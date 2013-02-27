@@ -35,7 +35,9 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.model.datawarehouse.DWHAccountOperation;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.local.AccountOperationServiceLocal;
 import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 import org.meveo.service.reporting.local.DWHAccountOperationServiceLocal;
 
@@ -47,6 +49,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
     private CustomerAccountServiceLocal customerAccountService;
     private DWHAccountOperationServiceLocal accountOperationTransformationService;
+    
+    private AccountOperationServiceLocal accountOperationService;
 
     private String reportsFolder;
     private String templateFilename;
@@ -86,6 +90,13 @@ public class AccountingDetail extends FileProducer implements Reporting {
                 	}
                     writer.append('\n');                		
                 }
+            	if(accountOperationTransformation.getStatus()==2){
+            		AccountOperation accountOperation=accountOperationService.findById(accountOperationTransformation.getId());
+            		amount=accountOperation.getUnMatchingAmount();
+            	}else{
+            		amount=accountOperationTransformation.getAmount();
+            	}
+            	
             	amount=accountOperationTransformation.getAmount();
         		if (accountOperationTransformation.getCategory() == 1){
         			solde = solde.subtract(amount);
@@ -101,11 +112,11 @@ public class AccountingDetail extends FileProducer implements Reporting {
                 writer.append(sdf.format(accountOperationTransformation.getTransactionDate()) + ";");
                 writer.append(sdf.format(accountOperationTransformation.getDueDate()) + ";");
                 if (accountOperationTransformation.getCategory() == 0)
-                    writer.append((accountOperationTransformation.getAmount() + ";").replace('.', ','));
+                    writer.append((amount + ";").replace('.', ','));
                 else
                     writer.append("0;");
                 if (accountOperationTransformation.getCategory() == 1)
-                    writer.append((accountOperationTransformation.getAmount() + ";").replace('.', ','));
+                    writer.append((amount + ";").replace('.', ','));
                 else
                     writer.append("0;");
 
@@ -185,6 +196,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
         accountOperationTransformationService = (DWHAccountOperationServiceLocal) Component
                 .getInstance("DWHAccountOperationService");
         customerAccountService = (CustomerAccountServiceLocal) Component.getInstance("customerAccountService");
+        accountOperationService = (AccountOperationServiceLocal) Component.getInstance("accountOperationService");
+        
         generateAccountingDetailFile(report.getProvider() == null ? null : report.getProvider().getCode(), report
                 .getStartDate(), report.getEndDate(), report.getOutputFormat());
 

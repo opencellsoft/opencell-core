@@ -44,8 +44,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
     public BigDecimal calculateRecordsBetweenDueMonth(String providerCode, Integer from, Integer to, String category) {
         log.info("calculateRecordsBetweenDueMonth({0},{1},{2})", from, to, category);
         BigDecimal result = new BigDecimal(0);
-        String queryString = "select sum(amount) from " + getEntityClass().getSimpleName() + " where providerCode='"
-                + providerCode + "' and category=" + category + " and status=0";
+        String queryString = "select sum(unMatchingAmount) from " + getEntityClass().getSimpleName() + " where providerCode='"
+                + providerCode + "' and category=" + category + " and (status=0 or status=2)";;
         if (from != null) {
             queryString += " and dueMonth >= " + from;
         }
@@ -66,7 +66,7 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
         log.info("countRecordsBetweenDueMonth({0},{1},{2})", from, to, category);
         int result = 0;
         String queryString = "select count(*) from " + getEntityClass().getSimpleName() + " where providerCode='"
-                + providerCode + "' and category=" + category + " and status=0";
+                + providerCode + "' and category=" + category + " and (status=0 or status=2)";
         if (from != null) {
             queryString += " and dueMonth >= " + from;
         }
@@ -88,8 +88,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
     public BigDecimal totalAmount(String providerCode, String category) {
         log.info("totalAmount({0})", category);
         BigDecimal result = new BigDecimal(0);
-        String queryString = "select sum(amount) from " + getEntityClass().getSimpleName() + " where providerCode='"
-                + providerCode + "' and category=" + category + " and status=0";
+        String queryString = "select sum(unMatchingAmount) from " + getEntityClass().getSimpleName() + " where providerCode='"
+                + providerCode + "' and category=" + category + " and status=0  or status=2";
         log.debug("totalAmount: queryString={0}", queryString);
         Query query = dwhEntityManager.createQuery(queryString);
         log.debug("countRecordsBetweenDueMonth: query={0}", query);
@@ -106,7 +106,7 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
         log.info("totalCount({0})", category);
         int result = 0;
         String queryString = "select count(*) from " + getEntityClass().getSimpleName() + " where providerCode='"
-                + providerCode + "' and category=" + category + " and status=0";
+                + providerCode + "' and category=" + category + " and status=0  or status=2";
         log.debug("totalCount: queryString={0}", queryString);
         Query query = dwhEntityManager.createQuery(queryString);
         log.debug("totalCount: query={0}", query);
@@ -126,7 +126,7 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
         log.info("getAccountingDetailRecords( {0} )", endDate);
         Query query = dwhEntityManager.createQuery(
                 "from " + getEntityClass().getSimpleName() + " a where a.providerCode='" + providerCode
-                        + "' and a.status=0 and"
+                        + "' and (a.status=0 or a.status=2) and"
                         + " a.transactionDate <= :endDate order by a.accountCode,a.transactionDate").setParameter(
                 "endDate", endDate);
         log.debug("getAccountingDetailRecords: query={0}", query);
@@ -160,11 +160,11 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
         log.info("getAccountingSummaryRecords( {0}, {1} )", endDate, category);
         Query query = dwhEntityManager
                 .createQuery(
-                        "select a.occCode, a.occDescription, sum(amount) as amount from "
+                        "select a.occCode, a.occDescription, sum(unMatchingAmount) as amount from "
                                 + getEntityClass().getSimpleName()
                                 + " a where a.providerCode='"
                                 + providerCode
-                                + "' and a.status=0 and a.category = :category and a.transactionDate <= :endDate  group by a.occCode, a.occDescription order by a.occCode")
+                                + "' and (a.status=0 or a.status=2) and a.category = :category and a.transactionDate <= :endDate  group by a.occCode, a.occDescription order by a.occCode")
                 .setParameter("endDate", endDate).setParameter("category", (byte) category);
         log.debug("getAccountingSummaryRecords: query={0}", query);
         result = query.getResultList();
