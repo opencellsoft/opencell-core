@@ -54,6 +54,7 @@ public class ChargeInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+	
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
     protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;

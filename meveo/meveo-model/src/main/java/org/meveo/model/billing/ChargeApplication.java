@@ -54,6 +54,7 @@ public class ChargeApplication extends BusinessEntity {
     @Column(name = "STATUS_DATE")
     private Date statusDate;
 
+	
     @Temporal(TemporalType.DATE)
     @Column(name = "APPLICATION_DATE")
     private Date applicationDate;
