@@ -54,6 +54,7 @@ public class ChargeInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+	
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
     protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;
@@ -62,7 +63,7 @@ public class ChargeInstance extends BusinessEntity {
     @Column(name = "STATUS_DATE")
     protected Date statusDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "TERMINATION_DATE")
     protected Date terminationDate;
 
@@ -70,7 +71,7 @@ public class ChargeInstance extends BusinessEntity {
     @JoinColumn(name = "CHARGE_TEMPLATE_ID")
     protected ChargeTemplate chargeTemplate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "CHARGE_DATE")
     protected Date chargeDate;
 
