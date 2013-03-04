@@ -54,11 +54,11 @@ public class ChargeApplication extends BusinessEntity {
     @Column(name = "STATUS_DATE")
     private Date statusDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "APPLICATION_DATE")
     private Date applicationDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "SUBSCRIPTION_DATE")
     private Date subscriptionDate;
 
