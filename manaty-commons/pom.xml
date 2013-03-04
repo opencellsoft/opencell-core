@@ -66,17 +66,27 @@
 			<version>5.12.1</version>
 			<scope>test</scope>
 		</dependency>
-
+   <dependency>
+	<groupId>joda-time</groupId>
+	<artifactId>joda-time</artifactId>
+	<version>2.1</version>
+   </dependency>
 		<!-- <dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
 			<version>1.0</version>
 		</dependency> -->
 		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<version>1.0.1.Final</version>
-		</dependency>
+   <groupId>org.hibernate.javax.persistence</groupId>
+   <artifactId>hibernate-jpa-2.0-api</artifactId>
+   <version>1.0.1.Final</version>
+   <exclusions>
+    <exclusion>
+     <groupId>javax.persistence</groupId>
+     <artifactId>persistence-api</artifactId>
+    </exclusion>
+ </exclusions>
+  </dependency>
 
 		<dependency>
 			<groupId>log4j</groupId>

@@ -223,14 +223,17 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             param1 = "0";
             param3 = "1";
         } else {
-            double part1 = nextapplicationDate.getTime() - periodStart.getTime();
-            double part2 = nextapplicationDate.getTime() - previousapplicationDate.getTime();
+            double part1 = DateUtils.daysBetween(periodStart, nextapplicationDate);
+            double part2 = DateUtils.daysBetween(previousapplicationDate, nextapplicationDate);
             if (part2 > 0) {
                 param1 = Double.toString(part1 / part2);
             } else {
                 log.error("Error in calendar dates : nextapplicationDate=#0, previousapplicationDate=#1",
                         nextapplicationDate, previousapplicationDate);
             }
+            
+            
+            
                 log.debug("chargeSubscription part1=#0, part2=#1, param1=#2", part1, part2, param1);
         }
 
@@ -327,8 +330,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
         Date periodStart = applicationDate;
         if (recurringChargeTemplate.getTerminationProrata()) {
 
-            double part1 = nextapplicationDate.getTime() - periodStart.getTime();
-            double part2 = nextapplicationDate.getTime() - previousapplicationDate.getTime();
+        	double part1 = DateUtils.daysBetween(periodStart, nextapplicationDate);
+        	double part2 = DateUtils.daysBetween(previousapplicationDate, nextapplicationDate); 
+             
             if (part2 > 0) {
                 param1 = Double.toString((-1) * part1 / part2);
             } else {
@@ -522,9 +526,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             } else {
 
                 applicationTypeEnum = ApplicationTypeEnum.PRORATA_SUBSCRIPTION;
-
-                double part1 = nextapplicationDate.getTime() - periodStart.getTime();
-                double part2 = nextapplicationDate.getTime() - previousapplicationDate.getTime();
+                double part1 = DateUtils.daysBetween(periodStart, nextapplicationDate);
+                double part2 = DateUtils.daysBetween(previousapplicationDate, nextapplicationDate);
+                
                 if (part2 > 0) {
                     param1 = Double.toString(part1 / part2);
                 } else {
@@ -737,8 +741,8 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
 
         Date periodStart = applicationDate;
         if (recurringChargeTemplate.getTerminationProrata()) {
-            double part1 = nextapplicationDate.getTime() - periodStart.getTime();
-            double part2 = nextapplicationDate.getTime() - previousapplicationDate.getTime();
+        	double part1 = DateUtils.daysBetween(periodStart, nextapplicationDate);
+        	double part2 = DateUtils.daysBetween(previousapplicationDate, nextapplicationDate);
             if (part2 > 0) {
                 param1 = Double.toString((-1) * part1 / part2);
             } else {

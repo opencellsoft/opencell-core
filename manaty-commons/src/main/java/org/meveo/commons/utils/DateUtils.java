@@ -19,11 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-
+import org.joda.time.*; 
 /**
  * @author Ignas Lelys
  * @created Jun 9, 2010
@@ -403,6 +402,13 @@ public class DateUtils {
 
         return ((afterYear * 12) + afterMonth) - ((beforeYear * 12) + beforeMonth);
     }
+    
+    
+    public static double daysBetween(Date date1, Date date2){
+    	  DateTime dateTime = new DateTime(date1.getTime());
+	      DateTime dateTime2 = new DateTime(date2.getTime());
+	     return Days.daysBetween(dateTime, dateTime2).getDays();
+	  }
 
     public static Date xmlGregorianCalendarToDate(XMLGregorianCalendar value) {
         Calendar cal = value.toGregorianCalendar();
