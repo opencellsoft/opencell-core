@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>meveo</artifactId>
@@ -112,18 +113,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-		<version>${manaty.hibernateAnnotation.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>hibernate</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-annotations</artifactId> 
+			<version>${manaty.hibernateAnnotation.version}</version> <scope>provided</scope> 
+			<exclusions> <exclusion> <artifactId>hibernate</artifactId> <groupId>org.hibernate</groupId> 
+			</exclusion> </exclusions> </dependency> -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -289,7 +282,7 @@
 				<manaty.unpackEarModules>false</manaty.unpackEarModules>
 			</properties>
 		</profile>
-		
+
 		<profile>
 			<id>integration-mysql</id>
 			<activation>
@@ -300,7 +293,7 @@
 			</activation>
 			<properties>
 				<manaty.unpackEarModules>false</manaty.unpackEarModules>
-				
+
 				<jboss.hostname>demo.meveo.info</jboss.hostname>
 				<jboss.home>/home/jboss</jboss.home>
 
@@ -315,7 +308,7 @@
 				<dbDWH.password>projetMEVEO</dbDWH.password>
 				<dbDWH.driver.class>com.mysql.jdbc.Driver</dbDWH.driver.class>
 				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
-				
+
 			</properties>
 		</profile>
 
@@ -376,7 +369,7 @@
 
 			</properties>
 
-		</profile>		
+		</profile>
 		<profile>
 			<id>gediminas</id>
 			<properties>
@@ -430,6 +423,34 @@
 				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
 
 			</properties>
-		</profile>		
+		</profile>
+		<profile>
+			<id>edward</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env</name>
+					<value>edward</value>
+				</property>
+			</activation>
+			<properties>
+				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
+
+				<jboss.hostname>localhost</jboss.hostname>
+				<jboss.home>C:/java/jboss-4.2.3.GA</jboss.home>
+
+				<db.connection.url>jdbc:postgresql://localhost:5432/meveo</db.connection.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+				<db.driver.class>org.postgresql.Driver</db.driver.class>
+				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+
+				<dbDWH.connection.url>jdbc:postgresql://localhost:5432/meveodwh</dbDWH.connection.url>
+				<dbDWH.username>meveodwh</dbDWH.username>
+				<dbDWH.password>meveodwh</dbDWH.password>
+				<dbDWH.driver.class>org.postgresql.Driver</dbDWH.driver.class>
+				<hibernateDWH.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernateDWH.dialect>
+			</properties>
+		</profile>
 	</profiles>
 </project>
