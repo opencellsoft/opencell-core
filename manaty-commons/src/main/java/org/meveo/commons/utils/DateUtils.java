@@ -404,10 +404,10 @@ public class DateUtils {
     }
     
     
-    public static double daysBetween(Date date1, Date date2){
-    	  DateTime dateTime = new DateTime(date1.getTime());
-	      DateTime dateTime2 = new DateTime(date2.getTime());
-	     return Days.daysBetween(dateTime, dateTime2).getDays();
+    public static double daysBetween(Date start, Date end){
+    	  DateTime dateTimeStart = new DateTime(start.getTime());
+	      DateTime dateTimeEnd = new DateTime(end.getTime());
+	     return Days.daysBetween(dateTimeStart, dateTimeEnd).getDays();
 	  }
 
     public static Date xmlGregorianCalendarToDate(XMLGregorianCalendar value) {
