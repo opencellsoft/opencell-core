@@ -1,0 +1,52 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+    xmlns:custom="http://manaty.net/custom"
+    xmlns:a="http://richfaces.org/a4j"
+    template="layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml">
+   		</ui:include>
+    </ui:define>
+
+    <ui:define name="body">
+    
+    	<custom:entityPopup id="providerPopup" showWhenRendered="true" rendered="#{identity.loggedIn and currentProvider==null}"
+				header="#{messages['provider.popup.header']}"
+				backingBean="#{providerBean}" dataModel="#{userProviders}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}"
+				searchField2="description"
+				column1Label="#{messages['businessEntity.code']}" column1="code"
+				column2Label="#{messages['businessEntity.description']}" column2="description" 
+				filtersMap="#{providerBean.filters}">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					action="#{currentProviderBean.setCurrentProvider(entity)}"
+					oncomplete="Richfaces.hideModalPanel('providerPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+        <rich:panel>
+            <h:panelGrid columns="2" style="width:100%;text-align:center;">
+            <h:graphicImage value="/img/logo_anatole.png" style="border:0px;"/>
+				<!-- REMOVED FOR NOW -->
+      					 <!--
+				<p:columnChart value="#{dashboard.customerAccount}" var="customerAccounts" xfield="#{customerAccounts.month}">
+					<p:chartSeries label="#{messages['dashboard.customerAccounts']}" value="#{customerAccounts.amount}" />
+				</p:columnChart >
+               -->
+            </h:panelGrid>
+        </rich:panel>
+        
+
+    </ui:define>
+</ui:composition>

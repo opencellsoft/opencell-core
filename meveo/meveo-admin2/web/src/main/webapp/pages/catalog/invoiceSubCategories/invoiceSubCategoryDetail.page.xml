@@ -1,0 +1,18 @@
+<page xmlns="http://jboss.com/products/seam/pages"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd">
+    <restrict>#{persistentPermissionResolver.hasPermission('catalog','catalogManagement') or (!edit and persistentPermissionResolver.hasPermission('catalog','catalogVisualization'))}</restrict>    
+    
+ 	 <param name="edit"/>
+	 <param name="invoiceCategoryId" />
+	 <param name="backView"/>
+	 <navigation>
+		 <rule if-outcome="invoiceCategoryDetail">
+	    	<redirect view-id="/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml">
+		     	<param name="objectId" value="#{invoiceCategoryId}"/>
+				<param name="edit" value="true"/>
+	    	</redirect>
+		 </rule>
+	 </navigation>
+    
+</page>

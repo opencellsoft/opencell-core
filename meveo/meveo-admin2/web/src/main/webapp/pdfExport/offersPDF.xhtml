@@ -1,0 +1,33 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:p="http://jboss.com/products/seam/pdf"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:s="http://jboss.com/products/seam/taglib"
+  title="Offers"
+  type="pdf">
+  
+   <p:font size="24">
+        <p:paragraph spacingAfter="50">Offers</p:paragraph>
+    </p:font>
+    <p:font size="11">
+	    <p:table columns="4" headerRows="1" widthPercentage="100">
+	      <p:cell grayFill=".25">Code</p:cell>
+	      <p:cell grayFill=".25">Name</p:cell>
+	      <p:cell grayFill=".25">Term. Duration</p:cell>
+	      <p:cell grayFill=".25">Services</p:cell>
+	      <ui:repeat value="#{offers.list()}" var="entity">
+	        <p:cell>#{entity.code}</p:cell>
+	        <p:cell>#{entity.name}</p:cell>
+	        <p:cell>#{entity.termDuration}</p:cell>
+	        <p:cell>
+	        	<p:list>
+      				<ui:repeat value="#{entity.services}" var="doc">
+        				<p:listItem>#{doc.name}</p:listItem>
+      				</ui:repeat>
+   				</p:list>
+	        </p:cell>
+	      </ui:repeat>
+	   </p:table>
+	</p:font>
+    
+
+</p:document>        

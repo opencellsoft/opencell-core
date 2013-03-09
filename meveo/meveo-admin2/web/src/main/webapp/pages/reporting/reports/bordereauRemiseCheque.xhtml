@@ -1,0 +1,48 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+
+		
+		
+		<rich:panel>
+			<f:facet name="header">
+				<h:outputText value="#{messages['bordereauRemiseCheque.bordereauRemiseChequePanel']}" />
+			</f:facet>
+			
+			<a:form id="bordereauRemiseChequeForm" styleClass="mainForm" reRender="datatable">
+				<s:validateAll>		
+				<h:panelGrid columns="1" styleClass="formPanelGrid">
+    	
+			
+			<s:decorate template="/layout/edit.xhtml">
+				<ui:define name="label">
+					<h:outputText value="#{messages['bordereauRemiseCheque.date']}" />
+				</ui:define>
+				<rich:calendar value="#{bordereauRemiseChequeBean.date}" popup="true" showApplyButton="false" cellWidth="24px"
+					cellHeight="22px" style="width:200px" required="true" />
+				<ui:insert />
+			</s:decorate>
+			
+<h:commandButton  id="executeReportNow" value="#{messages['report.generateReport']}" action="#{bordereauRemiseChequeBean.generateReport()}"/>
+				</h:panelGrid>
+				</s:validateAll>
+			</a:form>
+		</rich:panel>
+       
+    </ui:define>
+    
+</ui:composition>

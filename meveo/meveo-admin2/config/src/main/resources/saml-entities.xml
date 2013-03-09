@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<EntitiesDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
+
+
+	<EntityDescriptor
+		entityID="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/metadata"
+		xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+		<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+			<ds:SignedInfo>
+				<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+				<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+				<ds:Reference URI="#id5s9uvyLOkx-jBbwVjn4O2Pu2hdI">
+					<ds:Transforms>
+						<ds:Transform
+							Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+						<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+					</ds:Transforms>
+					<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+					<ds:DigestValue>hh0geOND1vwYKNtsP/Wojx/Ajds=</ds:DigestValue>
+				</ds:Reference>
+			</ds:SignedInfo>
+			<ds:SignatureValue>
+				mJLJbg0I9kFdkNax8Wytych11R25CaMkL0RAIAqiQJo8kcC1/NiCDivvHo3sJagCWPsfxtcQrMwC
+				/7m1nrdnv6pQVWs9cNUi5hdRVbH4Rlx9zrJ3AT3iQU77ZeW/TbjLQIsMjiZVCmbpM4wJixUUwGvt
+				VF0oRq3+u0/8THpX+0Yc0b8CD2VZ65QZt5gnRJpWXfWA46d7iYi7xWFRJZCCiIQ8b6WM5kF7HkbG
+				aiU8cm/jBsjrGZweBWfMAywpXjtfE6TLMQyuJxHH/bgSl0NkLMHspYT/Yr/znmZzCxRpREoDYBwt
+				qmPjpNIIlsEuoMw6YIihekaABJZUZ/jj1AZOgw==</ds:SignatureValue>
+			<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+				<ds:X509Data>
+					<ds:X509Certificate>
+						MIIFKzCCBBOgAwIBAgIkAhwR/7J2epUBYy5rUcI6Q0gNLnlvJqPZ/fHZUvSuAgIBGc2oMA0GCSqG
+						SIb3DQEBBQUAMDcxGjAYBgNVBAsTEU9yZ2FuaXphdGlvbmFsIENBMRkwFwYDVQQKFBBMREVGV05U
+						OTY2NF9UUkVFMB4XDTExMDMyNjExMjU0NloXDTEzMDMyNjExMjU0NlowQDEVMBMGA1UEAxMMdGVz
+						dC1zaWduaW5nMRYwFAYDVQQLEw1hY2Nlc3NNYW5hZ2VyMQ8wDQYDVQQKEwZub3ZlbGwwggEiMA0G
+						CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2AzCIQJPg5mv5eA2Tl3AY0nSRH1+GmszxNYR6rG0C
+						OHck5ZAmgGFhaSaAzuLZJRcj7+sQguUbIZMvh5PoFfuZb+WntwsNflt8nXsrg9IxjLIwZY2bXUbB
+						OxFu15K3yGOZkSJq8V262Y6SL6V6XmcR2q6u1Kngx1PqIlexo4KGLrntMXE5bDA0P40EEhnBKsQ8
+						8V2N50Ko6pgTIz1kG/eFim/B5Y+T5QU6kOwcJYHZPrh3JwnVCXHNKDEXzzeNdB7GyceyxvdGsIb+
+						81OerDN/l0q3LNiwgRrm1nV4pmJg9a634kJg4lroTiLAyIWRA7zBHddAYrGr9bRW+YTKN6gZAgMB
+						AAGjggIUMIICEDAdBgNVHQ4EFgQUiq+VPzl4uUQC/xei1uaeOVgVTAkwHwYDVR0jBBgwFoAU1vZe
+						dSkC348NcmAes1+Q8hKeyz0wggHMBgtghkgBhvg3AQkEAQSCAbswggG3BAIBAAEB/xMdTm92ZWxs
+						IFNlY3VyaXR5IEF0dHJpYnV0ZSh0bSkWQ2h0dHA6Ly9kZXZlbG9wZXIubm92ZWxsLmNvbS9yZXBv
+						c2l0b3J5L2F0dHJpYnV0ZXMvY2VydGF0dHJzX3YxMC5odG0wggFIoBoBAQAwCDAGAgEBAgFGMAgw
+						BgIBAQIBCgIBaaEaAQEAMAgwBgIBAQIBADAIMAYCAQECAQACAQCiBgIBFwEB/6OCAQSgWAIBAgIC
+						AP8CAQADDQCAAAAAAAAAAAAAAAADCQCAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQG8N9I
+						MBgwEAIBAAIIf/////////8BAQACBAbw30ihWAIBAgICAP8CAQADDQBAAAAAAAAAAAAAAAADCQBA
+						AAAAAAAAADAYMBACAQACCH//////////AQEAAgQR/7J2MBgwEAIBAAIIf/////////8BAQACBBH/
+						snaiTjBMAgECAgEAAgIA/wMNAIAAAAAAAAAAAAAAAAMJAIAAAAAAAAAAMBIwEAIBAAIIf///////
+						//8BAQAwEjAQAgEAAgh//////////wEBADANBgkqhkiG9w0BAQUFAAOCAQEAJ22GMm6pc3G8GjTw
+						q72vEdbQqwsyBO3sFj0ax0Zr6hGLHAIpKhp672yxCKgb3vDCUgL5PLZUkXp0RX08rj4GzPMEX/wa
+						yAQ3Sv77z1wdAgaW8ulz6XZBwXU6YZyyrm3VLjhB6/oftSFeCyFt3rKB5G2Pst/Jafs5hLhvWGZq
+						L0F0asNbJpFqnvEbtte16t46NYZmtFQ2i3WCxdQbXaiUyziM3JEGUBeMKRu//j8yxxOlfZ4eyfs5
+						YJqAq5x7wDKwDE44EESZmufAK4GhImru+B+W+5L5IbCWVKQsIE3r0as42DOrt9qJFSBU8dvkq7CZ
+						NHz57mmcera75ONBxumJZQ==</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</ds:Signature>
+
+		<AttributeAuthorityDescriptor ID="idzHHilQlWAdFp6YrXvBp6BfEeeVA"
+			protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+			<KeyDescriptor use="signing">
+				<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+					<ds:X509Data>
+						<ds:X509Certificate>
+							MIIFKzCCBBOgAwIBAgIkAhwR/7J2epUBYy5rUcI6Q0gNLnlvJqPZ/fHZUvSuAgIBGc2oMA0GCSqG
+							SIb3DQEBBQUAMDcxGjAYBgNVBAsTEU9yZ2FuaXphdGlvbmFsIENBMRkwFwYDVQQKFBBMREVGV05U
+							OTY2NF9UUkVFMB4XDTExMDMyNjExMjU0NloXDTEzMDMyNjExMjU0NlowQDEVMBMGA1UEAxMMdGVz
+							dC1zaWduaW5nMRYwFAYDVQQLEw1hY2Nlc3NNYW5hZ2VyMQ8wDQYDVQQKEwZub3ZlbGwwggEiMA0G
+							CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2AzCIQJPg5mv5eA2Tl3AY0nSRH1+GmszxNYR6rG0C
+							OHck5ZAmgGFhaSaAzuLZJRcj7+sQguUbIZMvh5PoFfuZb+WntwsNflt8nXsrg9IxjLIwZY2bXUbB
+							OxFu15K3yGOZkSJq8V262Y6SL6V6XmcR2q6u1Kngx1PqIlexo4KGLrntMXE5bDA0P40EEhnBKsQ8
+							8V2N50Ko6pgTIz1kG/eFim/B5Y+T5QU6kOwcJYHZPrh3JwnVCXHNKDEXzzeNdB7GyceyxvdGsIb+
+							81OerDN/l0q3LNiwgRrm1nV4pmJg9a634kJg4lroTiLAyIWRA7zBHddAYrGr9bRW+YTKN6gZAgMB
+							AAGjggIUMIICEDAdBgNVHQ4EFgQUiq+VPzl4uUQC/xei1uaeOVgVTAkwHwYDVR0jBBgwFoAU1vZe
+							dSkC348NcmAes1+Q8hKeyz0wggHMBgtghkgBhvg3AQkEAQSCAbswggG3BAIBAAEB/xMdTm92ZWxs
+							IFNlY3VyaXR5IEF0dHJpYnV0ZSh0bSkWQ2h0dHA6Ly9kZXZlbG9wZXIubm92ZWxsLmNvbS9yZXBv
+							c2l0b3J5L2F0dHJpYnV0ZXMvY2VydGF0dHJzX3YxMC5odG0wggFIoBoBAQAwCDAGAgEBAgFGMAgw
+							BgIBAQIBCgIBaaEaAQEAMAgwBgIBAQIBADAIMAYCAQECAQACAQCiBgIBFwEB/6OCAQSgWAIBAgIC
+							AP8CAQADDQCAAAAAAAAAAAAAAAADCQCAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQG8N9I
+							MBgwEAIBAAIIf/////////8BAQACBAbw30ihWAIBAgICAP8CAQADDQBAAAAAAAAAAAAAAAADCQBA
+							AAAAAAAAADAYMBACAQACCH//////////AQEAAgQR/7J2MBgwEAIBAAIIf/////////8BAQACBBH/
+							snaiTjBMAgECAgEAAgIA/wMNAIAAAAAAAAAAAAAAAAMJAIAAAAAAAAAAMBIwEAIBAAIIf///////
+							//8BAQAwEjAQAgEAAgh//////////wEBADANBgkqhkiG9w0BAQUFAAOCAQEAJ22GMm6pc3G8GjTw
+							q72vEdbQqwsyBO3sFj0ax0Zr6hGLHAIpKhp672yxCKgb3vDCUgL5PLZUkXp0RX08rj4GzPMEX/wa
+							yAQ3Sv77z1wdAgaW8ulz6XZBwXU6YZyyrm3VLjhB6/oftSFeCyFt3rKB5G2Pst/Jafs5hLhvWGZq
+							L0F0asNbJpFqnvEbtte16t46NYZmtFQ2i3WCxdQbXaiUyziM3JEGUBeMKRu//j8yxxOlfZ4eyfs5
+							YJqAq5x7wDKwDE44EESZmufAK4GhImru+B+W+5L5IbCWVKQsIE3r0as42DOrt9qJFSBU8dvkq7CZ
+							NHz57mmcera75ONBxumJZQ==</ds:X509Certificate>
+					</ds:X509Data>
+				</ds:KeyInfo>
+				<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc" />
+			</KeyDescriptor>
+			<KeyDescriptor use="encryption">
+				<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+					<ds:X509Data>
+						<ds:X509Certificate>
+							MIIFLjCCBBagAwIBAgIkAhwR/7J2epUBYy5rUcI6Q0gNLnlvJqPZ/fHZUvSuAgIBG2egMA0GCSqG
+							SIb3DQEBBQUAMDcxGjAYBgNVBAsTEU9yZ2FuaXphdGlvbmFsIENBMRkwFwYDVQQKFBBMREVGV05U
+							OTY2NF9UUkVFMB4XDTExMDMyNjExMjU1MVoXDTEzMDMyNjExMjU1MVowQzEYMBYGA1UEAxMPdGVz
+							dC1lbmNyeXB0aW9uMRYwFAYDVQQLEw1hY2Nlc3NNYW5hZ2VyMQ8wDQYDVQQKEwZub3ZlbGwwggEi
+							MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2rm5oRwB21HFPcZBmG8uQxHkxo4KgtITsqUV2
+							NdbLEQoK5/RgGM1cxHAv2xbufJjGONILyU4OtOMrlUoBhCqkWOmm6nDt4pDrhffioRBk1FZEFowc
+							vMToTMFP59+qhyq45gVWPyuEv+rRp40/IUOFm0cfR0obNnv8GgBXEJAhmwXgtEY2Njcwv1Nvx8A9
+							hM7QMQwLcFrRA1cLq6lz00alLdNo5LsNUOeqz72nnQJN8XYHwGAJPrbrRprw2uyvIN2ycmMhkG08
+							UztK90nqgbppBu9gUy5cwKarowjwSol0YUlrw49Ab9Z948jHB0Rbf+xVTzpHAeTzbKewmPC8FFc1
+							AgMBAAGjggIUMIICEDAdBgNVHQ4EFgQULMZmVH54VdspQKkXuA7hDo/tAxIwHwYDVR0jBBgwFoAU
+							1vZedSkC348NcmAes1+Q8hKeyz0wggHMBgtghkgBhvg3AQkEAQSCAbswggG3BAIBAAEB/xMdTm92
+							ZWxsIFNlY3VyaXR5IEF0dHJpYnV0ZSh0bSkWQ2h0dHA6Ly9kZXZlbG9wZXIubm92ZWxsLmNvbS9y
+							ZXBvc2l0b3J5L2F0dHJpYnV0ZXMvY2VydGF0dHJzX3YxMC5odG0wggFIoBoBAQAwCDAGAgEBAgFG
+							MAgwBgIBAQIBCgIBaaEaAQEAMAgwBgIBAQIBADAIMAYCAQECAQACAQCiBgIBFwEB/6OCAQSgWAIB
+							AgICAP8CAQADDQCAAAAAAAAAAAAAAAADCQCAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQG
+							8N9IMBgwEAIBAAIIf/////////8BAQACBAbw30ihWAIBAgICAP8CAQADDQBAAAAAAAAAAAAAAAAD
+							CQBAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQR/7J2MBgwEAIBAAIIf/////////8BAQAC
+							BBH/snaiTjBMAgECAgEAAgIA/wMNAIAAAAAAAAAAAAAAAAMJAIAAAAAAAAAAMBIwEAIBAAIIf///
+							//////8BAQAwEjAQAgEAAgh//////////wEBADANBgkqhkiG9w0BAQUFAAOCAQEAuR7kQ0jWX1hH
+							ykdkeeNUk+nbGpZJizALX/UVT7EmIwznkdHxEPPE1iS0kCCdreeiGwLuQWQqtzbJjab720E44zNR
+							LiW/NE17yt6krvRhCZ67fdq+gsEYHBzk4R9y21b8zZ1pcIBzvZnvpYQRE+wxNdofp1OY7dA0wjeB
+							v1W4KU9/RM6pLzHvDT9F2dYupuT+bPYZxXUNSqFtPRW6P/b3vCJzgZSMl8WqBo730AIfXpPwc+i8
+							hdP1tMlhrU5161jW55MJFZZMoYS/2dJVUJiBvj6C2IRr+/ZiID4OXhbx4nLzd0Cq3pganqbCyPDV
+							CmMmsvo7f+txh1eZqYlHZS2hZA==</ds:X509Certificate>
+					</ds:X509Data>
+				</ds:KeyInfo>
+				<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc" />
+			</KeyDescriptor>
+			<AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/soap" />
+			<AssertionIDRequestService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/soap" />
+			<AssertionIDRequestService Binding="urn:oasis:names:tc:SAML:2.0:bindings:URI"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/assertion" />
+		</AttributeAuthorityDescriptor>
+
+		<IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"
+			ID="id5eWfWolf7-aRvC.aBslt1l21uFY" WantAuthnRequestsSigned="true">
+			<KeyDescriptor use="signing">
+				<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+					<ds:X509Data>
+						<ds:X509Certificate>MIIFKzCCBBOgAwIBAgIkAhwR/7J2epUBYy5rUcI6Q0gNLnlvJqPZ/fHZUvSuAgIBGc2oMA0GCSqG
+							SIb3DQEBBQUAMDcxGjAYBgNVBAsTEU9yZ2FuaXphdGlvbmFsIENBMRkwFwYDVQQKFBBMREVGV05U
+							OTY2NF9UUkVFMB4XDTExMDMyNjExMjU0NloXDTEzMDMyNjExMjU0NlowQDEVMBMGA1UEAxMMdGVz
+							dC1zaWduaW5nMRYwFAYDVQQLEw1hY2Nlc3NNYW5hZ2VyMQ8wDQYDVQQKEwZub3ZlbGwwggEiMA0G
+							CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2AzCIQJPg5mv5eA2Tl3AY0nSRH1+GmszxNYR6rG0C
+							OHck5ZAmgGFhaSaAzuLZJRcj7+sQguUbIZMvh5PoFfuZb+WntwsNflt8nXsrg9IxjLIwZY2bXUbB
+							OxFu15K3yGOZkSJq8V262Y6SL6V6XmcR2q6u1Kngx1PqIlexo4KGLrntMXE5bDA0P40EEhnBKsQ8
+							8V2N50Ko6pgTIz1kG/eFim/B5Y+T5QU6kOwcJYHZPrh3JwnVCXHNKDEXzzeNdB7GyceyxvdGsIb+
+							81OerDN/l0q3LNiwgRrm1nV4pmJg9a634kJg4lroTiLAyIWRA7zBHddAYrGr9bRW+YTKN6gZAgMB
+							AAGjggIUMIICEDAdBgNVHQ4EFgQUiq+VPzl4uUQC/xei1uaeOVgVTAkwHwYDVR0jBBgwFoAU1vZe
+							dSkC348NcmAes1+Q8hKeyz0wggHMBgtghkgBhvg3AQkEAQSCAbswggG3BAIBAAEB/xMdTm92ZWxs
+							IFNlY3VyaXR5IEF0dHJpYnV0ZSh0bSkWQ2h0dHA6Ly9kZXZlbG9wZXIubm92ZWxsLmNvbS9yZXBv
+							c2l0b3J5L2F0dHJpYnV0ZXMvY2VydGF0dHJzX3YxMC5odG0wggFIoBoBAQAwCDAGAgEBAgFGMAgw
+							BgIBAQIBCgIBaaEaAQEAMAgwBgIBAQIBADAIMAYCAQECAQACAQCiBgIBFwEB/6OCAQSgWAIBAgIC
+							AP8CAQADDQCAAAAAAAAAAAAAAAADCQCAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQG8N9I
+							MBgwEAIBAAIIf/////////8BAQACBAbw30ihWAIBAgICAP8CAQADDQBAAAAAAAAAAAAAAAADCQBA
+							AAAAAAAAADAYMBACAQACCH//////////AQEAAgQR/7J2MBgwEAIBAAIIf/////////8BAQACBBH/
+							snaiTjBMAgECAgEAAgIA/wMNAIAAAAAAAAAAAAAAAAMJAIAAAAAAAAAAMBIwEAIBAAIIf///////
+							//8BAQAwEjAQAgEAAgh//////////wEBADANBgkqhkiG9w0BAQUFAAOCAQEAJ22GMm6pc3G8GjTw
+							q72vEdbQqwsyBO3sFj0ax0Zr6hGLHAIpKhp672yxCKgb3vDCUgL5PLZUkXp0RX08rj4GzPMEX/wa
+							yAQ3Sv77z1wdAgaW8ulz6XZBwXU6YZyyrm3VLjhB6/oftSFeCyFt3rKB5G2Pst/Jafs5hLhvWGZq
+							L0F0asNbJpFqnvEbtte16t46NYZmtFQ2i3WCxdQbXaiUyziM3JEGUBeMKRu//j8yxxOlfZ4eyfs5
+							YJqAq5x7wDKwDE44EESZmufAK4GhImru+B+W+5L5IbCWVKQsIE3r0as42DOrt9qJFSBU8dvkq7CZ
+							NHz57mmcera75ONBxumJZQ==</ds:X509Certificate>
+					</ds:X509Data>
+				</ds:KeyInfo>
+			</KeyDescriptor>
+			<KeyDescriptor use="encryption">
+				<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+					<ds:X509Data>
+						<ds:X509Certificate>MIIFLjCCBBagAwIBAgIkAhwR/7J2epUBYy5rUcI6Q0gNLnlvJqPZ/fHZUvSuAgIBG2egMA0GCSqG
+							SIb3DQEBBQUAMDcxGjAYBgNVBAsTEU9yZ2FuaXphdGlvbmFsIENBMRkwFwYDVQQKFBBMREVGV05U
+							OTY2NF9UUkVFMB4XDTExMDMyNjExMjU1MVoXDTEzMDMyNjExMjU1MVowQzEYMBYGA1UEAxMPdGVz
+							dC1lbmNyeXB0aW9uMRYwFAYDVQQLEw1hY2Nlc3NNYW5hZ2VyMQ8wDQYDVQQKEwZub3ZlbGwwggEi
+							MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2rm5oRwB21HFPcZBmG8uQxHkxo4KgtITsqUV2
+							NdbLEQoK5/RgGM1cxHAv2xbufJjGONILyU4OtOMrlUoBhCqkWOmm6nDt4pDrhffioRBk1FZEFowc
+							vMToTMFP59+qhyq45gVWPyuEv+rRp40/IUOFm0cfR0obNnv8GgBXEJAhmwXgtEY2Njcwv1Nvx8A9
+							hM7QMQwLcFrRA1cLq6lz00alLdNo5LsNUOeqz72nnQJN8XYHwGAJPrbrRprw2uyvIN2ycmMhkG08
+							UztK90nqgbppBu9gUy5cwKarowjwSol0YUlrw49Ab9Z948jHB0Rbf+xVTzpHAeTzbKewmPC8FFc1
+							AgMBAAGjggIUMIICEDAdBgNVHQ4EFgQULMZmVH54VdspQKkXuA7hDo/tAxIwHwYDVR0jBBgwFoAU
+							1vZedSkC348NcmAes1+Q8hKeyz0wggHMBgtghkgBhvg3AQkEAQSCAbswggG3BAIBAAEB/xMdTm92
+							ZWxsIFNlY3VyaXR5IEF0dHJpYnV0ZSh0bSkWQ2h0dHA6Ly9kZXZlbG9wZXIubm92ZWxsLmNvbS9y
+							ZXBvc2l0b3J5L2F0dHJpYnV0ZXMvY2VydGF0dHJzX3YxMC5odG0wggFIoBoBAQAwCDAGAgEBAgFG
+							MAgwBgIBAQIBCgIBaaEaAQEAMAgwBgIBAQIBADAIMAYCAQECAQACAQCiBgIBFwEB/6OCAQSgWAIB
+							AgICAP8CAQADDQCAAAAAAAAAAAAAAAADCQCAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQG
+							8N9IMBgwEAIBAAIIf/////////8BAQACBAbw30ihWAIBAgICAP8CAQADDQBAAAAAAAAAAAAAAAAD
+							CQBAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQR/7J2MBgwEAIBAAIIf/////////8BAQAC
+							BBH/snaiTjBMAgECAgEAAgIA/wMNAIAAAAAAAAAAAAAAAAMJAIAAAAAAAAAAMBIwEAIBAAIIf///
+							//////8BAQAwEjAQAgEAAgh//////////wEBADANBgkqhkiG9w0BAQUFAAOCAQEAuR7kQ0jWX1hH
+							ykdkeeNUk+nbGpZJizALX/UVT7EmIwznkdHxEPPE1iS0kCCdreeiGwLuQWQqtzbJjab720E44zNR
+							LiW/NE17yt6krvRhCZ67fdq+gsEYHBzk4R9y21b8zZ1pcIBzvZnvpYQRE+wxNdofp1OY7dA0wjeB
+							v1W4KU9/RM6pLzHvDT9F2dYupuT+bPYZxXUNSqFtPRW6P/b3vCJzgZSMl8WqBo730AIfXpPwc+i8
+							hdP1tMlhrU5161jW55MJFZZMoYS/2dJVUJiBvj6C2IRr+/ZiID4OXhbx4nLzd0Cq3pganqbCyPDV
+							CmMmsvo7f+txh1eZqYlHZS2hZA==</ds:X509Certificate>
+					</ds:X509Data>
+				</ds:KeyInfo>
+				<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc">
+					<xenc:KeySize xmlns:xenc="http://www.w3.org/2001/04/xmlenc#">128</xenc:KeySize>
+				</EncryptionMethod>
+			</KeyDescriptor>
+			<ArtifactResolutionService index="0"
+				isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/soap" />
+			<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/slo"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/slo_return" />
+			<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/soap" />
+			<SingleLogoutService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/slo"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/slo_return" />
+			<ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/soap" />
+			<ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/rni"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/rni_return" />
+			<ManageNameIDService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/rni"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/rni_return" />
+			<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+			<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+			<SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/sso" />
+			<SingleSignOnService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/sso" />
+			<NameIDMappingService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/soap" />
+		</IDPSSODescriptor>
+
+		<SPSSODescriptor ID="idgOGlsrrvStD5clceTXedjSPoaQc"
+			protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+			<KeyDescriptor use="signing">
+				<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+					<ds:X509Data>
+						<ds:X509Certificate>
+							MIIFKzCCBBOgAwIBAgIkAhwR/7J2epUBYy5rUcI6Q0gNLnlvJqPZ/fHZUvSuAgIBGc2oMA0GCSqG
+							SIb3DQEBBQUAMDcxGjAYBgNVBAsTEU9yZ2FuaXphdGlvbmFsIENBMRkwFwYDVQQKFBBMREVGV05U
+							OTY2NF9UUkVFMB4XDTExMDMyNjExMjU0NloXDTEzMDMyNjExMjU0NlowQDEVMBMGA1UEAxMMdGVz
+							dC1zaWduaW5nMRYwFAYDVQQLEw1hY2Nlc3NNYW5hZ2VyMQ8wDQYDVQQKEwZub3ZlbGwwggEiMA0G
+							CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2AzCIQJPg5mv5eA2Tl3AY0nSRH1+GmszxNYR6rG0C
+							OHck5ZAmgGFhaSaAzuLZJRcj7+sQguUbIZMvh5PoFfuZb+WntwsNflt8nXsrg9IxjLIwZY2bXUbB
+							OxFu15K3yGOZkSJq8V262Y6SL6V6XmcR2q6u1Kngx1PqIlexo4KGLrntMXE5bDA0P40EEhnBKsQ8
+							8V2N50Ko6pgTIz1kG/eFim/B5Y+T5QU6kOwcJYHZPrh3JwnVCXHNKDEXzzeNdB7GyceyxvdGsIb+
+							81OerDN/l0q3LNiwgRrm1nV4pmJg9a634kJg4lroTiLAyIWRA7zBHddAYrGr9bRW+YTKN6gZAgMB
+							AAGjggIUMIICEDAdBgNVHQ4EFgQUiq+VPzl4uUQC/xei1uaeOVgVTAkwHwYDVR0jBBgwFoAU1vZe
+							dSkC348NcmAes1+Q8hKeyz0wggHMBgtghkgBhvg3AQkEAQSCAbswggG3BAIBAAEB/xMdTm92ZWxs
+							IFNlY3VyaXR5IEF0dHJpYnV0ZSh0bSkWQ2h0dHA6Ly9kZXZlbG9wZXIubm92ZWxsLmNvbS9yZXBv
+							c2l0b3J5L2F0dHJpYnV0ZXMvY2VydGF0dHJzX3YxMC5odG0wggFIoBoBAQAwCDAGAgEBAgFGMAgw
+							BgIBAQIBCgIBaaEaAQEAMAgwBgIBAQIBADAIMAYCAQECAQACAQCiBgIBFwEB/6OCAQSgWAIBAgIC
+							AP8CAQADDQCAAAAAAAAAAAAAAAADCQCAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQG8N9I
+							MBgwEAIBAAIIf/////////8BAQACBAbw30ihWAIBAgICAP8CAQADDQBAAAAAAAAAAAAAAAADCQBA
+							AAAAAAAAADAYMBACAQACCH//////////AQEAAgQR/7J2MBgwEAIBAAIIf/////////8BAQACBBH/
+							snaiTjBMAgECAgEAAgIA/wMNAIAAAAAAAAAAAAAAAAMJAIAAAAAAAAAAMBIwEAIBAAIIf///////
+							//8BAQAwEjAQAgEAAgh//////////wEBADANBgkqhkiG9w0BAQUFAAOCAQEAJ22GMm6pc3G8GjTw
+							q72vEdbQqwsyBO3sFj0ax0Zr6hGLHAIpKhp672yxCKgb3vDCUgL5PLZUkXp0RX08rj4GzPMEX/wa
+							yAQ3Sv77z1wdAgaW8ulz6XZBwXU6YZyyrm3VLjhB6/oftSFeCyFt3rKB5G2Pst/Jafs5hLhvWGZq
+							L0F0asNbJpFqnvEbtte16t46NYZmtFQ2i3WCxdQbXaiUyziM3JEGUBeMKRu//j8yxxOlfZ4eyfs5
+							YJqAq5x7wDKwDE44EESZmufAK4GhImru+B+W+5L5IbCWVKQsIE3r0as42DOrt9qJFSBU8dvkq7CZ
+							NHz57mmcera75ONBxumJZQ==</ds:X509Certificate>
+					</ds:X509Data>
+				</ds:KeyInfo>
+				<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc" />
+			</KeyDescriptor>
+			<KeyDescriptor use="encryption">
+				<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+					<ds:X509Data>
+						<ds:X509Certificate>
+							MIIFLjCCBBagAwIBAgIkAhwR/7J2epUBYy5rUcI6Q0gNLnlvJqPZ/fHZUvSuAgIBG2egMA0GCSqG
+							SIb3DQEBBQUAMDcxGjAYBgNVBAsTEU9yZ2FuaXphdGlvbmFsIENBMRkwFwYDVQQKFBBMREVGV05U
+							OTY2NF9UUkVFMB4XDTExMDMyNjExMjU1MVoXDTEzMDMyNjExMjU1MVowQzEYMBYGA1UEAxMPdGVz
+							dC1lbmNyeXB0aW9uMRYwFAYDVQQLEw1hY2Nlc3NNYW5hZ2VyMQ8wDQYDVQQKEwZub3ZlbGwwggEi
+							MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2rm5oRwB21HFPcZBmG8uQxHkxo4KgtITsqUV2
+							NdbLEQoK5/RgGM1cxHAv2xbufJjGONILyU4OtOMrlUoBhCqkWOmm6nDt4pDrhffioRBk1FZEFowc
+							vMToTMFP59+qhyq45gVWPyuEv+rRp40/IUOFm0cfR0obNnv8GgBXEJAhmwXgtEY2Njcwv1Nvx8A9
+							hM7QMQwLcFrRA1cLq6lz00alLdNo5LsNUOeqz72nnQJN8XYHwGAJPrbrRprw2uyvIN2ycmMhkG08
+							UztK90nqgbppBu9gUy5cwKarowjwSol0YUlrw49Ab9Z948jHB0Rbf+xVTzpHAeTzbKewmPC8FFc1
+							AgMBAAGjggIUMIICEDAdBgNVHQ4EFgQULMZmVH54VdspQKkXuA7hDo/tAxIwHwYDVR0jBBgwFoAU
+							1vZedSkC348NcmAes1+Q8hKeyz0wggHMBgtghkgBhvg3AQkEAQSCAbswggG3BAIBAAEB/xMdTm92
+							ZWxsIFNlY3VyaXR5IEF0dHJpYnV0ZSh0bSkWQ2h0dHA6Ly9kZXZlbG9wZXIubm92ZWxsLmNvbS9y
+							ZXBvc2l0b3J5L2F0dHJpYnV0ZXMvY2VydGF0dHJzX3YxMC5odG0wggFIoBoBAQAwCDAGAgEBAgFG
+							MAgwBgIBAQIBCgIBaaEaAQEAMAgwBgIBAQIBADAIMAYCAQECAQACAQCiBgIBFwEB/6OCAQSgWAIB
+							AgICAP8CAQADDQCAAAAAAAAAAAAAAAADCQCAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQG
+							8N9IMBgwEAIBAAIIf/////////8BAQACBAbw30ihWAIBAgICAP8CAQADDQBAAAAAAAAAAAAAAAAD
+							CQBAAAAAAAAAADAYMBACAQACCH//////////AQEAAgQR/7J2MBgwEAIBAAIIf/////////8BAQAC
+							BBH/snaiTjBMAgECAgEAAgIA/wMNAIAAAAAAAAAAAAAAAAMJAIAAAAAAAAAAMBIwEAIBAAIIf///
+							//////8BAQAwEjAQAgEAAgh//////////wEBADANBgkqhkiG9w0BAQUFAAOCAQEAuR7kQ0jWX1hH
+							ykdkeeNUk+nbGpZJizALX/UVT7EmIwznkdHxEPPE1iS0kCCdreeiGwLuQWQqtzbJjab720E44zNR
+							LiW/NE17yt6krvRhCZ67fdq+gsEYHBzk4R9y21b8zZ1pcIBzvZnvpYQRE+wxNdofp1OY7dA0wjeB
+							v1W4KU9/RM6pLzHvDT9F2dYupuT+bPYZxXUNSqFtPRW6P/b3vCJzgZSMl8WqBo730AIfXpPwc+i8
+							hdP1tMlhrU5161jW55MJFZZMoYS/2dJVUJiBvj6C2IRr+/ZiID4OXhbx4nLzd0Cq3pganqbCyPDV
+							CmMmsvo7f+txh1eZqYlHZS2hZA==</ds:X509Certificate>
+					</ds:X509Data>
+				</ds:KeyInfo>
+				<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc" />
+			</KeyDescriptor>
+			<ArtifactResolutionService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spsoap"
+				index="0" isDefault="true" />
+			<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spslo"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spslo_return" />
+			<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spsoap" />
+			<SingleLogoutService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spslo"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spslo_return" />
+			<ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spsoap" />
+			<ManageNameIDService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/sprni"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/sprni_return" />
+			<ManageNameIDService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/sprni"
+				ResponseLocation="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/sprni_return" />
+			<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+			<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+			<AssertionConsumerService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spassertion_consumer"
+				index="2" />
+			<AssertionConsumerService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spassertion_consumer"
+				index="1" />
+			<AssertionConsumerService
+				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+				Location="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/spassertion_consumer"
+				index="0" isDefault="true" />
+		</SPSSODescriptor>
+		<Organization>
+			<OrganizationName xml:lang="fr">lyonnaise</OrganizationName>
+			<OrganizationDisplayName xml:lang="fr">lyonnaise</OrganizationDisplayName>
+			<OrganizationURL xml:lang="fr">www.lyonnaise.com</OrganizationURL>
+		</Organization>
+		<ContactPerson contactType="other" />
+	</EntityDescriptor>
+</EntitiesDescriptor>

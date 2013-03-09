@@ -1,0 +1,82 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<custom:entityPopup id="customerAccountPopup"
+				header="#{messages['customerAccount.popup.header']}"
+				backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}"
+				searchField1Label="#{messages['customerAccount.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['customerAccount.name']}"
+				searchField2="name"
+				column1Label="#{messages['customerAccount.code']}" column1="code"
+				column2Label="#{messages['customerAccount.name']}" column2="name" 
+				filtersMap="#{customerAccountBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="transferAccountForm" 
+					action="#{customerAccountBean.setCustomerAccountTransfer(entity)}"
+					oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		<rich:panel>
+			<f:facet name="header">
+				<h:outputText value="#{messages['customerAccount.transferAccountTitle']}" />
+			</f:facet>
+		<a:form id="transferAccountForm" styleClass="mainForm">
+		
+			 <h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;">
+			 <s:decorate template="/layout/edit.xhtml">
+		    		<ui:define name="label">
+		    			<h:outputText value="#{messages['customerAccount.accountTransferFrom']}" />
+		    		</ui:define>
+			    	
+				    	<h:inputText  value="#{customerAccount.code}" disabled="true" size="30" />
+			        
+		       	</s:decorate>	
+				<s:decorate template="/layout/edit.xhtml">
+		    		<ui:define name="label">
+		    			<h:outputText value="#{messages['customerAccount.accountTransferTo']}" />
+		    		</ui:define>
+			    	<h:panelGrid columns="2">
+				    	<h:inputText  value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}" required="true" disabled="true" size="30" />
+				    	<a:commandLink  id="selectLink" onclick="Richfaces.showModalPanel('customerAccountPopup');">
+			                 <h:graphicImage value="/img/search.gif" style="border:0"/>
+			            </a:commandLink>
+						<rich:toolTip for="selectLink" value="#{messages['commons.search']}"/>
+			         
+			            <ui:insert />
+			        </h:panelGrid>
+		       	</s:decorate>	
+				<s:decorate template="/layout/edit.xhtml">
+					<ui:define name="label">
+						<h:outputText value="#{messages['customerAccount.amountToTransfer']}" />
+					</ui:define>
+					<h:inputText  value="#{customerAccountBean.amountToTransfer}" required="true" size="5"  >
+					<f:converter converterId="bigDecimalConverter"/>
+					</h:inputText>
+						
+		     	</s:decorate>			       		     				
+		     </h:panelGrid>
+		     	
+		     	<h:panelGrid columns="4" >	
+				 <h:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="#{customerAccountBean.transferAccount()}"/>
+				 <a:commandButton value="#{messages['action.back']}" onclick="javascript:history.back()"/>
+					</h:panelGrid>	    
+	  	</a:form>				  
+	  	</rich:panel>				
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+  		xmlns:mnt="http://manaty.net/jsf/core"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+		
+		<rich:toolTip followMouse="true" direction="top-right" styleClass="tooltip">
+			<ui:repeat value="#{popupFields.split(',')}" var="popupField">
+               	<h:outputText style="white-space:nowrap" value="#{entity[popupField]}" /><br/>
+            </ui:repeat>
+        </rich:toolTip>
+				
+    </ui:composition>
+
+</html>

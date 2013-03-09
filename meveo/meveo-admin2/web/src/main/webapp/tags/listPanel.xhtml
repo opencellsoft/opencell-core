@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+	
+		<c:if test="${empty show}">
+			<c:set var="show" value="true" />
+		</c:if>
+		<!-- Default page Width -->
+		<c:if test="${empty size}">
+			<c:set var="pageWidt" value="100" />
+		</c:if>
+		
+		<rich:panel style="width : #{pageWidth}%;" rendered="#{show}">
+			<f:facet name="header">
+				#{label}
+			</f:facet>
+			
+			<ui:insert />
+			
+	    </rich:panel>
+	    
+    </ui:composition>
+
+</html>

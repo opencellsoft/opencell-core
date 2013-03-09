@@ -1,0 +1,81 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	<h:panelGrid columns="1" width="100%">
+		<h:panelGroup>
+			<div class="panels"> 	
+			<custom:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(customer)}" entity="#{customer}"/>
+					<custom:formPanel edit="#{edit}" label="#{messages['customer.customerPanel']}" backingBean="#{customerBean}" 
+				entity="#{customer}" style="formPanel">
+			<rich:tabPanel switchType="client">
+				<rich:tab label="Compte">
+					<custom:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" />
+					<custom:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50"/>
+					<custom:formField label="#{messages['customer.externalRef1']}" field="externalRef1" validateUnique="false" />
+					<custom:formField label="#{messages['customer.externalRef2']}" field="externalRef2" />
+				    <custom:formEntityField label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" popup="false" service="#{customerCategoryService}" required="true"/>
+					<custom:formEntityField label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description"  popup="false" service="#{customerBrandService}" required="true"/>
+				</rich:tab>
+				<rich:tab label="Informations">	
+					<custom:fieldset name = "#{messages['commons.contacts']}" columns="1">
+							<custom:panelGroup columns="1">
+								<custom:formEntityField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false" required="false"
+										 size="50" maxlength="100" useConverter="false"/>
+								<custom:formEntityField label="#{messages['address.address1']}"	field="address" childField="address1"
+											popup="false" size="80" maxlength="80" required="true"/>	
+										<custom:formEntityField label="#{messages['address.address2']}"	field="address" childField="address2" popup="false" size="80" maxlength="80"/>
+										<custom:formEntityField label="#{messages['address.address3']}"	field="address" childField="address3" popup="false" size="80" maxlength="80"/>
+							</custom:panelGroup>
+							<custom:panelGroup columns="2">
+							 	<custom:formEntityField label="#{messages['address.zipCode']}" field="address" childField="zipCode"  popup="false" required="true" maxlength="5" size="5"/>
+								<custom:formEntityField label="#{messages['address.city']}" field="address" childField="city"  popup="false" required="true" maxlength="50"/>
+							 	<a:outputPanel id="countryPanel">
+								 	<s:decorate template="/layout/edit.xhtml">
+											<ui:define name="label">
+												<h:outputText value="#{messages['address.country']}" />
+											</ui:define>
+											<h:selectOneMenu required="true" rendered="#{edit}" value="#{customer.address.country}">
+													 <s:selectItems value="#{messages['address.countrys'].split(',')}"
+		                                          		 var="country" label="#{country}" />
+									         </h:selectOneMenu>
+											 <h:outputText rendered="#{!edit}"
+													value="#{customer.address.country}" />							         
+									</s:decorate>
+								</a:outputPanel>
+							</custom:panelGroup>
+					</custom:fieldset>
+				 </rich:tab>
+				 </rich:tabPanel>	
+				
+		</custom:formPanel>
+				<h:form id="operationsForm" rendered="#{!edit}">
+					<custom:listPanel label="#{messages['customerAccount.operations']}">
+					<h:commandButton action="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}"/>
+					</custom:listPanel>		
+			   	</h:form>	
+			</div>
+		</h:panelGroup>
+	</h:panelGrid>
+		<rich:layout>
+		  
+		  <rich:layoutPanel position="right">
+			
+		  </rich:layoutPanel>
+		</rich:layout>
+	</ui:define>
+
+</ui:composition>

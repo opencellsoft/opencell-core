@@ -1,0 +1,39 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['actionPlanItem.title']}" backingBean="#{actionPlanItemBean}">
+    	
+    		<custom:searchPanel label="#{messages['actionPlanItem.search']}" newButtonView="/pages/payments/dunning/actionPlanItemDetail.xhtml">
+    			<custom:searchField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
+    			<custom:searchField label="#{messages['actionPlanItem.actionType']}" field="actionType" />
+    		</custom:searchPanel>
+
+	    	<custom:dataList dataModel="#{actionPlanItems}">
+	    		<custom:column label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
+				<custom:column label="#{messages['actionPlanItem.actionType']}" field="actionType" />
+				<custom:column label="#{messages['actionPlanItem.order']}" field="itemOrder" />
+				<custom:column label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" />
+				<custom:column label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" />
+				<custom:actionsColumn editView="/pages/payments/dunning/actionPlanItemDetail.xhtml" />    	
+		    </custom:dataList>
+		    
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

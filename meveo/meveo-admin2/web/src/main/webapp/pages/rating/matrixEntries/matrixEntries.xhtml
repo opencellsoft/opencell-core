@@ -1,0 +1,39 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['matrix.EntryTitle']}" backingBean="#{matrixEntryBean}" >
+    	
+    		<custom:searchPanel label="#{messages['matrixEntry.search']}" newButtonView="/pages/rating/matrixEntries/matrixEntryDetail.xhtml">
+				<custom:searchField label="#{messages['matrixEntry.coordinates']}" field="coordinates" />
+				<custom:searchField label="#{messages['matrixEntry.value']}" field="value" />
+				<custom:searchEntityField label="#{messages['matrixEntry.matrixDefinition']}" field="matrixDefinition" childField="name" service="#{matrixService}" />
+			</custom:searchPanel>
+			
+    		
+	    	<custom:dataList dataModel="#{matrixEntries}">
+	    		<custom:column label="#{messages['matrixEntry.coordinates']}" field="coordinates" />
+				<custom:column label="#{messages['matrixEntry.value']}" field="value" />
+				<custom:column label="#{messages['matrixEntry.matrixDefinition']}" field="matrixDefinition" childField="name"/>
+				<custom:actionsColumn editView="/pages/rating/matrixEntries/matrixEntryDetail.xhtml" />    	
+		    </custom:dataList>
+		    
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

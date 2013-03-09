@@ -1,0 +1,65 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    xmlns:c="http://java.sun.com/jstl/core"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    
+    	<!-- Entity select popup. -->
+		<c:set var="filtersMap" value="#{billingCycleBean.filters}" />
+		<c:set var="field" value="billingCycle" />
+		<custom:entityPopup id="searchBillingCyclePopup"
+			header="#{messages['customerAccount.popup.header']}"
+			backingBean="#{billingCycleBean}" dataModel="#{billingCycles}"
+			searchField1Label="#{messages['billingCycle.id']}"
+			searchField1="id"
+			searchField2Label="#{messages['billingCycle.billingFrequency']}"
+			searchField2="billingFrequency"
+			column1Label="#{messages['billingCycle.id']}" column1="id"
+			column2Label="#{messages['billingCycle.billingFrequency']}" column2="billingFrequency" >
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{filtersMap.put(field, entity)}"
+					oncomplete="Richfaces.hideModalPanel('searchBillingCyclePopup')">
+			</a:commandLink>
+				
+		</custom:entityPopup>
+    	
+    	<custom:listPanel label="#{messages['invoiceTasks.title']}" backingBean="#{invoiceTaskBean}">
+    	
+    		<custom:searchPanel label="#{messages['invoiceTasks.search']}" newButtonView="/pages/billing/invoiceTasks/invoiceTaskDetail.xhtml">
+    			<custom:searchField label="#{messages['invoiceTask.executionTime']}" field="executionTime" />
+    			<custom:searchField label="#{messages['invoiceTask.taskStatus']}" field="taskStatus" />
+    			<custom:searchField label="#{messages['invoiceTask.processName']}" field="processName" />
+    			<custom:searchField label="#{messages['invoiceTask.accountFilter']}" field="accountFilter" />
+    			<custom:searchField label="#{messages['invoiceTask.walletFilter']}" field="walletFilter" />
+    			<custom:searchEntityField label="#{messages['invoiceTask.billingCycle']}" field="billingCycle" childField="billingFrequency" popup="true" popupId="searchBillingCyclePopup" clearButton="true"/>
+    		</custom:searchPanel>
+    		
+    		<custom:dataList dataModel="#{invoiceTasks}">
+    			<custom:column label="#{messages['invoiceTask.executionTime']}" field="executionTime" />
+    			<custom:column label="#{messages['invoiceTask.processName']}" field="processName" />
+    			<custom:column label="#{messages['invoiceTask.accountFilter']}" field="accountFilter" />
+    			<custom:column label="#{messages['invoiceTask.walletFilter']}" field="walletFilter" />
+    			<custom:column label="#{messages['invoiceTask.taskStatus']}" field="taskStatus" childField="label" isMessage="true" />
+    			<custom:column label="#{messages['invoiceTask.billingCycle']}" field="billingCycle" childField="billingFrequency"/>
+    			<custom:actionsColumn editView="/pages/billing/invoiceTasks/invoiceTaskDetail.xhtml"  />
+		    </custom:dataList>
+    	</custom:listPanel>	
+		
+    </ui:define>
+    
+</ui:composition>

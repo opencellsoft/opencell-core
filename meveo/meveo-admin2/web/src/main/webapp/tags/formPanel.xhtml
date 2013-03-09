@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+  		xmlns:custom="http://manaty.net/custom"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+		
+		<c:if test="${empty pdf}">
+			<c:set var="pdf" value="false" />
+		</c:if>
+		
+		<c:if test="${empty formId}">
+			<c:set var="formId" value="formId" />
+		</c:if>
+
+		<c:if test="${empty reRender}">
+			<c:set var="reRender" value="datatable" />
+		</c:if>
+
+		<c:if test="${empty ajaxSubmit}">
+			<c:set var="ajaxSubmit" value="false" />
+		</c:if>
+		
+		<c:if test="${empty columns}">
+			<c:set var="columns" value="1" />
+		</c:if>
+		
+		<c:if test="${empty saveAction}">
+			<c:set var="saveAction" value="saveOrUpdate" />
+		</c:if>
+		
+		<c:if test="${empty cancelAction}">
+			<c:set var="cancelAction" value="cancel" />
+		</c:if>
+		
+		<c:if test="${empty showFormButtons}">
+			<c:set var="showFormButtons" value="true" />
+		</c:if>
+
+		<c:if test="${empty canModifyEntity}">
+			<c:set var="canModifyEntity" value="true" />
+		</c:if>
+		
+		<rich:panel styleClass="#{style}">
+			<f:facet name="header">
+				<h:outputText value="#{label}" />
+			</f:facet>
+			
+			 <h:graphicImage value="/img/msgerror.png" style="border:0" rendered="#{validation.failed}"/>
+			<h:outputText value="#{messages['validation.validationFailure']}" rendered="#{validation.failed}" styleClass="errorMessage"/>
+			<a:form id="#{formId}" ajaxSubmit="#{ajaxSubmit}" styleClass="mainForm" reRender="#{reRender}">
+				<s:validateAll>		
+		         <h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;">
+			        <h:commandLink id="pdfExport" action="exportPdf" rendered="#{pdf}" value = "#{messages['commons.exportPdf']} ">
+	       				  <h:graphicImage value="/img/pdf.gif" style="border:0"/>
+	    				  <rich:toolTip for="pdfExport" value="#{messages['commons.exportPdf']}"/>
+	           		</h:commandLink>
+	           	</h:panelGrid>	
+				<h:panelGrid columns="#{columns}" columnClasses="#{columnClasses}"  styleClass="formPanelGrid">
+					<ui:insert />
+					<custom:formButtons show="#{showFormButtons}" saveAction="#{saveAction}" cancelAction="#{cancelAction}" columns="2" saveId="button_#{formId}"/>
+				</h:panelGrid>
+				</s:validateAll>
+			</a:form>
+		</rich:panel>
+	    
+    </ui:composition>
+
+</html>

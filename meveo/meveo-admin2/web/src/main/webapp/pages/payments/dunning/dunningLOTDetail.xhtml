@@ -1,0 +1,42 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+	<ui:define name="body">	
+	<rich:panel>				
+				<custom:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningLOT.panel']}" backingBean="#{dunningLOTBean}" entity="#{dunningLOT}">
+				
+					<custom:panelGroup columns="2">							 
+						<custom:formField label="#{messages['dunningLOT.fileName']}" field="fileName"  />
+						<custom:formField label="#{messages['dunningLOT.actionType']}" field="actionType"  />
+																							                  															
+					</custom:panelGroup>												
+					<a:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
+				</custom:formPanel>
+				<custom:listPanel label="#{messages['dunningLOT.actionsDunning']}">
+					<custom:dataList backingBean="#{dunningLOTBean}"
+						dataModel="#{dunningLOT.getActions()}"
+						edit="#{false}" checkMany="#{false}">
+						<custom:column label="#{messages['actionDunning.typeAction']}" field="typeAction"  />
+						<custom:column label="#{messages['actionDunning.customerAccount']}"	field="customerAccount" childField="code" />					
+						<custom:column label="#{messages['actionDunning.referenceInvoice']}" field="recordedInvoice" childField="reference"  />
+						<custom:column label="#{messages['actionDunning.amountInvoice']}" field="recordedInvoice" childField="amount"  />
+						<custom:column label="#{messages['actionDunning.fromLevel']}" field="fromLevel"  />
+						<custom:column label="#{messages['actionDunning.toLevel']}" field="toLevel"  />				
+					</custom:dataList>
+				</custom:listPanel>
+				
+			</rich:panel>		
+		</ui:define>
+</ui:composition>

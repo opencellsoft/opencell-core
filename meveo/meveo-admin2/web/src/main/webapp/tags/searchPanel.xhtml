@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+	
+		<c:if test="${empty new}">
+			<c:set var="new" value="true" />
+		</c:if>
+		
+		<c:if test="${empty formId}">
+			<c:set var="formId" value="formId" />
+		</c:if>
+		<c:if test="${empty columns}">
+			<c:set var="columns" value="2" />
+		</c:if>
+		<f:facet name="header">
+			<h:outputText value="#{label}" />
+		</f:facet>
+		
+		<!-- Set entity variable. -->
+		<c:set var="entity" value="#{backingBean.instance}" />
+		
+		<h:form  id="#{formId}" styleClass="mainForm" >
+			<h:panelGrid columns="#{columns}">
+				<ui:insert />
+			</h:panelGrid>
+			<h:panelGrid columns="7">
+				<h:commandButton id="buttonSearch" value="#{messages['commons.search']}" action="#{backingBean.list}" />
+				<h:commandButton id="buttonClear" action="#{backingBean.clean}" reRender="#{formId}" value="#{messages['commons.clean']}"/>
+				<s:button id="buttonNew" value="#{messages['commons.new']}" view="#{newButtonView}" rendered="#{new}"> 
+					<f:param name = "edit" value="true"/>
+				</s:button>
+			</h:panelGrid>
+		</h:form>
+	    
+    </ui:composition>
+
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+		
+		<c:if test="${empty noView}">
+			<c:set var="noView" value="false" />
+		</c:if>
+		<c:if test="${empty noDelete}">
+			<c:set var="noDelete" value="false" />
+		</c:if>
+		<c:if test="${empty noEdit}">
+			<c:set var="noEdit" value="false" />
+		</c:if>
+		<c:if test="${empty noClose}">
+			<c:set var="noClose" value="true" />
+		</c:if>
+		<c:if test="${empty permission}">
+			<c:set var="permission" value="true" />
+		</c:if>
+		<c:if test="${empty deletePermission}">
+			<c:set var="deletePermission" value="true" />
+		</c:if>
+	
+		<rich:column styleClass="actions-column">
+             <f:facet name="header">
+                    <h:outputText value="#{messages['commons.actions']}" />
+             </f:facet>
+             
+             <s:link id="viewlink" view="#{editView}" rendered="#{!noView}">
+                <h:graphicImage value="/img/search.gif" style="border:0"/>
+             	<f:param name="objectId" value="#{entity.id}"/>
+             	<f:param name="edit" value="false"/>
+             </s:link>
+             <rich:toolTip for="viewlink" value="#{messages['commons.view']}"/>
+             <s:link id="editlink" view="#{editView}" rendered="#{edit and !noEdit and permission}">
+                <h:graphicImage value="/img/edit.gif" style="border:0"/>
+             	<f:param name="objectId" value="#{entity.id}"/>
+             	<f:param name="edit" value="true"/>
+             </s:link>
+             <rich:toolTip for="editlink" value="#{messages['commons.edit']}"/>
+             <h:commandLink id="deletelink" action="#{backingBean.delete(entity.id)}" rendered="#{edit and !noDelete and permission and deletePermission}" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
+                 <h:graphicImage value="/img/delete.gif" style="border:0"/>
+             </h:commandLink>
+             <rich:toolTip for="deletelink" value="#{messages['commons.delete']}"/>
+             <h:commandLink id="disablelink" action="#{backingBean.disable(entity.id)}" rendered="#{edit and !noClose and entity.isActive() and permission}" onclick="if(confirm('#{messages['commons.confirmClose']}')){return true;}else{return false;}">
+                 <h:graphicImage value="/img/close-record.png" style="border:0"/>
+             </h:commandLink>
+             <rich:toolTip for="disablelink" value="#{messages['commons.disable']}"/>
+         </rich:column>
+	    
+    </ui:composition>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['customerImportHisto.title']}" backingBean="#{customerImportHistoBean}">
+    	
+    			<custom:searchPanel label="#{messages['customerImportHisto.search']}" new ="false">
+    		    	<custom:searchField label="#{messages['customerImportHisto.executionDate']}" field="executionDate"/>
+    		</custom:searchPanel>
+    		
+    		<custom:dataList backingBean="#{customerImportHistoBean}" dataModel="#{customerImportHistories}">
+		       		<custom:column label="#{messages['customerImportHisto.executionDate']}" field="executionDate"/>
+		       		<custom:column label="#{messages['customerImportHisto.fileName']}" field="fileName"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomers']}" field="nbCustomers"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomersError']}" field="nbCustomersError"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomersWarning']}" field="nbCustomersWarning"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomersIgnored']}" field="nbCustomersIgnored"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomersCreated']}" field="nbCustomersCreated"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomerAccounts']}" field="nbCustomerAccounts"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomerAccountsError']}" field="nbCustomerAccountsError"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomerAccountsWarning']}" field="nbCustomerAccountsWarning"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomerAccountsIgnored']}" field="nbCustomerAccountsIgnored"/>
+		       		<custom:column label="#{messages['customerImportHisto.nbCustomerAccountsCreated']}" field="nbCustomerAccountsCreated"/>
+		    </custom:dataList>
+		    
+    	</custom:listPanel>	
+		
+    </ui:define>
+    
+</ui:composition>

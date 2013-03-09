@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+  		xmlns:mnt="http://manaty.net/jsf/core"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+	
+		<!-- No is is set. -->
+	    <c:if test="${empty id}">
+	        <c:set var="id" value="popupId" />
+	    </c:if>
+	    <c:if test="${empty rendered}">
+	        <c:set var="rendered" value="true" />
+	    </c:if>
+	    <c:if test="${empty showWhenRendered}">
+	        <c:set var="showWhenRendered" value="false" />
+	    </c:if>
+	    <c:set var="list"
+               value="list" />
+	
+	    	<rich:modalPanel id="#{id}" keepVisualState="true" autosized="true" showWhenRendered="${showWhenRendered}" rendered="${rendered}">
+				<f:facet name="header">
+			      <h:outputText value="#{header}" />
+			    </f:facet>
+			    <f:facet name="controls">
+			      <h:panelGroup>
+			        <h:graphicImage value="/img/close.png" style="cursor:pointer" id="#{id}hidelink"/>
+			        <rich:componentControl for="#{id}" attachTo="#{id}hidelink" operation="hide" event="onclick"/>
+			      </h:panelGroup>
+			    </f:facet>
+				<a:form>
+	    		<h:panelGrid id="#{id}searchFormPanel" columns="2">
+	    			<c:if test="${not empty searchField1}">
+		    			<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">#{searchField1Label}</ui:define>
+							<h:inputText value="#{filtersMap[searchField1]}" />
+						</s:decorate>
+					</c:if>
+	    			<c:if test="${not empty searchField2}">
+		    			<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">#{searchField2Label}</ui:define>
+							<h:inputText value="#{filtersMap[searchField2]}" />
+						</s:decorate>
+					</c:if>
+	    			<c:if test="${not empty searchField3}">
+		    			<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">#{searchField3Label}</ui:define>
+							<h:inputText value="#{filtersMap[searchField3]}" />
+						</s:decorate>
+					</c:if>
+				</h:panelGrid>
+				 <c:if test="${empty showSearchButton}">
+	        		<c:set var="showSearchButton" value="true" />
+	    		</c:if>
+				<c:if test="${showSearchButton}">
+					<div class="actionButtons">
+						<a:commandButton id="#{id}buttonSearch" reRender="#{id}datatable" value="#{messages['action.search']}" action="#{backingBean[list]}" limitToList="true" />
+					</div>
+	    		</c:if>
+	    		<rich:dataTable id="#{id}datatable" value="#{dataModel}" var="entity"
+					onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+					onclick="Richfaces.hideModalPanel('#{id}');"
+					reRender="scroller" rows="10">
+						<c:if test="${not empty column1}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{column1Label}"/>
+						        </f:facet>
+						        <h:outputText value="#{entity[column1]}" />
+							</rich:column>
+						</c:if>
+						<c:if test="${not empty column2}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{column2Label}"/>
+						        </f:facet>
+						        <h:outputText value="#{entity[column2]}" />
+							</rich:column>
+						</c:if>
+						<c:if test="${not empty column3}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{column3Label}"/>
+						        </f:facet>
+						        <h:outputText value="#{entity[column3]}" />
+							</rich:column>
+						</c:if>
+						<c:if test="${not empty column4}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{column4Label}"/>
+						        </f:facet>
+						        <h:outputText value="#{entity[column4]}" />
+							</rich:column>
+						</c:if>
+						<c:if test="${not empty column5}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{column5Label}"/>
+						        </f:facet>
+						        <h:outputText value="#{entity[column5]}" />
+							</rich:column>
+						</c:if>
+						<c:if test="${not empty column6}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{column6Label}"/>
+						        </f:facet>
+						        <h:outputText value="#{entity[column6]}" />
+							</rich:column>
+						</c:if>
+						<c:if test="${not empty column7}">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{column7Label}"/>
+						        </f:facet>
+						        <h:outputText value="#{entity[column7]}" />
+							</rich:column>
+						</c:if>
+						<h:column styleClass="action">
+							<ui:insert />
+				        </h:column>
+				</rich:dataTable>
+           		<rich:datascroller id="scroller" for="#{id}datatable" renderIfSinglePage="false" maxPages="10"/>
+				</a:form>
+			</rich:modalPanel>
+		
+    </ui:composition>
+
+</html>

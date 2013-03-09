@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages login-view-id="/loginInternal.xhtml"
+ no-conversation-view-id="/home.xhtml"
+ xmlns="http://jboss.com/products/seam/pages"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd">
+ 	
+ 	<!-- NAVIGATION RULES -->
+ 	<page login-required="false" view-id="*">
+	   
+	   <navigation from-action="#{authenticator.localLogout}">
+	   		<rule if-outcome="loggedOut">
+	       		<redirect view-id="/loginInternal.xhtml" />
+	       	</rule>
+	   </navigation>
+	      
+	   <navigation from-action="#{identity.login}">
+	       <redirect view-id="/home.xhtml" />
+	   </navigation>
+	   
+	   	      
+	  <navigation>
+		   <rule if-outcome="home">
+		    	<redirect view-id="/home.xhtml"/>
+		   </rule>
+		   <!-- Admin -->
+		   <rule if-outcome="systemCurrency">
+		    	<redirect view-id="/pages/admin/currencies/systemCurrency.xhtml"/>
+		   </rule>
+		   <rule if-outcome="currencies">
+		    	<redirect view-id="/pages/admin/currencies/currencies.xhtml"/>
+		   </rule>
+		   <rule if-outcome="currencyDetail">
+		    	<redirect view-id="/pages/admin/currencies/currencyDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="users">
+		    	<redirect view-id="/pages/admin/meveoUsers/users.xhtml"/>
+		   </rule>
+		   <rule if-outcome="userDetail">
+		    	<redirect view-id="/pages/admin/meveoUsers/userDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="userRoles">
+		    	<redirect view-id="/pages/admin/userRoles/userRoles.xhtml"/>
+		   </rule>
+		   <rule if-outcome="userRoleDetail">
+		    	<redirect view-id="/pages/admin/userRoles/userRoleDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="medinaInputs">
+		    	<redirect view-id="/pages/admin/medina/medinaInputs/medinaInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="medinaInputDetail">
+		    	<redirect view-id="/pages/admin/medina/medinaInputs/medinaInputDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="vertinaInputs">
+		    	<redirect view-id="/pages/admin/vertina/vertinaInputs/vertinaInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="vertinaInputDetail">
+		    	<redirect view-id="/pages/admin/vertina/vertinaInputs/vertinaInputDetail.xhtml"/>
+		   </rule>
+
+		   <rule if-outcome="oudayaInputs">
+		    	<redirect view-id="/pages/admin/oudaya/oudayaInputs/oudayaInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="oudayaInputDetail">
+		    	<redirect view-id="/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml"/>
+		   </rule>
+
+		   <rule if-outcome="griegDunningInputs">
+		    	<redirect view-id="/pages/admin/grieg/griegInputs/griegDunningInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="griegDunningInputDetail">
+		    	<redirect view-id="/pages/admin/grieg/griegInputs/griegDunningInputDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="griegValidatedInputs">
+		    	<redirect view-id="/pages/admin/grieg/griegInputs/griegValidatedInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="griegValidatedInputDetail">
+		    	<redirect view-id="/pages/admin/grieg/griegInputs/griegValidatedInputDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="griegConverterInputs">
+		    	<redirect view-id="/pages/admin/grieg/griegInputs/griegConverterInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="griegConverterInputDetail">
+		    	<redirect view-id="/pages/admin/grieg/griegInputs/griegConverterInputDetail.xhtml"/>
+		   </rule>
+
+		   <rule if-outcome="bayadInvoicingInputs">
+		    	<redirect view-id="/pages/admin/bayad/bayadInputs/bayadInvoicingInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="bayadInvoicingInputDetail">
+		    	<redirect view-id="/pages/admin/bayad/bayadInputs/bayadInvoicingInputDetail.xhtml"/>
+		   </rule>
+
+		   <rule if-outcome="bayadDunningInputs">
+		    	<redirect view-id="/pages/admin/bayad/bayadInputs/bayadDunningInputs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="bayadDunningInputDetail">
+		    	<redirect view-id="/pages/admin/bayad/bayadInputs/bayadDunningInputDetail.xhtml"/>
+		   </rule>
+		   
+		   		   <rule if-outcome="bankOperations">
+		    	<redirect view-id="/pages/admin/history/bankOperations.xhtml"/>
+		   </rule>	
+		   
+		   <rule if-outcome="medinaConfigurationDetail">
+		    	<redirect view-id="/pages/admin/medina/configuration/medinaConfigurationDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="medinaConfigurations">
+		    	<redirect view-id="/pages/admin/medina/configuration/medinaConfigurations.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="vertinaConfigurationDetail">
+		    	<redirect view-id="/pages/admin/vertina/configuration/vertinaConfigurationDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="vertinaConfigurations">
+		    	<redirect view-id="/pages/admin/vertina/configuration/vertinaConfigurations.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="medinaManagement">
+		    	<redirect view-id="/pages/admin/medina/management/medinaManagement.xhtml"/>
+		   </rule>
+		   <rule if-outcome="vertinaManagement">
+		    	<redirect view-id="/pages/admin/vertina/management/vertinaManagement.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="taxes">
+		    	<redirect view-id="/pages/admin/taxes/taxes.xhtml"/>
+		   </rule>
+		   <rule if-outcome="taxDetail">
+		    	<redirect view-id="/pages/admin/taxes/taxDetail.xhtml"/>
+		   </rule>
+		   
+		    <rule if-outcome="titles">
+		    	<redirect view-id="/pages/admin/title/titles.xhtml"/>
+		   </rule>
+		   <rule if-outcome="titleDetail">
+		    	<redirect view-id="/pages/admin/titles/titleDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="documentDetail">
+		    	<redirect view-id="/pages/admin/documents/documentDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="documents">
+		    	<redirect view-id="/pages/admin/documents/documents.xhtml"/>
+		   </rule>
+		   <rule if-outcome="accountImportHisto">
+		    	<redirect view-id="/pages/admin/history/accountImportHistory.xhtml"/>
+		   </rule>
+		   <rule if-outcome="customerImportHisto">
+		    	<redirect view-id="/pages/admin/history/customerImportHistory.xhtml"/>
+		   </rule>
+		   <rule if-outcome="subscriptionImportHisto">
+		    	<redirect view-id="/pages/admin/history/subscriptionImportHistory.xhtml"/>
+		   </rule>
+		   <rule if-outcome="accountImportHisto">
+		    	<redirect view-id="/pages/admin/history/accountImportHistory.xhtml"/>
+		   </rule>
+		   <rule if-outcome="dunningHisto">
+		    	<redirect view-id="/pages/admin/history/dunningHistories.xhtml"/>
+		   </rule>
+		   <rule if-outcome="crmRejectedFiles">
+		    	<redirect view-id="/pages/admin/history/crmConnectorRejectedFiles.xhtml"/>
+		   </rule>		   
+		   		
+		    <rule if-outcome="providers">
+		    	<redirect view-id="/pages/crm/providers/providers.xhtml"/>
+		   </rule>	  
+		    <rule if-outcome="providerDetail">
+		    	<redirect view-id="/pages/crm/providers/providerDetail.xhtml"/>
+		   </rule>	
+		   <rule if-outcome="providerContacts">
+		    	<redirect view-id="/pages/crm/providerContacts/providerContacts.xhtml"/>
+		   </rule> 
+		    <rule if-outcome="providerContactDetail">
+		    	<redirect view-id="/pages/crm/providerContacts/providerContactDetail.xhtml"/>
+		   </rule>
+		    <rule if-outcome="emailTemplates">
+		    	<redirect view-id="/pages/admin/communication/emailTemplates.xhtml"/>
+		   </rule>
+		    <rule if-outcome="emailTemplateDetail">
+		    	<redirect view-id="/pages/admin/communication/emailTemplateDetail.xhtml"/>
+		   </rule>
+		   <!-- Billing -->
+		   <rule if-outcome="invoices">
+		    	<redirect view-id="/pages/billing/invoices/invoices.xhtml"/>
+		   </rule>
+		   <rule if-outcome="invoiceDetail">
+		    	<redirect view-id="/pages/billing/invoices/invoiceDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="wallets">
+		    	<redirect view-id="/pages/billing/wallets/wallets.xhtml"/>
+		   </rule>
+		   <rule if-outcome="walletDetail">
+		    	<redirect view-id="/pages/billing/wallets/walletDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="invoiceTasks">
+		    	<redirect view-id="/pages/billing/invoiceTasks/invoiceTasks.xhtml"/>
+		   </rule>
+		   <rule if-outcome="invoiceTaskDetail">
+		    	<redirect view-id="/pages/billing/invoiceTasks/invoiceTaskDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="billingCycles">
+		    	<redirect view-id="/pages/billing/billingCycles/billingCycles.xhtml"/>
+		   </rule>
+		   <rule if-outcome="billingCycleDetail">
+		    	<redirect view-id="/pages/billing/billingCycles/billingCycleDetail.xhtml"/>
+		   </rule>
+		   
+		   <!-- Catalog -->
+		   <rule if-outcome="offerTemplates">
+		    	<redirect view-id="/pages/catalog/offerTemplates/offerTemplates.xhtml"/>
+		   </rule>
+		   <rule if-outcome="offerTemplateDetail">
+		    	<redirect view-id="/pages/catalog/offerTemplates/offerTemplateDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="usagePricePlanItems">
+		    	<redirect view-id="/pages/catalog/usagePricePlanItem/usagePricePlanItems.xhtml"/>
+		   </rule>
+		   <rule if-outcome="usagePricePlanItemDetail">
+		    	<redirect view-id="/pages/catalog/usagePricePlanItem/usagePricePlanItemDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="usageDiscountPlanItems">
+		    	<redirect view-id="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItems.xhtml"/>
+		   </rule>
+		   <rule if-outcome="usageDiscountPlanItemDetail">
+		    	<redirect view-id="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml"/>
+		   </rule>
+		   
+		   
+		   
+		   
+		   <rule if-outcome="priceCodes">
+		    	<redirect view-id="/pages/catalog/priceCode/priceCodes.xhtml"/>
+		   </rule>
+		   <rule if-outcome="priceCodeDetail">
+		    	<redirect view-id="/pages/catalog/priceCode/priceCodeDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="serviceTemplates">
+		    	<redirect view-id="/pages/catalog/serviceTemplates/serviceTemplates.xhtml"/>
+		   </rule>
+		   <rule if-outcome="serviceTemplateDetail">
+		    	<redirect view-id="/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="serviceParameterTemplates">
+		    	<redirect view-id="/pages/catalog/serviceParameterTemplates/serviceParameterTemplates.xhtml"/>
+		   </rule>
+		   <rule if-outcome="serviceParameterTemplateDetail">
+		    	<redirect view-id="/pages/catalog/serviceParameterTemplates/serviceParameterTemplateDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="oneShotChargeTemplates">
+		    	<redirect view-id="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.xhtml"/>
+		   </rule>
+		   <rule if-outcome="oneShotChargeTemplateDetail">
+		    	<redirect view-id="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="recurringChargeTemplates">
+		    	<redirect view-id="/pages/catalog/recurringChargeTemplates/recurringChargeTemplates.xhtml"/>
+		   </rule>
+		   <rule if-outcome="recurringChargeTemplateDetail">
+		    	<redirect view-id="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="calendars">
+		    	<redirect view-id="/pages/catalog/calendars/calendars.xhtml"/>
+		   </rule>
+		   <rule if-outcome="calendarDetail">
+		    	<redirect view-id="/pages/catalog/calendars/calendarDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="pricePlanMatrixes">
+		    	<redirect view-id="/pages/catalog/pricePlanMatrixes/pricePlanMatrixes.xhtml"/>
+		   </rule>
+		   <rule if-outcome="pricePlanMatrixDetail">
+		    	<redirect view-id="/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="discountPlanMatrixes">
+		    	<redirect view-id="/pages/catalog/discountPlanMatrixes/discountPlanMatrixes.xhtml"/>
+		   </rule>
+		   <rule if-outcome="discountPlanMatrixDetail">
+		    	<redirect view-id="/pages/catalog/discountPlanMatrixes/discountPlanMatrixDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="invoiceCategories">
+		    	<redirect view-id="/pages/catalog/invoiceCategories/invoiceCategories.xhtml"/>
+		   </rule>
+		   <rule if-outcome="invoiceCategoryDetail">
+		    	<redirect view-id="/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="invoiceSubCategories">
+		    	<redirect view-id="/pages/catalog/invoiceSubCategories/invoiceSubCategories.xhtml"/>
+		   </rule>
+		   <rule if-outcome="invoiceSubCategoryDetail">
+		    	<redirect view-id="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"/>
+		   </rule>
+		   
+		   <!-- CRM -->
+		   <rule if-outcome="customers">
+		    	<redirect view-id="/pages/crm/customers/customers.xhtml"/>
+		   </rule>
+		   <rule if-outcome="customerDetail">
+		    	<redirect view-id="/pages/crm/customers/customerDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="customerSearch">
+		    	<redirect view-id="/pages/crm/customers/customerSearch.xhtml"/>
+		   </rule>
+		   <rule if-outcome="customerAccounts">
+		    	<redirect view-id="/pages/payments/customerAccounts/customerAccounts.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="customerAccountDetail">
+		    	<redirect view-id="/pages/payments/customerAccounts/customerAccountDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="transferAccount">
+		    	<redirect view-id="/pages/payments/customerAccounts/transferAccount.xhtml"/>
+		   </rule>		   
+		   <rule if-outcome="dunningPlans">
+		    	<redirect view-id="/pages/payments/dunning/dunningPlans.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="dunningPlanDetail">
+		    	<redirect view-id="/pages/payments/dunning/dunningPlanDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="dunningPlanTransitions">
+		    	<redirect view-id="/pages/payments/dunning/dunningPlanTransitions.xhtml"/>
+		   </rule>
+		   <rule if-outcome="dunningPlanTransitionDetail">
+		    	<redirect view-id="/pages/payments/dunning/dunningPlanTransitionDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="actionPlanItems">
+		    	<redirect view-id="/pages/payments/dunning/actionPlanItems.xhtml"/>
+		   </rule>
+		   <rule if-outcome="actionPlanItemDetail">
+		    	<redirect view-id="/pages/payments/dunning/actionPlanItemDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="matchingCodes">
+		    	<redirect view-id="/pages/payments/matchingCode/matchingCodes.xhtml"/>
+		   </rule>
+		   <rule if-outcome="matchingCodeDetail">
+		    	<redirect view-id="/pages/payments/matchingCode/matchingCodeDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="ddrequestLots">
+		    	<redirect view-id="/pages/payments/ddrequestLot/ddrequestLots.xhtml"/>
+		   </rule>
+		   <rule if-outcome="ddrequestLotOps">
+		    	<redirect view-id="/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml"/>
+		   </rule>
+		   <rule if-outcome="ddrequestLotDetail">
+		    	<redirect view-id="/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml"/>
+		   </rule>		   
+		   <rule if-outcome="launchDDRequestLotProcess">
+		    	<redirect view-id="/pages/payments/ddrequestLot/launchDDRequestProcess.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="accountOperations">
+		    	<redirect view-id="/pages/payments/accountOperations/accountOperations.xhtml"/>
+		   </rule>
+		   <rule if-outcome="accountOperationDetail">
+		    	<redirect view-id="/pages/payments/accountOperation/accountOperationDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="billingAccounts">
+		    	<redirect view-id="/pages/billing/billingAccounts/billingAccounts.xhtml"/>
+		   </rule>
+		   <rule if-outcome="billingAccountDetail">
+		    	<redirect view-id="/pages/billing/billingAccounts/billingAccountDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="subscriptions">
+		    	<redirect view-id="/pages/billing/subscriptions/subscriptions.xhtml"/>
+		   </rule>
+		   <rule if-outcome="subscriptionDetail">
+		    	<redirect view-id="/pages/billing/subscriptions/subscriptionDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="userAccounts">
+		    	<redirect view-id="/pages/billing/userAccounts/userAccounts.xhtml"/>
+		   </rule>
+		   <rule if-outcome="userAccountDetail">
+		    	<redirect view-id="/pages/billing/userAccounts/userAccountDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="customerCategories">
+		    	<redirect view-id="/pages/crm/customerCategories/customerCategories.xhtml"/>
+		   </rule>
+		   <rule if-outcome="customerCategoryDetail">
+		    	<redirect view-id="/pages/crm/customerCategories/customerCategoryDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="customerBrands">
+		    	<redirect view-id="/pages/crm/customerBrands/customerBrands.xhtml"/>
+		   </rule>
+		   <rule if-outcome="customerBrandDetail">
+		    	<redirect view-id="/pages/crm/customerBrands/customerBrandDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="serviceInstances">
+		    	<redirect view-id="/pages/resource/serviceInstances/serviceInstances.xhtml"/>
+		   </rule>
+		   <rule if-outcome="serviceInstanceDetail">
+		    	<redirect view-id="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"/>
+	  	   </rule>
+		   
+		   	<rule if-outcome="serviceParameterInstances"> 
+				<redirect view-id="/pages/resource/serviceParameterInstances/serviceParameterInstances.xhtml"/> 
+			</rule> 
+			<rule if-outcome="serviceParameterInstancesDetail">
+				<redirect view-id="/pages/resource/serviceParameterInstances/serviceParameterInstanceDetail.xhtml" /> 
+			</rule>
+					
+		   <rule if-outcome="usageTypes">
+		    	<redirect view-id="/pages/rating/usageTypes/usageTypes.xhtml"/>
+		   </rule>
+		   <rule if-outcome="usageTypeDetail">
+		    	<redirect view-id="/pages/rating/usageTypes/usageTypeDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="matrixes">
+		    	<redirect view-id="/pages/rating/matrixes/matrixes.xhtml"/>
+		   </rule>
+		   <rule if-outcome="matrixDetail">
+		    	<redirect view-id="/pages/rating/matrixes/matrixDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="matrixEntries">
+		    	<redirect view-id="/pages/rating/matrixEntries/matrixEntries.xhtml"/>
+		   </rule>
+		   <rule if-outcome="matrixEntryDetail">
+		    	<redirect view-id="/pages/rating/matrixEntries/matrixEntryDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="pricePlanInstances">
+		    	<redirect view-id="/pages/rating/pricePlanInstances/pricePlanInstances.xhtml"/>
+		   </rule>
+		   <rule if-outcome="pricePlanInstanceDetail">
+		    	<redirect view-id="/pages/rating/pricePlanInstances/pricePlanInstanceDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="syncheseClients">
+		    	<redirect view-id="/pages/crm/syntheseClients/billingAccounts.xhtml"/>
+		   </rule>
+		   
+		   <!-- Reporting -->
+		   <rule if-outcome="jobs">
+		    	<redirect view-id="/pages/reporting/jobs/jobs.xhtml"/>
+		   </rule>
+		   <rule if-outcome="jobDetail">
+		    	<redirect view-id="/pages/reporting/jobs/jobDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="jobHistory">
+		    	<redirect view-id="/pages/reporting/jobHistory/jobHistory.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="reports">
+		    	<redirect view-id="/pages/reporting/reports/reports.xhtml"/>
+		   </rule>
+		   <rule if-outcome="reportDetail">
+		    	<redirect view-id="/pages/reporting/reports/reportDetail.xhtml"/>
+		   </rule>
+		    <rule if-outcome="bordereauRemiseCheque">
+		    	<redirect view-id="/pages/reporting/reports/bordereauRemiseCheque.xhtml"/>
+		   </rule>
+		   
+		   
+		   <!-- Resource -->
+		   <rule if-outcome="offerInstances">
+		    	<redirect view-id="/pages/resource/offerInstances/offerInstances.xhtml"/>
+		   </rule>
+		   <rule if-outcome="offerInstanceDetail">
+		    	<redirect view-id="/pages/resource/offerInstances/offerInstanceDetail.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="recurringInvoicing">
+		    	<redirect view-id="/pages/billing/invoicing/recurringInvoicing.xhtml">
+		    	   <param name="edit" value="true"/>
+		    	</redirect>
+		   </rule>
+		   
+		    <rule if-outcome="exceptionelInvoicing">
+		    	<redirect view-id="/pages/billing/invoicing/exceptionelInvoicing.xhtml">
+		    	   <param name="edit" value="true"/>
+		    	</redirect>
+		   </rule>
+		   
+		    <rule if-outcome="preInvoicingReports">
+		    	<redirect view-id="/pages/billing/invoicing/preInvoicingReports.xhtml">
+		    	   <param name="edit" value="false"/>
+		    	</redirect>
+		   </rule>
+		   
+		    <rule if-outcome="postInvoicingReports">
+		    	<redirect view-id="/pages/billing/invoicing/postInvoicingReports.xhtml">
+		    	   <param name="edit" value="false"/>
+		    	</redirect>
+		   </rule>
+		   
+		       <rule if-outcome="billingRuns">
+		    	<redirect view-id="/pages/billing/invoicing/billingRuns.xhtml">
+		    	   <param name="edit" value="false"/>
+		    	</redirect>
+		   </rule>
+		   
+		   <rule if-outcome="accesss">
+		    	<redirect view-id="/pages/medina/access/access.xhtml"/>
+		   </rule>
+		   
+		   
+		   <rule if-outcome="zonningPlans">
+		    	<redirect view-id="/pages/medina/zoningPlan/zoningPlan.xhtml"/>
+		   </rule>
+		   
+		   
+		   
+		   <rule if-outcome="timePlans">
+		    	<redirect view-id="/pages/medina/timePlan/timePlan.xhtml"/>
+		   </rule>
+		   
+		    <rule if-outcome="numberingPlans">
+		    	<redirect view-id="/pages/medina/numberingPlan/numberingPlan.xhtml"/>
+		   </rule>
+		   
+		    <rule if-outcome="eDRRatingPlans">
+		    	<redirect view-id="/pages/medina/edrRatingPlan/edrRatingPlan.xhtml"/>
+		   </rule>
+		   
+		   
+		   
+		  </navigation>
+	 </page>
+ 
+	 <!-- Security check  -->
+	 <page login-required="true" view-id="/pages/*"/>
+	 
+	
+    <!-- 
+    <page view-id="/pages/*" action="#{providerBean.checkCurrentProvider()}"/>
+     <page view-id="/home.xhtml*" action="#{providerBean.checkCurrentProvider()}"/>
+  -->
+   
+	 <!-- Exception handling  -->
+	 <exception class="org.jboss.seam.security.NotLoggedInException">
+	  	<redirect view-id="/login.xhtml">
+	   		<message>#{messages['org.jboss.seam.security.NotLoggedInException']}</message>
+	  	</redirect>
+	 </exception>
+	 
+	 <exception class="org.jboss.seam.security.AuthorizationException">
+	  	<end-conversation/>
+		<redirect view-id="/error.xhtml">
+			<message>#{messages['org.jboss.seam.security.AuthorizationException']}</message>
+		</redirect>
+	 </exception>
+
+	 <exception class="org.meveo.admin.exception.ProviderNotAllowedException">
+	  	<end-conversation/>
+		<redirect view-id="/error.xhtml">
+			<message>#{messages['org.meveo.admin.exception.ProviderNotAllowedException']}</message>
+		</redirect>
+	 </exception>
+	 
+	<exception class="org.meveo.admin.exception.PasswordExpiredException">
+	  	<end-conversation/>
+		<redirect view-id="/login.xhtml">
+			<message>#{messages['user.password.expired']}</message>
+		</redirect>
+	 </exception>
+	 
+	 
+	 <exception class="org.jboss.seam.framework.EntityNotFoundException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message severity="warn">#{messages['org.jboss.seam.framework.EntityNotFoundException']}</message>
+		</redirect>
+	 </exception>
+	 
+	 <exception class="javax.persistence.EntityNotFoundException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message severity="warn">#{messages['javax.persistence.EntityNotFoundException']}</message>
+	  	</redirect>
+	 </exception>
+	 
+	 <exception class="javax.persistence.EntityExistsException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message severity="warn">#{messages['javax.persistence.EntityExistsException']}</message>
+		</redirect>
+	 </exception>
+	 
+	 <exception class="javax.persistence.OptimisticLockException">
+	  	<end-conversation/>
+	  	<redirect view-id="/error.xhtml">
+	   		<message severity="warn">#{messages['javax.persistence.OptimisticLockException']}</message>
+	  	</redirect>
+	 </exception>
+	 
+	 <exception class="javax.faces.application.ViewExpiredException">
+	  	<redirect view-id="/login.xhtml">
+	   		<message severity="warn">#{messages['javax.faces.application.ViewExpiredException']}</message>
+		</redirect>
+	 </exception>
+	 
+	 <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace">
+	  	<http-error error-code="503"/>
+	 </exception>
+	 
+	 <exception class="javax.el.ELException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message>#{messages['javax.el.ELException']}</message>
+	  	</redirect>
+	 </exception>
+	 
+	 <exception class="javax.el.PropertyNotFoundException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message>#{messages['javax.el.PropertyNotFoundException']}</message>
+		</redirect>
+	 </exception>
+	 
+	<exception class="java.sql.BatchUpdateException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message>#{messages['java.sql.BatchUpdateException']}</message>
+		</redirect>
+	 </exception>
+	 
+	<exception class="org.hibernate.exception.ConstraintViolationException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message>#{messages['java.sql.ConstraintViolationException']}</message>
+		</redirect>
+	 </exception>
+	 <exception class="org.meveo.admin.exception.NoTemplateException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message>#{messages['exception.NoTemplateException']}</message>
+		</redirect>
+	 </exception>
+	 <exception class="org.meveo.admin.exception.UsernameAlreadyExistsException">
+	  	<redirect view-id="/error.xhtml">
+	   		<message>#{messages['exception.UsernameAlreadyExistsException']}</message>
+		</redirect>
+	 </exception>
+	 <exception>
+	  	<redirect view-id="/error.xhtml">
+	   		<message severity="WARN">#{messages['error.unexpected']} #{handledException.message}</message>
+		</redirect>
+	 </exception>
+ 
+</pages>

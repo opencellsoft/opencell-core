@@ -1,0 +1,41 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['timePlan.title']}" backingBean="#{timePlanBean}">
+ 
+    	 
+    	 
+    		<custom:searchPanel label="#{messages['timePlan.search']}" newButtonView="/pages/medina/timePlan/timePlanDetail.xhtml">
+    			<custom:searchField label="#{messages['timePlan.timeCode']}" field="timeCode"/>
+    		</custom:searchPanel>	
+    		<custom:dataList dataModel="#{timePlans}" noDelete="true" noClose="false">
+	    	    <custom:column label="#{messages['access.startDate']}" field="startDate"/>
+				<custom:column label="#{messages['access.endDate']}" field="endDate"/>
+	    		<custom:column label="#{messages['access.discriminatorCode']}" field="discriminatorCode"/>
+	    		<custom:column label="#{messages['timePlan.days']}" field="days"/>
+	    		<custom:column label="#{messages['timePlan.from']}" field="from"/>	
+	    		<custom:column label="#{messages['timePlan.to']}" field="to"/>
+	    		<custom:column label="#{messages['timePlan.timeCode']}" field="timeCode"/>
+    			<custom:actionsColumn editView="/pages/medina/timePlan/timePlanDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}"/>
+		    </custom:dataList>
+		   
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

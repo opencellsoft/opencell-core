@@ -1,0 +1,25 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:p="http://jboss.com/products/seam/pdf"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:s="http://jboss.com/products/seam/taglib"
+  title="Offers"
+  type="pdf">
+  
+    <p:font size="24">
+		<p:paragraph spacingAfter="50">Offer</p:paragraph>
+	</p:font>
+	<p:font size="18">
+	        <p:paragraph>Offer Code: #{offer.code}</p:paragraph>
+			<p:paragraph>Offer Name: #{offer.name}</p:paragraph>
+	        <p:paragraph>Ofer term. Duration: #{offer.termDuration}</p:paragraph>
+			<p:paragraph>Offer services:</p:paragraph>
+			<p:list listSymbol="-">
+  				<ui:repeat var="ts" value="#{offer.services}">
+   					 <p:listItem>#{ts.name}</p:listItem>
+ 				 </ui:repeat>
+			</p:list>
+			
+	</p:font>
+	
+
+</p:document>        

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:a="http://richfaces.org/a4j"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:p="http://primefaces.prime.com.tr/ui"
+   contentType="text/html">
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <title>MeveoAdmin</title>
+
+
+
+      <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>
+
+      <a:loadStyle src="resource:///stylesheet/theme.xcss"/>
+      <a:loadStyle src="/stylesheet/theme.css"/>
+      <a:loadStyle src="/stylesheet/main.css"/>
+      <ui:insert name="head"/>
+      <p:resources />
+   </head>
+   <body>
+   
+	<div id="header">
+		<div id="logo">
+	   		<h:graphicImage value="/img/logo_cobilling.png" style="border:0"/>
+		</div>
+		<div id="headerleft">
+		</div>
+		<div id="headerright">
+			<ui:include src="language.xhtml" />
+			<rich:spacer width="30"/>
+		</div>
+	</div>
+	<rich:toolBar>
+		<rich:toolBarGroup>Login</rich:toolBarGroup>		
+	</rich:toolBar>
+   
+	<div class="body">
+	    <ui:insert name="body"/>
+	 
+  </div>
+   	  
+      <div class="footer">
+         Cobilling v1.0
+      </div>
+   </body>
+</html>
+</f:view>

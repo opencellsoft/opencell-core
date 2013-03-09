@@ -1,0 +1,36 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	<rich:panel>
+		<f:facet name="header">
+			<h:outputText value="#{messages['accountOperation.selectionTypeTitle']}" />
+		</f:facet>	
+		<h:form id="selectionTypeTitle" styleClass="mainForm">				
+					 	#{messages['accountOperation.selectTypeOCC']} 
+					 	<h:selectOneMenu id="codeType" value="#{otherCreditAndChargeBean.occTemplate}">
+					        <s:convertEntity />
+					        <s:selectItems value="#{occTemplateBean.listOCCTemplate()}" var="occ" label="#{occ.description}" />
+				        </h:selectOneMenu>
+						 <h:commandButton value="#{messages['accountOperation.buttonSelectionType']}" action="#{otherCreditAndChargeBean.loadFromTemplate()}" />				  
+		</h:form>
+	</rich:panel>      
+	</ui:define>
+	
+	
+	
+
+</ui:composition>

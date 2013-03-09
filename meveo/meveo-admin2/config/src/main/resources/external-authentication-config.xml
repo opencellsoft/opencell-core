@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ExternalAuthenticationConfig
+	xmlns="urn:picketlink:identity-federation:seam:config:1.0" xmlns:tns="urn:picketlink:identity-federation:seam:config:1.0">
+
+	<ServiceProvider protocol="http" hostname="localhost"
+		unsolicitedAuthenticationUrl="home.seam" loggedOutUrl="http://localhost:8080/meveo/home.seam"
+		failedAuthenticationUrl="http://localhost:8080/meveo/home.seam"
+		internalAuthenticationMethod="#{authenticator.internalAuthenticate}">
+
+		<SamlConfig serviceProviderEntityId="http://localhost:8080/meveo"
+			keyStoreUrl="classpath:/keystore.jks" keyStorePass="meveo123"
+			signingKeyAlias="sever-alias" signingKeyPass="meveo123"
+			authnRequestsSigned="true">
+			<SamlIdentityProvider
+				entityId="https://idp.lyonnaise-des-eaux.fr/nidp/saml2/metadata" />
+
+		</SamlConfig>
+
+	</ServiceProvider>
+
+</ExternalAuthenticationConfig>

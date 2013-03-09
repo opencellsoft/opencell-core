@@ -1,0 +1,76 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		
+		<custom:entityPopup id="serviceTemplatePopup"
+			header="#{messages['usagePricePlanItem.serviceTemplate.popup.header']}"
+			backingBean="#{serviceTemplateBean}" dataModel="#{serviceTemplates}"
+			searchField1Label="#{messages['serviceTemplate.code']}" searchField1="code"
+			column1Label="#{messages['serviceTemplate.code']}" column1="code"
+			filtersMap="#{serviceTemplateBean.filters}">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="formId"
+				action="#{usageDiscountPlanItem.setServiceTemplate(entity)}"
+				oncomplete="Richfaces.hideModalPanel('serviceTemplatePopup')">
+			</a:commandLink>
+		</custom:entityPopup>		
+	 
+		
+		<custom:entityPopup id="customerAccountPopup"
+				header="#{messages['usagePricePlanItem.customerAccount.popup.header']}"
+				backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}"
+				searchField1Label="#{messages['customerAccount.code']}"
+				searchField1="code"
+				column1Label="#{messages['customerAccount.code']}" 
+				column1="code"
+				column2Label="#{messages['businessEntity.description']}" 
+				column2="description"
+				filtersMap="#{customerAccountBean.filters}">
+				<!-- select link -->
+				<a:commandLink value="#{messages['commons.select']}"
+						reRender="formId" 
+						action="#{usageDiscountPlanItem.setCustomerAccount(entity)}"
+						oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
+				</a:commandLink>
+		</custom:entityPopup>
+			
+		<custom:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usageDiscountPlanItemBean}" entity="#{usageDiscountPlanItem}" >
+			<custom:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true" />
+			<custom:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
+				field="serviceTemplate" childField="code"   popup="true" popupId="serviceTemplatePopup" />
+    		<custom:formEntityField id="customerAccountSelectId" label="#{messages['usagePricePlanItem.customerAccount']}"
+				field="customerAccount" childField="code" popup="true" popupId="customerAccountPopup" />
+				
+			    <custom:formField label="#{messages['numberingPlan.priority']}" field="priority"  />
+    			<custom:formField label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
+				<custom:formField label="#{messages['usagePricePlanItem.numberParam1Max']}" field="numberParam1Max" />
+	    		<custom:formField label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" />
+	    	    <custom:formField label="#{messages['usagePricePlanItem.stringParam2']}" field="stringParam2" />
+	    	    <custom:formField label="#{messages['usagePricePlanItem.stringParam3']}" field="stringParam3" />
+	    	    <custom:formField label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" isMessage="true" />
+	    	    <custom:formField label="#{messages['usageDiscountPlanItem.percentage']}" field="percentage" />
+	    	    <custom:formField label="#{messages['access.startDate']}" field="startDate"  />
+	    	    <custom:formField label="#{messages['access.endDate']}" field="endDate"  />
+				 
+    		
+    		
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>

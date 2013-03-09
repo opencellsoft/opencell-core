@@ -1,0 +1,298 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	<c:if test="${edit}">
+		<custom:entityPopup id="customerAccountPopup"
+				header="#{messages['customerAccount.popup.header']}"
+				backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}"
+				searchField1Label="#{messages['customerAccount.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['customerAccount.name']}"
+				searchField2="name"
+				column1Label="#{messages['customerAccount.code']}" column1="code"
+				column2Label="#{messages['customerAccount.name']}" column2="name" 
+				filtersMap="#{customerAccountBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId"  
+					immediate="true" 
+					action="#{billingAccountBean.populateAccounts(entity)}"
+					oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+		<custom:entityPopup id="billingCyclePopup"
+				header="#{messages['billingCycle.popup.header']}"
+				backingBean="#{billingCycleBean}" dataModel="#{billingCycles}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}"
+				searchField2="name"
+				column1Label="#{messages['businessEntity.code']}" column1="code"
+				column2Label="#{messages['businessEntity.description']}" column2="description" 
+				filtersMap="#{billingCycleBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{billingAccount.setBillingCycle(entity)}"
+					oncomplete="Richfaces.hideModalPanel('billingCyclePopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+	</c:if>
+		
+	<h:panelGrid columns="1" width="100%">
+		<h:panelGroup>
+			<div class="panels">
+				
+				<custom:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(billingAccount)}" entity="#{billingAccount}"/>
+				
+				<rich:tabPanel styleClass="formPanel" switchType="client">
+					<rich:tab label="#{messages['billingAccount.tab.account']}">
+						<custom:formPanel edit="#{edit}" label="#{messages['billingAccount.billingAccountPanel']}"
+						 		backingBean="#{billingAccountBean}" entity="#{billingAccount}" styleClass="formPanel">
+				
+							<rich:tabPanel switchType="client">
+								<rich:tab label="#{messages['billingAccount.tab.account']}">		
+									<custom:fieldset name="#{messages['billingAccount.billingAccountPanel']}" columns="1">
+										<custom:panelGroup columns="1">
+											<custom:formEntityField id="customerSelectId" label="#{messages['billingAccount.customerAccount']}"
+												field="customerAccount" childField="code" required="true" popup="true" popupId="customerAccountPopup" />
+										</custom:panelGroup>
+										<!--Creation window fields-->
+										<custom:panelGroup columns="2">
+											<custom:formField label="#{messages['businessEntity.code']}" field="code" showOnlyOnNew="true" validateUnique="true" size="35" maxlength="35"/>
+   	 										<custom:formEntityField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" childField="code" popup="false" service="#{providerContactService}"/>	
+										</custom:panelGroup>
+										<custom:panelGroup columns="1">	
+											<custom:formField label="#{messages['businessEntity.description']}" field="description"  useConverter="false" size="70" maxlength="100" />
+										</custom:panelGroup>
+										<custom:panelGroup columns="2">
+											<custom:formEntityField id="cycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle"  childField="code" required="true" popup="true" popupId="billingCyclePopup"/>
+										 	<custom:emtyFormField />	
+										 <a:outputPanel id="invoicePrefixBoxPanel" >		
+										 	<s:decorate template="/layout/edit.xhtml">
+												<ui:define name="label">
+													<h:outputText value="#{messages['billingAccount.returnToAgency']}" />
+												</ui:define>
+												<c:set var="fieldValue" value="#{billingAccountBean.returnToAgency}" />
+												<h:selectBooleanCheckbox rendered="#{edit}" id="returnToAgency" value="#{fieldValue}" >
+														<a:support event="onclick" reRender="invoicePrefixPanel" ajaxSingle="true" limitToList="true" action="#{billingAccountBean.setInvoicePrefix()}" />
+												</h:selectBooleanCheckbox>
+												
+												<c:if test="${!edit}">
+									        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'true' and !edit}" value="#{messages['commons.yes']}" style="font-weight:bold;"/>
+									        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'false' and !edit}" value="#{messages['commons.no']}" style="font-weight:bold;"/>
+									        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false' and !edit}" value="#{messages[entity[field]]}" style="font-weight:bold;"/>
+											    </c:if>
+											</s:decorate>
+										</a:outputPanel>	
+										<a:outputPanel id="invoicePrefixPanel">
+										
+										 	<s:decorate template="/layout/edit.xhtml">
+									    		 <ui:define name="label">
+										    		<h:outputText value="#{messages['billingAccount.invoicePrefix']}" rendered="#{billingAccountBean.returnToAgency}"/>
+										    	 </ui:define>
+										        <h:outputText id="invoicePrefix" value="#{entity.invoicePrefix}" style="font-weight:bold;" rendered="#{billingAccountBean.returnToAgency}"/>
+										        <ui:insert />
+									       	</s:decorate>
+									    </a:outputPanel>
+									    	
+										</custom:panelGroup>
+										<custom:panelGroup columns="2">
+											<custom:formField label="#{messages['billingAccount.externalRef1']}" field="externalRef1" maxlength="50" useConverter="false"/>
+											<s:decorate template="/layout/edit.xhtml" >
+				    							<ui:define name="label">
+					    							<h:outputText value="#{messages['billingAccount.externalRef2']}" useConverter="false"/>
+					    	 					</ui:define>
+				    		 					<h:inputText value="#{billingAccount.externalRef2}" rendered="#{edit}" valueChangeListener="#{billingAccountBean.processValueChange}">
+				    		 						<a:support event="onchange" reRender="invoicePrefixPanel"/>
+				    		 					</h:inputText>
+				        					    <h:outputText value="#{billingAccount.externalRef2}" rendered="#{!edit}" style="font-weight:bold;"/>
+						        			</s:decorate>
+										</custom:panelGroup>
+										<!--Edit window fields-->
+										<custom:panelGroup columns="1">
+											<s:decorate template="/layout/edit.xhtml" >
+				    							<ui:define name="label">
+					    							<h:outputText value="#{messages['name.title']}" />
+					    	 					</ui:define>
+				    		 					<h:selectOneMenu value="#{billingAccount.name.title}" rendered="#{edit}">
+					            					<s:selectItems value="#{titleService.list()}" var="t" label="#{messages[stringUtil.merge('Title.',t.code)]}" noSelectionLabel="#{messages['commons.select']}"/>
+					       							<s:convertEntity/>
+					       							<a:support event="onchange" immediate="false" ajaxSingle="true" bypassUpdates="false" limitToList="true" reRender="formId:userNamePanel, formId:countryPanel, paymentMethodField, electronicBillingField, bankCoordinatesPanel, invoicePrefixPanel, invoicePrefixBoxPanel"/>
+					         					</h:selectOneMenu>
+					         					<h:outputText rendered="#{!edit and billingAccount.name.title != null}" value="#{messages[stringUtil.merge('Title.',billingAccount.name.title.code)]}" style="font-weight:bold;"/>
+					        				</s:decorate>
+										</custom:panelGroup>
+										<a:outputPanel id="userNamePanel">
+											<h:panelGroup>
+												<h:panelGrid columns="2" width="100%" columnClasses="twoColGrid">
+													<custom:formEntityField label="#{messages['name.lastName']}" field="name" childField="lastName" popup="false" maxlength="50"/>
+													<s:decorate template="/layout/edit.xhtml" >
+						    							<ui:define name="label">
+							    							<h:outputText value="#{messages['name.firstName']}"  rendered="#{billingAccount.name.title == null or !billingAccount.name.title.isCompany}"/>
+							    	 					</ui:define>
+						    		 					<h:inputText value="#{billingAccount.name.firstName}" rendered="#{(billingAccount.name.title == null or !billingAccount.name.title.isCompany) and edit}"/>
+						        					    <h:outputText value="#{billingAccount.name.firstName}" rendered="#{(billingAccount.name.title == null or !billingAccount.name.title.isCompany) and !edit}" style="font-weight:bold;"/>
+						        					</s:decorate>
+													<custom:emtyFormField show="#{billingAccount.name.title == null or !billingAccount.name.title.isCompany}"/>	
+									    		</h:panelGrid>
+											</h:panelGroup>
+										</a:outputPanel>
+										<custom:panelGroup columns="2">
+											<custom:formField label="#{messages['billingAccount.status']}" field="status" show="#{!edit}"/>
+											<custom:formField label="#{messages['billingAccount.statusDate']}" field="statusDate"  show="#{!edit}"/>
+										</custom:panelGroup>
+										<custom:panelGroup columns="2">
+											<custom:formField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
+											<custom:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate"  show="#{!edit}"/>
+											<custom:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
+											
+										</custom:panelGroup>
+										
+										<custom:panelGroup columns="1">	
+											<custom:formField label="#{messages['accountEntity.defaultLevel']}" field="defaultLevel" isMessage="true"/>
+										</custom:panelGroup>
+									</custom:fieldset>
+								</rich:tab>
+								
+								<rich:tab label="#{messages['billingAccount.tab.information']}">	
+									<custom:fieldset name = "#{messages['commons.contacts']}" columns="1">
+								 		<custom:panelGroup columns="1">
+											<custom:formEntityField label="#{messages['address.address1']}" field="address" childField="address1"
+														popup="false"  size="80" maxlength="80"/>	
+											<custom:formEntityField label="#{messages['address.address2']}" field="address" childField="address2" popup="false" size="80" maxlength="80"/>
+											<custom:formEntityField label="#{messages['address.address3']}" field="address" childField="address3" popup="false" size="80" maxlength="80"/>
+										</custom:panelGroup>
+								 		<custom:panelGroup columns="2">
+										 	<custom:formEntityField label="#{messages['address.zipCode']}" field="address" childField="zipCode"  popup="false" required="true" size="5" maxlength="5" length="3"/>
+											<custom:formEntityField label="#{messages['address.city']}" field="address" childField="city"  popup="false" required="true" maxlength="50"/>
+									 		<a:outputPanel id="countryPanel">
+										 		<s:decorate template="/layout/edit.xhtml">
+													<ui:define name="label">
+														<h:outputText value="#{messages['address.country']}" />
+													</ui:define>
+													<h:selectOneMenu required="true" rendered="#{edit}" value="#{billingAccount.address.country}">
+															 <s:selectItems value="#{messages['address.countrys'].split(',')}"
+				                                          		 var="country" label="#{country}" />
+											         </h:selectOneMenu>
+													 <h:outputText rendered="#{!edit}" value="#{billingAccount.address.country}" />
+												</s:decorate>
+											</a:outputPanel>
+										</custom:panelGroup>
+									</custom:fieldset>
+									<custom:fieldset name = "#{messages['commons.bankCoordinates']}" >
+										<custom:panelGroup columns="1">
+											<a:outputPanel id="paymentMethodField">
+												<custom:formField label="#{messages['billingAccount.paymentMethod']}" field="paymentMethod" required="true" event="onchange" reRender="bankCoordinatesPanel" />
+										    </a:outputPanel>
+										</custom:panelGroup>	
+										<custom:panelGroup columns="2">	
+										    <a:outputPanel id="electronicBillingField">
+											   <custom:formField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" event="onchange" reRender="formId:emailField" isMessage="true" />
+											</a:outputPanel>
+											<a:outputPanel id="emailField">
+												<s:decorate template="/layout/edit.xhtml">
+													<ui:define name="label">
+														<h:outputText value="#{messages['billingAccount.email']}" />
+													</ui:define>
+													<h:inputText rendered="#{edit}" id="email" value="#{entity.email}" required="#{entity.electronicBilling}" size="20" maxlength="100" converter="nullableStringConverter" />
+													<h:outputText rendered="#{!edit}" id="emailText" value="#{entity.email}" required="#{entity.electronicBilling}" />
+												</s:decorate>
+											</a:outputPanel>
+										</custom:panelGroup>
+										<a:outputPanel id="bankCoordinatesPanel">
+											 <h:panelGroup rendered="#{entity.paymentMethod.toString() == 'DIRECTDEBIT' or entity.paymentMethod.toString() == 'TIP'}">
+								 				<custom:panelGroup columns="2">
+													<custom:formEntityField label="#{messages['bankCoordinates.bankCode']}" field="bankCoordinates" childField="bankCode"  size="5" maxlength="5" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" validateRib="true"/>
+													<custom:formEntityField label="#{messages['bankCoordinates.branchCode']}" field="bankCoordinates" childField="branchCode" size="5"  maxlength="5" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />	
+													<custom:formEntityField label="#{messages['bankCoordinates.accountNumber']}" field="bankCoordinates" childField="accountNumber" size="11"  maxlength="11" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}"/>
+													<custom:formEntityField label="#{messages['bankCoordinates.key']}" field="bankCoordinates" childField="key" size="2"  maxlength="2" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}"/>
+												</custom:panelGroup>
+												<custom:panelGroup columns="1">
+													<custom:formEntityField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15"  maxlength="11"/>
+													<custom:formEntityField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="45"  maxlength="34"/>
+													<custom:formEntityField label="#{messages['bankCoordinates.accountOwner']}" field="bankCoordinates" childField="accountOwner" size="55"  maxlength="50" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}"/>
+													<custom:formEntityField label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates" childField="bankName" size="55"  maxlength="50"/>
+												</custom:panelGroup>
+											</h:panelGroup>
+										</a:outputPanel>
+									</custom:fieldset>
+								</rich:tab>
+							</rich:tabPanel>
+						</custom:formPanel>
+				
+						<h:form id="operationsForm" rendered="#{!edit}">
+							<custom:listPanel label="#{messages['customerAccount.operations']}">
+							<h:commandButton action="#{billingAccountBean.terminateAccount()}" value="#{messages['account.buttonResiliateAccount']}" onclick="if(confirm('#{messages['account.confirmResiliateAccount']}')){return true;}else{return false;}" disabled="#{billingAccount.status.toString() != 'ACTIVE'}"/>&nbsp;&nbsp;
+							<h:commandButton action="#{billingAccountBean.cancelAccount()}" value="#{messages['account.buttonCancelAccount']}" onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}" disabled="#{billingAccount.status.toString() != 'ACTIVE'}"/>&nbsp;&nbsp;
+							<h:commandButton action="#{billingAccountBean.closeAccount()}" value="#{messages['account.buttonCloseAccount']}" onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}" disabled="#{billingAccount.status.toString() != 'TERMINATED' and entity.status.toString()!='CANCELLED'}"/>&nbsp;&nbsp;
+							<h:commandButton action="addNewUserAccountAction" value="#{messages['billingAccount.addUserAccount']}" disabled="#{billingAccount.status.toString() != 'ACTIVE'}"/>
+		   					</custom:listPanel>		
+		   				</h:form>
+   	
+					</rich:tab>
+
+					<rich:tab label="#{messages['billingAccount.tab.invoices']}" rendered="#{!edit}" >	
+						<custom:formPanel formId="form3" edit="#{edit}" 
+										backingBean="#{billingAccountBean}" entity="#{billingAccount}" showFormButtons="false" >
+								<custom:panelGroup columns="3">
+									<custom:formField label="#{messages['businessEntity.code']}" field="code" />
+									<custom:formField label="#{messages['billingAccount.status']}" field="status"/>
+						    		<custom:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
+								</custom:panelGroup>
+								<custom:panelGroup columns="3">
+									<custom:formEntityField id="customerAccountSelectId" label="#{messages['billingAccount.customerAccount']}"
+									field="customerAccount" childField="code" popup="false"/>
+									<custom:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
+									<custom:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+								</custom:panelGroup>
+						</custom:formPanel>
+						<br/>
+						<br/>
+						
+			    		<custom:dataList dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.getBillingAccount())}" resultsId="i_results" checkMany="false" backingBean="#{invoiceBean}">
+			    			<custom:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" />
+			    			<custom:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" />
+			    			<custom:column label="#{messages['invoice.dueDate']}" field="dueDate" />
+			    			<custom:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
+			    			<custom:column label="#{messages['invoice.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />
+			    			<rich:column width="100">
+								<f:facet name="header">
+									<h:outputText value="#{messages['billingAccount.status']}" />
+								</f:facet>
+								<h:outputText value="#{messages[entity.billingRun.status.label]}" />
+							</rich:column>
+			    			<rich:column width="100">
+								<f:facet name="header">
+									<h:outputText value="#{messages['billingAccount.invoice']}" />
+								</f:facet>
+								<h:commandLink action="#{billingAccountBean.generatePDF(entity.id)}" rendered="#{billingAccountBean.pdfExists(entity.id)}">
+										<h:graphicImage value="/img/pdf.gif" style="border:0"/>
+								</h:commandLink>
+							</rich:column>
+			    			<custom:actionsColumn editView="/pages/billing/invoices/invoiceDetail.xhtml"  />
+					    </custom:dataList>
+					</rich:tab>												
+				</rich:tabPanel>
+				
+			</div>
+		</h:panelGroup>
+	</h:panelGrid>
+	</ui:define>
+</ui:composition>

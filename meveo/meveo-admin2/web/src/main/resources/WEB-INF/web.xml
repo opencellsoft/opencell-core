@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<!-- RichFaces -->
+	<context-param>
+		<param-name>org.richfaces.SKIN</param-name>
+		<param-value>classic</param-value>
+	</context-param>
+	<!-- Suppress spurious stylesheets -->
+	<context-param>
+		<param-name>org.richfaces.CONTROL_SKINNING</param-name>
+		<param-value>disable</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.CONTROL_SKINNING_CLASSES</param-name>
+		<param-value>disable</param-value>
+	</context-param>
+	<!--
+		Change load strategy to DEFAULT to disable sending scripts/styles as
+		packs
+	-->
+	<context-param>
+		<param-name>org.richfaces.LoadStyleStrategy</param-name>
+		<param-value>ALL</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+	</context-param>
+	<!-- Facelets development mode (disable in production) -->
+	<context-param>
+		<param-name>facelets.DEVELOPMENT</param-name>
+		<param-value>@debug@</param-value>
+	</context-param>
+	<!-- JSF -->
+	<context-param>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+	<!-- Facelets taglib -->
+	<context-param>
+		<param-name>facelets.LIBRARIES</param-name>
+		<param-value>/tags/custom.taglib.xml;
+   			/tags/manaty.taglib.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>facelets.SKIP_COMMENTS</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<filter>
+		<filter-name>Seam Filter</filter-name>
+		<filter-class>org.jboss.seam.servlet.SeamFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>User Actions Logging Filter</filter-name>
+		<filter-class>org.meveo.admin.filter.UserActionsLoggingFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>UTF8CharacterEncodingFilter</filter-name>
+		<filter-class>org.meveo.admin.filter.UTF8CharacterEncodingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>Seam Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>User Actions Logging Filter</filter-name>
+		<url-pattern>*.seam</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>UTF8CharacterEncodingFilter</filter-name>
+		<url-pattern>*.seam</url-pattern>
+	</filter-mapping>
+	<!-- Seam -->
+	<listener>
+		<listener-class>org.jboss.seam.servlet.SeamListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>Seam Resource Servlet</servlet-name>
+		<servlet-class>org.jboss.seam.servlet.SeamResourceServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>Document Store Servlet</servlet-name>
+		<servlet-class>org.jboss.seam.pdf.DocumentStoreServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<!-- Added from me for prime faces -->
+	<servlet>
+		<servlet-name>Seam Remoting</servlet-name>
+		<servlet-class>org.jboss.seam.remoting.SeamRemotingServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Seam Remoting</servlet-name>
+		<url-pattern>/seam/remoting/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Resource Servlet</servlet-name>
+		<servlet-class>org.primefaces.resource.ResourceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Seam Resource Servlet</servlet-name>
+		<url-pattern>/seam/resource/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Document Store Servlet</servlet-name>
+		<url-pattern>*.pdf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Document Store Servlet</servlet-name>
+		<url-pattern>*.rtf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.seam</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/primefaces_resource/*</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	<!-- Error page -->
+	<error-page>
+		<error-code>500</error-code>
+		<location>/applicationerror.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.IllegalStateException</exception-type>
+		<location>/toomanysessionserror.html</location>
+	</error-page>
+	<!-- Security -->
+	<security-constraint>
+		<display-name>Restrict raw XHTML Documents</display-name>
+		<web-resource-collection>
+			<web-resource-name>XHTML</web-resource-name>
+			<url-pattern>*.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint />
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+	<!--
+		uncomment <ejb-local-ref> entries when deploying to GlassFish and
+		(optionally) JBoss AS 5 <ejb-local-ref>
+		<ejb-ref-name>MeveoAdmin/AuthenticatorBean/local</ejb-ref-name>
+		<ejb-ref-type>Session</ejb-ref-type> <local-home/>
+		<local>org.manaty.action.Authenticator</local> </ejb-local-ref> Add
+		entries for each EJB session bean which is also a Seam component (not
+		required on JBoss AS)
+	-->
+	<persistence-unit-ref>
+		<persistence-unit-ref-name>MeveoAdmin/pu</persistence-unit-ref-name>
+		<persistence-unit-name>../meveo-admin.jar#MeveoAdmin</persistence-unit-name>
+		<!--
+			The relative reference doesn't work on GlassFish. Instead, set the
+			<persistence-unit-name> to "MeveoAdmin", package persistence.xml in
+			the WAR, and add a <jar-file> element in persistence.xml with value
+			"../../meveo-admin.jar".
+			<persistence-unit-name>MeveoAdmin</persistence-unit-name>
+		-->
+	</persistence-unit-ref>
+</web-app>

@@ -1,0 +1,62 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    
+		 
+		<c:set var="filtersMap1" value="#{edrRatingPlanBean.filters}" />
+		<c:set var="field" value="priceCode" />
+    		<custom:entityPopup id="priceCodePopup"
+				header="#{messages['priceCode.popup.header']}"
+				backingBean="#{priceCodeBean}" dataModel="#{priceCodes}"
+				searchField1Label="#{messages['priceCode.code']}"
+				searchField1="code"
+				column1Label="#{messages['priceCode.code']}" column1="code"
+				filtersMap="#{priceCodeBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{filtersMap1.put(field, entity)}"
+					oncomplete="Richfaces.hideModalPanel('priceCodePopup22')">
+			</a:commandLink>
+		</custom:entityPopup>  
+	 
+    	<custom:listPanel label="#{messages['edrRatingPlan.title']}" backingBean="#{edrRatingPlanBean}">
+    	
+    <custom:searchPanel label="#{messages['edrRatingPlan.search']}" newButtonView="/pages/medina/edrRatingPlan/edrRatingPlanDetail.xhtml">
+   	<custom:searchEntityField label="#{messages['edrRatingPlan.priceCode']}" field="priceCode" childField="code" popup="true" popupId="priceCodePopup" clearButton="true"/>   
+    	
+    		</custom:searchPanel>	
+    		<custom:dataList dataModel="#{edrRatingPlans}" noDelete="true" noClose="false">
+	    		<custom:column label="#{messages['edrRatingPlan.priceCode']}" field="priceCode" childField="code"/>
+	    		<custom:column label="#{messages['edrRatingPlan.eventType']}" field="eventType"/> 
+	    		<custom:column label="#{messages['edrRatingPlan.originCustomer']}" field="originCustomer" childField="code"/>
+	    		<custom:column label="#{messages['edrRatingPlan.targetCustomer']}" field="targetCustomer" childField="code"/>
+	    		<custom:column label="#{messages['edrRatingPlan.chargeTemplateIn']}" field="chargeTemplateIn" childField="code"/>
+	    		<custom:column label="#{messages['edrRatingPlan.chargeTemplateOut']}" field="chargeTemplateOut" childField="code"/>
+	    			<custom:column label="#{messages['access.startDate']}" field="startDate"/>
+				<custom:column label="#{messages['access.endDate']}" field="endDate"/>
+    			<custom:actionsColumn editView="/pages/medina/edrRatingPlan/edrRatingPlanDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}"/>
+		    </custom:dataList>
+		   
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

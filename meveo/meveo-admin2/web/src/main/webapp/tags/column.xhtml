@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+  		xmlns:custom="http://manaty.net/custom"
+		xmlns:c="http://java.sun.com/jstl/core"
+		xmlns:e="http://jboss.com/products/seam/excel">
+
+	<ui:composition>
+		
+		<c:if test="${empty sortField}">
+	       	<c:set var="sortField" value="#{field}" />
+			<c:if test="${not empty childField}">
+	        	<c:set var="sortField" value="#{childField}" />
+	        </c:if>
+        </c:if>
+       <c:if test="${empty childField}">
+        	<c:set var="fieldName" value="#{field}" />
+        </c:if>
+			<c:if test="${not empty childField}">
+	        	<c:set var="fieldName" value="#{childField}" />
+	    </c:if>
+        
+        
+		<c:if test="${empty isMessage}">
+        	<c:set var="isMessage" value="false" />
+        </c:if>
+        
+		<c:if test="${empty show}">
+        	<c:set var="show" value="true" />
+        </c:if>        
+        
+        <c:if test="${empty isDate}">
+        	<c:set var="isDate" value="false" />
+        </c:if>
+        
+        <c:if test="${empty time}">
+			<c:set var="time" value="true" />
+		</c:if>
+		<c:if test="${time}">	
+			<c:set var="datePattern" value="#{messages['meveo.dateTimeFormat']}" />
+		</c:if>
+		<c:if test="${!time}">
+			<c:set var="datePattern" value="#{messages['meveo.dateFormat']}" />
+		</c:if>
+        
+        <c:if test="${empty isList}">
+        	<c:set var="isList" value="false" />
+        </c:if>
+
+        <c:if test="${empty showSortLinks}">
+        	<c:set var="showSortLinks" value="true" />
+        </c:if>
+        
+        <c:if test="${wrapHeader}">
+        	<c:set var="headerStyle" value="white-space: normal;" />
+        </c:if>
+        
+        <c:if test="${empty width}">
+        	<c:set var="width" value="100" />
+        </c:if>
+        
+		<rich:column width="${width}">
+			<f:facet name="header">
+				<h:panelGrid columns="2">
+					<h:column>
+						<h:outputText value="#{label}" style="#{headerStyle}" />
+					</h:column>
+					<h:column>
+						<c:if test="${!isMessage and !isList and showSortLinks}">
+				         	<a:commandLink reRender="datatable, scrollerPanel"> 
+								<h:graphicImage value="/img/arrow-asc.png" style="border:0"/>
+				                <a:actionparam  name="sortField" value="#{fieldName}" assignTo="#{backingBean.sortField}"/>
+				                <a:actionparam  name="sortOrder" value="asc" assignTo="#{backingBean.sortOrder}"/> 
+				           </a:commandLink>
+				            <a:commandLink reRender="datatable, scrollerPanel"> 
+								<h:graphicImage value="/img/arrow-desc.png" style="border:0"/>
+				                <a:actionparam  name="sortField" value="#{fieldName}" assignTo="#{backingBean.sortField}"/>
+				                <a:actionparam  name="sortOrder" value="desc" assignTo="#{backingBean.sortOrder}"/> 
+				            </a:commandLink>
+				         </c:if>
+			        </h:column>
+	            </h:panelGrid>
+	        </f:facet>
+	        
+	        <c:if test="${not empty field}">
+		        <e:cell>
+		        
+		        <!-- If there is no child field, just show fieldValue. However if fieldValue can be message check if it is not boolean first
+		        	is so use standard yes and no messages. If its not boolean just translate fieldValue message. 
+		        	Also if childField is not set then it basically means it cant be isList=true even if it is set, so we dont check isList here.-->
+		        <c:if test="${empty childField}">
+		        	<c:if test="${isMessage}">
+		        	
+		        		<c:set var="fieldValue" value="#{entity[field]}" />
+		        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'true'}" value="#{messages['commons.yes']}" />
+		        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'false'}" value="#{messages['commons.no']}" />
+		        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false'}" value="#{messages[entity[field]]}"/>
+			    	</c:if>
+			    	<c:if test="${!isMessage}">
+			    	 <!-- If there is date field, show date in specified pattern 
+			    	 If isDate is not set then it basically means it is not a date. Alse is time is not set it basically means that time=true
+			    	 -->
+			    		<c:if test="${!isDate}">						
+							<h:outputText value="#{entity[field]}" rendered="#{show}" converter="#{getConverter.forType(entity[field], converterParam)}" />
+						</c:if>
+			
+						<c:if test="${isDate}">
+							<h:outputText value="#{entity[field]}"> 
+								<s:convertDateTime type="date" pattern="#{datePattern}"/>
+							</h:outputText>
+	
+						</c:if>
+		        	</c:if>
+			    </c:if>
+			    
+			    <!-- If childField parameter is provided that means fieldValue is entity, enum or list. -->
+		        <c:if test="${not empty childField}">
+		        	<!-- If field is not list, then it means it is either another entity or enum. -->
+		        	<c:if test="${!isList}">
+			        	<c:set var="child" value="#{entity[field]}" />
+		        		<c:set var="fieldValue" value="#{child[childField]}" />
+			        	<!-- If childField ID is not provided then we dont need link to entity page. -->
+			        	<c:if test="${empty childFieldId}">
+				        	<c:if test="${isMessage}">
+				        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'true'}" value="#{messages['commons.yes']}" />
+				        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'false'}" value="#{messages['commons.no']}" />
+				        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false'}" value="#{messages[fieldValue]}" />
+					    	</c:if>
+					    	<c:if test="${!isMessage}">
+								<h:outputText value="#{fieldValue}" />
+				        	</c:if>
+				        </c:if>
+				        <!-- If childField ID provided then show link to childField entity page. -->
+				        <c:if test="${not empty childFieldId}">
+			        		<c:set var="fieldId" value="#{child[childFieldId]}" />
+				        	<c:if test="${isMessage}">
+				        		<custom:linkToEntity entityId="#{fieldId}" value="#{messages[fieldValue]}" view="#{view}" >
+									<c:if test="${showPopup}">
+										<custom:entityTooltip entity="#{child}" entityFields="#{popupFields}" />
+								    </c:if>
+				        		</custom:linkToEntity>
+					    	</c:if>
+					    	<c:if test="${!isMessage}">
+								<custom:linkToEntity entityId="#{fieldId}" value="#{fieldValue}" view="#{view}" >
+									<c:if test="${showPopup}">
+										<custom:entityTooltip entity="#{child}" entityFields="#{popupFields}" />
+								    </c:if>
+				        		</custom:linkToEntity>
+				        	</c:if>
+				        </c:if>
+				    </c:if>
+				    
+				    <!-- If its list then run through it and show results. -->
+				    <c:if test="${isList}">
+			        	<c:set var="child" value="#{entity[field]}" />
+			    		<h:outputText  value="" rendered="#{child.size == 0}"/>
+			        	<ui:repeat value="#{child}" var="c" rendered="#{child.size > 0}" >
+				        	<!-- If childField ID is not provided then we dont need link to entity page. -->
+			        		<c:set var="fieldValue" value="#{c[childField]}" />
+				        	<c:if test="${empty childFieldId}">
+					        	<c:if test="${isMessage}">
+					        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'true'}" value="#{messages['commons.yes']}" />
+					        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'false'}" value="#{messages['commons.no']}" />
+					        		<h:outputText rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false'}" value="#{messages[fieldValue]}" />
+						    	</c:if>
+						    	<c:if test="${!isMessage}">
+									<h:outputText value="#{fieldValue}" />
+					        	</c:if>
+					        </c:if>
+					        <!-- If childField ID provided then show link to childField entity page. -->
+					        <c:if test="${not empty childFieldId}">
+				        		<c:set var="fieldId" value="#{c[childFieldId]}" />
+					        	<c:if test="${isMessage}">
+					        		<custom:linkToEntity entityId="#{fieldId}" value="#{fieldValue}" view="#{view}" backView="#{backView}">
+										<c:if test="${showPopup}">
+											<custom:entityTooltip entity="#{c}" entityFields="#{popupFields}" />
+									    </c:if>
+					        		</custom:linkToEntity>
+						    	</c:if>
+						    	<c:if test="${!isMessage}">
+									<custom:linkToEntity entityId="#{fieldId}" value="#{fieldValue}" view="#{view}" backView="#{backView}">
+										<c:if test="${showPopup}">
+											<custom:entityTooltip entity="#{c}" entityFields="#{popupFields}" />
+									    </c:if>
+					        		</custom:linkToEntity>
+					        	</c:if>
+					        </c:if>
+					        <br/>
+					    </ui:repeat>
+				    </c:if>
+			    </c:if>
+			  	</e:cell>
+		    </c:if>
+	    	<ui:insert />
+		</rich:column>
+	    
+    </ui:composition>
+
+</html>

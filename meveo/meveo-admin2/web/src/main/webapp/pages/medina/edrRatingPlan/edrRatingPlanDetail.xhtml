@@ -1,0 +1,221 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+			<custom:entityPopup id="priceCodePopup2"
+				header="#{messages['priceCode.popup.header']}"
+				backingBean="#{priceCodeBean}" dataModel="#{priceCodes}"
+				searchField1Label="#{messages['priceCode.code']}"
+				searchField1="code"
+				column1Label="#{messages['priceCode.code']}" column1="code"
+				filtersMap="#{priceCodeBean.filters}"	>
+			<!-- select link -->
+			
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{edrRatingPlan.setPriceCode(entity)}"
+					oncomplete="Richfaces.hideModalPanel('priceCodePopup2')">
+			</a:commandLink>
+		</custom:entityPopup>
+	
+
+	  
+		<custom:entityPopup id="customerPopup"
+				header="#{messages['customer.popup.header']}"
+				backingBean="#{customerBean}" dataModel="#{customers}"
+				searchField1Label="#{messages['customer.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['customer.description']}"
+				searchField2="description"
+				column1Label="#{messages['customer.code']}" column1="code"
+				column2Label="#{messages['customer.description']}" column2="description" 
+				filtersMap="#{customerBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{edrRatingPlan.setOriginCustomer(entity)}"
+					oncomplete="Richfaces.hideModalPanel('customerPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+		 
+			<custom:entityPopup id="customerPopup1"
+				header="#{messages['customer.popup.header']}"
+				backingBean="#{customerBean}" dataModel="#{customers}"
+				searchField1Label="#{messages['customer.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['customer.description']}"
+				searchField2="description"
+				column1Label="#{messages['customer.code']}" column1="code"
+				column2Label="#{messages['customer.description']}" column2="description" 
+				filtersMap="#{customerBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{edrRatingPlan.setTargetCustomer(entity)}"
+					oncomplete="Richfaces.hideModalPanel('customerPopup1')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+    	 
+	 
+  
+	<custom:entityPopup id="oneShotChargeTemplatePopup"
+				header="#{messages['oneShotChargeTemplate.popup.header']}"
+				backingBean="#{oneShotChargeTemplateBean}" dataModel="#{oneShotChargeTemplates}"
+				searchField1Label="#{messages['oneShotChargeTemplate.code']}"
+				searchField1="code" 
+				column1Label="#{messages['oneShotChargeTemplate.code']}" column1="code" 
+				filtersMap="#{oneShotChargeTemplateBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{edrRatingPlan.setChargeTemplateIn(entity)}"
+					oncomplete="Richfaces.hideModalPanel('oneShotChargeTemplatePopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+		
+			<custom:entityPopup id="oneShotChargeTemplatePopup1"
+				header="#{messages['oneShotChargeTemplate.popup.header']}"
+				backingBean="#{oneShotChargeTemplateBean}" dataModel="#{oneShotChargeTemplates}"
+				searchField1Label="#{messages['oneShotChargeTemplate.code']}"
+				searchField1="code" 
+				column1Label="#{messages['oneShotChargeTemplate.code']}" column1="code" 
+				filtersMap="#{oneShotChargeTemplateBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{edrRatingPlan.setChargeTemplateOut(entity)}"
+					oncomplete="Richfaces.hideModalPanel('oneShotChargeTemplatePopup1')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+ 
+		 
+
+		<custom:formPanel edit="#{edit}"  label="#{messages['edrRatingPlan.edrRatingPlanPanel']}" backingBean="#{edrRatingPlanBean}" entity="#{edrRatingPlan}" >
+		
+			<custom:formField label="#{messages['edrRatingPlan.eventType']}" field="eventType"   />
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customText1Prefix']}" field="customText1Prefix"  />
+				<custom:formField label="#{messages['edrRatingPlan.customText1Regex']}" field="customText1Regex"  />
+			</custom:panelGroup>
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customText2Prefix']}" field="customText2Prefix"  />
+				<custom:formField label="#{messages['edrRatingPlan.customText2Regex']}" field="customText2Regex"  />
+			</custom:panelGroup>
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customText3Prefix']}" field="customText3Prefix"  />
+				<custom:formField label="#{messages['edrRatingPlan.customText3Regex']}" field="customText3Regex"  />
+			</custom:panelGroup>
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customText4Prefix']}" field="customText4Prefix"  />
+				<custom:formField label="#{messages['edrRatingPlan.customText4Regex']}" field="customText4Regex"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customNumber1Min']}" field="customNumber1Min"  />
+				<custom:formField label="#{messages['edrRatingPlan.customNumber1Max']}" field="customNumber1Max"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customNumber2Min']}" field="customNumber2Min"  />
+				<custom:formField label="#{messages['edrRatingPlan.customNumber2Max']}" field="customNumber2Max"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customNumber3Min']}" field="customNumber3Min"  />
+				<custom:formField label="#{messages['edrRatingPlan.customNumber3Max']}" field="customNumber3Max"  />
+			</custom:panelGroup>
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customNumber4Min']}" field="customNumber4Min"  />
+				<custom:formField label="#{messages['edrRatingPlan.customNumber4Max']}" field="customNumber4Max"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customDate1Min']}" field="customDate1Min"  />
+				 <custom:formField label="#{messages['edrRatingPlan.customDate1Max']}" field="customDate1Max"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customDate2Min']}" field="customDate2Min"  />
+				 <custom:formField label="#{messages['edrRatingPlan.customDate2Max']}" field="customDate2Max"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customDate3Min']}" field="customDate3Min"  />
+				 <custom:formField label="#{messages['edrRatingPlan.customDate3Max']}" field="customDate3Max"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customDate4Min']}" field="customDate4Min"  />
+				 <custom:formField label="#{messages['edrRatingPlan.customDate4Max']}" field="customDate4Max"  />
+			</custom:panelGroup>
+			
+			
+			<custom:panelGroup columns="2">
+				<custom:formField label="#{messages['edrRatingPlan.customDate4Min']}" field="customDate4Min"  />
+				 <custom:formField label="#{messages['edrRatingPlan.customDate4Max']}" field="customDate4Max"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+   		    <custom:formField label="#{messages['edrRatingPlan.customBoolean1']}" field="customBoolean1"  />
+		    <custom:formField label="#{messages['edrRatingPlan.customBoolean2']}" field="customBoolean2"  />
+		    </custom:panelGroup>
+		    <custom:panelGroup columns="2">
+		    <custom:formField label="#{messages['edrRatingPlan.customBoolean3']}" field="customBoolean3"  /> 
+		    <custom:formField label="#{messages['edrRatingPlan.customBoolean4']}" field="customBoolean4"  />
+			</custom:panelGroup>
+			
+			<custom:panelGroup columns="2">
+			<custom:formEntityField id="priceCodeSelectId"  label="#{messages['edrRatingPlan.priceCode']}" field="priceCode" childField="code" popup="true" popupId="priceCodePopup2" required="true"  clearButton="true"/>
+			</custom:panelGroup>
+		  
+		  <custom:panelGroup columns="2">
+			 <custom:formEntityField id="oneShotChargeTemplateSelectId" label="#{messages['edrRatingPlan.chargeTemplateOut']}" field="chargeTemplateOut" childField="code" popup="true" popupId="oneShotChargeTemplatePopup1" clearButton="true"/>
+			 <custom:formEntityField id="oneShotChargeTemplateSelectId"  label="#{messages['edrRatingPlan.chargeTemplateIn']}" field="chargeTemplateIn" childField="code" popup="true" popupId="oneShotChargeTemplatePopup" clearButton="true"/>
+			</custom:panelGroup>
+		 	
+			<custom:panelGroup columns="2">
+		    <custom:formField label="#{messages['edrRatingPlan.chargeInPrice1']}" field="chargeInPrice1"  /> 
+		     <custom:formField label="#{messages['edrRatingPlan.chargeOutPrice1']}" field="chargeOutPrice1"  />
+		     </custom:panelGroup>
+		     <custom:panelGroup columns="2">
+			    <custom:formField label="#{messages['edrRatingPlan.chargeInPrice2']}" field="chargeInPrice2"  />
+			    <custom:formField label="#{messages['edrRatingPlan.chargeOutPrice2']}" field="chargeOutPrice2"  /> 
+		    </custom:panelGroup>
+		    
+		    <custom:panelGroup columns="2">
+		    <custom:formField label="#{messages['access.startDate']}" field="startDate"  />
+			<custom:formField label="#{messages['access.endDate']}" field="endDate"   />
+		    </custom:panelGroup>
+		    
+		    <custom:panelGroup columns="2">
+ 		    <custom:formEntityField id="customerSelectId" label="#{messages['edrRatingPlan.originCustomer']}" field="originCustomer" childField="code" popup="true" popupId="customerPopup" clearButton="true"/>
+ 		    <custom:formEntityField id="oneShotChargeTemplateSelectId"  label="#{messages['edrRatingPlan.targetCustomer']}" field="targetCustomer" childField="code" popup="true" popupId="customerPopup1" clearButton="true"/>
+			
+			</custom:panelGroup>
+	 
+		
+				
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>

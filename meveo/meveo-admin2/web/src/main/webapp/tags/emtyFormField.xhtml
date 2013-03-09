@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+	<!-- Show form field -->
+	<c:set var="show" value="true" />
+	<c:if test="${!empty objectId and !empty showOnlyOnNew}">
+		<c:set var="show" value="false" />
+	</c:if>
+	<c:if test="${empty objectId and !empty showOnlyOnNew}">
+		<c:set var="show" value="true" />
+	</c:if>	
+	<c:if test="${empty objectId and !empty showOnlyOnConsult}">
+		<c:set var="show" value="false" />
+	</c:if>	
+	
+	
+		<f:view>
+			<h:outputText value="" rendered="${show}"/>
+		</f:view>
+    </ui:composition>
+
+</html>
