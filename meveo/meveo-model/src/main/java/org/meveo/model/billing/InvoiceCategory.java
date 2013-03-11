@@ -71,10 +71,7 @@ public class InvoiceCategory extends BusinessEntity {
 		this.prDescription = prDescription;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
+	
 	public Integer getProviderId() {
 		return providerId;
 	}
