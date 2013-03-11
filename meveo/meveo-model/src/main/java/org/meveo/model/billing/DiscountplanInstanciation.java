@@ -46,7 +46,6 @@ public class DiscountplanInstanciation  extends AuditableEntity{
 	@Column(name = "BILLING_ACCOUNT_ID")
 	private Integer billingAccountId;
 	
-	
 	@Column(name = "USAGE_TYPE")
 	private EventTypeEnum usageType;
 	
