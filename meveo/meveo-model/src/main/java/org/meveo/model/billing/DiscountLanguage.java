@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package newer;
+package org.meveo.model.billing;
 
 import java.util.Date;
 
@@ -28,6 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.meveo.model.AuditableEntity;
 
 /**
  * DiscountLanguage entity.
@@ -38,9 +39,10 @@ import org.jboss.seam.annotations.AutoCreate;
 
 @Entity
 @Table(name = "DISCOUNT_LANGUAGE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "NEWER_DISCOUNT_LANGUAGE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNT_LANGUAGE_SEQ")
 
-public class DiscountLanguage {
+public class DiscountLanguage  extends AuditableEntity{
+	private static final long serialVersionUID = 1L;
 	
 	@Column(name = "ID")
 	private Integer id;

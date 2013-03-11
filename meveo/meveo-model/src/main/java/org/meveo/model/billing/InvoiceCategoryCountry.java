@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package newer;
+package org.meveo.model.billing;
 
 import java.util.Date;
 
@@ -28,6 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.meveo.model.AuditableEntity;
 
 /**
  * InvoiceCategoryCountry entity.
@@ -38,10 +39,10 @@ import org.jboss.seam.annotations.AutoCreate;
 
 @Entity
 @Table(name = "INVOICE_CATEGORY_ COUNTRY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "NEWER_INVOICE_CATEGORY_COUNTRY_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CATEGORY_COUNTRY_SEQ")
 
-public class InvoiceCategoryCountry {
-	
+public class InvoiceCategoryCountry  extends AuditableEntity{
+	private static final long serialVersionUID = 1L;
 
 	@Column(name = "ID")
 	private Integer id;

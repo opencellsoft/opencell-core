@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package newer;
+package org.meveo.model.billing;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -24,6 +24,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.meveo.model.AuditableEntity;
 
 /**
  * Currency entity.
@@ -34,10 +35,10 @@ import org.jboss.seam.annotations.AutoCreate;
 
 @Entity
 @Table(name = "CURRENCY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "NEWER_CURRENCY_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CURRENCY_SEQ")
 
-public class Currency {
-	
+public class Currency  extends AuditableEntity{
+	private static final long serialVersionUID = 1L;
 
 	@Column(name = "CURRENCY_CODE", length = 3)
 	private String currencyCode;

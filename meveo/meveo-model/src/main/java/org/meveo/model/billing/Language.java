@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package newer;
+package org.meveo.model.billing;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -24,6 +24,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.meveo.model.AuditableEntity;
 
 /**
  * Language entity.
@@ -34,9 +35,9 @@ import org.jboss.seam.annotations.AutoCreate;
 
 @Entity
 @Table(name = "LANGUAGE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "NEWER_LANGUAGE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_SEQ")
 
-public class Language {
+public class Language  extends AuditableEntity{
 	
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;

@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package newer;
+package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -29,6 +29,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.meveo.model.AuditableEntity;
 
 /**
  * PriceplanInstanciation entity.
@@ -39,11 +40,11 @@ import org.jboss.seam.annotations.AutoCreate;
 
 @Entity
 @Table(name = "PRICEPLAN_INSTANCIATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "NEWER_PRICEPLAN_INSTANCIATION_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_PRICEPLAN_INSTANCIATION_SEQ")
 
-public class PriceplanInstanciation {
+public class PriceplanInstanciation  extends AuditableEntity{
 	
-	
+	private static final long serialVersionUID = 1L;
 
 	
 	
