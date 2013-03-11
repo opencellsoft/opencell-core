@@ -87,14 +87,14 @@ public class BillingRun extends AuditableEntity {
     @Column(name = "PRODUCIBLE_AMOUNT_WITH_TAX", precision = 23, scale = 12)
     private BigDecimal producibleAmountWithTax;
 
-    @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax;
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+    private BigDecimal prAmountWithoutTax;
 
-    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal AmountWithTax;
+    @Column(name = "PR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+    private BigDecimal prAmountWithTax;
 
-    @Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal AmountTax;
+    @Column(name = "PR_AMOUNT_TAX", precision = 23, scale = 12)
+    private BigDecimal prAmountTax;
 
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<Invoice>();
@@ -123,6 +123,20 @@ public class BillingRun extends AuditableEntity {
     @Column(name = "REJECTION_REASON")
     private String rejectionReason;
 
+    @Column(name = "PR_CURRENCY_CODE", length = 3)
+    private String prCurrencyCode;
+    
+    
+    @Column(name = "PR_COUNTRY_CODE", length = 2)
+    private String prCountryCode;
+    
+    
+    @Column(name = "PR_LANGUAGE_CODE", length = 3)
+    private String prLanguageCode;
+    
+
+    
+    
     @Transient
     PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
@@ -217,28 +231,9 @@ public class BillingRun extends AuditableEntity {
         this.producibleAmountWithTax = producibleAmountWithTax;
     }
 
-    public BigDecimal getAmountWithoutTax() {
-        return amountWithoutTax;
-    }
-
-    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.amountWithoutTax = amountWithoutTax;
-    }
-
-    public BigDecimal getAmountWithTax() {
-        return AmountWithTax;
-    }
-
-    public void setAmountWithTax(BigDecimal amountWithTax) {
-        AmountWithTax = amountWithTax;
-    }
-
-    public BigDecimal getAmountTax() {
-        return AmountTax;
-    }
-
-    public void setAmountTax(BigDecimal amountTax) {
-        AmountTax = amountTax;
+   
+    public void setPrAmountTax(BigDecimal amountTax) {
+        amountTax = amountTax;
     }
 
     public List<Invoice> getInvoices() {
@@ -320,5 +315,51 @@ public class BillingRun extends AuditableEntity {
     public void setRejectionReason(String rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
+
+	public BigDecimal getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
+
+	public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
+
+	public BigDecimal getPrAmountWithTax() {
+		return prAmountWithTax;
+	}
+
+	public void setPrAmountWithTax(BigDecimal prAmountWithTax) {
+		this.prAmountWithTax = prAmountWithTax;
+	}
+
+	public String getPrCurrencyCode() {
+		return prCurrencyCode;
+	}
+
+	public void setPrCurrencyCode(String prCurrencyCode) {
+		this.prCurrencyCode = prCurrencyCode;
+	}
+
+	public String getPrCountryCode() {
+		return prCountryCode;
+	}
+
+	public void setPrCountryCode(String prCountryCode) {
+		this.prCountryCode = prCountryCode;
+	}
+
+	public String getPrLanguageCode() {
+		return prLanguageCode;
+	}
+
+	public void setPrLanguageCode(String prLanguageCode) {
+		this.prLanguageCode = prLanguageCode;
+	}
+
+	public BigDecimal getPrAmountTax() {
+		return prAmountTax;
+	}
+    
+    
 
 }

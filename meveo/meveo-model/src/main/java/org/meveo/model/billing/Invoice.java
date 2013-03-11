@@ -111,6 +111,39 @@ public class Invoice extends AuditableEntity {
     //private Blob pdfBlob;
     private byte[] pdf;
     
+    @Column(name = "CURRENCY_CODE", length = 3)
+    private String currencyCode;
+    
+    @Column(name = "COUNTRY_CODE", length = 2)
+    private String countryCode;
+    
+    @Column(name = "LANGUAGE_CODE", length = 3)
+    private String languageCode;
+    
+    @Column(name = "DISCOUNT_CODE", length = 20)
+    private String discountCode;
+    
+    @Column(name = "PR_AMOUNT")
+    private Integer prAmount;
+    
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX")
+    private Integer prAmountWithoutTax;
+    
+    @Column(name = "PR_AMOUNT_TAX")
+    private Integer prAmountTax;
+    
+    @Column(name = "PR_AMOUNT_WITH_TAX")
+    private Integer prAmountWithTax;
+    
+    @Column(name = "PR_CURRENCY_CODE", length = 3)
+    private String prCurrencyCode;
+    
+    @Column(name = "PR_COUNTRY_CODE", length = 2)
+    private String prCountryCode;
+    
+    @Column(name = "PR_LANGUAGE_CODE", length = 3)
+    private String prLanguageCode;
+
     
     @Column(name = "INVOICE_TYPE",length = 20)
     private String invoiceType;
@@ -118,7 +151,97 @@ public class Invoice extends AuditableEntity {
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
 
-    public List<RatedTransaction> getRatedTransactions() {
+    
+    
+    public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
+	}
+
+	public String getDiscountCode() {
+		return discountCode;
+	}
+
+	public void setDiscountCode(String discountCode) {
+		this.discountCode = discountCode;
+	}
+
+	public Integer getPrAmount() {
+		return prAmount;
+	}
+
+	public void setPrAmount(Integer prAmount) {
+		this.prAmount = prAmount;
+	}
+
+	public Integer getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
+
+	public void setPrAmountWithoutTax(Integer prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
+
+	public Integer getPrAmountTax() {
+		return prAmountTax;
+	}
+
+	public void setPrAmountTax(Integer prAmountTax) {
+		this.prAmountTax = prAmountTax;
+	}
+
+	public Integer getPrAmountWithTax() {
+		return prAmountWithTax;
+	}
+
+	public void setPrAmountWithTax(Integer prAmountWithTax) {
+		this.prAmountWithTax = prAmountWithTax;
+	}
+
+	public String getPrCurrencyCode() {
+		return prCurrencyCode;
+	}
+
+	public void setPrCurrencyCode(String prCurrencyCode) {
+		this.prCurrencyCode = prCurrencyCode;
+	}
+
+	public String getPrCountryCode() {
+		return prCountryCode;
+	}
+
+	public void setPrCountryCode(String prCountryCode) {
+		this.prCountryCode = prCountryCode;
+	}
+
+	public String getPrLanguageCode() {
+		return prLanguageCode;
+	}
+
+	public void setPrLanguageCode(String prLanguageCode) {
+		this.prLanguageCode = prLanguageCode;
+	}
+
+	public List<RatedTransaction> getRatedTransactions() {
         return ratedTransactions;
     }
 

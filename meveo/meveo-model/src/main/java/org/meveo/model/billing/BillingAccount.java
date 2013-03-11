@@ -122,6 +122,14 @@ public class BillingAccount extends AccountEntity {
     @Column(name = "INVOICE_PREFIX")
     private String invoicePrefix;
 
+    @Column(name = "COUNTRY_CODE", length = 2)
+    private String countryCode;
+    
+    
+    @Column(name = "LANGUAGE_CODE", length = 3)
+    private String languageCode;
+
+    
     public List<UserAccount> getUsersAccounts() {
         return usersAccounts;
     }
@@ -282,6 +290,22 @@ public class BillingAccount extends AccountEntity {
 
 	public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
 		this.invoiceAgregates = invoiceAgregates;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
 	}
 	
 }

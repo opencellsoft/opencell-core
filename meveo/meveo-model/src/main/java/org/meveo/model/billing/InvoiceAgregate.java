@@ -89,7 +89,176 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
     private BigDecimal amountWithTax = BigDecimal.ZERO;
 
-    public BillingAccount getBillingAccount() {
+    
+    @Column(name = "CURRENCY_CODE", length = 3)
+    private String currencyCode;
+    
+    
+    @Column(name = "COUNTRY_CODE", length = 2)
+    private String countryCode;
+    
+    
+    @Column(name = "LANGUAGE_CODE", length = 3)
+    private String languageCode;
+    
+    
+    @Column(name = "DISCOUNT_CODE", length = 20)
+    private String discountCode;
+    
+    
+    @Column(name = "PR_AMOUNT")
+    private Integer prAmount;
+    
+    
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX")
+    private Integer prAmountWithoutTax;
+    
+    
+    @Column(name = "PR_AMOUNT_TAX")
+    private Integer prAmountTax;
+    
+    
+    @Column(name = "PR_AMOUNT_WITH_TAX")
+    private Integer prAmountWithTax;
+    
+    
+    @Column(name = "PR_CURRENCY_CODE", length = 3)
+    private String prCurrencyCode;
+    
+    
+    @Column(name = "PR_COUNTRY_CODE", length = 2)
+    private String prCountryCode;
+    
+    
+    @Column(name = "PR_LANGUAGE_CODE", length = 3)
+    private String prLanguageCode;
+    
+    
+    @Column(name = "PR_DESCRIPTION", length = 50)
+    private String prDescription;
+    
+    
+    @Column(name = "PR_DESCRIPTION_DISCOUNT", length = 50)
+    private String prDescriptionDiscount;
+    
+    
+    @Column(name = "DESCRIPTION_DISCOUNT", length = 50)
+    private String descriptionDiscount;
+
+    
+    public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
+	}
+
+	public String getDiscountCode() {
+		return discountCode;
+	}
+
+	public void setDiscountCode(String discountCode) {
+		this.discountCode = discountCode;
+	}
+
+	public Integer getPrAmount() {
+		return prAmount;
+	}
+
+	public void setPrAmount(Integer prAmount) {
+		this.prAmount = prAmount;
+	}
+
+	public Integer getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
+
+	public void setPrAmountWithoutTax(Integer prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
+
+	public Integer getPrAmountTax() {
+		return prAmountTax;
+	}
+
+	public void setPrAmountTax(Integer prAmountTax) {
+		this.prAmountTax = prAmountTax;
+	}
+
+	public Integer getPrAmountWithTax() {
+		return prAmountWithTax;
+	}
+
+	public void setPrAmountWithTax(Integer prAmountWithTax) {
+		this.prAmountWithTax = prAmountWithTax;
+	}
+
+	public String getPrCurrencyCode() {
+		return prCurrencyCode;
+	}
+
+	public void setPrCurrencyCode(String prCurrencyCode) {
+		this.prCurrencyCode = prCurrencyCode;
+	}
+
+	public String getPrCountryCode() {
+		return prCountryCode;
+	}
+
+	public void setPrCountryCode(String prCountryCode) {
+		this.prCountryCode = prCountryCode;
+	}
+
+	public String getPrLanguageCode() {
+		return prLanguageCode;
+	}
+
+	public void setPrLanguageCode(String prLanguageCode) {
+		this.prLanguageCode = prLanguageCode;
+	}
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
+
+	public String getPrDescriptionDiscount() {
+		return prDescriptionDiscount;
+	}
+
+	public void setPrDescriptionDiscount(String prDescriptionDiscount) {
+		this.prDescriptionDiscount = prDescriptionDiscount;
+	}
+
+	public String getDescriptionDiscount() {
+		return descriptionDiscount;
+	}
+
+	public void setDescriptionDiscount(String descriptionDiscount) {
+		this.descriptionDiscount = descriptionDiscount;
+	}
+
+	public BillingAccount getBillingAccount() {
         return billingAccount;
     }
 

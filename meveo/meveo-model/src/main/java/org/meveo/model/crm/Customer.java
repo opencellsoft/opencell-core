@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,7 +63,57 @@ public class Customer extends AccountEntity {
     @Embedded
     private ContactInformation contactInformation = new ContactInformation();
 
-    public CustomerCategory getCustomerCategory() {
+    
+    @Column(name = "BUSINESS_INTERMEDIARY_ID")
+    private Integer businessIntermediaryId;
+    
+    
+    @Column(name = "COUNTRY_CODE", length = 2)
+    private String countryCode;
+    
+    
+    @Column(name = "CURRENCY_CODE", length = 3)
+    private String currencyCode;
+    
+    
+    @Column(name = "LANGUAGE_CODE", length = 3)
+    private String languageCode;
+
+    
+    
+    public Integer getBusinessIntermediaryId() {
+		return businessIntermediaryId;
+	}
+
+	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
+		this.businessIntermediaryId = businessIntermediaryId;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
+	}
+
+	public CustomerCategory getCustomerCategory() {
         return customerCategory;
     }
 
