@@ -46,6 +46,10 @@ import org.meveo.model.AuditableEntity;
 public class DiscountPlanMatrix extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
+    
+    @Column(name = "BUSINESS_INTERMEDIARY_ID")
+    private Integer businessIntermediaryId;
+
 
     @Column(name = "EVENT_CODE", length = 20, nullable = false)
     @Length(max = 20)
@@ -69,7 +73,17 @@ public class DiscountPlanMatrix extends AuditableEntity {
     @Min(0)
     private BigDecimal percent;
 
-    public String getEventCode() {
+    
+    
+    public Integer getBusinessIntermediaryId() {
+		return businessIntermediaryId;
+	}
+
+	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
+		this.businessIntermediaryId = businessIntermediaryId;
+	}
+
+	public String getEventCode() {
         return eventCode;
     }
 

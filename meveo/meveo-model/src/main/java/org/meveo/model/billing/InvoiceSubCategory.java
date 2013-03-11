@@ -50,7 +50,9 @@ public class InvoiceSubCategory extends BusinessEntity {
     @JoinColumn(name = "TAX_ID")
     private Tax tax;
  
-    
+    @Column(name = "PR_DESCRIPTION", length = 50)
+    private String prDescription;
+
     
     @Column(name = "PROVIDER_ID")
     private Integer providerId;

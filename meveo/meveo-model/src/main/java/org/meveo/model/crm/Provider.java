@@ -48,6 +48,46 @@ public class Provider extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "COUNTRY_CODE")
+    private String countryCode;
+    
+    
+    @Column(name = "CURRENCY_CODE")
+    private String currencyCode;
+    
+    
+    @Column(name = "LANGUAGE_CODE")
+    private String languageCode;
+    
+    
+    @Column(name = "MULTICOUNTRY_FLAG")
+    private Integer multicountryFlag;
+    
+    
+    @Column(name = "MULTICURRENCY_FLAG")
+    private Integer multicurrencyFlag;
+    
+    
+    @Column(name = "MULTILANGUAGE_FLAG")
+    private Integer multilanguageFlag;
+    
+    
+    @Column(name = "CUSTOMER_ID")
+    private Integer customerId;
+    
+    
+    @Column(name = "CUSTOMER_ACCOUNT_ID")
+    private Integer customerAccountId;
+    
+    
+    @Column(name = "BILLING_ACCOUNT_ID")
+    private Integer billingAccountId;
+    
+    
+    @Column(name = "USER_ACCOUNT_ID")
+    private Integer userAccountId;
+
+    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
     private List<User> users = new ArrayList<User>();
@@ -109,7 +149,87 @@ public class Provider extends BusinessEntity {
         this.serializedPaymentMethods = serializedPaymentMethods;
     }
 
-    public List<PaymentMethodEnum> getPaymentMethods() {
+    public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
+	}
+
+	public Integer getMulticountryFlag() {
+		return multicountryFlag;
+	}
+
+	public void setMulticountryFlag(Integer multicountryFlag) {
+		this.multicountryFlag = multicountryFlag;
+	}
+
+	public Integer getMulticurrencyFlag() {
+		return multicurrencyFlag;
+	}
+
+	public void setMulticurrencyFlag(Integer multicurrencyFlag) {
+		this.multicurrencyFlag = multicurrencyFlag;
+	}
+
+	public Integer getMultilanguageFlag() {
+		return multilanguageFlag;
+	}
+
+	public void setMultilanguageFlag(Integer multilanguageFlag) {
+		this.multilanguageFlag = multilanguageFlag;
+	}
+
+	public Integer getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
+	}
+
+	public Integer getCustomerAccountId() {
+		return customerAccountId;
+	}
+
+	public void setCustomerAccountId(Integer customerAccountId) {
+		this.customerAccountId = customerAccountId;
+	}
+
+	public Integer getBillingAccountId() {
+		return billingAccountId;
+	}
+
+	public void setBillingAccountId(Integer billingAccountId) {
+		this.billingAccountId = billingAccountId;
+	}
+
+	public Integer getUserAccountId() {
+		return userAccountId;
+	}
+
+	public void setUserAccountId(Integer userAccountId) {
+		this.userAccountId = userAccountId;
+	}
+
+	public List<PaymentMethodEnum> getPaymentMethods() {
         if (paymentMethods == null) {
             paymentMethods = new ArrayList<PaymentMethodEnum>();
             if (serializedPaymentMethods != null) {

@@ -41,14 +41,21 @@ public class Tax extends BusinessEntity {
     @Column(name = "PERCENT", precision = 19, scale = 8)
     private BigDecimal percent;
 
-    
-    
+    @Column(name = "PR_DESCRIPTION")
+    private String prDescription;
+
     
     @Column(name = "PROVIDER_ID")
     private Integer providerId;
-
-    
    
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
 
 	public Integer getProviderId() {
 		return providerId;

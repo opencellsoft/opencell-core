@@ -41,6 +41,9 @@ public class InvoiceCategory extends BusinessEntity {
     @OneToMany(mappedBy = "invoiceCategory", fetch = FetchType.LAZY)
     private List<InvoiceSubCategory> invoiceSubCategories;
 
+    @Column(name = "PR_DESCRIPTION")
+    private String prDescription;
+
     
     @Column(name = "SORT_INDEX")
     private Integer sortIndex;
@@ -59,6 +62,18 @@ public class InvoiceCategory extends BusinessEntity {
     
     
 
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 	public Integer getProviderId() {
 		return providerId;

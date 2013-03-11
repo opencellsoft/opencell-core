@@ -91,6 +91,16 @@ public class PricePlanMatrix extends AuditableEntity {
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithoutTax2;
 
+    
+    @Column(name = "BUSINESS_INTERMEDIARY_ID")
+    private Integer businessIntermediaryId;
+    
+    
+    @Column(name = "CURRENCY_CODE")
+    private String currencyCode;
+
+    
+    
     public String getEventCode() {
         return eventCode;
     }
