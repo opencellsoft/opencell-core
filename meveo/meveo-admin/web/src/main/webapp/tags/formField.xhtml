@@ -319,7 +319,7 @@
 				<rich:calendar rendered="#{edit}" value="#{entity[field]}" disabled="#{disabled}"
 					popup="true" showApplyButton="false" cellWidth="24px"
 					datePattern="#{datePattern}" cellHeight="22px" style="width:200px"
-					required="${required}" defaultTime="#{defaultTime}" resetTimeOnDateSelect="#{resetTimeOnDateSelect}"/>
+					required="${required}" resetTimeOnDateSelect="#{resetTimeOnDateSelect}"/>
 				<h:outputText rendered="#{!edit}" value="#{entity[field]}" style="font-weight:bold;">
 					<s:convertDateTime type="date" pattern="#{datePattern}"/>
 				</h:outputText>

@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:mnt="http://manaty.net/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:custom="http://manaty.net/custom">
+
+<ui:composition>
+
+	<c:set var="filtersMap" value="#{backingBean.filters}" />
+
+	<!-- Default size -->
+	<c:if test="${empty size}">
+		<c:set var="size" value="20" />
+	</c:if>
+
+	<!-- Default rangeSearch -->
+	<c:if test="${empty rangeSearch}">
+		<c:set var="rangeSearch" value="true" />
+	</c:if>
+	
+	<!-- Default padding -->
+	<c:if test="${empty padding}">
+		<c:set var="padding" value="5px" />
+	</c:if>
+	
+	<!-- Default Data Pattern -->
+	<c:if test="${empty time}">
+		<c:set var="time" value="true" />
+	</c:if>
+	<c:if test="${time}">	
+		<c:set var="datePattern" value="#{messages['meveo.dateTimeFormat']}" />
+	</c:if>
+	<c:if test="${!time}">
+		<c:set var="datePattern" value="#{messages['meveo.dateFormat']}" />
+	</c:if>
+	
+	<!--  Initialize the value binding -->
+	<mnt:setValueBinding var="vb" valueBinding="#{entity[field]}" />
+
+	<!--  If the value binding is a string, 
+	          display an inputText field. -->
+	<mnt:isText id="vb">
+		<s:decorate template="/layout/edit.xhtml">
+			<ui:define name="label">
+				<h:outputText value="#{label}" />
+			</ui:define>
+			<h:inputText id="#{field}" value="#{filtersMap[field]}"
+				size="#{size}"/>
+		</s:decorate>
+	</mnt:isText>
+
+	<!--  If the value binding is a boolean, display a
+	           display drop down with yes/no choices. -->
+	<mnt:isInteger id="vb">
+		<custom:numberField rangeSearch="#{rangeSearch}" label="#{label}"
+			field="#{field}" filtersMap="#{filtersMap}"
+			converterId="javax.faces.Integer" />
+	</mnt:isInteger>
+
+	<mnt:isLong id="vb">
+		<custom:numberField rangeSearch="#{rangeSearch}" label="#{label}"
+			field="#{field}" filtersMap="#{filtersMap}" converterId="javax.faces.Long" />
+	</mnt:isLong>
+	
+	<mnt:isByte id="vb">
+		<custom:numberField rangeSearch="#{rangeSearch}" label="#{label}"
+			field="#{field}" filtersMap="#{filtersMap}" converterId="javax.faces.Byte" />
+	</mnt:isByte>
+	
+	<mnt:isShort id="vb">
+		<custom:numberField rangeSearch="#{rangeSearch}" label="#{label}"
+			field="#{field}" filtersMap="#{filtersMap}" converterId="javax.faces.Short" />
+	</mnt:isShort>
+	
+	<mnt:isDouble id="vb">
+		<custom:numberField rangeSearch="#{rangeSearch}" label="#{label}"
+			field="#{field}" filtersMap="#{filtersMap}" converterId="javax.faces.Double" />
+	</mnt:isDouble> 
+	
+	<mnt:isFloat id="vb">
+		<custom:numberField rangeSearch="#{rangeSearch}" label="#{label}"
+			field="#{field}" filtersMap="#{filtersMap}" converterId="javax.faces.Float" />
+	</mnt:isFloat>
+	
+	<mnt:isBigDecimal id="vb">
+		<custom:numberField rangeSearch="#{rangeSearch}" label="#{label}"
+			field="#{field}" filtersMap="#{filtersMap}" converterId="javax.faces.BigDecimal" />
+	</mnt:isBigDecimal>
+	
+	<!--  If the value binding is a boolean, display a
+	           display drop down with yes/no choices. -->
+	<mnt:isBoolean id="vb">
+		<s:decorate template="/layout/edit.xhtml">
+			<ui:define name="label">
+				<h:outputText value="#{label}" />
+			</ui:define>
+			<h:selectOneMenu value="#{filtersMap[field]}"
+				converter="javax.faces.Boolean">
+				<f:selectItem itemValue="#{null}" itemLabel="" />
+				<f:selectItem itemValue="#{true}"
+					itemLabel="#{messages['commons.yes']}" />
+				<f:selectItem itemValue="#{false}"
+					itemLabel="#{messages['commons.no']}" />
+			</h:selectOneMenu>
+		</s:decorate>
+	</mnt:isBoolean>
+
+	<!--  If the value binding is a date, 
+	          display a rich:calendar field. -->
+	<mnt:isDate id="vb">
+		<c:if test="${!rangeSearch}">
+			<s:decorate template="/layout/edit.xhtml">
+				<ui:define name="label">
+					<h:outputText value="#{label}" />
+				</ui:define>
+				<rich:calendar value="#{filtersMap[field]}" popup="true"
+					showApplyButton="false" cellWidth="24px" cellHeight="22px" datePattern="#{datePattern}"
+					style="width:200px" />
+			</s:decorate>
+		</c:if>
+		<c:if test="${rangeSearch}">
+			<s:decorate template="/layout/edit.xhtml">
+				<ui:define name="label">
+					<h:outputText value="#{label}" style="padding-right:5px" />
+				</ui:define>
+
+				<c:set var="fromRangeField" value="fromRange-#{field}" />
+				<h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" />
+				<rich:calendar value="#{filtersMap[fromRangeField]}" popup="true"
+					showApplyButton="false" cellWidth="24px" cellHeight="22px" datePattern="#{datePattern}"
+					style="width:200px;"/>
+
+				<c:set var="toRangeField" value="toRange-#{field}" />
+				<h:outputText value="#{messages['commons.dateTill']}" style="padding:5px"/>
+				<rich:calendar value="#{filtersMap[toRangeField]}" popup="true"
+					showApplyButton="false" cellWidth="24px" cellHeight="22px" datePattern="#{datePattern}"
+					style="width:200px" />
+			</s:decorate>
+		</c:if>
+	</mnt:isDate>
+
+	<!--  If the value binding is an enum, 
+	          display a drop down. -->
+	<mnt:isEnum id="vb">
+		<s:decorate template="/layout/edit.xhtml">
+			<ui:define name="label">
+				<h:outputText value="#{label}" />
+			</ui:define>
+			<h:selectOneMenu id="level" value="#{filtersMap[field]}">
+				<s:selectItems value="#{vbType.getEnumConstants()}" var="enum"
+					label="#{messages[enum.label]}" noSelectionLabel="#{messages['commons.select']}" />
+				<s:convertEnum />
+			</h:selectOneMenu>
+		</s:decorate>
+	</mnt:isEnum>
+	
+</ui:composition>
+
+</html>

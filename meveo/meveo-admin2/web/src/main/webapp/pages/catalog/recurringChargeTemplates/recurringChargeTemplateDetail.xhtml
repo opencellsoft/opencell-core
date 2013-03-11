@@ -1,0 +1,62 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+	
+	<ui:define name="body">
+		<script>
+			function showHide(id) {
+				
+			}
+		</script>
+
+		<custom:entityPopup id="searchInvoiceSubCategoryPopup"
+			header="#{messages['invoiceSubCategory.panel']}"
+			backingBean="#{invoiceSubCategoryBean}" dataModel="#{invoiceSubCategories}"
+			searchField1Label="#{messages['invoiceSubCategory.code']}" searchField1="code"
+			searchField2Label="#{messages['invoiceSubCategory.description']}"
+			searchField2="description"
+			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
+			column2Label="#{messages['invoiceSubCategory.description']}"
+			column2="description" filtersMap="#{invoiceSubCategoryBean.filters}">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="formId" action="#{recurringChargeTemplate.setInvoiceSubCategory(entity)}"
+				oncomplete="Richfaces.hideModalPanel('searchInvoiceSubCategoryPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+
+		<custom:formPanel edit="#{edit}" label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}" backingBean="#{recurringChargeTemplateBean}" entity="#{recurringChargeTemplate}">
+    			<custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
+    			<custom:formField label="#{messages['chargeTemplate.description']}" field="description" required="true"  useConverter="false" size="50" maxlength="50"/>
+		    	<custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+    			<custom:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
+    			<custom:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
+    			<custom:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
+    			<custom:formField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
+    			<custom:formField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" />
+    			<custom:formEntityField id="invoiceSubCategoryId"
+										label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"
+										childField="code" required="true" popup="true"
+										popupId="searchInvoiceSubCategoryPopup" />
+				<custom:panelGroup columns="2">	
+	    			<custom:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="false" popup="false"
+											show="#{entity.recurrenceType == 'CALENDAR'}" service="#{calendarService}" listElements="#{calendarService.listChargeApplicationCalendars()}" />
+					<custom:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
+				</custom:panelGroup>
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>

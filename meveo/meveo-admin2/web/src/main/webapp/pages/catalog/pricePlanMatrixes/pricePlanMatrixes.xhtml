@@ -1,0 +1,56 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['pricePlanMatrix.title']}" backingBean="#{pricePlanMatrixBean}">
+    	
+    		<custom:searchPanel label="#{messages['pricePlanMatrix.search']}" newButtonView="/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml">
+    			<custom:searchField label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode" />
+    			<!-- <custom:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.startRatingDate']}" field="startRatingDate" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.endRatingDate']}" field="endRatingDate" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}" field="minSubscriptionAgeInMonth" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}" field="maxSubscriptionAgeInMonth" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.criteria1Value']}" field="criteria1Value" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.criteria2Value']}" field="criteria2Value" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.criteria3Value']}" field="criteria3Value" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" />
+    			<custom:searchField label="#{messages['pricePlanMatrix.amountWithoutTax2']}" field="amountWithoutTax2" /> -->
+    		</custom:searchPanel>	
+    		
+    		<custom:dataList dataModel="#{pricePlanMatrixes}">
+    			<custom:column label="#{messages['pricePlanMatrix.table.eventCode']}" field="eventCode" />
+    			<custom:column label="#{messages['pricePlanMatrix.table.startSubscriptionDate']}" field="startSubscriptionDate" />
+    			<custom:column label="#{messages['pricePlanMatrix.table.endSubscriptionDate']}" field="endSubscriptionDate" />
+    			<custom:column label="#{messages['pricePlanMatrix.table.startRatingDate']}" field="startRatingDate"  wrapHeader="true"/>
+    			<custom:column label="#{messages['pricePlanMatrix.table.endRatingDate']}" field="endRatingDate"  wrapHeader="true"/>
+    			<custom:column label="#{messages['pricePlanMatrix.table.minSubscriptionAgeInMonth']}" field="minSubscriptionAgeInMonth"  wrapHeader="true" />
+    			<custom:column label="#{messages['pricePlanMatrix.table.maxSubscriptionAgeInMonth']}" field="maxSubscriptionAgeInMonth"  wrapHeader="true" />
+    			<custom:column label="#{messages['pricePlanMatrix.table.criteria1Value']}" field="criteria1Value" />
+    			<custom:column label="#{messages['pricePlanMatrix.table.criteria2Value']}" field="criteria2Value" />
+    			<custom:column label="#{messages['pricePlanMatrix.table.criteria3Value']}" field="criteria3Value" />
+    			<custom:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converterParam="10digits" wrapHeader="true" />
+    			<custom:column label="#{messages['pricePlanMatrix.amountWithoutTax2']}" field="amountWithoutTax2"  converterParam="10digits" wrapHeader="true" />
+		    	<custom:actionsColumn editView="/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}" />
+		    </custom:dataList>
+		   
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

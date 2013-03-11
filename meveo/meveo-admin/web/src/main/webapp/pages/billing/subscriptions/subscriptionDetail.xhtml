@@ -355,15 +355,14 @@
 								<h:outputText value="#{messages['chargeApplication.applicationDate']}" />
 							</f:facet>
 							<h:outputText value="#{shotApplication.applicationDate}" >
-								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+								<f:convertDateTime pattern="dd/MM/yyyy"/>
 							</h:outputText>
 						</rich:column>
 						<rich:column>
 							<f:facet name="header">
 								<h:outputText value="#{messages['chargeApplication.description']}" />
 							</f:facet>
-							<h:outputText value="#{shotApplication.description}" >
-								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+							<h:outputText value="#{shotApplication.description}" > 
 							</h:outputText>
 						</rich:column>
 						<rich:column>
@@ -597,7 +596,7 @@
 								<h:outputText value="#{messages['chargeApplication.applicationDate']}" />
 							</f:facet>
 							<h:outputText value="#{shotApplication.applicationDate}" >
-								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+								<f:convertDateTime pattern="dd/MM/yyyy"/>
 							</h:outputText>
 						</rich:column>
 						<rich:column>
@@ -605,7 +604,6 @@
 								<h:outputText value="#{messages['chargeApplication.description']}" />
 							</f:facet>
 							<h:outputText value="#{shotApplication.description}" >
-								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
 							</h:outputText>
 						</rich:column>
 						<rich:column>

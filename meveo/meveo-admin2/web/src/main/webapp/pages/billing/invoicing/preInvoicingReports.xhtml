@@ -1,0 +1,110 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml"
+	xmlns:e="http://jboss.com/products/seam/excel">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	
+	<custom:formPanel formId="form3" edit="false"  label="Rapport de pre-facturation"
+				backingBean="#{billingRunBean}" entity="#{billingRun}" showFormButtons="false" >
+		<custom:panelGroup columns="2">
+			<custom:formEntityField id="billingCycleSelectId" label="#{messages['billingAccount.billingCycle']}"
+				field="preInvoicingReports" childField="billingCycleCode" popup="false"/>
+				
+		   <custom:formEntityField id="billingCycleSelectId" label="Nbre de comptes "
+				field="preInvoicingReports" childField="billingAccountNumber" popup="false"/>
+		</custom:panelGroup>
+		
+		<custom:panelGroup columns="2">
+		<custom:formEntityField id="billingCycleSelectId" label="Nbre de comptes a facturer"
+			field="preInvoicingReports" childField="billableBillingAccountNumber" popup="false"/>
+	
+	<custom:formEntityField id="billingCycleSelectId" label="Montant HT"
+			field="preInvoicingReports" childField="amoutWitountTax" popup="false"/>
+		</custom:panelGroup>
+		
+		
+		<b>Nombre de comptes par moyen de paiement :</b>
+		<custom:panelGroup columns="1">
+			<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.check']}"
+			field="preInvoicingReports" childField="checkBANumber" popup="false"/>
+		</custom:panelGroup>
+		<custom:panelGroup columns="1">
+			<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.directDebit']}"
+			field="preInvoicingReports" childField="directDebitBANumber" popup="false"/>
+		</custom:panelGroup>
+		<custom:panelGroup columns="1">
+			<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.tip']}"
+			field="preInvoicingReports" childField="tipBANumber" popup="false"/>
+		</custom:panelGroup>
+		<custom:panelGroup columns="1">
+			<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.wiretransfer']}"
+			field="preInvoicingReports" childField="wiretransferBANumber" popup="false"/>
+		</custom:panelGroup>
+			<b>Nombre de comptes a facturer par moyen de paiement :</b>
+			
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.check']}"
+				field="preInvoicingReports" childField="checkBillableBANumber" popup="false"/>
+			</custom:panelGroup>
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.directDebit']}"
+				field="preInvoicingReports" childField="directDebitBillableBANumber" popup="false"/>
+			</custom:panelGroup>
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.tip']}"
+				field="preInvoicingReports" childField="tipBillableBANumber" popup="false"/>
+			</custom:panelGroup>
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.wiretransfer']}"
+				field="preInvoicingReports" childField="wiretransferBillableBANumber" popup="false"/>
+			</custom:panelGroup>
+				
+				<b>Montant HT total valorise par moyen de paiement :</b>
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.check']}"
+				field="preInvoicingReports" childField="checkBillableBAAmountHT" popup="false"/>
+			</custom:panelGroup>
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.directDebit']}"
+				field="preInvoicingReports" childField="directDebitBillableBAAmountHT" popup="false"/>
+			</custom:panelGroup>
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.tip']}"
+				field="preInvoicingReports" childField="tipBillableBAAmountHT" popup="false"/>
+			</custom:panelGroup>
+			<custom:panelGroup columns="1">
+				<custom:formEntityField id="billingCycleSelectId" label="#{messages['paymentMethod.wiretransfer']}"
+				field="preInvoicingReports" childField="wiretransferBillableBAAmountHT" popup="false"/>
+			</custom:panelGroup>
+				<br/>
+		
+			
+	</custom:formPanel>	
+	
+	      <br/>
+		<h:form id="operationsForm" rendered="#{!edit}">
+					<custom:listPanel>
+					<h:commandButton action="#{billingRunBean.confirmInvoicing()}" value="Confirmer"/>
+					<h:commandButton action="#{billingRunBean.rerateInvoicing()}" value="Revaloriser"/>	
+					<h:commandButton action="#{billingRunBean.cancelInvoicing()}" value="Annuler le traitement" onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}"/>
+					</custom:listPanel>		
+   	  </h:form>	
+
+	</ui:define>
+
+	
+
+</ui:composition>

@@ -1,0 +1,38 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['jobHistory.title']}" backingBean="#{jobExecutionHistoryBean}">
+    	
+    			<custom:searchPanel label="#{messages['jobHistory.search']}" new ="false">
+					<custom:searchEntityField label="#{messages['jobHistory.job']}" field="job" childField="name" service="#{jobService}" />
+    		    	<custom:searchField label="#{messages['jobHistory.executionDate']}" field="executionDate"/>
+    		</custom:searchPanel>
+    			<custom:dataList backingBean="#{jobExecutionHistoryBean}" dataModel="#{jobExecutionHistories}">
+    				<custom:column label="#{messages['jobHistory.job']}" field="job" childField="name" childFieldId="id" view="/pages/reporting/jobs/jobDetail.xhtml" backView="jobHistory"/>
+    		    	<custom:column label="#{messages['jobHistory.executionDate']}" field="executionDate" isDate="true"/>
+		       		<custom:column label="#{messages['jobHistory.linesRead']}" field="linesRead"/>
+		       		<custom:column label="#{messages['jobHistory.linesInserted']}" field="linesInserted" />
+		       		<custom:column label="#{messages['jobHistory.linesRejected']}" field="linesRejected"/>
+		    </custom:dataList>
+    	
+		    
+    	</custom:listPanel>	
+		
+    </ui:define>
+    
+</ui:composition>

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+  		xmlns:mnt="http://manaty.net/jsf/core"
+		xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:composition>
+		
+		<!-- The required attribute is optional, 
+         initialize it to false if not found. -->
+	    <c:if test="${empty required}">
+	        <c:set var="required" value="false" />
+	    </c:if>
+	    
+	    <c:set var="filtersMap" value="#{backingBean.filters}" />
+	    
+	    <!-- Default size. -->
+	    <c:if test="${empty size}">
+	        <c:set var="size" value="20" />
+	    </c:if>
+ 		
+ 		<!-- Clear Button. -->
+	    <c:if test="${empty clearButton}">
+	        <c:set var="clearButton" value="false" />
+	    </c:if>
+
+	    <!-- No popup is set. -->
+	    <c:if test="${empty popup}">
+	        <c:set var="popup" value="false" />
+	    </c:if>
+	    
+	    <c:if test="${popup}">
+	        <c:set var="childEntity" value="#{entity[field]}" />
+	        <s:decorate template="/layout/edit.xhtml">
+	    		<ui:define name="label">
+	    			<h:outputText value="#{label}" />
+	    		</ui:define>
+		    	<h:panelGrid columns="2">
+		    		<h:column>
+				    	<h:inputText value="#{filtersMap[field][childField]}" disabled="true" size="#{size}" />
+				    	<a:commandLink  id="selectLink" onclick="Richfaces.showModalPanel('#{popupId}');">
+			                 <h:graphicImage value="/img/search.gif" style="border:0"/>
+			            </a:commandLink>
+						<rich:toolTip for="selectLink" value="#{messages['commons.search']}"/>
+			        </h:column>
+			        <h:column>
+			            <a:commandLink rendered="#{clearButton}" id="clearLink" action="#{filtersMap.put(field, null)}" reRender="formId" >
+			                 <h:graphicImage value="/img/delete.gif" style="border:0"/>
+			            </a:commandLink>
+			            <rich:toolTip for="clearLink" value="#{messages['commons.clearField']}"/>
+			        </h:column>
+		        </h:panelGrid>
+	       	</s:decorate>
+	    </c:if>
+
+	    <c:if test="${!popup}">
+	    	<s:decorate template="/layout/edit.xhtml">
+	    		<ui:define name="label">
+	    			<h:outputText value="#{label}" />
+	    		</ui:define>
+		    	<h:selectOneMenu id="entity" value="#{filtersMap[field]}" >
+				       <s:selectItems value="#{service.list()}" var="childEntity" label="#{childEntity[childField]}" noSelectionLabel="#{messages['commons.select']}"/>
+				       <s:convertEntity/>
+				</h:selectOneMenu>	
+	       	</s:decorate>
+	    </c:if>
+	    
+	    
+	    
+    </ui:composition>
+
+</html>

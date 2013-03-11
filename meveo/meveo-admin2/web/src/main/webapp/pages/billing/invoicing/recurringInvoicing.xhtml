@@ -1,0 +1,51 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<custom:entityPopup id="billingCyclePopup"
+				header="#{messages['billingCycle.popup.header']}"
+				backingBean="#{billingCycleBean}" dataModel="#{billingCycles}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}"
+				searchField2="name"
+				column1Label="#{messages['businessEntity.code']}" column1="code"
+				column2Label="#{messages['businessEntity.description']}" column2="description" 
+				column3Label="#{messages['billingCycle.nextInvoiceDate']}" column3="nextCalendarDate" 
+				filtersMap="#{billingCycleBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{billingRun.setBillingCycle(entity)}"
+					oncomplete="Richfaces.hideModalPanel('billingCyclePopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+		<custom:formPanel edit ="true" label="#{messages['billingRun.panel']}" backingBean="#{billingRunBean}" entity="#{billingRun}" showFormButtons="false">
+    			<custom:formEntityField id="billingCycleId" label="#{messages['billingRun.billingCycle']}" field="billingCycle"  childField="code" 
+    					required="true" popup="true" popupId="billingCyclePopup"/>	
+				<custom:formField label="#{messages['billingRun.type']}" field="processType" required="true" noSelectionLabel="false" disabled="true"/>
+				<custom:formField label="#{messages['billingRun.startDate']}" field="startDate" />
+				<custom:formField label="#{messages['billingRun.endDate']}" field="endDate" required="false"/>
+				<h:commandButton action="#{billingRunBean.lunchRecurringInvoicing}" value="#{messages['button.launchInvoicing']}" />
+				
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>
+

@@ -1,0 +1,40 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+ 
+    	
+    	<custom:listPanel label="#{messages['numberingPlan.title']}" backingBean="#{numberingPlanBean}">
+    	
+    		<custom:searchPanel label="#{messages['numberingPlan.search']}" newButtonView="/pages/medina/numberingPlan/numberingPlanDetail.xhtml">
+    			<custom:searchField label="#{messages['numberingPlan.numberingCode']}" field="numberingCode"/>
+    		</custom:searchPanel>	
+    		<custom:dataList dataModel="#{numberingPlans}" noDelete="true" noClose="false">
+	    		<custom:column label="#{messages['access.startDate']}" field="startDate"/>
+				<custom:column label="#{messages['access.endDate']}" field="endDate"/>
+				<custom:column label="#{messages['numberingPlan.priority']}" field="priority"/>
+			    <custom:column label="#{messages['access.discriminatorCode']}" field="discriminatorCode"/>	    		
+	    		<custom:column label="#{messages['numberingPlan.numberPrefix']}" field="numberPrefix"/>	    		
+	    		<custom:column label="#{messages['numberingPlan.numberingCode']}" field="numberingCode"/>
+    			<custom:actionsColumn editView="/pages/medina/numberingPlan/numberingPlanDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}"/>
+		    </custom:dataList>
+		   
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

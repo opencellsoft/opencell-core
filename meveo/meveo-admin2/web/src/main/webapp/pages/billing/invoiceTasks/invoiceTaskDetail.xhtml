@@ -1,0 +1,44 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<custom:formPanel edit="#{edit}" label="#{messages['invoiceTasks.panel']}" backingBean="#{invoiceTaskBean}" entity="#{invoiceTask}">
+			<custom:formField label="#{messages['invoiceTask.executionTime']}" field="executionTime" required="true" />
+			<custom:formField label="#{messages['invoiceTask.processName']}" field="processName" required="true"  />
+				
+			<!-- Show form field with all possible values for account filter. -->
+			<s:decorate template="/layout/edit.xhtml">
+	    		<ui:define name="label">
+	    			<h:outputText value="#{messages['invoiceTask.accountFilter']}" />
+	    		</ui:define>
+	    		<c:if test="${edit}">
+	            	<c:set var="entityField" value="#{entity[field]}" />
+	            </c:if>
+	    		<h:selectOneMenu rendered="#{edit}" value="#{invoiceTask.accountFilter}" >
+		            <s:selectItems value="#{customerAccountService.getAllBillingKeywords()}" var="keyword" label="#{keyword}" noSelectionLabel="#{messages['commons.select']}"/>
+		        </h:selectOneMenu>
+		        <h:outputText rendered="#{!edit}" value="#{invoiceTask.accountFilter}" />
+	       	</s:decorate>
+	       	
+			<custom:formField label="#{messages['invoiceTask.walletFilter']}" field="walletFilter" />
+			<custom:formField label="#{messages['invoiceTask.taskStatus']}" field="taskStatus" required="true" />
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>

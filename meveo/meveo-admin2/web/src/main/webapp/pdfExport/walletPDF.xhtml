@@ -1,0 +1,24 @@
+<p:document xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://jboss.com/products/seam/pdf"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:s="http://jboss.com/products/seam/taglib" title="Wallets"
+	type="pdf">
+
+	<p:font size="24">
+		<p:paragraph spacingAfter="50">Wallet</p:paragraph>
+	</p:font>
+	<p:font size="18">
+	
+		<p:paragraph>Wallet name: #{wallet.name}</p:paragraph>
+	        <p:paragraph>Wallet Balance: #{wallet.balance}</p:paragraph>
+	        <p:paragraph>Wallet Reserver Balance: #{wallet.reservedBalance}</p:paragraph>
+			<p:paragraph>Wallet Currency: #{wallet.currency.name}</p:paragraph>
+			<p:paragraph>Wallet Status: #{wallet.walletStatus}</p:paragraph>
+			<p:paragraph>Wallet Expiration Date: #{wallet.expirationDate}</p:paragraph>
+			<p:paragraph>Wallet Lower Credit Limit: #{wallet.lowerCreditLimit}</p:paragraph>
+			<p:paragraph>Wallet Upper Credit Limit: #{wallet.upperCreditLimit}</p:paragraph>
+	</p:font>
+	
+
+
+</p:document>

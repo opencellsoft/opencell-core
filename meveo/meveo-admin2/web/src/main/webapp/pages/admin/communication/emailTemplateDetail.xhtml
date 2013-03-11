@@ -1,0 +1,39 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+		<custom:formPanel edit="#{edit}" label="#{messages['emailTemplate.Panel']}" backingBean="#{emailTemplateBean}" entity="#{emailTemplate}">
+			<custom:formField label="#{messages['emailTemplate.subject']}" field="subject" required="true"/>
+									<s:decorate template="/layout/edit.xhtml" >
+			    						 <ui:define name="label">
+				    						<h:outputText value="#{messages['emailTemplate.htmlContent']}" />
+				    	 				</ui:define>
+										<rich:editor  rendered="#{edit}" value="#{emailTemplate.htmlContent}"  theme="advanced"/>   
+										<rich:editor  rendered="#{!edit}" value="#{emailTemplate.htmlContent}"  theme="advanced" readonly="true"/>   	
+				        			</s:decorate>
+				        			<s:decorate template="/layout/edit.xhtml" >
+			    						 <ui:define name="label">
+				    						<h:outputText value="#{messages['emailTemplate.textContent']}" />
+				    	 				</ui:define>
+				    	 				<rich:editor rendered="#{edit}" value="#{emailTemplate.textContent}"  theme="advanced" />   	
+										<rich:editor rendered="#{!edit}" value="#{emailTemplate.textContent}"  theme="advanced" readonly="true"/>   	
+				        			</s:decorate>
+		</custom:formPanel>
+       
+    </ui:define>
+    
+</ui:composition>

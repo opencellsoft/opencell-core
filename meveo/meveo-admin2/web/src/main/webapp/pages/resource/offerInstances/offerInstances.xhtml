@@ -1,0 +1,39 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['offerInstance.title']}" backingBean="#{offerInstanceBean}">
+    	
+    		<custom:searchPanel label="#{messages['offerInstance.search']}" newButtonView="/pages/resource/offerInstances/fferInstanceDetail.xhtml">
+    			<custom:searchField label="#{messages['offerInstance.code']}" field="code" />
+    			<custom:searchField label="#{messages['offerInstance.name']}" field="name" />
+    			<custom:searchField label="#{messages['offerInstance.termDuration']}" field="termDuration" />
+    		</custom:searchPanel>	
+
+    		<custom:dataList dataModel="#{offerInstances}" pdf="true">
+    			<custom:column label="#{messages['offerInstance.code']}" field="code" />
+    			<custom:column label="#{messages['offerInstance.name']}" field="name" />
+    			<custom:column label="#{messages['offerInstance.termDuration']}" field="termDuration" />
+    			<custom:column label="#{messages['offerInstance.serviceGroups']}" field="serviceGroups" isList="true" childField="name" childFieldId="id" view="/pages/crm/serviceGroups/serviceGroupDetail.xhtml" backView="/pages/crm/offers/offerInstanceDetail.xhtml"/>
+    			<custom:actionsColumn editView="/pages/crm/offers/offerInstanceDetail.xhtml"/>
+		    </custom:dataList>
+		   
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

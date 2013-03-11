@@ -1,0 +1,68 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	<c:if test="${edit}">
+	<custom:entityPopup id="userAccountPopup"
+				header="#{messages['userAccount.popup.header']}"
+				backingBean="#{userAccountBean}" dataModel="#{userAccounts}"
+				searchField1Label="#{messages['userAccount.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['userAccount.name']}"
+				searchField2="name"
+				column1Label="#{messages['userAccount.code']}" column1="code"
+				column2Label="#{messages['userAccount.name']}" column2="name" 
+				filtersMap="#{userAccountBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{access.setUserAccount(entity)}"
+					oncomplete="Richfaces.hideModalPanel('userAccountPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		<custom:entityPopup id="subscriptionPopup"
+			header="#{messages['subscription.popup.header']}"
+			backingBean="#{subscriptionBean}" dataModel="#{subscriptions}"
+			searchField1Label="#{messages['subscription.code']}" searchField1="code"
+			searchField2Label="#{messages['subscription.description']}"
+			searchField2="description"
+			column1Label="#{messages['subscription.code']}" column1="code"
+			column2Label="#{messages['subscription.description']}"
+			column2="description" filtersMap="#{subscriptionBean.filters}">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="formId" action="#{access.setSubscription(entity)}"
+				oncomplete="Richfaces.hideModalPanel('subscriptionPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+
+		</c:if>
+		<custom:formPanel edit="#{edit}" label="#{messages['access.accessPanel']}" backingBean="#{accessBean}" entity="#{access}" >
+			<custom:formField label="#{messages['access.accessUserId']}" field="accessUserId"  /> 
+			<custom:formField label="#{messages['access.startDate']}" field="startDate"  />
+			<custom:formField label="#{messages['access.endDate']}" field="endDate" />
+			<custom:formField label="#{messages['access.discriminatorCode']}" field="discriminatorCode"  />
+			<custom:formEntityField id="subscriptionSelectedId" label="#{messages['access.subscription']}"
+								field="subscription" childField="code"   popup="true" popupId="subscriptionPopup" showOnlyOnConsult="true" clearButton="true"/>
+			<custom:formEntityField id="userSelectId" label="#{messages['access.userAccount']}"
+								field="userAccount" childField="code"   popup="true" popupId="userAccountPopup" clearButton="true" />			
+			<custom:formField label="#{messages['access.serviceInstance']}" field="serviceCode"  /> 	
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>
