@@ -141,6 +141,15 @@ public class ChargeApplication extends BusinessEntity {
      */
     @Column(name = "INPUT_HISTORY_ID")
     private Long inputHistoryId;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "START_DATE")
+    private Date startDate;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "END_DATE")
+    private Date endDate;
+    
 
     public ChargeApplication() {
         super();
@@ -436,5 +445,23 @@ public class ChargeApplication extends BusinessEntity {
     public void setInputHistoryId(Long inputHistoryId) {
         this.inputHistoryId = inputHistoryId;
     }
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+    
+    
     
 }
