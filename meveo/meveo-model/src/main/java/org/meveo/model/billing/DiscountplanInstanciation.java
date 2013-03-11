@@ -50,6 +50,7 @@ public class DiscountplanInstanciation  extends AuditableEntity{
 	private EventTypeEnum usageType;
 	
 	
+	
 	@Column(name = "CHARGE_CODE")
 	private String chargeCode;
 	
