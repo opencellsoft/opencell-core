@@ -86,6 +86,7 @@ public class DiscountplanInstanciation  extends AuditableEntity{
 	}
 
 
+	
 	public void setUsageType(EventTypeEnum usageType) {
 		this.usageType = usageType;
 	}
