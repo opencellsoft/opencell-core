@@ -8,7 +8,7 @@
 
 	<a:queue />
 	
-	<rich:toolBar>
+	<rich:toolBar> 
 		<rich:toolBarGroup rendered="#{identity.loggedIn}">
 		
 			<rich:dropDownMenu id="admin" value="#{messages['menu.admin']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization') or persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
@@ -17,9 +17,131 @@
 					action="users" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
-		 
+		     <!-- <rich:menuItem id="userRoles" value="#{messages['menu.userRoles']}"
+					action="userRoles" rendered="#{s:hasRole('meveo.admin')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="currencies" value="#{messages['menu.currencies']}"
+					action="currencies" rendered="#{s:hasRole('meveo.admin')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem> -->
+				<rich:menuItem id="invoiceCategories" value="#{messages['menu.invoiceCategories']}" 
+						action="invoiceCategories" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="invoiceSubCategories" value="#{messages['menu.invoiceSubCategories']}" 
+						action="invoiceSubCategories" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="taxes" value="#{messages['menu.taxes']}" 
+						action="taxes" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="billingCycles" value="#{messages['menu.billingCycles']}"
+					action="billingCycles" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="customerCategories" value="#{messages['menu.customerCategories']}"
+					action="customerCategories" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="customerBrands" value="#{messages['menu.customerBrands']}"
+					action="customerBrands" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="titles" value="#{messages['menu.titles']}" 
+						action="titles" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="calendars" value="#{messages['menu.calendars']}" 
+						action="calendars" rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="emailTemplates" value="#{messages['menu.emailTemplates']}" 
+						action="emailTemplates" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="providers" value="#{messages['menu.providers']}" 
+						action="providers" rendered="#{s:hasRole('superAdministrateur')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				<rich:menuItem id="providerContacts" value="#{messages['menu.providerContacts']}" 
+						action="providerContacts" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				
+				<rich:menuGroup id="history" value="#{messages['menu.history']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<rich:menuItem id="accountImportHisto" value="#{messages['menu.accountImportHisto']}" 
+							action="accountImportHisto" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<rich:menuItem id="customerImportHisto" value="#{messages['menu.customerImportHisto']}" 
+							action="customerImportHisto" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<rich:menuItem id="subscriptionImportHisto" value="#{messages['menu.subscriptionImportHisto']}" 
+							action="subscriptionImportHisto" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<rich:menuItem id="dunningHisto" value="#{messages['menu.dunningHisto']}" 
+							action="dunningHisto" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>	
+					<rich:menuItem id="crmRejectedFiles" value="#{messages['menu.crmRejectedFiles']}" 
+							action="crmRejectedFiles" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>					
+				</rich:menuGroup> 
+			 	
+			 	<rich:menuSeparator />
+			 	
+				<rich:menuGroup id="vertina" value="#{messages['menu.vertina']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<rich:menuItem id="vertinaInputs" value="#{messages['menu.vertinaInputs']}"
+						action="vertinaInputs"  rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<!--<rich:menuItem id="vertinaManagement" value="#{messages['menu.management']}"
+						action="vertinaManagement" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<rich:menuItem id="vertinaConfiguration" value="#{messages['menu.configuration']}"
+						action="vertinaConfigurations"  rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>-->
+				</rich:menuGroup>
+				<rich:menuGroup id="oudaya" value="#{messages['menu.oudaya']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<rich:menuItem id="oudayaInputs" value="#{messages['menu.oudayaInputs']}"
+						action="oudayaInputs" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+				</rich:menuGroup>
+				<rich:menuGroup id="grieg" value="#{messages['menu.grieg']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<rich:menuItem id="griegDunningInputs" value="#{messages['menu.griegDunningInputs']}"
+						action="griegDunningInputs" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<rich:menuItem id="griegConverterInputs" value="#{messages['menu.griegConverterInputs']}"
+						action="griegConverterInputs" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<rich:menuItem id="griegValidatedInputs" value="#{messages['menu.griegValidatedInputs']}"
+						action="griegValidatedInputs" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+				</rich:menuGroup>
+				<rich:menuGroup id="bayad" value="#{messages['menu.bayad']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<rich:menuItem id="bayadInvoicingInputs" value="#{messages['menu.bayadInvoicingInputs']}"
+						action="bayadInvoicingInputs" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+					<rich:menuItem id="bayadDunningInputs" value="#{messages['menu.bayadDunningInputs']}"
+						action="bayadDunningInputs" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+						<s:conversationPropagation type="none" />
+					</rich:menuItem>
+				</rich:menuGroup>
 				
 			</rich:dropDownMenu>
+		
 			
 			<rich:dropDownMenu id="catalog" value="#{messages['menu.catalog']}" rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
 				
