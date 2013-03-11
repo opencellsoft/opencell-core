@@ -45,7 +45,8 @@ public class PricePlanMatrix extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "EVENT_CODE", length = 20, nullable = false)
+    
+	@Column(name = "EVENT_CODE", length = 20, nullable = false)
     @Length(max = 20)
     @NotNull
     @NotEmpty
@@ -100,7 +101,23 @@ public class PricePlanMatrix extends AuditableEntity {
     private String currencyCode;
 
     
-    
+    public Integer getBusinessIntermediaryId() {
+		return businessIntermediaryId;
+	}
+
+	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
+		this.businessIntermediaryId = businessIntermediaryId;
+	}
+
+	public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	
     public String getEventCode() {
         return eventCode;
     }
