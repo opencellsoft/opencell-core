@@ -48,7 +48,7 @@ public class DiscountplanInstanciation  extends AuditableEntity{
 	
 	
 	@Column(name = "USAGE_TYPE")
-	private FAUX usageType;
+	private EventTypeEnum usageType;
 	
 	
 	@Column(name = "CHARGE_CODE")
@@ -81,12 +81,12 @@ public class DiscountplanInstanciation  extends AuditableEntity{
 	}
 
 
-	public FAUX getUsageType() {
+	public EventTypeEnum getUsageType() {
 		return usageType;
 	}
 
 
-	public void setUsageType(FAUX usageType) {
+	public void setUsageType(EventTypeEnum usageType) {
 		this.usageType = usageType;
 	}
 

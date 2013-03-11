@@ -44,8 +44,6 @@ import org.meveo.model.AuditableEntity;
 public class InvoiceCategoryLanguage  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
-	@Column(name = "ID")
-	private Integer id;
 	
 	
 	@Column(name = "INVOICE_CATEGORY_ID")
@@ -74,13 +72,7 @@ public class InvoiceCategoryLanguage  extends AuditableEntity{
 	@Column(name = "UPDATER_ID")
 	private Integer updaterId;
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	
 
 	public Integer getInvoiceCategoryId() {
 		return invoiceCategoryId;

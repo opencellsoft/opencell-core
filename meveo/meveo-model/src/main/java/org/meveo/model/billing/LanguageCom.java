@@ -76,15 +76,7 @@ public class LanguageCom  extends AuditableEntity{
 	private Integer updaterId;
 
 
-	public Integer getId() {
-		return id;
-	}
-
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
+	
 
 	public Integer getProviderId() {
 		return providerId;

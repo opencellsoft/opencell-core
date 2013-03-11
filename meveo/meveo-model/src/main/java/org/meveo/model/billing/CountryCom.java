@@ -46,8 +46,6 @@ public class CountryCom  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
-	@Column(name = "ID")
-	private Integer id;
 
 
 	@Column(name = "PROVIDER_ID")
@@ -78,14 +76,6 @@ public class CountryCom  extends AuditableEntity{
 	private Integer updaterId;
 
 
-	public Integer getId() {
-		return id;
-	}
-
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 
 	public Integer getProviderId() {
