@@ -22,6 +22,9 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -44,9 +47,9 @@ import org.meveo.model.AuditableEntity;
 public class InvoiceCategoryCountry  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 
-	
-	@Column(name = "INVOICE_CATEGORY_ID")
-	private Integer invoiceCategoryId;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "INVOICE_CATEGORY_ID")
+	private InvoiceCategory invoiceCategory;
 	
 	
 	@Column(name = "COUNTRY_CODE", length = 2)
@@ -64,24 +67,17 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 	@Column(name = "DISCOUNT_CODE", length = 20)
 	private String discountCode;
 	
+
 	
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
-	
-	
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
 
 
-
-
-	public Integer getInvoiceCategoryId() {
-		return invoiceCategoryId;
+	public InvoiceCategory getInvoiceCategory() {
+		return invoiceCategory;
 	}
 
 
-	public void setInvoiceCategoryId(Integer invoiceCategoryId) {
-		this.invoiceCategoryId = invoiceCategoryId;
+	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
+		this.invoiceCategory = invoiceCategory;
 	}
 
 
@@ -124,25 +120,6 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 		this.discountCode = discountCode;
 	}
 
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
-	}
 
 
 	

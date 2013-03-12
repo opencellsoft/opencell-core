@@ -54,22 +54,9 @@ public class InvoiceSubCategory extends BusinessEntity {
     private String prDescription;
 
     
-    @Column(name = "PROVIDER_ID")
-    private Integer providerId;
-    
-    
     @Column(name = "DISCOUNT_CODE", length = 20)
     private String discountCode;
 
-
-  
-	public Integer getProviderId() {
-		return providerId;
-	}
-
-	public void setProviderId(Integer providerId) {
-		this.providerId = providerId;
-	}
 
 	public String getDiscountCode() {
 		return discountCode;

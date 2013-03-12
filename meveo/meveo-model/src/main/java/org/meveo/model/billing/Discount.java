@@ -46,9 +46,6 @@ public class Discount  extends AuditableEntity{
 	
 	
 	
-	@Column(name = "PROVIDER_ID")
-	private Integer providerId;
-	
 	
 	@Column(name = "DISCOUNT_CODE", length = 20)
 	private String discountCode;
@@ -68,27 +65,10 @@ public class Discount  extends AuditableEntity{
 	
 	@Column(name = "POURCENT")
 	private Integer pourcent;
-	
-	
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
-	
-	
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
-
 
 	
 
 
-	public Integer getProviderId() {
-		return providerId;
-	}
-
-
-	public void setProviderId(Integer providerId) {
-		this.providerId = providerId;
-	}
 
 
 	public String getDiscountCode() {
@@ -140,26 +120,5 @@ public class Discount  extends AuditableEntity{
 		this.pourcent = pourcent;
 	}
 
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
-	}
-
-	
 	
 }

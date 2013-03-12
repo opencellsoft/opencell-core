@@ -44,9 +44,7 @@ import org.meveo.model.AuditableEntity;
 public class CurrencyCom  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
-	
-	@Column(name = "PROVIDER_ID")
-	private Integer providerId;
+
 	
 	@Column(name = "CURRENCY_CODE", length = 3)
 	private String currencyCode;
@@ -61,22 +59,9 @@ public class CurrencyCom  extends AuditableEntity{
 	
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
-	
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
-	
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
+
 
 	
-
-	public Integer getProviderId() {
-		return providerId;
-	}
-
-	public void setProviderId(Integer providerId) {
-		this.providerId = providerId;
-	}
 
 	public String getCurrencyCode() {
 		return currencyCode;
@@ -108,22 +93,6 @@ public class CurrencyCom  extends AuditableEntity{
 
 	public void setPrDescription(String prDescription) {
 		this.prDescription = prDescription;
-	}
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
 	}
 
 

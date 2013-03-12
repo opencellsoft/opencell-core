@@ -70,12 +70,6 @@ public class InvoiceCategoryLanguage  extends AuditableEntity{
 	private String description;
 	
 	
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
-	
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
-
 	
 
 	
@@ -117,22 +111,6 @@ public class InvoiceCategoryLanguage  extends AuditableEntity{
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
 	}
 
 }

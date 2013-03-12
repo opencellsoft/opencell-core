@@ -22,6 +22,9 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -45,9 +48,9 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
-	
-	@Column(name = "INVOICE_SUBCATEGORY_ID")
-	private Integer invoiceSubcategoryId;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "INVOICE_SUBCATEGORY_ID")
+	private InvoiceSubCategory invoiceSubCategory;
 	
 	
 	@Column(name = "COUNTRY_CODE", length = 2)
@@ -70,23 +73,19 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	private String taxCode;
 	
 	
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
-	
-	
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
 
 
 	
 
-	public Integer getInvoiceSubcategoryId() {
-		return invoiceSubcategoryId;
+	
+
+	public InvoiceSubCategory getInvoiceSubCategory() {
+		return invoiceSubCategory;
 	}
 
 
-	public void setInvoiceSubcategoryId(Integer invoiceSubcategoryId) {
-		this.invoiceSubcategoryId = invoiceSubcategoryId;
+	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+		this.invoiceSubCategory = invoiceSubCategory;
 	}
 
 
@@ -139,25 +138,6 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 		this.taxCode = taxCode;
 	}
 
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
-	}
 
 	
 }

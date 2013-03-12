@@ -48,9 +48,6 @@ public class LanguageCom  extends AuditableEntity{
 	private Integer id;
 	
 	
-	@Column(name = "PROVIDER_ID")
-	private Integer providerId;
-	
 	
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
@@ -68,24 +65,7 @@ public class LanguageCom  extends AuditableEntity{
 	private String prDescription;
 	
 	
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
 	
-	
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
-
-
-	
-
-	public Integer getProviderId() {
-		return providerId;
-	}
-
-
-	public void setProviderId(Integer providerId) {
-		this.providerId = providerId;
-	}
 
 
 	public String getLanguageCode() {
@@ -127,25 +107,6 @@ public class LanguageCom  extends AuditableEntity{
 		this.prDescription = prDescription;
 	}
 
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
-	}
 
 	
 	

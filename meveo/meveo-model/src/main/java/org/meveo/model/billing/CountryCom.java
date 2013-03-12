@@ -48,10 +48,6 @@ public class CountryCom  extends AuditableEntity{
 	
 
 
-	@Column(name = "PROVIDER_ID")
-	private Integer providerId;
-
-
 	@Column(name = "COUNTRY_CODE", length = 2)
 	private String countryCode;
 
@@ -68,24 +64,9 @@ public class CountryCom  extends AuditableEntity{
 	private String prDescription;
 
 
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
-
-
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
 
 
 
-
-	public Integer getProviderId() {
-		return providerId;
-	}
-
-
-	public void setProviderId(Integer providerId) {
-		this.providerId = providerId;
-	}
 
 
 	public String getCountryCode() {
@@ -126,27 +107,6 @@ public class CountryCom  extends AuditableEntity{
 	public void setPrDescription(String prDescription) {
 		this.prDescription = prDescription;
 	}
-
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
-	}
-
 
 
 }

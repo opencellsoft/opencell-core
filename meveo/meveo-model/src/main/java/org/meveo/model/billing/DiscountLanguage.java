@@ -22,6 +22,9 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -46,9 +49,9 @@ public class DiscountLanguage  extends AuditableEntity{
 	
 	
 	
-	
-	@Column(name = "DISCOUNT_ID")
-	private Integer discountId;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DISCOUNT_ID")
+	private Discount discount;
 	
 	
 	@Column(name = "LANGUAGE_CODE", length = 3)
@@ -67,23 +70,14 @@ public class DiscountLanguage  extends AuditableEntity{
 	private String description;
 	
 	
-	@Column(name = "CREATOR_ID")
-	private Integer creatorId;
-	
-	
-	@Column(name = "UPDATER_ID")
-	private Integer updaterId;
 
-
-	
-
-	public Integer getDiscountId() {
-		return discountId;
+	public Discount getDiscount() {
+		return discount;
 	}
 
 
-	public void setDiscountId(Integer discountId) {
-		this.discountId = discountId;
+	public void setDiscount(Discount discount) {
+		this.discount = discount;
 	}
 
 
@@ -125,27 +119,6 @@ public class DiscountLanguage  extends AuditableEntity{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-
-	public Integer getCreatorId() {
-		return creatorId;
-	}
-
-
-	public void setCreatorId(Integer creatorId) {
-		this.creatorId = creatorId;
-	}
-
-
-	public Integer getUpdaterId() {
-		return updaterId;
-	}
-
-
-	public void setUpdaterId(Integer updaterId) {
-		this.updaterId = updaterId;
-	}
-
 	
 	
 }

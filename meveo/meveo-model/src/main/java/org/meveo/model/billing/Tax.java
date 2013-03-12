@@ -44,9 +44,6 @@ public class Tax extends BusinessEntity {
     @Column(name = "PR_DESCRIPTION")
     private String prDescription;
 
-    
-    @Column(name = "PROVIDER_ID")
-    private Integer providerId;
    
 
 	public String getPrDescription() {
@@ -57,13 +54,6 @@ public class Tax extends BusinessEntity {
 		this.prDescription = prDescription;
 	}
 
-	public Integer getProviderId() {
-		return providerId;
-	}
-
-	public void setProviderId(Integer providerId) {
-		this.providerId = providerId;
-	}
 
 	public String getAccountingCode() {
         return accountingCode;
