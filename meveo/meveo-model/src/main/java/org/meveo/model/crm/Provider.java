@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -37,6 +38,9 @@ import org.hibernate.validator.constraints.Email;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.InterBankTitle;
 import org.meveo.model.shared.Title;
@@ -71,21 +75,22 @@ public class Provider extends BusinessEntity {
     @Column(name = "MULTILANGUAGE_FLAG")
     private Integer multilanguageFlag;
     
-    
-    @Column(name = "CUSTOMER_ID")
-    private Integer customerId;
-    
-    
-    @Column(name = "CUSTOMER_ACCOUNT_ID")
-    private Integer customerAccountId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CUSTOMER_ID")
+    private Customer customer;
     
     
-    @Column(name = "BILLING_ACCOUNT_ID")
-    private Integer billingAccountId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+    private CustomerAccount customerAccount;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BILLING_ACCOUNT_ID")
+    private BillingAccount billingAccount;
     
-    @Column(name = "USER_ACCOUNT_ID")
-    private Integer userAccountId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ACCOUNT_ID")
+    private UserAccount userAccount;
 
     
     @ManyToMany(fetch = FetchType.LAZY)
@@ -197,36 +202,39 @@ public class Provider extends BusinessEntity {
 		this.multilanguageFlag = multilanguageFlag;
 	}
 
-	public Integer getCustomerId() {
-		return customerId;
+	
+	
+
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerId(Integer customerId) {
-		this.customerId = customerId;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
-	public Integer getCustomerAccountId() {
-		return customerAccountId;
+	public CustomerAccount getCustomerAccount() {
+		return customerAccount;
 	}
 
-	public void setCustomerAccountId(Integer customerAccountId) {
-		this.customerAccountId = customerAccountId;
+	public void setCustomerAccount(CustomerAccount customerAccount) {
+		this.customerAccount = customerAccount;
 	}
 
-	public Integer getBillingAccountId() {
-		return billingAccountId;
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
 	}
 
-	public void setBillingAccountId(Integer billingAccountId) {
-		this.billingAccountId = billingAccountId;
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
 
-	public Integer getUserAccountId() {
-		return userAccountId;
+	public UserAccount getUserAccount() {
+		return userAccount;
 	}
 
-	public void setUserAccountId(Integer userAccountId) {
-		this.userAccountId = userAccountId;
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
 	}
 
 	public List<PaymentMethodEnum> getPaymentMethods() {
