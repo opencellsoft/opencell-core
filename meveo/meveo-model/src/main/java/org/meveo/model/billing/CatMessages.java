@@ -39,7 +39,7 @@ public class CatMessages  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
-	@Column(name = "ENTITY_ID", length = 3)
+	@Column(name = "ENTITY_ID")
 	private BusinessEntity entityId;
 	
 	@Column(name = "LANGUAGE_CODE", length = 3)
