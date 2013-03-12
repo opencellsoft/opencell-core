@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+
 package org.meveo.model.billing;
 
 import java.util.Date;
