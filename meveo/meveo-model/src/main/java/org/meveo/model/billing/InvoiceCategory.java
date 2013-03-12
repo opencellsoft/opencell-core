@@ -49,10 +49,7 @@ public class InvoiceCategory extends BusinessEntity {
     private Integer sortIndex;
 
 
-    
-    
-    @Column(name = "PROVIDER_ID")
-    private Integer providerId;
+ 
     
     
     @Column(name = "DISCOUNT_CODE", length = 20)
@@ -69,15 +66,6 @@ public class InvoiceCategory extends BusinessEntity {
 
 	public void setPrDescription(String prDescription) {
 		this.prDescription = prDescription;
-	}
-
-	
-	public Integer getProviderId() {
-		return providerId;
-	}
-
-	public void setProviderId(Integer providerId) {
-		this.providerId = providerId;
 	}
 
 	public String getDiscountCode() {
