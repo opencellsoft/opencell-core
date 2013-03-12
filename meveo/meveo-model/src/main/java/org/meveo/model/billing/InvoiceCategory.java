@@ -57,10 +57,7 @@ public class InvoiceCategory extends BusinessEntity {
 
     
     
-    
-
-
-	public String getPrDescription() {
+    public String getPrDescription() {
 		return prDescription;
 	}
 
