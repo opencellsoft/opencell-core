@@ -38,8 +38,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy file="src/main/resources/import-${env}.sql" tofile="${project.build.outputDirectory}/import.sql" overwrite="true" failonerror="false" />
-								<copy file="src/main/resources/importDWH-${env}.sql" tofile="${project.build.outputDirectory}/importDWH.sql" overwrite="true" failonerror="false" />
+								<copy file="src/main/resources/import-MySQL.sql" tofile="${project.build.outputDirectory}/import.sql" overwrite="true" failonerror="false" />
+								<copy file="src/main/resources/importDWH.sql" tofile="${project.build.outputDirectory}/importDWH.sql" overwrite="true" failonerror="false" />
 							</tasks>
 						</configuration>
 					</execution>
