@@ -18,8 +18,6 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +28,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -41,7 +38,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "DISCOUNT_LANGUAGE")
+@Table(name = "BILLING_DISCOUNT_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNT_LANGUAGE_SEQ")
 
 public class DiscountLanguage  extends AuditableEntity{
@@ -56,14 +53,6 @@ public class DiscountLanguage  extends AuditableEntity{
 	
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
 	
 	
 	@Column(name = "DESCRIPTION", length = 50)
@@ -90,25 +79,6 @@ public class DiscountLanguage  extends AuditableEntity{
 		this.languageCode = languageCode;
 	}
 
-
-	public Date getCreated() {
-		return created;
-	}
-
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 
 
 	public String getDescription() {

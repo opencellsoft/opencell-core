@@ -18,8 +18,7 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
@@ -27,7 +26,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -38,27 +36,18 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "COUNTRY_COM")
+@Table(name = "BILLING_COUNTRY_COM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTRY_COM_SEQ")
 
 public class CountryCom  extends AuditableEntity{
 
 	private static final long serialVersionUID = 1L;
-	
-	
 
 
 	@Column(name = "COUNTRY_CODE", length = 2)
 	private String countryCode;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
-
+	
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
@@ -78,25 +67,6 @@ public class CountryCom  extends AuditableEntity{
 		this.countryCode = countryCode;
 	}
 
-
-	public Date getCreated() {
-		return created;
-	}
-
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 
 
 	public String getPrDescription() {

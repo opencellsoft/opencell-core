@@ -41,6 +41,9 @@ public class InvoiceSubCategory extends BusinessEntity {
     @Column(name = "ACCOUNTING_CODE", length = 255)
     private String accountingCode;
 
+    @Column(name = "DISCOUNT")
+    private BigDecimal discount;
+    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "INVOICE_CATEGORY_ID")
@@ -89,6 +92,22 @@ public class InvoiceSubCategory extends BusinessEntity {
     public void setTax(Tax tax) {
         this.tax = tax;
     }
+
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
 
 
 }

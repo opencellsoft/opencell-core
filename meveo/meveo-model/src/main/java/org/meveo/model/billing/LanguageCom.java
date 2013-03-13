@@ -18,16 +18,16 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -38,27 +38,21 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "LANGUAGE_COM")
+@Table(name = "BILLING_LANGUAGE_COM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_COM_SEQ")
 
 public class LanguageCom  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
-	@Column(name = "ID")
+	@Id
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.TABLE)
+	@Column(name = "LANG_COM_ID")
 	private Integer id;
 	
 	
 	
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
 	
 	
 	@Column(name = "PR_DESCRIPTION", length = 100)
@@ -77,27 +71,6 @@ public class LanguageCom  extends AuditableEntity{
 		this.languageCode = languageCode;
 	}
 
-
-	public Date getCreated() {
-		return created;
-	}
-
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
-
-
 	public String getPrDescription() {
 		return prDescription;
 	}
@@ -106,8 +79,5 @@ public class LanguageCom  extends AuditableEntity{
 	public void setPrDescription(String prDescription) {
 		this.prDescription = prDescription;
 	}
-
-
-	
 	
 }

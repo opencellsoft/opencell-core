@@ -19,8 +19,6 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,7 +29,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -42,8 +39,8 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "INVOICE_CATEGORY_LANGUAGE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CATEGORY_LANGUAGE_SEQ")
+@Table(name = "BILLING_INVOICE_CAT_LANG")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_LANG_SEQ")
 
 public class InvoiceCategoryLanguage  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
@@ -57,14 +54,7 @@ public class InvoiceCategoryLanguage  extends AuditableEntity{
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
-	
+
 	
 	@Column(name = "DESCRIPTION", length = 50)
 	private String description;
@@ -89,21 +79,7 @@ public class InvoiceCategoryLanguage  extends AuditableEntity{
 		this.languageCode = languageCode;
 	}
 
-	public Date getCreated() {
-		return created;
-	}
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 
 	public String getDescription() {
 		return description;

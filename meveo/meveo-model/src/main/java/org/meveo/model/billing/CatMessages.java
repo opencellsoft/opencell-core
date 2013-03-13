@@ -16,23 +16,13 @@
 
 package org.meveo.model.billing;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 
 /**
  * CAT_MESSAGES entity
@@ -49,9 +39,8 @@ public class CatMessages  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
-    @Column(name = "MESSAGE_CODE")
-    private String messageCode;
-    
+	@Column(name = "ENTITY_ID", length = 3)
+	private BusinessEntity entityId;
 	
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
@@ -59,31 +48,14 @@ public class CatMessages  extends AuditableEntity{
 	@Column(name = "DESCRIPTION", length = 100)
 	private String description;
 	
-	
-	
- 
 
-	public CatMessages(String  messageCode, String languageCode,
-			String description) {
-		super();
-		this.messageCode = messageCode;
-		this.languageCode = languageCode;
-		this.description = description;
+	public BusinessEntity getEntityId() {
+		return entityId;
 	}
 
-	 
-
-	public String getMessageCode() {
-		return messageCode;
+	public void setEntityId(BusinessEntity entityId) {
+		this.entityId = entityId;
 	}
-
-
-
-	public void setMessageCode(String messageCode) {
-		this.messageCode = messageCode;
-	}
-
-
 
 	public String getLanguageCode() {
 		return languageCode;

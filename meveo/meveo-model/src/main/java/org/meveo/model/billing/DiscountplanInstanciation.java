@@ -19,14 +19,14 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -37,14 +37,15 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "DISCOUNTPLAN_INSTANCIATION")
+@Table(name = "BILLING_DISCOUNTPLAN_INSTANCIATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNTPLAN_INSTANCIATION_SEQ")
 
 public class DiscountplanInstanciation  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "BILLING_ACCOUNT_ID")
-	private Integer billingAccountId;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BILLING_ACCOUNT_ID")
+	private BillingAccount billingAccount;
 	
 	@Column(name = "USAGE_TYPE")
 	private EventTypeEnum usageType;
@@ -71,13 +72,13 @@ public class DiscountplanInstanciation  extends AuditableEntity{
 	private BigDecimal pourcent;
 
 
-	public Integer getBillingAccountId() {
-		return billingAccountId;
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
 	}
 
 
-	public void setBillingAccountId(Integer billingAccountId) {
-		this.billingAccountId = billingAccountId;
+	public void setBillingAccountId(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
 
 

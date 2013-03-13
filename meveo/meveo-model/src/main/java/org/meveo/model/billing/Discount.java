@@ -16,10 +16,10 @@
 
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
@@ -27,7 +27,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -38,7 +37,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "DISCOUNT")
+@Table(name = "BILLING_DISCOUNT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNT_SEQ")
 
 public class Discount  extends AuditableEntity{
@@ -49,14 +48,7 @@ public class Discount  extends AuditableEntity{
 	
 	@Column(name = "DISCOUNT_CODE", length = 20)
 	private String discountCode;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
+
 	
 	
 	@Column(name = "PR_DESCRIPTION", length = 100)
@@ -64,7 +56,7 @@ public class Discount  extends AuditableEntity{
 	
 	
 	@Column(name = "POURCENT")
-	private Integer pourcent;
+	private BigDecimal pourcent;
 
 	
 
@@ -81,25 +73,6 @@ public class Discount  extends AuditableEntity{
 	}
 
 
-	public Date getCreated() {
-		return created;
-	}
-
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
-
 
 	public String getPrDescription() {
 		return prDescription;
@@ -111,12 +84,12 @@ public class Discount  extends AuditableEntity{
 	}
 
 
-	public Integer getPourcent() {
+	public BigDecimal getPourcent() {
 		return pourcent;
 	}
 
 
-	public void setPourcent(Integer pourcent) {
+	public void setPourcent(BigDecimal pourcent) {
 		this.pourcent = pourcent;
 	}
 

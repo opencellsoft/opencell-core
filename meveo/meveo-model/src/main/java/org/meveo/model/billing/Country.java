@@ -16,14 +16,12 @@
 
 package org.meveo.model.billing;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -34,7 +32,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "COUNTRY")
+@Table(name = "BILLING_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTRY_SEQ")
 
 public class Country  extends AuditableEntity{
