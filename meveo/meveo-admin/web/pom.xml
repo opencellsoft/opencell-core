@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>meveo-admin</artifactId>
@@ -7,7 +8,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin-web</artifactId>
-	<name>Meveo admin web application - web module</name>
+	<name>MEVEO Admin Web Application - Web Module</name>
 	<packaging>war</packaging>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
@@ -25,26 +26,26 @@
 		</resources>
 
 
-		<!-- <plugins> -->
-		<!-- <plugin> -->
-		<!-- <groupId>org.codehaus.cargo</groupId> -->
-		<!-- <artifactId>cargo-maven2-plugin</artifactId> -->
-		<!-- <version>1.1.2</version> -->
-		<!-- <configuration> -->
-		<!-- <skip>true</skip> -->
-		<!-- </configuration> -->
-		<!-- </plugin> -->
-		<!-- </plugins> -->
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<!-- In version 2.1-alpha-1, this was incorrectly named warSourceExcludes -->
+					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 
 	<dependencies>
-		<dependency>
-			<groupId>com.sun.facelets</groupId>
-			<artifactId>jsf-facelets</artifactId>
-			<version>1.1.11</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.jboss.seam</groupId>
 			<artifactId>jboss-seam-ui</artifactId>
@@ -60,7 +61,7 @@
 		<dependency>
 			<groupId>org.jboss.seam</groupId>
 			<artifactId>jboss-seam</artifactId>
-			<version>${manaty.seam.version}</version>
+			<version>${manaty.seam.version}</version>			
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -79,7 +80,7 @@
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
 			<version>1.1</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 
 	<profiles>
