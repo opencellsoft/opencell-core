@@ -28,9 +28,11 @@ import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.local.CatMessagesServiceLocal;
 import org.meveo.service.catalog.local.TaxServiceLocal;
 
 /**
@@ -50,6 +52,13 @@ public class TaxBean extends BaseBean<Tax> {
     /**
      * Injected @{link Tax} service. Extends {@link PersistenceService}.
      */
+    
+    @In
+    private CatMessagesServiceLocal catMessagesService;
+     
+     private String descriptionFr;
+    
+    
     @In
     private TaxServiceLocal taxService;
 
@@ -114,6 +123,10 @@ public class TaxBean extends BaseBean<Tax> {
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
         entity.setAccountingCode(generateAccountingCode());
+        CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
+    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
+    	catMessagesService.create(catMessagesEn);
+    	catMessagesService.create(catMessagesFr);
         return saveOrUpdate(entity);
     }
 
@@ -223,4 +236,14 @@ public class TaxBean extends BaseBean<Tax> {
     public void setAccountingCodeField7(String accountingCodeField7) {
         this.accountingCodeFields[6] = accountingCodeField7;
     }
+
+	public String getDescriptionFr() {
+		return descriptionFr;
+	}
+
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
+	}
+    
+    
 }

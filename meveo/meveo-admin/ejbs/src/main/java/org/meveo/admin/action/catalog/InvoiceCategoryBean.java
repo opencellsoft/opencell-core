@@ -25,9 +25,11 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.local.CatMessagesServiceLocal;
 import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 
 /**
@@ -44,7 +46,13 @@ import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 
     private static final long serialVersionUID = 1L;
-
+    
+   @In
+   private CatMessagesServiceLocal catMessagesService;
+    
+    private String descriptionFr;
+    
+   
     /**
      * Injected @{link InvoiceCategory} service. Extends
      * {@link PersistenceService}.
@@ -103,8 +111,14 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
     @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
-        return saveOrUpdate(entity);
+	public String saveOrUpdate() {	
+    	String back=saveOrUpdate(entity);
+    	CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
+    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
+    	catMessagesService.create(catMessagesEn);
+    	catMessagesService.create(catMessagesFr);
+    	
+        return back;
     }
 
     /**
@@ -124,5 +138,18 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
     protected IPersistenceService<InvoiceCategory> getPersistenceService() {
         return invoiceCategoryService;
     }
+    
+   
+
+	public String getDescriptionFr() {
+		return descriptionFr;
+	}
+
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
+	}
+    
+    
+    
 
 }

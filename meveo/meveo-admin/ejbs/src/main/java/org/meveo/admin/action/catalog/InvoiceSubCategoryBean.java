@@ -27,9 +27,11 @@ import org.jboss.seam.annotations.web.RequestParameter;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.local.CatMessagesServiceLocal;
 import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
 
@@ -47,6 +49,11 @@ import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
 public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
     private static final long serialVersionUID = 1L;
+    
+    @In
+    private CatMessagesServiceLocal catMessagesService;
+     
+     private String descriptionFr;
 
     /**
      * Injected @{link InvoiceSubCategory} service. Extends
@@ -133,9 +140,16 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-        entity.setAccountingCode(generateAccountingCode());
-        return saveOrUpdate(entity);
+    	entity.setAccountingCode(generateAccountingCode());
+    	String back =saveOrUpdate(entity);
+    	CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
+    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr);
+    	catMessagesService.create(catMessagesEn);
+    	catMessagesService.create(catMessagesFr);
+       
+        return back;
     }
+    
 
     /**
      * Constructs cost accounting code
@@ -236,4 +250,14 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     public void setAccountingCodeField7(String accountingCodeField7) {
         this.accountingCodeFields[6] = accountingCodeField7;
     }
+
+	public String getDescriptionFr() {
+		return descriptionFr;
+	}
+
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
+	}
+    
+    
 }
