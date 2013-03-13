@@ -5,17 +5,17 @@
 	<artifactId>meveo</artifactId>
 	<packaging>pom</packaging>
 	<version>3.0-SNAPSHOT</version>
-	<name>Meveo parent project</name>
+	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 	<properties>
 		<!-- Env set to dev, so that profile dev would be the default and also 
 			env value is used in copy some files for a specific configuration (e.g. import.sql) -->
-		<env>dev</env>
+		<env>edward</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<manaty.seam.version>2.2.0.GA</manaty.seam.version>
+		<manaty.seam.version>2.3.0.Final</manaty.seam.version>
 		<manaty.richfaces.version>3.3.3.Final</manaty.richfaces.version>
-		<manaty.jsf.version>1.2_13</manaty.jsf.version>
+		<manaty.jsf.version>2.1.19</manaty.jsf.version>
 		<manaty.hibernate.version>4.1.7.Final</manaty.hibernate.version>
 		<manaty.hibernateValidator.version>4.2.0.Final</manaty.hibernateValidator.version>
 	</properties>
