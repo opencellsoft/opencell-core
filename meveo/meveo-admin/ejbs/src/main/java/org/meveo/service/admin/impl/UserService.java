@@ -26,6 +26,7 @@ import javax.persistence.Query;
 
 import org.jboss.seam.Component;
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.core.ResourceBundle;
 import org.meveo.admin.exception.BusinessException;
@@ -56,6 +57,7 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Name("userService")
+@JndiName("java:app/meveo-admin-ejb/UserService")
 @AutoCreate
 public class UserService extends PersistenceService<User> implements UserServiceLocal {
 

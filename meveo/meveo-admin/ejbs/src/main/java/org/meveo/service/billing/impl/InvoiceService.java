@@ -24,6 +24,7 @@ import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -44,6 +45,7 @@ import org.meveo.service.crm.local.ProviderServiceLocal;
  */
 @Stateless
 @Name("invoiceService")
+@JndiName("java:app/meveo-admin-ejb/InvoiceService")
 @AutoCreate
 public class InvoiceService extends PersistenceService<Invoice> implements
 		InvoiceServiceLocal, InvoiceServiceRemote {

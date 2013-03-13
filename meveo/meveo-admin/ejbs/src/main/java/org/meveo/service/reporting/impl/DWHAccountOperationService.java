@@ -25,6 +25,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.service.base.PersistenceService;
@@ -36,6 +37,7 @@ import org.meveo.service.reporting.local.DWHAccountOperationServiceLocal;
  */
 @Stateless
 @Name("DWHAccountOperationService")
+@JndiName("java:app/meveo-admin-ejb/DWHAccountOperationService")
 @AutoCreate
 public class DWHAccountOperationService extends PersistenceService<DWHAccountOperation> implements
         DWHAccountOperationServiceLocal {

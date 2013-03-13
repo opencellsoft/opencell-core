@@ -19,6 +19,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.service.base.PersistenceService;
@@ -30,6 +31,7 @@ import org.meveo.service.crm.local.CustomerBrandServiceLocal;
  */
 @Stateless
 @Name("customerBrandService")
+@JndiName("java:app/meveo-admin-ejb/CustomerBrandService")
 @AutoCreate
 public class CustomerBrandService extends PersistenceService<CustomerBrand> implements CustomerBrandServiceLocal {
     public CustomerBrand findByCode(String code) {

@@ -18,6 +18,7 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
@@ -28,6 +29,7 @@ import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
  */
 @Stateless
 @Name("recurringChargeTemplateService")
+@JndiName("java:app/meveo-admin-ejb/RecurringChargeTemplateService")
 @AutoCreate
 public class RecurringChargeTemplateService extends ChargeTemplateService<RecurringChargeTemplate> implements RecurringChargeTemplateServiceLocal {
 

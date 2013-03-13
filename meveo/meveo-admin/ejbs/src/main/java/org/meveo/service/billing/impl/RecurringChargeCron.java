@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -45,6 +46,7 @@ import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
  * @created 23 d�c. 10
  */
 @Name("recurringChargeCron")
+@JndiName("java:app/meveo-admin-ejb/RecurringChargeCron")
 @AutoCreate
 public class RecurringChargeCron {
 

@@ -18,6 +18,7 @@ package org.meveo.service.admin.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.VertinaConfiguration;
 import org.meveo.service.admin.local.VertinaConfigurationServiceLocal;
@@ -31,6 +32,7 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @Name("vertinaConfigurationService")
+@JndiName("java:app/meveo-admin-ejb/VertinaConfigurationService")
 @AutoCreate
 public class VertinaConfigurationService extends PersistenceService<VertinaConfiguration> implements
         VertinaConfigurationServiceLocal {

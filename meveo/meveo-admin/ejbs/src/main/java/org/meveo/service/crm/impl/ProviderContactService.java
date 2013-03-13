@@ -18,6 +18,7 @@ package org.meveo.service.crm.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.service.base.PersistenceService;
@@ -31,6 +32,7 @@ import org.meveo.service.crm.local.ProviderContactServiceLocal;
  */
 @Stateless
 @Name("providerContactService")
+@JndiName("java:app/meveo-admin-ejb/ProviderContactService")
 @AutoCreate
 public class ProviderContactService extends PersistenceService<ProviderContact>
 		implements ProviderContactServiceLocal {

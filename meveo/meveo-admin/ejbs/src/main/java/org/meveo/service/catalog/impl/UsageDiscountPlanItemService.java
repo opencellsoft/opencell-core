@@ -18,12 +18,11 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.catalog.UsageDiscountPlanItem;
-import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.local.UsageDiscountPlanItemServiceLocal;
-import org.meveo.service.catalog.local.UsagePricePlanItemServiceLocal;
 
 /**
  * Offer Template service implementation.
@@ -31,6 +30,7 @@ import org.meveo.service.catalog.local.UsagePricePlanItemServiceLocal;
  */
 @Stateless
 @Name("usageDiscountPlanItemService")
+@JndiName("java:app/meveo-admin-ejb/UsageDiscountPlanItemService")
 @AutoCreate
 public class UsageDiscountPlanItemService extends PersistenceService<UsageDiscountPlanItem> implements UsageDiscountPlanItemServiceLocal {
 

@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
@@ -56,6 +57,7 @@ import org.meveo.service.payments.remote.MatchingCodeServiceRemote;
  */
 @Stateless
 @Name("matchingCodeService")
+@JndiName("java:app/meveo-admin-ejb/MatchingCodeService")
 @AutoCreate
 public class MatchingCodeService extends PersistenceService<MatchingCode> implements MatchingCodeServiceLocal, MatchingCodeServiceRemote {
 

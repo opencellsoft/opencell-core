@@ -18,6 +18,7 @@ package org.meveo.service.admin.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Currency;
@@ -32,6 +33,7 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @Name("currencyService")
+@JndiName("java:app/meveo-admin-ejb/CurrencyService")
 @AutoCreate
 public class CurrencyService extends PersistenceService<Currency> implements CurrencyServiceLocal {
 

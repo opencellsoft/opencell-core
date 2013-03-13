@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
@@ -64,6 +64,7 @@ import org.meveo.service.payments.remote.CustomerAccountServiceRemote;
  */
 @Stateless
 @Name("customerAccountService")
+@JndiName("java:app/meveo-admin-ejb/CustomerAccountService")
 @AutoCreate
 public class CustomerAccountService extends AccountService<CustomerAccount> implements CustomerAccountServiceLocal, CustomerAccountServiceRemote {
 

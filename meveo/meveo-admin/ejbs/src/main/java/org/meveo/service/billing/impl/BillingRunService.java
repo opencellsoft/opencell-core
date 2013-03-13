@@ -25,6 +25,7 @@ import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -54,6 +55,7 @@ import org.meveo.service.crm.local.ProviderServiceLocal;
  */
 @Stateless
 @Name("billingRunService")
+@JndiName("java:app/meveo-admin-ejb/BillingRunService")
 @AutoCreate
 public class BillingRunService extends PersistenceService<BillingRun> implements BillingRunServiceRemote,
         BillingRunServiceLocal {

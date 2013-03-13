@@ -18,6 +18,7 @@ package org.meveo.service.bi.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.bi.JobHistory;
 import org.meveo.service.base.PersistenceService;
@@ -31,6 +32,7 @@ import org.meveo.service.bi.local.JobHistoryServiceLocal;
  */
 @Stateless
 @Name("jobHistoryService")
+@JndiName("java:app/meveo-admin-ejb/JobHistoryService")
 @AutoCreate
 public class JobHistoryService extends PersistenceService<JobHistory> implements JobHistoryServiceLocal {
 

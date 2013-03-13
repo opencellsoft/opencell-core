@@ -18,6 +18,7 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.service.base.PersistenceService;
@@ -30,6 +31,7 @@ import org.meveo.service.catalog.local.DayInYearServiceLocal;
  */
 @Stateless
 @Name("dayInYearService")
+@JndiName("java:app/meveo-admin-ejb/DayInYearService")
 @AutoCreate
 public class DayInYearService extends PersistenceService<DayInYear> implements DayInYearServiceLocal {
 

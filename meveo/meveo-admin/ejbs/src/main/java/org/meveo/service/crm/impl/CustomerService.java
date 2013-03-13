@@ -19,6 +19,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
@@ -32,6 +33,7 @@ import org.meveo.service.crm.local.CustomerServiceLocal;
  */
 @Stateless
 @Name("customerService")
+@JndiName("java:app/meveo-admin-ejb/CustomerService")
 @AutoCreate
 public class CustomerService extends PersistenceService<Customer> implements CustomerServiceLocal {
 

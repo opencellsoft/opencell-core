@@ -22,17 +22,13 @@ import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.ApplicationChgStatusEnum;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -53,6 +49,7 @@ import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
  */
 @Stateless
 @Name("chargeInstanceService")
+@JndiName("java:app/meveo-admin-ejb/ChargeInstanceService")
 @AutoCreate
 public class ChargeInstanceService<P extends ChargeInstance> extends BusinessService<P> implements
         ChargeInstanceServiceLocal<P> {

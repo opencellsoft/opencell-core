@@ -18,6 +18,7 @@ package org.meveo.service.billing.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.billing.ServiceParameterInstance;
 import org.meveo.service.base.PersistenceService;
@@ -29,6 +30,7 @@ import org.meveo.service.billing.local.ServiceParameterInstanceServiceLocal;
  */
 @Stateless
 @Name("serviceParameterService")
+@JndiName("java:app/meveo-admin-ejb/ServiceParameterInstanceService")
 @AutoCreate
 public class ServiceParameterInstanceService extends PersistenceService<ServiceParameterInstance> implements
         ServiceParameterInstanceServiceLocal {

@@ -18,6 +18,7 @@ package org.meveo.service.payments.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.DunningHistory;
 import org.meveo.service.base.PersistenceService;
@@ -31,6 +32,7 @@ import org.meveo.service.payments.local.DunningHistoryServiceLocal;
  */
 @Stateless
 @Name("dunningHistoryService")
+@JndiName("java:app/meveo-admin-ejb/DunningHistoryService")
 @AutoCreate
 public class DunningHistoryService extends PersistenceService<DunningHistory> implements DunningHistoryServiceLocal {
 

@@ -25,6 +25,7 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
@@ -61,6 +62,7 @@ import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
  */
 @Stateless
 @Name("chargeApplicationService")
+@JndiName("java:app/meveo-admin-ejb/ChargeApplicationService")
 @AutoCreate
 public class ChargeApplicationService extends BusinessService<ChargeApplication> implements
         ChargeApplicationServiceLocal {

@@ -18,13 +18,10 @@ package org.meveo.service.medina.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
-import org.meveo.model.catalog.PriceCode;
-import org.meveo.model.mediation.Access;
 import org.meveo.model.mediation.NumberingPlan;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.PriceCodeServiceLocal;
-import org.meveo.service.medina.local.AccessServiceLocal;
 import org.meveo.service.medina.local.NumberingPlanServiceLocal;
 
 
@@ -34,6 +31,7 @@ import org.meveo.service.medina.local.NumberingPlanServiceLocal;
  */
 @Stateless
 @Name("numberingPlanService")
+@JndiName("java:app/meveo-admin-ejb/NumberingPlanService")
 @AutoCreate
 public class NumberingPlanService extends PersistenceService<NumberingPlan> implements NumberingPlanServiceLocal {
 

@@ -24,6 +24,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
@@ -35,6 +36,7 @@ import org.meveo.service.bi.local.ReportServiceLocal;
  */
 @Stateless
 @Name("reportService")
+@JndiName("java:app/meveo-admin-ejb/ReportService")
 @AutoCreate
 public class ReportService extends PersistenceService<Report> implements ReportServiceLocal {
 

@@ -18,6 +18,7 @@ package org.meveo.service.billing.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.billing.Operation;
 import org.meveo.service.base.PersistenceService;
@@ -31,6 +32,7 @@ import org.meveo.service.billing.local.OperationServiceLocal;
  */
 @Stateless
 @Name("operationService")
+@JndiName("java:app/meveo-admin-ejb/OperationService")
 @AutoCreate
 public class OperationService extends PersistenceService<Operation> implements OperationServiceLocal {
 

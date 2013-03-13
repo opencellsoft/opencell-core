@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -47,6 +48,7 @@ import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
 
 @Stateless
 @Name("selfcareService")
+@JndiName("java:app/meveo-admin-ejb/SelfcareService")
 public class SelfcareService extends PersistenceService<CustomerAccount>
 		implements SelfcareServiceLocal, SelfcareServiceRemote {
 

@@ -18,6 +18,7 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
@@ -34,6 +35,7 @@ import org.meveo.service.catalog.local.TitleServiceLocal;
  */
 @Stateless
 @Name("titleService")
+@JndiName("java:app/meveo-admin-ejb/TitleService")
 @AutoCreate
 public class TitleService extends PersistenceService<Title> implements TitleServiceLocal {
 

@@ -21,6 +21,7 @@ import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.crm.Provider;
 
@@ -31,6 +32,7 @@ import org.meveo.model.crm.Provider;
  */
 @Stateless
 @Name("validationService")
+@JndiName("java:app/meveo-admin-ejb/ValidationService")
 @AutoCreate
 public class ValidationService implements ValidationServiceLocal {
 

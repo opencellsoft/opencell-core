@@ -26,6 +26,7 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.meveo.model.billing.Tax;
@@ -34,6 +35,7 @@ import org.meveo.service.catalog.local.ChargeTemplateServiceLocal;
 
 @Stateless
 @Name("javaScriptAction")
+@JndiName("java:app/meveo-admin-ejb/JavaScriptAction")
 @Scope(ScopeType.SESSION)
 public class JavaScriptAction implements JavaScriptActionLocal {
 

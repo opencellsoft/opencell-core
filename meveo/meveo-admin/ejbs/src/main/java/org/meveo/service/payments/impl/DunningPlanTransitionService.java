@@ -18,6 +18,7 @@ package org.meveo.service.payments.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.payments.DunningPlanTransition;
 import org.meveo.service.base.PersistenceService;
@@ -29,6 +30,7 @@ import org.meveo.service.payments.local.DunningPlanTransitionServiceLocal;
 @Stateless
 @AutoCreate
 @Name("dunningPlanTransitionService")
+@JndiName("java:app/meveo-admin-ejb/DunningPlanTransitionService")
 public class DunningPlanTransitionService extends
 		PersistenceService<DunningPlanTransition> implements
 		DunningPlanTransitionServiceLocal {

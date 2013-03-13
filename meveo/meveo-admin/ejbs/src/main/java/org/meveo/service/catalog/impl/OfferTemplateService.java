@@ -18,6 +18,7 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.base.BusinessService;
@@ -29,6 +30,7 @@ import org.meveo.service.catalog.local.OfferTemplateServiceLocal;
  */
 @Stateless
 @Name("offerTemplateService")
+@JndiName("java:app/meveo-admin-ejb/OfferTemplateService")
 @AutoCreate
 public class OfferTemplateService extends BusinessService<OfferTemplate> implements OfferTemplateServiceLocal {
 

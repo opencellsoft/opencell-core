@@ -18,16 +18,11 @@ package org.meveo.service.medina.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
-import org.meveo.model.catalog.PriceCode;
-import org.meveo.model.mediation.Access;
 import org.meveo.model.mediation.TimePlan;
-import org.meveo.model.mediation.ZonningPlan;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.PriceCodeServiceLocal;
-import org.meveo.service.medina.local.AccessServiceLocal;
 import org.meveo.service.medina.local.TimePlanServiceLocal;
-import org.meveo.service.medina.local.ZoningPlanServiceLocal;
 
 
 /**
@@ -36,6 +31,7 @@ import org.meveo.service.medina.local.ZoningPlanServiceLocal;
  */
 @Stateless
 @Name("timePlanService")
+@JndiName("java:app/meveo-admin-ejb/TimePlanService")
 @AutoCreate
 public class TimePlanService extends PersistenceService<TimePlan> implements TimePlanServiceLocal {
 

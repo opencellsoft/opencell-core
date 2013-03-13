@@ -18,6 +18,7 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.service.base.PersistenceService;
@@ -32,6 +33,7 @@ import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
  */
 @Stateless
 @Name("invoiceSubCategoryService")
+@JndiName("java:app/meveo-admin-ejb/InvoiceSubCategoryService")
 @AutoCreate
 public class InvoiceSubCategoryService extends PersistenceService<InvoiceSubCategory> implements InvoiceSubCategoryServiceLocal {
 

@@ -18,6 +18,7 @@ package org.meveo.service.payments.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
@@ -34,6 +35,7 @@ import org.meveo.service.payments.local.RecordedInvoiceServiceLocal;
  */
 @Stateless
 @Name("recordedInvoiceService")
+@JndiName("java:app/meveo-admin-ejb/RecordedInvoiceService")
 @AutoCreate
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> implements RecordedInvoiceServiceLocal {
 

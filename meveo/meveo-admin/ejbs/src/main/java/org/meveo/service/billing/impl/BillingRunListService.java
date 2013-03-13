@@ -18,6 +18,7 @@ package org.meveo.service.billing.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.billing.BillingRunList;
 import org.meveo.service.base.PersistenceService;
@@ -26,10 +27,11 @@ import org.meveo.service.billing.remote.BillingRunListServiceRemote;
 
 /**
  * @author R.AITYAAZZA
- * @created 29 déc. 10
+ * @created 29 dï¿½c. 10
  */
 @Stateless
 @Name("billingRunListService")
+@JndiName("java:app/meveo-admin-ejb/BillingRunListService")
 @AutoCreate
 public class BillingRunListService extends PersistenceService<BillingRunList> implements BillingRunListServiceRemote,
         BillingRunListServiceLocal {

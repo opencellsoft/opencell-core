@@ -18,6 +18,7 @@ package org.meveo.service.communication.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -32,6 +33,7 @@ import org.meveo.service.communication.local.EmailTemplateServiceLocal;
  */
 @Stateless
 @Name("emailTemplateService")
+@JndiName("java:app/meveo-admin-ejb/EmailTemplateService")
 @AutoCreate
 public class EmailTemplateService extends PersistenceService<EmailTemplate> implements EmailTemplateServiceLocal {
 }

@@ -25,17 +25,17 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.mail.Message.RecipientType;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.persistence.EntityManager;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -56,6 +56,7 @@ import org.meveo.service.crm.local.EmailServiceLocal;
  */
 @Stateless
 @Name("emailService")
+@JndiName("java:app/meveo-admin-ejb/EmailService")
 @AutoCreate
 public class EmailService extends PersistenceService<Email> implements EmailServiceLocal {
 

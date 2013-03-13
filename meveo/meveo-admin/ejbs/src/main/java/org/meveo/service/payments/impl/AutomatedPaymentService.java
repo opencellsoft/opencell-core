@@ -18,6 +18,7 @@ package org.meveo.service.payments.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.service.base.PersistenceService;
@@ -31,6 +32,7 @@ import org.meveo.service.payments.local.AutomatedPaymentServiceLocal;
  */
 @Stateless
 @Name("automatedPaymentService")
+@JndiName("java:app/meveo-admin-ejb/AutomatedPaymentService")
 @AutoCreate
 public class AutomatedPaymentService extends PersistenceService<AutomatedPayment> implements AutomatedPaymentServiceLocal {
 }

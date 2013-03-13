@@ -25,6 +25,7 @@ import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
@@ -72,6 +73,7 @@ import org.meveo.service.payments.local.CustomerAccountServiceLocal;
  */
 @Stateless
 @Name("serviceInstanceService")
+@JndiName("java:app/meveo-admin-ejb/ServiceInstanceService")
 @AutoCreate
 public class ServiceInstanceService extends BusinessService<ServiceInstance> implements ServiceInstanceServiceLocal {
 

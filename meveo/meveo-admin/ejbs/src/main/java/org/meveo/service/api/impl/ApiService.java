@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import org.jboss.seam.Component;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
@@ -87,6 +88,7 @@ import org.meveo.service.payments.local.CustomerAccountServiceLocal;
  */
 @Stateless
 @Name("apiService")
+@JndiName("java:app/meveo-admin-ejb/ApiService")
 @AutoCreate
 public class ApiService implements ApiServiceRemote {
 

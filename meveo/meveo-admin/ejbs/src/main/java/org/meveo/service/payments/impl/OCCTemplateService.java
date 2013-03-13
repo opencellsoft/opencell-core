@@ -20,6 +20,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.OCCTemplate;
@@ -34,6 +35,7 @@ import org.meveo.service.payments.local.OCCTemplateServiceLocal;
  */
 @Stateless
 @Name("occTemplateService")
+@JndiName("java:app/meveo-admin-ejb/OCCTemplateService")
 @AutoCreate
 public class OCCTemplateService extends PersistenceService<OCCTemplate> implements OCCTemplateServiceLocal {
 

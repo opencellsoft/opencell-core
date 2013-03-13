@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -40,6 +41,7 @@ import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
  */
 @Stateless
 @Name("recurringChargeInstanceService")
+@JndiName("java:app/meveo-admin-ejb/RecurringChargeInstanceService")
 @AutoCreate
 public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> implements
         RecurringChargeInstanceServiceLocal {

@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
@@ -38,6 +39,7 @@ import org.meveo.service.payments.local.AccountOperationServiceLocal;
  */
 @Stateless
 @Name("accountOperationService")
+@JndiName("java:app/meveo-admin-ejb/AccountOperationService")
 @AutoCreate
 public class AccountOperationService extends PersistenceService<AccountOperation> implements AccountOperationServiceLocal {
 

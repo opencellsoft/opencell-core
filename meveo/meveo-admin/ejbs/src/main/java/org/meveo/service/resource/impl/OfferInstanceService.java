@@ -18,6 +18,7 @@ package org.meveo.service.resource.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.resource.OfferInstance;
 import org.meveo.service.base.PersistenceService;
@@ -29,6 +30,7 @@ import org.meveo.service.resource.local.OfferInstanceServiceLocal;
  */
 @Stateless
 @Name("offerInstanceService")
+@JndiName("java:app/meveo-admin-ejb/OfferInstanceService")
 @AutoCreate
 public class OfferInstanceService extends PersistenceService<OfferInstance> implements OfferInstanceServiceLocal {
 

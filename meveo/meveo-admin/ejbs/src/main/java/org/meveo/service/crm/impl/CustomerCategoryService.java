@@ -19,6 +19,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.base.PersistenceService;
@@ -30,6 +31,7 @@ import org.meveo.service.crm.local.CustomerCategoryServiceLocal;
  */
 @Stateless
 @Name("customerCategoryService")
+@JndiName("java:app/meveo-admin-ejb/CustomerCategoryService")
 @AutoCreate
 public class CustomerCategoryService extends PersistenceService<CustomerCategory> implements CustomerCategoryServiceLocal {
 

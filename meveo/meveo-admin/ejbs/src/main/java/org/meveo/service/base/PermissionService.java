@@ -20,6 +20,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Role;
@@ -27,6 +28,7 @@ import org.meveo.service.base.local.PermissionServiceLocal;
 
 @Stateless
 @Name("permissionService")
+@JndiName("java:app/meveo-admin-ejb/PermissionService")
 @AutoCreate
 public class PermissionService extends PersistenceService<Role> implements PermissionServiceLocal {
 

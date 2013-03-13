@@ -22,6 +22,7 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementAlreadyExistsException;
@@ -30,7 +31,6 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.exception.UnknownAccountException;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -39,8 +39,6 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
 import org.meveo.service.billing.local.SubscriptionServiceLocal;
@@ -54,6 +52,7 @@ import org.meveo.service.catalog.local.OfferTemplateServiceLocal;
  */
 @Stateless
 @Name("subscriptionService")
+@JndiName("java:app/meveo-admin-ejb/SubscriptionService")
 @AutoCreate
 public class SubscriptionService extends BusinessService<Subscription> implements SubscriptionServiceLocal,
         SubscriptionServiceRemote {

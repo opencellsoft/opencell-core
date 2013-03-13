@@ -27,6 +27,7 @@ import javax.persistence.Query;
 
 import org.jboss.seam.Component;
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -44,6 +45,7 @@ import org.meveo.service.billing.local.SubscriptionServiceLocal;
  */
 @Stateless
 @Name("ratedTransactionService")
+@JndiName("java:app/meveo-admin-ejb/RatedTransactionService")
 @AutoCreate
 public class RatedTransactionService extends PersistenceService<RatedTransaction> implements RatedTransactionServiceLocal {
 

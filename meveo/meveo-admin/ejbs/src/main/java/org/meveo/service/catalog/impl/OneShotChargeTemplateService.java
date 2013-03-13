@@ -22,6 +22,7 @@ import javax.persistence.Query;
 
 import org.jboss.seam.Component;
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -35,6 +36,7 @@ import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
  */
 @Stateless
 @Name("oneShotChargeTemplateService")
+@JndiName("java:app/meveo-admin-ejb/OneShotChargeTemplateService")
 @AutoCreate
 public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate> implements
         OneShotChargeTemplateServiceLocal {

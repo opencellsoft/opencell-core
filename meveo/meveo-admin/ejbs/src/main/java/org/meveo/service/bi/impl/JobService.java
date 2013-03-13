@@ -27,6 +27,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.bi.Job;
@@ -41,6 +42,7 @@ import org.meveo.service.bi.local.JobServiceLocal;
  */
 @Stateless
 @Name("jobService")
+@JndiName("java:app/meveo-admin-ejb/JobService")
 @AutoCreate
 public class JobService extends PersistenceService<Job> implements JobServiceLocal {
     private static final String SELECT_JOB = "SELECT R_JOB.NAME, R_JOBENTRY_ATTRIBUTE.VALUE_NUM, MODIFIED_DATE, R_JOB.JOB_STATUS, R_JOB.ID_JOB FROM R_JOB INNER JOIN R_JOBENTRY_ATTRIBUTE ON R_JOB.ID_JOB=R_JOBENTRY_ATTRIBUTE.ID_JOB where R_JOBENTRY_ATTRIBUTE.CODE = 'schedulerType' and R_JOB.NAME= :name";

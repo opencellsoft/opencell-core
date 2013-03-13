@@ -22,6 +22,7 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Transactional;
@@ -46,6 +47,7 @@ import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
  */
 @Stateless
 @Name("otherCreditAndChargeService")
+@JndiName("java:app/meveo-admin-ejb/OtherCreditAndChargeService")
 @AutoCreate
 public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> implements OtherCreditAndChargeServiceLocal {
 

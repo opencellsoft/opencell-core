@@ -18,6 +18,7 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
@@ -30,6 +31,7 @@ import org.meveo.service.catalog.local.PricePlanMatrixServiceLocal;
  */
 @Stateless
 @Name("pricePlanMatrixService")
+@JndiName("java:app/meveo-admin-ejb/PricePlanMatrixService")
 @AutoCreate
 public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> implements PricePlanMatrixServiceLocal {
 

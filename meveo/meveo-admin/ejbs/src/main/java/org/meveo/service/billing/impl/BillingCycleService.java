@@ -20,6 +20,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.BillingCycle;
@@ -35,6 +36,7 @@ import org.meveo.service.billing.local.BillingCycleServiceLocal;
  */
 @Stateless
 @Name("billingCycleService")
+@JndiName("java:app/meveo-admin-ejb/BillingCycleService")
 @AutoCreate
 public class BillingCycleService extends PersistenceService<BillingCycle> implements BillingCycleServiceLocal {
     /**

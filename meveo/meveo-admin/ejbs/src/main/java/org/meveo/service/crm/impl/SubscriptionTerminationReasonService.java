@@ -22,6 +22,7 @@ import javax.persistence.Query;
 
 import org.jboss.seam.Component;
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -35,6 +36,7 @@ import org.meveo.service.crm.local.SubscriptionTerminationReasonServiceLocal;
  */
 @Stateless
 @Name("subscriptionTerminationReasonService")
+@JndiName("java:app/meveo-admin-ejb/SubscriptionTerminationReasonService")
 @AutoCreate
 public class SubscriptionTerminationReasonService extends PersistenceService<SubscriptionTerminationReason> implements
         SubscriptionTerminationReasonServiceLocal {

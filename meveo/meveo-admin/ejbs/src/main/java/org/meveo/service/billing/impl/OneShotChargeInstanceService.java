@@ -24,6 +24,7 @@ import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -44,6 +45,7 @@ import org.meveo.service.billing.local.OneShotChargeInstanceServiceLocal;
  */
 @Stateless
 @Name("oneShotChargeInstanceService")
+@JndiName("java:app/meveo-admin-ejb/OneShotChargeInstanceService")
 @AutoCreate
 public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> implements
         OneShotChargeInstanceServiceLocal {

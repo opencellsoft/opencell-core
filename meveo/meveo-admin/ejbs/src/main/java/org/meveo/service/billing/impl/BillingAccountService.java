@@ -26,6 +26,7 @@ import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
@@ -47,6 +48,7 @@ import org.meveo.service.billing.local.UserAccountServiceLocal;
  */
 @Stateless
 @Name("billingAccountService")
+@JndiName("java:app/meveo-admin-ejb/BillingAccountService")
 @AutoCreate
 public class BillingAccountService extends AccountService<BillingAccount> implements BillingAccountServiceLocal {
 

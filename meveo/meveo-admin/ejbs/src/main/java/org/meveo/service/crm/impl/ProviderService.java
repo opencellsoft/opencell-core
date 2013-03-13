@@ -22,6 +22,7 @@ import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -37,6 +38,7 @@ import org.meveo.service.crm.local.ProviderServiceLocal;
  */
 @Stateless
 @Name("providerService")
+@JndiName("java:app/meveo-admin-ejb/ProviderService")
 @AutoCreate
 public class ProviderService extends PersistenceService<Provider> implements ProviderServiceLocal {
     @In

@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
@@ -42,6 +43,7 @@ import org.meveo.service.bi.local.JobExecutionHistoryServiceLocal;
  */
 @Stateless
 @Name("jobExecutionHistoryService")
+@JndiName("java:app/meveo-admin-ejb/JobExecutionHistoryService")
 @AutoCreate
 public class JobExecutionHistoryService extends
 		PersistenceService<JobExecutionHisto> implements

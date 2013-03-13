@@ -21,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.VertinaInputHistory;
 import org.meveo.model.billing.ApplicationChgStatusEnum;
@@ -37,6 +38,7 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @Name("vertinaInputHistoryService")
+@JndiName("java:app/meveo-admin-ejb/VertinaInputHistoryService")
 @AutoCreate
 public class VertinaInputHistoryService extends PersistenceService<VertinaInputHistory> implements
         VertinaInputHistoryServiceLocal {

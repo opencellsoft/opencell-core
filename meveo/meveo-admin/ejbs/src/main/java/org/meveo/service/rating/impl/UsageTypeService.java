@@ -18,6 +18,7 @@ package org.meveo.service.rating.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.rating.UsageType;
 import org.meveo.service.base.PersistenceService;
@@ -31,6 +32,7 @@ import org.meveo.service.rating.local.UsageTypeServiceLocal;
  */
 @Stateless
 @Name("usageTypeService")
+@JndiName("java:app/meveo-admin-ejb/UsageTypeService")
 @AutoCreate
 public class UsageTypeService extends PersistenceService<UsageType> implements UsageTypeServiceLocal {
 

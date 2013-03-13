@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
@@ -37,8 +38,6 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.Wallet;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.billing.local.BillingAccountServiceLocal;
 import org.meveo.service.billing.local.SubscriptionServiceLocal;
@@ -51,6 +50,7 @@ import org.meveo.service.billing.local.WalletServiceLocal;
  */
 @Stateless
 @Name("userAccountService")
+@JndiName("java:app/meveo-admin-ejb/UserAccountService")
 @AutoCreate
 public class UserAccountService extends AccountService<UserAccount> implements UserAccountServiceLocal {
 

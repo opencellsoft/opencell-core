@@ -21,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Role;
@@ -36,6 +37,7 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Name("userRoleService")
+@JndiName("java:app/meveo-admin-ejb/UserRoleService")
 @AutoCreate
 public class UserRoleService extends PersistenceService<Role> implements UserRoleServiceLocal {
     /**

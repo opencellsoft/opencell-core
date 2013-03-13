@@ -18,6 +18,7 @@ package org.meveo.service.admin.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.JndiName;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.CustomerImportHisto;
 import org.meveo.service.admin.local.CustomerImportHistoServiceLocal;
@@ -31,6 +32,7 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @Name("customerImportHistoService")
+@JndiName("java:app/meveo-admin-ejb/CustomerImportHistoService")
 @AutoCreate
 public class CustomerImportHistoService extends PersistenceService<CustomerImportHisto> implements
 				CustomerImportHistoServiceLocal {
