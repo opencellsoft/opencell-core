@@ -52,15 +52,15 @@ public class Provider extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "COUNTRY_CODE")
+    @Column(name = "COUNTRY_CODE", length = 2)
     private String countryCode;
     
     
-    @Column(name = "CURRENCY_CODE")
+    @Column(name = "CURRENCY_CODE", length = 3)
     private String currencyCode;
     
     
-    @Column(name = "LANGUAGE_CODE")
+    @Column(name = "LANGUAGE_CODE", length = 3)
     private String languageCode;
     
     
