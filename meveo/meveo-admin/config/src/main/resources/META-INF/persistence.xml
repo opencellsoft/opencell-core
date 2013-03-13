@@ -61,6 +61,22 @@
 		<class>org.meveo.model.billing.TaxInvoiceAgregate</class>
 		<class>org.meveo.model.billing.RatedTransaction</class>
 		<class>org.meveo.model.billing.ChargeApplication</class>
+		
+		<class>org.meveo.model.billing.Language</class>
+		<class>org.meveo.model.billing.Country</class>
+		<class>org.meveo.model.billing.CountryCom</class>
+		<class>org.meveo.model.billing.CurrencyCom</class>
+		<class>org.meveo.model.billing.LanguageCom</class>
+		<class>org.meveo.model.billing.TaxLanguage</class>
+		<class>org.meveo.model.billing.Discount</class>
+		<class>org.meveo.model.billing.DiscountLanguage</class>
+		<class>org.meveo.model.billing.InvoiceCategoryCountry</class>
+		<class>org.meveo.model.billing.InvoiceCategoryLanguage</class>
+		<class>org.meveo.model.billing.InvoiceSubcategoryCountry</class>
+		<class>org.meveo.model.billing.PriceplanInstanciation</class>
+		<class>org.meveo.model.billing.DiscountplanInstanciation</class>
+		
+		
 		<class>org.meveo.model.AccountEntity</class>
 		<class>org.meveo.model.catalog.Calendar</class>
 		<class>org.meveo.model.catalog.ChargeTemplate</class>
