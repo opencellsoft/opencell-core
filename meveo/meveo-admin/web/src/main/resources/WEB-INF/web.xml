@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
 	<!-- RichFaces -->
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
@@ -16,10 +16,8 @@
 		<param-name>org.richfaces.CONTROL_SKINNING_CLASSES</param-name>
 		<param-value>disable</param-value>
 	</context-param>
-	<!--
-		Change load strategy to DEFAULT to disable sending scripts/styles as
-		packs
-	-->
+	<!-- Change load strategy to DEFAULT to disable sending scripts/styles as 
+		packs -->
 	<context-param>
 		<param-name>org.richfaces.LoadStyleStrategy</param-name>
 		<param-value>ALL</param-value>
@@ -148,24 +146,17 @@
 	<login-config>
 		<auth-method>BASIC</auth-method>
 	</login-config>
-	<!--
-		uncomment <ejb-local-ref> entries when deploying to GlassFish and
-		(optionally) JBoss AS 5 <ejb-local-ref>
-		<ejb-ref-name>MeveoAdmin/AuthenticatorBean/local</ejb-ref-name>
-		<ejb-ref-type>Session</ejb-ref-type> <local-home/>
-		<local>org.manaty.action.Authenticator</local> </ejb-local-ref> Add
-		entries for each EJB session bean which is also a Seam component (not
-		required on JBoss AS)
-	-->
-	<persistence-unit-ref>
+	<!-- uncomment <ejb-local-ref> entries when deploying to GlassFish and (optionally) 
+		JBoss AS 5 <ejb-local-ref> <ejb-ref-name>MeveoAdmin/AuthenticatorBean/local</ejb-ref-name> 
+		<ejb-ref-type>Session</ejb-ref-type> <local-home/> <local>org.manaty.action.Authenticator</local> 
+		</ejb-local-ref> Add entries for each EJB session bean which is also a Seam 
+		component (not required on JBoss AS) -->
+	<!-- <persistence-unit-ref>
 		<persistence-unit-ref-name>MeveoAdmin/pu</persistence-unit-ref-name>
 		<persistence-unit-name>../meveo-admin.jar#MeveoAdmin</persistence-unit-name>
-		<!--
-			The relative reference doesn't work on GlassFish. Instead, set the
-			<persistence-unit-name> to "MeveoAdmin", package persistence.xml in
-			the WAR, and add a <jar-file> element in persistence.xml with value
-			"../../meveo-admin.jar".
+		The relative reference doesn't work on GlassFish. Instead, set the 
+			<persistence-unit-name> to "MeveoAdmin", package persistence.xml in the WAR, 
+			and add a <jar-file> element in persistence.xml with value "../../meveo-admin.jar". 
 			<persistence-unit-name>MeveoAdmin</persistence-unit-name>
-		-->
-	</persistence-unit-ref>
+	</persistence-unit-ref> -->
 </web-app>
