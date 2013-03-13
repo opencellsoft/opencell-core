@@ -9,9 +9,8 @@
 	</parent>
 	<artifactId>meveo-admin-ear</artifactId>
 	<packaging>ear</packaging>
-	<name>Meveo admin web application - EAR file packaging</name>
+	<name>Meveo Admin Web Application - EAR File Packaging</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
-
 
 	<build>
 		<!-- <finalName>meveo-admin</finalName> -->
@@ -30,15 +29,10 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-ear-plugin</artifactId>
-				<version>2.5</version>
+				<version>2.8</version>
 				<configuration>
-					<defaultLibBundleDir>lib</defaultLibBundleDir>
-					<displayName>meveo-admin</displayName>
-					<classifier>${env}</classifier>
-					<jboss>
-						<version>4.2</version>
-						<loader-repository>seam.jboss.org:loader=${manaty.serverArchiveName}</loader-repository>
-					</jboss>
+					<defaultLibBundleDir>lib/</defaultLibBundleDir>
+					<displayName>meveo-admin</displayName>					
 
 					<modules>
 						<ejbModule>
@@ -147,13 +141,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.1-901.jdbc4</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
 		<profile>
 			<id>development</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
 					<value>dev</value>
@@ -264,6 +262,166 @@
 					<value>prod</value>
 				</property>
 			</activation>
+		</profile>
+
+		<profile>
+			<id>edward</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env</name>
+					<value>edward</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.as.plugins</groupId>
+						<artifactId>jboss-as-maven-plugin</artifactId>
+						<version>7.4.Final</version>
+						<executions>
+							<!-- Undeploy the application on clean -->
+							<execution>
+								<id>undeploy</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>undeploy</goal>
+								</goals>
+								<configuration>
+									<ignoreMissingDeployment>true</ignoreMissingDeployment>
+								</configuration>
+							</execution>
+							<!-- Deploy the application on install -->
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>deploy</goal>
+								</goals>
+							</execution>
+							<!-- Deploy the JDBC library -->
+							<execution>
+								<id>deploy-driver</id>
+								<phase>install</phase>
+								<configuration>
+									<groupId>postgresql</groupId>
+									<artifactId>postgresql</artifactId>
+									<name>postgresql.jar</name>
+								</configuration>
+								<goals>
+									<goal>deploy-artifact</goal>
+								</goals>
+							</execution>
+							<!-- Add an XA datasource -->
+							<execution>
+								<id>add-xa-datasource</id>
+								<phase>install</phase>
+								<configuration>
+									<address>subsystem=datasources</address>
+									<resources>
+										<resource>
+											<address>xa-data-source=java:jboss/datasources/MeveoAdminDatasource</address>
+											<enableResource>true</enableResource>
+											<properties>
+												<xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+												<jndi-name>java:jboss/datasources/MeveoAdminDatasource</jndi-name>
+												<enabled>true</enabled>
+												<pool-name>MeveoAdminPool</pool-name>
+												<driver-name>postgresql.jar</driver-name>
+											</properties>
+											<!-- Add the XA data source properties. The nested addresses will 
+												prepended the address above. -->
+											<resources>
+												<resource>
+													<address>
+														xa-datasource-properties=DatabaseName
+													</address>
+													<properties>
+														<value>meveo</value>
+													</properties>
+												</resource>
+												<resource>
+													<address>
+														xa-datasource-properties=ServerName
+													</address>
+													<properties>
+														<value>localhost</value>
+													</properties>
+												</resource>
+												<resource>
+													<address>
+														xa-datasource-properties=User
+													</address>
+													<properties>
+														<value>meveo</value>
+													</properties>
+												</resource>
+												<resource>
+													<address>
+														xa-datasource-properties=Password
+													</address>
+													<properties>
+														<value>meveo</value>
+													</properties>
+												</resource>
+											</resources>
+										</resource>
+										<resource>
+											<address>xa-data-source=java:jboss/datasources/MeveoDWHDatasource</address>
+											<enableResource>true</enableResource>
+											<properties>
+												<xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+												<jndi-name>java:jboss/datasources/MeveoDWHDatasource</jndi-name>
+												<enabled>true</enabled>
+												<pool-name>MeveoAdminPool</pool-name>
+												<driver-name>postgresql.jar</driver-name>
+											</properties>
+											<!-- Add the XA data source properties. The nested addresses will 
+												prepended the address above. -->
+											<resources>
+												<resource>
+													<address>
+														xa-datasource-properties=DatabaseName
+													</address>
+													<properties>
+														<value>meveodwh</value>
+													</properties>
+												</resource>
+												<resource>
+													<address>
+														xa-datasource-properties=ServerName
+													</address>
+													<properties>
+														<value>localhost</value>
+													</properties>
+												</resource>
+												<resource>
+													<address>
+														xa-datasource-properties=User
+													</address>
+													<properties>
+														<value>meveodwh</value>
+													</properties>
+												</resource>
+												<resource>
+													<address>
+														xa-datasource-properties=Password
+													</address>
+													<properties>
+														<value>meveodwh</value>
+													</properties>
+												</resource>
+											</resources>
+										</resource>
+									</resources>
+								</configuration>
+								<goals>
+									<goal>add-resource</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 </project>

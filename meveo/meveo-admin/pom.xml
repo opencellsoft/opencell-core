@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>meveo-admin</artifactId>
 	<packaging>pom</packaging>
-	<name>Meveo admin web application - parent project</name>
+	<name>Meveo Admin Web Application</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<modules>
@@ -22,8 +22,10 @@
 
 	<properties>
 		<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
-		<manaty.serverArchiveName>meveo-admin</manaty.serverArchiveName>
-		<manaty.jndiPattern>${manaty.serverArchiveName}/#{ejbName}/local</manaty.jndiPattern>
+		<!-- <manaty.serverArchiveName>meveo-admin</manaty.serverArchiveName>
+		<manaty.jndiPattern>${manaty.serverArchiveName}/#{ejbName}/local</manaty.jndiPattern> -->
+		<manaty.serverArchiveName>meveo-admin-ejb</manaty.serverArchiveName>
+		<manaty.jndiPattern>java:app/${manaty.serverArchiveName}/#{ejbName}</manaty.jndiPattern>
 		<manaty.unpackEarModules>true</manaty.unpackEarModules>
 	</properties>
 
@@ -34,7 +36,6 @@
 	</build>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -87,12 +88,6 @@
 			<groupId>javax.el</groupId>
 			<artifactId>el-api</artifactId>
 			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>${manaty.jsf.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -154,7 +149,13 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.faces</groupId>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>${manaty.jsf.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
 			<version>${manaty.jsf.version}</version>
 			<scope>provided</scope>
