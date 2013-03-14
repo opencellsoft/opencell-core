@@ -24,6 +24,14 @@
 					<include>**/*.*</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>src/main/resources/META-INF</directory>
+				<targetPath>${project.build.directory}\${project.artifactId}-${project.version}\META-INF</targetPath>
+				<filtering>false</filtering>
+				<includes>
+					<include>*.xml</include>
+				</includes>
+			</resource>
 		</resources>
 
 		<plugins>
@@ -32,7 +40,7 @@
 				<version>2.8</version>
 				<configuration>
 					<defaultLibBundleDir>lib/</defaultLibBundleDir>
-					<displayName>meveo-admin</displayName>					
+					<displayName>meveo-admin</displayName>
 
 					<modules>
 						<ejbModule>
@@ -145,6 +153,21 @@
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901.jdbc4</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<version>${manaty.hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>2.4.3</version>
 		</dependency>
 	</dependencies>
 
@@ -275,6 +298,32 @@
 			</activation>
 			<build>
 				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<!-- Copy property files to Jboss server -->
+							<execution>
+								<id>deploy_to_Jboss_properties</id>
+								<phase>install</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${jboss.home}/standalone/configuration</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.build.directory}</directory>
+											<filtering>false</filtering>
+											<includes>
+												<include>meveo-admin.properties</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.jboss.as.plugins</groupId>
 						<artifactId>jboss-as-maven-plugin</artifactId>
