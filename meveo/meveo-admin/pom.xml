@@ -19,11 +19,9 @@
 		<module>ear</module>
 	</modules>
 
-
 	<properties>
 		<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
-		<!-- <manaty.serverArchiveName>meveo-admin</manaty.serverArchiveName>
-		<manaty.jndiPattern>${manaty.serverArchiveName}/#{ejbName}/local</manaty.jndiPattern> -->
+		<!-- <manaty.serverArchiveName>meveo-admin</manaty.serverArchiveName> <manaty.jndiPattern>${manaty.serverArchiveName}/#{ejbName}/local</manaty.jndiPattern> -->
 		<manaty.serverArchiveName>meveo-admin-ejb</manaty.serverArchiveName>
 		<manaty.jndiPattern>java:app/${manaty.serverArchiveName}/#{ejbName}</manaty.jndiPattern>
 		<manaty.unpackEarModules>true</manaty.unpackEarModules>
@@ -34,6 +32,18 @@
 			<filter>${project.basedir}/../src/filters/${manaty.filterFile}</filter>
 		</filters>
 	</build>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.seam</groupId>
+				<artifactId>bom</artifactId>
+				<version>${manaty.seam.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -438,7 +448,7 @@
 				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
 
 				<jboss.hostname>localhost</jboss.hostname>
-				<jboss.home>C:/java/jboss-4.2.3.GA</jboss.home>
+				<jboss.home>C:/java/jboss-as-7.1.1/</jboss.home>
 
 				<db.connection.url>jdbc:postgresql://localhost:5432/meveo</db.connection.url>
 				<db.username>meveo</db.username>
