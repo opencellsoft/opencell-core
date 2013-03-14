@@ -30,6 +30,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.LanguageEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.local.CatMessagesServiceLocal;
@@ -103,7 +104,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     @Begin(nested = true)
     public InvoiceSubCategory init() { 
          InvoiceSubCategory invoiceSubcat= initEntity();
-         descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),"FR");
+         descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),LanguageEnum.FR.toString());
          
         if (invoiceCategoryId != null) {
         	invoiceSubcat.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
@@ -146,7 +147,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     	String back=null;
     	if(entity.getId()!=null ){
     		
-    		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR"); 
+    		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
     		catSubMsFr.setDescription(descriptionFr);
     		catMessagesService.update(catSubMsFr); 
     		back =saveOrUpdate(entity); 
@@ -154,7 +155,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
     	entity.setAccountingCode(generateAccountingCode());
     	back =saveOrUpdate(entity); 
-    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr);
+    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr);
     	catMessagesService.create(catMessagesFr);
     
     	}

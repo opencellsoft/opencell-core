@@ -29,6 +29,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.LanguageEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -86,9 +87,10 @@ public class TaxBean extends BaseBean<Tax> {
     @Factory("tax")
     @Begin(nested = true)
     public Tax init() {
-        initEntity();
+        Tax tax=initEntity();
+        descriptionFr=catMessagesService.getMessageDescription(Tax.class.getSimpleName()+"_"+tax.getId(),LanguageEnum.FR.toString());
         parseAccountingCode();
-        return entity;
+        return tax;    
     }
 
     /**
@@ -122,12 +124,19 @@ public class TaxBean extends BaseBean<Tax> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-        entity.setAccountingCode(generateAccountingCode());
-        String back=saveOrUpdate(entity);
-        CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
-    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
-    	catMessagesService.create(catMessagesEn);
-    	catMessagesService.create(catMessagesFr);
+    	String back=null;
+    	if(entity.getId()!=null){	
+    		CatMessages taxMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
+    		taxMsFr.setDescription(descriptionFr);
+    	    catMessagesService.update(taxMsFr); 
+    	    back=saveOrUpdate(entity);
+    	}else{
+    		  entity.setAccountingCode(generateAccountingCode());
+    	       back=saveOrUpdate(entity); 
+    	    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr);  
+    	    	catMessagesService.create(catMessagesFr);
+    	}
+      
         return back;
     }
 

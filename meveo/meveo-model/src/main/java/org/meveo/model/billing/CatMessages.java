@@ -50,7 +50,7 @@ public class CatMessages  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
-    @Column(name = "MESSAGE_CODE")
+    @Column(name = "MESSAGE_CODE",length=20)
     private String messageCode;
     
 	
