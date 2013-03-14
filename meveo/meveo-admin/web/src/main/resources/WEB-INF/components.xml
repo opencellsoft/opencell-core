@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <components xmlns="http://jboss.org/schema/seam/components"
-            xmlns:core="http://jboss.org/schema/seam/core"
-            xmlns:persistence="http://jboss.org/schema/seam/persistence"
-            xmlns:drools="http://jboss.org/schema/seam/drools"
-            xmlns:bpm="http://jboss.org/schema/seam/bpm"
-            xmlns:security="http://jboss.org/schema/seam/security"
-            xmlns:mail="http://jboss.org/schema/seam/mail"
-            xmlns:web="http://jboss.org/schema/seam/web"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns:pdf="http://jboss.org/schema/seam/pdf"
-            xmlns:async="http://jboss.org/schema/seam/async"
-            xsi:schemaLocation=
-                "http://jboss.org/schema/seam/components http://jboss.org/schema/seam/components-2.3.xsd
+	xmlns:core="http://jboss.org/schema/seam/core" xmlns:persistence="http://jboss.org/schema/seam/persistence"
+	xmlns:drools="http://jboss.org/schema/seam/drools" xmlns:bpm="http://jboss.org/schema/seam/bpm"
+	xmlns:security="http://jboss.org/schema/seam/security" xmlns:mail="http://jboss.org/schema/seam/mail"
+	xmlns:web="http://jboss.org/schema/seam/web" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:pdf="http://jboss.org/schema/seam/pdf" xmlns:async="http://jboss.org/schema/seam/async"
+	xsi:schemaLocation="http://jboss.org/schema/seam/components http://jboss.org/schema/seam/components-2.3.xsd
                  http://jboss.org/schema/seam/core http://jboss.org/schema/seam/core-2.3.xsd
                  http://jboss.org/schema/seam/persistence http://jboss.org/schema/seam/persistence-2.3.xsd
                  http://jboss.org/schema/seam/drools http://jboss.org/schema/seam/drools-2.3.xsd
@@ -20,64 +14,69 @@
                  http://jboss.org/schema/seam/mail http://jboss.org/schema/seam/mail-2.3.xsd
                  http://jboss.org/schema/seam/web http://jboss.org/schema/seam/web-2.3.xsd
                  http://jboss.org/schema/seam/pdf http://jboss.org/schema/seam/pdf-2.3.xsd
-                 http://jboss.org/schema/seam/async http://jboss.org/schema/seam/async-2.3.xsd"
-                 >
-                 
-   <import>org.picketlink.identity.seam.federation</import>
+                 http://jboss.org/schema/seam/async http://jboss.org/schema/seam/async-2.3.xsd">
 
-   <async:quartz-dispatcher />
-   
-   <core:init debug="@seam_debug@" jndi-pattern="@seam_jndiPattern@"/>
-   
-   <core:manager concurrent-request-timeout="2000"
+	<!-- <import>org.picketlink.identity.seam.federation</import> -->
+
+	<async:quartz-dispatcher />
+
+	<core:init debug="@debug@" jndi-pattern="@seam_jndiPattern@" />
+
+	<core:manager concurrent-request-timeout="2000"
 		conversation-timeout="1800000" conversation-id-parameter="cid"
 		parent-conversation-id-parameter="pid" />
-		
+
 	<!-- <core:dispatcher /> -->
-                 
-    <core:resource-loader>
-        <core:bundle-names>
-        	<value>messages</value>
-            <value>meveo-admin</value>
-        </core:bundle-names>
+
+	<core:resource-loader>
+		<core:bundle-names>
+			<value>messages</value>
+			<value>meveo-admin</value>
+		</core:bundle-names>
 	</core:resource-loader>
 
-   <!-- Make sure this URL pattern is the same as that used by the Faces Servlet-->
-   <web:hot-deploy-filter url-pattern="*.seam"/>
-   <web:exception-filter url-pattern="*.seam"/>
-	<web:context-filter regex-url-pattern="/config/*"/>
-	
-   <persistence:managed-persistence-context name="entityManager" auto-create="true"
-                      persistence-unit-jndi-name="java:/MeveoAdminEntityManagerFactory"/>
-                      
-   <persistence:managed-persistence-context name="meveoDWHentityManager" auto-create="true"
-                      persistence-unit-jndi-name="java:/MeveoDWHEntityManagerFactory"/>
+	<!-- Make sure this URL pattern is the same as that used by the Faces Servlet -->
+	<web:hot-deploy-filter url-pattern="*.seam" />
+	<web:exception-filter url-pattern="*.seam" />
+	<web:context-filter regex-url-pattern="/config/*" />
 
-   <security:rule-based-permission-resolver security-rules="#{securityRules}"/>
+	<persistence:managed-persistence-context
+		name="entityManager" auto-create="true"
+		persistence-unit-jndi-name="java:/MeveoAdminEntityManagerFactory" />
 
-   <security:identity authenticate-method="#{authenticator.authenticate}" remember-me="true"/>
+	<persistence:managed-persistence-context
+		name="meveoDWHentityManager" auto-create="true"
+		persistence-unit-jndi-name="java:/MeveoDWHEntityManagerFactory" />
 
-   <mail:mail-session host="localhost" port="25"/>
-   
-   <pdf:document-store use-extensions="true"></pdf:document-store>
-   
-   <event type="org.jboss.seam.security.notLoggedIn">
-   		<action execute="#{redirect.captureCurrentView}"/>
-   </event>
-   
-   <event type="org.jboss.seam.security.loginSuccessful">
-   		<action execute="#{redirect.returnToCapturedView}"/>
-   </event>
+	<security:rule-based-permission-resolver
+		security-rules="#{securityRules}" />
 
-   <!-- For use with jBPM pageflow or process management -->
-   <!--
-   <bpm:jbpm>
-      <bpm:process-definitions></bpm:process-definitions>
-      <bpm:pageflow-definitions></bpm:pageflow-definitions>
-   </bpm:jbpm>
-   -->
-   
-   <!-- Permisions -->
-   
-   <security:cacheable-jpa-permission-store user-permission-class="org.meveo.model.security.Permission"/>
+	<security:identity authenticate-method="#{authenticator.authenticate}"
+		remember-me="true" />	
+
+	<mail:mail-session host="localhost" port="25" />
+
+	<pdf:document-store use-extensions="true"></pdf:document-store>
+
+	<event type="org.jboss.seam.security.notLoggedIn">
+		<action execute="#{redirect.captureCurrentView}" />
+	</event>
+
+	<event type="org.jboss.seam.security.loginSuccessful">
+		<action execute="#{redirect.returnToCapturedView}" />
+	</event>
+
+	<!-- For use with jBPM pageflow or process management -->
+	<!-- <bpm:jbpm> <bpm:process-definitions></bpm:process-definitions> <bpm:pageflow-definitions></bpm:pageflow-definitions> 
+		</bpm:jbpm> -->
+
+	<!-- Permisions -->
+
+	<security:cacheable-jpa-permission-store
+		user-permission-class="org.meveo.model.security.Permission" />
+
+	<component class="org.jboss.seam.transaction.EjbSynchronizations"
+		jndi-name="java:app/jboss-seam/EjbSynchronizations" />
+	<component class="org.jboss.seam.async.TimerServiceDispatcher"
+		jndi-name="java:app/jboss-seam/TimerServiceDispatcher" />
 </components>
