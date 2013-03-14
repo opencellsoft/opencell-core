@@ -16,13 +16,17 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.local.CatMessagesServiceLocal;
 import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
+ 
 
 /**
  * CatMessagesService service implementation.
@@ -35,5 +39,27 @@ import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 @Name("catMessagesService")
 @AutoCreate
 public class CatMessagesService extends PersistenceService<CatMessages> implements CatMessagesServiceLocal {
-
+	
+	@SuppressWarnings("unchecked")
+	public String getMessageDescription(String messageCode,String languageCode){ 
+		QueryBuilder qb = new QueryBuilder(CatMessages.class,"c");
+    	qb.addCriterionWildcard("c.messageCode", messageCode, true);
+    	qb.addCriterionWildcard("c.languageCode", languageCode, true);
+        List<CatMessages> catMessages=qb.getQuery(em).getResultList(); 
+        return catMessages.size()>0?catMessages.get(0).getDescription():null;	
+	}
+	
+ 
+	
+	
+       public CatMessages getCatMessages(String messageCode, String languageCode){
+    	   QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
+       	qb.addCriterionWildcard("c.messageCode", messageCode, true);
+       	qb.addCriterionWildcard("c.languageCode", languageCode, true);
+           List<CatMessages> cats=(List<CatMessages>)qb.getQuery(em).getResultList();
+           return cats!=null && cats.size()>0?cats.get(0):null;   
+       }
+	
+ 
+ 
 }

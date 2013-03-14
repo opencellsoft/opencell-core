@@ -28,6 +28,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -101,7 +102,10 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     @Factory("invoiceSubCategory")
     @Begin(nested = true)
     public InvoiceSubCategory init() {
-         initEntity();
+    	initEntity();
+         InvoiceSubCategory invoiceSubcat= initEntity();
+         descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),"FR");
+         
         if (invoiceCategoryId != null) {
             entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
         }
@@ -140,18 +144,29 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
+    	String back=null;
+    	if(entity.getId()!=null ){
+    		
+    		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR"); 
+    		catSubMsFr.setDescription(descriptionFr);
+    		catMessagesService.update(catSubMsFr); 
+    		
+    		CatMessages catSubMsEn=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN");
+    		catSubMsEn.setDescription(entity.getDescription());
+    		catMessagesService.update(catSubMsEn);
+    	}else{	
+
     	entity.setAccountingCode(generateAccountingCode());
-    	String back =saveOrUpdate(entity);
+    	back =saveOrUpdate(entity);
     	CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
     	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr);
     	catMessagesService.create(catMessagesEn);
     	catMessagesService.create(catMessagesFr);
-       
-        return back;
-    }
     
-
-    /**
+    	}
+    	 return back;
+    }
+   /**
      * Constructs cost accounting code
      */
     public String generateAccountingCode() {

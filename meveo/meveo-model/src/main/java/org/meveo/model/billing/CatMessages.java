@@ -29,6 +29,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.Customer;
@@ -60,8 +61,22 @@ public class CatMessages  extends AuditableEntity{
 	private String description;
 	
 	
-	
+	 
  
+
+	public CatMessages() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	public CatMessages(Auditable auditable) {
+		super(auditable);
+		// TODO Auto-generated constructor stub
+	}
+
+
 
 	public CatMessages(String  messageCode, String languageCode,
 			String description) {
@@ -71,6 +86,11 @@ public class CatMessages  extends AuditableEntity{
 		this.description = description;
 	}
 
+	public CatMessages(String  messageCode, String languageCode) {
+		super();
+		this.messageCode = messageCode;
+		this.languageCode = languageCode; 
+	}
 	 
 
 	public String getMessageCode() {

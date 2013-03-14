@@ -28,9 +28,11 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.local.CatMessagesServiceLocal;
 import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
 
 /**
@@ -54,6 +56,11 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
      */
     @In
     private RecurringChargeTemplateServiceLocal recurringChargeTemplateService;
+    
+    @In
+    private CatMessagesServiceLocal catMessagesService;
+     
+     private String descriptionFr;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this
@@ -112,8 +119,16 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-        return saveOrUpdate(entity);
+	    String back=saveOrUpdate(entity);
+	    CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
+	   	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
+	   	catMessagesService.create(catMessagesEn);
+	   	catMessagesService.create(catMessagesFr);
+	   	return back ;
     }
+    
+    
+  
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -136,4 +151,14 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("calendar");
     }
+
+	public String getDescriptionFr() {
+		return descriptionFr;
+	}
+
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
+	}
+    
+    
 }

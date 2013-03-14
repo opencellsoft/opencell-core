@@ -63,7 +63,8 @@
 		    		<ui:define name="label">
 		    			<h:outputText value="" />
 		    		</ui:define>
-				    	<h:inputText  value="#{invoiceSubCategoryBean.descriptionFr}"   size="50" />
+				    	<h:inputText  value="#{invoiceSubCategoryBean.descriptionFr}"   size="50" rendered="#{edit}"/>
+				    	<h:outputText value="#{invoiceSubCategoryBean.descriptionFr}" rendered="#{!edit}"/>
 		       	</s:decorate>
 				 </a:outputPanel>		
 		        <h:graphicImage value="/img/imgFrenchFlag.png" style="height:16px; width:25px;"/>	

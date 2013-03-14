@@ -27,5 +27,8 @@ import org.meveo.service.base.local.IPersistenceService;
  */
 @Local
 public interface CatMessagesServiceLocal extends IPersistenceService<CatMessages> {
+	
+	public String getMessageDescription(String messageCode,String languageCode);
+	public CatMessages getCatMessages(String messageCode, String languageCode);
 
 }

@@ -27,6 +27,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.LanguageEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.local.CatMessagesServiceLocal;
@@ -77,8 +78,10 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
      */
     @Factory("invoiceCategory")
     @Begin(nested = true)
-    public InvoiceCategory init() {
-        return initEntity();
+    public InvoiceCategory init() { ;
+        InvoiceCategory invoicecat= initEntity();
+        descriptionFr=catMessagesService.getMessageDescription(InvoiceCategory.class.getSimpleName()+"_"+invoicecat.getId(),"FR");
+        return invoicecat;
     }
 
     /**
@@ -111,13 +114,27 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
     @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {	
-    	String back=saveOrUpdate(entity);
-    	CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
-    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
-    	catMessagesService.create(catMessagesEn);
-    	catMessagesService.create(catMessagesFr);
-    	
+	public String saveOrUpdate() {
+    	String back=null;
+    
+    		
+    		if(entity.getId()!=null ){
+        		
+        		CatMessages catMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR"); 
+        		catMsFr.setDescription(descriptionFr);
+        		catMessagesService.update(catMsFr); 
+        		
+        		CatMessages catMsEn=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN");
+        		catMsEn.setDescription(entity.getDescription());
+        		catMessagesService.update(catMsEn);
+        	}else{
+        		back=saveOrUpdate(entity);
+        		CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
+        		CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
+            	catMessagesService.create(catMessagesEn);
+            	catMessagesService.create(catMessagesFr);	
+        	}
+ 
         return back;
     }
 
@@ -139,8 +156,6 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
         return invoiceCategoryService;
     }
     
-   
-
 	public String getDescriptionFr() {
 		return descriptionFr;
 	}
@@ -149,7 +164,8 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 		this.descriptionFr = descriptionFr;
 	}
     
-    
+
+	
     
 
 }

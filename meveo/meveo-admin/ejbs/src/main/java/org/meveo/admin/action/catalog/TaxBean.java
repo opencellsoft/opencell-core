@@ -123,11 +123,12 @@ public class TaxBean extends BaseBean<Tax> {
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
         entity.setAccountingCode(generateAccountingCode());
+        String back=saveOrUpdate(entity);
         CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
     	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
     	catMessagesService.create(catMessagesEn);
     	catMessagesService.create(catMessagesFr);
-        return saveOrUpdate(entity);
+        return back;
     }
 
     /**
