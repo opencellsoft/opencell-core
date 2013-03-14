@@ -2,6 +2,10 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
+	<context-param>
+		<param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
+		<param-value>false</param-value>
+	</context-param>
 	<!-- RichFaces -->
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
@@ -70,6 +74,10 @@
 		<filter-name>UTF8CharacterEncodingFilter</filter-name>
 		<url-pattern>*.seam</url-pattern>
 	</filter-mapping>
+	<!-- JSF -->
+	<listener>
+		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+	</listener>
 	<!-- Seam -->
 	<listener>
 		<listener-class>org.jboss.seam.servlet.SeamListener</listener-class>
@@ -151,12 +159,10 @@
 		<ejb-ref-type>Session</ejb-ref-type> <local-home/> <local>org.manaty.action.Authenticator</local> 
 		</ejb-local-ref> Add entries for each EJB session bean which is also a Seam 
 		component (not required on JBoss AS) -->
-	<!-- <persistence-unit-ref>
-		<persistence-unit-ref-name>MeveoAdmin/pu</persistence-unit-ref-name>
-		<persistence-unit-name>../meveo-admin.jar#MeveoAdmin</persistence-unit-name>
-		The relative reference doesn't work on GlassFish. Instead, set the 
-			<persistence-unit-name> to "MeveoAdmin", package persistence.xml in the WAR, 
-			and add a <jar-file> element in persistence.xml with value "../../meveo-admin.jar". 
-			<persistence-unit-name>MeveoAdmin</persistence-unit-name>
-	</persistence-unit-ref> -->
+	<!-- <persistence-unit-ref> <persistence-unit-ref-name>MeveoAdmin/pu</persistence-unit-ref-name> 
+		<persistence-unit-name>../meveo-admin.jar#MeveoAdmin</persistence-unit-name> 
+		The relative reference doesn't work on GlassFish. Instead, set the <persistence-unit-name> 
+		to "MeveoAdmin", package persistence.xml in the WAR, and add a <jar-file> 
+		element in persistence.xml with value "../../meveo-admin.jar". <persistence-unit-name>MeveoAdmin</persistence-unit-name> 
+		</persistence-unit-ref> -->
 </web-app>
