@@ -58,6 +58,10 @@ public class CustomerAccount extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "CURRENCY_CODE", length = 3)
+    private String currencyCode;
+
+    
     @Column(name = "STATUS", length = 10)
     @Enumerated(EnumType.STRING)
     private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
@@ -112,7 +116,15 @@ public class CustomerAccount extends AccountEntity {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 

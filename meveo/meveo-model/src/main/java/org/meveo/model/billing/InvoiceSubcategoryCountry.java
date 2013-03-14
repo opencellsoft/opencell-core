@@ -18,8 +18,6 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +28,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -41,8 +38,8 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "INVOICE_SUBCATEGORY_COUNTRY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUBCATEGORY_COUNTRY_SEQ")
+@Table(name = "BILLING_INVOIC_SUBCAT_COUNT")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_SUBCAT_COUNT_SEQ")
 
 public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
@@ -56,13 +53,6 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	@Column(name = "COUNTRY_CODE", length = 2)
 	private String countryCode;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
 	
 	
 	@Column(name = "DISCOUNT_CODE", length = 20)
@@ -72,12 +62,7 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	@Column(name = "TAX_CODE", length = 20)
 	private String taxCode;
 	
-	
-
-
-	
-
-	
+		
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
@@ -98,25 +83,6 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 		this.countryCode = countryCode;
 	}
 
-
-	public Date getCreated() {
-		return created;
-	}
-
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 
 
 	public String getDiscountCode() {
