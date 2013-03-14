@@ -78,7 +78,7 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
      */
     @Factory("invoiceCategory")
     @Begin(nested = true)
-    public InvoiceCategory init() { ;
+    public InvoiceCategory init() { 
         InvoiceCategory invoicecat= initEntity();
         descriptionFr=catMessagesService.getMessageDescription(InvoiceCategory.class.getSimpleName()+"_"+invoicecat.getId(),"FR");
         return invoicecat;
@@ -122,16 +122,12 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
         		
         		CatMessages catMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR"); 
         		catMsFr.setDescription(descriptionFr);
-        		catMessagesService.update(catMsFr); 
-        		
-        		CatMessages catMsEn=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN");
-        		catMsEn.setDescription(entity.getDescription());
-        		catMessagesService.update(catMsEn);
+        	    catMessagesService.update(catMsFr); 
+        	    back=saveOrUpdate(entity);
+        	 
         	}else{
         		back=saveOrUpdate(entity);
-        		CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
-        		CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
-            	catMessagesService.create(catMessagesEn);
+        		CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr);  
             	catMessagesService.create(catMessagesFr);	
         	}
  

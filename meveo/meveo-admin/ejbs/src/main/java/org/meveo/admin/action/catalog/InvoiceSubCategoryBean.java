@@ -101,16 +101,15 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
     @Factory("invoiceSubCategory")
     @Begin(nested = true)
-    public InvoiceSubCategory init() {
-    	initEntity();
+    public InvoiceSubCategory init() { 
          InvoiceSubCategory invoiceSubcat= initEntity();
          descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),"FR");
          
         if (invoiceCategoryId != null) {
-            entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
+        	invoiceSubcat.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
         }
         parseAccountingCode();
-        return entity;
+        return invoiceSubcat;
     }
 
     /**
@@ -150,17 +149,12 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR"); 
     		catSubMsFr.setDescription(descriptionFr);
     		catMessagesService.update(catSubMsFr); 
-    		
-    		CatMessages catSubMsEn=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN");
-    		catSubMsEn.setDescription(entity.getDescription());
-    		catMessagesService.update(catSubMsEn);
+    		back =saveOrUpdate(entity); 
     	}else{	
 
     	entity.setAccountingCode(generateAccountingCode());
-    	back =saveOrUpdate(entity);
-    	CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
+    	back =saveOrUpdate(entity); 
     	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr);
-    	catMessagesService.create(catMessagesEn);
     	catMessagesService.create(catMessagesFr);
     
     	}
