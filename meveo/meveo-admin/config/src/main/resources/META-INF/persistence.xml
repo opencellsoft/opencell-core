@@ -126,7 +126,7 @@
 		<class>org.meveo.model.mediation.ZonningPlan</class>
 		<class>org.meveo.model.mediation.TimePlan</class>
 		<class>org.meveo.model.mediation.NumberingPlan</class>
-		
+		<class>org.meveo.model.billing.CatMessages</class>
       <properties>
          <property name="hibernate.dialect" value="@hibernate.dialect@"/>
          <property name="hibernate.hbm2ddl.auto" value="@hibernate.hbm2ddl.auto@"/>
