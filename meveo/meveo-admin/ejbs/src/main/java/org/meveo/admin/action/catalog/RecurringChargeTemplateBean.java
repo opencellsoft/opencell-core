@@ -30,6 +30,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.LanguageEnum;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -83,7 +84,7 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
     @Factory("recurringChargeTemplate")
     public RecurringChargeTemplate init() {
     	RecurringChargeTemplate recuChargeTemplate= initEntity();
-          descriptionFr=catMessagesService.getMessageDescription(RecurringChargeTemplate.class.getSimpleName()+"_"+recuChargeTemplate.getId(),LanguageEnum.FR.toString());
+          descriptionFr=catMessagesService.getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+recuChargeTemplate.getId(),LanguageEnum.FR.toString());
         return recuChargeTemplate;
     }
 
@@ -125,13 +126,13 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
     public String saveOrUpdate() {
     	String back=null;
     	if(entity.getId()!=null){
-    		CatMessages oneRecMsfr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
+    		CatMessages oneRecMsfr=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
     		oneRecMsfr.setDescription(descriptionFr);
     	    catMessagesService.update(oneRecMsfr); 
     	    back=saveOrUpdate(entity);
     	}else{
     		 back=saveOrUpdate(entity); 
-    		   	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr); 
+    		   	CatMessages catMessagesFr=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr); 
     		   	catMessagesService.create(catMessagesFr);	   
     	}
     	return back ;
