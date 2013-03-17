@@ -32,7 +32,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -70,7 +69,7 @@ public class Subscription extends BusinessEntity {
     private Date terminationDate;
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)

@@ -28,9 +28,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.validator.constraints.Length;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.AuditableEntity;
 
@@ -46,7 +45,7 @@ public class Calendar extends AuditableEntity {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "NAME", length = 20)
-    @Length(max = 20)
+	@Size(max = 20)
     private String name;
 
     @Column(name = "DESCRIPTION")
@@ -54,7 +53,7 @@ public class Calendar extends AuditableEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "CAT_CALENDAR_DAYS", joinColumns = @JoinColumn(name = "CALENDAR_ID"), inverseJoinColumns = @JoinColumn(name = "DAY_ID"))
-    @BatchSize(size = 365)
+    // @BatchSize(size = 365)
     private List<DayInYear> days;
 
     @Enumerated(EnumType.STRING)

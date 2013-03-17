@@ -11,12 +11,31 @@
 	<packaging>jar</packaging>
 	<name>Meveo model project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
+
 	<scm>
 		<connection>scm:svn:https://code.manaty.net/svn/trunk/meveo/meveo-model</connection>
 		<developerConnection>scm:svn:https://code.manaty.net/svn/trunk/meveo/meveo-model</developerConnection>
 		<url>https://code.manaty.net/svn/trunk/meveo/meveo-model</url>
 	</scm>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.seam</groupId>
+				<artifactId>seam-bom</artifactId>
+				<version>3.1.0.Final</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.jboss.seam.security</groupId>
+			<artifactId>seam-security</artifactId>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>manaty-commons</artifactId>
@@ -45,7 +64,7 @@
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
-			<version>2.4.7</version>
+			<version>2.4.9</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -54,7 +73,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -71,15 +89,14 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.6.0</version>
+			<version>1.7.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-nop</artifactId>
-			<version>1.6.0</version>
+			<version>1.7.2</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 </project>

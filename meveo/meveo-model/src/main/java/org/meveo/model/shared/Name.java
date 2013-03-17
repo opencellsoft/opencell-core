@@ -21,8 +21,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -40,11 +39,11 @@ public class Name implements Serializable, Cloneable {
     private Title title;
 
     @Column(name = "FIRSTNAME", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     protected String firstName;
 
     @Column(name = "LASTNAME", length = 50)
-    @Length(max = 50)
+	@Size(max = 50)
     protected String lastName;
 
     public Name() {

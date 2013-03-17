@@ -19,8 +19,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -34,47 +33,47 @@ public class BankCoordinates implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "BANK_CODE", nullable = true, length = 5)
-    @Length(max = 5)
+    @Size(max = 5)
     private String bankCode;
 
     @Column(name = "BRANCH_CODE", nullable = true, length = 5)
-    @Length(max = 5)
+    @Size(max = 5)
     private String branchCode;
 
     @Column(name = "ACCOUNT_NUMBER", nullable = true, length = 11)
-    @Length(max = 11)
+    @Size(max = 11)
     private String accountNumber;
 
     @Column(name = "HASH_KEY", nullable = true, length = 2)
-    @Length(max = 2)
+    @Size(max = 2)
     private String key;
 
     @Column(name = "IBAN", length = 34)
-    @Length(max = 34)
+    @Size(max = 34)
     private String iban;
 
     @Column(name = "BIC", length = 11)
-    @Length(max = 11)
+    @Size(max = 11)
     private String bic;
 
     @Column(name = "ACCOUNT_OWNER", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     private String accountOwner;
 
     @Column(name = "BANK_NAME", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     private String bankName;
 
     @Column(name = "BANK_ID", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     private String bankId;
 
     @Column(name = "ISSUER_NUMBER", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     private String issuerNumber;
 
     @Column(name = "ISSUER_NAME", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     private String issuerName;
 
     public BankCoordinates() {

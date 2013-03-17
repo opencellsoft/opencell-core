@@ -1,27 +1,27 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.crm;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.shared.Address;
 
@@ -33,33 +33,33 @@ public class ProviderContact extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "FIRSTNAME", length = 50)
-	@Length(max = 50)
+	@Size(max = 50)
 	protected String firstName;
 
 	@Column(name = "LASTNAME", length = 50)
-	@Length(max = 50)
+	@Size(max = 50)
 	protected String lastName;
-	
+
 	@Column(name = "EMAIL", length = 100)
-	@Email
-	@Length(max = 100)
+	@Pattern(regexp = ".+@.+\\..{2,4}")
+	@Size(max = 100)
 	protected String email;
 
 	@Column(name = "PHONE", length = 15)
-	@Length(max = 15)
+	@Size(max = 15)
 	protected String phone;
 
 	@Column(name = "MOBILE", length = 15)
-	@Length(max = 15)
+	@Size(max = 15)
 	protected String mobile;
 
 	@Column(name = "FAX", length = 15)
-	@Length(max = 15)
+	@Size(max = 15)
 	protected String fax;
-	
+
 	@Column(name = "GENERIC_MAIL", length = 100)
-	@Email
-	@Length(max = 100)
+	@Pattern(regexp = ".+@.+\\..{2,4}")
+	@Size(max = 100)
 	protected String genericMail;
 
 	@Embedded
@@ -131,7 +131,5 @@ public class ProviderContact extends BusinessEntity {
 	public void setGenericMail(String genericMail) {
 		this.genericMail = genericMail;
 	}
-	
-	
-	
+
 }

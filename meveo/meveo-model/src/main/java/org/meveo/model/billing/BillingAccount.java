@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
@@ -33,9 +33,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Pattern;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.validator.constraints.Email;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -49,218 +48,217 @@ import org.meveo.model.payments.PaymentMethodEnum;
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_ACCOUNT_SEQ")
 public class BillingAccount extends AccountEntity {
 
-    public static final String ACCOUNT_TYPE = "billingAccount.type";
+	public static final String ACCOUNT_TYPE = "billingAccount.type";
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", length = 10)
-    private AccountStatusEnum status;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS", length = 10)
+	private AccountStatusEnum status;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "STATUS_DATE")
-    private Date statusDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "STATUS_DATE")
+	private Date statusDate;
 
-    @Embedded
-    private BankCoordinates bankCoordinates = new BankCoordinates();
+	@Embedded
+	private BankCoordinates bankCoordinates = new BankCoordinates();
 
-    @Column(name = "EMAIL")
-    @Email
-    private String email;
+	@Column(name = "EMAIL")
+	@Pattern(regexp = ".+@.+\\..{2,4}")
+	private String email;
 
-    @Column(name = "ELECTRONIC_BILLING")
-    private Boolean electronicBilling = false;
+	@Column(name = "ELECTRONIC_BILLING")
+	private Boolean electronicBilling = false;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "NEXT_INVOICE_DATE")
-    private Date nextInvoiceDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "NEXT_INVOICE_DATE")
+	private Date nextInvoiceDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "SUBSCRIPTION_DATE")
-    private Date subscriptionDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "SUBSCRIPTION_DATE")
+	private Date subscriptionDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "TERMINATION_DATE")
-    private Date terminationDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "TERMINATION_DATE")
+	private Date terminationDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
-    private CustomerAccount customerAccount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+	private CustomerAccount customerAccount;
 
-    @Column(name = "PAYMENT_METHOD")
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
+	@Column(name = "PAYMENT_METHOD")
+	@Enumerated(EnumType.STRING)
+	private PaymentMethodEnum paymentMethod;
 
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();
-        
-    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Invoice> invoices = new ArrayList<Invoice>();
-    
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<BillingRunList> billingRunLists = new ArrayList<BillingRunList>();
-    
-    
-    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
+	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	//TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();
 
-    @Column(name = "DISCOUNT_RATE", precision = 19, scale = 8)
-    private BigDecimal discountRate;
+	@OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Invoice> invoices = new ArrayList<Invoice>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_CYCLE")
-    private BillingCycle billingCycle;
+	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	//TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<BillingRunList> billingRunLists = new ArrayList<BillingRunList>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_RUN")
-    private BillingRun billingRun;
+	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	//TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
-    @Column(name = "INVOICE_PREFIX")
-    private String invoicePrefix;
+	@Column(name = "DISCOUNT_RATE", precision = 19, scale = 8)
+	private BigDecimal discountRate;
 
-    public List<UserAccount> getUsersAccounts() {
-        return usersAccounts;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BILLING_CYCLE")
+	private BillingCycle billingCycle;
 
-    public void setUsersAccounts(List<UserAccount> usersAccounts) {
-        this.usersAccounts = usersAccounts;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BILLING_RUN")
+	private BillingRun billingRun;
 
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
-    }
+	@Column(name = "INVOICE_PREFIX")
+	private String invoicePrefix;
 
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
+	public List<UserAccount> getUsersAccounts() {
+		return usersAccounts;
+	}
 
-    public CustomerAccount getCustomerAccount() {
-        return customerAccount;
-    }
+	public void setUsersAccounts(List<UserAccount> usersAccounts) {
+		this.usersAccounts = usersAccounts;
+	}
 
-    public void setCustomerAccount(CustomerAccount customerAccount) {
-        this.customerAccount = customerAccount;
-    }
+	public PaymentMethodEnum getPaymentMethod() {
+		return paymentMethod;
+	}
 
-    public AccountStatusEnum getStatus() {
-        return status;
-    }
+	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
 
-    public void setStatus(AccountStatusEnum status) {
-        this.status = status;
-        this.statusDate = new Date();
-    }
+	public CustomerAccount getCustomerAccount() {
+		return customerAccount;
+	}
 
-    public Date getStatusDate() {
-        return statusDate;
-    }
+	public void setCustomerAccount(CustomerAccount customerAccount) {
+		this.customerAccount = customerAccount;
+	}
 
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
+	public AccountStatusEnum getStatus() {
+		return status;
+	}
 
-    public Boolean getElectronicBilling() {
-        return electronicBilling;
-    }
+	public void setStatus(AccountStatusEnum status) {
+		this.status = status;
+		this.statusDate = new Date();
+	}
 
-    public void setElectronicBilling(Boolean electronicBilling) {
-        this.electronicBilling = electronicBilling;
-    }
+	public Date getStatusDate() {
+		return statusDate;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public Boolean getElectronicBilling() {
+		return electronicBilling;
+	}
 
-    public Date getNextInvoiceDate() {
-        return nextInvoiceDate;
-    }
+	public void setElectronicBilling(Boolean electronicBilling) {
+		this.electronicBilling = electronicBilling;
+	}
 
-    public void setNextInvoiceDate(Date nextInvoiceDate) {
-        this.nextInvoiceDate = nextInvoiceDate;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public Date getSubscriptionDate() {
-        return subscriptionDate;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setSubscriptionDate(Date subscriptionDate) {
-        this.subscriptionDate = subscriptionDate;
-    }
+	public Date getNextInvoiceDate() {
+		return nextInvoiceDate;
+	}
 
-    public Date getTerminationDate() {
-        return terminationDate;
-    }
+	public void setNextInvoiceDate(Date nextInvoiceDate) {
+		this.nextInvoiceDate = nextInvoiceDate;
+	}
 
-    public void setTerminationDate(Date terminationDate) {
-        this.terminationDate = terminationDate;
-    }
+	public Date getSubscriptionDate() {
+		return subscriptionDate;
+	}
 
-    public BankCoordinates getBankCoordinates() {
-        if (bankCoordinates == null) {
-            bankCoordinates = new BankCoordinates();
-        }
-        return bankCoordinates;
-    }
+	public void setSubscriptionDate(Date subscriptionDate) {
+		this.subscriptionDate = subscriptionDate;
+	}
 
-    public void setBankCoordinates(BankCoordinates bankCoordinates) {
-        this.bankCoordinates = bankCoordinates;
-    }
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
 
-    public BigDecimal getDiscountRate() {
-        return discountRate;
-    }
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
+	}
 
-    public void setDiscountRate(BigDecimal discountRate) {
-        this.discountRate = discountRate;
-    }
+	public BankCoordinates getBankCoordinates() {
+		if (bankCoordinates == null) {
+			bankCoordinates = new BankCoordinates();
+		}
+		return bankCoordinates;
+	}
 
-    public List<Invoice> getInvoices() {
-        return invoices;
-    }
+	public void setBankCoordinates(BankCoordinates bankCoordinates) {
+		this.bankCoordinates = bankCoordinates;
+	}
 
-    public void setInvoices(List<Invoice> invoices) {
-        this.invoices = invoices;
-    }
+	public BigDecimal getDiscountRate() {
+		return discountRate;
+	}
 
-    public BillingCycle getBillingCycle() {
-        return billingCycle;
-    }
+	public void setDiscountRate(BigDecimal discountRate) {
+		this.discountRate = discountRate;
+	}
 
-    public void setBillingCycle(BillingCycle billingCycle) {
-        this.billingCycle = billingCycle;
-    }
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
 
-    @Override
-    public String getAccountType() {
-        return ACCOUNT_TYPE;
-    }
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
 
-    public BillingRun getBillingRun() {
-        return billingRun;
-    }
+	public BillingCycle getBillingCycle() {
+		return billingCycle;
+	}
 
-    public void setBillingRun(BillingRun billingRun) {
-        this.billingRun = billingRun;
-    }
+	public void setBillingCycle(BillingCycle billingCycle) {
+		this.billingCycle = billingCycle;
+	}
 
-    public String getInvoicePrefix() {
-        return invoicePrefix;
-    }
+	@Override
+	public String getAccountType() {
+		return ACCOUNT_TYPE;
+	}
 
-    public void setInvoicePrefix(String invoicePrefix) {
-        this.invoicePrefix = invoicePrefix;
-    }
-    
-	public UserAccount getDefaultUserAccount(){
-		for(UserAccount userAccount : getUsersAccounts()){
-			if(userAccount.getDefaultLevel()){
+	public BillingRun getBillingRun() {
+		return billingRun;
+	}
+
+	public void setBillingRun(BillingRun billingRun) {
+		this.billingRun = billingRun;
+	}
+
+	public String getInvoicePrefix() {
+		return invoicePrefix;
+	}
+
+	public void setInvoicePrefix(String invoicePrefix) {
+		this.invoicePrefix = invoicePrefix;
+	}
+
+	public UserAccount getDefaultUserAccount() {
+		for (UserAccount userAccount : getUsersAccounts()) {
+			if (userAccount.getDefaultLevel()) {
 				return userAccount;
 			}
 		}
@@ -282,5 +280,5 @@ public class BillingAccount extends AccountEntity {
 	public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
 		this.invoiceAgregates = invoiceAgregates;
 	}
-	
+
 }
