@@ -26,7 +26,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -38,7 +37,7 @@ import org.meveo.model.admin.DunningHistory;
  */
 @Entity
 @Table(name = "AR_DUNNING_LOT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_LOT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_LOT_SEQ")
 public class DunningLOT extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

@@ -23,14 +23,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
 
 import org.hibernate.validator.constraints.Length;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PriceCode;
@@ -38,7 +36,7 @@ import org.meveo.model.crm.Customer;
 
 @Entity
 @Table(name = "RATING_EDR_PLAN")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_EDR_PLAN_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_EDR_PLAN_SEQ")
 public class EDRRatingPlan extends EnableEntity {
 
 	/**

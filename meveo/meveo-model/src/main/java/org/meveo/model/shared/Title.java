@@ -17,7 +17,6 @@ package org.meveo.model.shared;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -30,7 +29,7 @@ import org.meveo.model.AuditableEntity;
 @Entity
 @Table(name = "ADM_TITLE", uniqueConstraints=
     @UniqueConstraint(columnNames={"PROVIDER_ID", "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_TITLE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_TITLE_SEQ")
 public class Title extends AuditableEntity {
 
     // MR("Title.mr", false),

@@ -18,22 +18,6 @@
 	</scm>
 	<repositories>
 		<repository>
-			<id>jboss.repo</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-		</repository>
-		<repository>
-			<id>jboss.repo.deprecated</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
-		</repository>
-		<repository>
-			<id>pentaho.repo</id>
-			<url>http://repository.pentaho.org/artifactory/repo/</url>
-		</repository>
-		<repository>
-			<id>primefaces.repo</id>
-			<url>http://repository.primefaces.org</url>
-		</repository>
-		<repository>
 			<id>manaty.repo.releases</id>
 			<url>http://libsmeveocore.manaty.net/releases</url>
 		</repository>
@@ -72,16 +56,6 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.1</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<!-- <dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<version>1.0.1.Final</version>
-		</dependency> -->
 
 		<dependency>
 			<groupId>log4j</groupId>

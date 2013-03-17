@@ -18,7 +18,6 @@ package org.meveo.model.crm;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.Email;
@@ -28,7 +27,7 @@ import org.meveo.model.shared.Address;
 
 @Entity
 @Table(name = "CRM_PROVIDER_CONTACT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_CONTACT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_CONTACT_SEQ")
 public class ProviderContact extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

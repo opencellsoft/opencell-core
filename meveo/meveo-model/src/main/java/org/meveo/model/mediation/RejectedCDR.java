@@ -21,7 +21,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,7 +29,7 @@ import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "MEDINA_REJECTED_CDR")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_REJECTED_CDR_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_REJECTED_CDR_SEQ")
 public class RejectedCDR extends BaseEntity {
 	
 	public enum RejectedCDRFlag {REJECTED_FOR_RETRY, MANUAL_RETRY, REJECTED_FINALLY, PROCESSED};

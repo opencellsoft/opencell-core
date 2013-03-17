@@ -17,14 +17,13 @@ package org.meveo.model.admin;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "ADM_OUDAYA_CONFIGURATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_OUDAYA_CONFIGURATION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_OUDAYA_CONFIGURATION_SEQ")
 public class OudayaConfiguration extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

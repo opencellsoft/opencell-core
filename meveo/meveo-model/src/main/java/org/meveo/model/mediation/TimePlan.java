@@ -21,12 +21,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
 
 /**
@@ -37,7 +35,7 @@ import org.meveo.model.EnableEntity;
  */
 @Entity
 @Table(name="MEDINA_TIME_PLAN")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_TIME_PLAN_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_TIME_PLAN_SEQ")
 public class TimePlan extends EnableEntity {
 	
 	private static final long serialVersionUID = 3308464990654625792L;

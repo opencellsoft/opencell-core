@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +33,7 @@ import org.meveo.model.BaseEntity;
  */
 @Entity
 @Table(name = "BILLING_INVOICE_TEMPLATE", uniqueConstraints = {@UniqueConstraint(columnNames={"CODE", "PROVIDER_ID"}), @UniqueConstraint(columnNames={"FILE_NAME", "PROVIDER_ID"})})
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_TEMPLATE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_TEMPLATE_SEQ")
 public class InvoiceTemplate extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

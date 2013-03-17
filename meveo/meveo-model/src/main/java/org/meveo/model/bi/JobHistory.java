@@ -22,7 +22,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
@@ -37,7 +36,7 @@ import org.meveo.model.BaseEntity;
 @Table(name = "BI_JOB_HISTORY")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "HISTORY_TYPE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_HISTORY_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_HISTORY_SEQ")
 public class JobHistory extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

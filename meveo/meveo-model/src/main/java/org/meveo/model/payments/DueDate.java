@@ -22,7 +22,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,7 +34,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "AR_DUE_DATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUE_DATE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUE_DATE_SEQ")
 public class DueDate extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

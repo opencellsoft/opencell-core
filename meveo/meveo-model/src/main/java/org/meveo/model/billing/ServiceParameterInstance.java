@@ -17,7 +17,6 @@ package org.meveo.model.billing;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -29,7 +28,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "BILLING_SERV_PARAM_INST")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SERV_PARAM_INST_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SERV_PARAM_INST_SEQ")
 public class ServiceParameterInstance extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

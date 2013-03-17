@@ -26,7 +26,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,7 +38,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "AR_MATCHING_CODE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_MATCHING_CODE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_MATCHING_CODE_SEQ")
 public class MatchingCode extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;

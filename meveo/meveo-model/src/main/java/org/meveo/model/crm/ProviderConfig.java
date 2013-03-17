@@ -16,14 +16,13 @@
 package org.meveo.model.crm;
 
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
 @Table(name = "CRM_PROVIDER_CONFIG")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_CONFIG_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_CONFIG_SEQ")
 public class ProviderConfig extends BusinessEntity {
 
 	/**

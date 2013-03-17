@@ -17,7 +17,6 @@ package org.meveo.model.rating;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.ProviderlessEntity;
@@ -31,7 +30,7 @@ import org.meveo.model.ProviderlessEntity;
  */
 @Entity
 @Table(name = "RATING_USAGE_TYPE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_USAGE_TYPE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_USAGE_TYPE_SEQ")
 public class UsageType extends ProviderlessEntity {
 
     private static final long serialVersionUID = 1L;

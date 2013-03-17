@@ -27,7 +27,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.Length;
@@ -42,7 +41,7 @@ import org.meveo.model.crm.Email;
  */
 @Entity
 @Table(name = "BI_REPORT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_REPORT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_REPORT_SEQ")
 public class Report extends BaseEntity {
     private static final long serialVersionUID = 1L;
 

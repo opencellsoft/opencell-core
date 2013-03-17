@@ -24,7 +24,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -52,7 +51,7 @@ import org.meveo.model.BaseEntity;
     discriminatorType=DiscriminatorType.STRING
 )
 @DiscriminatorValue("NOT_SPECIFIED")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_INPUT_HISTORY_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_INPUT_HISTORY_SEQ")
 public class InputHistory extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

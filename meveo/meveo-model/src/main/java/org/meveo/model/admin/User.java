@@ -26,7 +26,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,6 +33,7 @@ import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 
 /**
@@ -45,7 +45,7 @@ import org.meveo.model.shared.Name;
  */
 @Entity
 @Table(name = "ADM_USER")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_USER_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_USER_SEQ")
 public class User extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

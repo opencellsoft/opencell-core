@@ -28,7 +28,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -41,7 +40,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "RATING_MATRIX_DEFINITION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_MATRIX_DEFINITION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_MATRIX_DEFINITION_SEQ")
 public class MatrixDefinition extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

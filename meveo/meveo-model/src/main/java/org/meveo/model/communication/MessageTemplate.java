@@ -24,7 +24,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,7 +34,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name="COM_MESSAGE_TEMPLATE")
 @DiscriminatorColumn(name = "MEDIA")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MSG_TMPL_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MSG_TMPL_SEQ")
 public abstract class MessageTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 5835960109145222442L;

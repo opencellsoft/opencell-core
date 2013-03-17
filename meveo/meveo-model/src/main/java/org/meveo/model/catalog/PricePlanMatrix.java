@@ -20,7 +20,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,7 +39,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "CAT_PRICE_PLAN_MATRIX")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
 public class PricePlanMatrix extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

@@ -25,7 +25,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,7 +37,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "AR_DDREQUEST_LOT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DDREQUEST_LOT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DDREQUEST_LOT_SEQ")
 public class DDRequestLOT extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

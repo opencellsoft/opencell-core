@@ -23,7 +23,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -33,7 +32,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "AR_ACTION_PLAN_ITEM")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACTION_PLAN_ITEM_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACTION_PLAN_ITEM_SEQ")
 public class ActionPlanItem extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +33,7 @@ import org.meveo.model.BaseEntity;
  */
 @Entity
 @Table(name = "MEDIATION_MAGIC_NUMBERS")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDIATION_MAGIC_NUMBERS_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDIATION_MAGIC_NUMBERS_SEQ")
 public class MagicNumber extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

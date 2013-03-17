@@ -29,14 +29,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.crm.Customer;
@@ -51,7 +48,7 @@ import org.meveo.model.shared.ContactInformation;
  */
 @Entity
 @Table(name = "AR_CUSTOMER_ACCOUNT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_CUSTOMER_ACCOUNT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_CUSTOMER_ACCOUNT_SEQ")
 public class CustomerAccount extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = "customerAccount.type";

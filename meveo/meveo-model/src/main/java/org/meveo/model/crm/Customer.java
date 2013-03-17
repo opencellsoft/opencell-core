@@ -25,7 +25,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AccountEntity;
@@ -41,7 +40,7 @@ import org.meveo.model.shared.ContactInformation;
  */
 @Entity
 @Table(name = "CRM_CUSTOMER")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOMER_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOMER_SEQ")
 public class Customer extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = "customer.type";

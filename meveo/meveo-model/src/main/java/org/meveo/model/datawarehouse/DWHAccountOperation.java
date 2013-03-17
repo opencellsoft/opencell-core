@@ -23,7 +23,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,7 +37,7 @@ import org.meveo.model.IEntity;
  */
 @Entity
 @Table(name = "DWH_ACCOUNT_OPERATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_ACCOUNT_OPERATION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_ACCOUNT_OPERATION_SEQ")
 public class DWHAccountOperation implements Serializable,IEntity {
 
     private static final long serialVersionUID = 1L;

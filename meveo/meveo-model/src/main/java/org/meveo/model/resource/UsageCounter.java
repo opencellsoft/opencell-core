@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +33,7 @@ import org.meveo.model.BaseEntity;
  */
 @Entity
 @Table(name = "RM_USAGE_COUNTER")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RM_USAGE_COUNTER_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RM_USAGE_COUNTER_SEQ")
 public class UsageCounter extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

@@ -23,7 +23,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -34,7 +33,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "AR_DUNNING_PLAN_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = { "DUNNING_LEVEL_FROM", "DUNNING_LEVEL_TO", "DUNNING_PLAN_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_PLAN_TRANSITION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_PLAN_TRANSITION_SEQ")
 public class DunningPlanTransition extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

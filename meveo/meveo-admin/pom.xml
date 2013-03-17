@@ -349,23 +349,9 @@
 
 		</profile>
 		<profile>
-			<id>andrius-local</id>
+			<id>andrius-local</id>			
 			<properties>
 				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
-
-				<jboss.hostname>localhost</jboss.hostname>
-				<jboss.home>c:/java/jboss-4.2.3.GA</jboss.home>
-
-				<db.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</db.connection.url>
-				<db.username>MEVEO</db.username>
-				<db.password>meveo</db.password>
-
-				<dbDWH.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</dbDWH.connection.url>
-				<dbDWH.username>meveoDWH</dbDWH.username>
-				<dbDWH.password>meveoDWH</dbDWH.password>
-
 			</properties>
 
 		</profile>
@@ -426,7 +412,6 @@
 		<profile>
 			<id>edward</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
 					<value>edward</value>

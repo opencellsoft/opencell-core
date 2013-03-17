@@ -22,7 +22,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
@@ -31,7 +30,7 @@ import org.meveo.model.communication.MediaEnum;
 @Entity
 @Table(name = "COM_CONTACT_COORDS")
 @DiscriminatorColumn(name = "MEDIA")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_COORDS_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_COORDS_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class ContactCoordinates extends BusinessEntity {
 	private static final long serialVersionUID = 5212396734631312511L;

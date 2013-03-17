@@ -25,7 +25,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -38,7 +37,7 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "BILLING_INVOICE_AGREGATE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_AGREGATE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_AGREGATE_SEQ")
 public abstract class InvoiceAgregate extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

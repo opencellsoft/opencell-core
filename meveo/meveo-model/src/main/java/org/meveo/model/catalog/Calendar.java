@@ -26,7 +26,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -41,7 +40,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "CAT_CALENDAR", uniqueConstraints = @UniqueConstraint(columnNames={"NAME", "PROVIDER_ID"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CALENDAR_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CALENDAR_SEQ")
 public class Calendar extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

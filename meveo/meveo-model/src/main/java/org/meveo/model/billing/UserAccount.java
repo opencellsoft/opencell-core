@@ -29,7 +29,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -44,7 +43,7 @@ import org.meveo.model.AccountEntity;
  */
 @Entity
 @Table(name = "BILLING_USER_ACCOUNT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USER_ACCOUNT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USER_ACCOUNT_SEQ")
 public class UserAccount extends AccountEntity {
 
     private static final long serialVersionUID = 1L;

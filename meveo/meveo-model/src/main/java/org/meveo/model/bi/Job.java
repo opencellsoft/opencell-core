@@ -23,7 +23,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
@@ -37,7 +36,7 @@ import org.meveo.model.ProviderlessEntity;
  */
 @Entity
 @Table(name = "BI_JOB")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_SEQ")
 public class Job extends ProviderlessEntity {
 
     private static final long serialVersionUID = 1L;

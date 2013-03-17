@@ -22,7 +22,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
@@ -33,7 +32,7 @@ import org.meveo.model.BusinessEntity;
  */
 @Entity
 @Table(name = "CAT_OFFER_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
 public class OfferTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
