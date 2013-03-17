@@ -26,6 +26,9 @@ import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.LanguageEnum;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.PersistenceService;
@@ -78,7 +81,9 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
     @Begin(nested = true)
     @Factory("oneShotChargeTemplate")
     public OneShotChargeTemplate init() {
-        return initEntity();
+        OneShotChargeTemplate oneShotChargeTemplate= initEntity();
+        descriptionFr=catMessagesService.getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+oneShotChargeTemplate.getId(),LanguageEnum.FR.toString());
+        return oneShotChargeTemplate; 
     }
 
     /**
@@ -145,12 +150,19 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-    	String back=saveOrUpdate(entity);
-	    CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
-	   	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
-	   	catMessagesService.create(catMessagesEn);
-	   	catMessagesService.create(catMessagesFr);
-	   	return back ;
+    	String back;
+    	if(entity.getId()!=null){
+    		CatMessages oneShorMsfr=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
+    		oneShorMsfr.setDescription(descriptionFr);
+    	    catMessagesService.update(oneShorMsfr); 
+    	    back=saveOrUpdate(entity);
+    	}else{
+    		back=saveOrUpdate(entity); 
+    	   	CatMessages catMessagesFr=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr); 
+    	   	catMessagesService.create(catMessagesFr);
+    	}
+    	
+	   	return back;
     }
     
  

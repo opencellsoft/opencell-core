@@ -101,6 +101,7 @@
       <c:if test="${empty disabled}">
         <c:set var="disabled" value="false" />
      </c:if>
+	 
      
 	<c:if test="${show}">
 		<!--  Initialize the value binding -->
@@ -131,7 +132,7 @@
 					<h:outputText value="#{label}" />
 				</ui:define>
 				<c:if test="${empty textArea}">
-					<c:if test="${useConverter}">
+					<c:if test="${useConverter and empty flag}">
 						<h:inputText rendered="#{edit}" id="#{field}" disabled="#{disabled}"
 							value="#{entity[field]}" required="${required}" size="#{size}" maxlength="#{maxlength}" converter="stringConverter">
 							<c:if test="${validateUnique}">
@@ -149,9 +150,10 @@
 	      					</c:if>
 						</h:inputText>
 					</c:if>
-					<c:if test="${!useConverter}">
+					<c:if test="${!useConverter and empty flag}">
 						<h:inputText rendered="#{edit}" id="#{field}" disabled="#{disabled}"
 							value="#{entity[field]}" required="${required}" size="#{size}" maxlength="#{maxlength}">
+							
 							<c:if test="${validateUnique}">
 								<f:validator validatorId="uniqueConstraintValidator"/>
 	      						<f:attribute name="className" value="#{entity.getClass().getSimpleName()}"/>
@@ -167,11 +169,33 @@
 	      					</c:if>
 						</h:inputText>
 					</c:if>
+					<c:if test="${!empty flag}">
+                     <h:panelGrid columns="2"> 
+					 <a:outputPanel>
+									<c:if test="${flag=='FR'}">
+								
+								<h:graphicImage value="/img/imgFrenchFlag.png" style="height:12px; width:27px;"/>
+			      					</c:if>
+									<c:if test="${flag=='EN'}">
+										 <h:graphicImage value="/img/imgEnglishFlag.png" style="height:12px; width:27px;"/>
+									</c:if>
+						</a:outputPanel>
+					   <a:outputPanel>
+					   <h:inputText rendered="#{edit}"  disabled="#{disabled}"
+							value="#{entity[field]}" required="${required}" size="#{size}" maxlength="#{maxlength}"/>
+						
+						<h:outputText rendered="#{!edit}" value="#{entity[field]}" style="font-weight:bold;"  />
+						
+						</a:outputPanel>
+						
+						</h:panelGrid> 
+					</c:if>
+			 	
 				</c:if>
 				<c:if test="${!empty textArea}">
 					<h:inputTextarea rendered="#{edit}" id="#{field}" disabled="#{disabled}" value="#{entity[field]}" required="${required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}"/>
 				</c:if>
-				<h:outputText rendered="#{!edit}" value="#{entity[field]}" style="font-weight:bold;"  />
+				
 				<ui:insert />
 			</s:decorate>
 		</mnt:isText>

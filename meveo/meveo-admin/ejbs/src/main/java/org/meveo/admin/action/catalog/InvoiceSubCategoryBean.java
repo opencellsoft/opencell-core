@@ -30,6 +30,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.LanguageEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.local.CatMessagesServiceLocal;
@@ -101,16 +102,15 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
     @Factory("invoiceSubCategory")
     @Begin(nested = true)
-    public InvoiceSubCategory init() {
-    	initEntity();
+    public InvoiceSubCategory init() { 
          InvoiceSubCategory invoiceSubcat= initEntity();
-         descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),"FR");
+         descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),LanguageEnum.FR.toString());
          
         if (invoiceCategoryId != null) {
-            entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
+        	invoiceSubcat.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
         }
         parseAccountingCode();
-        return entity;
+        return invoiceSubcat;
     }
 
     /**
@@ -147,20 +147,15 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     	String back=null;
     	if(entity.getId()!=null ){
     		
-    		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR"); 
+    		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
     		catSubMsFr.setDescription(descriptionFr);
     		catMessagesService.update(catSubMsFr); 
-    		
-    		CatMessages catSubMsEn=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN");
-    		catSubMsEn.setDescription(entity.getDescription());
-    		catMessagesService.update(catSubMsEn);
+    		back =saveOrUpdate(entity); 
     	}else{	
 
     	entity.setAccountingCode(generateAccountingCode());
-    	back =saveOrUpdate(entity);
-    	CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
-    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr);
-    	catMessagesService.create(catMessagesEn);
+    	back =saveOrUpdate(entity); 
+    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr);
     	catMessagesService.create(catMessagesFr);
     
     	}

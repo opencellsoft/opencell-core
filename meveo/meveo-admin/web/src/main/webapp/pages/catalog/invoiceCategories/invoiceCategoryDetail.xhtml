@@ -19,20 +19,9 @@
 
 		<custom:formPanel edit="#{edit}" label="#{messages['invoiceCategory.panel']}" backingBean="#{invoiceCategoryBean}" entity="#{invoiceCategory}" >
    			<custom:formField label="#{messages['invoiceCategory.code']}" field="code" required="true" validateUnique="true" />
-   			<h:panelGrid columns="2">  			
-    		<custom:formField label="#{messages['invoiceCategory.description']}" field="description" useConverter="false" size="50" maxlength="50"/>
-            <h:graphicImage value="/img/imgEnglishFlag.png" style="height:16px; width:25px;"/>	
-			  <a:outputPanel id="invoiceCategoryMessages" >	 
-					 <s:decorate template="/layout/edit.xhtml">
-		    		<ui:define name="label">
-		    			<h:outputText value="" />
-		    		</ui:define>
-				    	<h:inputText  value="#{invoiceCategoryBean.descriptionFr}"   size="50" rendered="#{edit}"/>
-				    	<h:outputText value="#{invoiceCategoryBean.descriptionFr}" rendered="#{!edit}"/>
-		       	</s:decorate>
-				 </a:outputPanel>		
-		  <h:graphicImage value="/img/imgFrenchFlag.png" style="height:16px; width:25px;"/>	
-			</h:panelGrid>
+   			
+   			<custom:formField label="#{messages['invoiceCategory.description']}"  field="description" required="true" useConverter="false" size="50" maxlength="50" flag="EN"/>
+            <custom:formField label="" field="descriptionFr" entity="#{invoiceCategoryBean}" useConverter="false" size="50" maxlength="50" flag="FR"/>
 			
    			<!-- <custom:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
    			<custom:formField label="#{messages['invoiceCategory.subcategories']}" field="invoiceSubCategories" edit="true" showFields="invoiceSubCategory.code,code;invoiceSubCategory.accountingCode,accountingCode" deleteButton="false"/>

@@ -55,20 +55,11 @@
 										childField="code" required="true" popup="true"
 										popupId="searchInvoiceCategoryPopup" />
    			<custom:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false"/>
-   			<h:panelGrid columns="2">  			
-    		<custom:formField label="#{messages['invoiceSubCategory.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
-   			<h:graphicImage value="/img/imgEnglishFlag.png" style="height:16px; width:25px;"/>	
-			  <a:outputPanel id="invoiceSubCategoryMessages" >	 
-					 <s:decorate template="/layout/edit.xhtml">
-		    		<ui:define name="label">
-		    			<h:outputText value="" />
-		    		</ui:define>
-				    	<h:inputText  value="#{invoiceSubCategoryBean.descriptionFr}"   size="50" rendered="#{edit}"/>
-				    	<h:outputText value="#{invoiceSubCategoryBean.descriptionFr}" rendered="#{!edit}"/>
-		       	</s:decorate>
-				 </a:outputPanel>		
-		        <h:graphicImage value="/img/imgFrenchFlag.png" style="height:16px; width:25px;"/>	
-			</h:panelGrid>
+   		
+   		
+   		      <custom:formField label="#{messages['invoiceSubCategory.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50" flag="EN"/>
+   			  <custom:formField label="" field="descriptionFr" entity="#{invoiceSubCategoryBean}" useConverter="false" size="50" maxlength="50" flag="FR"/>
+		
           <custom:fieldset name="#{messages['invoiceSubCategory.accountingCode']}" columns="3">	
 	   			<s:decorate template="/layout/edit.xhtml">
 					<ui:define name="label">

@@ -43,9 +43,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
@@ -58,6 +61,8 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.oudaya.OudayaConfig;
@@ -73,7 +78,7 @@ import org.w3c.dom.Text;
 public class XMLInvoiceCreator {
 
     private static final String dueDateFormat = "dd/MM/yyyy";
-
+    protected static EntityManager em;
     protected final Logger logger = Logger.getLogger(this.getClass());
 
     public void createXMLInvoice(Invoice invoice, File billingRundir) throws BusinessException {
@@ -450,9 +455,18 @@ public class XMLInvoiceCreator {
 
         }
     }
+    
+	private static String  getMessageDescription(String messageCode,String languageCode){ 
+		QueryBuilder qb = new QueryBuilder(CatMessages.class,"c");
+    	qb.addCriterionWildcard("c.messageCode", messageCode, true);
+    	qb.addCriterionWildcard("c.languageCode", languageCode, true);
+        List<CatMessages> catMessages=qb.getQuery(em).getResultList(); 
+        return catMessages.size()>0?catMessages.get(0).getDescription():null;	
+	}
 
     public static void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element parent,
             boolean generateSubCat) {
+    	String languageCode=invoice.getBillingAccount().getLanguageCode();
 
         Element categories = doc.createElement("categories");
         parent.appendChild(categories);
@@ -479,16 +493,16 @@ public class XMLInvoiceCreator {
                                 }
                             });
         for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
+        	
            InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
-                    Element category = doc.createElement("category");
-                    category.setAttribute("label",
-                            invoiceCategory != null && invoiceCategory.getDescription() != null ? invoiceCategory
-                                    .getDescription() : "");
+       
+           String invoiceCategoryLabel =invoiceCategory != null ? getMessageDescription(invoiceCategory.getClass().getSimpleName()+"_"+invoiceCategory.getId(),languageCode):"";
+                         Element category = doc.createElement("category");
+                    category.setAttribute("label",invoiceCategoryLabel );
                     category.setAttribute("code",
                             invoiceCategory != null && invoiceCategory.getCode() != null ? invoiceCategory
                                     .getCode() : "");
                     categories.appendChild(category);
-
                     Element amountWithoutTax = doc.createElement("amountWithoutTax");
                     Text amountWithoutTaxTxt = doc.createTextNode(round(categoryInvoiceAgregate.getAmountWithoutTax()));
                     amountWithoutTax.appendChild(amountWithoutTaxTxt);
@@ -511,8 +525,8 @@ public class XMLInvoiceCreator {
 
                             boolean createSubCatElement = false;
                             for (RatedTransaction ratedTrnsaction : transactions) {
-                                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmount1WithTax()
-                                        : ratedTrnsaction.getAmount2WithoutTax();
+                                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
+                                        : ratedTrnsaction.getAmountWithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
                                     createSubCatElement = true;
                                     break;
@@ -521,11 +535,10 @@ public class XMLInvoiceCreator {
                             if (!createSubCatElement) {
                                 continue;
                             }
-
+                            String invoiceSubCategoryLabel =invoiceSubCat != null ? getMessageDescription(invoiceSubCat.getClass().getSimpleName()+"_"+invoiceSubCat.getId(),languageCode):"";
                             Element subCategory = doc.createElement("subCategory");
                             subCategories.appendChild(subCategory);
-                            subCategory.setAttribute("label", invoiceSubCat != null ? invoiceSubCat.getDescription()
-                                    + "" : "");
+                            subCategory.setAttribute("label", invoiceSubCategoryLabel);
 
                             Collections.sort(transactions, new Comparator<RatedTransaction>() {
                                 public int compare(RatedTransaction c0, RatedTransaction c1) {
@@ -538,31 +551,36 @@ public class XMLInvoiceCreator {
                             });
 
                             for (RatedTransaction ratedTrnsaction : transactions) {
-                                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmount1WithTax()
-                                        : ratedTrnsaction.getAmount2WithoutTax();
+                                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
+                                        : ratedTrnsaction.getAmountWithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
 
                                     Element line = doc.createElement("line");
                                     line.setAttribute("code", ratedTrnsaction.getUsageCode() != null ? ratedTrnsaction
                                             .getUsageCode() : "");
                                     line.setAttribute("taxPercent", round(ratedTrnsaction.getTaxPercent()));
-
+                                    
+                                    Long chargeid=ratedTrnsaction.getChargeApplication().getChargeInstance().getChargeTemplate().getId();
+                                    String lineDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
+                                    String retedTransactionLabel=lineDescription +" "+ ratedTrnsaction.getChargeApplication().getStartDate()+" "+ 
+                                    OudayaConfig.getToLabel(invoice.getBillingAccount().getLanguageCode())+" "+ratedTrnsaction.getChargeApplication().getEndDate();
+                                   
                                     Element lebel = doc.createElement("label");
                                     Text lebelTxt = doc
-                                            .createTextNode(ratedTrnsaction.getDescription() != null ? ratedTrnsaction
-                                                    .getDescription() : "");
+                                    .createTextNode(retedTransactionLabel);
+                                    
                                     lebel.appendChild(lebelTxt);
                                     line.appendChild(lebel);
 
                                     Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
                                     Text lineAmountWithoutTaxTxt = doc.createTextNode(round(ratedTrnsaction
-                                            .getAmount1WithoutTax()));
+                                            .getAmountWithoutTax()));
                                     lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
                                     line.appendChild(lineAmountWithoutTax);
 
                                     Element lineAmountWithTax = doc.createElement("amountWithTax");
                                     Text lineAmountWithTaxTxt = doc.createTextNode(round(entreprise ? ratedTrnsaction
-                                            .getAmount1WithTax() : ratedTrnsaction.getAmount2WithoutTax()));
+                                            .getAmountWithTax() : ratedTrnsaction.getAmountWithoutTax()));
                                     lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                                     line.appendChild(lineAmountWithTax);
 
@@ -630,11 +648,12 @@ public class XMLInvoiceCreator {
 
             tax.setAttribute("id", ++taxId + "");
             tax.setAttribute("code", taxInvoiceAgregate.getTax().getCode() + "");
-
+            Long idTax=taxInvoiceAgregate.getTax().getId();
+            String languageCode=invoice.getBillingAccount().getLanguageCode();
+            String taxDescription=getMessageDescription(taxInvoiceAgregate.getTax().getClass().getSimpleName()+"_"+idTax,languageCode); 
             Element taxName = doc.createElement("name");
             Text taxNameTxt = doc
-                    .createTextNode(taxInvoiceAgregate.getTax()!=null?(taxInvoiceAgregate.getTax().getDescription() != null ? taxInvoiceAgregate.getTax()
-                            .getDescription() : ""):"");
+                    .createTextNode(taxInvoiceAgregate.getTax()!=null?taxDescription:"");
             taxName.appendChild(taxNameTxt);
             tax.appendChild(taxName);
 
@@ -718,34 +737,37 @@ public class XMLInvoiceCreator {
                         });
                         Map<String, RatedTransaction> headerRatedTransactions = headerCat.getRatedtransactions();
                         for (RatedTransaction ratedTrnsaction : transactions) {
-                            BigDecimal transactionAmountWithTax = ratedTrnsaction.getAmount1WithTax();
+                            BigDecimal transactionAmountWithTax = ratedTrnsaction.getAmountWithTax();
                             if (transactionAmountWithTax == null || transactionAmountWithTax.equals(BigDecimal.ZERO)) {
                                 continue;
                             }
                             RatedTransaction headerRatedTransaction = null;
                             logger.info("headerRatedTransaction id=" + ratedTrnsaction.getId() + ",code="
                                     + ratedTrnsaction.getUsageCode() + ",Amount1WithoutTax="
-                                    + ratedTrnsaction.getAmount1WithoutTax());
+                                    + ratedTrnsaction.getAmountWithoutTax());
 
                             if (headerRatedTransactions.containsKey(ratedTrnsaction.getUsageCode())) {
                                 headerRatedTransaction = headerRatedTransactions.get(ratedTrnsaction.getUsageCode());
-                                headerRatedTransaction.setAmount1WithoutTax(headerRatedTransaction
-                                        .getAmount1WithoutTax().add(ratedTrnsaction.getAmount1WithoutTax()));
-                                headerRatedTransaction.setAmount1WithTax(headerRatedTransaction.getAmount1WithTax()
+                                headerRatedTransaction.setAmountWithoutTax(headerRatedTransaction
+                                        .getAmountWithoutTax().add(ratedTrnsaction.getAmountWithoutTax()));
+                                headerRatedTransaction.setAmountWithTax(headerRatedTransaction.getAmountWithTax()
                                         .add(transactionAmountWithTax));
 
                             } else {
                                 headerRatedTransaction = new RatedTransaction();
                                 headerRatedTransaction.setUsageCode(ratedTrnsaction.getUsageCode());
-                                headerRatedTransaction.setDescription(ratedTrnsaction.getChargeApplication()!=null?ratedTrnsaction.getChargeApplication()
-                                        .getDescription():"");
-                                headerRatedTransaction.setAmount1WithoutTax(ratedTrnsaction.getAmount1WithoutTax());
-                                headerRatedTransaction.setAmount1WithTax(ratedTrnsaction.getAmount1WithTax());
+                                String languageCode=invoice.getBillingAccount().getLanguageCode();
+                                Long chargeid=ratedTrnsaction.getChargeApplication().getChargeInstance().getChargeTemplate().getId();
+                                String headerRatedDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
+                       
+                                headerRatedTransaction.setDescription(ratedTrnsaction.getChargeApplication()!=null?headerRatedDescription:"");
+                                headerRatedTransaction.setAmountWithoutTax(ratedTrnsaction.getAmountWithoutTax());
+                                headerRatedTransaction.setAmountWithTax(ratedTrnsaction.getAmountWithTax());
                                 headerRatedTransaction.setTaxPercent(ratedTrnsaction.getTaxPercent());
                                 headerRatedTransactions.put(ratedTrnsaction.getUsageCode(), headerRatedTransaction);
                             }
                             logger.info("addHeaderCategories headerRatedTransaction amoutHT="
-                                    + headerRatedTransaction.getAmount1WithoutTax());
+                                    + headerRatedTransaction.getAmountWithoutTax());
 
                         }
 
@@ -799,15 +821,15 @@ public class XMLInvoiceCreator {
                     lebel.appendChild(lebelTxt);
                     line.appendChild(lebel);
                     logger.info("addHeaderCategories2 headerRatedTransaction amountHT="
-                            + headerTransaction.getAmount1WithoutTax());
+                            + headerTransaction.getAmountWithoutTax());
                     Element lineAmountWithoutTax = doc.createElement("amountWithoutTax");
-                    Text lineAmountWithoutTaxTxt = doc.createTextNode(round(headerTransaction.getAmount1WithoutTax())
+                    Text lineAmountWithoutTaxTxt = doc.createTextNode(round(headerTransaction.getAmountWithoutTax())
                             + "");
                     lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
                     line.appendChild(lineAmountWithoutTax);
 
                     Element lineAmountWithTax = doc.createElement("amountWithTax");
-                    Text lineAmountWithTaxTxt = doc.createTextNode(round(headerTransaction.getAmount1WithTax()) + "");
+                    Text lineAmountWithTaxTxt = doc.createTextNode(round(headerTransaction.getAmountWithTax()) + "");
                     lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                     line.appendChild(lineAmountWithTax);
 
@@ -854,6 +876,12 @@ public class XMLInvoiceCreator {
         }
         return true;
     }
+     
 
+ 
+	
+	 
+    
+    
 
 }

@@ -48,7 +48,7 @@ public class OudayaConfig implements MeveoConfig {
     private static final String CUSTOMER_ACCOUNT_SERVICE_NAME = "oudaya.customerAccountServiceName";
     private static final String SERVICE_PROVIDER_URL = "oudaya.serviceProviderUrl";
     private static final String DEFAULT_PROVIDER_ID = "oudaya.defaultProvider.id";
-
+    private static final String TO_LABEL = "to.label";
     // Defaults
     private static final String DEFAULT_SCANNING_INTERVAL = "5000"; // 0.5s
     private static final String DEFAULT_PERSISTENCE_UNIT_NAME = "OudayaPU";
@@ -177,6 +177,11 @@ public class OudayaConfig implements MeveoConfig {
 	public Long getDefaultProviderId() {
 		return Long.valueOf(ParamBean.getInstance(OUDAYA_PROPERTIES_FILENAME).getProperty(DEFAULT_PROVIDER_ID,
 				DEFAULT_DEFAULT_PROVIDER_ID));
+	}
+	
+	public static String getToLabel(String languageCode) {
+		return ParamBean.getInstance(OUDAYA_PROPERTIES_FILENAME).getProperty(TO_LABEL+"."+languageCode,
+				"to");
 	}
 
 }
