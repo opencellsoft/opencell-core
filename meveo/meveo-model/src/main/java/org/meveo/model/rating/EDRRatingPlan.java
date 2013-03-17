@@ -28,9 +28,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PriceCode;
@@ -167,7 +166,7 @@ public class EDRRatingPlan extends EnableEntity {
     //if PriceCode is set, then the charges and 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CODE", nullable = false)
-    @Length(max = 20)
+	@Size(max = 20)
     private PriceCode priceCode;
 
     @ManyToOne(fetch = FetchType.LAZY)

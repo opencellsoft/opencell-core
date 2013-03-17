@@ -35,7 +35,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 
@@ -80,15 +79,15 @@ public class ServiceInstance extends BusinessEntity {
     private Date endAgrementDate;
 
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
 
     @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<OneShotChargeInstance>();
 
     @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<OneShotChargeInstance>();
 
     @ManyToOne(fetch = FetchType.LAZY)

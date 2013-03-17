@@ -34,7 +34,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.AccountEntity;
 
 /**
@@ -72,14 +71,14 @@ public class UserAccount extends AccountEntity {
     private BillingAccount billingAccount;
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
     @OneToOne( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     @JoinColumn(name = "WALLET_ID")
     private Wallet wallet;
 

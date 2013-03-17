@@ -19,8 +19,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -34,31 +33,31 @@ public class Address implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "ADDRESS_1", length = 50)
-    @Length(max = 80)
+    @Size(max = 80)
     protected String address1;
 
     @Column(name = "ADDRESS_2", length = 50)
-    @Length(max = 80)
+    @Size(max = 80)
     protected String address2;
 
     @Column(name = "ADDRESS_3", length = 50)
-    @Length(max = 80)
+    @Size(max = 80)
     protected String address3;
 
     @Column(name = "ADDRESS_ZIPCODE", length = 10)
-    @Length(max = 10)
+    @Size(max = 10)
     protected String zipCode;
 
     @Column(name = "ADDRESS_CITY", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     protected String city;
 
     @Column(name = "ADDRESS_COUNTRY", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     protected String country;
 
     @Column(name = "ADDRESS_STATE", length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     protected String state;
 
     public Address() {

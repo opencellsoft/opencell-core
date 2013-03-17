@@ -26,7 +26,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.ProviderlessEntity;
 
 /**
@@ -61,7 +60,7 @@ public class Job extends ProviderlessEntity {
     private Integer jobRepositoryId;
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<JobExecutionHisto> jobHistory;
 
     public String getName() {

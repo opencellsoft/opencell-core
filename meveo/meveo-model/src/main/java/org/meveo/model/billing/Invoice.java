@@ -16,8 +16,6 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +34,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 

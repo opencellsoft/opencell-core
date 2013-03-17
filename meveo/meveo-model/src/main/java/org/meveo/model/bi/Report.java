@@ -29,8 +29,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.crm.Email;
 
@@ -50,7 +50,7 @@ public class Report extends BaseEntity {
     private String name;
 
     @Column(name = "DESCRIPTION", nullable = true, length = 50)
-    @Length(max = 50)
+    @Size(max = 50)
     protected String description;
 
     @ManyToMany(fetch = FetchType.LAZY)
