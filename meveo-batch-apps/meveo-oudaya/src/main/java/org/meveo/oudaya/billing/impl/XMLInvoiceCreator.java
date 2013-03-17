@@ -526,7 +526,7 @@ public class XMLInvoiceCreator {
                             boolean createSubCatElement = false;
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
-                                        : ratedTrnsaction.getAmountWithoutTax();
+                                        : ratedTrnsaction.getPrAmountWithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
                                     createSubCatElement = true;
                                     break;
@@ -552,7 +552,7 @@ public class XMLInvoiceCreator {
 
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
-                                        : ratedTrnsaction.getAmountWithoutTax();
+                                        : ratedTrnsaction.getPrAmountWithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
 
                                     Element line = doc.createElement("line");
@@ -580,7 +580,7 @@ public class XMLInvoiceCreator {
 
                                     Element lineAmountWithTax = doc.createElement("amountWithTax");
                                     Text lineAmountWithTaxTxt = doc.createTextNode(round(entreprise ? ratedTrnsaction
-                                            .getAmountWithTax() : ratedTrnsaction.getAmountWithoutTax()));
+                                            .getAmountWithTax() : ratedTrnsaction.getPrAmountWithoutTax()));
                                     lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                                     line.appendChild(lineAmountWithTax);
 
