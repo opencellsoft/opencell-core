@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
@@ -52,13 +53,13 @@ import org.meveo.service.catalog.local.OfferTemplateServiceLocal;
 public class SubscriptionService extends BusinessService<Subscription>
 		implements SubscriptionServiceLocal, SubscriptionServiceRemote {
 
-	@In
+	@Inject
 	private UserAccountServiceLocal userAccountService;
 
-	@In
+	@Inject
 	private ServiceInstanceServiceLocal serviceInstanceService;
 
-	@In
+	@Inject
 	private OfferTemplateServiceLocal offerTemplateService;
 
 	public void createSubscription(String userAccountCode,

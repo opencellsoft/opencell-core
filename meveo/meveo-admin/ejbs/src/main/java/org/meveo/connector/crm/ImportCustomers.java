@@ -19,20 +19,17 @@ import java.io.File;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
+import javax.ejb.Asynchronous;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.connector.InputFiles;
-
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.util.RandomStringUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.connector.InputFiles;
 import org.meveo.model.admin.CustomerImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
@@ -60,41 +57,41 @@ import org.meveo.service.crm.local.CustomerCategoryServiceLocal;
 import org.meveo.service.crm.local.CustomerServiceLocal;
 import org.meveo.service.crm.local.ProviderServiceLocal;
 import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
  * @created 22.12.2010
  * 
  */
-@Name("importCustomers")
+@Named
 public class ImportCustomers extends InputFiles {
 
-	@In(create = true)
+	@Inject
 	private CustomerAccountServiceLocal customerAccountService;
 
-	@In
+	@Inject
 	private CustomerServiceLocal customerService;
 
-	@In
+	@Inject
 	UserServiceLocal userService;
 
-	@In
+	@Inject
 	CustomerBrandServiceLocal customerBrandService;
 
-	@In
+	@Inject
 	CustomerCategoryServiceLocal customerCategoryService;
 
-	@In
+	@Inject
 	private TitleServiceLocal titleService;
 
-	@In
+	@Inject
 	private CustomerImportHistoServiceLocal customerImportHistoService;
 
-	@In
+	@Inject
 	private ProviderServiceLocal providerService;
 
-	@Logger
-	protected Log log;
+	protected Logger log;
 
 	Customers customersWarning;
 	Customers customersError;

@@ -17,7 +17,7 @@ package org.meveo.service.admin.local;
 
 import javax.ejb.Local;
 
-import org.meveo.model.admin.Role;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**

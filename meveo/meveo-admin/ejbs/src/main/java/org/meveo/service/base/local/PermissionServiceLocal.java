@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.ejb.Local;
 
-import org.meveo.model.admin.Role;
+import org.meveo.model.security.Role;
 
 @Local
 public interface PermissionServiceLocal extends IPersistenceService<Role>{

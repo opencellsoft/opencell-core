@@ -24,13 +24,11 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jboss.seam.annotations.security.PermissionCheck;
-
 @Target( { METHOD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
 @Inherited
-@PermissionCheck("billingVisualization")
+//TODO: @PermissionCheck("billingVisualization")
 public @interface BillingVisualization {
 
     @SuppressWarnings("unchecked")

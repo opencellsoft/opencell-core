@@ -29,16 +29,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.local.DWHAccountOperationServiceLocal;
+import org.slf4j.Logger;
 
-@Name("accountingSummary")
+@Named
 public class AccountingSummary extends FileProducer implements Reporting {
 
     static final Comparator<AccountingSummaryObject> OCC_CODE_ORDER = new Comparator<AccountingSummaryObject>() {
@@ -46,10 +46,11 @@ public class AccountingSummary extends FileProducer implements Reporting {
             return e2.getOccCode().compareTo(e2.getOccCode());
         }
     };
-    /** Logger. */
-    @Logger
-    protected Log log;
 
+    @Inject
+    protected Logger log;
+
+    @Inject
     private DWHAccountOperationServiceLocal accountOperationTransformationService;
 
     private String reportsFolder;
@@ -142,8 +143,6 @@ public class AccountingSummary extends FileProducer implements Reporting {
         reportsFolder = param.getProperty("reportsURL");
         String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder");
         templateFilename = jasperTemplatesFolder + "accountingSummary.jasper";
-        accountOperationTransformationService = (DWHAccountOperationServiceLocal) Component
-                .getInstance("DWHAccountOperationService");
         generateAccountingSummaryFile(report.getProvider() == null ? null : report.getProvider().getCode(), report
                 .getStartDate(), report.getEndDate(), report.getOutputFormat());
     }

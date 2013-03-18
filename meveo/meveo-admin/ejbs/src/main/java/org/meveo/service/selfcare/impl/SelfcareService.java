@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 public class SelfcareService extends PersistenceService<CustomerAccount>
 		implements SelfcareServiceLocal, SelfcareServiceRemote {
 
+	@Inject
 	private Logger log;
 
 	@Inject

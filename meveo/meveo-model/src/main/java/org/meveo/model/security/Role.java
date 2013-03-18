@@ -1,6 +1,5 @@
 package org.meveo.model.security;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -14,10 +13,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.meveo.model.BaseEntity;
+
 @Entity
 @Table(name = "ADM_ROLE")
 // @org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Role implements Serializable {
+public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
 

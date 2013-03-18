@@ -21,29 +21,22 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Named;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.core.ResourceBundle;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.admin.security.user.UserCreate;
-import org.meveo.admin.security.user.UserDelete;
-import org.meveo.admin.security.user.UserUpdate;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.Role;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.security.Role;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.local.UserServiceLocal;
 import org.meveo.service.base.PersistenceService;
@@ -57,16 +50,17 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Named
-public class UserService extends PersistenceService<User> implements
-		UserServiceLocal {
+public class UserService extends PersistenceService<User> implements UserServiceLocal {
 
 	static User systemUser = null;
 
-	private static String SEQUENCE_VALUE_TEST = "";//TODO: ResourceBundle. ResourceBundle.instance()
-			.getString("sequence.test");
+	private static String SEQUENCE_VALUE_TEST = "";
+
+	// TODO: ResourceBundle.
+	// ResourceBundle.instance().getString("sequence.test");
 
 	@Override
-	@UserCreate
+	// TODO: @UserCreate
 	public void create(User user) throws UsernameAlreadyExistsException {
 		// TODO: Provider. Provider currentProvider = (Provider)
 		// Component.getInstance("currentProvider");
@@ -84,7 +78,7 @@ public class UserService extends PersistenceService<User> implements
 	}
 
 	@Override
-	@UserUpdate
+	// TODO: @UserUpdate
 	public void update(User user) throws UsernameAlreadyExistsException {
 		if (isUsernameExists(user.getUserName(), user.getId())) {
 			em.refresh(user);
@@ -93,8 +87,7 @@ public class UserService extends PersistenceService<User> implements
 
 		user.setUserName(user.getUserName().toUpperCase());
 		if (!StringUtils.isBlank(user.getNewPassword())) {
-			String encryptedPassword = Sha1Encrypt.encodePassword(user
-					.getPassword());
+			String encryptedPassword = Sha1Encrypt.encodePassword(user.getPassword());
 			user.setPassword(encryptedPassword);
 		}
 
@@ -102,7 +95,7 @@ public class UserService extends PersistenceService<User> implements
 	}
 
 	@Override
-	@UserDelete
+	// TODO: @UserDelete
 	public void remove(User user) {
 		super.remove(user);
 	}
@@ -144,8 +137,7 @@ public class UserService extends PersistenceService<User> implements
 		try {
 			password = Sha1Encrypt.encodePassword(password);
 			return (User) em
-					.createQuery(
-							"from User where userName = :userName and password = :password")
+					.createQuery("from User where userName = :userName and password = :password")
 					.setParameter("userName", username.toUpperCase())
 					.setParameter("password", password).getSingleResult();
 		} catch (NoResultException ex) {
@@ -155,10 +147,8 @@ public class UserService extends PersistenceService<User> implements
 
 	public User findByUsername(String username) {
 		try {
-			return (User) em
-					.createQuery("from User where userName = :userName")
-					.setParameter("userName", username.toUpperCase())
-					.getSingleResult();
+			return (User) em.createQuery("from User where userName = :userName")
+					.setParameter("userName", username.toUpperCase()).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
@@ -173,8 +163,7 @@ public class UserService extends PersistenceService<User> implements
 		}
 	}
 
-	public User changePassword(User user, String newPassword)
-			throws BusinessException {
+	public User changePassword(User user, String newPassword) throws BusinessException {
 		em.refresh(user);
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
@@ -184,11 +173,8 @@ public class UserService extends PersistenceService<User> implements
 
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRolesExcept(String rolename1, String rolename2) {
-		return em
-				.createQuery(
-						"from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
-				.setParameter("name1", rolename1)
-				.setParameter("name2", rolename2).getResultList();
+		return em.createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
+				.setParameter("name1", rolename1).setParameter("name2", rolename2).getResultList();
 	}
 
 	public Role getRoleByName(String name) {
@@ -200,26 +186,23 @@ public class UserService extends PersistenceService<User> implements
 		// Check if the user is active
 		if (!currentUser.isActive()) {
 			log.info("The user #" + currentUser.getId() + " is not active");
-			throw new InactiveUserException("The user #" + currentUser.getId()
-					+ " is not active");
+			throw new InactiveUserException("The user #" + currentUser.getId() + " is not active");
 		}
 
 		// Check if the user password has expired
-		String passwordExpiracy = ParamBean.getInstance("meveo.properties")
-				.getProperty("password.Expiracy", "90");
+		String passwordExpiracy = ParamBean.getInstance("meveo.properties").getProperty(
+				"password.Expiracy", "90");
 
 		if (currentUser.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user #" + currentUser.getId()
+			log.info("The password of user #" + currentUser.getId() + " has expired.");
+			throw new PasswordExpiredException("The password of user #" + currentUser.getId()
 					+ " has expired.");
-			throw new PasswordExpiredException("The password of user #"
-					+ currentUser.getId() + " has expired.");
 		}
 
 		// Check the roles
 		if (currentUser.getRoles() == null || currentUser.getRoles().isEmpty()) {
 			log.info("The user #" + currentUser.getId() + " has no role!");
-			throw new NoRoleException("The user #" + currentUser.getId()
-					+ " has no role!");
+			throw new NoRoleException("The user #" + currentUser.getId() + " has no role!");
 		}
 	}
 
@@ -237,8 +220,7 @@ public class UserService extends PersistenceService<User> implements
 
 		User newUser = new User();
 
-		newUser.setName(new org.meveo.model.shared.Name(title, firstName,
-				lastName));
+		newUser.setName(new org.meveo.model.shared.Name(title, firstName, lastName));
 
 		newUser.setDisabled(newUser.isDisabled());
 		newUser.setUserName(user.getUserName() + "_NEW");
@@ -249,8 +231,7 @@ public class UserService extends PersistenceService<User> implements
 		return newUser;
 	}
 
-	public void saveActivity(User user, String objectId, String action,
-			String uri) {
+	public void saveActivity(User user, String objectId, String action, String uri) {
 		// String sequenceValue = "USER_LOG_SEQ.nextval";
 		if (!SEQUENCE_VALUE_TEST.equals("true")) {
 

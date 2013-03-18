@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.connector.crm;
 
 import java.io.File;
@@ -22,19 +22,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import javax.ejb.Asynchronous;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.connector.InputFiles;
-
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.log.Log;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.connector.InputFiles;
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -62,44 +59,44 @@ import org.meveo.service.catalog.local.OfferTemplateServiceLocal;
 import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
 import org.meveo.service.crm.local.ProviderServiceLocal;
 import org.meveo.service.crm.local.SubscriptionTerminationReasonServiceLocal;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
  * @created 22.12.2010
  * 
  */
-@Name("importSubscriptions")
+@Named
 public class ImportSubscriptions extends InputFiles {
 
-	@In
+	@Inject
 	UserServiceLocal userService;
 
-	@In
+	@Inject
 	SubscriptionServiceLocal subscriptionService;
 
-	@In
+	@Inject
 	OfferTemplateServiceLocal offerTemplateService;
 
-	@In
+	@Inject
 	UserAccountServiceLocal userAccountService;
 
-	@In
+	@Inject
 	SubscriptionTerminationReasonServiceLocal subscriptionTerminationReasonService;
 
-	@In
+	@Inject
 	ServiceTemplateServiceLocal serviceTemplateService;
 
-	@In
+	@Inject
 	ServiceInstanceServiceLocal serviceInstanceService;
 
-	@In
+	@Inject
 	SubscriptionImportHistoServiceLocal subscriptionImportHistoService;
 
-	@In
+	@Inject
 	private ProviderServiceLocal providerService;
 
-	@Logger
-	protected Log log;
+	protected Logger log;
 
 	Subscriptions subscriptionsError;
 	Subscriptions subscriptionsWarning;
@@ -113,7 +110,8 @@ public class ImportSubscriptions extends InputFiles {
 	SubscriptionImportHisto subscriptionImportHisto;
 
 	@Asynchronous
-	public void importFile(File file, String fileName, CountDownLatch latch) throws JAXBException, Exception {
+	public void importFile(File file, String fileName, CountDownLatch latch) throws JAXBException,
+			Exception {
 
 		try {
 
@@ -145,37 +143,41 @@ public class ImportSubscriptions extends InputFiles {
 				createHistory(provider, userJob);
 				return;
 			}
-			Subscriptions subscriptions = (Subscriptions) JAXBUtils.unmarshaller(Subscriptions.class, file);
+			Subscriptions subscriptions = (Subscriptions) JAXBUtils.unmarshaller(
+					Subscriptions.class, file);
 			log.debug("parsing file ok");
 			int i = -1;
 			nbSubscriptions = subscriptions.getSubscription().size();
 			if (nbSubscriptions == 0) {
 				createSubscriptionWarning(null, "Fichier vide");
 			}
-			SubscripFOR: for (org.meveo.model.jaxb.subscription.Subscription subscrip : subscriptions.getSubscription()) {
+			SubscripFOR: for (org.meveo.model.jaxb.subscription.Subscription subscrip : subscriptions
+					.getSubscription()) {
 				try {
 					i++;
 					CheckSubscription checkSubscription = subscriptionCheckError(subscrip);
 					if (checkSubscription == null) {
 						nbSubscriptionsError++;
-						log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-								+ subscrip.getCode() + ", status:Error");
+						log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i
+								+ ", code:" + subscrip.getCode() + ", status:Error");
 						continue;
 					}
 					Subscription subscription = checkSubscription.subscription;
 					if (subscription != null) {
 						if (!"ACTIVE".equals(subscrip.getStatus().getValue())) {
 							if (!provider.getCode().equals(subscription.getProvider().getCode())) {
-								createSubscriptionError(subscrip, "Conflict subscription.provider and file.provider");
+								createSubscriptionError(subscrip,
+										"Conflict subscription.provider and file.provider");
 								nbSubscriptionsError++;
-								log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ subscrip.getCode() + ", status:Error");
+								log.info("file:" + fileName + ", typeEntity:Subscription, index:"
+										+ i + ", code:" + subscrip.getCode() + ", status:Error");
 								continue;
 							}
 							SubscriptionTerminationReason subscriptionTerminationType = null;
 							try {
-								subscriptionTerminationType = subscriptionTerminationReasonService.findByCodeReason(
-										subscrip.getStatus().getReason(), provider.getCode());
+								subscriptionTerminationType = subscriptionTerminationReasonService
+										.findByCodeReason(subscrip.getStatus().getReason(),
+												provider.getCode());
 							} catch (Exception e) {
 							}
 							if (subscriptionTerminationType == null) {
@@ -183,29 +185,31 @@ public class ImportSubscriptions extends InputFiles {
 										"subscriptionTerminationType not found for codeReason:"
 												+ subscrip.getStatus().getReason());
 								nbSubscriptionsError++;
-								log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ subscrip.getCode() + ", status:Error");
+								log.info("file:" + fileName + ", typeEntity:Subscription, index:"
+										+ i + ", code:" + subscrip.getCode() + ", status:Error");
 								continue;
 							}
 							try {
-								subscriptionService.terminateSubscription(subscription.getCode(), DateUtils
-										.parseDateWithPattern(subscrip.getStatus().getDate(), param
-												.getProperty("connectorCRM.dateFormat")), subscriptionTerminationType,
-										userJob);
-								log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ subscrip.getCode() + ", status:Terminated");
+								subscriptionService.terminateSubscription(subscription.getCode(),
+										DateUtils.parseDateWithPattern(subscrip.getStatus()
+												.getDate(), param
+												.getProperty("connectorCRM.dateFormat")),
+										subscriptionTerminationType, userJob);
+								log.info("file:" + fileName + ", typeEntity:Subscription, index:"
+										+ i + ", code:" + subscrip.getCode()
+										+ ", status:Terminated");
 
 								continue;
 							} catch (Exception e) {
 								createSubscriptionError(subscrip, e.getMessage());
 								nbSubscriptionsError++;
-								log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-										+ subscrip.getCode() + ", status:Error");
+								log.info("file:" + fileName + ", typeEntity:Subscription, index:"
+										+ i + ", code:" + subscrip.getCode() + ", status:Error");
 								continue;
 							}
 						} else {
-							log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-									+ subscrip.getCode() + ", status:Ignored");
+							log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i
+									+ ", code:" + subscrip.getCode() + ", status:Ignored");
 							nbSubscriptionsIgnored++;
 							continue;
 						}
@@ -216,35 +220,40 @@ public class ImportSubscriptions extends InputFiles {
 					subscription.setOffer(checkSubscription.offerTemplate);
 					subscription.setCode(subscrip.getCode());
 					subscription.setDescription(subscrip.getDescription());
-					subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(subscrip.getSubscriptionDate(),
+					subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(
+							subscrip.getSubscriptionDate(),
 							param.getProperty("connectorCRM.dateFormat")));
-					subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(subscrip.getEndAgreementDate(),
+					subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(
+							subscrip.getEndAgreementDate(),
 							param.getProperty("connectorCRM.dateFormat")));
-					subscription.setStatusDate(DateUtils.parseDateWithPattern(subscrip.getStatus().getDate(), param
-							.getProperty("connectorCRM.dateFormat")));
+					subscription.setStatusDate(DateUtils.parseDateWithPattern(subscrip.getStatus()
+							.getDate(), param.getProperty("connectorCRM.dateFormat")));
 					subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 					subscription.setUserAccount(checkSubscription.userAccount);
 					subscriptionService.create(subscription, userJob, provider);
 					nbSubscriptionsCreated++;
-					log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-							+ subscrip.getCode() + ", status:Created");
+					log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i
+							+ ", code:" + subscrip.getCode() + ", status:Created");
 					for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.serviceInsts) {
 						try {
 							ServiceTemplate serviceTemplate = null;
 							ServiceInstance serviceInstance = new ServiceInstance();
-							serviceTemplate = serviceTemplateService.findByCode(serviceInst.getCode().toUpperCase());
+							serviceTemplate = serviceTemplateService.findByCode(serviceInst
+									.getCode().toUpperCase());
 							serviceInstance.setCode(serviceTemplate.getCode());
 							serviceInstance.setDescription(serviceTemplate.getDescription());
 							serviceInstance.setServiceTemplate(serviceTemplate);
 							serviceInstance.setSubscription(subscription);
-							serviceInstance.setSubscriptionDate(DateUtils.parseDateWithPattern(serviceInst
-									.getSubscriptionDate(), param.getProperty("connectorCRM.dateFormat")));
+							serviceInstance.setSubscriptionDate(DateUtils.parseDateWithPattern(
+									serviceInst.getSubscriptionDate(),
+									param.getProperty("connectorCRM.dateFormat")));
 							int quantity = 1;
-							if (serviceInst.getQuantity() != null && serviceInst.getQuantity().trim().length() != 0) {
+							if (serviceInst.getQuantity() != null
+									&& serviceInst.getQuantity().trim().length() != 0) {
 								quantity = Integer.parseInt(serviceInst.getQuantity().trim());
 							}
-							log.debug("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-									+ subscrip.getCode() + ", quantity:" + quantity);
+							log.debug("file:" + fileName + ", typeEntity:Subscription, index:" + i
+									+ ", code:" + subscrip.getCode() + ", quantity:" + quantity);
 							serviceInstance.setQuantity(quantity);
 							serviceInstance.setProvider(provider);
 							serviceInstanceService.serviceInstanciation(serviceInstance, userJob);
@@ -253,28 +262,47 @@ public class ImportSubscriptions extends InputFiles {
 								if (serviceInstance.getRecurringChargeInstances() != null) {
 									for (RecurringChargeInstance recurringChargeInstance : serviceInstance
 											.getRecurringChargeInstances()) {
-										log.debug("file:" + fileName + ", typeEntity:Subscription, index:" + i
-												+ ", code:" + subscrip.getCode() + ", recurringChargeInstance:"
+										log.debug("file:" + fileName
+												+ ", typeEntity:Subscription, index:" + i
+												+ ", code:" + subscrip.getCode()
+												+ ", recurringChargeInstance:"
 												+ recurringChargeInstance.getCode());
 										if (serviceInst.getRecurringCharges().getAmountWithoutTax() != null) {
-											recurringChargeInstance.setAmountWithoutTax(new BigDecimal(serviceInst
-													.getRecurringCharges().getAmountWithoutTax().replace(',', '.')));
-											log.debug("file:" + fileName + ", typeEntity:Subscription, index:" + i
-													+ ", code:" + subscrip.getCode()
+											recurringChargeInstance
+													.setAmountWithoutTax(new BigDecimal(serviceInst
+															.getRecurringCharges()
+															.getAmountWithoutTax()
+															.replace(',', '.')));
+											log.debug("file:"
+													+ fileName
+													+ ", typeEntity:Subscription, index:"
+													+ i
+													+ ", code:"
+													+ subscrip.getCode()
 													+ ", recurringChargeInstance.setAmountWithoutTax:"
-													+ serviceInst.getRecurringCharges().getAmountWithoutTax());
+													+ serviceInst.getRecurringCharges()
+															.getAmountWithoutTax());
 										}
 										if (serviceInst.getRecurringCharges().getAmountWithoutTax() != null) {
-											recurringChargeInstance.setAmount2(new BigDecimal(serviceInst
-													.getRecurringCharges().getAmountWithTax().replace(',', '.')));
-											log.debug("file:" + fileName + ", typeEntity:Subscription, index:" + i
-													+ ", code:" + subscrip.getCode()
+											recurringChargeInstance.setAmount2(new BigDecimal(
+													serviceInst.getRecurringCharges()
+															.getAmountWithTax().replace(',', '.')));
+											log.debug("file:"
+													+ fileName
+													+ ", typeEntity:Subscription, index:"
+													+ i
+													+ ", code:"
+													+ subscrip.getCode()
 													+ ", recurringChargeInstance.setAmount2:"
-													+ serviceInst.getRecurringCharges().getAmountWithTax());
+													+ serviceInst.getRecurringCharges()
+															.getAmountWithTax());
 										}
-										recurringChargeInstance.setCriteria1(serviceInst.getRecurringCharges().getC1());
-										recurringChargeInstance.setCriteria2(serviceInst.getRecurringCharges().getC2());
-										recurringChargeInstance.setCriteria3(serviceInst.getRecurringCharges().getC3());
+										recurringChargeInstance.setCriteria1(serviceInst
+												.getRecurringCharges().getC1());
+										recurringChargeInstance.setCriteria2(serviceInst
+												.getRecurringCharges().getC2());
+										recurringChargeInstance.setCriteria3(serviceInst
+												.getRecurringCharges().getC3());
 									}
 								}
 							}
@@ -284,52 +312,67 @@ public class ImportSubscriptions extends InputFiles {
 									for (ChargeInstance subscriptionChargeInstance : serviceInstance
 											.getSubscriptionChargeInstances()) {
 										if (serviceInst.getOneshotCharges().getAmountWithoutTax() != null) {
-											subscriptionChargeInstance.setAmountWithoutTax(new BigDecimal(serviceInst
-													.getOneshotCharges().getAmountWithoutTax().replace(',', '.')));
-											log.debug("file:" + fileName + ", typeEntity:Subscription, index:" + i
-													+ ", code:" + subscrip.getCode()
+											subscriptionChargeInstance
+													.setAmountWithoutTax(new BigDecimal(serviceInst
+															.getOneshotCharges()
+															.getAmountWithoutTax()
+															.replace(',', '.')));
+											log.debug("file:"
+													+ fileName
+													+ ", typeEntity:Subscription, index:"
+													+ i
+													+ ", code:"
+													+ subscrip.getCode()
 													+ ", subscriptionChargeInstance.setAmountWithoutTax:"
-													+ serviceInst.getOneshotCharges().getAmountWithoutTax());
+													+ serviceInst.getOneshotCharges()
+															.getAmountWithoutTax());
 										}
 										if (serviceInst.getOneshotCharges().getAmountWithoutTax() != null) {
-											subscriptionChargeInstance.setAmount2(new BigDecimal(serviceInst
-													.getOneshotCharges().getAmountWithTax().replace(',', '.')));
-											log.debug("file:" + fileName + ", typeEntity:Subscription, index:" + i
-													+ ", code:" + subscrip.getCode()
+											subscriptionChargeInstance.setAmount2(new BigDecimal(
+													serviceInst.getOneshotCharges()
+															.getAmountWithTax().replace(',', '.')));
+											log.debug("file:"
+													+ fileName
+													+ ", typeEntity:Subscription, index:"
+													+ i
+													+ ", code:"
+													+ subscrip.getCode()
 													+ ", subscriptionChargeInstance.setAmount2:"
-													+ serviceInst.getOneshotCharges().getAmountWithTax());
+													+ serviceInst.getOneshotCharges()
+															.getAmountWithTax());
 										}
-										subscriptionChargeInstance
-												.setCriteria1(serviceInst.getOneshotCharges().getC1());
-										subscriptionChargeInstance
-												.setCriteria2(serviceInst.getOneshotCharges().getC2());
-										subscriptionChargeInstance
-												.setCriteria3(serviceInst.getOneshotCharges().getC3());
+										subscriptionChargeInstance.setCriteria1(serviceInst
+												.getOneshotCharges().getC1());
+										subscriptionChargeInstance.setCriteria2(serviceInst
+												.getOneshotCharges().getC2());
+										subscriptionChargeInstance.setCriteria3(serviceInst
+												.getOneshotCharges().getC3());
 									}
 								}
 							}
 
 							subscriptionService.update(subscription, userJob);
-							serviceInstanceService.serviceActivation(serviceInstance, null, null, userJob);
+							serviceInstanceService.serviceActivation(serviceInstance, null, null,
+									userJob);
 						} catch (Exception e) {
 							createServiceInstanceError(subscrip, serviceInst, e.getMessage());
 							nbSubscriptionsError++;
-							log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-									+ subscrip.getCode() + ", status:Error");
+							log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i
+									+ ", code:" + subscrip.getCode() + ", status:Error");
 							e.printStackTrace();
 							continue SubscripFOR;
 						}
 
-						log.info("file:" + fileName + ", typeEntity:ServiceInstance, index:" + i + ", code:"
-								+ serviceInst.getCode() + ", status:Actived");
+						log.info("file:" + fileName + ", typeEntity:ServiceInstance, index:" + i
+								+ ", code:" + serviceInst.getCode() + ", status:Actived");
 					}
 				} catch (Exception e) {
 					// createSubscriptionError(subscrip,
 					// ExceptionUtils.getRootCause(e).getMessage());
 					createSubscriptionError(subscrip, e.getMessage());
 					nbSubscriptionsError++;
-					log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
-							+ subscrip.getCode() + ", status:Error");
+					log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i
+							+ ", code:" + subscrip.getCode() + ", status:Error");
 					e.printStackTrace();
 				}
 			}
@@ -355,33 +398,40 @@ public class ImportSubscriptions extends InputFiles {
 
 	private void generateReport(String fileName) throws Exception {
 		if (subscriptionsWarning.getWarnings() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importSubscriptions.ouputDir.alert"));
+			File dir = new File(
+					param.getProperty("connectorCRM.importSubscriptions.ouputDir.alert"));
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(subscriptionsWarning, new File(param
-					.getProperty("connectorCRM.importSubscriptions.ouputDir.alert")
-					+ File.separator + param.getProperty("connectorCRM.importSubscriptions.alert.prefix") + fileName));
+			JAXBUtils.marshaller(
+					subscriptionsWarning,
+					new File(param.getProperty("connectorCRM.importSubscriptions.ouputDir.alert")
+							+ File.separator
+							+ param.getProperty("connectorCRM.importSubscriptions.alert.prefix")
+							+ fileName));
 		}
 
 		if (subscriptionsError.getErrors() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importSubscriptions.ouputDir.error"));
+			File dir = new File(
+					param.getProperty("connectorCRM.importSubscriptions.ouputDir.error"));
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(subscriptionsError, new File(param
-					.getProperty("connectorCRM.importSubscriptions.ouputDir.error")
-					+ File.separator + fileName));
+			JAXBUtils.marshaller(subscriptionsError,
+					new File(param.getProperty("connectorCRM.importSubscriptions.ouputDir.error")
+							+ File.separator + fileName));
 		}
 
 	}
 
-	private void createSubscriptionError(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
+	private void createSubscriptionError(org.meveo.model.jaxb.subscription.Subscription subscrip,
+			String cause) {
 		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject");
 		ErrorSubscription errorSubscription = new ErrorSubscription();
 		errorSubscription.setCause(cause);
 		errorSubscription.setCode(subscrip.getCode());
-		if (!subscriptionsError.getSubscription().contains(subscrip) && "true".equalsIgnoreCase(generateFullCrmReject)) {
+		if (!subscriptionsError.getSubscription().contains(subscrip)
+				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
 			subscriptionsError.getSubscription().add(subscrip);
 		}
 		if (subscriptionsError.getErrors() == null) {
@@ -390,12 +440,14 @@ public class ImportSubscriptions extends InputFiles {
 		subscriptionsError.getErrors().getErrorSubscription().add(errorSubscription);
 	}
 
-	private void createSubscriptionWarning(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
+	private void createSubscriptionWarning(org.meveo.model.jaxb.subscription.Subscription subscrip,
+			String cause) {
 		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject");
 		WarningSubscription warningSubscription = new WarningSubscription();
 		warningSubscription.setCause(cause);
 		warningSubscription.setCode(subscrip == null ? "" : subscrip.getCode());
-		if (!subscriptionsWarning.getSubscription().contains(subscrip) && "true".equalsIgnoreCase(generateFullCrmReject) && subscrip != null) {
+		if (!subscriptionsWarning.getSubscription().contains(subscrip)
+				&& "true".equalsIgnoreCase(generateFullCrmReject) && subscrip != null) {
 			subscriptionsWarning.getSubscription().add(subscrip);
 		}
 		if (subscriptionsWarning.getWarnings() == null) {
@@ -404,7 +456,8 @@ public class ImportSubscriptions extends InputFiles {
 		subscriptionsWarning.getWarnings().getWarningSubscription().add(warningSubscription);
 	}
 
-	private CheckSubscription subscriptionCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip) {
+	private CheckSubscription subscriptionCheckError(
+			org.meveo.model.jaxb.subscription.Subscription subscrip) {
 		CheckSubscription checkSubscription = new CheckSubscription();
 		if (StringUtils.isBlank(subscrip.getCode())) {
 			createSubscriptionError(subscrip, "code is null");
@@ -422,9 +475,12 @@ public class ImportSubscriptions extends InputFiles {
 			createSubscriptionError(subscrip, "SubscriptionDate is null");
 			return null;
 		}
-		if (subscrip.getStatus() == null || StringUtils.isBlank(subscrip.getStatus().getValue())
-				|| ("ACTIVE" + "TERMINATED" + "CANCELED" + "SUSPENDED").indexOf(subscrip.getStatus().getValue()) == -1) {
-			createSubscriptionError(subscrip, "Status is null,or not in {ACTIVE,TERMINATED,CANCELED,SUSPENDED}");
+		if (subscrip.getStatus() == null
+				|| StringUtils.isBlank(subscrip.getStatus().getValue())
+				|| ("ACTIVE" + "TERMINATED" + "CANCELED" + "SUSPENDED").indexOf(subscrip
+						.getStatus().getValue()) == -1) {
+			createSubscriptionError(subscrip,
+					"Status is null,or not in {ACTIVE,TERMINATED,CANCELED,SUSPENDED}");
 			return null;
 		}
 		OfferTemplate offerTemplate = null;
@@ -444,7 +500,8 @@ public class ImportSubscriptions extends InputFiles {
 			e.printStackTrace();
 		}
 		if (userAccount == null) {
-			createSubscriptionError(subscrip, "cannot found UserAccount entity:" + subscrip.getUserAccountId());
+			createSubscriptionError(subscrip,
+					"cannot found UserAccount entity:" + subscrip.getUserAccountId());
 			return null;
 		}
 		checkSubscription.userAccount = userAccount;
@@ -454,18 +511,21 @@ public class ImportSubscriptions extends InputFiles {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (!"ACTIVE".equals(subscrip.getStatus().getValue()) && checkSubscription.subscription == null) {
-			createSubscriptionError(subscrip, "cannot found souscription code:" + subscrip.getCode());
+		if (!"ACTIVE".equals(subscrip.getStatus().getValue())
+				&& checkSubscription.subscription == null) {
+			createSubscriptionError(subscrip,
+					"cannot found souscription code:" + subscrip.getCode());
 			return null;
 		}
 		if ("ACTIVE".equals(subscrip.getStatus().getValue())) {
-			if (subscrip.getServices() == null || subscrip.getServices().getServiceInstance() == null
+			if (subscrip.getServices() == null
+					|| subscrip.getServices().getServiceInstance() == null
 					|| subscrip.getServices().getServiceInstance().isEmpty()) {
 				createSubscriptionError(subscrip, "cannot create souscription without services");
 				return null;
 			}
-			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : subscrip.getServices()
-					.getServiceInstance()) {
+			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : subscrip
+					.getServices().getServiceInstance()) {
 				if (serviceInstanceCheckError(subscrip, serviceInst)) {
 					return null;
 				}
@@ -475,7 +535,8 @@ public class ImportSubscriptions extends InputFiles {
 		return checkSubscription;
 	}
 
-	private boolean serviceInstanceCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip,
+	private boolean serviceInstanceCheckError(
+			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst) {
 
 		if (StringUtils.isBlank(serviceInst.getCode())) {
@@ -489,7 +550,8 @@ public class ImportSubscriptions extends InputFiles {
 		return false;
 	}
 
-	private void createServiceInstanceError(org.meveo.model.jaxb.subscription.Subscription subscrip,
+	private void createServiceInstanceError(
+			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst, String cause) {
 		ErrorServiceInstance errorServiceInstance = new ErrorServiceInstance();
 		errorServiceInstance.setCause(cause);

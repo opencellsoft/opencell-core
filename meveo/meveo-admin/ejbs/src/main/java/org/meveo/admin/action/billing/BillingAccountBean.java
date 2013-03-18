@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.billing;
 
 import java.awt.Color;
@@ -21,22 +21,13 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-import org.jboss.seam.annotations.web.RequestParameter;
-import org.jboss.seam.faces.Redirect;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -57,6 +48,7 @@ import org.meveo.service.billing.local.BillingAccountServiceLocal;
 import org.meveo.service.billing.local.BillingRunServiceLocal;
 import org.meveo.service.billing.local.InvoiceServiceLocal;
 import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.testng.annotations.Factory;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -78,8 +70,8 @@ import com.lowagie.text.pdf.PdfStamper;
  * @created Dec 7, 2010
  * 
  */
-@Name("billingAccountBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+// TODO: @Scope(ScopeType.CONVERSATION)
 public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -89,30 +81,30 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * 
 	 * @{link BillingAccount} service. Extends {@link PersistenceService}.
 	 */
-	@In(create = true)
+	@Inject
 	private BillingAccountServiceLocal billingAccountService;
 
-	@In
+	@Inject
 	private InvoiceServiceLocal invoiceService;
 
-	@In
+	@Inject
 	private BillingRunServiceLocal billingRunService;
 
 	// SEB: i think it is required
-	// @In(required = false)
-	@In
+	// @Inject(required = false)
+	@Inject
 	private User currentUser;
 
-	@In
+	@Inject
 	private Provider currentProvider;
 
-	@RequestParameter
+	// TODO: @RequestParameter
 	private Long customerAccountId;
 
 	public boolean returnToAgency;
 
 	// TODO: SEB: pls explain why you write create=true ?
-	@In(create = true)
+	@Inject
 	private CustomerAccountServiceLocal customerAccountService;
 
 	/** Selected billing account in exceptionelInvoicing page. */
@@ -139,10 +131,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		initEntity();
 		returnToAgency = !(entity.getInvoicePrefix() == null);
 		if (entity.getId() == null && customerAccountId != null) {
-			CustomerAccount customerAccount = customerAccountService
-					.findById(customerAccountId);
-			entity.setCustomerAccount(customerAccountService
-					.findById(customerAccountId));
+			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
+			entity.setCustomerAccount(customerAccountService.findById(customerAccountId));
 			populateAccounts(customerAccount);
 		}
 		return entity;
@@ -189,23 +179,20 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 			saveOrUpdate(entity);
 			CustomerAccount customerAccount = entity.getCustomerAccount();
-			if (customerAccount != null
-					&& !customerAccount.getBillingAccounts().contains(entity)) {
+			if (customerAccount != null && !customerAccount.getBillingAccounts().contains(entity)) {
 				customerAccount.getBillingAccounts().add(entity);
 			}
 			Redirect.instance().setParameter("edit", "false");
 			Redirect.instance().setParameter("objectId", entity.getId());
-			Redirect.instance()
-					.setViewId(
-							"/pages/billing/billingAccounts/billingAccountDetail.xhtml");
+			Redirect.instance().setViewId(
+					"/pages/billing/billingAccounts/billingAccountDetail.xhtml");
 			Redirect.instance().execute();
 		} catch (DuplicateDefaultAccountException e1) {
 			statusMessages.addFromResourceBundle(Severity.ERROR,
 					"error.account.duplicateDefautlLevel");
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.addFromResourceBundle(Severity.ERROR,
-					"javax.el.ELException");
+			statusMessages.addFromResourceBundle(Severity.ERROR, "javax.el.ELException");
 
 		}
 		return null;
@@ -241,10 +228,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String terminateAccount() {
 		log.info("terminateAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity.getCode(),
-					new Date(), currentUser);
-			statusMessages
-					.addFromResourceBundle("resiliation.resiliateSuccessful");
+			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),
+					currentUser);
+			statusMessages.addFromResourceBundle("resiliation.resiliateSuccessful");
 			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
@@ -260,10 +246,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountCancellation(entity.getCode(),
-					new Date(), currentUser);
-			statusMessages
-					.addFromResourceBundle("cancellation.cancelSuccessful");
+			billingAccountService.billingAccountCancellation(entity.getCode(), new Date(),
+					currentUser);
+			statusMessages.addFromResourceBundle("cancellation.cancelSuccessful");
 			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
@@ -279,8 +264,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String closeAccount() {
 		log.info("closeAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.closeBillingAccount(entity.getCode(),
-					currentUser);
+			billingAccountService.closeBillingAccount(entity.getCode(), currentUser);
 			statusMessages.addFromResourceBundle("close.closeSuccessful");
 			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
 					+ entity.getId() + "&edit=false";
@@ -307,13 +291,13 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		String invoiceFilename = null;
 		if (invoice.getBillingRun().getStatus() == BillingRunStatusEnum.VALIDATED) {
 			invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
+		} else {
+			invoiceFilename = "unvalidated-invoice.pdf";
 		}
-		else {invoiceFilename="unvalidated-invoice.pdf";}
-		HttpServletResponse response = (HttpServletResponse) context
-				.getExternalContext().getResponse();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
+				.getResponse();
 		response.setContentType("application/pdf"); // fill in
-		response.setHeader("Content-disposition", "attachment; filename="
-				+ invoiceFilename);
+		response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
 
 		try {
 			OutputStream os = response.getOutputStream();
@@ -324,8 +308,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 				int n = reader.getNumberOfPages();
 				PdfStamper stamp = new PdfStamper(reader, os);
 				PdfContentByte over = null;
-				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA,
-						BaseFont.WINANSI, BaseFont.EMBEDDED);
+				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI,
+						BaseFont.EMBEDDED);
 				PdfGState gs = new PdfGState();
 				gs.setFillOpacity(0.5f);
 				int i = 1;
@@ -333,14 +317,12 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 					over = stamp.getOverContent(i);
 					over.setGState(gs);
 					over.beginText();
-					System.out.println("top=" + document.top() + ",bottom="
-							+ document.bottom());
+					System.out.println("top=" + document.top() + ",bottom=" + document.bottom());
 					over.setTextMatrix(document.top(), document.bottom());
 					over.setFontAndSize(bf, 150);
 					over.setColorFill(Color.GRAY);
-					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document
-							.getPageSize().getWidth() / 2, document
-							.getPageSize().getHeight() / 2, 45);
+					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize()
+							.getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
 					over.endText();
 					i++;
 				}
@@ -372,12 +354,10 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		log.info("launchExceptionelInvoicing...");
 		try {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-			String allowManyInvoicing = param.getProperty(
-					"billingRun.allowManyInvoicing", "true");
+			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
 			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
-			if (billingRunService.isActiveBillingRunsExist(currentProvider)
-					&& !isAllowed) {
+			if (billingRunService.isActiveBillingRunsExist(currentProvider) && !isAllowed) {
 				statusMessages.addFromResourceBundle(Severity.ERROR,
 						"error.invoicing.alreadyLunched");
 				return null;
@@ -389,8 +369,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 
 			for (BillingAccount billingAccount : itemSelector.getList()) {
-				log.debug("lunchExceptionelInvoicing id=#0",
-						billingAccount.getId());
+				log.debug("lunchExceptionelInvoicing id=#0", billingAccount.getId());
 				billingAccount.setBillingRun(billingRun);
 				billingAccountService.update(billingAccount);
 			}
@@ -398,8 +377,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			return "/pages/billing/invoicing/billingRuns.seam?edit=false";
 		} catch (Exception e) {
 			log.error("lunchExceptionelInvoicing", e);
-			statusMessages
-					.addFromResourceBundle(Severity.ERROR, e.getMessage());
+			statusMessages.addFromResourceBundle(Severity.ERROR, e.getMessage());
 		}
 		return null;
 	}

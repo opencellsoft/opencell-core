@@ -16,14 +16,11 @@
 package org.meveo.service.validation;
 
 import javax.ejb.Stateless;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Name;
 import org.meveo.model.crm.Provider;
 
 /**

@@ -33,9 +33,8 @@ import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
  */
 @Stateless
 @Named
-public class OneShotChargeTemplateService extends
-		ChargeTemplateService<OneShotChargeTemplate> implements
-		OneShotChargeTemplateServiceLocal {
+public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate>
+		implements OneShotChargeTemplateServiceLocal {
 
 	/**
 	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getTerminationChargeTemplates()
@@ -48,10 +47,9 @@ public class OneShotChargeTemplateService extends
 										 */
 		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
 				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.TERMINATION)
-				.startOrClause()
-				.addCriterionEntity("c.provider", currentProvider)
-				.addSql("c.provider is null").endOrClause().getQuery(em);
+						OneShotChargeTemplateTypeEnum.TERMINATION).startOrClause()
+				.addCriterionEntity("c.provider", currentProvider).addSql("c.provider is null")
+				.endOrClause().getQuery(em);
 		return query.getResultList();
 	}
 
@@ -60,14 +58,15 @@ public class OneShotChargeTemplateService extends
 	 */
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates() {
-		null; /*TODO: Provider. (Provider) Component
-		.getInstance("currentProvider");*/
+		Provider currentProvider = null; /*
+										 * TODO: Provider. (Provider) Component
+										 * .getInstance("currentProvider");
+										 */
 		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
 				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
-				.startOrClause()
-				.addCriterionEntity("c.provider", currentProvider)
-				.addSql("c.provider is null").endOrClause().getQuery(em);
+						OneShotChargeTemplateTypeEnum.SUBSCRIPTION).startOrClause()
+				.addCriterionEntity("c.provider", currentProvider).addSql("c.provider is null")
+				.endOrClause().getQuery(em);
 		return query.getResultList();
 	}
 }

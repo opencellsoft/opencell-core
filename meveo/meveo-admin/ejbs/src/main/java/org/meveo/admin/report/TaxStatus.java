@@ -25,21 +25,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.local.JournalEntryServiceLocal;
+import org.slf4j.Logger;
 
-@Name("taxStatus")
+@Named
 public class TaxStatus extends FileProducer implements Reporting {
-    /** Logger. */
-    @Logger
-    protected Log log;
 
+	@Inject
+    protected Logger log;
+
+	@Inject
     private JournalEntryServiceLocal salesTransformationService;
 
     private String reportsFolder;
@@ -118,7 +119,6 @@ public class TaxStatus extends FileProducer implements Reporting {
     public void export(Report report) {
         ParamBean param = ParamBean.getInstance("meveo-admin.properties");
         reportsFolder = param.getProperty("reportsURL");
-        salesTransformationService = (JournalEntryServiceLocal) Component.getInstance("journalEntryService");
         String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder");
         templateFilename = jasperTemplatesFolder + "taxStatus.jasper";
         generateTaxStatusFile(report.getProvider() == null ? null : report.getProvider().getCode(), report

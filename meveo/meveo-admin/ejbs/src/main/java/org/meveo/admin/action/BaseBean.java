@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
@@ -49,9 +48,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected org.slf4j.Logger log;
 
 	/** Status messages. */
-	@Inject
-	protected StatusMessages statusMessages;
-
+	/*
+	 * TODO @Inject protected StatusMessages statusMessages;
+	 */
+	
 	@Inject
 	protected Provider currentProvider;
 
@@ -113,8 +113,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			if (getFormFieldsToFetch() == null) {
 				entity = (T) getPersistenceService().findById(getObjectId());
 			} else {
-				entity = (T) getPersistenceService().findById(getObjectId(),
-						getFormFieldsToFetch());
+				entity = (T) getPersistenceService()
+						.findById(getObjectId(), getFormFieldsToFetch());
 			}
 			// getPersistenceService().detach(entity);
 		} else {
@@ -127,8 +127,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 				// creation time
 			} catch (InstantiationException e) {
 				log.error("Unexpected error!", e);
-				throw new IllegalStateException(
-						"could not instantiate a class, abstract class");
+				throw new IllegalStateException("could not instantiate a class, abstract class");
 			} catch (IllegalAccessException e) {
 				log.error("Unexpected error!", e);
 				throw new IllegalStateException(
@@ -206,8 +205,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	public String back() {
 		Object backViewParameter = null;
 		if (FacesContext.getCurrentInstance() != null) {
-			backViewParameter = FacesContext.getCurrentInstance()
-					.getExternalContext().getRequestMap().get("backView");
+			backViewParameter = FacesContext.getCurrentInstance().getExternalContext()
+					.getRequestMap().get("backView");
 		}
 		if (backViewParameter != null) {
 			return backViewParameter.toString();
@@ -265,8 +264,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public void delete(Long id) {
 		try {
-			log.info(String.format("Deleting entity %s with id = %s",
-					clazz.getName(), id));
+			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
 			getPersistenceService().remove(id);
 			// TODO
 			/*
@@ -275,9 +273,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			 */
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info(
-						"delete was unsuccessful because entity is used in the system",
-						t);
+				log.info("delete was unsuccessful because entity is used in the system", t);
 				// TODO
 				/*
 				 * statusMessages.addFromResourceBundle(Severity.ERROR,
@@ -311,20 +307,22 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 				}
 			}
 			getPersistenceService().remove(idsToDelete);
-			//TODO
-			/*statusMessages.addFromResourceBundle(Severity.INFO,
-					"delete.entitities.successful");*/
+			// TODO
+			/*
+			 * statusMessages.addFromResourceBundle(Severity.INFO,
+			 * "delete.entitities.successful");
+			 */
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info(
-						"delete was unsuccessful because entity is used in the system",
-						t);
-				//TODO
-			/*	statusMessages.addFromResourceBundle(Severity.ERROR,
-						"error.delete.entityUsed");*/
+				log.info("delete was unsuccessful because entity is used in the system", t);
+				// TODO
+				/*
+				 * statusMessages.addFromResourceBundle(Severity.ERROR,
+				 * "error.delete.entityUsed");
+				 */
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				//TODO
+				// TODO
 				/*
 				 * statusMessages.addFromResourceBundle(Severity.ERROR,
 				 * "error.delete.unexpected");
@@ -353,8 +351,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public T getInstance() throws InstantiationException,
-			IllegalAccessException {
+	public T getInstance() throws InstantiationException, IllegalAccessException {
 		return clazz.newInstance();
 	}
 
@@ -402,22 +399,19 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public void disable(Long id) {
 		try {
-			log.info(String.format("Disabling entity %s with id = %s",
-					clazz.getName(), id));
+			log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
 			getPersistenceService().disable(id);
-			statusMessages.addFromResourceBundle(Severity.INFO,
-					"disabled.successful");
+			// TODO: statusMessages.addFromResourceBundle(Severity.INFO,
+			// "disabled.successful");
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info(
-						"delete was unsuccessful because entity is used in the system",
-						t);
-				statusMessages.addFromResourceBundle(Severity.ERROR,
-						"error.delete.entityUsed");
+				log.info("delete was unsuccessful because entity is used in the system", t);
+				// TODO: statusMessages.addFromResourceBundle(Severity.ERROR,
+				// "error.delete.entityUsed");
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				statusMessages.addFromResourceBundle(Severity.ERROR,
-						"error.delete.unexpected");
+				// TODO: statusMessages.addFromResourceBundle(Severity.ERROR,
+				// "error.delete.unexpected");
 			}
 		}
 		entities.forceRefresh();

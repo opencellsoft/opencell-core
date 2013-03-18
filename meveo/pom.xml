@@ -9,8 +9,8 @@
 	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 	<properties>
-		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some 
-			files for a specific configuration (e.g. import.sql) -->
+		<!-- Env set to dev, so that profile dev would be the default and also 
+			env value is used in copy some files for a specific configuration (e.g. import.sql) -->
 		<env>edward</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -68,36 +68,9 @@
 			<url>scp://libsmeveocore.manaty.net/var/www/sites/libsmeveocore/sites</url>
 		</site>
 	</distributionManagement>
-	<dependencies>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>5.12.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.7</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.jboss.bom</groupId>
-				<artifactId>jboss-javaee-6.0-with-tools</artifactId>
-				<version>${jboss.bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.bom</groupId>
-				<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
-				<version>${jboss.bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 			<dependency>
 				<groupId>org.jboss.seam</groupId>
 				<artifactId>seam-bom</artifactId>
@@ -110,13 +83,23 @@
 				<artifactId>manaty-commons</artifactId>
 				<version>3.0-SNAPSHOT</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>${project.groupId}</groupId> -->
-			<!-- <artifactId>batch-apps-core</artifactId> -->
-			<!-- <version>2.2-SNAPSHOT</version> -->
-			<!-- </dependency> -->
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>

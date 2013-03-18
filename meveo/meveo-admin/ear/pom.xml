@@ -13,8 +13,6 @@
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<build>
-		<!-- <finalName>meveo-admin</finalName> -->
-
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -39,37 +37,14 @@
 				<artifactId>maven-ear-plugin</artifactId>
 				<version>2.8</version>
 				<configuration>
+					<version>6</version>
 					<defaultLibBundleDir>lib/</defaultLibBundleDir>
 					<displayName>meveo-admin</displayName>
-
-					<modules>
-						<ejbModule>
-							<groupId>${project.parent.groupId}</groupId>
-							<artifactId>meveo-admin-config</artifactId>
-							<bundleFileName>meveo-admin-config.jar</bundleFileName>
-							<unpack>${manaty.unpackEarModules}</unpack>
-						</ejbModule>
-						<ejbModule>
-							<groupId>${project.parent.groupId}</groupId>
-							<artifactId>meveo-admin-ejbs</artifactId>
-							<bundleFileName>meveo-admin.jar</bundleFileName>
-							<unpack>${manaty.unpackEarModules}</unpack>
-						</ejbModule>
-						<webModule>
-							<groupId>${project.parent.groupId}</groupId>
-							<artifactId>meveo-admin-web</artifactId>
-							<contextRoot>/meveo</contextRoot>
-							<bundleFileName>meveo-admin.war</bundleFileName>
-							<unpack>${manaty.unpackEarModules}</unpack>
-						</webModule>
-						<ejbModule>
-							<groupId>org.jboss.seam</groupId>
-							<artifactId>jboss-seam</artifactId>
-						</ejbModule>
-					</modules>
+					<modules></modules>
 				</configuration>
 			</plugin>
 		</plugins>
+
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -109,45 +84,23 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>meveo-admin-config</artifactId>
-			<version>${project.version}</version>
 			<type>ejb</type>
 			<classifier>${env}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
-			<version>${project.version}</version>
 			<type>ejb</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>meveo-admin-web</artifactId>
-			<version>${project.version}</version>
 			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam</artifactId>
-			<version>${manaty.seam.version}</version>
-			<type>ejb</type>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.el</groupId>
-					<artifactId>el-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xpp3</groupId>
-					<artifactId>xpp3_min</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xstream</groupId>
-					<artifactId>xstream</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>postgresql</groupId>
@@ -159,31 +112,6 @@
 			<artifactId>dom4j</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-ehcache</artifactId>
-			<version>${manaty.hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${manaty.hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.faces</groupId>
-			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- <dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>${manaty.jsf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
-			<version>${manaty.jsf.version}</version>
-		</dependency> -->
 	</dependencies>
 
 	<profiles>
@@ -195,91 +123,6 @@
 					<value>dev</value>
 				</property>
 			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<version>2.5</version>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>${jboss.home}/server/default/deploy/${manaty.serverArchiveName}.ear</directory>
-								</fileset>
-							</filesets>
-						</configuration>
-					</plugin>
-					<!-- Copies EAR files to Jboss server after the build (tied to install 
-						phase) -->
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<!-- Copy EAR files to Jboss server -->
-							<execution>
-								<id>deploy_to_Jboss_ear</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${jboss.home}/server/default/deploy/${manaty.serverArchiveName}.ear</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.directory}/${project.build.finalName}</directory>
-											<filtering>false</filtering>
-											<includes>
-												<include>*.*</include>
-												<include>lib/*.*</include>
-												<include>META-INF/*.*</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<!-- Copy DS files to Jboss server -->
-							<execution>
-								<id>deploy_to_Jboss_DS</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${jboss.home}/server/default/deploy</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.directory}</directory>
-											<filtering>false</filtering>
-											<includes>
-												<include>meveo-admin-ds.xml</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<!-- Copy property files to Jboss server -->
-							<execution>
-								<id>deploy_to_Jboss_properties</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${jboss.home}/server/default/conf</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.directory}</directory>
-											<filtering>false</filtering>
-											<includes>
-												<include>meveo-admin.properties</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 
 		<profile>

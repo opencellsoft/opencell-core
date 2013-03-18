@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 public class InvoiceService extends PersistenceService<Invoice> implements
 		InvoiceServiceLocal, InvoiceServiceRemote {
 
+	@Inject
 	private Logger log;
 
 	@Inject

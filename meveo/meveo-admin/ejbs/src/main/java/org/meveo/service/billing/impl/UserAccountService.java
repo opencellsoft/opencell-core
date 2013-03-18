@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
@@ -50,13 +51,13 @@ import org.meveo.service.billing.local.WalletServiceLocal;
 public class UserAccountService extends AccountService<UserAccount> implements
 		UserAccountServiceLocal {
 
-	@In
+	@Inject
 	BillingAccountServiceLocal billingAccountService;
 
-	@In
+	@Inject
 	WalletServiceLocal walletService;
 
-	@In
+	@Inject
 	SubscriptionServiceLocal subscriptionService;
 
 	public List<Subscription> subscriptionList(String code)

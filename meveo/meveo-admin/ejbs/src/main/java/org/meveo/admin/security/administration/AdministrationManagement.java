@@ -24,13 +24,11 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jboss.seam.annotations.security.PermissionCheck;
-
 @Target( { METHOD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
 @Inherited
-@PermissionCheck("administrationManagement")
+//TODO: @PermissionCheck("administrationManagement")
 public @interface AdministrationManagement {
 
     @SuppressWarnings("unchecked")

@@ -22,8 +22,8 @@ import javax.ejb.Local;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.model.admin.Role;
 import org.meveo.model.admin.User;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**
