@@ -18,28 +18,11 @@
 		<url>https://code.manaty.net/svn/trunk/meveo/meveo-model</url>
 	</scm>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.jboss.seam</groupId>
-				<artifactId>seam-bom</artifactId>
-				<version>3.1.0.Final</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.security</groupId>
-			<artifactId>seam-security</artifactId>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
