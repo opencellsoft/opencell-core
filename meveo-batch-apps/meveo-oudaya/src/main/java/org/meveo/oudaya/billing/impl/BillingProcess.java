@@ -176,7 +176,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
                     Wallet wallet = userAccount.getWallet();
 
                     List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) em.createQuery(
-                            "from RatedTransaction where wallet=:walletId and invoice is null and status=:status and doNotTriggerInvoicing=:invoicing and amount1WithoutTax<>:zeroValue")
+                            "from RatedTransaction where wallet=:walletId and invoice is null and status=:status and doNotTriggerInvoicing=:invoicing and amountWithoutTax<>:zeroValue")
                             .setParameter("walletId", wallet).setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("invoicing", false).setParameter("zeroValue", BigDecimal.ZERO)
                             .getResultList();
                     ratedTransactionsCount = ratedTransactionsCount + ratedTransactions.size();
