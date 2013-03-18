@@ -19,14 +19,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Transactional;
-import org.jboss.seam.log.Log;
+import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.payments.CustomerAccount;
@@ -38,6 +34,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 import org.meveo.service.payments.local.OCCTemplateServiceLocal;
 import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
+import org.slf4j.Logger;
 
 /**
  * OtherCreditAndCharge service implementation.
@@ -46,19 +43,16 @@ import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
  * @created 2009.09.04
  */
 @Stateless
-@Name("otherCreditAndChargeService")
-@JndiName("java:app/meveo-admin-ejb/OtherCreditAndChargeService")
-@AutoCreate
+@Named
 public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> implements OtherCreditAndChargeServiceLocal {
 
-	@In(create = true)
+	@Inject
 	private CustomerAccountServiceLocal customerAccountService;
 
-	@In
+	@Inject
 	private OCCTemplateServiceLocal occTemplateService;
 
-	@Logger
-	protected Log log;
+	protected Logger log;
 
 	@Transactional
 	public void addOCC(String codeOCCTemplate, String descToAppend, CustomerAccount customerAccount, BigDecimal amount, Date dueDate, User user)

@@ -16,10 +16,8 @@
 package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
+import javax.inject.Named;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.BayadInvoicingInputHistory;
 import org.meveo.service.admin.local.BayadInvoicingInputHistoryServiceLocal;
 import org.meveo.service.base.PersistenceService;
@@ -31,9 +29,7 @@ import org.meveo.service.base.PersistenceService;
  * @created Apr 11, 2011
  */
 @Stateless
-@Name("bayadInvoicingInputHistoryService")
-@JndiName("java:app/meveo-admin-ejb/BayadInvoicingInputHistoryService")
-@AutoCreate
+@Named
 public class BayadInvoicingInputHistoryService extends PersistenceService<BayadInvoicingInputHistory> implements
         BayadInvoicingInputHistoryServiceLocal {
 

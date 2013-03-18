@@ -24,12 +24,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.EmailNotFoundException;
 import org.meveo.commons.utils.ParamBean;
@@ -45,26 +42,25 @@ import org.meveo.service.crm.local.EmailServiceLocal;
 import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
+import org.slf4j.Logger;
 
 @Stateless
-@Name("selfcareService")
-@JndiName("java:app/meveo-admin-ejb/SelfcareService")
+@Named
 public class SelfcareService extends PersistenceService<CustomerAccount>
 		implements SelfcareServiceLocal, SelfcareServiceRemote {
 
-	@Logger
-	private Log log;
+	private Logger log;
 
-	@In
+	@Inject
 	private EmailServiceLocal emailService;
 
-	@In
+	@Inject
 	private BillingAccountServiceLocal billingAccountService;
 
-	@In
+	@Inject
 	private InvoiceServiceLocal invoiceService;
 
-	@In(create = true)
+	@Inject
 	private CustomerAccountServiceLocal customerAccountService;
 
 	public Boolean authenticate(String username, String password)

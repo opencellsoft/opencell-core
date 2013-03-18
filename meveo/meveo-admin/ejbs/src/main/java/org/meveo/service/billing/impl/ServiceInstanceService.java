@@ -21,12 +21,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.NoResultException;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -72,33 +70,31 @@ import org.meveo.service.payments.local.CustomerAccountServiceLocal;
  * @author R.AITYAAZZA
  */
 @Stateless
-@Name("serviceInstanceService")
-@JndiName("java:app/meveo-admin-ejb/ServiceInstanceService")
-@AutoCreate
+@Named
 public class ServiceInstanceService extends BusinessService<ServiceInstance> implements ServiceInstanceServiceLocal {
 
-    @In
+    @Inject
     private SubscriptionServiceLocal subscriptionService;
 
-    @In
+    @Inject
     private ServiceTemplateServiceLocal serviceTemplateService;
 
-    @In
+    @Inject
     private RecurringChargeInstanceServiceLocal recurringChargeInstanceService;
 
-    @In
+    @Inject
     private ChargeInstanceServiceLocal<ChargeInstance> chargeInstanceService;
 
-    @In
+    @Inject
     private OneShotChargeInstanceServiceLocal oneShotChargeInstanceService;
 
-    @In
+    @Inject
     private ChargeApplicationServiceLocal chargeApplicationService;
     
-    @In
+    @Inject
     private CustomerAccountServiceLocal customerAccountService;
     
-    @In
+	@Inject
     private RatedTransactionServiceLocal ratedTransactionService;
 
     public ServiceInstance findByCodeAndSubscription(String code, String subscriptionCode) {

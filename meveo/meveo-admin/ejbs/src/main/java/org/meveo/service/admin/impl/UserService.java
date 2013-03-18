@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.service.admin.impl;
 
 import java.util.ArrayList;
@@ -56,19 +56,21 @@ import org.meveo.service.base.PersistenceService;
  */
 
 @Stateless
-@Name("userService")
-@JndiName("java:app/meveo-admin-ejb/UserService")
-@AutoCreate
-public class UserService extends PersistenceService<User> implements UserServiceLocal {
+@Named
+public class UserService extends PersistenceService<User> implements
+		UserServiceLocal {
 
 	static User systemUser = null;
 
-	private static String SEQUENCE_VALUE_TEST = ResourceBundle.instance().getString("sequence.test");
+	private static String SEQUENCE_VALUE_TEST = "";//TODO: ResourceBundle. ResourceBundle.instance()
+			.getString("sequence.test");
 
 	@Override
 	@UserCreate
 	public void create(User user) throws UsernameAlreadyExistsException {
-		Provider currentProvider = (Provider) Component.getInstance("currentProvider");
+		// TODO: Provider. Provider currentProvider = (Provider)
+		// Component.getInstance("currentProvider");
+		Provider currentProvider = null;
 		if (isUsernameExists(user.getUserName()))
 			throw new UsernameAlreadyExistsException(user.getUserName());
 
@@ -91,7 +93,8 @@ public class UserService extends PersistenceService<User> implements UserService
 
 		user.setUserName(user.getUserName().toUpperCase());
 		if (!StringUtils.isBlank(user.getNewPassword())) {
-			String encryptedPassword = Sha1Encrypt.encodePassword(user.getPassword());
+			String encryptedPassword = Sha1Encrypt.encodePassword(user
+					.getPassword());
 			user.setPassword(encryptedPassword);
 		}
 
@@ -140,8 +143,11 @@ public class UserService extends PersistenceService<User> implements UserService
 	public User findByUsernameAndPassword(String username, String password) {
 		try {
 			password = Sha1Encrypt.encodePassword(password);
-			return (User) em.createQuery("from User where userName = :userName and password = :password").setParameter(
-					"userName", username.toUpperCase()).setParameter("password", password).getSingleResult();
+			return (User) em
+					.createQuery(
+							"from User where userName = :userName and password = :password")
+					.setParameter("userName", username.toUpperCase())
+					.setParameter("password", password).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
@@ -149,8 +155,10 @@ public class UserService extends PersistenceService<User> implements UserService
 
 	public User findByUsername(String username) {
 		try {
-			return (User) em.createQuery("from User where userName = :userName").setParameter("userName",
-					username.toUpperCase()).getSingleResult();
+			return (User) em
+					.createQuery("from User where userName = :userName")
+					.setParameter("userName", username.toUpperCase())
+					.getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
@@ -158,14 +166,15 @@ public class UserService extends PersistenceService<User> implements UserService
 
 	public User findByEmail(String email) {
 		try {
-			return (User) em.createQuery("from User where email = :email").setParameter("email", email)
-					.getSingleResult();
+			return (User) em.createQuery("from User where email = :email")
+					.setParameter("email", email).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
 	}
 
-	public User changePassword(User user, String newPassword) throws BusinessException {
+	public User changePassword(User user, String newPassword)
+			throws BusinessException {
 		em.refresh(user);
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
@@ -175,34 +184,42 @@ public class UserService extends PersistenceService<User> implements UserService
 
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRolesExcept(String rolename1, String rolename2) {
-		return em.createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2").setParameter("name1",
-				rolename1).setParameter("name2", rolename2).getResultList();
+		return em
+				.createQuery(
+						"from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
+				.setParameter("name1", rolename1)
+				.setParameter("name2", rolename2).getResultList();
 	}
 
 	public Role getRoleByName(String name) {
-		return (Role) em.createQuery("from MeveoRole as r where r.name=:name").setParameter("name", name)
-				.getSingleResult();
+		return (Role) em.createQuery("from MeveoRole as r where r.name=:name")
+				.setParameter("name", name).getSingleResult();
 	}
 
 	public void login(User currentUser) throws LoginException {
 		// Check if the user is active
 		if (!currentUser.isActive()) {
 			log.info("The user #" + currentUser.getId() + " is not active");
-			throw new InactiveUserException("The user #" + currentUser.getId() + " is not active");
+			throw new InactiveUserException("The user #" + currentUser.getId()
+					+ " is not active");
 		}
 
 		// Check if the user password has expired
-		String passwordExpiracy = ParamBean.getInstance("meveo.properties").getProperty("password.Expiracy", "90");
+		String passwordExpiracy = ParamBean.getInstance("meveo.properties")
+				.getProperty("password.Expiracy", "90");
 
 		if (currentUser.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user #" + currentUser.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user #" + currentUser.getId() + " has expired.");
+			log.info("The password of user #" + currentUser.getId()
+					+ " has expired.");
+			throw new PasswordExpiredException("The password of user #"
+					+ currentUser.getId() + " has expired.");
 		}
 
 		// Check the roles
 		if (currentUser.getRoles() == null || currentUser.getRoles().isEmpty()) {
 			log.info("The user #" + currentUser.getId() + " has no role!");
-			throw new NoRoleException("The user #" + currentUser.getId() + " has no role!");
+			throw new NoRoleException("The user #" + currentUser.getId()
+					+ " has no role!");
 		}
 	}
 
@@ -220,7 +237,8 @@ public class UserService extends PersistenceService<User> implements UserService
 
 		User newUser = new User();
 
-		newUser.setName(new org.meveo.model.shared.Name(title, firstName, lastName));
+		newUser.setName(new org.meveo.model.shared.Name(title, firstName,
+				lastName));
 
 		newUser.setDisabled(newUser.isDisabled());
 		newUser.setUserName(user.getUserName() + "_NEW");
@@ -231,8 +249,9 @@ public class UserService extends PersistenceService<User> implements UserService
 		return newUser;
 	}
 
-	public void saveActivity(User user, String objectId, String action, String uri) {
-		//String sequenceValue = "USER_LOG_SEQ.nextval";
+	public void saveActivity(User user, String objectId, String action,
+			String uri) {
+		// String sequenceValue = "USER_LOG_SEQ.nextval";
 		if (!SEQUENCE_VALUE_TEST.equals("true")) {
 
 			String stringQuery = "INSERT INTO ADM_USER_LOG (USER_NAME, USER_ID, DATE_EXECUTED, ACTION, URL, OBJECT_ID) VALUES ( ?, ?, ?, ?, ?, ?)";

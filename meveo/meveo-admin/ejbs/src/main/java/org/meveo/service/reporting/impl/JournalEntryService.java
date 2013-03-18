@@ -23,9 +23,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Name;
 import org.meveo.model.datawarehouse.JournalEntry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.reporting.local.JournalEntryServiceLocal;

@@ -18,12 +18,10 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.NoResultException;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.JndiName;
-import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -48,27 +46,25 @@ import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
  * 
  */
 @Stateless
-@Name("chargeInstanceService")
-@JndiName("java:app/meveo-admin-ejb/ChargeInstanceService")
-@AutoCreate
+@Named
 public class ChargeInstanceService<P extends ChargeInstance> extends BusinessService<P> implements
         ChargeInstanceServiceLocal<P> {
 
-    @In
+    @Inject
     private SubscriptionServiceLocal subscriptionService;
 
-    @In
+    @Inject
     private ServiceInstanceServiceLocal serviceInstanceService;
-    @In
+    @Inject
     private RecurringChargeInstanceServiceLocal recurringChargeInstanceService;
 
-    @In
+    @Inject
     private RecurringChargeTemplateServiceLocal recurringChargeTemplateService;
 
-    @In
+    @Inject
     private ChargeApplicationServiceLocal chargeApplicationService;
 
-    @In
+    @Inject
     private RatedTransactionServiceLocal ratedTransactionService;
 
     @SuppressWarnings("unchecked")
