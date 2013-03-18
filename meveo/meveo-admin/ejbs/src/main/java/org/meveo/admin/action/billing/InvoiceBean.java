@@ -15,14 +15,10 @@
 */
 package org.meveo.admin.action.billing;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.BillingAccount;
@@ -42,8 +38,8 @@ import org.meveo.service.billing.local.InvoiceServiceLocal;
  * @created Dec 7, 2010
  * 
  */
-@Name("invoiceBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+//TODO: @Scope(ScopeType.CONVERSATION)
 public class InvoiceBean extends BaseBean<Invoice> {
 
     private static final long serialVersionUID = 1L;
@@ -53,10 +49,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
      * 
      * @{link Invoice} service. Extends {@link PersistenceService}.
      */
-    @In
+    @Inject
     private InvoiceServiceLocal invoiceService;
     
-    @In
+    @Inject
     BillingAccountServiceLocal billingAccountService;
 
     /**
@@ -74,8 +70,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Begin(nested = true)
-    @Factory("invoice")
+   /*TODO: @Begin(nested = true)
+    @Factory("invoice")*/
+    @Produces
+	@Named("invoice")
     public Invoice init() {
         return initEntity();
     }
@@ -85,7 +83,9 @@ public class InvoiceBean extends BaseBean<Invoice> {
      * 
      * @return filtered entities.
      */
-    @Out(value = "invoices", required = false)
+    //@Out(value = "invoices", required = false)
+    @Produces
+	@Named("invoices")
     protected PaginationDataModel<Invoice> getDataModel() {
         return entities;
     }
@@ -97,8 +97,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
-    @Begin(join = true)
-    @Factory("invoices")
+    /*TODO: @Begin(join = true)
+    @Factory("invoices")*/
+    @Produces
+	@Named("invoices")
     public void list() {
         super.list();
     }
@@ -126,7 +128,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    @End(beforeRedirect = true, root=false)
+    //TODO: @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
         return saveOrUpdate(entity);
     }

@@ -15,15 +15,10 @@
 */
 package org.meveo.admin.action.billing;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.web.RequestParameter;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.Wallet;
@@ -40,14 +35,14 @@ import org.meveo.service.billing.local.WalletServiceLocal;
  * @author Ignas Lelys
  * @created Dec 7, 2010
  */
-@Name("walletBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+//TODO: @Scope(ScopeType.CONVERSATION)
 public class WalletBean extends BaseBean<Wallet> {
 
     private static final long serialVersionUID = 1L;
 
     /** Injected @{link Wallet} service. Extends {@link PersistenceService}. */
-    @In
+    @Inject
     private WalletServiceLocal walletService;
 
     /**
@@ -55,7 +50,7 @@ public class WalletBean extends BaseBean<Wallet> {
      * from customer account window, so default customer account will be set on
      * newly created wallet.
      */
-    @RequestParameter
+    //TODO: @RequestParameter
     private Long customerAccountId;
 
     /**
@@ -73,8 +68,10 @@ public class WalletBean extends BaseBean<Wallet> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Factory("wallet")
-    @Begin(nested = true)
+    /*TODO: @Factory("wallet")
+    @Begin(nested = true)*/
+    @Produces
+	@Named("wallet")
     public Wallet init() {
         initEntity();
         if (customerAccountId != null) {
@@ -88,7 +85,9 @@ public class WalletBean extends BaseBean<Wallet> {
      * 
      * @return filtered entities.
      */
-    @Out(value = "wallets", required = false)
+    //@Out(value = "wallets", required = false)
+    @Produces
+	@Named("wallets")
     protected PaginationDataModel<Wallet> getDataModel() {
         return entities;
     }
@@ -100,8 +99,10 @@ public class WalletBean extends BaseBean<Wallet> {
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
-    @Begin(join = true)
-    @Factory("wallets")
+    /*TODO: @Begin(join = true)
+    @Factory("wallets")*/
+    @Produces
+	@Named("wallets")
     public void list() {
         super.list();
     }
@@ -112,7 +113,7 @@ public class WalletBean extends BaseBean<Wallet> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    @End(beforeRedirect = true, root=false)
+    //TODO: @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
         return saveOrUpdate(entity);
     }

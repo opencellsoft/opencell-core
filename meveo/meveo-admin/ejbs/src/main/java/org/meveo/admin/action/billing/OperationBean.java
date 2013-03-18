@@ -15,15 +15,10 @@
 */
 package org.meveo.admin.action.billing;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.Operation;
@@ -41,15 +36,15 @@ import org.meveo.service.billing.local.OperationServiceLocal;
  * @created Dec 7, 2010
  * 
  */
-@Name("operationBean")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{s:hasRole('meveo.crm')}")
+@Named
+//TODO: @Scope(ScopeType.CONVERSATION)
+//TODO: @Restrict("#{s:hasRole('meveo.crm')}")
 public class OperationBean extends BaseBean<Operation> {
 
     private static final long serialVersionUID = 1L;
 
     /** Injected @{link Operation} service. Extends {@link PersistenceService}. */
-    @In
+    @Inject
     private OperationServiceLocal operationService;
 
     /**
@@ -67,8 +62,10 @@ public class OperationBean extends BaseBean<Operation> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Begin(nested = true)
-    @Factory("operation")
+    /*TODO: @Begin(nested = true)
+    @Factory("operation")*/
+    @Produces
+	@Named("operation")
     public Operation init() {
         return initEntity();
     }
@@ -78,7 +75,9 @@ public class OperationBean extends BaseBean<Operation> {
      * 
      * @return filtered entities.
      */
-    @Out(value = "operations", required = false)
+    //@Out(value = "operations", required = false)
+    @Produces
+	@Named("operations")
     protected PaginationDataModel<Operation> getDataModel() {
         return entities;
     }
@@ -90,8 +89,10 @@ public class OperationBean extends BaseBean<Operation> {
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
-    @Begin(join = true)
-    @Factory("operations")
+    /*TODO: @Begin(join = true)
+    @Factory("operations")*/
+    @Produces
+	@Named("operations")
     public void list() {
         super.list();
     }
@@ -102,7 +103,7 @@ public class OperationBean extends BaseBean<Operation> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    @End(beforeRedirect = true, root=false)
+    //@End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
         return saveOrUpdate(entity);
     }

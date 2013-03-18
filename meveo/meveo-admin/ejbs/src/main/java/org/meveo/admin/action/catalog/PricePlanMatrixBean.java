@@ -15,14 +15,10 @@
 */
 package org.meveo.admin.action.catalog;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -40,8 +36,8 @@ import org.meveo.service.catalog.local.PricePlanMatrixServiceLocal;
  * @created Nov 29, 2010
  * 
  */
-@Name("pricePlanMatrixBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+//TODO: @Scope(ScopeType.CONVERSATION)
 public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +46,7 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
      * Injected @{link PricePlanMatrix} service. Extends
      * {@link PersistenceService}.
      */
-    @In
+    @Inject
     private PricePlanMatrixServiceLocal pricePlanMatrixService;
 
 
@@ -69,8 +65,10 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Begin(nested = true)
-    @Factory("pricePlanMatrix")
+    /*TODO: @Begin(nested = true)
+    @Factory("pricePlanMatrix")*/
+    @Produces
+	@Named("pricePlanMatrix")
     public PricePlanMatrix init() {
         return initEntity();
     }
@@ -80,7 +78,9 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
      * 
      * @return filtered entities.
      */
-    @Out(value = "pricePlanMatrixes", required = false)
+    //@Out(value = "pricePlanMatrixes", required = false)
+    @Produces
+	@Named("pricePlanMatrixes")
     protected PaginationDataModel<PricePlanMatrix> getDataModel() {
         return entities;
     }
@@ -92,8 +92,10 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
-    @Begin(join = true)
-    @Factory("pricePlanMatrixes")
+    /*TODO: @Begin(join = true)
+    @Factory("pricePlanMatrixes")*/
+    @Produces
+	@Named("pricePlanMatrixes")
     public void list() {
         super.list();
     }
@@ -104,7 +106,7 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    @End(beforeRedirect = true, root=false)
+    //@End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
         return saveOrUpdate(entity);
     }

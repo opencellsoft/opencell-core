@@ -15,15 +15,10 @@
 */
 package org.meveo.admin.action.billing;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -41,9 +36,9 @@ import org.meveo.service.billing.local.OneShotChargeInstanceServiceLocal;
  * @created Dec 7, 2010
  * 
  */
-@Name("ponctualChargeInstanceBean")
-@Scope(ScopeType.CONVERSATION)
-@Restrict("#{s:hasRole('meveo.vertina')}")
+@Named
+/*TODO: @Scope(ScopeType.CONVERSATION)
+@Restrict("#{s:hasRole('meveo.vertina')}")*/
 public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> {
 
     private static final long serialVersionUID = 1L;
@@ -52,7 +47,7 @@ public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> 
      * Injected @{link OneShotChargeInstance} service. Extends
      * {@link PersistenceService}.
      */
-    @In
+    @Inject
     private OneShotChargeInstanceServiceLocal oneShotChargeInstanceService;
 
     /**
@@ -70,8 +65,10 @@ public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> 
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Begin(nested = true)
-    @Factory("ponctualChargeInstance")
+    /*TODO: @Begin(nested = true)
+    @Factory("ponctualChargeInstance")*/
+    @Produces
+	@Named("ponctualChargeInstance")
     public OneShotChargeInstance init() {
         return initEntity();
     }
@@ -81,7 +78,9 @@ public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> 
      * 
      * @return filtered entities.
      */
-    @Out(value = "ponctualChargeInstances", required = false)
+    // @Out(value = "ponctualChargeInstances", required = false)
+    @Produces
+	@Named("ponctualChargeInstances")
     protected PaginationDataModel<OneShotChargeInstance> getDataModel() {
         return entities;
     }
@@ -93,8 +92,10 @@ public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> 
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
-    @Begin(join = true)
-    @Factory("ponctualChargeInstances")
+   /*TODO: @Begin(join = true)
+    @Factory("ponctualChargeInstances")*/
+    @Produces
+	@Named("ponctualChargeInstances")
     public void list() {
         super.list();
     }
@@ -105,7 +106,7 @@ public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> 
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    @End(beforeRedirect = true, root=false)
+    //TODO: @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
         return saveOrUpdate(entity);
     }

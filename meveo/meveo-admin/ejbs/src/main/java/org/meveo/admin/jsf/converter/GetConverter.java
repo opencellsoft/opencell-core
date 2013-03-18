@@ -23,7 +23,7 @@ import org.jboss.seam.Component;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.StringUtils;
 
-@Name(value = "getConverter")
+@Named
 public class GetConverter {
 
     /**

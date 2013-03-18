@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -125,8 +126,13 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Begin(nested = true)
-	@Factory("billingAccount")
+	/*
+	 * TODO: @Begin(nested = true)
+	 * 
+	 * @Factory("billingAccount")
+	 */
+	@Produces
+	@Named("billingAccount")
 	public BillingAccount init() {
 		initEntity();
 		returnToAgency = !(entity.getInvoicePrefix() == null);
@@ -143,7 +149,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * 
 	 * @return filtered entities.
 	 */
-	@Out(value = "billingAccounts", required = false)
+	// TODO: @Out(value = "billingAccounts", required = false)
+	@Produces
+	@Named("billingAccounts")
 	protected PaginationDataModel<BillingAccount> getDataModel() {
 		return entities;
 	}
@@ -155,8 +163,13 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	@Begin(join = true)
-	@Factory("billingAccounts")
+	/*
+	 * TODO: @Begin(join = true)
+	 * 
+	 * @Factory("billingAccounts")
+	 */
+	@Produces
+	@Named("billingAccounts")
 	public void list() {
 		super.list();
 	}
@@ -167,7 +180,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	@End(beforeRedirect = true, root = false)
+	// TODO: @End(beforeRedirect = true, root = false)
 	public String saveOrUpdate() {
 		try {
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
@@ -278,7 +291,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		return null;
 	}
 
-	@Factory("getInvoices")
+	//TODO: @Factory("getInvoices")
+	@Produces
+	@Named("getInvoices")
 	public List<Invoice> getInvoices() {
 
 		return entity != null ? entity.getInvoices() : null;
@@ -337,9 +352,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			os.close();
 			context.responseComplete();
 		} catch (IOException e) {
-			log.error(e);
+			log.error(e.getMessage());
 		} catch (DocumentException e) {
-			log.error(e);
+			log.error(e.getMessage());
 		}
 	}
 
@@ -397,7 +412,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * Item selector getter. Item selector keeps a state of multiselect
 	 * checkboxes.
 	 */
-	@BypassInterceptors
+	// TODO: @BypassInterceptors
 	public ListItemsSelector<BillingAccount> getItemSelector() {
 		if (itemSelector == null) {
 			itemSelector = new ListItemsSelector<BillingAccount>(false);
