@@ -75,19 +75,19 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     private Integer quantity = 0;
 
     @Column(name = "AMOUNT", precision = 23, scale = 12)
-    private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal amount;
 
     @Column(name = "DISCOUNT", precision = 23, scale = 12)
     private BigDecimal discount;
 
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    private BigDecimal amountWithoutTax;
 
     @Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountTax = BigDecimal.ZERO;
+    private BigDecimal amountTax;
 
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithTax = BigDecimal.ZERO;
+    private BigDecimal amountWithTax;
 
     
     @Column(name = "CURRENCY_CODE", length = 3)

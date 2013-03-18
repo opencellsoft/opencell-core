@@ -16,8 +16,8 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.sql.Blob;
-import java.sql.SQLException;
+
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +36,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -81,19 +79,19 @@ public class Invoice extends AuditableEntity {
     private Date dueDate;
 
     @Column(name = "AMOUNT", precision = 23, scale = 12)
-    private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal amount;
 
     @Column(name = "DISCOUNT", precision = 23, scale = 12)
-    private BigDecimal discount = BigDecimal.ZERO;
+    private BigDecimal discount;
 
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    private BigDecimal amountWithoutTax;
 
     @Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountTax = BigDecimal.ZERO;
+    private BigDecimal amountTax;
 
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithTax = BigDecimal.ZERO;
+    private BigDecimal amountWithTax;
 
     @Column(name = "PAYMENT_METHOD")
     @Enumerated(EnumType.STRING)

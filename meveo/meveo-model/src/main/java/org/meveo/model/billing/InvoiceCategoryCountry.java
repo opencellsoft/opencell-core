@@ -18,8 +18,6 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +28,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -41,8 +38,8 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "INVOICE_CATEGORY_ COUNTRY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CATEGORY_COUNTRY_SEQ")
+@Table(name = "BILLING_INVOIC_CAT_COUNTR")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_CAT_COUNTR_SEQ")
 
 public class InvoiceCategoryCountry  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
@@ -55,13 +52,7 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 	@Column(name = "COUNTRY_CODE", length = 2)
 	private String countryCode;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
 	
 	
 	@Column(name = "DISCOUNT_CODE", length = 20)
@@ -90,25 +81,6 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 		this.countryCode = countryCode;
 	}
 
-
-	public Date getCreated() {
-		return created;
-	}
-
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 
 
 	public String getDiscountCode() {

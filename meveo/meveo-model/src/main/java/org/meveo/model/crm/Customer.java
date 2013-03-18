@@ -64,8 +64,7 @@ public class Customer extends AccountEntity {
     private ContactInformation contactInformation = new ContactInformation();
 
     
-    @Column(name = "BUSINESS_INTERMEDIARY_ID")
-    private Integer businessIntermediaryId;
+    
     
     
     @Column(name = "COUNTRY_CODE", length = 2)
@@ -80,14 +79,6 @@ public class Customer extends AccountEntity {
     private String languageCode;
 
     
-    
-    public Integer getBusinessIntermediaryId() {
-		return businessIntermediaryId;
-	}
-
-	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
-		this.businessIntermediaryId = businessIntermediaryId;
-	}
 
 	public String getCountryCode() {
 		return countryCode;

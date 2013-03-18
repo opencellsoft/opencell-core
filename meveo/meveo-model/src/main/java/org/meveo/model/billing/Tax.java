@@ -41,7 +41,7 @@ public class Tax extends BusinessEntity {
     @Column(name = "PERCENT", precision = 19, scale = 8)
     private BigDecimal percent;
 
-    @Column(name = "PR_DESCRIPTION")
+    @Column(name = "PR_DESCRIPTION", length = 50)
     private String prDescription;
 
    
