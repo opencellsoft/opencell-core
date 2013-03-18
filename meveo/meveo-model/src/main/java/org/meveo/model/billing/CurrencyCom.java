@@ -18,8 +18,6 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
@@ -27,7 +25,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -38,7 +35,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "CURRENCY_COM")
+@Table(name = "BILLING_CURRENCY_COM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CURRENCY_COM_SEQ")
 
 public class CurrencyCom  extends AuditableEntity{
@@ -49,13 +46,7 @@ public class CurrencyCom  extends AuditableEntity{
 	@Column(name = "CURRENCY_CODE", length = 3)
 	private String currencyCode;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
-	private Date created;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
-	private Date updated;
+
 	
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
@@ -71,21 +62,6 @@ public class CurrencyCom  extends AuditableEntity{
 		this.currencyCode = currencyCode;
 	}
 
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Date getUpdated() {
-		return updated;
-	}
-
-	public void setUpdated(Date updated) {
-		this.updated = updated;
-	}
 
 	public String getPrDescription() {
 		return prDescription;

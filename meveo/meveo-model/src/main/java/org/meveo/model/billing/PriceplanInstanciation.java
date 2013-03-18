@@ -19,16 +19,16 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -39,7 +39,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "PRICEPLAN_INSTANCIATION")
+@Table(name = "BILLING_PRICEPLAN_INSTANCIATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_PRICEPLAN_INSTANCIATION_SEQ")
 
 public class PriceplanInstanciation  extends AuditableEntity{
@@ -47,9 +47,9 @@ public class PriceplanInstanciation  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 
 	
-	
-	@Column(name = "BILLING_ACCOUNT_ID")
-	private Integer billingAccountId;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BILLING_ACCOUNT_ID")
+	private BillingAccount billingAccount;
 
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -59,6 +59,9 @@ public class PriceplanInstanciation  extends AuditableEntity{
 	@Column(name = "CHARGE_CODE")
 	private String chargeCode;
 
+	
+	@Column(name = "USAGE_TYPE")
+	private EventTypeEnum usageType;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "END_SUBSCRIPTION_DATE")
@@ -109,6 +112,14 @@ public class PriceplanInstanciation  extends AuditableEntity{
 	private String prCurrencyCode;
 
 
+	public EventTypeEnum getUsageType() {
+		return usageType;
+	}
+
+	public void setUsageType(EventTypeEnum usageType) {
+		this.usageType = usageType;
+	}
+
 	public BigDecimal getPrAmountWithoutTax() {
 		return prAmountWithoutTax;
 	}
@@ -117,12 +128,12 @@ public class PriceplanInstanciation  extends AuditableEntity{
 		this.prAmountWithoutTax = prAmountWithoutTax;
 	}
 
-	public Integer getBillingAccountId() {
-		return billingAccountId;
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
 	}
 
-	public void setBillingAccountId(Integer billingAccountId) {
-		this.billingAccountId = billingAccountId;
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
 	
 	public String getChargeCode() {

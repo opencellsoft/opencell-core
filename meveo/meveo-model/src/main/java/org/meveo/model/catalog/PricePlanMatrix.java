@@ -97,7 +97,7 @@ public class PricePlanMatrix extends AuditableEntity {
     private Integer businessIntermediaryId;
     
     
-    @Column(name = "CURRENCY_CODE")
+    @Column(name = "CURRENCY_CODE", length = 3)
     private String currencyCode;
 
     

@@ -36,16 +36,16 @@ public class Currency extends ProviderlessEntity {
     private static final long serialVersionUID = 1L;
 
     /** Currency code e.g. EUR for euros. */
-    @Column(name = "CODE", unique = true)
-    private String code;
+    @Column(name = "CURRENCY_CODE", length = 3, unique = true)
+    private String currencyCode;
 
     /** Currency ISO code e.g. 987 for euros. */
     @Column(name = "ISO_CODE")
     private String isoCode;
 
     /** Currency name. */
-    @Column(name = "NAME")
-    private String name;
+    @Column(name = "DESCRIPTION_EN")
+    private String DescriotionEn;
 
     /** Flag field that indicates if it is system currency. */
     @Column(name = "SYSTEM_CURRENCY")
@@ -59,23 +59,26 @@ public class Currency extends ProviderlessEntity {
         this.isoCode = isoCode;
     }
 
-    public String getCode() {
-        return code;
-    }
+   
+   
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+    public String getCurrencyCode() {
+		return currencyCode;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getDescriotionEn() {
+		return DescriotionEn;
+	}
 
-    public Boolean getSystemCurrency() {
+	public void setDescriotionEn(String descriotionEn) {
+		DescriotionEn = descriotionEn;
+	}
+
+	public Boolean getSystemCurrency() {
         return systemCurrency;
     }
 
@@ -87,7 +90,7 @@ public class Currency extends ProviderlessEntity {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        result = prime * result + ((currencyCode == null) ? 0 : currencyCode.hashCode());
         return result;
     }
 
@@ -100,15 +103,15 @@ public class Currency extends ProviderlessEntity {
         if (getClass() != obj.getClass())
             return false;
         Currency other = (Currency) obj;
-        if (code == null) {
-            if (other.code != null)
+        if (currencyCode == null) {
+            if (other.currencyCode != null)
                 return false;
-        } else if (!code.equals(other.code))
+        } else if (!currencyCode.equals(other.currencyCode))
             return false;
         return true;
     }
 
     public String toString() {
-        return name;
+        return DescriotionEn;
     }
 }
