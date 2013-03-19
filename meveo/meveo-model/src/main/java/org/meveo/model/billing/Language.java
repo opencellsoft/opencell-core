@@ -16,15 +16,13 @@
 
 package org.meveo.model.billing;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.jboss.seam.annotations.AutoCreate;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 
 /**
  * Language entity.
@@ -34,7 +32,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "LANGUAGE")
+@Table(name = "BILLING_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_SEQ")
 
 public class Language  extends AuditableEntity{
@@ -66,6 +64,21 @@ public class Language  extends AuditableEntity{
 		this.descriptionEn = descriptionEn;
 	}
 
-
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Language other = (Language) obj;
+        if (languageCode == null) {
+            if (other.languageCode != null)
+                return false;
+        } else if (!languageCode.equals(other.languageCode))
+            return false;
+        return true;
+    }
 	
 }

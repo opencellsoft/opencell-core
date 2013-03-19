@@ -184,6 +184,15 @@
 		    <rule if-outcome="emailTemplateDetail">
 		    	<redirect view-id="/pages/admin/communication/emailTemplateDetail.xhtml"/>
 		   </rule>
+		   
+		     <rule if-outcome="comLanguages">
+		    	<redirect view-id="/pages/admin/comLanguages/comLanguages.xhtml"/>
+		   </rule>
+		   <rule if-outcome="comLanguagesDetail">
+		    	 <redirect view-id="/pages/admin/comLanguages/comLanguagesDetail.xhtml"/> 
+		    	
+		   </rule>
+		   
 		   <!-- Billing -->
 		   <rule if-outcome="invoices">
 		    	<redirect view-id="/pages/billing/invoices/invoices.xhtml"/>
