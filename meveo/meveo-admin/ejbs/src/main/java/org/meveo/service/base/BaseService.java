@@ -19,32 +19,23 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
+import org.jboss.seam.security.Identity;
 import org.meveo.model.admin.User;
-import org.meveo.service.admin.local.UserServiceLocal;
+import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 public class BaseService {
 	private static final Random RANDOM = new Random();
 
+    @Inject
+    Identity identity;
+    
 	@Inject
 	protected Logger log;
 
-	protected User getCurrentUser() {
-		User user = null; /* TODO: (User) Component.getInstance("currentUser"); */
-		if (user == null) {
-			log.debug("MEVEOADMIN - Current user was not found in the seam context");
-
-			UserServiceLocal userService = null; /*
-												 * TODO: (UserServiceLocal)
-												 * Component
-												 * .getInstance("userService");
-												 */
-			log.debug("MEVEOADMIN - Looking for the user system");
-			user = userService.getSystemUser();
-		}
-
-		return user;
-	}
+    protected MeveoUser getCurrentUser() {
+        return (MeveoUser) identity.getUser();
+    }
 
 	protected String generateRequestId() {
 		return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());

@@ -30,6 +30,7 @@ import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
+import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
@@ -38,7 +39,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Title;
-import org.meveo.service.admin.local.UserServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -50,7 +50,7 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Named
-public class UserService extends PersistenceService<User> implements UserServiceLocal {
+public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
 
@@ -182,28 +182,43 @@ public class UserService extends PersistenceService<User> implements UserService
 				.setParameter("name", name).getSingleResult();
 	}
 
-	public void login(User currentUser) throws LoginException {
+    public User loginChecks(String username, String password) throws InactiveUserException, UnknownUserException, PasswordExpiredException {
+        return loginChecks(username, password, false);
+    }
+
+    public User loginChecks(String username, String password, boolean skipPasswordExpiracy) throws InactiveUserException, UnknownUserException, PasswordExpiredException {
+        User user = findByUsernameAndPassword(username, password);
+        if (skipPasswordExpiracy) {
+            // log.debug("[UserService] Skipping expiry check asked");
+        } else {
+            // log.debug("[UserService] Checking expiry asked");
+        }
+        return loginChecks(user, skipPasswordExpiracy);
+    }
+	
+	public User loginChecks(User user, boolean skipPasswordExpiracy) throws LoginException {
 		// Check if the user is active
-		if (!currentUser.isActive()) {
-			log.info("The user #" + currentUser.getId() + " is not active");
-			throw new InactiveUserException("The user #" + currentUser.getId() + " is not active");
+		if (!user.isActive()) {
+			log.info("The user #" + user.getId() + " is not active");
+			throw new InactiveUserException("The user #" + user.getId() + " is not active");
 		}
 
 		// Check if the user password has expired
 		String passwordExpiracy = ParamBean.getInstance("meveo.properties").getProperty(
 				"password.Expiracy", "90");
 
-		if (currentUser.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user #" + currentUser.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user #" + currentUser.getId()
+		if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
+			log.info("The password of user #" + user.getId() + " has expired.");
+			throw new PasswordExpiredException("The password of user #" + user.getId()
 					+ " has expired.");
 		}
 
 		// Check the roles
-		if (currentUser.getRoles() == null || currentUser.getRoles().isEmpty()) {
-			log.info("The user #" + currentUser.getId() + " has no role!");
-			throw new NoRoleException("The user #" + currentUser.getId() + " has no role!");
+		if (user.getRoles() == null || user.getRoles().isEmpty()) {
+			log.info("The user #" + user.getId() + " has no role!");
+			throw new NoRoleException("The user #" + user.getId() + " has no role!");
 		}
+		return user;
 	}
 
 	public User duplicate(User user) {
