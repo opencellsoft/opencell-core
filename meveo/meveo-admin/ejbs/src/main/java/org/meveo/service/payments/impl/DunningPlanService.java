@@ -16,18 +16,14 @@
 package org.meveo.service.payments.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.DunningPlanServiceLocal;
 
 /**
  * @author Tyshan(tyshan@manaty.net)
  */
 @Stateless
-@Named
-public class DunningPlanService extends PersistenceService<DunningPlan> implements
-		DunningPlanServiceLocal {
+public class DunningPlanService extends PersistenceService<DunningPlan> {
 
 }

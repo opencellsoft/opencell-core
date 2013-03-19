@@ -16,11 +16,9 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.billing.Wallet;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.local.WalletServiceLocal;
 
 /**
  * Wallet service implementation.
@@ -29,8 +27,6 @@ import org.meveo.service.billing.local.WalletServiceLocal;
  * @created 2009.09.03
  */
 @Stateless
-@Named
-public class WalletService extends PersistenceService<Wallet> implements
-		WalletServiceLocal {
+public class WalletService extends PersistenceService<Wallet> {
 
 }

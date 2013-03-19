@@ -18,15 +18,12 @@ package org.meveo.service.base;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.security.Role;
-import org.meveo.service.base.local.PermissionServiceLocal;
 
 @Stateless
-@Named
-public class PermissionService extends PersistenceService<Role> implements PermissionServiceLocal {
+public class PermissionService extends PersistenceService<Role> {
 
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRoles() {

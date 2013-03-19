@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
@@ -62,19 +61,19 @@ import org.meveo.service.api.dto.ServiceActivationDTO;
 import org.meveo.service.api.dto.SubscriptionDTO;
 import org.meveo.service.api.dto.UserAccountDTO;
 import org.meveo.service.api.remote.ApiServiceRemote;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
-import org.meveo.service.billing.local.BillingCycleServiceLocal;
-import org.meveo.service.billing.local.RatedTransactionServiceLocal;
-import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
-import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
-import org.meveo.service.catalog.local.TitleServiceLocal;
-import org.meveo.service.crm.local.CustomerBrandServiceLocal;
-import org.meveo.service.crm.local.CustomerCategoryServiceLocal;
-import org.meveo.service.crm.local.CustomerServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.CustomerBrandService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 /**
@@ -83,44 +82,46 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  */
 @Stateless
-@Named
 public class ApiService implements ApiServiceRemote {
 
 	@Inject
-	private CustomerServiceLocal customerService;
+	private CustomerService customerService;
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
-	private BillingAccountServiceLocal billingAccountService;
+	private BillingAccountService billingAccountService;
 
 	@Inject
-	private UserAccountServiceLocal userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
-	private SubscriptionServiceLocal subscriptionService;
+	private SubscriptionService subscriptionService;
 
 	@Inject
-	private ServiceInstanceServiceLocal serviceInstanceService;
+	private ServiceInstanceService serviceInstanceService;
 
 	@Inject
-	private ServiceTemplateServiceLocal serviceTemplateService;
+	private ServiceTemplateService serviceTemplateService;
 
 	@Inject
-	private CustomerBrandServiceLocal customerBrandService;
+	private CustomerBrandService customerBrandService;
 
 	@Inject
-	private CustomerCategoryServiceLocal customerCategoryService;
+	private CustomerCategoryService customerCategoryService;
 
 	@Inject
-	private TitleServiceLocal titleService;
+	private TitleService titleService;
 
 	@Inject
-	private BillingCycleServiceLocal billingCycleService;
+	private BillingCycleService billingCycleService;
 
 	@Inject
-	private ProviderServiceLocal providerService;
+	private ProviderService providerService;
+
+	@Inject
+	private RatedTransactionService ratedTransactionService;
 
 	@Inject
 	private Logger log;
@@ -136,9 +137,8 @@ public class ApiService implements ApiServiceRemote {
 	 * .String, java.lang.String, java.util.Date, int)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Long activateService(String subscriptionCode, String serviceCode,
-			Date activationDate, int quantity)
-			throws IncorrectSusbcriptionException, ElementNotFoundException,
+	public Long activateService(String subscriptionCode, String serviceCode, Date activationDate,
+			int quantity) throws IncorrectSusbcriptionException, ElementNotFoundException,
 			BusinessException {
 
 		// Upercase all codes, as Meveo stores them upercased
@@ -149,14 +149,13 @@ public class ApiService implements ApiServiceRemote {
 				"[Meveo] [API] Activating service: subscriptionCode {0}, serviceCode {1}, activationDate {2}, quantity {3}",
 				subscriptionCode, serviceCode, activationDate, quantity);
 
-		Subscription subscription = subscriptionService
-				.findByCode(subscriptionCode);
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
 		if (subscription == null) {
 			log.error(
 					"[Meveo] [API] Activating service: Subscription {0}, service {1} - subscription does not exist",
 					subscriptionCode, serviceCode);
-			throw new IncorrectSusbcriptionException(
-					"Subscription does not exist. code=" + subscriptionCode);
+			throw new IncorrectSusbcriptionException("Subscription does not exist. code="
+					+ subscriptionCode);
 		}
 
 		ServiceTemplate serviceTemplate = null;
@@ -173,16 +172,14 @@ public class ApiService implements ApiServiceRemote {
 		serviceInstance.setCode(serviceTemplate.getCode());
 		serviceInstance.setServiceTemplate(serviceTemplate);
 		serviceInstance.setSubscription(subscription);
-		serviceInstance.setSubscriptionDate(activationDate == null ? new Date()
-				: activationDate);
+		serviceInstance.setSubscriptionDate(activationDate == null ? new Date() : activationDate);
 		serviceInstance.setQuantity(quantity);
 		serviceInstance.setProvider(subscription.getProvider());
 
 		serviceInstanceService.serviceInstanciation(serviceInstance, null);
 
 		// Activate a service on subscription
-		serviceInstanceService.serviceActivation(serviceInstance, null, null,
-				null);
+		serviceInstanceService.serviceActivation(serviceInstance, null, null, null);
 
 		entityManager.flush();
 
@@ -201,13 +198,10 @@ public class ApiService implements ApiServiceRemote {
 	 * .List)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public HashMap<String, String> activateServices(
-			List<ServiceActivationDTO> serviceActivationInfo)
-			throws IncorrectSusbcriptionException, ElementNotFoundException,
-			BusinessException {
+	public HashMap<String, String> activateServices(List<ServiceActivationDTO> serviceActivationInfo)
+			throws IncorrectSusbcriptionException, ElementNotFoundException, BusinessException {
 
-		log.debug("[Meveo] [API] Activating services {0}",
-				serviceActivationInfo);
+		log.debug("[Meveo] [API] Activating services {0}", serviceActivationInfo);
 
 		HashMap<String, String> results = new HashMap<String, String>();
 
@@ -216,18 +210,16 @@ public class ApiService implements ApiServiceRemote {
 		for (ServiceActivationDTO serviceActivationDTO : serviceActivationInfo) {
 
 			// Upercase code values, as Meveo stores them upercase
-			String subscriptionCode = serviceActivationDTO
-					.getSubscriptionCode().toUpperCase();
-			String serviceCode = serviceActivationDTO.getServiceCode()
-					.toUpperCase();
+			String subscriptionCode = serviceActivationDTO.getSubscriptionCode().toUpperCase();
+			String serviceCode = serviceActivationDTO.getServiceCode().toUpperCase();
 
 			subscription = subscriptionService.findByCode(subscriptionCode);
 			if (subscription == null) {
 				log.error(
 						"[Meveo] [API] Activating service: Subscription {0}, service {1} - subscription does not exist",
 						subscriptionCode, serviceCode);
-				throw new IncorrectSusbcriptionException(
-						"Subscription does not exist. code=" + subscriptionCode);
+				throw new IncorrectSusbcriptionException("Subscription does not exist. code="
+						+ subscriptionCode);
 			}
 
 			serviceTemplate = null;
@@ -236,8 +228,7 @@ public class ApiService implements ApiServiceRemote {
 				log.error(
 						"[Meveo] [API] Activating service: Subscription {0}, service {1} - Service template does not exist",
 						serviceActivationDTO.getSubscriptionCode(), serviceCode);
-				throw new ElementNotFoundException(serviceCode,
-						"ServiceTemplate");
+				throw new ElementNotFoundException(serviceCode, "ServiceTemplate");
 			}
 
 			// Instantiate a service in subscription
@@ -245,22 +236,21 @@ public class ApiService implements ApiServiceRemote {
 			serviceInstance.setCode(serviceTemplate.getCode());
 			serviceInstance.setServiceTemplate(serviceTemplate);
 			serviceInstance.setSubscription(subscription);
-			serviceInstance.setSubscriptionDate(serviceActivationDTO
-					.getActivationDate());
+			serviceInstance.setSubscriptionDate(serviceActivationDTO.getActivationDate());
 			serviceInstance.setQuantity(serviceActivationDTO.getQuantity());
 			serviceInstance.setProvider(subscription.getProvider());
 
 			serviceInstanceService.serviceInstanciation(serviceInstance, null);
 
 			// Activate a service on subscription
-			serviceInstanceService.serviceActivation(serviceInstance, null,
-					null, null);
+			serviceInstanceService.serviceActivation(serviceInstance, null, null, null);
 
 			// Here use original values of subscription code and service code,
 			// as calling program might not know of change to uppercase
-			results.put(serviceActivationDTO.getSubscriptionCode() + "_"
-					+ serviceActivationDTO.getServiceCode(), serviceInstance
-					.getId().toString());
+			results.put(
+					serviceActivationDTO.getSubscriptionCode() + "_"
+							+ serviceActivationDTO.getServiceCode(), serviceInstance.getId()
+							.toString());
 		}
 
 		entityManager.flush();
@@ -277,8 +267,7 @@ public class ApiService implements ApiServiceRemote {
 	 * .lang.String)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void closeBillingAccount(String code)
-			throws UnknownAccountException,
+	public void closeBillingAccount(String code) throws UnknownAccountException,
 			ElementNotResiliatedOrCanceledException {
 
 		// Uppercase code values, as Meveo stores them uppercase
@@ -304,13 +293,11 @@ public class ApiService implements ApiServiceRemote {
 	 * java.lang.String, java.util.Date, java.util.Date)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createBillingAccount(String customerAccountCode, String code,
-			String description, String billingCycleCode, String firstName,
-			String lastName, AddressDTO address, Integer paymentMethodCode,
-			Boolean elBilling, String elBillingEmail, String extRef1,
+	public void createBillingAccount(String customerAccountCode, String code, String description,
+			String billingCycleCode, String firstName, String lastName, AddressDTO address,
+			Integer paymentMethodCode, Boolean elBilling, String elBillingEmail, String extRef1,
 			String extRef2, Date subscriptionDate, Date nextInvoiceDate)
-			throws AccountAlreadyExistsException, UnknownAccountException,
-			ElementNotFoundException {
+			throws AccountAlreadyExistsException, UnknownAccountException, ElementNotFoundException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		customerAccountCode = customerAccountCode.toUpperCase();
@@ -322,15 +309,12 @@ public class ApiService implements ApiServiceRemote {
 						+ ",  extRef2 "
 						+ extRef2
 						+ ",  subscriptionDate "
-						+ subscriptionDate
-						+ ",  nextInvoiceDate " + nextInvoiceDate,
-				customerAccountCode, code, description, billingCycleCode,
-				firstName, lastName, address, paymentMethodCode, elBilling,
-				elBillingEmail);
+						+ subscriptionDate + ",  nextInvoiceDate " + nextInvoiceDate,
+				customerAccountCode, code, description, billingCycleCode, firstName, lastName,
+				address, paymentMethodCode, elBilling, elBillingEmail);
 
 		// Find a customer
-		CustomerAccount customerAccount = customerAccountService
-				.findByCode(customerAccountCode);
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 		if (customerAccount == null) {
 			log.error(
 					"[Meveo] [API] Creating billing account: billing account {0} - customer {1} was not found",
@@ -347,8 +331,8 @@ public class ApiService implements ApiServiceRemote {
 			throw new AccountAlreadyExistsException(code);
 		}
 
-		BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(
-				billingCycleCode, customerAccount.getProvider());
+		BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode,
+				customerAccount.getProvider());
 		if (billingCycle == null) {
 			log.error(
 					"[Meveo] [API] Creating billing account: billing account {0} - billing cycle {1} was not found for provider {2}",
@@ -378,11 +362,9 @@ public class ApiService implements ApiServiceRemote {
 
 		// Check that payment method was matched
 		if (paymentMethodCode != null) {
-			billingAccount.setPaymentMethod(PaymentMethodEnum
-					.getValue(paymentMethodCode));
+			billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(paymentMethodCode));
 			if (billingAccount.getPaymentMethod() == null) {
-				throw new ElementNotFoundException(
-						paymentMethodCode.toString(), "PaymentMethod");
+				throw new ElementNotFoundException(paymentMethodCode.toString(), "PaymentMethod");
 			}
 		}
 
@@ -390,9 +372,7 @@ public class ApiService implements ApiServiceRemote {
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Creating billing account: billing account {0} was created",
-				code);
+		log.debug("[Meveo] [API] Creating billing account: billing account {0} was created", code);
 
 	}
 
@@ -406,9 +386,8 @@ public class ApiService implements ApiServiceRemote {
 	 * java.lang.String)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createCustomer(String code, String name, String brandCode,
-			String categoryCode, AddressDTO address, String extRef1,
-			String extRef2, String providerCode)
+	public void createCustomer(String code, String name, String brandCode, String categoryCode,
+			AddressDTO address, String extRef1, String extRef2, String providerCode)
 			throws AccountAlreadyExistsException, ElementNotFoundException {
 
 		// Uppercase code values, as Meveo stores them uppercase
@@ -416,19 +395,16 @@ public class ApiService implements ApiServiceRemote {
 
 		log.debug(
 				"[Meveo] [API] Creating a customer code {0}, name {1}, brandCode {2}, categoryCode {3}, address {4}, extRef1 {5}, extRef2 {6}, providerCode {7}",
-				code, name, brandCode, categoryCode, address, extRef1, extRef2,
-				providerCode);
+				code, name, brandCode, categoryCode, address, extRef1, extRef2, providerCode);
 
-		CustomerBrand customerBrand = customerBrandService
-				.findByCode(brandCode);
+		CustomerBrand customerBrand = customerBrandService.findByCode(brandCode);
 		if (customerBrand == null) {
 			log.error(
 					"[Meveo] [API] Creating customer: customer {0} - customer brand {1} was not found",
 					code, brandCode);
 			throw new ElementNotFoundException(brandCode, "CustomerBrand");
 		}
-		CustomerCategory customerCategory = customerCategoryService
-				.findByCode(categoryCode);
+		CustomerCategory customerCategory = customerCategoryService.findByCode(categoryCode);
 		if (customerCategory == null) {
 			log.error(
 					"[Meveo] [API] Creating customer: customer {0} - customer category {1} was not found",
@@ -438,8 +414,7 @@ public class ApiService implements ApiServiceRemote {
 
 		Provider provider = providerService.findByCode(providerCode);
 		if (provider == null) {
-			log.error(
-					"[Meveo] [API] Creating customer: customer {0} - provider {1} was not found",
+			log.error("[Meveo] [API] Creating customer: customer {0} - provider {1} was not found",
 					code, providerCode);
 			throw new ElementNotFoundException(providerCode, "Provider");
 		}
@@ -447,8 +422,7 @@ public class ApiService implements ApiServiceRemote {
 		// Check that record does not exist already
 		Customer customer = customerService.findByCode(code);
 		if (customer != null) {
-			log.error(
-					"[Meveo] [API] Creating customer: customer {0} - customer already exists",
+			log.error("[Meveo] [API] Creating customer: customer {0} - customer already exists",
 					code);
 			throw new AccountAlreadyExistsException(code);
 		}
@@ -469,9 +443,7 @@ public class ApiService implements ApiServiceRemote {
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Creating customer: customer {0} - customer was created",
-				code);
+		log.debug("[Meveo] [API] Creating customer: customer {0} - customer was created", code);
 	}
 
 	/*
@@ -484,12 +456,10 @@ public class ApiService implements ApiServiceRemote {
 	 * java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createCustomerAccount(String customerCode, String code,
-			String description, String firstName, String lastName,
-			String emailForContact, AddressDTO address, String titleCode,
-			Integer creditCategoryCode, Integer paymentMethodCode,
-			String extRef1) throws AccountAlreadyExistsException,
-			UnknownAccountException, ElementNotFoundException {
+	public void createCustomerAccount(String customerCode, String code, String description,
+			String firstName, String lastName, String emailForContact, AddressDTO address,
+			String titleCode, Integer creditCategoryCode, Integer paymentMethodCode, String extRef1)
+			throws AccountAlreadyExistsException, UnknownAccountException, ElementNotFoundException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		customerCode = customerCode.toUpperCase();
@@ -497,9 +467,8 @@ public class ApiService implements ApiServiceRemote {
 
 		log.debug(
 				"[Meveo] [API] Creating a customer account: customerCode {0}, code {1}, description {2}, firstName {3}, lastName {4}, emailForContact {5}, address {6}, titleCode {7},  creditCategoryCode {8},  paymentMethodCode {9},  extRef1 "
-						+ extRef1, customerCode, code, description, firstName,
-				lastName, emailForContact, address, titleCode,
-				creditCategoryCode, paymentMethodCode);
+						+ extRef1, customerCode, code, description, firstName, lastName,
+				emailForContact, address, titleCode, creditCategoryCode, paymentMethodCode);
 
 		Customer customer = customerService.findByCode(customerCode);
 		if (customer == null) {
@@ -509,8 +478,7 @@ public class ApiService implements ApiServiceRemote {
 			throw new UnknownAccountException(customerCode);
 		}
 
-		Title title = titleService
-				.findByCode(customer.getProvider(), titleCode);
+		Title title = titleService.findByCode(customer.getProvider(), titleCode);
 		if (title == null) {
 			log.error(
 					"[Meveo] [API] Creating customer account: customer account {0} - title does not exist",
@@ -519,8 +487,7 @@ public class ApiService implements ApiServiceRemote {
 		}
 
 		// Check that record does not exist already
-		CustomerAccount customerAccount = customerAccountService
-				.findByCode(code);
+		CustomerAccount customerAccount = customerAccountService.findByCode(code);
 		if (customerAccount != null) {
 			log.error(
 					"[Meveo] [API] Creating customer account: customer account {0} - account already exists",
@@ -550,27 +517,23 @@ public class ApiService implements ApiServiceRemote {
 
 		// Check that payment method was matched
 		if (paymentMethodCode != null) {
-			customerAccount.setPaymentMethod(PaymentMethodEnum
-					.getValue(paymentMethodCode));
+			customerAccount.setPaymentMethod(PaymentMethodEnum.getValue(paymentMethodCode));
 			if (customerAccount.getPaymentMethod() == null) {
 				log.error(
 						"[Meveo] [API] Creating customer account: customer account {0} - payment method not found",
 						code);
-				throw new ElementNotFoundException(
-						paymentMethodCode.toString(), "PaymentMethod");
+				throw new ElementNotFoundException(paymentMethodCode.toString(), "PaymentMethod");
 			}
 		}
 
 		// Check that credit category was matched
 		if (creditCategoryCode != null) {
-			customerAccount.setCreditCategory(CreditCategoryEnum
-					.getValue(creditCategoryCode));
+			customerAccount.setCreditCategory(CreditCategoryEnum.getValue(creditCategoryCode));
 			if (customerAccount.getCreditCategory() == null) {
 				log.error(
 						"[Meveo] [API] Creating customer account: customer account {0} - credit category not found",
 						code);
-				throw new ElementNotFoundException(
-						creditCategoryCode.toString(), "CreditCategory");
+				throw new ElementNotFoundException(creditCategoryCode.toString(), "CreditCategory");
 			}
 		}
 
@@ -583,10 +546,9 @@ public class ApiService implements ApiServiceRemote {
 				code);
 	}
 
-	public void createCustomerAccountOperation(String customerAccountCode,
-			String creditChargeType, String creditChargeCode,
-			String creditChargeDescription, Double amount, Date operationDate,
-			Date efectiveDate) {
+	public void createCustomerAccountOperation(String customerAccountCode, String creditChargeType,
+			String creditChargeCode, String creditChargeDescription, Double amount,
+			Date operationDate, Date efectiveDate) {
 
 	}
 
@@ -599,10 +561,9 @@ public class ApiService implements ApiServiceRemote {
 	 * java.util.Date, java.util.Date)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Long createSubscription(String userAccountCode, String code,
-			String description, String offerCode, Date subscriptionDate,
-			Date terminationDate) throws ElementAlreadyExistsException,
-			UnknownAccountException, BusinessException {
+	public Long createSubscription(String userAccountCode, String code, String description,
+			String offerCode, Date subscriptionDate, Date terminationDate)
+			throws ElementAlreadyExistsException, UnknownAccountException, BusinessException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		userAccountCode = userAccountCode.toUpperCase();
@@ -611,8 +572,7 @@ public class ApiService implements ApiServiceRemote {
 
 		log.debug(
 				"[Meveo] [API] Creating a subscription userAccountCode {0}, code {1}, description {2}, offerCode {3}, subscriptionDate {4}, terminationDate {5}",
-				userAccountCode, code, description, offerCode,
-				subscriptionDate, terminationDate);
+				userAccountCode, code, description, offerCode, subscriptionDate, terminationDate);
 
 		Subscription subscription = subscriptionService.findByCode(code);
 		if (subscription != null) {
@@ -622,8 +582,7 @@ public class ApiService implements ApiServiceRemote {
 			throw new ElementAlreadyExistsException(code, "Subscription");
 		}
 
-		UserAccount userAccount = userAccountService
-				.findByCode(userAccountCode);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
 		if (userAccount == null) {
 			log.error(
 					"[Meveo] [API] Creating subscription: subscription {0} - user account not found",
@@ -639,10 +598,8 @@ public class ApiService implements ApiServiceRemote {
 		subscription.setSubscriptionDate(subscriptionDate);
 		subscription.setProvider(userAccount.getProvider());
 
-		subscriptionService.createSubscription(userAccountCode, subscription,
-				null);
-		subscriptionService.subscriptionOffer(code, offerCode,
-				subscriptionDate, null);
+		subscriptionService.createSubscription(userAccountCode, subscription, null);
+		subscriptionService.subscriptionOffer(code, offerCode, subscriptionDate, null);
 
 		entityManager.flush();
 
@@ -662,9 +619,8 @@ public class ApiService implements ApiServiceRemote {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public HashMap<String, String> createSubscriptions(String userAccountCode,
-			List<SubscriptionDTO> subscriptionCreateInfo)
-			throws ElementAlreadyExistsException, UnknownAccountException,
-			BusinessException {
+			List<SubscriptionDTO> subscriptionCreateInfo) throws ElementAlreadyExistsException,
+			UnknownAccountException, BusinessException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		userAccountCode = userAccountCode.toUpperCase();
@@ -673,8 +629,7 @@ public class ApiService implements ApiServiceRemote {
 				"[Meveo] [API] Creating subscriptions userAccountCode {0}, subscriptionCreateInfo {1}",
 				userAccountCode, subscriptionCreateInfo);
 
-		UserAccount userAccount = userAccountService
-				.findByCode(userAccountCode);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
 		if (userAccount == null) {
 			log.error("[Meveo] [API] Creating subscriptions: user account not found");
 			throw new UnknownAccountException(userAccountCode);
@@ -703,22 +658,18 @@ public class ApiService implements ApiServiceRemote {
 				subscription = new Subscription();
 				subscription.setCode(code);
 				subscription.setDescription(subscriptionDTO.getDescription());
-				subscription.setEndAgrementDate(subscriptionDTO
-						.getTerminationDate());
-				subscription.setSubscriptionDate(subscriptionDTO
-						.getSubscriptionDate());
+				subscription.setEndAgrementDate(subscriptionDTO.getTerminationDate());
+				subscription.setSubscriptionDate(subscriptionDTO.getSubscriptionDate());
 				subscription.setProvider(userAccount.getProvider());
 
-				subscriptionService.createSubscription(userAccountCode,
-						subscription, null);
+				subscriptionService.createSubscription(userAccountCode, subscription, null);
 				subscriptionService.subscriptionOffer(code, offerCode,
 						subscriptionDTO.getSubscriptionDate(), null);
 			}
 
 			// Here use original subscription code, as calling application might
 			// not know of the change to uppercase
-			results.put(subscriptionDTO.getCode(), subscription.getId()
-					.toString());
+			results.put(subscriptionDTO.getCode(), subscription.getId().toString());
 		}
 
 		entityManager.flush();
@@ -738,11 +689,10 @@ public class ApiService implements ApiServiceRemote {
 	 * java.lang.String, java.lang.String)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createUserAccount(String billingAccountCode, String code,
-			String description, String firstName, String lastName,
-			String titleCode, AddressDTO address, String extRef1, String extRef2)
-			throws AccountAlreadyExistsException, UnknownAccountException,
-			ElementNotFoundException {
+	public void createUserAccount(String billingAccountCode, String code, String description,
+			String firstName, String lastName, String titleCode, AddressDTO address,
+			String extRef1, String extRef2) throws AccountAlreadyExistsException,
+			UnknownAccountException, ElementNotFoundException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		billingAccountCode = billingAccountCode.toUpperCase();
@@ -750,11 +700,10 @@ public class ApiService implements ApiServiceRemote {
 
 		log.debug(
 				"[Meveo] [API] Creating user account billingAccountCode {0}, code {1}, description {2}, firstName {3}, lastName {4}, titleCode {5}, address {6}, extRef1 {7}, extRef2 {8}",
-				billingAccountCode, code, description, firstName, lastName,
-				titleCode, address, extRef1, extRef2);
+				billingAccountCode, code, description, firstName, lastName, titleCode, address,
+				extRef1, extRef2);
 
-		BillingAccount billingAccount = billingAccountService
-				.findByCode(billingAccountCode);
+		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode);
 		if (billingAccount == null) {
 			log.error(
 					"[Meveo] [API] Creating user account: account {0} - billing account not found",
@@ -762,20 +711,16 @@ public class ApiService implements ApiServiceRemote {
 			throw new UnknownAccountException(billingAccountCode);
 		}
 
-		Title title = titleService.findByCode(billingAccount.getProvider(),
-				titleCode);
+		Title title = titleService.findByCode(billingAccount.getProvider(), titleCode);
 		if (title == null) {
-			log.error(
-					"[Meveo] [API] Creating user account: account {0} - title not found",
-					code);
+			log.error("[Meveo] [API] Creating user account: account {0} - title not found", code);
 			throw new ElementNotFoundException(titleCode, "Title");
 		}
 
 		// Check that record does not exist already
 		UserAccount userAccount = userAccountService.findByCode(code);
 		if (userAccount != null) {
-			log.error(
-					"[Meveo] [API] Creating user account: account {0} - account exists already",
+			log.error("[Meveo] [API] Creating user account: account {0} - account exists already",
 					code);
 			throw new AccountAlreadyExistsException(code);
 		}
@@ -795,14 +740,11 @@ public class ApiService implements ApiServiceRemote {
 		userAccount.getName().setLastName(lastName);
 		userAccount.setProvider(billingAccount.getProvider());
 
-		userAccountService.createUserAccount(billingAccountCode, userAccount,
-				null);
+		userAccountService.createUserAccount(billingAccountCode, userAccount, null);
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Creating user account: account {0} - account was created",
-				code);
+		log.debug("[Meveo] [API] Creating user account: account {0} - account was created", code);
 	}
 
 	/*
@@ -812,8 +754,7 @@ public class ApiService implements ApiServiceRemote {
 	 * org.meveo.service.api.remote.ApiServiceRemote#findBillingAccount(java
 	 * .lang.String)
 	 */
-	public BillingAccountDTO findBillingAccount(String code)
-			throws UnknownAccountException {
+	public BillingAccountDTO findBillingAccount(String code) throws UnknownAccountException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
@@ -822,21 +763,16 @@ public class ApiService implements ApiServiceRemote {
 
 		BillingAccount billingAccount = billingAccountService.findByCode(code);
 		if (billingAccount == null) {
-			log.error(
-					"[Meveo] [API] Find billing account: account {0} - account not found",
-					code);
+			log.error("[Meveo] [API] Find billing account: account {0} - account not found", code);
 			throw new UnknownAccountException(code);
 		}
 
-		BillingAccountDTO billingAccountDTO = new BillingAccountDTO(
-				billingAccount.getId(), billingAccount.getCode(),
-				billingAccount.getExternalRef1(),
-				billingAccount.getExternalRef2(),
-				convertToAddressDto(billingAccount.getAddress()),
-				billingAccount.getName().getTitle().getCode(), billingAccount
-						.getName().getFirstName(), billingAccount.getName()
-						.getLastName(), billingAccount.getCustomerAccount()
-						.getCode());
+		BillingAccountDTO billingAccountDTO = new BillingAccountDTO(billingAccount.getId(),
+				billingAccount.getCode(), billingAccount.getExternalRef1(),
+				billingAccount.getExternalRef2(), convertToAddressDto(billingAccount.getAddress()),
+				billingAccount.getName().getTitle().getCode(), billingAccount.getName()
+						.getFirstName(), billingAccount.getName().getLastName(), billingAccount
+						.getCustomerAccount().getCode());
 
 		return billingAccountDTO;
 	}
@@ -857,18 +793,14 @@ public class ApiService implements ApiServiceRemote {
 
 		Customer customer = customerService.findByCode(code);
 		if (customer == null) {
-			log.error(
-					"[Meveo] [API] Find customer: customer {0} - customer not found",
-					code);
+			log.error("[Meveo] [API] Find customer: customer {0} - customer not found", code);
 			throw new UnknownAccountException(code);
 		}
 
-		return new CustomerDTO(customer.getId(), customer.getCode(),
-				customer.getDescription(), customer.getExternalRef1(),
-				customer.getExternalRef2(),
-				convertToAddressDto(customer.getAddress()), customer
-						.getCustomerBrand().getCode(), customer
-						.getCustomerCategory().getCode());
+		return new CustomerDTO(customer.getId(), customer.getCode(), customer.getDescription(),
+				customer.getExternalRef1(), customer.getExternalRef2(),
+				convertToAddressDto(customer.getAddress()), customer.getCustomerBrand().getCode(),
+				customer.getCustomerCategory().getCode());
 	}
 
 	/*
@@ -878,31 +810,25 @@ public class ApiService implements ApiServiceRemote {
 	 * org.meveo.service.api.remote.ApiServiceRemote#findCustomerAccount(java
 	 * .lang.String)
 	 */
-	public CustomerAccountDTO findCustomerAccount(String code)
-			throws UnknownAccountException {
+	public CustomerAccountDTO findCustomerAccount(String code) throws UnknownAccountException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
 
 		log.debug("[Meveo] [API] Find customer account: code {0}", code);
 
-		CustomerAccount customerAccount = customerAccountService
-				.findByCode(code);
+		CustomerAccount customerAccount = customerAccountService.findByCode(code);
 		if (customerAccount == null) {
-			log.error(
-					"[Meveo] [API] Find customer account: account {0} - account not found",
-					code);
+			log.error("[Meveo] [API] Find customer account: account {0} - account not found", code);
 			throw new UnknownAccountException(code);
 		}
 
-		CustomerAccountDTO customerAccountDTO = new CustomerAccountDTO(
-				customerAccount.getId(), customerAccount.getCode(),
-				customerAccount.getExternalRef1(),
+		CustomerAccountDTO customerAccountDTO = new CustomerAccountDTO(customerAccount.getId(),
+				customerAccount.getCode(), customerAccount.getExternalRef1(),
 				customerAccount.getExternalRef2(),
-				convertToAddressDto(customerAccount.getAddress()),
-				customerAccount.getName().getTitle().getCode(), customerAccount
-						.getName().getFirstName(), customerAccount.getName()
-						.getLastName(), customerAccount.getCustomer().getCode());
+				convertToAddressDto(customerAccount.getAddress()), customerAccount.getName()
+						.getTitle().getCode(), customerAccount.getName().getFirstName(),
+				customerAccount.getName().getLastName(), customerAccount.getCustomer().getCode());
 
 		return customerAccountDTO;
 	}
@@ -914,8 +840,7 @@ public class ApiService implements ApiServiceRemote {
 	 * org.meveo.service.api.remote.ApiServiceRemote#findUserAccount(java.lang
 	 * .String)
 	 */
-	public UserAccountDTO findUserAccount(String code)
-			throws UnknownAccountException {
+	public UserAccountDTO findUserAccount(String code) throws UnknownAccountException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
@@ -924,19 +849,15 @@ public class ApiService implements ApiServiceRemote {
 
 		UserAccount userAccount = userAccountService.findByCode(code);
 		if (userAccount == null) {
-			log.error(
-					"[Meveo] [API] Find user account: account {0} - account not found",
-					code);
+			log.error("[Meveo] [API] Find user account: account {0} - account not found", code);
 			throw new UnknownAccountException(code);
 		}
 
 		UserAccountDTO userAccountDTO = new UserAccountDTO(userAccount.getId(),
 				userAccount.getCode(), userAccount.getExternalRef1(),
-				userAccount.getExternalRef2(),
-				convertToAddressDto(userAccount.getAddress()), userAccount
-						.getName().getTitle().getCode(), userAccount.getName()
-						.getFirstName(), userAccount.getName().getLastName(),
-				userAccount.getBillingAccount().getCode());
+				userAccount.getExternalRef2(), convertToAddressDto(userAccount.getAddress()),
+				userAccount.getName().getTitle().getCode(), userAccount.getName().getFirstName(),
+				userAccount.getName().getLastName(), userAccount.getBillingAccount().getCode());
 
 		return userAccountDTO;
 	}
@@ -948,8 +869,7 @@ public class ApiService implements ApiServiceRemote {
 	 * org.meveo.service.api.remote.ApiServiceRemote#findSubscription(java.lang
 	 * .String)
 	 */
-	public SubscriptionDTO findSubscription(String code)
-			throws IncorrectSusbcriptionException {
+	public SubscriptionDTO findSubscription(String code) throws IncorrectSusbcriptionException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
@@ -958,17 +878,13 @@ public class ApiService implements ApiServiceRemote {
 
 		Subscription subscription = subscriptionService.findByCode(code);
 		if (subscription == null) {
-			log.error(
-					"[Meveo] [API] Find subscription: subscription {0} - not found",
-					code);
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + code);
+			log.error("[Meveo] [API] Find subscription: subscription {0} - not found", code);
+			throw new IncorrectSusbcriptionException("subscription does not exist. code=" + code);
 		}
 
-		SubscriptionDTO subscriptionDTO = new SubscriptionDTO(subscription
-				.getUserAccount().getCode(), subscription.getCode(),
-				subscription.getDescription(), subscription.getOffer()
-						.getCode(), subscription.getSubscriptionDate(),
+		SubscriptionDTO subscriptionDTO = new SubscriptionDTO(subscription.getUserAccount()
+				.getCode(), subscription.getCode(), subscription.getDescription(), subscription
+				.getOffer().getCode(), subscription.getSubscriptionDate(),
 				subscription.getTerminationDate());
 
 		return subscriptionDTO;
@@ -984,24 +900,20 @@ public class ApiService implements ApiServiceRemote {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void reactivateSubscription(String code, Date activationDate)
-			throws IncorrectSusbcriptionException,
-			ElementNotResiliatedOrCanceledException,
+			throws IncorrectSusbcriptionException, ElementNotResiliatedOrCanceledException,
 			IncorrectServiceInstanceException, BusinessException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
 
-		log.debug(
-				"[Meveo] [API] Reactivate subscription: code {0}, activationDate {1}",
-				code, activationDate);
+		log.debug("[Meveo] [API] Reactivate subscription: code {0}, activationDate {1}", code,
+				activationDate);
 
-		subscriptionService
-				.subscriptionReactivation(code, activationDate, null);
+		subscriptionService.subscriptionReactivation(code, activationDate, null);
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Reactivate subscription: code {0} - subscription reactivated",
+		log.debug("[Meveo] [API] Reactivate subscription: code {0} - subscription reactivated",
 				code);
 	}
 
@@ -1014,23 +926,20 @@ public class ApiService implements ApiServiceRemote {
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void suspendSubscription(String code, Date suspensionDate)
-			throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
+			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+			BusinessException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
 
-		log.debug(
-				"[Meveo] [API] Suspend subscription: code {0}, suspensionDate {1}",
-				code, suspensionDate);
+		log.debug("[Meveo] [API] Suspend subscription: code {0}, suspensionDate {1}", code,
+				suspensionDate);
 
 		subscriptionService.subscriptionSuspension(code, suspensionDate, null);
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Suspend subscription: code {0} - subscription suspended",
-				code);
+		log.debug("[Meveo] [API] Suspend subscription: code {0} - subscription suspended", code);
 	}
 
 	/*
@@ -1041,9 +950,9 @@ public class ApiService implements ApiServiceRemote {
 	 * .String, java.lang.String, java.util.Date)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void terminateService(String subscriptionCode, String serviceCode,
-			Date terminationDate) throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
+	public void terminateService(String subscriptionCode, String serviceCode, Date terminationDate)
+			throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+			BusinessException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		subscriptionCode = subscriptionCode.toUpperCase();
@@ -1053,19 +962,17 @@ public class ApiService implements ApiServiceRemote {
 				"[Meveo] [API] Terminate service: subscriptionCode {0}, serviceCode {1}, terminationDate {2}",
 				subscriptionCode, serviceCode, terminationDate);
 
-		ServiceInstance serviceInstance = serviceInstanceService
-				.findByCodeAndSubscription(serviceCode, subscriptionCode);
+		ServiceInstance serviceInstance = serviceInstanceService.findByCodeAndSubscription(
+				serviceCode, subscriptionCode);
 		if (serviceInstance == null) {
 			log.debug(
 					"[Meveo] [API] Terminate service: subscriptionCode {0}, serviceCode {1} - service or subscription not found",
 					subscriptionCode, serviceCode);
-			throw new IncorrectServiceInstanceException(
-					"Could not find a service " + serviceCode
-							+ " in subscription " + subscriptionCode);
+			throw new IncorrectServiceInstanceException("Could not find a service " + serviceCode
+					+ " in subscription " + subscriptionCode);
 		}
 
-		serviceInstanceService.serviceTermination(serviceInstance,
-				terminationDate, null);
+		serviceInstanceService.serviceTermination(serviceInstance, terminationDate, null);
 
 		entityManager.flush();
 
@@ -1089,18 +996,14 @@ public class ApiService implements ApiServiceRemote {
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
 
-		log.debug(
-				"[Meveo] [API] Terminate subscription: code {0}, terminationDate {1}",
-				code, terminationDate);
+		log.debug("[Meveo] [API] Terminate subscription: code {0}, terminationDate {1}", code,
+				terminationDate);
 
-		subscriptionService
-				.subscriptionTermination(code, terminationDate, null);
+		subscriptionService.subscriptionTermination(code, terminationDate, null);
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Terminate subscription: code {0} - subscription terminated",
-				code);
+		log.debug("[Meveo] [API] Terminate subscription: code {0} - subscription terminated", code);
 	}
 
 	/*
@@ -1114,12 +1017,11 @@ public class ApiService implements ApiServiceRemote {
 	 * java.lang.String, java.util.Date, java.util.Date)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateBillingAccount(String code, String description,
-			String billingCycleCode, String firstName, String lastName,
-			AddressDTO address, Integer paymentMethodCode, Boolean elBilling,
-			String elBillingEmail, String extRef1, String extRef2,
-			Date subscriptionDate, Date nextInvoiceDate)
-			throws UnknownAccountException, ElementNotFoundException {
+	public void updateBillingAccount(String code, String description, String billingCycleCode,
+			String firstName, String lastName, AddressDTO address, Integer paymentMethodCode,
+			Boolean elBilling, String elBillingEmail, String extRef1, String extRef2,
+			Date subscriptionDate, Date nextInvoiceDate) throws UnknownAccountException,
+			ElementNotFoundException {
 
 		// Uppercase code values, as Meveo stores them uppercase
 		code = code.toUpperCase();
@@ -1130,10 +1032,9 @@ public class ApiService implements ApiServiceRemote {
 						+ ",  extRef2 "
 						+ extRef2
 						+ ",  subscriptionDate "
-						+ subscriptionDate
-						+ ",  nextInvoiceDate " + nextInvoiceDate, code,
-				description, billingCycleCode, firstName, lastName, address,
-				paymentMethodCode, elBilling, elBillingEmail);
+						+ subscriptionDate + ",  nextInvoiceDate " + nextInvoiceDate, code,
+				description, billingCycleCode, firstName, lastName, address, paymentMethodCode,
+				elBilling, elBillingEmail);
 
 		BillingAccount billingAccount = billingAccountService.findByCode(code);
 		if (billingAccount == null) {
@@ -1144,15 +1045,13 @@ public class ApiService implements ApiServiceRemote {
 		}
 
 		if (billingCycleCode != null) {
-			BillingCycle billingCycle = billingCycleService
-					.findByBillingCycleCode(billingCycleCode,
-							billingAccount.getProvider());
+			BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(
+					billingCycleCode, billingAccount.getProvider());
 			if (billingCycle == null) {
 				log.error(
 						"[Meveo] [API] Update billing account: billing account {0} - billing cycle {1} was not found for provider {2}",
 						code, billingCycleCode, billingAccount.getProvider());
-				throw new ElementNotFoundException(billingCycleCode,
-						"BillingCycle");
+				throw new ElementNotFoundException(billingCycleCode, "BillingCycle");
 			}
 			billingAccount.setBillingCycle(billingCycle);
 		}
@@ -1183,11 +1082,9 @@ public class ApiService implements ApiServiceRemote {
 		}
 
 		if (paymentMethodCode != null) {
-			billingAccount.setPaymentMethod(PaymentMethodEnum
-					.getValue(paymentMethodCode));
+			billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(paymentMethodCode));
 			if (billingAccount.getPaymentMethod() == null) {
-				throw new ElementNotFoundException(
-						paymentMethodCode.toString(), "PaymentMethod");
+				throw new ElementNotFoundException(paymentMethodCode.toString(), "PaymentMethod");
 			}
 		}
 
@@ -1195,8 +1092,7 @@ public class ApiService implements ApiServiceRemote {
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Update billing account: billing account {0} - account updated",
+		log.debug("[Meveo] [API] Update billing account: billing account {0} - account updated",
 				code);
 	}
 
@@ -1210,9 +1106,8 @@ public class ApiService implements ApiServiceRemote {
 	 * java.lang.String)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateUserAccount(String code, String description,
-			String firstName, String lastName, String titleCode,
-			AddressDTO address, String extRef1, String extRef2)
+	public void updateUserAccount(String code, String description, String firstName,
+			String lastName, String titleCode, AddressDTO address, String extRef1, String extRef2)
 			throws UnknownAccountException, ElementNotFoundException {
 
 		// Uppercase code values, as Meveo stores them uppercase
@@ -1220,8 +1115,7 @@ public class ApiService implements ApiServiceRemote {
 
 		log.debug(
 				"[Meveo] [API] Update user account: code {0}, description {1}, firstName {2}, lastName {3}, titleCode {4}, address {5}, extRef1 {6}, extRef2 {7}",
-				code, description, firstName, lastName, titleCode, address,
-				extRef1, extRef2);
+				code, description, firstName, lastName, titleCode, address, extRef1, extRef2);
 
 		UserAccount userAccount = userAccountService.findByCode(code);
 		if (userAccount == null) {
@@ -1231,12 +1125,9 @@ public class ApiService implements ApiServiceRemote {
 			throw new UnknownAccountException(code);
 		}
 
-		Title title = titleService.findByCode(userAccount.getProvider(),
-				titleCode);
+		Title title = titleService.findByCode(userAccount.getProvider(), titleCode);
 		if (title == null) {
-			log.error(
-					"[Meveo] [API] Update user account: user account {0} - title not found",
-					code);
+			log.error("[Meveo] [API] Update user account: user account {0} - title not found", code);
 			throw new ElementNotFoundException(titleCode, "Title");
 		}
 
@@ -1267,9 +1158,7 @@ public class ApiService implements ApiServiceRemote {
 
 		entityManager.flush();
 
-		log.debug(
-				"[Meveo] [API] Update user account: user account {0} - account updated",
-				code);
+		log.debug("[Meveo] [API] Update user account: user account {0} - account updated", code);
 	}
 
 	/**
@@ -1286,9 +1175,8 @@ public class ApiService implements ApiServiceRemote {
 		}
 
 		return new Address(addressDTO.getAddress1(), addressDTO.getAddress2(),
-				addressDTO.getAddress3(), addressDTO.getZipCode(),
-				addressDTO.getCity(), addressDTO.getCountry(),
-				addressDTO.getState());
+				addressDTO.getAddress3(), addressDTO.getZipCode(), addressDTO.getCity(),
+				addressDTO.getCountry(), addressDTO.getState());
 	}
 
 	/**
@@ -1300,9 +1188,8 @@ public class ApiService implements ApiServiceRemote {
 	 */
 	private AddressDTO convertToAddressDto(Address address) {
 
-		return new AddressDTO(address.getAddress1(), address.getAddress2(),
-				address.getAddress3(), address.getZipCode(), address.getCity(),
-				address.getCountry(), address.getState());
+		return new AddressDTO(address.getAddress1(), address.getAddress2(), address.getAddress3(),
+				address.getZipCode(), address.getCity(), address.getCountry(), address.getState());
 	}
 
 	/*
@@ -1313,8 +1200,8 @@ public class ApiService implements ApiServiceRemote {
 	 * .String, java.lang.String, java.lang.Integer, boolean)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public ConsumptionDTO getConsumption(String subscriptionCode,
-			String infoType, Integer billingCycle, boolean sumarizeConsumption)
+	public ConsumptionDTO getConsumption(String subscriptionCode, String infoType,
+			Integer billingCycle, boolean sumarizeConsumption)
 			throws IncorrectSusbcriptionException {
 
 		/*
@@ -1322,8 +1209,7 @@ public class ApiService implements ApiServiceRemote {
 		 * (RatedTransactionServiceLocal) Component
 		 * .getInstance("ratedTransactionService");
 		 */
-		RatedTransactionServiceLocal service = null;
-		return service.getConsumption(subscriptionCode, infoType, billingCycle,
+		return ratedTransactionService.getConsumption(subscriptionCode, infoType, billingCycle,
 				sumarizeConsumption);
 	}
 }

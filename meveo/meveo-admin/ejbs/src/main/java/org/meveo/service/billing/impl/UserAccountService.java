@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
@@ -37,28 +36,22 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.Wallet;
 import org.meveo.service.base.AccountService;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
-import org.meveo.service.billing.local.WalletServiceLocal;
 
 /**
  * @author R.AITYAAZZA
  * 
  */
 @Stateless
-@Named
-public class UserAccountService extends AccountService<UserAccount> implements
-		UserAccountServiceLocal {
+public class UserAccountService extends AccountService<UserAccount> {
 
 	@Inject
-	BillingAccountServiceLocal billingAccountService;
+	BillingAccountService billingAccountService;
 
 	@Inject
-	WalletServiceLocal walletService;
+	WalletService walletService;
 
 	@Inject
-	SubscriptionServiceLocal subscriptionService;
+	SubscriptionService subscriptionService;
 
 	public List<Subscription> subscriptionList(String code)
 			throws BusinessException {

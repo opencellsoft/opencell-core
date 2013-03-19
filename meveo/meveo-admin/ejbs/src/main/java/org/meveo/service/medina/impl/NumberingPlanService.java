@@ -16,19 +16,15 @@
 package org.meveo.service.medina.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.mediation.NumberingPlan;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.medina.local.NumberingPlanServiceLocal;
 
 /**
  * @author MBAREK
  * 
  */
 @Stateless
-@Named
-public class NumberingPlanService extends PersistenceService<NumberingPlan>
-		implements NumberingPlanServiceLocal {
+public class NumberingPlanService extends PersistenceService<NumberingPlan> {
 
 }

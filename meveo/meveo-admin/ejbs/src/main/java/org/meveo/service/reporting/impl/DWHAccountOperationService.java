@@ -22,21 +22,17 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.reporting.local.DWHAccountOperationServiceLocal;
 
 /**
  * Account Operation Transformation service implementation.
  * 
  */
 @Stateless
-@Named
-public class DWHAccountOperationService extends PersistenceService<DWHAccountOperation> implements
-		DWHAccountOperationServiceLocal {
+public class DWHAccountOperationService extends PersistenceService<DWHAccountOperation> {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public BigDecimal calculateRecordsBetweenDueMonth(String providerCode, Integer from,

@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.model.admin.User;
-import org.meveo.service.admin.local.UserServiceLocal;
+import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 
 /**
@@ -43,7 +43,7 @@ public class ChangePasswordAction {
 	private User user;
 
 	@Inject
-	private UserServiceLocal userService;
+	private UserService userService;
 
 	private String currentPassword;
 

@@ -24,13 +24,11 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.bi.Job;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.bi.local.JobServiceLocal;
 
 /**
  * Job service implementation.
@@ -39,9 +37,7 @@ import org.meveo.service.bi.local.JobServiceLocal;
  * @created 2010.09.23
  */
 @Stateless
-@Named
-public class JobService extends PersistenceService<Job> implements
-		JobServiceLocal {
+public class JobService extends PersistenceService<Job> {
 	private static final String SELECT_JOB = "SELECT R_JOB.NAME, R_JOBENTRY_ATTRIBUTE.VALUE_NUM, MODIFIED_DATE, R_JOB.JOB_STATUS, R_JOB.ID_JOB FROM R_JOB INNER JOIN R_JOBENTRY_ATTRIBUTE ON R_JOB.ID_JOB=R_JOBENTRY_ATTRIBUTE.ID_JOB where R_JOBENTRY_ATTRIBUTE.CODE = 'schedulerType' and R_JOB.NAME= :name";
 	private static final String SELECT_JOB_INFO = "SELECT CODE, VALUE_NUM FROM R_JOBENTRY_ATTRIBUTE where ID_JOB=:id";
 
@@ -118,14 +114,12 @@ public class JobService extends PersistenceService<Job> implements
 			}
 			temp = (BigDecimal) o[4];
 			job.setJobRepositoryId(temp.intValue());
-			job.setLastExecutionDate(DateUtils.addDaysToDate(
-					job.getNextExecutionDate(), -1));
+			job.setLastExecutionDate(DateUtils.addDaysToDate(job.getNextExecutionDate(), -1));
 		}
 		return job;
 	}
 
-	public void createJob(String name, Date nextExecutionDate, boolean active,
-			int jobFrequency) {
+	public void createJob(String name, Date nextExecutionDate, boolean active, int jobFrequency) {
 		Job job = new Job();
 		job.setName(name);
 		job.setNextExecutionDate(nextExecutionDate);

@@ -16,11 +16,9 @@
 package org.meveo.service.crm.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.local.AccountEntitySearchServiceLocal;
 
 /**
  * Customer search service implementation.
@@ -29,9 +27,7 @@ import org.meveo.service.crm.local.AccountEntitySearchServiceLocal;
  * @created 2010.11.22
  */
 @Stateless
-@Named
 public class AccountEntitySearchService extends
-		PersistenceService<AccountEntity> implements
-		AccountEntitySearchServiceLocal {
+		PersistenceService<AccountEntity> {
 
 }

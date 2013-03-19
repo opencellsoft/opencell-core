@@ -26,7 +26,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.TitleServiceLocal;
+import org.meveo.service.catalog.impl.TitleService;
 
 @Named
 // TODO: @Scope(ScopeType.CONVERSATION)
@@ -38,7 +38,7 @@ public class TitleBean extends BaseBean<Title> {
 	 * Injected @{link Title} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private TitleServiceLocal titleService;
+	private TitleService titleService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

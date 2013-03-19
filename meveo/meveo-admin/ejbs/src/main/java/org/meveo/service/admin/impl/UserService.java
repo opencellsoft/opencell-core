@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -30,7 +29,6 @@ import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
-import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
@@ -47,9 +45,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2010.05.31
  */
-
 @Stateless
-@Named
 public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
@@ -182,11 +178,11 @@ public class UserService extends PersistenceService<User> {
 				.setParameter("name", name).getSingleResult();
 	}
 
-    public User loginChecks(String username, String password) throws InactiveUserException, UnknownUserException, PasswordExpiredException {
+    public User loginChecks(String username, String password) throws LoginException {
         return loginChecks(username, password, false);
     }
 
-    public User loginChecks(String username, String password, boolean skipPasswordExpiracy) throws InactiveUserException, UnknownUserException, PasswordExpiredException {
+    public User loginChecks(String username, String password, boolean skipPasswordExpiracy) throws LoginException {
         User user = findByUsernameAndPassword(username, password);
         if (skipPasswordExpiracy) {
             // log.debug("[UserService] Skipping expiry check asked");

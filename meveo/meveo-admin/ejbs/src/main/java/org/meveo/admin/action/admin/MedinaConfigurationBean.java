@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.MedinaConfiguration;
-import org.meveo.service.admin.local.MedinaConfigurationServiceLocal;
+import org.meveo.service.admin.impl.MedinaConfigurationService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -48,7 +48,7 @@ public class MedinaConfigurationBean extends BaseBean<MedinaConfiguration> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private MedinaConfigurationServiceLocal medinaConfigurationService;
+	private MedinaConfigurationService medinaConfigurationService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

@@ -16,20 +16,16 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.catalog.ServiceParameterTemplate;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.ServiceParameterTemplateServiceLocal;
 
 /**
  * Service Parameter Template service implementation.
  * 
  */
 @Stateless
-@Named
 public class ServiceParameterTemplateService extends
-		PersistenceService<ServiceParameterTemplate> implements
-		ServiceParameterTemplateServiceLocal {
+		PersistenceService<ServiceParameterTemplate> {
 
 }

@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -54,15 +53,8 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
-import org.meveo.service.billing.local.ChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.OneShotChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.RatedTransactionServiceLocal;
-import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
-import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * Service instance service implementation.
@@ -70,32 +62,31 @@ import org.meveo.service.payments.local.CustomerAccountServiceLocal;
  * @author R.AITYAAZZA
  */
 @Stateless
-@Named
-public class ServiceInstanceService extends BusinessService<ServiceInstance> implements ServiceInstanceServiceLocal {
+public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
-    private SubscriptionServiceLocal subscriptionService;
+    private SubscriptionService subscriptionService;
 
     @Inject
-    private ServiceTemplateServiceLocal serviceTemplateService;
+    private ServiceTemplateService serviceTemplateService;
 
     @Inject
-    private RecurringChargeInstanceServiceLocal recurringChargeInstanceService;
+    private RecurringChargeInstanceService recurringChargeInstanceService;
 
     @Inject
-    private ChargeInstanceServiceLocal<ChargeInstance> chargeInstanceService;
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
     @Inject
-    private OneShotChargeInstanceServiceLocal oneShotChargeInstanceService;
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
 
     @Inject
-    private ChargeApplicationServiceLocal chargeApplicationService;
+    private ChargeApplicationService chargeApplicationService;
     
     @Inject
-    private CustomerAccountServiceLocal customerAccountService;
+    private CustomerAccountService customerAccountService;
     
 	@Inject
-    private RatedTransactionServiceLocal ratedTransactionService;
+    private RatedTransactionService ratedTransactionService;
 
     public ServiceInstance findByCodeAndSubscription(String code, String subscriptionCode) {
         ServiceInstance chargeInstance = null;

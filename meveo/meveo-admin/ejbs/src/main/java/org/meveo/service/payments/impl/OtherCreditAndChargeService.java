@@ -20,7 +20,6 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
@@ -31,9 +30,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.meveo.service.payments.local.OCCTemplateServiceLocal;
-import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
 import org.slf4j.Logger;
 
 /**
@@ -43,14 +39,13 @@ import org.slf4j.Logger;
  * @created 2009.09.04
  */
 @Stateless
-@Named
-public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> implements OtherCreditAndChargeServiceLocal {
+public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> {
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
-	private OCCTemplateServiceLocal occTemplateService;
+	private OCCTemplateService occTemplateService;
 
 	protected Logger log;
 

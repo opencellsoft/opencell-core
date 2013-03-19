@@ -22,10 +22,9 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.AccountImportHisto;
-import org.meveo.service.admin.local.AccountImportHistoServiceLocal;
+import org.meveo.service.admin.impl.AccountImportHistoService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.testng.annotations.Factory;
 
 /**
  * Standard backing bean for {@link AccountImportHisto} (extends
@@ -47,7 +46,7 @@ public class AccountImportHistoBean extends BaseBean<AccountImportHisto> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private AccountImportHistoServiceLocal accountImportHistoService;
+	private AccountImportHistoService accountImportHistoService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

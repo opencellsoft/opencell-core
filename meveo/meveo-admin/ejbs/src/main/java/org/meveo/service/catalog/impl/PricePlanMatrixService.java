@@ -16,11 +16,9 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.PricePlanMatrixServiceLocal;
 
 /**
  * @author Ignas Lelys
@@ -28,8 +26,6 @@ import org.meveo.service.catalog.local.PricePlanMatrixServiceLocal;
  * 
  */
 @Stateless
-@Named
-public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix>
-		implements PricePlanMatrixServiceLocal {
+public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> {
 
 }

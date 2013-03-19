@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.OudayaInputHistory;
-import org.meveo.service.admin.local.OudayaInputHistoryServiceLocal;
+import org.meveo.service.admin.impl.OudayaInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -46,7 +46,7 @@ public class OudayaInputHistoryBean extends BaseBean<OudayaInputHistory> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private OudayaInputHistoryServiceLocal oudayaInputHistoryService;
+	private OudayaInputHistoryService oudayaInputHistoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

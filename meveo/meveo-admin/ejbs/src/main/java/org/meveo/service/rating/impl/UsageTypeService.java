@@ -16,11 +16,9 @@
 package org.meveo.service.rating.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.rating.UsageType;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.rating.local.UsageTypeServiceLocal;
 
 /**
  * Usage type service implementation.
@@ -29,8 +27,6 @@ import org.meveo.service.rating.local.UsageTypeServiceLocal;
  * @created 2009.09.07
  */
 @Stateless
-@Named
-public class UsageTypeService extends PersistenceService<UsageType> implements
-		UsageTypeServiceLocal {
+public class UsageTypeService extends PersistenceService<UsageType> {
 
 }

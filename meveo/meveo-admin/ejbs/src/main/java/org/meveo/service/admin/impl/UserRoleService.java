@@ -18,12 +18,10 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.security.Role;
-import org.meveo.service.admin.local.UserRoleServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -34,9 +32,7 @@ import org.meveo.service.base.PersistenceService;
  */
 
 @Stateless
-@Named
-public class UserRoleService extends PersistenceService<Role> implements
-		UserRoleServiceLocal {
+public class UserRoleService extends PersistenceService<Role> {
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list()
 	 */

@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -37,20 +36,16 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.AccountService;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
 
 /**
  * @author R.AITYAAZZA
  * 
  */
 @Stateless
-@Named
-public class BillingAccountService extends AccountService<BillingAccount>
-		implements BillingAccountServiceLocal {
+public class BillingAccountService extends AccountService<BillingAccount> {
 
 	@Inject
-	private UserAccountServiceLocal userAccountService;
+	private UserAccountService userAccountService;
 
 	public List<UserAccount> UserAccountList(String code)
 			throws BusinessException {

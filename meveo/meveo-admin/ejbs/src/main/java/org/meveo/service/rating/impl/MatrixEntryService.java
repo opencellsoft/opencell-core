@@ -16,19 +16,15 @@
 package org.meveo.service.rating.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.rating.MatrixEntry;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.rating.local.MatrixEntryServiceLocal;
 
 /**
  * Matrix Entry service implementation.
  * 
  */
 @Stateless
-@Named
-public class MatrixEntryService extends PersistenceService<MatrixEntry> implements
-		MatrixEntryServiceLocal {
+public class MatrixEntryService extends PersistenceService<MatrixEntry> {
 
 }

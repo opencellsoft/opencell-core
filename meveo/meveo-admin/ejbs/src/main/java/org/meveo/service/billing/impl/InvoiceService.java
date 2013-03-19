@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -31,7 +30,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.local.InvoiceServiceLocal;
 import org.meveo.service.billing.remote.InvoiceServiceRemote;
-import org.meveo.service.crm.local.ProviderServiceLocal;
+import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
 
 /**
@@ -41,7 +40,6 @@ import org.slf4j.Logger;
  * @created 2010.05.14
  */
 @Stateless
-@Named
 public class InvoiceService extends PersistenceService<Invoice> implements
 		InvoiceServiceLocal, InvoiceServiceRemote {
 
@@ -49,7 +47,7 @@ public class InvoiceService extends PersistenceService<Invoice> implements
 	private Logger log;
 
 	@Inject
-	private ProviderServiceLocal providerService;
+	private ProviderService providerService;
 
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode)
 			throws BusinessException {

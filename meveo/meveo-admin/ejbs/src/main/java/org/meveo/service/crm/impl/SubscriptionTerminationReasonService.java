@@ -18,24 +18,20 @@ package org.meveo.service.crm.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.local.SubscriptionTerminationReasonServiceLocal;
 
 /**
  * Service SubscriptionTerminationReason implementation.
  * 
  */
 @Stateless
-@Named
 public class SubscriptionTerminationReasonService extends
-		PersistenceService<SubscriptionTerminationReason> implements
-		SubscriptionTerminationReasonServiceLocal {
+		PersistenceService<SubscriptionTerminationReason> {
 
 	public SubscriptionTerminationReason findByCodeReason(String codeReason,
 			String providerCode) throws Exception {

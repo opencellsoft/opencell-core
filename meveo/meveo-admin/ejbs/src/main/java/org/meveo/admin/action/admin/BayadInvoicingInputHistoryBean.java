@@ -22,10 +22,9 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.BayadInvoicingInputHistory;
-import org.meveo.service.admin.local.BayadInvoicingInputHistoryServiceLocal;
+import org.meveo.service.admin.impl.BayadInvoicingInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.testng.annotations.Factory;
 
 /**
  * Standard backing bean for {@link BayadInvoicingInputHistory} (extends
@@ -47,7 +46,7 @@ public class BayadInvoicingInputHistoryBean extends BaseBean<BayadInvoicingInput
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private BayadInvoicingInputHistoryServiceLocal bayadInvoicingInputHistoryService;
+	private BayadInvoicingInputHistoryService bayadInvoicingInputHistoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

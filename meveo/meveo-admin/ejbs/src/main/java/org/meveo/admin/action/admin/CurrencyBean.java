@@ -23,6 +23,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.base.local.IPersistenceService;
 
 /**
  * Standard backing bean for {@link Currency} (extends {@link BaseBean} that
@@ -104,7 +105,7 @@ public class CurrencyBean extends BaseBean<Currency> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	//@End(beforeRedirect = true, root = false)
+	// @End(beforeRedirect = true, root = false)
 	public String saveOrUpdate() {
 		return saveOrUpdate(entity);
 	}

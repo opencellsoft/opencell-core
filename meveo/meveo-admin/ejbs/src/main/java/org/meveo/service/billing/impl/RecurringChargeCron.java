@@ -35,8 +35,6 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
-import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
 import org.slf4j.Logger;
 
 /**
@@ -47,10 +45,10 @@ import org.slf4j.Logger;
 public class RecurringChargeCron {
 
 	@Inject
-	private RecurringChargeInstanceServiceLocal recurringChargeInstanceService;
+	private RecurringChargeInstanceService recurringChargeInstanceService;
 
 	@Inject
-	private ChargeApplicationServiceLocal chargeApplicationService;
+	private ChargeApplicationService chargeApplicationService;
 
 	protected Logger log;
 

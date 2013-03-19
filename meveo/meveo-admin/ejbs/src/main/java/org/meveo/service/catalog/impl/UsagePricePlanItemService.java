@@ -16,20 +16,16 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.UsagePricePlanItemServiceLocal;
 
 /**
  * Offer Template service implementation.
  * 
  */
 @Stateless
-@Named
 public class UsagePricePlanItemService extends
-		PersistenceService<UsagePricePlanItem> implements
-		UsagePricePlanItemServiceLocal {
+		PersistenceService<UsagePricePlanItem> {
 
 }

@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.GriegInvoiceConverterInputHistory;
-import org.meveo.service.admin.local.GriegConverterInputHistoryServiceLocal;
+import org.meveo.service.admin.impl.GriegConverterInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -46,7 +46,7 @@ public class GriegConverterInputHistoryBean extends BaseBean<GriegInvoiceConvert
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private GriegConverterInputHistoryServiceLocal griegConverterInputHistoryService;
+	private GriegConverterInputHistoryService griegConverterInputHistoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

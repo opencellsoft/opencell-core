@@ -16,11 +16,9 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.TaxServiceLocal;
 
 /**
  * Tax service implementation.
@@ -30,8 +28,6 @@ import org.meveo.service.catalog.local.TaxServiceLocal;
  * 
  */
 @Stateless
-@Named
-public class TaxService extends PersistenceService<Tax> implements
-		TaxServiceLocal {
+public class TaxService extends PersistenceService<Tax> {
 
 }

@@ -16,19 +16,15 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.catalog.PriceCode;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.PriceCodeServiceLocal;
 
 /**
  * Offer Template service implementation.
  * 
  */
 @Stateless
-@Named
-public class PriceCodeService extends PersistenceService<PriceCode> implements
-		PriceCodeServiceLocal {
+public class PriceCodeService extends PersistenceService<PriceCode> {
 
 }

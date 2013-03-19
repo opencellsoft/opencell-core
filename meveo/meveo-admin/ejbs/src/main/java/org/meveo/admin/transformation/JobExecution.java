@@ -20,14 +20,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.model.bi.JobExecutionHisto;
-import org.meveo.service.bi.local.JobExecutionHistoryServiceLocal;
-import org.meveo.service.bi.local.JobServiceLocal;
+import org.meveo.service.bi.impl.JobExecutionHistoryService;
+import org.meveo.service.bi.impl.JobService;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -55,7 +54,7 @@ import org.slf4j.Logger;
 public class JobExecution {
 
 	@Inject
-	private JobServiceLocal jobService;
+	private JobService jobService;
 
 	@Inject
 	protected Logger log;
@@ -177,7 +176,7 @@ public class JobExecution {
 	 *            Job entity id
 	 */
 	@Inject
-	private JobExecutionHistoryServiceLocal jobExecutionHistoryService;
+	private JobExecutionHistoryService jobExecutionHistoryService;
 
 	public void history(Date nextExecutionDate, Date executionDate, long jobId) {
 		log.info("Job executed, calculating next execution date:", nextExecutionDate);

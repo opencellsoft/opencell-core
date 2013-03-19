@@ -15,6 +15,7 @@
  */
 package org.meveo.service.validation;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -29,7 +30,6 @@ import org.meveo.model.crm.Provider;
  * 
  */
 @Stateless
-@Named
 public class ValidationService implements ValidationServiceLocal {
 
 	@PersistenceContext(unitName = "entityManager")

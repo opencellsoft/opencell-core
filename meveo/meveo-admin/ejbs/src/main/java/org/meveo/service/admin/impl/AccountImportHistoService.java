@@ -19,7 +19,6 @@ import javax.ejb.Stateless;
 import javax.inject.Named;
 
 import org.meveo.model.admin.AccountImportHisto;
-import org.meveo.service.admin.local.AccountImportHistoServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -31,7 +30,6 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @Named
 public class AccountImportHistoService extends
-		PersistenceService<AccountImportHisto> implements
-		AccountImportHistoServiceLocal {
+		PersistenceService<AccountImportHisto> {
 
 }

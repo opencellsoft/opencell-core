@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -30,20 +29,16 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
-import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
 
 /**
  * @author R.AITYAAZZA
  * 
  */
 @Stateless
-@Named
-public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> implements
-        RecurringChargeInstanceServiceLocal {
+public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> {
 
     @Inject
-    private ChargeApplicationServiceLocal chargeApplicationService;
+    private ChargeApplicationService chargeApplicationService;
 
 	// @Inject
     // private RecurringChargeTemplateServiceLocal

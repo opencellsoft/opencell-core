@@ -16,11 +16,9 @@
 package org.meveo.service.bi.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.bi.JobHistory;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.bi.local.JobHistoryServiceLocal;
 
 /**
  * Job history service implementation.
@@ -29,8 +27,6 @@ import org.meveo.service.bi.local.JobHistoryServiceLocal;
  * @created 2010.09.28
  */
 @Stateless
-@Named
-public class JobHistoryService extends PersistenceService<JobHistory> implements
-		JobHistoryServiceLocal {
+public class JobHistoryService extends PersistenceService<JobHistory> {
 
 }

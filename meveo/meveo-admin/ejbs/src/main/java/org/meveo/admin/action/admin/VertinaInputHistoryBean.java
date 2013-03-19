@@ -27,7 +27,7 @@ import org.meveo.model.admin.VertinaInputHistory;
 import org.meveo.model.billing.ApplicationChgStatusEnum;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.service.admin.local.VertinaInputHistoryServiceLocal;
+import org.meveo.service.admin.impl.VertinaInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -51,7 +51,7 @@ public class VertinaInputHistoryBean extends BaseBean<VertinaInputHistory> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private VertinaInputHistoryServiceLocal vertinaInputHistoryService;
+	private VertinaInputHistoryService vertinaInputHistoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

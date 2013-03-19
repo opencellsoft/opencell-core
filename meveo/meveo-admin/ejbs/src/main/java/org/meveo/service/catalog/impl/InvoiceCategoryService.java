@@ -16,11 +16,9 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 
 /**
  * InvoiceCategory service implementation.
@@ -30,8 +28,6 @@ import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
  * 
  */
 @Stateless
-@Named
-public class InvoiceCategoryService extends PersistenceService<InvoiceCategory>
-		implements InvoiceCategoryServiceLocal {
+public class InvoiceCategoryService extends PersistenceService<InvoiceCategory> {
 
 }

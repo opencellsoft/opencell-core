@@ -26,14 +26,13 @@ import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.service.base.local.AccountServiceLocal;
 
 /**
  * CustomerAccount service remote interface.
  * 
  */
 
-public interface ICustomerAccountService extends AccountServiceLocal<CustomerAccount> {
+public interface ICustomerAccountService {
     /**
      * Checks if customer account with current id exists
      * 

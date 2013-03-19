@@ -16,19 +16,15 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.local.OfferTemplateServiceLocal;
 
 /**
  * Offer Template service implementation.
  * 
  */
 @Stateless
-@Named
-public class OfferTemplateService extends BusinessService<OfferTemplate>
-		implements OfferTemplateServiceLocal {
+public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 }

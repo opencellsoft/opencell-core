@@ -16,14 +16,12 @@
 package org.meveo.service.payments.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.RecordedInvoiceServiceLocal;
 
 /**
  * RecordedInvoice service implementation.
@@ -32,9 +30,7 @@ import org.meveo.service.payments.local.RecordedInvoiceServiceLocal;
  * @created 2009.09.04
  */
 @Stateless
-@Named
-public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> implements
-		RecordedInvoiceServiceLocal {
+public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
 
 	public void addLitigation(Long recordedInvoiceId, User user) throws BusinessException {
 		if (recordedInvoiceId == null) {

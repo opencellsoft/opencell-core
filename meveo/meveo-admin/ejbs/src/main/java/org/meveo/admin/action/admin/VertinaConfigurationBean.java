@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.VertinaConfiguration;
-import org.meveo.service.admin.local.VertinaConfigurationServiceLocal;
+import org.meveo.service.admin.impl.VertinaConfigurationService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -47,7 +47,7 @@ public class VertinaConfigurationBean extends BaseBean<VertinaConfiguration> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private VertinaConfigurationServiceLocal vertinaConfigurationService;
+	private VertinaConfigurationService vertinaConfigurationService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

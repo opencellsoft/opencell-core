@@ -24,18 +24,18 @@ import org.meveo.model.admin.User;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
-public class BaseService {
+public abstract class BaseService {
 	private static final Random RANDOM = new Random();
 
-    @Inject
-    Identity identity;
-    
+	@Inject
+	Identity identity;
+
 	@Inject
 	protected Logger log;
 
-    protected MeveoUser getCurrentUser() {
-        return (MeveoUser) identity.getUser();
-    }
+	protected User getCurrentUser() {
+		return ((MeveoUser) identity.getUser()).getUser();
+	}
 
 	protected String generateRequestId() {
 		return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());

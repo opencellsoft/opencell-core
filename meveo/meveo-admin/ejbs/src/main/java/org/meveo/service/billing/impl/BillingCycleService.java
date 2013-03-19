@@ -16,7 +16,6 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -24,7 +23,6 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.local.BillingCycleServiceLocal;
 
 /**
  * BillingCycle service implementation.
@@ -33,9 +31,7 @@ import org.meveo.service.billing.local.BillingCycleServiceLocal;
  * @created 2010.05.14
  */
 @Stateless
-@Named
-public class BillingCycleService extends PersistenceService<BillingCycle>
-		implements BillingCycleServiceLocal {
+public class BillingCycleService extends PersistenceService<BillingCycle> {
 	/**
 	 * Find BillingCycle by its billing cycle code.
 	 * 

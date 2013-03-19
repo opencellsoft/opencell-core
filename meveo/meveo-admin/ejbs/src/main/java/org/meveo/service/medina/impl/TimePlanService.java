@@ -16,19 +16,15 @@
 package org.meveo.service.medina.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.mediation.TimePlan;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.medina.local.TimePlanServiceLocal;
 
 /**
  * @author MBAREK
  * 
  */
 @Stateless
-@Named
-public class TimePlanService extends PersistenceService<TimePlan> implements
-		TimePlanServiceLocal {
+public class TimePlanService extends PersistenceService<TimePlan> {
 
 }

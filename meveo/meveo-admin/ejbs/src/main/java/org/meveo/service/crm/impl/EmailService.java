@@ -25,7 +25,6 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.mail.Message.RecipientType;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -41,7 +40,6 @@ import org.meveo.model.communication.MessageSenderConfig;
 import org.meveo.model.crm.Email;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.local.EmailServiceLocal;
 import org.slf4j.Logger;
 
 /**
@@ -51,9 +49,7 @@ import org.slf4j.Logger;
  * @created 2010.10.05
  */
 @Stateless
-@Named
-public class EmailService extends PersistenceService<Email> implements
-		EmailServiceLocal {
+public class EmailService extends PersistenceService<Email> {
 
 	@Resource(mappedName = "java:/Mail")
 	private static Session mailSession;

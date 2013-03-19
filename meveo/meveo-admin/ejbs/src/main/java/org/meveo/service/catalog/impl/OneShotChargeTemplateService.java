@@ -18,23 +18,19 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-@Named
-public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate>
-		implements OneShotChargeTemplateServiceLocal {
+public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate> {
 
 	/**
 	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getTerminationChargeTemplates()

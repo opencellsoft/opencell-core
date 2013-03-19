@@ -16,11 +16,9 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.billing.Operation;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.local.OperationServiceLocal;
 
 /**
  * Operation service implementation.
@@ -29,8 +27,6 @@ import org.meveo.service.billing.local.OperationServiceLocal;
  * @created 2009.10.19
  */
 @Stateless
-@Named
-public class OperationService extends PersistenceService<Operation> implements
-		OperationServiceLocal {
+public class OperationService extends PersistenceService<Operation> {
 
 }

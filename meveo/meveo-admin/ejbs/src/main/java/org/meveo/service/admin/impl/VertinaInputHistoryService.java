@@ -18,14 +18,12 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.model.admin.VertinaInputHistory;
 import org.meveo.model.billing.ApplicationChgStatusEnum;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.service.admin.local.VertinaInputHistoryServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -35,10 +33,8 @@ import org.meveo.service.base.PersistenceService;
  * @created 2009.10.15
  */
 @Stateless
-@Named
 public class VertinaInputHistoryService extends
-		PersistenceService<VertinaInputHistory> implements
-		VertinaInputHistoryServiceLocal {
+		PersistenceService<VertinaInputHistory> {
 
 	/**
 	 * @see org.meveo.service.admin.local.VertinaInputHistoryServiceLocal#getChargeApplications(java.lang.Long,

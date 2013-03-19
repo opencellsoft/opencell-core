@@ -16,10 +16,8 @@
 package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.admin.GriegDunningInputHistory;
-import org.meveo.service.admin.local.GriegDunningInputHistoryServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -29,9 +27,6 @@ import org.meveo.service.base.PersistenceService;
  * @created Apr 11, 2011
  */
 @Stateless
-@Named
-public class GriegDunningInputHistoryService extends
-		PersistenceService<GriegDunningInputHistory> implements
-		GriegDunningInputHistoryServiceLocal {
+public class GriegDunningInputHistoryService extends PersistenceService<GriegDunningInputHistory> {
 
 }

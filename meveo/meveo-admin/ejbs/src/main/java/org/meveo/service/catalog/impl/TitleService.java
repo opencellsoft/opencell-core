@@ -16,13 +16,11 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.TitleServiceLocal;
 
 /**
  * Title service implementation.
@@ -32,9 +30,7 @@ import org.meveo.service.catalog.local.TitleServiceLocal;
  * 
  */
 @Stateless
-@Named
-public class TitleService extends PersistenceService<Title> implements
-		TitleServiceLocal {
+public class TitleService extends PersistenceService<Title> {
 
 	public Title findByCode(Provider provider, String code) {
 		Title title = null;

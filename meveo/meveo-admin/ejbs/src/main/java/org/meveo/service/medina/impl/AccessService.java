@@ -16,19 +16,15 @@
 package org.meveo.service.medina.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.medina.local.AccessServiceLocal;
 
 /**
  * @author MBAREK
  * 
  */
 @Stateless
-@Named
-public class AccessService extends PersistenceService<Access> implements
-		AccessServiceLocal {
+public class AccessService extends PersistenceService<Access> {
 
 }

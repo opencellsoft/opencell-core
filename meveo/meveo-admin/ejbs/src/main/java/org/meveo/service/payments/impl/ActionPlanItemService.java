@@ -16,19 +16,15 @@
 package org.meveo.service.payments.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.ActionPlanItemServiceLocal;
 
 /**
  * @author Tyshan(tyshan@manaty.net)
  */
 
 @Stateless
-@Named
-public class ActionPlanItemService extends PersistenceService<ActionPlanItem>
-		implements ActionPlanItemServiceLocal {
+public class ActionPlanItemService extends PersistenceService<ActionPlanItem> {
 
 }

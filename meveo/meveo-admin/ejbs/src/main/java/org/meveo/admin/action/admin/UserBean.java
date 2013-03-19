@@ -20,14 +20,13 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.inject.Produces;
-import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.User;
-import org.meveo.service.admin.local.UserServiceLocal;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -48,7 +47,7 @@ public class UserBean extends BaseBean<User> {
 
 	/** Injected @{link User} service. Extends {@link PersistenceService}. */
 	@Inject
-	private UserServiceLocal userService;
+	private UserService userService;
 
 	/**
 	 * Password set by user which is later encoded and set to user before saving

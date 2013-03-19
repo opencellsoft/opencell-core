@@ -16,10 +16,8 @@
 package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.admin.GriegInvoiceConverterInputHistory;
-import org.meveo.service.admin.local.GriegConverterInputHistoryServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -29,9 +27,7 @@ import org.meveo.service.base.PersistenceService;
  * @created Apr 11, 2011
  */
 @Stateless
-@Named
 public class GriegConverterInputHistoryService extends
-		PersistenceService<GriegInvoiceConverterInputHistory> implements
-		GriegConverterInputHistoryServiceLocal {
+		PersistenceService<GriegInvoiceConverterInputHistory> {
 
 }

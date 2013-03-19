@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.jboss.seam.transaction.Transactional;
@@ -46,11 +45,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.base.AccountService;
-import org.meveo.service.catalog.local.TitleServiceLocal;
-import org.meveo.service.crm.local.CustomerServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
-import org.meveo.service.payments.remote.CustomerAccountServiceRemote;
+import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.slf4j.Logger;
 
 /**
@@ -60,20 +56,18 @@ import org.slf4j.Logger;
  * @created 2009.09.04
  */
 @Stateless
-@Named
-public class CustomerAccountService extends AccountService<CustomerAccount>
-		implements CustomerAccountServiceLocal, CustomerAccountServiceRemote {
+public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 	@Inject
-	private CustomerServiceLocal customerService;
+	private CustomerService customerService;
 
 	@Inject
-	private OtherCreditAndChargeServiceLocal otherCreditAndChargeService;
+	private OtherCreditAndChargeService otherCreditAndChargeService;
 
 	protected Logger log;
 
 	@Inject
-	private TitleServiceLocal titleService;
+	private TitleService titleService;
 
 	ResourceBundle recourceMessage = ResourceBundle.getBundle("messages");
 
@@ -702,6 +696,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount>
 		Query billingQuery = em
 				.createQuery("select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");
 		billingQuery.setParameter("customerAccountId", customerAccount.getId());
+		@SuppressWarnings("unchecked")
 		List<ServiceInstance> services = (List<ServiceInstance>) billingQuery
 				.getResultList();
 		for (ServiceInstance service : services) {

@@ -16,19 +16,15 @@
 package org.meveo.service.medina.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.mediation.ZonningPlan;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.medina.local.ZoningPlanServiceLocal;
 
 /**
  * @author MBAREK
  * 
  */
 @Stateless
-@Named
-public class ZoningPlanService extends PersistenceService<ZonningPlan>
-		implements ZoningPlanServiceLocal {
+public class ZoningPlanService extends PersistenceService<ZonningPlan> {
 
 }

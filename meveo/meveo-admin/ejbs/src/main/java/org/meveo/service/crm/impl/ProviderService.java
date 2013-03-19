@@ -19,14 +19,12 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.admin.local.UserServiceLocal;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.local.ProviderServiceLocal;
 
 /**
  * Provider service implementation.
@@ -35,10 +33,9 @@ import org.meveo.service.crm.local.ProviderServiceLocal;
  * @created 2011.03.01
  */
 @Stateless
-@Named
-public class ProviderService extends PersistenceService<Provider> implements ProviderServiceLocal {
+public class ProviderService extends PersistenceService<Provider> {
 	@Inject
-    private UserServiceLocal userService;
+    private UserService userService;
 
     public Provider findByCode(String code) {
         try {

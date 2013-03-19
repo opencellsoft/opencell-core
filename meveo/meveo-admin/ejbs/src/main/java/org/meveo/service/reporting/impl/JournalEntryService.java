@@ -21,21 +21,17 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.model.datawarehouse.JournalEntry;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.reporting.local.JournalEntryServiceLocal;
 
 /**
  * Sales Transformation service implementation.
  * 
  */
 @Stateless
-@Named
-public class JournalEntryService extends PersistenceService<JournalEntry> implements
-		JournalEntryServiceLocal {
+public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

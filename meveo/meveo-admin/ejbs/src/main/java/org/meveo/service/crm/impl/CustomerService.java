@@ -16,12 +16,10 @@
 package org.meveo.service.crm.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.local.CustomerServiceLocal;
 
 /**
  * Customer service implementation.
@@ -30,9 +28,7 @@ import org.meveo.service.crm.local.CustomerServiceLocal;
  * @created 2010.11.15
  */
 @Stateless
-@Named
-public class CustomerService extends PersistenceService<Customer> implements
-		CustomerServiceLocal {
+public class CustomerService extends PersistenceService<Customer> {
 
 	public Customer findByCode(String code) {
 		Query query = em.createQuery(

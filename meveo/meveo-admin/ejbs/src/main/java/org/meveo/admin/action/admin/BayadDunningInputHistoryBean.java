@@ -22,10 +22,9 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.BayadDunningInputHistory;
-import org.meveo.service.admin.local.BayadDunningInputHistoryServiceLocal;
+import org.meveo.service.admin.impl.BayadDunningInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.testng.annotations.Factory;
 
 /**
  * Standard backing bean for {@link BayadDunningInputHistory} (extends
@@ -47,7 +46,7 @@ public class BayadDunningInputHistoryBean extends BaseBean<BayadDunningInputHist
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private BayadDunningInputHistoryServiceLocal bayadDunningInputHistoryService;
+	private BayadDunningInputHistoryService bayadDunningInputHistoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

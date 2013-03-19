@@ -16,11 +16,9 @@
 package org.meveo.service.payments.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.MatchingAmountServiceLocal;
 
 /**
  * MatchingAmount service implementation.
@@ -29,7 +27,5 @@ import org.meveo.service.payments.local.MatchingAmountServiceLocal;
  * @created 28.11.2010
  */
 @Stateless
-@Named
-public class MatchingAmountService extends PersistenceService<MatchingAmount> implements
-		MatchingAmountServiceLocal {
+public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 }

@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.SubscriptionImportHisto;
-import org.meveo.service.admin.local.SubscriptionImportHistoServiceLocal;
+import org.meveo.service.admin.impl.SubscriptionImportHistoService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -46,7 +46,7 @@ public class SubscriptionImportHistoBean extends BaseBean<SubscriptionImportHist
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private SubscriptionImportHistoServiceLocal subscriptionImportHistoService;
+	private SubscriptionImportHistoService subscriptionImportHistoService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

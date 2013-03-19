@@ -21,21 +21,17 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.bi.local.ReportServiceLocal;
 
 /**
  * Report service implementation.
  * 
  */
 @Stateless
-@Named
-public class ReportService extends PersistenceService<Report> implements
-		ReportServiceLocal {
+public class ReportService extends PersistenceService<Report> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -44,8 +40,7 @@ public class ReportService extends PersistenceService<Report> implements
 		return query.getResultList();
 	}
 
-	public List<Object> getBordereauRemiseChequeRecords(Date startDate,
-			Date endDate) {
+	public List<Object> getBordereauRemiseChequeRecords(Date startDate, Date endDate) {
 
 		// Query query = em
 		// .createQuery(

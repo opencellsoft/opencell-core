@@ -16,22 +16,18 @@
 package org.meveo.service.crm.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.local.CustomerCategoryServiceLocal;
 
 /**
  * Service Template service implementation.
  * 
  */
 @Stateless
-@Named
 public class CustomerCategoryService extends
-		PersistenceService<CustomerCategory> implements
-		CustomerCategoryServiceLocal {
+		PersistenceService<CustomerCategory> {
 
 	public CustomerCategory findByCode(String code) {
 		try {

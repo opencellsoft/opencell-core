@@ -20,14 +20,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.AccountOperationServiceLocal;
 
 /**
  * AccountOperation service implementation.
@@ -36,10 +34,8 @@ import org.meveo.service.payments.local.AccountOperationServiceLocal;
  * @created 2009.10.15
  */
 @Stateless
-@Named
 public class AccountOperationService extends
-		PersistenceService<AccountOperation> implements
-		AccountOperationServiceLocal {
+		PersistenceService<AccountOperation> {
 
 	@SuppressWarnings("unchecked")
 	public List<AccountOperation> getAccountOperations(Date date,

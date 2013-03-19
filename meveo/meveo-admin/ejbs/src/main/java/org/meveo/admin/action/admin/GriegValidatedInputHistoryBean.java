@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.GriegValidatedInvoiceInputHistory;
-import org.meveo.service.admin.local.GriegValidatedInputHistoryServiceLocal;
+import org.meveo.service.admin.impl.GriegValidatedInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -46,7 +46,7 @@ public class GriegValidatedInputHistoryBean extends BaseBean<GriegValidatedInvoi
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private GriegValidatedInputHistoryServiceLocal griegValidatedInputHistoryService;
+	private GriegValidatedInputHistoryService griegValidatedInputHistoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

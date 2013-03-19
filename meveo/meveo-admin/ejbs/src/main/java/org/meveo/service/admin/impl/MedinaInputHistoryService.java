@@ -16,10 +16,8 @@
 package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.admin.MedinaInputHistory;
-import org.meveo.service.admin.local.MedinaInputHistoryServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -29,9 +27,6 @@ import org.meveo.service.base.PersistenceService;
  * @created 2010.08.23
  */
 @Stateless
-@Named
-public class MedinaInputHistoryService extends
-		PersistenceService<MedinaInputHistory> implements
-		MedinaInputHistoryServiceLocal {
+public class MedinaInputHistoryService extends PersistenceService<MedinaInputHistory> {
 
 }

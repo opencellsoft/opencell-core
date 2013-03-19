@@ -16,10 +16,8 @@
 package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.admin.MedinaConfiguration;
-import org.meveo.service.admin.local.MedinaConfigurationServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -29,9 +27,6 @@ import org.meveo.service.base.PersistenceService;
  * @created 2010-08-26
  */
 @Stateless
-@Named
-public class MedinaConfigurationService extends
-		PersistenceService<MedinaConfiguration> implements
-		MedinaConfigurationServiceLocal {
+public class MedinaConfigurationService extends PersistenceService<MedinaConfiguration> {
 
 }

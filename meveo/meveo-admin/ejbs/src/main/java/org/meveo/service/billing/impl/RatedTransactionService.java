@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
+import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -33,22 +33,19 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.local.RatedTransactionServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
 
 /**
  * @author R.AITYAAZZA
  * @created 16 d�c. 10
  */
 @Stateless
-@Named
-public class RatedTransactionService extends
-		PersistenceService<RatedTransaction> implements
-		RatedTransactionServiceLocal {
+public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
+	@Inject
+	private SubscriptionService subscriptionService;
+	
 	@SuppressWarnings("unchecked")
-	public List<RatedTransaction> getRatedTransactionsInvoiced(
-			UserAccount userAccount) {
+	public List<RatedTransaction> getRatedTransactionsInvoiced(UserAccount userAccount) {
 		if (userAccount == null || userAccount.getWallet() == null) {
 			return null;
 		}
@@ -57,13 +54,11 @@ public class RatedTransactionService extends
 						"from "
 								+ RatedTransaction.class.getSimpleName()
 								+ " where wallet=:wallet and invoice is not null order by usageDate desc")
-				.setParameter("wallet", userAccount.getWallet())
-				.getResultList();
+				.setParameter("wallet", userAccount.getWallet()).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<RatedTransaction> getRatedTransactionsNoInvoiced(
-			UserAccount userAccount) {
+	public List<RatedTransaction> getRatedTransactionsNoInvoiced(UserAccount userAccount) {
 		if (userAccount == null || userAccount.getWallet() == null) {
 			return null;
 		}
@@ -72,40 +67,30 @@ public class RatedTransactionService extends
 						"from "
 								+ RatedTransaction.class.getSimpleName()
 								+ " where wallet=:wallet and invoice is null order by usageDate desc")
-				.setParameter("wallet", userAccount.getWallet())
-				.getResultList();
+				.setParameter("wallet", userAccount.getWallet()).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public ConsumptionDTO getConsumption(String subscriptionCode,
-			String infoType, Integer billingCycle, boolean sumarizeConsumption)
+	public ConsumptionDTO getConsumption(String subscriptionCode, String infoType,
+			Integer billingCycle, boolean sumarizeConsumption)
 			throws IncorrectSusbcriptionException {
 
 		Date lastBilledDate = null;
 		Subscription subscription = null;
 		ConsumptionDTO consumptionDTO = new ConsumptionDTO();
-
-		SubscriptionServiceLocal subscriptionService = null;/*
-															 * TODO: Component.
-															 * (
-															 * SubscriptionServiceLocal
-															 * ) Component
-															 * .getInstance(
-															 * "subscriptionService"
-															 * );
-															 */
+		
 		subscription = subscriptionService.findByCode(subscriptionCode);
 		if (subscription == null) {
-			throw new IncorrectSusbcriptionException("Subscription with code "
-					+ subscriptionCode + " was not found");
+			throw new IncorrectSusbcriptionException("Subscription with code " + subscriptionCode
+					+ " was not found");
 		}
 
 		// If billing has been run already, use last billing date plus a day as
 		// filtering FROM value
 		// Otherwise leave it null, so it wont be included in a query
 		if (subscription.getUserAccount().getBillingAccount().getBillingRun() != null) {
-			lastBilledDate = subscription.getUserAccount().getBillingAccount()
-					.getBillingRun().getEndDate();
+			lastBilledDate = subscription.getUserAccount().getBillingAccount().getBillingRun()
+					.getEndDate();
 
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(lastBilledDate);
@@ -116,13 +101,11 @@ public class RatedTransactionService extends
 
 		if (sumarizeConsumption) {
 
-			QueryBuilder qb = new QueryBuilder(
-					"select sum(amount1WithTax), sum(usageAmount) from "
-							+ RatedTransaction.class.getSimpleName());
+			QueryBuilder qb = new QueryBuilder("select sum(amount1WithTax), sum(usageAmount) from "
+					+ RatedTransaction.class.getSimpleName());
 			qb.addCriterionEntity("subscription", subscription);
 			qb.addCriterion("subUsageCode1", "=", infoType, false);
-			qb.addCriterionDateRangeFromTruncatedToDay("usageDate",
-					lastBilledDate);
+			qb.addCriterionDateRangeFromTruncatedToDay("usageDate", lastBilledDate);
 			String baseSql = qb.getSqlString();
 
 			// Summarize invoiced transactions
@@ -137,8 +120,7 @@ public class RatedTransactionService extends
 			Object[] results = (Object[]) query.getSingleResult();
 
 			consumptionDTO.setAmountCharged((BigDecimal) results[0]);
-			consumptionDTO
-					.setConsumptionCharged(((Long) results[1]).intValue());
+			consumptionDTO.setConsumptionCharged(((Long) results[1]).intValue());
 
 			// Summarize not invoiced transactions
 			sql = baseSql + " and status<>'BILLED'";
@@ -152,8 +134,7 @@ public class RatedTransactionService extends
 			results = (Object[]) query.getSingleResult();
 
 			consumptionDTO.setAmountUncharged((BigDecimal) results[0]);
-			consumptionDTO.setConsumptionUncharged(((Long) results[1])
-					.intValue());
+			consumptionDTO.setConsumptionUncharged(((Long) results[1]).intValue());
 
 		} else {
 
@@ -162,8 +143,7 @@ public class RatedTransactionService extends
 							+ RatedTransaction.class.getSimpleName());
 			qb.addCriterionEntity("subscription", subscription);
 			qb.addCriterion("subUsageCode1", "=", infoType, false);
-			qb.addCriterionDateRangeFromTruncatedToDay("usageDate",
-					lastBilledDate);
+			qb.addCriterionDateRangeFromTruncatedToDay("usageDate", lastBilledDate);
 			qb.addSql("groupingId is not null");
 			String sql = qb.getSqlString()
 					+ " group by groupingId, case when status='BILLED' then 'true' else 'false' end";
@@ -182,50 +162,39 @@ public class RatedTransactionService extends
 				int consumption = ((Long) result[1]).intValue();
 				int groupId = (Integer) result[2];
 				boolean charged = Boolean.parseBoolean((String) result[3]);
-				boolean roaming = RatedTransaction
-						.translateGroupIdToRoaming(groupId);
-				boolean upload = RatedTransaction
-						.translateGroupIdToUpload(groupId);
+				boolean roaming = RatedTransaction.translateGroupIdToRoaming(groupId);
+				boolean upload = RatedTransaction.translateGroupIdToUpload(groupId);
 
 				if (charged) {
 
 					if (!roaming && !upload) {
-						consumptionDTO
-								.setIncomingNationalConsumptionCharged(consumption);
+						consumptionDTO.setIncomingNationalConsumptionCharged(consumption);
 					} else if (roaming && !upload) {
-						consumptionDTO
-								.setIncomingRoamingConsumptionCharged(consumption);
+						consumptionDTO.setIncomingRoamingConsumptionCharged(consumption);
 					} else if (!roaming && upload) {
-						consumptionDTO
-								.setOutgoingNationalConsumptionCharged(consumption);
+						consumptionDTO.setOutgoingNationalConsumptionCharged(consumption);
 					} else {
-						consumptionDTO
-								.setOutgoingRoamingConsumptionCharged(consumption);
+						consumptionDTO.setOutgoingRoamingConsumptionCharged(consumption);
 					}
 
-					consumptionDTO.setConsumptionCharged(consumptionDTO
-							.getConsumptionCharged() + consumption);
-					consumptionDTO.setAmountCharged(consumptionDTO
-							.getAmountCharged().add(amount));
+					consumptionDTO.setConsumptionCharged(consumptionDTO.getConsumptionCharged()
+							+ consumption);
+					consumptionDTO.setAmountCharged(consumptionDTO.getAmountCharged().add(amount));
 
 				} else {
 					if (!roaming && !upload) {
-						consumptionDTO
-								.setIncomingNationalConsumptionUncharged(consumption);
+						consumptionDTO.setIncomingNationalConsumptionUncharged(consumption);
 					} else if (roaming && !upload) {
-						consumptionDTO
-								.setIncomingRoamingConsumptionUncharged(consumption);
+						consumptionDTO.setIncomingRoamingConsumptionUncharged(consumption);
 					} else if (!roaming && upload) {
-						consumptionDTO
-								.setOutgoingNationalConsumptionUncharged(consumption);
+						consumptionDTO.setOutgoingNationalConsumptionUncharged(consumption);
 					} else {
-						consumptionDTO
-								.setOutgoingRoamingConsumptionUncharged(consumption);
+						consumptionDTO.setOutgoingRoamingConsumptionUncharged(consumption);
 					}
-					consumptionDTO.setConsumptionUncharged(consumptionDTO
-							.getConsumptionUncharged() + consumption);
-					consumptionDTO.setAmountUncharged(consumptionDTO
-							.getAmountUncharged().add(amount));
+					consumptionDTO.setConsumptionUncharged(consumptionDTO.getConsumptionUncharged()
+							+ consumption);
+					consumptionDTO.setAmountUncharged(consumptionDTO.getAmountUncharged().add(
+							amount));
 				}
 			}
 		}

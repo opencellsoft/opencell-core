@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -26,7 +25,6 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.CalendarServiceLocal;
 
 /**
  * Calendar service implementation.
@@ -36,9 +34,7 @@ import org.meveo.service.catalog.local.CalendarServiceLocal;
  * 
  */
 @Stateless
-@Named
-public class CalendarService extends PersistenceService<Calendar> implements
-		CalendarServiceLocal {
+public class CalendarService extends PersistenceService<Calendar> {
 
 	/**
 	 * @see org.meveo.service.catalog.local.CalendarServiceLocal#listChargeApplicationCalendars()

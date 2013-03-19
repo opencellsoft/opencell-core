@@ -16,11 +16,9 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.local.DayInYearServiceLocal;
 
 /**
  * @author Ignas Lelys
@@ -28,8 +26,6 @@ import org.meveo.service.catalog.local.DayInYearServiceLocal;
  * 
  */
 @Stateless
-@Named
-public class DayInYearService extends PersistenceService<DayInYear> implements
-		DayInYearServiceLocal {
+public class DayInYearService extends PersistenceService<DayInYear> {
 
 }

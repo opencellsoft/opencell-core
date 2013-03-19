@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.GriegDunningInputHistory;
-import org.meveo.service.admin.local.GriegDunningInputHistoryServiceLocal;
+import org.meveo.service.admin.impl.GriegDunningInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -46,7 +46,7 @@ public class GriegDunningInputHistoryBean extends BaseBean<GriegDunningInputHist
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private GriegDunningInputHistoryServiceLocal griegDunningInputHistoryService;
+	private GriegDunningInputHistoryService griegDunningInputHistoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

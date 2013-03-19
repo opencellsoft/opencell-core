@@ -18,12 +18,10 @@ package org.meveo.service.payments.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.OCCTemplateServiceLocal;
 
 /**
  * OCCTemplate service implementation.
@@ -32,9 +30,7 @@ import org.meveo.service.payments.local.OCCTemplateServiceLocal;
  * @created 2009.09.04
  */
 @Stateless
-@Named
-public class OCCTemplateService extends PersistenceService<OCCTemplate> implements
-		OCCTemplateServiceLocal {
+public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
 	public OCCTemplate findByCode(String code, String providerCode) {
 		log.debug("start of find {0} by code (code={1}) ..", "OCCTemplate", code);

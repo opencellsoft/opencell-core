@@ -29,16 +29,15 @@ import javax.inject.Named;
 
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.service.catalog.local.ChargeTemplateServiceLocal;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 
 @Stateless
 @Named
 @SessionScoped
 public class JavaScriptAction implements JavaScriptActionLocal {
 
-	@SuppressWarnings("unchecked")
 	@Inject
-	private ChargeTemplateServiceLocal chargeTemplateService;
+	private ChargeTemplateService chargeTemplateService;
 
 	public String calculateOneShotChargeInstanceAmount(String chargeTemplateCode,
 			String amountWithoutTaxString) {

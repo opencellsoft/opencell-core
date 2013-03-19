@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.service.selfcare.impl;
 
 import java.io.File;
@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.EmailNotFoundException;
@@ -36,27 +35,25 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.local.InvoiceServiceLocal;
-import org.meveo.service.crm.local.EmailServiceLocal;
+import org.meveo.service.crm.impl.EmailService;
 import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
 import org.slf4j.Logger;
 
 @Stateless
-@Named
-public class SelfcareService extends PersistenceService<CustomerAccount>
-		implements SelfcareServiceLocal, SelfcareServiceRemote {
+public class SelfcareService extends PersistenceService<CustomerAccount> implements
+		SelfcareServiceRemote {
 
 	@Inject
 	private Logger log;
 
 	@Inject
-	private EmailServiceLocal emailService;
+	private EmailService emailService;
 
 	@Inject
-	private BillingAccountServiceLocal billingAccountService;
+	private BillingAccountService billingAccountService;
 
 	@Inject
 	private InvoiceServiceLocal invoiceService;
@@ -64,16 +61,12 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 	@Inject
 	private CustomerAccountServiceLocal customerAccountService;
 
-	public Boolean authenticate(String username, String password)
-			throws BusinessException, EmailNotFoundException {
-		log.info("start authenticate with username:#0,password:#1", username,
-				password);
-		if ((username == null || username.equals(""))
-				|| (password == null || password.equals(""))) {
-			log.warn("Error: required is null with username:#0,password:#1",
-					username, password);
-			throw new BusinessException(
-					"Error when username or password is null!");
+	public Boolean authenticate(String username, String password) throws BusinessException,
+			EmailNotFoundException {
+		log.info("start authenticate with username:#0,password:#1", username, password);
+		if ((username == null || username.equals("")) || (password == null || password.equals(""))) {
+			log.warn("Error: required is null with username:#0,password:#1", username, password);
+			throw new BusinessException("Error when username or password is null!");
 		}
 		Boolean result = false;
 		CustomerAccount customerAccount = findCustomerAccoundByEmail(username);
@@ -88,38 +81,33 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 		return result;
 	}
 
-	public void sendPassword(String email) throws BusinessException,
-			EmailNotFoundException {
+	public void sendPassword(String email) throws BusinessException, EmailNotFoundException {
 
 		log.info("start sendPassword with email:#0", email);
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 		String from = param.getProperty("selfcare.email.from");
 		ResourceBundle resource = ResourceBundle.getBundle("messages");
-		String sendpasswordSubject = resource
-				.getString("selfcareemail.sendpassword.subject");// "Your password to log into Seflcare!";
-		String sendpasswordBody = resource
-				.getString("selfcareemail.sendpassword.body");// "\n\nyour username:%s\nyour password:%s\n\n";
+		String sendpasswordSubject = resource.getString("selfcareemail.sendpassword.subject");// "Your password to log into Seflcare!";
+		String sendpasswordBody = resource.getString("selfcareemail.sendpassword.body");// "\n\nyour username:%s\nyour password:%s\n\n";
 
 		log.info("send password for selfcare with email:" + email + ",subject:"
 				+ sendpasswordSubject);
 
 		CustomerAccount customerAccount = findCustomerAccoundByEmail(email);
 
-		sendpasswordBody = String.format(sendpasswordBody, email,
-				customerAccount.getPassword());
+		sendpasswordBody = String.format(sendpasswordBody, email, customerAccount.getPassword());
 
 		List<String> to = new ArrayList<String>();
 		to.add(email);
-		log.info("send email details: from:#0,to:#1,subject:#2,body:#3", from,
-				to, sendpasswordSubject, sendpasswordBody);
-		emailService.sendEmail(from, to, null, sendpasswordSubject,
-				sendpasswordBody, null);
+		log.info("send email details: from:#0,to:#1,subject:#2,body:#3", from, to,
+				sendpasswordSubject, sendpasswordBody);
+		emailService.sendEmail(from, to, null, sendpasswordSubject, sendpasswordBody, null);
 		log.info("successfully send email to #0", email);
 	}
 
 	@SuppressWarnings("unchecked")
-	private CustomerAccount findCustomerAccoundByEmail(String email)
-			throws BusinessException, EmailNotFoundException {
+	private CustomerAccount findCustomerAccoundByEmail(String email) throws BusinessException,
+			EmailNotFoundException {
 		// @TODO if more customerAccount with the same email? email should
 		// attach to customer?
 		log.info("start findCustomerAccountByEmail with email:#0", email);
@@ -128,40 +116,32 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 			throw new BusinessException("Error when email is null!");
 		}
 		List<CustomerAccount> result = null;
-		result = this.em.createQuery(
-				"from " + CustomerAccount.class.getSimpleName()
-						+ "  where lower(contactInformation.email)=:email")
+		result = this.em
+				.createQuery(
+						"from " + CustomerAccount.class.getSimpleName()
+								+ "  where lower(contactInformation.email)=:email")
 				.setParameter("email", email.toLowerCase()).getResultList();
 		if (result == null || result.size() == 0) {// if more than 0, how to
 			// do???
-			log.warn("Error when nonexisted customer account with email:#0",
-					email);
-			throw new EmailNotFoundException(
-					"Retrieve null customer accounts with email:" + email);
+			log.warn("Error when nonexisted customer account with email:#0", email);
+			throw new EmailNotFoundException("Retrieve null customer accounts with email:" + email);
 		}
-		log
-				.info(
-						"successfully end findCustomerAccountByEmail email:#0 with result size:#1",
-						email, result.size());
+		log.info("successfully end findCustomerAccountByEmail email:#0 with result size:#1", email,
+				result.size());
 		return result.get(0);
 	}
 
-	public Boolean updatePassword(String username, String oldpassword,
-			String newpassword) throws BusinessException {
+	public Boolean updatePassword(String username, String oldpassword, String newpassword)
+			throws BusinessException {
 		Boolean result = Boolean.FALSE;
-		log
-				.info(
-						"start updatePassword with username:#0,password:#1,newPassword:#2",
-						username, oldpassword, newpassword);
+		log.info("start updatePassword with username:#0,password:#1,newPassword:#2", username,
+				oldpassword, newpassword);
 		if ((username == null || username.equals(""))
 				|| (oldpassword == null || oldpassword.equals(""))
 				|| (newpassword == null || newpassword.equals(""))) {
-			log
-					.warn(
-							"Error: required is null with username:#0,password:#1,newpassword:#2",
-							username, oldpassword, newpassword);
-			throw new BusinessException(
-					"Error when username or password or newpassword is null!");
+			log.warn("Error: required is null with username:#0,password:#1,newpassword:#2",
+					username, oldpassword, newpassword);
+			throw new BusinessException("Error when username or password or newpassword is null!");
 		}
 		CustomerAccount customerAccount = findCustomerAccoundByEmail(username);
 
@@ -174,8 +154,7 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 		return result;
 	}
 
-	public CustomerAccount getCustomerAccount(String username)
-			throws BusinessException {
+	public CustomerAccount getCustomerAccount(String username) throws BusinessException {
 		log.info("start searching with username:#0");
 		if ((username == null || username.equals(""))) {
 			log.warn("Error: required is null with username:#0", username);
@@ -186,31 +165,27 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<BillingAccount> getBillingAccounts(String username)
-			throws BusinessException {
+	public List<BillingAccount> getBillingAccounts(String username) throws BusinessException {
 		log.info("start searching customer account for username:#0");
 		CustomerAccount customerAccount = getCustomerAccount(username);
-		log.info("start searching billing accounts for user: #0",
-				customerAccount.getCode());
+		log.info("start searching billing accounts for user: #0", customerAccount.getCode());
 		List<BillingAccount> result = null;
-		result = this.em.createQuery(
-				"from " + BillingAccount.class.getSimpleName()
-						+ "  where customer_account_id=:id").setParameter("id",
-				customerAccount.getId()).getResultList();
+		result = this.em
+				.createQuery(
+						"from " + BillingAccount.class.getSimpleName()
+								+ "  where customer_account_id=:id")
+				.setParameter("id", customerAccount.getId()).getResultList();
 		return result;
 	}
 
-	public List<Invoice> getBillingAccountInvoices(String code)
-			throws BusinessException {
+	public List<Invoice> getBillingAccountInvoices(String code) throws BusinessException {
 		log.info("start searching invoices for billing account:#0", code);
 		List<Invoice> invoices = billingAccountService.invoiceList(code);
 		return invoices;
 	}
 
-	public List<Invoice> getBillingAccountValidatedInvoices(String code)
-			throws BusinessException {
-		log.info("start searching validated invoices for billing account:#0",
-				code);
+	public List<Invoice> getBillingAccountValidatedInvoices(String code) throws BusinessException {
+		log.info("start searching validated invoices for billing account:#0", code);
 		List<Invoice> invoices = getBillingAccountInvoices(code);
 		if (invoices != null) {
 			Iterator<Invoice> it = invoices.iterator();
@@ -228,16 +203,14 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 
 	public BigDecimal getAccountBalance(String code) throws BusinessException {
 		log.info("start getAccountBalance for code:#0", code);
-		BigDecimal balance = customerAccountService.customerAccountBalanceDue(
-				null, code, new Date());
+		BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, code,
+				new Date());
 		log.info("calculating balance for customer acccount:#0", balance);
 		return balance;
 	}
 
-	public byte[] getPDFInvoice(String invoiceNumber, String providerCode)
-			throws BusinessException {
-		Invoice invoice = invoiceService.getInvoiceByNumber(invoiceNumber,
-				providerCode);
+	public byte[] getPDFInvoice(String invoiceNumber, String providerCode) throws BusinessException {
+		Invoice invoice = invoiceService.getInvoiceByNumber(invoiceNumber, providerCode);
 		if (invoice != null) {
 			return invoice.getPdf();
 		} else {
@@ -254,9 +227,8 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 		}
 	}
 
-	public void sendMail(String from, List<String> to, List<String> cc,
-			String subject, String body, List<File> files)
-			throws BusinessException {
+	public void sendMail(String from, List<String> to, List<String> cc, String subject,
+			String body, List<File> files) throws BusinessException {
 		emailService.sendEmail(from, to, cc, subject, body, files);
 	}
 
@@ -266,28 +238,23 @@ public class SelfcareService extends PersistenceService<CustomerAccount>
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 		String from = param.getProperty("selfcare.email.from");
 		ResourceBundle resource = ResourceBundle.getBundle("messages");
-		String sendpasswordSubject = resource
-				.getString("selfcareemail.creationSpace.subject");
-		String sendpasswordBody = resource
-				.getString("selfcareemail.creationSpace.body");
+		String sendpasswordSubject = resource.getString("selfcareemail.creationSpace.subject");
+		String sendpasswordBody = resource.getString("selfcareemail.creationSpace.body");
 		CustomerAccount customerAccount = findCustomerAccoundByEmail(email);
-		sendpasswordBody = String.format(sendpasswordBody, customerAccount
-				.getPassword());
-		sendpasswordSubject = String.format(sendpasswordSubject,
-				customerAccount.getName().toString());
+		sendpasswordBody = String.format(sendpasswordBody, customerAccount.getPassword());
+		sendpasswordSubject = String.format(sendpasswordSubject, customerAccount.getName()
+				.toString());
 		log.info("send password for selfcare with email:" + email + ",subject:"
 				+ sendpasswordSubject);
 		List<String> to = new ArrayList<String>();
 		to.add(email);
-		log.info("send email details: from:#0,to:#1,subject:#2,body:#3", from,
-				to, sendpasswordSubject, sendpasswordBody);
-		emailService.sendEmail(from, to, null, sendpasswordSubject,
-				sendpasswordBody, null);
+		log.info("send email details: from:#0,to:#1,subject:#2,body:#3", from, to,
+				sendpasswordSubject, sendpasswordBody);
+		emailService.sendEmail(from, to, null, sendpasswordSubject, sendpasswordBody, null);
 		log.info("successfully send email to #0", email);
 	}
 
-	public String getBillingAccountProviderCode(String code)
-			throws BusinessException {
+	public String getBillingAccountProviderCode(String code) throws BusinessException {
 		log.info("searching provider code for billing account id #0", code);
 		BillingAccount billingAccount = billingAccountService.findByCode(code);
 		return billingAccount.getProvider().getCode();

@@ -16,10 +16,8 @@
 package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.admin.CustomerImportHisto;
-import org.meveo.service.admin.local.CustomerImportHistoServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -29,9 +27,7 @@ import org.meveo.service.base.PersistenceService;
  * @created 06.01.2011
  */
 @Stateless
-@Named
 public class CustomerImportHistoService extends
-		PersistenceService<CustomerImportHisto> implements
-		CustomerImportHistoServiceLocal {
+		PersistenceService<CustomerImportHisto> {
 
 }

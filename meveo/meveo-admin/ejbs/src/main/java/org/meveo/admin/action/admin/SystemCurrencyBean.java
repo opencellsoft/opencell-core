@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.model.admin.Currency;
-import org.meveo.service.admin.local.CurrencyServiceLocal;
+import org.meveo.service.admin.impl.CurrencyService;
 
 /**
  * Seam bean for system currency entity.
@@ -40,7 +40,7 @@ public class SystemCurrencyBean implements Serializable {
 
 	/** Injected @{link Currency} service. */
 	@Inject
-	private CurrencyServiceLocal currencyService;
+	private CurrencyService currencyService;
 
 	/**
 	 * Current system currency.

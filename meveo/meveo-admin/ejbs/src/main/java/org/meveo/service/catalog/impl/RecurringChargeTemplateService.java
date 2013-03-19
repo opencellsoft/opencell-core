@@ -16,19 +16,14 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-@Named
-public class RecurringChargeTemplateService extends
-		ChargeTemplateService<RecurringChargeTemplate> implements
-		RecurringChargeTemplateServiceLocal {
+public class RecurringChargeTemplateService extends ChargeTemplateService<RecurringChargeTemplate> {
 
 }
