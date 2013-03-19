@@ -17,6 +17,8 @@
 
 	<ui:define name="body">
 		
+		
+		
 		<custom:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['invoiceCategory.panel']}"
 			backingBean="#{invoiceCategoryBean}" dataModel="#{invoiceCategories}"
@@ -48,28 +50,18 @@
 				oncomplete="Richfaces.hideModalPanel('searchTaxPopup')">
 			</a:commandLink>
 		</custom:entityPopup>
-
-		<custom:formPanel edit="#{edit}" label="#{messages['invoiceSubCategory.panel']}" backingBean="#{invoiceSubCategoryBean}" entity="#{invoiceSubCategory}" >
+<div class="panels">
+<rich:panel>
+<rich:tabPanel switchType="client">
+<rich:tab label="#{messages['invoiceSubCategory.tab1']}" >
+ 		<custom:formPanel edit="#{edit}" label="#{messages['invoiceSubCategory.panel']}" backingBean="#{invoiceSubCategoryBean}" entity="#{invoiceSubCategory}" > 
    			<custom:formEntityField id="categorySelectId"
 										label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory"
 										childField="code" required="true" popup="true"
 										popupId="searchInvoiceCategoryPopup" />
    			<custom:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false"/>
-   			<h:panelGrid columns="2">  			
-    		<custom:formField label="#{messages['invoiceSubCategory.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
-   			<h:graphicImage value="/img/imgEnglishFlag.png" style="height:16px; width:25px;"/>	
-			  <a:outputPanel id="invoiceSubCategoryMessages" >	 
-					 <s:decorate template="/layout/edit.xhtml">
-		    		<ui:define name="label">
-		    			<h:outputText value="" />
-		    		</ui:define>
-				    	<h:inputText  value="#{invoiceSubCategoryBean.descriptionFr}"   size="50" rendered="#{edit}"/>
-				    	<h:outputText value="#{invoiceSubCategoryBean.descriptionFr}" rendered="#{!edit}"/>
-		       	</s:decorate>
-				 </a:outputPanel>		
-		        <h:graphicImage value="/img/imgFrenchFlag.png" style="height:16px; width:25px;"/>	
-			</h:panelGrid>
-          <custom:fieldset name="#{messages['invoiceSubCategory.accountingCode']}" columns="3">	
+   			<custom:formField label="#{messages['invoiceSubCategory.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
+   			<custom:fieldset name="#{messages['invoiceSubCategory.accountingCode']}" columns="3">	
 	   			<s:decorate template="/layout/edit.xhtml">
 					<ui:define name="label">
 						<h:outputText value="#{messages['invoiceSubCategory.accountingCodeField1']}" />
@@ -125,12 +117,72 @@
 					<ui:insert/>
 				</s:decorate>
    		</custom:fieldset>	
+   			
    			<custom:formEntityField id="taxSelectId"
 										label="#{messages['invoiceSubCategory.tax']}" field="tax"
 										childField="code" required="true" popup="true"
 										popupId="searchTaxPopup" />
-		</custom:formPanel>
+		</custom:formPanel> 
 
+</rich:tab>
+<rich:tab label="#{messages['invoiceSubCategory.tab2']}">
+
+
+
+
+
+<h:outputText  value="#{messages['invoiceSubCategory.description']} : " style="font-weight:bold;"  />
+
+<br/>
+<br/>			
+	
+<a:outputPanel> 
+	 <custom:dataList dataModel="#{invoiceSubCategory.invoiceSubcategoryCountries}" resultsId="invoiceSubCategoryCountries_results" checkMany="false"  backingBean="#{invoiceSubCategoryBean}">
+    		   <custom:column label="#{messages['invoiceSubCategoryCountry.id']}" field="id" />  
+    			<custom:column label="#{messages['invoiceSubCategoryCountry.countryCode']}" field="countryCode" isMessage="true"/>
+    			<custom:column label="#{messages['invoiceSubCategoryCountry.taxe']}" field="taxCode"/>
+    	 		<!-- <custom:column label="#{messages['invoiceSubCategoryCountry.creationDate']}" field="created"/>
+    			  -->   			
+    			 <rich:column styleClass="actions-column">
+             		<f:facet name="header">
+                    	<h:outputText value="#{messages['commons.actions']}" />
+             		</f:facet>
+             		
+             		 <a:commandLink id="editSubCategoryCountryLink" reRender="subCategoryCountrySdiv" onclick="document.getElementById('subCategoryCountrydiv').style.display='';" action="#{invoiceSubCategrogyBean.editInvoiceSubcategoryCountry(entity)}">
+                		<h:graphicImage value="/img/edit.gif" style="border:0"/>
+             		</a:commandLink>
+             		<rich:toolTip for="editSubCategoryCountryLink" value="#{messages['commons.edit']}"/>
+             	</rich:column>
+	</custom:dataList>
+	</a:outputPanel>
+	<rich:panel>
+	
+<div id="subCategoryCountrydiv" style="display:none"><s:div id="subCategoryCountrySdiv">
+	<custom:formPanel edit="true" label="#{messages['subscription.tab.recurringShotChg']}" backingBean="#{invoiceSubCategoryBean}" 
+			entity="#{invoiceSubcategoryCountry}" formId="invSubCatCountForm1" showFormButtons="false" ajaxSubmit="true" >
+				<custom:formField label="#{messages['invoiceSubCategoryCountry.countryCode']}" field="countryCode" size="50" maxlength="50" disabled="true"/>
+		<h:panelGrid columns="2">
+					<h:commandButton action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}" value="#{messages['action.save']}" rendered="#{currentProvider.amountValidation}">
+						<a:support event="onclick" reRender="invoiceSubCategoryCountries_results" 
+
+                    oncomplete="document.getElementById('subCategoryCountrydiv').style.display='none';" />
+
+					</h:commandButton>
+					
+					<a:commandButton action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}" value="#{messages['action.save']}" reRender="invoiceSubCategoryCountries_results" onclick="document.getElementById('subCategoryCountrydiv').style.display='none';" />
+					
+					
+					<s:button value="#{messages['action.cancel']}" onclick="document.getElementById('subCategoryCountrydiv').style.display='none';"/>
+				</h:panelGrid>
+			</custom:formPanel>
+</s:div></div>
+	</rich:panel>
+
+</rich:tab>
+</rich:tabPanel>
+</rich:panel>
+
+</div>
 	</ui:define>
 
 </ui:composition>
