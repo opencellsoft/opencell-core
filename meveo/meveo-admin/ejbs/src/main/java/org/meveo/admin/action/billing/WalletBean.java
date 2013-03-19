@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.Wallet;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.WalletServiceLocal;
+import org.meveo.service.billing.impl.WalletService;
 
 /**
  * Standard backing bean for {@link Wallet} (extends {@link BaseBean} that
@@ -43,7 +43,7 @@ public class WalletBean extends BaseBean<Wallet> {
 
     /** Injected @{link Wallet} service. Extends {@link PersistenceService}. */
     @Inject
-    private WalletServiceLocal walletService;
+	private WalletService walletService;
 
     /**
      * Customer account Id passed as a parameter. Used when creating new Wallet

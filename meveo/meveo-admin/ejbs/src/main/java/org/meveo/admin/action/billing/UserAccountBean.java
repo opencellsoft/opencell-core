@@ -33,9 +33,9 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
-import org.meveo.service.billing.local.RatedTransactionServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.billing.impl.UserAccountService;
 
 /**
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that
@@ -58,16 +58,16 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	 * @{link UserAccount} service. Extends {@link PersistenceService} .
 	 */
 	@Inject
-	private UserAccountServiceLocal userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
-	private RatedTransactionServiceLocal ratedTransactionService;
+	private RatedTransactionService ratedTransactionService;
 
 	// TODO: @RequestParameter
 	private Long billingAccountId;
 
 	@Inject
-	private BillingAccountServiceLocal billingAccountService;
+	private BillingAccountService billingAccountService;
 
 	@Inject
 	private User currentUser;

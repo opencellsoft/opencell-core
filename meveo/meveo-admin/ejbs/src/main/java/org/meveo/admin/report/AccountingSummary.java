@@ -35,7 +35,7 @@ import javax.inject.Named;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.service.reporting.local.DWHAccountOperationServiceLocal;
+import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
 @Named
@@ -51,7 +51,7 @@ public class AccountingSummary extends FileProducer implements Reporting {
     protected Logger log;
 
     @Inject
-    private DWHAccountOperationServiceLocal accountOperationTransformationService;
+	private DWHAccountOperationService accountOperationTransformationService;
 
     private String reportsFolder;
     private String templateFilename;

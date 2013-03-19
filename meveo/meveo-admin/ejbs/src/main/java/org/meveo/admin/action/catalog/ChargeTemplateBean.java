@@ -25,7 +25,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.ChargeTemplateServiceLocal;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
 
 /**
  * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean}
@@ -48,7 +48,7 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private ChargeTemplateServiceLocal<ChargeTemplate> chargeTemplateService;
+	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

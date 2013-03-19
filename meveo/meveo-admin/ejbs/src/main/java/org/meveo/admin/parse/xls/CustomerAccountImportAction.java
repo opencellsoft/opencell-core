@@ -19,15 +19,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 /**
@@ -46,7 +43,7 @@ public class CustomerAccountImportAction implements Serializable {
 	protected Logger log;
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	private XLSFile xls;
 

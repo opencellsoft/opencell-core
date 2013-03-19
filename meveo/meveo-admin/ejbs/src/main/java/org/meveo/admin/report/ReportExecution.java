@@ -41,7 +41,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.meveo.model.bi.JobNameEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.service.bi.local.ReportServiceLocal;
+import org.meveo.service.bi.impl.ReportService;
 import org.slf4j.Logger;
 
 /**
@@ -61,10 +61,10 @@ public class ReportExecution {
 	protected Logger log;
 
 	@Inject
-	private ReportServiceLocal reportService;
+	private ReportService reportService;
 
 	// @In(create=true)
-	// private RecurringChargeCronLocal recurringChargeCron;
+	// private RecurringChargeCron recurringChargeCron;
 
 	public JasperReport jasperReport;
 

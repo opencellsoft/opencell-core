@@ -30,13 +30,13 @@ import javax.inject.Named;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.service.reporting.local.DWHAccountOperationServiceLocal;
+import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
 @Named
 public class AgedBalance extends FileProducer implements Reporting {
 	@Inject
-	private DWHAccountOperationServiceLocal accountOperationService;
+	private DWHAccountOperationService accountOperationService;
 
 	final static String DEBIT = "0";
 	final static String CREDIT = "1";

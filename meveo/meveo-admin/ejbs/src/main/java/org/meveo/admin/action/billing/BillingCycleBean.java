@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.BillingCycleServiceLocal;
+import org.meveo.service.billing.impl.BillingCycleService;
 
 /**
  * Standard backing bean for {@link BillingCycle} (extends {@link BaseBean} that
@@ -47,7 +47,7 @@ public class BillingCycleBean extends BaseBean<BillingCycle> {
 	 * .
 	 */
 	@Inject
-	private BillingCycleServiceLocal billingCycleService;
+	private BillingCycleService billingCycleService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

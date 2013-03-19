@@ -26,7 +26,7 @@ import org.meveo.model.bi.JobExecutionHisto;
 import org.meveo.model.bi.JobHistory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.bi.local.JobExecutionHistoryServiceLocal;
+import org.meveo.service.bi.impl.JobExecutionHistoryService;
 
 /**
  * Standard backing bean for {@link JobHistory} (extends {@link BaseBean} that
@@ -45,7 +45,7 @@ public class JobExecutionHistoryBean extends BaseBean<JobExecutionHisto> {
 
 	/** Injected @{link JobHistory} service. Extends {@link PersistenceService}. */
 	@Inject
-	private JobExecutionHistoryServiceLocal jobExecutionHistoryService;
+	private JobExecutionHistoryService jobExecutionHistoryService;
 
 	DunningHistory dunningHistory;
 

@@ -27,7 +27,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.TaxServiceLocal;
+import org.meveo.service.catalog.impl.TaxService;
 
 /**
  * Standard backing bean for {@link Tax} (extends {@link BaseBean} that provides
@@ -47,7 +47,7 @@ public class TaxBean extends BaseBean<Tax> {
 	 * Injected @{link Tax} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private TaxServiceLocal taxService;
+	private TaxService taxService;
 
 	private String[] accountingCodeFields = new String[7];
 	private String separator;

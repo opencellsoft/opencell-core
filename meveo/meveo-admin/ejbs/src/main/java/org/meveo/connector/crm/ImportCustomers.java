@@ -49,14 +49,14 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Title;
-import org.meveo.service.admin.local.CustomerImportHistoServiceLocal;
-import org.meveo.service.admin.local.UserServiceLocal;
-import org.meveo.service.catalog.local.TitleServiceLocal;
-import org.meveo.service.crm.local.CustomerBrandServiceLocal;
-import org.meveo.service.crm.local.CustomerCategoryServiceLocal;
-import org.meveo.service.crm.local.CustomerServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.admin.impl.CustomerImportHistoService;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.CustomerBrandService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 /**
@@ -68,28 +68,28 @@ import org.slf4j.Logger;
 public class ImportCustomers extends InputFiles {
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
-	private CustomerServiceLocal customerService;
+	private CustomerService customerService;
 
 	@Inject
-	UserServiceLocal userService;
+	UserService userService;
 
 	@Inject
-	CustomerBrandServiceLocal customerBrandService;
+	CustomerBrandService customerBrandService;
 
 	@Inject
-	CustomerCategoryServiceLocal customerCategoryService;
+	CustomerCategoryService customerCategoryService;
 
 	@Inject
-	private TitleServiceLocal titleService;
+	private TitleService titleService;
 
 	@Inject
-	private CustomerImportHistoServiceLocal customerImportHistoService;
+	private CustomerImportHistoService customerImportHistoService;
 
 	@Inject
-	private ProviderServiceLocal providerService;
+	private ProviderService providerService;
 
 	protected Logger log;
 

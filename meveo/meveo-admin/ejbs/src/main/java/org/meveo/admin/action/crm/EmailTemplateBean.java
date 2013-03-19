@@ -1,34 +1,30 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.crm;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.communication.local.EmailTemplateServiceLocal;
+import org.meveo.service.communication.impl.EmailTemplateService;
 
 /**
  * Standard backing bean for {@link EmailTemplate} (extends {@link BaseBean}
@@ -39,8 +35,8 @@ import org.meveo.service.communication.local.EmailTemplateServiceLocal;
  * @author Ignas Lelys
  * @created 2011.04.26
  */
-@Name("emailTemplateBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+// TODO: @Scope(ScopeType.CONVERSATION)
 public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 
 	private static final long serialVersionUID = 1L;
@@ -49,8 +45,8 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	 * Injected @{link EmailTemplate} service. Extends
 	 * {@link PersistenceService}.
 	 */
-	@In
-	private EmailTemplateServiceLocal emailTemplateService;
+	@Inject
+	private EmailTemplateService emailTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -67,8 +63,13 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Factory("emailTemplate")
-	@Begin(nested = true)
+	/*
+	 * TODO: @Factory("emailTemplate")
+	 * 
+	 * @Begin(nested = true)
+	 */
+	@Produces
+	@Named("emailTemplate")
 	public EmailTemplate init() {
 		return initEntity();
 	}
@@ -78,7 +79,9 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	 * 
 	 * @return filtered entities.
 	 */
-	@Out(value = "emailTemplates", required = false)
+	// @Out(value = "emailTemplates", required = false)
+	@Produces
+	@Named("emailTemplates")
 	protected PaginationDataModel<EmailTemplate> getDataModel() {
 		return entities;
 	}
@@ -90,7 +93,9 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	@Factory("emailTemplates")
+	// @Factory("emailTemplates")
+	@Produces
+	@Named("emailTemplates")
 	public void list() {
 		super.list();
 	}
@@ -101,7 +106,7 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	@End(beforeRedirect = true, root=false)
+	// TODO: @End(beforeRedirect = true, root=false)
 	public String saveOrUpdate() {
 		return saveOrUpdate(entity);
 	}

@@ -28,7 +28,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.bi.Job;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.bi.local.JobServiceLocal;
+import org.meveo.service.bi.impl.JobService;
 
 /**
  * Standard backing bean for {@link Job} (extends {@link BaseBean} that provides
@@ -47,7 +47,7 @@ public class JobBean extends BaseBean<Job> {
 
 	/** Injected @{link Job} service. Extends {@link PersistenceService}. */
 	@Inject
-	private JobServiceLocal jobService;
+	private JobService jobService;
 
 	/** Injected component that executes jobs. */
 	@Inject

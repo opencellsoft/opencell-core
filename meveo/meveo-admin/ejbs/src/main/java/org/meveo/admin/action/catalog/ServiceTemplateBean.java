@@ -27,7 +27,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 /**
  * Standard backing bean for {@link ServiceTemplate} (extends {@link BaseBean}
@@ -51,7 +51,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	 * @{link ServiceTemplate} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private ServiceTemplateServiceLocal serviceTemplateService;
+	private ServiceTemplateService serviceTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

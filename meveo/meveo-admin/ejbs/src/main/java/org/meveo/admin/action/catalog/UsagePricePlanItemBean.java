@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.UsagePricePlanItemServiceLocal;
+import org.meveo.service.catalog.impl.UsagePricePlanItemService;
 
 /**
  * Standard backing bean for {@link UsagePricePlanItem} (extends
@@ -45,7 +45,7 @@ public class UsagePricePlanItemBean extends BaseBean<UsagePricePlanItem> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private UsagePricePlanItemServiceLocal usagePricePlanItemService;
+	private UsagePricePlanItemService usagePricePlanItemService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

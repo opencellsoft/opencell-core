@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.PriceCode;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.PriceCodeServiceLocal;
+import org.meveo.service.catalog.impl.PriceCodeService;
 
 /**
  * Standard backing bean for {@link PriceCode} (extends {@link BaseBean} that
@@ -44,7 +44,7 @@ public class PriceCodeBean extends BaseBean<PriceCode> {
 	 * Injected @{link PriceCode} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private PriceCodeServiceLocal priceCodeService;
+	private PriceCodeService priceCodeService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

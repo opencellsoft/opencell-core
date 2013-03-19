@@ -17,11 +17,10 @@ package org.meveo.admin.action.crm;
 
 import java.util.List;
 
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.web.RequestParameter;
-import org.jboss.seam.core.Conversation;
-import org.jboss.seam.faces.Redirect;
+import javax.enterprise.context.Conversation;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BaseEntity;
@@ -32,10 +31,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.local.AccountEntitySearchServiceLocal;
-import org.richfaces.component.html.HtmlTree;
-import org.richfaces.event.NodeSelectedEvent;
-import org.richfaces.event.NodeSelectedListener;
+import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 
@@ -48,8 +44,8 @@ import org.richfaces.model.TreeNodeImpl;
  * @created Dec 14, 2010
  * 
  */
-@Name("customerTreeBean")
-public class CustomerTreeBean extends BaseBean<AccountEntity> implements NodeSelectedListener {
+@Named
+public class CustomerTreeBean extends BaseBean<AccountEntity> {
 
     private static final String SUBSCRIPTION_KEY = "subscription";
 
@@ -59,8 +55,8 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> implements NodeSel
      * Injected @{link AccountEntity} service. Extends
      * {@link PersistenceService}.
      */
-    @In
-    private AccountEntitySearchServiceLocal accountEntitySearchService;
+    @Inject
+    private AccountEntitySearchService accountEntitySearchService;
 
     @RequestParameter
     private Long objectId;

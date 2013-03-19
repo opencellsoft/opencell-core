@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
+import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
 /**
  * Standard backing bean for {@link InvoiceCategory} (extends {@link BaseBean}
@@ -46,7 +46,7 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private InvoiceCategoryServiceLocal invoiceCategoryService;
+	private InvoiceCategoryService invoiceCategoryService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

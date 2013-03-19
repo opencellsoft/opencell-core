@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.CalendarServiceLocal;
+import org.meveo.service.catalog.impl.CalendarService;
 
 /**
  * Standard backing bean for {@link Calendar} (extends {@link BaseBean} that
@@ -43,7 +43,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
 	/** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
 	@Inject
-	private CalendarServiceLocal calendarService;
+	private CalendarService calendarService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

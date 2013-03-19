@@ -31,9 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
-import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,7 +49,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.payments.local.AccountOperationServiceLocal;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.slf4j.Logger;
 
 @Named
@@ -71,7 +69,7 @@ public class BordereauRemiseCheque {
 	protected StatusMessages statusMessages;*/
 	
 	@Inject
-	private AccountOperationServiceLocal accountOperationService;
+	private AccountOperationService accountOperationService;
 
 	public JasperReport jasperReport;
 

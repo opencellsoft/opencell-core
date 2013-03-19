@@ -25,8 +25,8 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
-import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
+import org.meveo.service.catalog.impl.InvoiceCategoryService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
  * Standard backing bean for {@link InvoiceSubCategory} (extends
@@ -48,14 +48,14 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private InvoiceSubCategoryServiceLocal invoiceSubCategoryService;
+	private InvoiceSubCategoryService invoiceSubCategoryService;
 
 	/**
 	 * Inject InvoiceCategory service, that is used to load default category if
 	 * its id was passed in parameters.
 	 */
 	@Inject
-	private InvoiceCategoryServiceLocal invoiceCategoryService;
+	private InvoiceCategoryService invoiceCategoryService;
 
 	/**
 	 * InvoiceCategory Id passed as a parameter. Used when creating new

@@ -47,14 +47,14 @@ import org.meveo.model.jaxb.account.WarningUserAccount;
 import org.meveo.model.jaxb.account.Warnings;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
-import org.meveo.service.admin.local.AccountImportHistoServiceLocal;
-import org.meveo.service.admin.local.UserServiceLocal;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
-import org.meveo.service.billing.local.BillingCycleServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
-import org.meveo.service.catalog.local.TitleServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.admin.impl.AccountImportHistoService;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 /**
@@ -66,30 +66,30 @@ import org.slf4j.Logger;
 public class ImportAccounts extends InputFiles {
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
-	private BillingAccountServiceLocal billingAccountService;
+	private BillingAccountService billingAccountService;
 
 	@Inject
-	private UserAccountServiceLocal userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
-	UserServiceLocal userService;
+	UserService userService;
 
 	@Inject
-	BillingCycleServiceLocal billingCycleService;
+	BillingCycleService billingCycleService;
 
 	@Inject
-	private AccountImportHistoServiceLocal accountImportHistoService;
+	private AccountImportHistoService accountImportHistoService;
 
 	protected Logger log;
 
 	@Inject
-	private ProviderServiceLocal providerService;
+	private ProviderService providerService;
 
 	@Inject
-	private TitleServiceLocal titleService;
+	private TitleService titleService;
 
 	BillingAccounts billingAccountsWarning;
 	BillingAccounts billingAccountsError;

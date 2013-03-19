@@ -27,7 +27,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.ServiceParameterTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.ServiceParameterTemplateServiceLocal;
+import org.meveo.service.catalog.impl.ServiceParameterTemplateService;
 
 /**
  * Standard backing bean for {@link ServiceParameterTemplate} (extends
@@ -51,7 +51,7 @@ public class ServiceParameterTemplateBean extends BaseBean<ServiceParameterTempl
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private ServiceParameterTemplateServiceLocal serviceParameterTemplateService;
+	private ServiceParameterTemplateService serviceParameterTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

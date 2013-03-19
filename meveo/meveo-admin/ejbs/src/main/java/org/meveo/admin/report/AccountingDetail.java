@@ -36,9 +36,9 @@ import org.meveo.model.bi.Report;
 import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.payments.local.AccountOperationServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.meveo.service.reporting.local.DWHAccountOperationServiceLocal;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
 @Named
@@ -46,10 +46,10 @@ public class AccountingDetail extends FileProducer implements Reporting {
 	@Inject
 	protected Logger log;
 
-	private CustomerAccountServiceLocal customerAccountService;
-	private DWHAccountOperationServiceLocal accountOperationTransformationService;
+	private CustomerAccountService customerAccountService;
+	private DWHAccountOperationService accountOperationTransformationService;
 
-	private AccountOperationServiceLocal accountOperationService;
+	private AccountOperationService accountOperationService;
 
 	private String reportsFolder;
 	private String templateFilename;

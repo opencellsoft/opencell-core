@@ -25,7 +25,7 @@ import org.meveo.model.catalog.UsageDiscountPlanItem;
 import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.UsageDiscountPlanItemServiceLocal;
+import org.meveo.service.catalog.impl.UsageDiscountPlanItemService;
 
 /**
  * Standard backing bean for {@link UsagePricePlanItem} (extends
@@ -46,7 +46,7 @@ public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private UsageDiscountPlanItemServiceLocal usageDiscountPlanItemService;
+	private UsageDiscountPlanItemService usageDiscountPlanItemService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

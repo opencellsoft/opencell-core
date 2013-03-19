@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.local.SubscriptionTerminationReasonServiceLocal;
+import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
 /**
  * @author R.AITYAAZZA
@@ -42,7 +42,7 @@ public class SubscriptionTerminationReasonBean extends BaseBean<SubscriptionTerm
 	 *        .
 	 */
 	@Inject
-	private SubscriptionTerminationReasonServiceLocal subscriptionTerminationReasonService;
+	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.PricePlanMatrixServiceLocal;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 
 /**
  * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean}
@@ -47,7 +47,7 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
      * {@link PersistenceService}.
      */
     @Inject
-    private PricePlanMatrixServiceLocal pricePlanMatrixService;
+	private PricePlanMatrixService pricePlanMatrixService;
 
 
     /**

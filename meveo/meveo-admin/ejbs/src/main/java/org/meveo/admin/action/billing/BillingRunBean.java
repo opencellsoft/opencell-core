@@ -41,10 +41,9 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.BillingRunServiceLocal;
-import org.meveo.service.billing.local.InvoiceServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
-import org.testng.annotations.Factory;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Named
 @Scope(ScopeType.PAGE)
@@ -58,13 +57,13 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	 * @{link Invoice} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private BillingRunServiceLocal billingRunService;
+	private BillingRunService billingRunService;
 
 	@Inject
-	private InvoiceServiceLocal invoiceService;
+	private InvoiceService invoiceService;
 
 	@Inject
-	private ProviderServiceLocal providerService;
+	private ProviderService providerService;
 
 	@RequestParameter
 	private Boolean preReport = false;

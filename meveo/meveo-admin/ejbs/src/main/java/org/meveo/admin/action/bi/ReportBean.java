@@ -30,7 +30,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.bi.local.ReportServiceLocal;
+import org.meveo.service.bi.impl.ReportService;
 
 /**
  * Standard backing bean for {@link Report} (extends {@link BaseBean} that
@@ -47,7 +47,7 @@ public class ReportBean extends BaseBean<Report> {
 
 	/** Injected @{link Report} service. Extends {@link PersistenceService}. */
 	@Inject
-	private ReportServiceLocal reportService;
+	private ReportService reportService;
 
 	/** Injected component that generates PDF reports. */
 	@Inject

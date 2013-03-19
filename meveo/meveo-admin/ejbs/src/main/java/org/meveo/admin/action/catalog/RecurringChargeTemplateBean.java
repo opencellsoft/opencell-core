@@ -27,7 +27,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
 /**
  * Standard backing bean for {@link RecurringChargeTemplate} (extends
@@ -49,7 +49,7 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private RecurringChargeTemplateServiceLocal recurringChargeTemplateService;
+	private RecurringChargeTemplateService recurringChargeTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

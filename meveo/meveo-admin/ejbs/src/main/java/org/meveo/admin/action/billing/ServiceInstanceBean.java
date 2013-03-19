@@ -29,7 +29,7 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 
 /**
  * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean}
@@ -53,7 +53,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
 	 * @{link ServiceInstance} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private ServiceInstanceServiceLocal serviceInstanceService;
+	private ServiceInstanceService serviceInstanceService;
 
 	@Inject
 	User currentUser;

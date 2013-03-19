@@ -45,11 +45,10 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
-import org.meveo.service.billing.local.BillingRunServiceLocal;
-import org.meveo.service.billing.local.InvoiceServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.testng.annotations.Factory;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -83,13 +82,13 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * @{link BillingAccount} service. Extends {@link PersistenceService}.
 	 */
 	@Inject
-	private BillingAccountServiceLocal billingAccountService;
+	private BillingAccountService billingAccountService;
 
 	@Inject
-	private InvoiceServiceLocal invoiceService;
+	private InvoiceService invoiceService;
 
 	@Inject
-	private BillingRunServiceLocal billingRunService;
+	private BillingRunService billingRunService;
 
 	// SEB: i think it is required
 	// @Inject(required = false)
@@ -106,7 +105,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 	// TODO: SEB: pls explain why you write create=true ?
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;

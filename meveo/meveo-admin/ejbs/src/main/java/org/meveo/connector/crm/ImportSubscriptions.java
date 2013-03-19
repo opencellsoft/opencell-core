@@ -50,15 +50,15 @@ import org.meveo.model.jaxb.subscription.Errors;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
-import org.meveo.service.admin.local.SubscriptionImportHistoServiceLocal;
-import org.meveo.service.admin.local.UserServiceLocal;
-import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
-import org.meveo.service.catalog.local.OfferTemplateServiceLocal;
-import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
-import org.meveo.service.crm.local.SubscriptionTerminationReasonServiceLocal;
+import org.meveo.service.admin.impl.SubscriptionImportHistoService;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.slf4j.Logger;
 
 /**
@@ -70,31 +70,31 @@ import org.slf4j.Logger;
 public class ImportSubscriptions extends InputFiles {
 
 	@Inject
-	UserServiceLocal userService;
+	UserService userService;
 
 	@Inject
-	SubscriptionServiceLocal subscriptionService;
+	SubscriptionService subscriptionService;
 
 	@Inject
-	OfferTemplateServiceLocal offerTemplateService;
+	OfferTemplateService offerTemplateService;
 
 	@Inject
-	UserAccountServiceLocal userAccountService;
+	UserAccountService userAccountService;
 
 	@Inject
-	SubscriptionTerminationReasonServiceLocal subscriptionTerminationReasonService;
+	SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
 	@Inject
-	ServiceTemplateServiceLocal serviceTemplateService;
+	ServiceTemplateService serviceTemplateService;
 
 	@Inject
-	ServiceInstanceServiceLocal serviceInstanceService;
+	ServiceInstanceService serviceInstanceService;
 
 	@Inject
-	SubscriptionImportHistoServiceLocal subscriptionImportHistoService;
+	SubscriptionImportHistoService subscriptionImportHistoService;
 
 	@Inject
-	private ProviderServiceLocal providerService;
+	private ProviderService providerService;
 
 	protected Logger log;
 

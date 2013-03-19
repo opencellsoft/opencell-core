@@ -25,8 +25,8 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.BillingAccountServiceLocal;
-import org.meveo.service.billing.local.InvoiceServiceLocal;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that
@@ -50,10 +50,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
      * @{link Invoice} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private InvoiceServiceLocal invoiceService;
+    private InvoiceService invoiceService;
     
     @Inject
-    BillingAccountServiceLocal billingAccountService;
+	BillingAccountService billingAccountService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this

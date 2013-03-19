@@ -31,7 +31,7 @@ import javax.inject.Named;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.service.reporting.local.JournalEntryServiceLocal;
+import org.meveo.service.reporting.impl.JournalEntryService;
 import org.slf4j.Logger;
 
 @Named
@@ -41,7 +41,7 @@ public class TaxStatus extends FileProducer implements Reporting {
     protected Logger log;
 
 	@Inject
-    private JournalEntryServiceLocal salesTransformationService;
+	private JournalEntryService salesTransformationService;
 
     private String reportsFolder;
     private String templateFilename;

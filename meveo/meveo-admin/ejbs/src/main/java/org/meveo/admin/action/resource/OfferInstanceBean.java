@@ -27,7 +27,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.resource.OfferInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.resource.local.OfferInstanceServiceLocal;
+import org.meveo.service.resource.impl.OfferInstanceService;
 
 /**
  * Standard backing bean for {@link OfferInstance} (extends {@link BaseBean}
@@ -55,7 +55,7 @@ public class OfferInstanceBean extends BaseBean<OfferInstance> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private OfferInstanceServiceLocal offerInstanceService;
+	private OfferInstanceService offerInstanceService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

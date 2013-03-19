@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.OneShotChargeInstanceServiceLocal;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 
 /**
  * Standard backing bean for {@link OneShotChargeInstance} (extends
@@ -48,7 +48,7 @@ public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> 
      * {@link PersistenceService}.
      */
     @Inject
-    private OneShotChargeInstanceServiceLocal oneShotChargeInstanceService;
+	private OneShotChargeInstanceService oneShotChargeInstanceService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this

@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.Operation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.OperationServiceLocal;
+import org.meveo.service.billing.impl.OperationService;
 
 /**
  * Standard backing bean for {@link Operation} (extends {@link BaseBean} that
@@ -45,7 +45,7 @@ public class OperationBean extends BaseBean<Operation> {
 
     /** Injected @{link Operation} service. Extends {@link PersistenceService}. */
     @Inject
-    private OperationServiceLocal operationService;
+	private OperationService operationService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this

@@ -44,12 +44,12 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.OneShotChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
-import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
+import org.meveo.service.billing.impl.OneShotChargeInstanceService;
+import org.meveo.service.billing.impl.RecurringChargeInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that
@@ -72,13 +72,13 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	 * @{link Subscription} service. Extends {@link PersistenceService}
 	 */
 	@Inject
-	private SubscriptionServiceLocal subscriptionService;
+	private SubscriptionService subscriptionService;
 
 	/**
 	 * UserAccount service. TODO (needed?)
 	 */
 	@Inject
-	private UserAccountServiceLocal userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
 	private User currentUser;
@@ -108,16 +108,16 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	private RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance();
 
 	@Inject
-	private ServiceInstanceServiceLocal serviceInstanceService;
+	private ServiceInstanceService serviceInstanceService;
 
 	@Inject
-	private OneShotChargeInstanceServiceLocal oneShotChargeInstanceService;
+	private OneShotChargeInstanceService oneShotChargeInstanceService;
 
 	@Inject
-	private RecurringChargeInstanceServiceLocal recurringChargeInstanceService;
+	private RecurringChargeInstanceService recurringChargeInstanceService;
 
 	@Inject
-	private ServiceTemplateServiceLocal serviceTemplateService;
+	private ServiceTemplateService serviceTemplateService;
 
 	private Integer oneShotChargeInstanceQuantity = 1;
 

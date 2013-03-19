@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.DiscountPlanMatrixServiceLocal;
+import org.meveo.service.catalog.impl.DiscountPlanMatrixService;
 
 /**
  * Standard backing bean for {@link DiscountPlanMatrix} (extends
@@ -47,7 +47,7 @@ public class DiscountPlanMatrixBean extends BaseBean<DiscountPlanMatrix> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private DiscountPlanMatrixServiceLocal discountPlanMatrixService;
+	private DiscountPlanMatrixService discountPlanMatrixService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

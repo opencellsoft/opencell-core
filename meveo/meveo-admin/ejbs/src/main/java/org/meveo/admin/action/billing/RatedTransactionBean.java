@@ -24,7 +24,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.RatedTransactionServiceLocal;
+import org.meveo.service.billing.impl.RatedTransactionService;
 
 /**
  * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean}
@@ -46,7 +46,7 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private RatedTransactionServiceLocal ratedTransactionService;
+	private RatedTransactionService ratedTransactionService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

@@ -25,7 +25,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
 /**
  * Standard backing bean for {@link OneShotChargeTemplate} (extends
@@ -47,7 +47,7 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private OneShotChargeTemplateServiceLocal oneShotChargeTemplateService;
+	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
