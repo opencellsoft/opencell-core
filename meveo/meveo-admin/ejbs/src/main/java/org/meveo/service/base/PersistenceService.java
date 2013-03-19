@@ -38,7 +38,6 @@ import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.base.local.IPersistenceService;
 import org.slf4j.Logger;
 
 /**
@@ -50,7 +49,7 @@ import org.slf4j.Logger;
  * @created 2009.09.04
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService
-		implements IPersistenceService<E> {
+		 {
 
 	protected final Class<E> entityClass;
 

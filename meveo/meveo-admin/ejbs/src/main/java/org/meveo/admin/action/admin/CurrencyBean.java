@@ -22,9 +22,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.Currency;
-import org.meveo.service.admin.local.CurrencyServiceLocal;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.admin.impl.CurrencyService;
 
 /**
  * Standard backing bean for {@link Currency} (extends {@link BaseBean} that
@@ -41,9 +39,8 @@ public class CurrencyBean extends BaseBean<Currency> {
 
 	private static final long serialVersionUID = 1L;
 
-	/** Injected @{link Currency} service. Extends {@link PersistenceService}. */
 	@Inject
-	private CurrencyServiceLocal currencyService;
+	private CurrencyService currencyService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
