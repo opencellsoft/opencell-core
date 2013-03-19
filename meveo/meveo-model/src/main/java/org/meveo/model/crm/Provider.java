@@ -65,15 +65,15 @@ public class Provider extends BusinessEntity {
     
     
     @Column(name = "MULTICOUNTRY_FLAG")
-    private Integer multicountryFlag;
+    private boolean multicountryFlag;
     
     
     @Column(name = "MULTICURRENCY_FLAG")
-    private Integer multicurrencyFlag;
+    private boolean multicurrencyFlag;
     
     
     @Column(name = "MULTILANGUAGE_FLAG")
-    private Integer multilanguageFlag;
+    private boolean multilanguageFlag;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER_ID")
@@ -178,27 +178,27 @@ public class Provider extends BusinessEntity {
 		this.languageCode = languageCode;
 	}
 
-	public Integer getMulticountryFlag() {
+	public boolean getMulticountryFlag() {
 		return multicountryFlag;
 	}
 
-	public void setMulticountryFlag(Integer multicountryFlag) {
+	public void setMulticountryFlag(boolean multicountryFlag) {
 		this.multicountryFlag = multicountryFlag;
 	}
 
-	public Integer getMulticurrencyFlag() {
+	public boolean getMulticurrencyFlag() {
 		return multicurrencyFlag;
 	}
 
-	public void setMulticurrencyFlag(Integer multicurrencyFlag) {
+	public void setMulticurrencyFlag(boolean multicurrencyFlag) {
 		this.multicurrencyFlag = multicurrencyFlag;
 	}
 
-	public Integer getMultilanguageFlag() {
+	public boolean getMultilanguageFlag() {
 		return multilanguageFlag;
 	}
 
-	public void setMultilanguageFlag(Integer multilanguageFlag) {
+	public void setMultilanguageFlag(boolean multilanguageFlag) {
 		this.multilanguageFlag = multilanguageFlag;
 	}
 
