@@ -1,28 +1,32 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.payments;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Scope;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jboss.seam.faces.context.conversation.Begin;
 import org.jboss.seam.faces.context.conversation.End;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.User;
@@ -33,6 +37,9 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.DDRequestLOTService;
+import org.meveo.service.payments.impl.DDRequestLotOpService;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.testng.annotations.Factory;
 
 /**
@@ -43,8 +50,8 @@ import org.testng.annotations.Factory;
  * 
  * @author Tyshan(tyshan@manaty.net)
  */
-@Name("ddrequestLOTBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 
 	private static final long serialVersionUID = 1L;
@@ -53,17 +60,14 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * Injected @{link DDRequestLOT} service. Extends {@link PersistenceService}
 	 * .
 	 */
-	@In
-	private DDRequestLOTServiceLocal ddrequestLOTService;
+	@Inject
+	private DDRequestLOTService ddrequestLOTService;
 
-	@In
-	private DDRequestLotOpServiceLocal ddrequestLotOpService;
+	@Inject
+	private DDRequestLotOpService ddrequestLotOpService;
 
-	@In
-	private RecordedInvoiceServiceLocal recordedInvoiceService;
-
-	@In
-	private User currentUser;
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
 
 	/**
 	 * startDueDate parameter for ddRequest batch
@@ -89,20 +93,10 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Factory("ddrequestLOT")
-	@Begin(nested = true)
+	@Produces
+	@Named("ddrequestLOT")
 	public DDRequestLOT init() {
 		return initEntity();
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	@Out(value = "ddrequestLOTs", required = false)
-	protected PaginationDataModel<DDRequestLOT> getDataModel() {
-		return entities;
 	}
 
 	/**
@@ -110,24 +104,15 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
+	 * @return
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	@Override
-	@Factory("ddrequestLOTs")
-	@Begin(join = true)
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	@End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@Produces
+	@Named("ddrequestLOTs")
+	@ConversationScoped
+	public PaginationDataModel<DDRequestLOT> list() {
+		return super.list();
 	}
 
 	/**
@@ -141,11 +126,12 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.FILE);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, currentUser, currentProvider);
-			statusMessages.addFromResourceBundle("ddrequestLot.generateFileSuccessful");
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser().getUser(),
+					getCurrentUser().getCurrentProvider());
+			messages.info(new BundleKey("messages", "ddrequestLot.generateFileSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.addFromResourceBundle("ddrequestLot.generateFileFailed");
+			messages.error(new BundleKey("messages", "ddrequestLot.generateFileFailed"));
 		}
 
 		return null;
@@ -162,11 +148,12 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.PAYMENT);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, currentUser, currentProvider);
-			statusMessages.addFromResourceBundle("ddrequestLot.doPaymentsSuccessful");
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser().getUser(),
+					getCurrentUser().getCurrentProvider());
+			messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.addFromResourceBundle("ddrequestLot.doPaymentsFailed");
+			messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsFailed"));
 		}
 
 		return null;
@@ -184,12 +171,13 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setToDueDate(getEndDueDate());
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
-			ddrequestLotOpService.create(ddrequestLotOp, currentUser, currentProvider);
-			statusMessages.addFromResourceBundle("ddrequestLot.launchProcessSuccessful");
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser().getUser(),
+					getCurrentUser().getCurrentProvider());
+			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.addFromResourceBundle("ddrequestLot.launchProcessFailed");
-			statusMessages.add(e.getMessage());
+			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessFailed"));
+			messages.info(e.getMessage());
 		}
 		return null;
 	}
@@ -238,7 +226,8 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	}
 
 	public PaginationDataModel<RecordedInvoice> getInvoices() {
-		PaginationDataModel<RecordedInvoice> invoices = new PaginationDataModel<RecordedInvoice>(recordedInvoiceService);
+		PaginationDataModel<RecordedInvoice> invoices = new PaginationDataModel<RecordedInvoice>(
+				recordedInvoiceService);
 		Map<String, Object> filters2 = new HashMap<String, Object>();
 		filters2.put("ddRequestLOT", entity);
 		invoices.addFilters(filters2);

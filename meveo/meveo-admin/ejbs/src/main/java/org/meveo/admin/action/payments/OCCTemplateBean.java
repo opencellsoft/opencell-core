@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -31,8 +32,10 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
- * Standard backing bean for {@link OCCTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link OCCTemplate} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  * 
  * @author Ignas
  * @created 2009.10.13
@@ -41,60 +44,66 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 @ConversationScoped
 public class OCCTemplateBean extends BaseBean<OCCTemplate> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link OCCTemplate} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private OCCTemplateService occTemplateService;
+	/**
+	 * Injected @{link OCCTemplate} service. Extends {@link PersistenceService}.
+	 */
+	@Inject
+	private OCCTemplateService occTemplateService;
 
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
+	@Inject
+	@CurrentProvider
+	private Provider currentProvider;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public OCCTemplateBean() {
-        super(OCCTemplate.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public OCCTemplateBean() {
+		super(OCCTemplate.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("occTemplate")
-    public OCCTemplate init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("occTemplate")
+	public OCCTemplate init() {
+		return initEntity();
+	}
 
-    public List<OCCTemplate> listOCCTemplate() {
-        return (List<OCCTemplate>) occTemplateService.getListOccSortedByName(currentProvider.getCode());
-    }
+	public List<OCCTemplate> listOCCTemplate() {
+		return (List<OCCTemplate>) occTemplateService.getListOccSortedByName(currentProvider
+				.getCode());
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("occTemplates")
-    @ConversationScoped
-    public void list() {
-        super.list();
-    }
+	/**
+	 * Factory method, that is invoked if data model is empty. Invokes
+	 * BaseBean.list() method that handles all data model loading. Overriding is
+	 * needed only to put factory name on it.
+	 * 
+	 * @return
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#list()
+	 */
+	@Produces
+	@Named("occTemplates")
+	@ConversationScoped
+	public PaginationDataModel<OCCTemplate> list() {
+		return super.list();
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<OCCTemplate> getPersistenceService() {
-        return occTemplateService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<OCCTemplate> getPersistenceService() {
+		return occTemplateService;
+	}
 
 }

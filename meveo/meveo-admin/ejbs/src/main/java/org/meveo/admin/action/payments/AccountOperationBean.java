@@ -1,27 +1,29 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.payments;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Scope;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.jboss.seam.faces.context.conversation.Begin;
-import org.jboss.seam.faces.context.conversation.End;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
@@ -36,8 +38,8 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.local.MatchingCodeServiceLocal;
-import org.testng.annotations.Factory;
 
 /**
  * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean}
@@ -48,8 +50,8 @@ import org.testng.annotations.Factory;
  * @author Ignas
  * @created 2009.10.13
  */
-@Name("accountOperationBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 	private static final long serialVersionUID = 1L;
@@ -58,26 +60,27 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 * Injected @{link AccountOperation} service. Extends
 	 * {@link PersistenceService}.
 	 */
-	@In
-	private AccountOperationServiceLocal accountOperationService;
-	@In
+	@Inject
+	private AccountOperationService accountOperationService;
+
+	@Inject
 	private User currentUser;
 
-	@In
+	@Inject
 	private MatchingCodeServiceLocal matchingCodeService;
 
 	@SuppressWarnings("unused")
-	@Out(required = false)
+	// TODO: @Out(required = false)
 	private AutomatedPayment automatedPayment;
 
 	@SuppressWarnings("unused")
-	@Out(required = false)
+	// TODO: @Out(required = false)
 	private RecordedInvoice recordedInvoice;
 
-	@Out(required = false)
+	// TODO: @Out(required = false)
 	private List<PartialMatchingOccToSelect> partialMatchingOps = new ArrayList<PartialMatchingOccToSelect>();
 
-	@Out(required = false)
+	// TODO: @Out(required = false)
 	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
 	public List<PartialMatchingOccToSelect> getPartialMatchingOps() {
@@ -92,7 +95,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 * TODO
 	 */
 	@SuppressWarnings("unused")
-	@Out(required = false)
+	// TODO: @Out(required = false)
 	private OtherCreditAndCharge otherCreditAndCharge;
 
 	/**
@@ -110,26 +113,10 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Factory("accountOperation")
-	@Begin(nested = true)
+	@Produces
+	@Named("accountOperation")
 	public AccountOperation init() {
 		return initEntity();
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	@Out(value = "accountOperations", required = false)
-	protected PaginationDataModel<AccountOperation> getDataModel() {
-		// final FacesContext context = FacesContext.getCurrentInstance();
-		// context.getExternalContext().getRequestParameterMap().put("sortField",
-		// "transactionDate");
-		// context.getExternalContext().getRequestParameterMap().put("sortOrder",
-		// "desc");
-		super.list();
-		return entities;
 	}
 
 	/**
@@ -137,24 +124,15 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
+	 * @return
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	@Override
-	@Begin(join = true)
-	@Factory("accountOperations")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	@End(beforeRedirect = true, root=true)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@Produces
+	@Named("accountOperations")
+	@ConversationScoped
+	public PaginationDataModel<AccountOperation> list() {
+		return super.list();
 	}
 
 	/**
@@ -196,25 +174,28 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 		log.info("operationIds    " + operationIds);
 		if (operationIds.isEmpty()) {
-			statusMessages.addFromResourceBundle(Severity.ERROR, "customerAccount.matchingUnselectedOperation");
+			messages.error(new BundleKey("messages", "customerAccount.matchingUnselectedOperation"));
 			return null;
 		}
 		try {
-			MatchingReturnObject result = matchingCodeService.matchOperations(customerAccountId, null, operationIds, null, currentUser);
+			MatchingReturnObject result = matchingCodeService.matchOperations(customerAccountId,
+					null, operationIds, null, currentUser);
 			if (result.isOk()) {
-				statusMessages.addFromResourceBundle("customerAccount.matchingSuccessful");
+				messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
 			} else {
 				setPartialMatchingOps(result.getPartialMatchingOcc());
-				return "/pages/payments/customerAccounts/partialMatching.seam?objectId=" + customerAccountId + "";
+				return "/pages/payments/customerAccounts/partialMatching.seam?objectId="
+						+ customerAccountId + "";
 			}
 
 		} catch (NoAllOperationUnmatchedException ee) {
-			statusMessages.addFromResourceBundle(Severity.ERROR, "customerAccount.noAllOperationUnmatched");
+			messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.addFromResourceBundle(Severity.ERROR, e.getMessage());
+			messages.error(e.getMessage());
 		}
-		return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId=" + customerAccountId + "&edit=false&tab=ops";
+		return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+				+ customerAccountId + "&edit=false&tab=ops";
 	}
 
 	// called from page of selection partial operation
@@ -224,22 +205,24 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			operationIds.add(p.getAccountOperation().getId());
 		}
 		try {
-			MatchingReturnObject result = matchingCodeService.matchOperations(partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId(),
-					null,
-					operationIds, partialMatchingOccSelected.getAccountOperation().getId(), currentUser);
+			MatchingReturnObject result = matchingCodeService.matchOperations(
+					partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId(),
+					null, operationIds, partialMatchingOccSelected.getAccountOperation().getId(),
+					currentUser);
 			if (result.isOk()) {
-				statusMessages.addFromResourceBundle("customerAccount.matchingSuccessful");
+				messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
 			} else {
-				statusMessages.addFromResourceBundle(Severity.ERROR, "customerAccount.matchingFailed");
+				messages.error(new BundleKey("messages", "customerAccount.matchingFailed"));
 			}
 		} catch (NoAllOperationUnmatchedException ee) {
-			statusMessages.addFromResourceBundle(Severity.ERROR, "customerAccount.noAllOperationUnmatched");
+			messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.add(Severity.ERROR, e.getMessage());
+			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
-				+ partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId() + "&edit=false&tab=ops";
+				+ partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId()
+				+ "&edit=false&tab=ops";
 	}
 
 	/**
@@ -258,19 +241,22 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 		log.info(" consultMatching operationIds " + operationIds);
 		if (operationIds.isEmpty() || operationIds.size() > 1) {
-			statusMessages.addFromResourceBundle("consultMatching.noOperationSelected");
+			messages.info(new BundleKey("messages", "consultMatching.noOperationSelected"));
 			return null;
 		}
 		AccountOperation accountOperation = accountOperationService.findById(operationIds.get(0));
-		if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
-			statusMessages.addFromResourceBundle("consultMatching.operationNotMatched");
+		if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L
+				&& accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
+			messages.info(new BundleKey("messages", "consultMatching.operationNotMatched"));
 			return null;
 		}
 		matchingAmounts = accountOperation.getMatchingAmounts();
 		if (matchingAmounts.size() == 1) {
-			return "/pages/payments/matchingCode/matchingCodeDetail.seam?objectId=" + matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false";
+			return "/pages/payments/matchingCode/matchingCodeDetail.seam?objectId="
+					+ matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false";
 		}
-		return "/pages/payments/matchingCode/selectMatchingCode.seam?objectId=" + accountOperation.getId() + "&edit=false";
+		return "/pages/payments/matchingCode/selectMatchingCode.seam?objectId="
+				+ accountOperation.getId() + "&edit=false";
 	}
 
 	public List<MatchingAmount> getMatchingAmounts() {

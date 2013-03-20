@@ -1,24 +1,26 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.payments;
 
-import javax.inject.Scope;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.jboss.seam.faces.context.conversation.Begin;
-import org.jboss.seam.faces.context.conversation.End;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
@@ -26,8 +28,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.local.MatchingCodeServiceLocal;
-import org.testng.annotations.Factory;
+import org.meveo.service.payments.impl.MatchingCodeService;
 
 /**
  * Standard backing bean for {@link MatchingCode} (extends {@link BaseBean} that
@@ -38,8 +39,8 @@ import org.testng.annotations.Factory;
  * @author Tyshan(tyshanchn@manaty.net)
  * @created 2010-12-1
  */
-@Name("matchingCodeBean")
-@Scope(ScopeType.PAGE)
+@Named
+// TODO: @Scope(ScopeType.PAGE)
 public class MatchingCodeBean extends BaseBean<MatchingCode> {
 
 	private static final long serialVersionUID = 1L;
@@ -47,10 +48,10 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	/**
 	 * Injected @{link MatchingCode} service. Extends {@link PersistenceService}
 	 */
-	@In
-	private MatchingCodeServiceLocal matchingCodeService;
+	@Inject
+	private MatchingCodeService matchingCodeService;
 
-	@In
+	@Inject
 	private User currentUser;
 
 	/**
@@ -68,20 +69,10 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Factory("matchingCode")
-	@Begin(nested = true)
+	@Produces
+	@Named("matchingCode")
 	public MatchingCode init() {
 		return initEntity();
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	@Out(value = "matchingCodes", required = false)
-	protected PaginationDataModel<MatchingCode> getDataModel() {
-		return entities;
 	}
 
 	/**
@@ -89,23 +80,14 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
+	 * @return
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	@Begin(join = true)
-	@Factory("matchingCodes")
-	public void lsit() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	@End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@Produces
+	@Named("matchingCodes")
+	public PaginationDataModel<MatchingCode> list() {
+		return super.list();
 	}
 
 	/**
@@ -120,8 +102,8 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		String returnPage = null;
 
 		returnPage = "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
-				+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount().getId()
-				+ "&edit=false&tab=ops";
+				+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount()
+						.getId() + "&edit=false&tab=ops";
 
 		return returnPage;
 	}
@@ -130,12 +112,12 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		String returnPage = null;
 		try {
 			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
-					+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount().getId()
-					+ "&edit=false&tab=ops";
+					+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount()
+							.getId() + "&edit=false&tab=ops";
 			matchingCodeService.unmatching(entity.getId(), currentUser);
-			statusMessages.addFromResourceBundle("matchingCode.unmatchingOK");
+			messages.info(new BundleKey("messages", "matchingCode.unmatchingOK"));
 		} catch (BusinessException e) {
-			statusMessages.addFromResourceBundle("matchingCode.unmatchingKO");
+			messages.error(new BundleKey("messages", "matchingCode.unmatchingKO"));
 			e.printStackTrace();
 		}
 		return returnPage;
