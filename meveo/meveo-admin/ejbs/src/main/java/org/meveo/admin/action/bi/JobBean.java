@@ -75,21 +75,21 @@ public class JobBean extends BaseBean<Job> {
 		return initEntity();
 	}
 
-
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
+	 * @return
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Produces
 	@Named("jobs")
-    @ConversationScoped
-	public void list() {
-		super.list();
+	@ConversationScoped
+	public PaginationDataModel<Job> list() {
+		return super.list();
 	}
-
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

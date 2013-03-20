@@ -70,14 +70,15 @@ public class MedinaConfigurationBean extends BaseBean<MedinaConfiguration> {
     /**
      * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
      * it.
+     * @return 
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
     @Produces
     @Named("medinaConfigurations")
     @ConversationScoped
-    public void list() {
-        super.list();
+    public PaginationDataModel<MedinaConfiguration> list() {
+        return super.list();
     }
 
     /**

@@ -70,21 +70,21 @@ public class GriegDunningInputHistoryBean extends BaseBean<GriegDunningInputHist
 		return initEntity();
 	}
 
-
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
+	 * 
+	 * @return
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Produces
 	@Named("griegDunningInputs")
 	@ConversationScoped
-	public void list() {
-		super.list();
+	public PaginationDataModel<GriegDunningInputHistory> list() {
+		return super.list();
 	}
-
 
 	/**
 	 * Override default list view name. (By default view name is class name

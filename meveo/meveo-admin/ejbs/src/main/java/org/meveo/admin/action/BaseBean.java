@@ -52,7 +52,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected org.slf4j.Logger log;
 
     @Inject
-    private Messages messages;
+    protected Messages messages;
 
     @Inject
     protected Identity identity;

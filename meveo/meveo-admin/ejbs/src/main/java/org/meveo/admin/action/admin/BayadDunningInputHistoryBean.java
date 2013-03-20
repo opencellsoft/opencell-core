@@ -21,14 +21,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.BayadDunningInputHistory;
 import org.meveo.service.admin.impl.BayadDunningInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**
- * Standard backing bean for {@link BayadDunningInputHistory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
- * their create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link BayadDunningInputHistory} (extends
+ * {@link BaseBean} that provides almost all common methods to handle entities
+ * filtering/sorting in datatable, their create, edit, view, delete operations).
+ * It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created Apr 13, 2011
@@ -37,60 +40,67 @@ import org.meveo.service.base.local.IPersistenceService;
 @ConversationScoped
 public class BayadDunningInputHistoryBean extends BaseBean<BayadDunningInputHistory> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link BayadDunningInputHistory} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private BayadDunningInputHistoryService bayadDunningInputHistoryService;
+	/**
+	 * Injected @{link BayadDunningInputHistory} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private BayadDunningInputHistoryService bayadDunningInputHistoryService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public BayadDunningInputHistoryBean() {
-        super(BayadDunningInputHistory.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public BayadDunningInputHistoryBean() {
+		super(BayadDunningInputHistory.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("bayadDunningInputHistory")
-    public BayadDunningInputHistory init() {
-        return super.initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("bayadDunningInputHistory")
+	public BayadDunningInputHistory init() {
+		return super.initEntity();
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("bayadDunningInputs")
-    @ConversationScoped
-    public void list() {
-        super.list();
-    }
+	/**
+	 * Factory method, that is invoked if data model is empty. Invokes
+	 * BaseBean.list() method that handles all data model loading. Overriding is
+	 * needed only to put factory name on it.
+	 * 
+	 * @return
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#list()
+	 */
+	@Produces
+	@Named("bayadDunningInputs")
+	@ConversationScoped
+	public PaginationDataModel<BayadDunningInputHistory> list() {
+		return super.list();
+	}
 
-    /**
-     * Override default list view name. (By default view name is class name starting lower case + ending 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "bayadDunningInputs";
-    }
+	/**
+	 * Override default list view name. (By default view name is class name
+	 * starting lower case + ending 's').
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 */
+	protected String getDefaultViewName() {
+		return "bayadDunningInputs";
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<BayadDunningInputHistory> getPersistenceService() {
-        return bayadDunningInputHistoryService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<BayadDunningInputHistory> getPersistenceService() {
+		return bayadDunningInputHistoryService;
+	}
 }

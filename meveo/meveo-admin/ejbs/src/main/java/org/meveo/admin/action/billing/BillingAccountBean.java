@@ -65,8 +65,10 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
 /**
- * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Dec 7, 2010
@@ -76,409 +78,431 @@ import com.lowagie.text.pdf.PdfStamper;
 @ConversationScoped
 public class BillingAccountBean extends BaseBean<BillingAccount> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link BillingAccount} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private BillingAccountService billingAccountService;
+	/**
+	 * Injected
+	 * 
+	 * @{link BillingAccount} service. Extends {@link PersistenceService}.
+	 */
+	@Inject
+	private BillingAccountService billingAccountService;
 
-    @Inject
-    private InvoiceService invoiceService;
+	@Inject
+	private InvoiceService invoiceService;
 
-    @Inject
-    private BillingRunService billingRunService;
+	@Inject
+	private BillingRunService billingRunService;
 
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
+	@Inject
+	@CurrentProvider
+	private Provider currentProvider;
 
-    @Inject
-    @RequestParam
-    private Instance<Long> customerAccountId;
+	@Inject
+	@RequestParam
+	private Instance<Long> customerAccountId;
 
-    @Inject
-    private Messages messages;
+	@Inject
+	private Messages messages;
 
-    private boolean returnToAgency;
+	private boolean returnToAgency;
 
-    @Inject
-    private CustomerAccountService customerAccountService;
+	@Inject
+	private CustomerAccountService customerAccountService;
 
-    /** Selected billing account in exceptionelInvoicing page. */
-    private ListItemsSelector<BillingAccount> itemSelector;
+	/** Selected billing account in exceptionelInvoicing page. */
+	private ListItemsSelector<BillingAccount> itemSelector;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public BillingAccountBean() {
-        super(BillingAccount.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public BillingAccountBean() {
+		super(BillingAccount.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    /*
-     * TODO: @Begin(nested = true)
-     * 
-     * @Factory("billingAccount")
-     */
-    @Produces
-    @Named("billingAccount")
-    public BillingAccount init() {
-        initEntity();
-        returnToAgency = !(entity.getInvoicePrefix() == null);
-        if (entity.getId() == null && customerAccountId != null) {
-            CustomerAccount customerAccount = customerAccountService.findById(customerAccountId.get());
-            entity.setCustomerAccount(customerAccountService.findById(customerAccountId.get()));
-            populateAccounts(customerAccount);
-        }
-        return entity;
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	/*
+	 * TODO: @Begin(nested = true)
+	 * 
+	 * @Factory("billingAccount")
+	 */
+	@Produces
+	@Named("billingAccount")
+	public BillingAccount init() {
+		initEntity();
+		returnToAgency = !(entity.getInvoicePrefix() == null);
+		if (entity.getId() == null && customerAccountId != null) {
+			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId
+					.get());
+			entity.setCustomerAccount(customerAccountService.findById(customerAccountId.get()));
+			populateAccounts(customerAccount);
+		}
+		return entity;
+	}
 
-    /**
-     * Data model of entities for data table in GUI.
-     * 
-     * @return filtered entities.
-     */
-    // TODO: @Out(value = "billingAccounts", required = false)
-    @Produces
-    @Named("billingAccounts")
-    protected PaginationDataModel<BillingAccount> getDataModel() {
-        return entities;
-    }
+	/**
+	 * Data model of entities for data table in GUI.
+	 * 
+	 * @return filtered entities.
+	 */
+	// TODO: @Out(value = "billingAccounts", required = false)
+	@Produces
+	@Named("billingAccounts")
+	protected PaginationDataModel<BillingAccount> getDataModel() {
+		return entities;
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    /*
-     * TODO: @Begin(join = true)
-     * 
-     * @Factory("billingAccounts")
-     */
-    @Produces
-    @Named("billingAccounts")
-    public void list() {
-        super.list();
-    }
+	/**
+	 * Factory method, that is invoked if data model is empty. Invokes
+	 * BaseBean.list() method that handles all data model loading. Overriding is
+	 * needed only to put factory name on it.
+	 * 
+	 * @return
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#list()
+	 */
+	/*
+	 * TODO: @Begin(join = true)
+	 * 
+	 * @Factory("billingAccounts")
+	 */
+	@Produces
+	@Named("billingAccounts")
+	@ConversationScoped
+	public PaginationDataModel<BillingAccount> list() {
+		return super.list();
+	}
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    // TODO: @End(beforeRedirect = true, root = false)
-    public String saveOrUpdate() {
-        try {
-            if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-                if (billingAccountService.isDuplicationExist(entity)) {
-                    entity.setDefaultLevel(false);
-                    throw new DuplicateDefaultAccountException();
-                }
-            }
+	/**
+	 * Conversation is ended and user is redirected from edit to his previous
+	 * window.
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 */
+	// TODO: @End(beforeRedirect = true, root = false)
+	public String saveOrUpdate() {
+		try {
+			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
+				if (billingAccountService.isDuplicationExist(entity)) {
+					entity.setDefaultLevel(false);
+					throw new DuplicateDefaultAccountException();
+				}
+			}
 
-            saveOrUpdate(entity);
-            CustomerAccount customerAccount = entity.getCustomerAccount();
-            if (customerAccount != null && !customerAccount.getBillingAccounts().contains(entity)) {
-                customerAccount.getBillingAccounts().add(entity);
-            }
-            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&objectId=" + entity.getId() + "&faces-redirect=true";
-        } catch (DuplicateDefaultAccountException e1) {
-            messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(new BundleKey("messages", "javax.el.ELException"));
-        }
-        return null;
-    }
+			saveOrUpdate(entity);
+			CustomerAccount customerAccount = entity.getCustomerAccount();
+			if (customerAccount != null && !customerAccount.getBillingAccounts().contains(entity)) {
+				customerAccount.getBillingAccounts().add(entity);
+			}
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&objectId="
+					+ entity.getId() + "&faces-redirect=true";
+		} catch (DuplicateDefaultAccountException e1) {
+			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(new BundleKey("messages", "javax.el.ELException"));
+		}
+		return null;
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<BillingAccount> getPersistenceService() {
-        return billingAccountService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<BillingAccount> getPersistenceService() {
+		return billingAccountService;
+	}
 
-    public String saveOrUpdate(BillingAccount entity) {
-        try {
+	public String saveOrUpdate(BillingAccount entity) {
+		try {
 
-            if (entity.isTransient()) {
-                billingAccountService.createBillingAccount(entity, null);
-                messages.info(new BundleKey("messages", "save.successful"));
-            } else {
-                billingAccountService.updateBillingAccount(entity, null);
-                messages.info(new BundleKey("messages", "update.successful"));
-            }
+			if (entity.isTransient()) {
+				billingAccountService.createBillingAccount(entity, null);
+				messages.info(new BundleKey("messages", "save.successful"));
+			} else {
+				billingAccountService.updateBillingAccount(entity, null);
+				messages.info(new BundleKey("messages", "update.successful"));
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
 
-        return back();
-    }
+		return back();
+	}
 
-    public String terminateAccount() {
-        log.info("terminateAccount billingAccountId:" + entity.getId());
-        try {
-            billingAccountService.billingAccountTermination(entity.getCode(), new Date(), getCurrentUser().getUser());
-            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-            return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId=" + entity.getId() + "&edit=false";
-        } catch (BusinessException e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+	public String terminateAccount() {
+		log.info("terminateAccount billingAccountId:" + entity.getId());
+		try {
+			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),
+					getCurrentUser().getUser());
+			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
+					+ entity.getId() + "&edit=false";
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
 
-    public String cancelAccount() {
-        log.info("cancelAccount billingAccountId:" + entity.getId());
-        try {
-            billingAccountService.billingAccountCancellation(entity.getCode(), new Date(), getCurrentUser().getUser());
-            messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-            return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId=" + entity.getId() + "&edit=false";
-        } catch (BusinessException e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+	public String cancelAccount() {
+		log.info("cancelAccount billingAccountId:" + entity.getId());
+		try {
+			billingAccountService.billingAccountCancellation(entity.getCode(), new Date(),
+					getCurrentUser().getUser());
+			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
+			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
+					+ entity.getId() + "&edit=false";
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
 
-    public String closeAccount() {
-        log.info("closeAccount billingAccountId:" + entity.getId());
-        try {
-            billingAccountService.closeBillingAccount(entity.getCode(), getCurrentUser().getUser());
-            messages.info(new BundleKey("messages", "close.closeSuccessful"));
-            return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId=" + entity.getId() + "&edit=false";
-        } catch (BusinessException e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+	public String closeAccount() {
+		log.info("closeAccount billingAccountId:" + entity.getId());
+		try {
+			billingAccountService.closeBillingAccount(entity.getCode(), getCurrentUser().getUser());
+			messages.info(new BundleKey("messages", "close.closeSuccessful"));
+			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
+					+ entity.getId() + "&edit=false";
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
 
-    // TODO: @Factory("getInvoices")
-    @Produces
-    @Named("getInvoices")
-    public List<Invoice> getInvoices() {
+	// TODO: @Factory("getInvoices")
+	@Produces
+	@Named("getInvoices")
+	public List<Invoice> getInvoices() {
 
-        return entity != null ? entity.getInvoices() : null;
-    }
+		return entity != null ? entity.getInvoices() : null;
+	}
 
-    public void generatePDF(long invoiceId) {
-        Invoice invoice = invoiceService.findById(invoiceId);
-        byte[] invoicePdf = invoice.getPdf();
-        FacesContext context = FacesContext.getCurrentInstance();
-        String invoiceFilename = null;
-        if (invoice.getBillingRun().getStatus() == BillingRunStatusEnum.VALIDATED) {
-            invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
-        } else {
-            invoiceFilename = "unvalidated-invoice.pdf";
-        }
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        response.setContentType("application/pdf"); // fill in
-        response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
+	public void generatePDF(long invoiceId) {
+		Invoice invoice = invoiceService.findById(invoiceId);
+		byte[] invoicePdf = invoice.getPdf();
+		FacesContext context = FacesContext.getCurrentInstance();
+		String invoiceFilename = null;
+		if (invoice.getBillingRun().getStatus() == BillingRunStatusEnum.VALIDATED) {
+			invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
+		} else {
+			invoiceFilename = "unvalidated-invoice.pdf";
+		}
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
+				.getResponse();
+		response.setContentType("application/pdf"); // fill in
+		response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
 
-        try {
-            OutputStream os = response.getOutputStream();
-            Document document = new Document(PageSize.A4);
-            if (invoice.getBillingRun().getStatus() != BillingRunStatusEnum.VALIDATED) {
-                // Add watemark image
-                PdfReader reader = new PdfReader(invoicePdf);
-                int n = reader.getNumberOfPages();
-                PdfStamper stamp = new PdfStamper(reader, os);
-                PdfContentByte over = null;
-                BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-                PdfGState gs = new PdfGState();
-                gs.setFillOpacity(0.5f);
-                int i = 1;
-                while (i <= n) {
-                    over = stamp.getOverContent(i);
-                    over.setGState(gs);
-                    over.beginText();
-                    System.out.println("top=" + document.top() + ",bottom=" + document.bottom());
-                    over.setTextMatrix(document.top(), document.bottom());
-                    over.setFontAndSize(bf, 150);
-                    over.setColorFill(Color.GRAY);
-                    over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize().getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
-                    over.endText();
-                    i++;
-                }
+		try {
+			OutputStream os = response.getOutputStream();
+			Document document = new Document(PageSize.A4);
+			if (invoice.getBillingRun().getStatus() != BillingRunStatusEnum.VALIDATED) {
+				// Add watemark image
+				PdfReader reader = new PdfReader(invoicePdf);
+				int n = reader.getNumberOfPages();
+				PdfStamper stamp = new PdfStamper(reader, os);
+				PdfContentByte over = null;
+				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI,
+						BaseFont.EMBEDDED);
+				PdfGState gs = new PdfGState();
+				gs.setFillOpacity(0.5f);
+				int i = 1;
+				while (i <= n) {
+					over = stamp.getOverContent(i);
+					over.setGState(gs);
+					over.beginText();
+					System.out.println("top=" + document.top() + ",bottom=" + document.bottom());
+					over.setTextMatrix(document.top(), document.bottom());
+					over.setFontAndSize(bf, 150);
+					over.setColorFill(Color.GRAY);
+					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize()
+							.getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
+					over.endText();
+					i++;
+				}
 
-                stamp.close();
-            } else {
-                os.write(invoicePdf); // fill in PDF with bytes
-            }
+				stamp.close();
+			} else {
+				os.write(invoicePdf); // fill in PDF with bytes
+			}
 
-            // contentType
-            os.flush();
-            os.close();
-            context.responseComplete();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        } catch (DocumentException e) {
-            log.error(e.getMessage());
-        }
-    }
+			// contentType
+			os.flush();
+			os.close();
+			context.responseComplete();
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} catch (DocumentException e) {
+			log.error(e.getMessage());
+		}
+	}
 
-    public boolean pdfExists(long invoiceId) {
-        Invoice invoice = invoiceService.findById(invoiceId);
-        if (invoice.getPdf() == null)
-            return false;
-        return true;
-    }
+	public boolean pdfExists(long invoiceId) {
+		Invoice invoice = invoiceService.findById(invoiceId);
+		if (invoice.getPdf() == null)
+			return false;
+		return true;
+	}
 
-    public String launchExceptionalInvoicing() {
-        log.info("launchExceptionelInvoicing...");
-        try {
-            ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-            String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
-            boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-            log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
-            if (billingRunService.isActiveBillingRunsExist(currentProvider) && !isAllowed) {
-                messages.info(new BundleKey("messages", "error.invoicing.alreadyLunched"));
-                return null;
-            }
+	public String launchExceptionalInvoicing() {
+		log.info("launchExceptionelInvoicing...");
+		try {
+			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
+			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
+			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
+			if (billingRunService.isActiveBillingRunsExist(currentProvider) && !isAllowed) {
+				messages.info(new BundleKey("messages", "error.invoicing.alreadyLunched"));
+				return null;
+			}
 
-            BillingRun billingRun = new BillingRun();
-            billingRun.setStatus(BillingRunStatusEnum.NEW);
-            billingRun.setProcessDate(new Date());
-            billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
+			BillingRun billingRun = new BillingRun();
+			billingRun.setStatus(BillingRunStatusEnum.NEW);
+			billingRun.setProcessDate(new Date());
+			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 
-            for (BillingAccount billingAccount : itemSelector.getList()) {
-                log.debug("lunchExceptionelInvoicing id=#0", billingAccount.getId());
-                billingAccount.setBillingRun(billingRun);
-                billingAccountService.update(billingAccount);
-            }
-            billingRunService.create(billingRun);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
-        } catch (Exception e) {
-            log.error("lunchExceptionelInvoicing", e);
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+			for (BillingAccount billingAccount : itemSelector.getList()) {
+				log.debug("lunchExceptionelInvoicing id=#0", billingAccount.getId());
+				billingAccount.setBillingRun(billingRun);
+				billingAccountService.update(billingAccount);
+			}
+			billingRunService.create(billingRun);
+			return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+		} catch (Exception e) {
+			log.error("lunchExceptionelInvoicing", e);
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
 
-    /**
-     * This is workaround for #594. For some reason when leaving billingAccountDetail.xhtml, the invoices datalist somehow asks for #{billingAccount} when we are not in
-     * billingAccountDetails conversation, that invokes factory method init() which starts new new conversation, which later cause a bug.
-     */
-    public BillingAccount getBillingAccount() {
-        return entity != null ? entity : new BillingAccount();
-    }
+	/**
+	 * This is workaround for #594. For some reason when leaving
+	 * billingAccountDetail.xhtml, the invoices datalist somehow asks for
+	 * #{billingAccount} when we are not in billingAccountDetails conversation,
+	 * that invokes factory method init() which starts new new conversation,
+	 * which later cause a bug.
+	 */
+	public BillingAccount getBillingAccount() {
+		return entity != null ? entity : new BillingAccount();
+	}
 
-    /**
-     * Item selector getter. Item selector keeps a state of multiselect checkboxes.
-     */
-    // TODO: @BypassInterceptors
-    public ListItemsSelector<BillingAccount> getItemSelector() {
-        if (itemSelector == null) {
-            itemSelector = new ListItemsSelector<BillingAccount>(false);
-        }
-        return itemSelector;
-    }
+	/**
+	 * Item selector getter. Item selector keeps a state of multiselect
+	 * checkboxes.
+	 */
+	// TODO: @BypassInterceptors
+	public ListItemsSelector<BillingAccount> getItemSelector() {
+		if (itemSelector == null) {
+			itemSelector = new ListItemsSelector<BillingAccount>(false);
+		}
+		return itemSelector;
+	}
 
-    /**
-     * Check/uncheck all select boxes.
-     */
-    public void checkUncheckAll(ValueChangeEvent event) {
-        itemSelector.switchMode();
-    }
+	/**
+	 * Check/uncheck all select boxes.
+	 */
+	public void checkUncheckAll(ValueChangeEvent event) {
+		itemSelector.switchMode();
+	}
 
-    /**
-     * Listener of select changed event.
-     */
-    public void selectChanged(ValueChangeEvent event) {
-        if (entities != null) {
-            BillingAccount entity = entities.getRowDataT();
-            if (entity != null) {
-                itemSelector.check(entity);
-            }
-        }
-    }
+	/**
+	 * Listener of select changed event.
+	 */
+	public void selectChanged(ValueChangeEvent event) {
+		if (entities != null) {
+			BillingAccount entity = entities.getRowDataT();
+			if (entity != null) {
+				itemSelector.check(entity);
+			}
+		}
+	}
 
-    /**
-     * Resets item selector.
-     */
-    public void resetSelection() {
-        if (itemSelector == null) {
-            itemSelector = new ListItemsSelector<BillingAccount>(false);
-        } else {
-            itemSelector.reset();
-        }
-    }
+	/**
+	 * Resets item selector.
+	 */
+	public void resetSelection() {
+		if (itemSelector == null) {
+			itemSelector = new ListItemsSelector<BillingAccount>(false);
+		} else {
+			itemSelector.reset();
+		}
+	}
 
-    public boolean isReturnToAgency() {
-        return returnToAgency;
-    }
+	public boolean isReturnToAgency() {
+		return returnToAgency;
+	}
 
-    public void setReturnToAgency(boolean returnToAgency) {
-        this.returnToAgency = returnToAgency;
-    }
+	public void setReturnToAgency(boolean returnToAgency) {
+		this.returnToAgency = returnToAgency;
+	}
 
-    public void setInvoicePrefix() {
-        if (returnToAgency) {
-            String invoicePrefix = null;
-            if (entity.getProvider().isEntreprise()) {
-                invoicePrefix = "R_PRO_";
-            } else {
-                invoicePrefix = "R_PART_";
-            }
-            entity.setInvoicePrefix(invoicePrefix + entity.getExternalRef2());
-        } else
-            entity.setInvoicePrefix(null);
-    }
+	public void setInvoicePrefix() {
+		if (returnToAgency) {
+			String invoicePrefix = null;
+			if (entity.getProvider().isEntreprise()) {
+				invoicePrefix = "R_PRO_";
+			} else {
+				invoicePrefix = "R_PART_";
+			}
+			entity.setInvoicePrefix(invoicePrefix + entity.getExternalRef2());
+		} else
+			entity.setInvoicePrefix(null);
+	}
 
-    public void processValueChange(ValueChangeEvent value) {
-        if (value != null) {
-            if (value.getNewValue() instanceof String) {
-                entity.setExternalRef2((String) value.getNewValue());
-                setInvoicePrefix();
-            }
+	public void processValueChange(ValueChangeEvent value) {
+		if (value != null) {
+			if (value.getNewValue() instanceof String) {
+				entity.setExternalRef2((String) value.getNewValue());
+				setInvoicePrefix();
+			}
 
-        }
-    }
+		}
+	}
 
-    public void populateAccounts(CustomerAccount customerAccount) {
-        entity.setCustomerAccount(customerAccount);
-        if (billingAccountService.isDuplicationExist(entity)) {
-            entity.setDefaultLevel(false);
-        } else {
-            entity.setDefaultLevel(true);
-        }
-        if (customerAccount != null && customerAccount.getProvider() != null && customerAccount.getProvider().isLevelDuplication()) {
+	public void populateAccounts(CustomerAccount customerAccount) {
+		entity.setCustomerAccount(customerAccount);
+		if (billingAccountService.isDuplicationExist(entity)) {
+			entity.setDefaultLevel(false);
+		} else {
+			entity.setDefaultLevel(true);
+		}
+		if (customerAccount != null && customerAccount.getProvider() != null
+				&& customerAccount.getProvider().isLevelDuplication()) {
 
-            entity.setCode(customerAccount.getCode());
-            entity.setDescription(customerAccount.getDescription());
-            entity.setEmail(customerAccount.getContactInformation().getEmail());
-            entity.setAddress(customerAccount.getAddress());
-            entity.setExternalRef1(customerAccount.getExternalRef1());
-            entity.setExternalRef2(customerAccount.getExternalRef2());
-            entity.setProviderContact(customerAccount.getProviderContact());
-            entity.setName(customerAccount.getName());
-            entity.setPaymentMethod(customerAccount.getPaymentMethod());
-            entity.setProvider(customerAccount.getProvider());
-            entity.setPrimaryContact(customerAccount.getPrimaryContact());
-        }
-    }
+			entity.setCode(customerAccount.getCode());
+			entity.setDescription(customerAccount.getDescription());
+			entity.setEmail(customerAccount.getContactInformation().getEmail());
+			entity.setAddress(customerAccount.getAddress());
+			entity.setExternalRef1(customerAccount.getExternalRef1());
+			entity.setExternalRef2(customerAccount.getExternalRef2());
+			entity.setProviderContact(customerAccount.getProviderContact());
+			entity.setName(customerAccount.getName());
+			entity.setPaymentMethod(customerAccount.getPaymentMethod());
+			entity.setProvider(customerAccount.getProvider());
+			entity.setPrimaryContact(customerAccount.getPrimaryContact());
+		}
+	}
 
 }

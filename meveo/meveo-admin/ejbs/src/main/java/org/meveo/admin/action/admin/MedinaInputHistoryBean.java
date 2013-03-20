@@ -21,14 +21,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.MedinaInputHistory;
 import org.meveo.service.admin.impl.MedinaInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**
- * Standard backing bean for {@link MedinaInputHistory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link MedinaInputHistory} (extends
+ * {@link BaseBean} that provides almost all common methods to handle entities
+ * filtering/sorting in datatable, their create, edit, view, delete operations).
+ * It works with Manaty custom JSF components.
  * 
  * @author Gediminas Ubartas
  * @created 2010.08.23
@@ -38,61 +41,68 @@ import org.meveo.service.base.local.IPersistenceService;
 // TODO: @Restrict("#{s:hasRole('meveo.medina')}")
 public class MedinaInputHistoryBean extends BaseBean<MedinaInputHistory> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link MedinaInputHistory} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private MedinaInputHistoryService medinaInputHistoryService;
+	/**
+	 * Injected @{link MedinaInputHistory} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private MedinaInputHistoryService medinaInputHistoryService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public MedinaInputHistoryBean() {
-        super(MedinaInputHistory.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public MedinaInputHistoryBean() {
+		super(MedinaInputHistory.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("medinaInputHistory")
-    public MedinaInputHistory init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("medinaInputHistory")
+	public MedinaInputHistory init() {
+		return initEntity();
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("medinaInputs")
-    @ConversationScoped
-    public void list() {
-        super.list();
-    }
+	/**
+	 * Factory method, that is invoked if data model is empty. Invokes
+	 * BaseBean.list() method that handles all data model loading. Overriding is
+	 * needed only to put factory name on it.
+	 * 
+	 * @return
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#list()
+	 */
+	@Produces
+	@Named("medinaInputs")
+	@ConversationScoped
+	public PaginationDataModel<MedinaInputHistory> list() {
+		return super.list();
+	}
 
-    /**
-     * Override default list view name. (By default view name is class name starting lower case + ending 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "medinaInputs";
-    }
+	/**
+	 * Override default list view name. (By default view name is class name
+	 * starting lower case + ending 's').
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 */
+	protected String getDefaultViewName() {
+		return "medinaInputs";
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<MedinaInputHistory> getPersistenceService() {
-        return medinaInputHistoryService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<MedinaInputHistory> getPersistenceService() {
+		return medinaInputHistoryService;
+	}
 
 }

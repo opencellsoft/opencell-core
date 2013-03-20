@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.service.admin.impl.AccountImportHistoService;
 import org.meveo.service.base.PersistenceService;
@@ -65,14 +66,15 @@ public class AccountImportHistoBean extends BaseBean<AccountImportHisto> {
     /**
      * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
      * it.
+     * @return 
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
     @Produces
     @Named("accountImportHistories")
     @ConversationScoped
-    public void list() {
-        super.list();
+    public PaginationDataModel<AccountImportHisto> list() {
+        return super.list();
     }
 
     /**
