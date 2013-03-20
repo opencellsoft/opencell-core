@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:s="http://jboss.com/products/seam/taglib"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:rich="http://richfaces.org/rich"
+  		xmlns:a="http://richfaces.org/a4j"
+		xmlns:c="http://java.sun.com/jstl/core"
+		xmlns:custom="http://manaty.net/custom">
+		
+	<ui:composition>
+	
+		<c:if test="${empty edit}">
+			<c:set var="edit" value="true" />
+		</c:if>
+	
+		
+		
+		<a:outputPanel width="100">
+			
+						
+			<a:form >
+			<custom:panelGroup columns="2">	
+			<a:outputPanel id="languageId" >	 
+					 <s:decorate template="/layout/edit.xhtml">
+		    		<ui:define name="label">
+		    			<h:outputLabel value="Description" /> 
+						
+		    		</ui:define> 
+					
+					<h:column>
+					     <h:panelGrid column="1">
+						 <h:dataTable value="">
+						 
+						 <h:column>
+						 <h:graphicImage value="/img/img#{entity.provider.languageCode}.png" style="height:17px; width:33px;"/>
+						 </h:column>
+						 <h:column>
+						<h:inputText rendered="#{edit}"  
+							value="#{entity.description}"  size="50" maxlength="100"/>
+							<h:outputText rendered="#{!edit}" value="#{entity.description}" style="font-weight:bold;"  />
+							</h:column>
+						 </h:dataTable>	
+						<h:dataTable  value="#{backingBean.getProviderLanguages()}" var="languageCom">
+							<h:column><h:graphicImage value="/img/img#{languageCom.language.languageCode}.png" style="height:17px; width:33px;"/></h:column>
+							
+							<h:column>
+								<h:inputText rendered="#{edit}"  
+									value="#{backingBean.languageMessagesMap[languageCom.language.languageCode]}"  size="50" maxlength="100"/>
+									<h:outputText rendered="#{!edit}" value="#{backingBean.languageMessagesMap[languageCom.language.languageCode]}" style="font-weight:bold;"  />
+							</h:column>
+							
+						</h:dataTable>	
+						</h:panelGrid>
+					</h:column>
+					</s:decorate>
+				
+				</a:outputPanel> 
+				 
+			  </custom:panelGroup> 
+			  
+				
+				
+	           	
+			</a:form> 	
+		</a:outputPanel>
+	    
+	</ui:composition>
+
+</html>
