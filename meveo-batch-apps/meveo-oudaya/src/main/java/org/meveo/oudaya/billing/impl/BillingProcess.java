@@ -27,11 +27,13 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.config.MeveoConfig;
 import org.meveo.core.inputhandler.TaskExecution;
 import org.meveo.core.process.step.AbstractProcessStep;
@@ -42,12 +44,15 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunList;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.Wallet;
@@ -282,6 +287,9 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                // we first compute Sub Category aggregates and create its empty
 	                // Tax and Category aggregates
 	                for (RatedTransaction ratedTransaction : ratedTransactions) {
+
+                        InvoiceSubcategoryCountry invoiceSubcategoryCountry= findInvoiceSubCategoryCountry(ratedTransaction.getInvoiceSubCategory().getId(), ratedTransaction.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+                        Tax tax = invoiceSubcategoryCountry.getTax();
 	                    if (ratedTransaction.getInvoice() == null && ratedTransaction.getWallet() != null
 	                            && ratedTransaction.getWallet().getId() == wallet.getId()) {
 	                        SubCategoryInvoiceAgregate invoiceAgregateF = null;
@@ -296,7 +304,9 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                            invoiceAgregateF.setBillingRun(billingRun);
 	                            invoiceAgregateF.setAccountingCode(ratedTransaction.getInvoiceSubCategory()
 	                                    .getAccountingCode());
-	                            invoiceAgregateF.setSubCategoryTax(ratedTransaction.getInvoiceSubCategory().getTax());
+
+	                            
+	                            invoiceAgregateF.setSubCategoryTax(tax);
 	                            subCatInvoiceAgregateMap.put(invoiceSubCatId, invoiceAgregateF);
 	                        }
 
@@ -314,7 +324,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 
 	                        // start agregate T
 	                        TaxInvoiceAgregate invoiceAgregateT = null;
-	                        Long taxId = ratedTransaction.getInvoiceSubCategory().getTax().getId();
+	                        Long taxId = tax.getId();
 	                        if (taxInvoiceAgregateMap.containsKey(taxId)) {
 	                            invoiceAgregateT = taxInvoiceAgregateMap.get(taxId);
 	                        } else {
@@ -323,13 +333,12 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                            invoiceAgregateT.setProvider(billingRun.getProvider());
 	                            invoiceAgregateT.setInvoice(invoice);
 	                            invoiceAgregateT.setBillingRun(billingRun);
-	                            invoiceAgregateT.setTax(ratedTransaction.getInvoiceSubCategory().getTax());
-	                            invoiceAgregateT.setAccountingCode(ratedTransaction.getInvoiceSubCategory().getTax()
-	                                    .getAccountingCode());
+	                            invoiceAgregateT.setTax(tax);
+	                            invoiceAgregateT.setAccountingCode(tax.getAccountingCode());
 
 	                            taxInvoiceAgregateMap.put(taxId, invoiceAgregateT);
 	                        }
-	                        if(ratedTransaction.getInvoiceSubCategory().getTax().getPercent().compareTo(BigDecimal.ZERO)==0){
+	                        if(tax.getPercent().compareTo(BigDecimal.ZERO)==0){
 	                        	invoiceAgregateT.addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
 	                        	invoiceAgregateT.addAmountWithTax(ratedTransaction.getAmountWithTax());
 	                        	invoiceAgregateT.addAmountTax(ratedTransaction.getAmountTax());
@@ -339,7 +348,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                        	invoiceAgregateT.setTaxPercent(invoiceAgregateF.getSubCategoryTax().getPercent());
 	                        }
 	                        invoiceAgregateT.setProvider(billingRun.getProvider());
-	                        invoiceAgregateF.setSubCategoryTax(ratedTransaction.getInvoiceSubCategory().getTax());
+	                        invoiceAgregateF.setSubCategoryTax(tax);
 	                        invoiceAgregateF.setInvoiceSubCategory(ratedTransaction.getInvoiceSubCategory());
 	                        // end agregate T
 
@@ -579,5 +588,19 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 		// Implemented only for EDF
 		
 	}
+	 public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) {
+	        try {
+	        	EntityManager em = MeveoPersistence.getEntityManager();
+	            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
+	            qb.addCriterionEntity("i.invoiceSubCategory.id", invoiceSubCategoryId);
+	            qb.addCriterionWildcard("i.countryCom.id", countryCode, true);
+	            List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb.getQuery(em).getResultList();
+	            return InvoiceSubcategoryCountries.size()>0?InvoiceSubcategoryCountries.get(0):null;
+	        } catch (NoResultException ex) {
+	            ex.printStackTrace();
+	        }
+	        return null;
+	    }
+	 
 
 }
