@@ -17,6 +17,7 @@ package org.meveo.admin.action.crm;
 
 import java.io.IOException;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -59,7 +60,6 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	@Inject
 	private AccountEntitySearchService accountEntitySearchService;
 
-	/** TODO */
 	private String customerPage;
 
 	/**
@@ -103,17 +103,15 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
+	 * @return
 	 * 
-	 * @Factory("customerSearchResults")
+	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Produces
 	@Named("customerSearchResults")
-	public void list() {
-		super.list();
+	@ConversationScoped
+	public PaginationDataModel<AccountEntity> list() {
+		return super.list();
 	}
 
 	/**
@@ -154,10 +152,11 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	 * when user selects customer account type in search, he is redirected to
 	 * custmer accounts search page).
 	 */
-	public void changeCustomerPage(ValueChangeEvent event) throws IOException {
+	public String changeCustomerPage(ValueChangeEvent event) throws IOException {
 		String page = (String) event.getNewValue();
-		Redirect.instance().setViewId(page);
-		Redirect.instance().execute();
+		/*TODO: Redirect.instance().setViewId(page);
+		Redirect.instance().execute();*/
+		return page;
 	}
 
 	public String getCustomerPage() {

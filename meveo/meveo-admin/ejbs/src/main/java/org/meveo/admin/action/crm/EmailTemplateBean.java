@@ -64,11 +64,6 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Factory("emailTemplate")
-	 * 
-	 * @Begin(nested = true)
-	 */
 	@Produces
 	@Named("emailTemplate")
 	public EmailTemplate init() {
@@ -76,40 +71,19 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	}
 
 	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "emailTemplates", required = false)
-	@Produces
-	@Named("emailTemplates")
-	protected PaginationDataModel<EmailTemplate> getDataModel() {
-		return entities;
-	}
-
-	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
+	 * @return
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	// @Factory("emailTemplates")
 	@Produces
 	@Named("emailTemplates")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// TODO: @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<EmailTemplate> list() {
+		return super.list();
 	}
 
 	/**

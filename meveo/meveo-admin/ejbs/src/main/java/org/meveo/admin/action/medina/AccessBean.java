@@ -58,28 +58,10 @@ public class AccessBean extends BaseBean<Access> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("access")
-	 */
 	@Produces
-	@Named("")
+	@Named("access")
 	public Access init() {
 		return initEntity();
-
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "accesses", required = false)
-	@Produces
-	@Named("")
-	protected PaginationDataModel<Access> getDataModel() {
-		return entities;
 	}
 
 	/**
@@ -87,29 +69,15 @@ public class AccessBean extends BaseBean<Access> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
+	 * @return
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("accesses")
-	 */
 	@Produces
-	@Named("")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-
+	@Named("accesses")
+	@ConversationScoped
+	public PaginationDataModel<Access> list() {
+		return super.list();
 	}
 
 	/**

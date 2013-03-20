@@ -58,11 +58,6 @@ public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * @Begin(nested = true)
-	 * 
-	 * @Factory("zoningPlan")
-	 */
 	@Produces
 	@Named("zoningPlan")
 	public ZonningPlan init() {
@@ -71,21 +66,11 @@ public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 	}
 
 	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "zoningPlans", required = false)
-	@Produces
-	@Named("zoningPlans")
-	protected PaginationDataModel<ZonningPlan> getDataModel() {
-		return entities;
-	}
-
-	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
+	 * 
+	 * @return
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
@@ -93,19 +78,9 @@ public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 	// @Factory("zoningPlans")
 	@Produces
 	@Named("zoningPlans")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// TODO: @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<ZonningPlan> list() {
+		return super.list();
 	}
 
 	/**

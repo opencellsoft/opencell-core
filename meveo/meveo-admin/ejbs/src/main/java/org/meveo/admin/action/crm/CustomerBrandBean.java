@@ -65,11 +65,6 @@ public class CustomerBrandBean extends BaseBean<CustomerBrand> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("customerBrand")
-	 */
 	@Produces
 	@Named("customerBrand")
 	public CustomerBrand init() {
@@ -77,44 +72,18 @@ public class CustomerBrandBean extends BaseBean<CustomerBrand> {
 	}
 
 	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "customerBrands", required = false)
-	@Produces
-	@Named("customerBrands")
-	protected PaginationDataModel<CustomerBrand> getDataModel() {
-		return entities;
-	}
-
-	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
+	 * @return 
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("customerBrands")
-	 */
 	@Produces
 	@Named("customerBrands")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// TODO: @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<CustomerBrand> list() {
+		return super.list();
 	}
 
 	/**

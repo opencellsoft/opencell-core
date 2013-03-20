@@ -62,11 +62,6 @@ public class CustomerBean extends BaseBean<Customer> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Factory("customer")
-	 * 
-	 * @Begin(nested=true)
-	 */
 	@Produces
 	@Named("customer")
 	public Customer init() {
@@ -74,31 +69,16 @@ public class CustomerBean extends BaseBean<Customer> {
 	}
 
 	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "customers", required = false)
-	@Produces
-	@Named("customers")
-	protected PaginationDataModel<Customer> getDataModel() {
-		return entities;
-	}
-
-	/**
 	 * Invokes BaseBean.list() method that handles all data model loading.
+	 * @return 
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("customerList")
-	 */
 	@Produces
 	@Named("customerList")
-	public void list() {
-		super.list();
+	@ConversationScoped
+	public PaginationDataModel<Customer> list() {
+		return super.list();
 	}
 
 	/**
@@ -108,11 +88,6 @@ public class CustomerBean extends BaseBean<Customer> {
 	 * list isn't called for sorting and pagination.
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("customers")
 	 */
 	@Produces
 	@Named("customers")
@@ -134,15 +109,10 @@ public class CustomerBean extends BaseBean<Customer> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	// TODO: @End(beforeRedirect = true, root=false)
 	public String saveOrUpdate() {
 		saveOrUpdate(entity);
-		Redirect.instance().setParameter("edit", "false");
-		Redirect.instance().setParameter("objectId", entity.getId());
-		Redirect.instance().setViewId("/pages/crm/customers/customerDetail.xhtml");
-		Redirect.instance().execute();
-		return null;
-
+		return "/pages/crm/customers/customerDetail.xhtml?edit=false&objectId=" + entity.getId()
+				+ "&faces-redirect=true";
 	}
 
 	/**

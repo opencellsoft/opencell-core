@@ -58,28 +58,10 @@ public class TimePlanBean extends BaseBean<TimePlan> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("timePlan")
-	 */
 	@Produces
 	@Named("timePlan")
 	public TimePlan init() {
 		return initEntity();
-
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	/* @Out(value = "timePlans", required = false) */
-	@Produces
-	@Named("timePlans")
-	protected PaginationDataModel<TimePlan> getDataModel() {
-		return entities;
 	}
 
 	/**
@@ -87,24 +69,15 @@ public class TimePlanBean extends BaseBean<TimePlan> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
+	 * @return
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/* @Factory("timePlans") */
 	@Produces
 	@Named("timePlans")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	/* @End(beforeRedirect = true, root=false) */
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<TimePlan> list() {
+		return super.list();
 	}
 
 	/**

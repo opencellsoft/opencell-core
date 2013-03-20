@@ -58,53 +58,25 @@ public class EdrRatingPlanBean extends BaseBean<EDRRatingPlan> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * @Begin(nested = true)
-	 * 
-	 * @Factory("edrRatingPlan")
-	 */
 	@Produces
 	@Named("edrRatingPlan")
 	public EDRRatingPlan init() {
 		return initEntity();
-
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "edrRatingPlans", required = false)
-	@Produces
-	@Named("edrRatingPlans")
-	protected PaginationDataModel<EDRRatingPlan> getDataModel() {
-		return entities;
 	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
+	 * @return 
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	// @Factory("edrRatingPlans")
 	@Produces
 	@Named("edrRatingPlans")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<EDRRatingPlan> list() {
+		return super.list();
 	}
 
 	/**
