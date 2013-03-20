@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 
+import org.jboss.seam.international.status.Messages;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
@@ -47,11 +48,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	@Inject
 	protected org.slf4j.Logger log;
 
-	/** Status messages. */
-	/*
-	 * TODO @Inject protected StatusMessages statusMessages;
-	 */
-	
+	@Inject
+	protected Messages statusMessages;
+
 	@Inject
 	protected Provider currentProvider;
 
