@@ -22,6 +22,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 
 /**
  * Language entity.
@@ -63,6 +64,21 @@ public class Language  extends AuditableEntity{
 		this.descriptionEn = descriptionEn;
 	}
 
-
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Language other = (Language) obj;
+        if (languageCode == null) {
+            if (other.languageCode != null)
+                return false;
+        } else if (!languageCode.equals(other.languageCode))
+            return false;
+        return true;
+    }
 	
 }

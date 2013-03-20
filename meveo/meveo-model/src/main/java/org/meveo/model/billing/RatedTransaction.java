@@ -690,6 +690,10 @@ public class RatedTransaction extends BaseEntity {
 	public void setDoNotTriggerInvoicing(boolean doNotTriggerInvoicing) {
 		this.doNotTriggerInvoicing = doNotTriggerInvoicing;
 	}
+
+	public void setPrAmountWithTax(BigDecimal prAmountWithTax) {
+		this.prAmountWithTax = prAmountWithTax;
+	}
     
     
 }

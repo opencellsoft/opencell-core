@@ -78,7 +78,6 @@ import org.w3c.dom.Text;
 public class XMLInvoiceCreator {
 
     private static final String dueDateFormat = "dd/MM/yyyy";
-    protected static EntityManager em;
     protected final Logger logger = Logger.getLogger(this.getClass());
 
     public void createXMLInvoice(Invoice invoice, File billingRundir) throws BusinessException {
@@ -457,11 +456,15 @@ public class XMLInvoiceCreator {
     }
     
 	private static String  getMessageDescription(String messageCode,String languageCode){ 
+		EntityManager em = MeveoPersistence.getEntityManager();
+		String result="";
 		QueryBuilder qb = new QueryBuilder(CatMessages.class,"c");
-    	qb.addCriterionWildcard("c.messageCode", messageCode, true);
-    	qb.addCriterionWildcard("c.languageCode", languageCode, true);
-        List<CatMessages> catMessages=qb.getQuery(em).getResultList(); 
-        return catMessages.size()>0?catMessages.get(0).getDescription():null;	
+	    	qb.addCriterionWildcard("c.messageCode", messageCode, true);
+	    	qb.addCriterionWildcard("c.languageCode", languageCode, true);
+	        List<CatMessages> catMessages=qb.getQuery(em).getResultList(); 
+	        result= catMessages.size()>0?catMessages.get(0).getDescription():null;
+		
+		return result!=null?result:"";	
 	}
 
     public static void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element parent,
@@ -526,7 +529,7 @@ public class XMLInvoiceCreator {
                             boolean createSubCatElement = false;
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
-                                        : ratedTrnsaction.getAmountWithoutTax();
+                                        : ratedTrnsaction.getPrAmountWithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
                                     createSubCatElement = true;
                                     break;
@@ -552,7 +555,7 @@ public class XMLInvoiceCreator {
 
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
-                                        : ratedTrnsaction.getAmountWithoutTax();
+                                        : ratedTrnsaction.getPrAmountWithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
 
                                     Element line = doc.createElement("line");
@@ -580,7 +583,7 @@ public class XMLInvoiceCreator {
 
                                     Element lineAmountWithTax = doc.createElement("amountWithTax");
                                     Text lineAmountWithTaxTxt = doc.createTextNode(round(entreprise ? ratedTrnsaction
-                                            .getAmountWithTax() : ratedTrnsaction.getAmountWithoutTax()));
+                                            .getAmountWithTax() : ratedTrnsaction.getPrAmountWithoutTax()));
                                     lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                                     line.appendChild(lineAmountWithTax);
 

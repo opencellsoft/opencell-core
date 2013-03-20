@@ -176,19 +176,19 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
                     Wallet wallet = userAccount.getWallet();
 
                     List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) em.createQuery(
-                            "from RatedTransaction where wallet=:walletId and invoice is null and status=:status and doNotTriggerInvoicing=:invoicing and amount1WithoutTax<>:zeroValue")
+                            "from RatedTransaction where wallet=:walletId and invoice is null and status=:status and doNotTriggerInvoicing=:invoicing and amountWithoutTax<>:zeroValue")
                             .setParameter("walletId", wallet).setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("invoicing", false).setParameter("zeroValue", BigDecimal.ZERO)
                             .getResultList();
                     ratedTransactionsCount = ratedTransactionsCount + ratedTransactions.size();
                     for (RatedTransaction ratedTransaction : ratedTransactions) {
                         billingRunList.setRatedAmountTax(billingRunList.getRatedAmountTax().add(
-                                ratedTransaction.getAmount1Tax()));
+                                ratedTransaction.getAmountTax()));
                         billingRunList.setRatedAmountWithoutTax(billingRunList.getRatedAmountWithoutTax().add(
-                                ratedTransaction.getAmount1WithoutTax()));
+                                ratedTransaction.getAmountWithoutTax()));
                         billingRunList.setRatedAmountWithTax(billingRunList.getRatedAmountWithTax().add(
-                                ratedTransaction.getAmount1WithTax()));
+                                ratedTransaction.getAmountWithTax()));
                         billingRunList.setRatedAmount2WithoutTax(billingRunList.getRatedAmount2WithoutTax().add(
-                                ratedTransaction.getAmount2WithoutTax()));
+                                ratedTransaction.getAmountWithoutTax()));
                         ratedTransaction.setBillingRun(billingRun);
                         billingRunList.setBillingRun(billingRun);
                         billable = true;
@@ -215,12 +215,12 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 
             }
         }
-        billingRun.setAmountTax(totalAmountTax);
-        billingRun.setAmountWithoutTax(totalAmountWithoutTax);
+        billingRun.setPrAmountTax(totalAmountTax);
+        billingRun.setPrAmountWithoutTax(totalAmountWithoutTax);
         if (entreprise) {
-            billingRun.setAmountWithTax(totalAmountWithTax);
+            billingRun.setPrAmountWithTax(totalAmountWithTax);
         } else {
-            billingRun.setAmountWithTax(totalAmount2WithoutTax);
+            billingRun.setPrAmountWithTax(totalAmount2WithoutTax);
         }
         billingRun.setBillingAccountNumber(billingAccounts.size());
         billingRun.setBillableBillingAcountNumber(billableBillingAccount);
@@ -303,13 +303,13 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                        ratedTransaction.setInvoice(invoice);
 	                        fillAgregates(invoiceAgregateF, wallet);
 	                        invoiceAgregateF.addQuantity(ratedTransaction.getUsageQuantity());
-	                        logger.info("createAgregates code=" + ratedTransaction.getAmount1WithoutTax() + ",amoutHT="
-	                                + ratedTransaction.getAmount1WithoutTax());
-	                        invoiceAgregateF.addAmountWithoutTax(ratedTransaction.getAmount1WithoutTax());
+	                        logger.info("createAgregates code=" + ratedTransaction.getAmountWithoutTax() + ",amoutHT="
+	                                + ratedTransaction.getAmountWithoutTax());
+	                        invoiceAgregateF.addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
 	                        invoiceAgregateF.setProvider(billingRun.getProvider());
 	                        if (!entreprise) {
 	                            nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(ratedTransaction
-	                                    .getAmount2WithoutTax());
+	                                    .getPrAmountWithoutTax());
 	                        }
 
 	                        // start agregate T
@@ -330,9 +330,9 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                            taxInvoiceAgregateMap.put(taxId, invoiceAgregateT);
 	                        }
 	                        if(ratedTransaction.getInvoiceSubCategory().getTax().getPercent().compareTo(BigDecimal.ZERO)==0){
-	                        	invoiceAgregateT.addAmountWithoutTax(ratedTransaction.getAmount1WithoutTax());
-	                        	invoiceAgregateT.addAmountWithTax(ratedTransaction.getAmount1WithTax());
-	                        	invoiceAgregateT.addAmountTax(ratedTransaction.getAmount1Tax());
+	                        	invoiceAgregateT.addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+	                        	invoiceAgregateT.addAmountWithTax(ratedTransaction.getAmountWithTax());
+	                        	invoiceAgregateT.addAmountTax(ratedTransaction.getAmountTax());
 	                        }
 	                        fillAgregates(invoiceAgregateT, wallet);
 	                        if(invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO)!=0) {
@@ -478,8 +478,8 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	            logger.info("invoice.getRatedTransactions().size()=" + invoice.getRatedTransactions().size());
 	            boolean createXmlInvoice = false;
 	            for (RatedTransaction ratedTrnsaction : invoice.getRatedTransactions()) {
-	                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmount1WithTax() : ratedTrnsaction
-	                        .getAmount2WithoutTax();
+	                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax() : ratedTrnsaction
+	                        .getPrAmountWithoutTax();
 	                if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO) && !ratedTrnsaction.isDoNotTriggerInvoicing()) {
 	                    createXmlInvoice = true;
 	                    break;
