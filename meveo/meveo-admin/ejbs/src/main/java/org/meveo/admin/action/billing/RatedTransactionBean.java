@@ -28,10 +28,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 
 /**
- * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author R.AITYAAZZA
  * @created 16 dec. 10
@@ -40,88 +38,57 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 @ConversationScoped
 public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link RatedTransaction} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private RatedTransactionService ratedTransactionService;
+    /**
+     * Injected @{link RatedTransaction} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public RatedTransactionBean() {
-		super(RatedTransaction.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public RatedTransactionBean() {
+        super(RatedTransaction.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("ratedTransaction")
-	 */
-	@Produces
-	@Named("ratedTransaction")
-	public RatedTransaction init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("ratedTransaction")
+    public RatedTransaction init() {
+        return initEntity();
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "ratedTransactions", required = false)
-	@Produces
-	@Named("ratedTransactions")
-	protected PaginationDataModel<RatedTransaction> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    /*
+     * TODO: @Begin(join = true)
+     * 
+     * @Factory("ratedTransactions")
+     */
+    @Produces
+    @Named("ratedTransactions")
+    @ConversationScoped
+    public PaginationDataModel<RatedTransaction> list() {
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("ratedTransactions")
-	 */
-	@Produces
-	@Named("ratedTransactions")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	//TODO: @End(beforeRedirect = true, root = false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<RatedTransaction> getPersistenceService() {
-		return ratedTransactionService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<RatedTransaction> getPersistenceService() {
+        return ratedTransactionService;
+    }
 
 }

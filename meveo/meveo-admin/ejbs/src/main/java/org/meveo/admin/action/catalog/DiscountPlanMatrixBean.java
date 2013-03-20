@@ -28,10 +28,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.DiscountPlanMatrixService;
 
 /**
- * Standard backing bean for {@link DiscountPlanMatrix} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link DiscountPlanMatrix} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Nov 29, 2010
@@ -41,99 +39,62 @@ import org.meveo.service.catalog.impl.DiscountPlanMatrixService;
 @ConversationScoped
 public class DiscountPlanMatrixBean extends BaseBean<DiscountPlanMatrix> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link DiscountPlanMatrix} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private DiscountPlanMatrixService discountPlanMatrixService;
+    /**
+     * Injected @{link DiscountPlanMatrix} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private DiscountPlanMatrixService discountPlanMatrixService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public DiscountPlanMatrixBean() {
-		super(DiscountPlanMatrix.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public DiscountPlanMatrixBean() {
+        super(DiscountPlanMatrix.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("discountPlanMatrix")
-	 */
-	@Produces
-	@Named("discountPlanMatrix")
-	public DiscountPlanMatrix init() {
-		return initEntity();
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("discountPlanMatrix")
+    public DiscountPlanMatrix init() {
+        return initEntity();
 
-	}
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "discountPlanMatrixes", required = false)
-	@Produces
-	@Named("discountPlanMatrixes")
-	protected PaginationDataModel<DiscountPlanMatrix> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("discountPlanMatrixes")
+    @ConversationScoped
+    public PaginationDataModel<DiscountPlanMatrix> list() {
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("discountPlanMatrixes")
-	 */
-	@Produces
-	@Named("discountPlanMatrixes")
-	public void list() {
-		super.list();
-	}
+    /**
+     * Override default list view name. (By default view name is class name starting lower case + ending 's').
+     * 
+     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+     */
+    protected String getDefaultViewName() {
+        return "discountPlanMatrixes";
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
-
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "discountPlanMatrixes";
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<DiscountPlanMatrix> getPersistenceService() {
-		return discountPlanMatrixService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<DiscountPlanMatrix> getPersistenceService() {
+        return discountPlanMatrixService;
+    }
 
 }

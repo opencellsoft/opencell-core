@@ -29,10 +29,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 
 /**
- * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Gediminas Ubartas
  * @created 2011-01-28
@@ -42,90 +40,52 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 @Named
 @ConversationScoped
 public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link OneShotChargeTemplate} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+    /**
+     * Injected @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ChargeTemplateBean() {
-		super(ChargeTemplate.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ChargeTemplateBean() {
+        super(ChargeTemplate.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * @Begin(nested = true)
-	 * 
-	 * @Factory("chargeTemplate")
-	 */
-	@Produces
-	@Named("chargeTemplate")
-	public ChargeTemplate init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("chargeTemplate")
+    public ChargeTemplate init() {
+        return initEntity();
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "chargeTemplates", required = false)
-	@Produces
-	@Named("chargeTemplates")
-	protected PaginationDataModel<ChargeTemplate> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("chargeTemplates")
+    @ConversationScoped
+    public PaginationDataModel<ChargeTemplate> list() {
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Factory("chargeTemplates")
-	 * 
-	 * @Override
-	 * 
-	 * @Begin(join = true)
-	 */
-	@Produces
-	@Named("chargeTemplates")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<ChargeTemplate> getPersistenceService() {
-		return chargeTemplateService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<ChargeTemplate> getPersistenceService() {
+        return chargeTemplateService;
+    }
 
 }

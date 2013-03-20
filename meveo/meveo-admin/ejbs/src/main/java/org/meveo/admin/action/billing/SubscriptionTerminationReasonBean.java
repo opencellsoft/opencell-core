@@ -34,92 +34,54 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 @Named
 @ConversationScoped
 public class SubscriptionTerminationReasonBean extends BaseBean<SubscriptionTerminationReason> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}
-	 *        .
-	 */
-	@Inject
-	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
+    /**
+     * Injected
+     * 
+     * @{link OneShotChargeTemplate} service. Extends {@link PersistenceService} .
+     */
+    @Inject
+    private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public SubscriptionTerminationReasonBean() {
-		super(SubscriptionTerminationReason.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public SubscriptionTerminationReasonBean() {
+        super(SubscriptionTerminationReason.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("subscriptionTerminationReason")
-	 */
-	@Produces
-	@Named("subscriptionTerminationReason")
-	public SubscriptionTerminationReason init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("subscriptionTerminationReason")
+    public SubscriptionTerminationReason init() {
+        return initEntity();
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "subscriptionTerminationReasons", required = false)
-	@Produces
-	@Named("subscriptionTerminationReasons")
-	protected PaginationDataModel<SubscriptionTerminationReason> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("subscriptionTerminationReasons")
+    @ConversationScoped
+    public PaginationDataModel<SubscriptionTerminationReason> list() {
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Factory("subscriptionTerminationReasons")
-	 * 
-	 * @Override
-	 * 
-	 * @Begin(join = true)
-	 */
-	@Produces
-	@Named("subscriptionTerminationReasons")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<SubscriptionTerminationReason> getPersistenceService() {
-		return subscriptionTerminationReasonService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<SubscriptionTerminationReason> getPersistenceService() {
+        return subscriptionTerminationReasonService;
+    }
 
 }

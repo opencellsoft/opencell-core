@@ -64,11 +64,6 @@ public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("usageDiscountPlanItem")
-	 */
 	@Produces
 	@Named("usageDiscountPlanItem")
 	public UsageDiscountPlanItem init() {
@@ -76,17 +71,6 @@ public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "usageDiscountPlanItems", required = false)
-	@Produces
-	@Named("usageDiscountPlanItems")
-	protected PaginationDataModel<UsageDiscountPlanItem> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -95,27 +79,17 @@ public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	// @Factory("usageDiscountPlanItems")
 	@Produces
 	@Named("usageDiscountPlanItems")
-	public void list() {
+	@ConversationScoped
+	public PaginationDataModel<UsageDiscountPlanItem>  list() {
 		getFilters();
 		if (!filters.containsKey("disabled")) {
 			filters.put("disabled", false);
 		}
-		super.list();
+		return super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

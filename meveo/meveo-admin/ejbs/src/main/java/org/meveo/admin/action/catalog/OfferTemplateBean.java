@@ -31,10 +31,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
 /**
- * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Dec 7, 2010
@@ -44,107 +42,71 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 @ConversationScoped
 public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link OfferTemplate} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private OfferTemplateService offerTemplateService;
+    /**
+     * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private OfferTemplateService offerTemplateService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public OfferTemplateBean() {
-		super(OfferTemplate.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public OfferTemplateBean() {
+        super(OfferTemplate.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("offerTemplate")
-	 */
-	@Produces
-	@Named("offerTemplate")
-	public OfferTemplate init() {
-		return initEntity();
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("offerTemplate")
+    public OfferTemplate init() {
+        return initEntity();
 
-	}
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "offerTemplates", required = false)
-	@Produces
-	@Named("offerTemplates")
-	protected PaginationDataModel<OfferTemplate> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("offerTemplates")
+    @ConversationScoped
+    public PaginationDataModel<OfferTemplate> list() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("offerTemplates")
-	 */
-	@Produces
-	@Named("offerTemplates")
-	public void list() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		super.list();
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<OfferTemplate> getPersistenceService() {
+        return offerTemplateService;
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+     */
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("serviceTemplates");
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<OfferTemplate> getPersistenceService() {
-		return offerTemplateService;
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("serviceTemplates");
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("serviceTemplates");
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("serviceTemplates");
+    }
 
 }

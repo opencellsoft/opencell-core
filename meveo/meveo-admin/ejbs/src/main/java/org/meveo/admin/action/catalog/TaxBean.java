@@ -70,11 +70,6 @@ public class TaxBean extends BaseBean<Tax> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Factory("tax")
-	 * 
-	 * @Begin(nested = true)
-	 */
 	@Produces
 	@Named("tax")
 	public Tax init() {
@@ -83,46 +78,20 @@ public class TaxBean extends BaseBean<Tax> {
 		return entity;
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "taxes", required = false)
-	@Produces
-	@Named("taxes")
-	protected PaginationDataModel<Tax> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
+	 * @return 
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Factory("taxes")
-	 * 
-	 * @Begin(join = true)
-	 */
 	@Produces
 	@Named("taxes")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		entity.setAccountingCode(generateAccountingCode());
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<Tax> list() {
+		return super.list();
 	}
 
 	/**

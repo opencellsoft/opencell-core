@@ -61,28 +61,12 @@ public class CalendarBean extends BaseBean<Calendar> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * @Factory("calendar")
-	 * 
-	 * @Begin(nested = true)
-	 */
 	@Produces
 	@Named("calendar")
 	public Calendar init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "calendars", required = false)
-	@Produces
-	@Named("calendars")
-	protected PaginationDataModel<Calendar> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -91,27 +75,13 @@ public class CalendarBean extends BaseBean<Calendar> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * @Begin(join = true)
-	 * 
-	 * @Factory("calendars")
-	 */
 	@Produces
 	@Named("calendars")
-	public void list() {
-		super.list();
+	@ConversationScoped
+	public PaginationDataModel<Calendar> list() {
+		return super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
