@@ -22,434 +22,396 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.seam.security.Identity;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.crm.Provider;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**
- * Base bean class. Other seam backing beans extends this class if they need
- * functionality it provides.
+ * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
  * 
  * @author Ignas
  * @created 2009.09.21
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Logger. */
-	@Inject
-	protected org.slf4j.Logger log;
+    /** Logger. */
+    @Inject
+    protected org.slf4j.Logger log;
 
-	/** Status messages. */
-	/*
-	 * TODO @Inject protected StatusMessages statusMessages;
-	 */
-	
-	@Inject
-	protected Provider currentProvider;
+    @Inject
+    private Messages messages;
 
-	/** Search filters. */
-	protected Map<String, Object> filters;
+    @Inject
+    protected Identity identity;
 
-	/** List of loaded entities. */
-	protected PaginationDataModel<T> entities;
+    /** Search filters. */
+    protected Map<String, Object> filters;
 
-	/** Entity to edit/view. */
-	protected T entity;
+    /** List of loaded entities. */
+    protected PaginationDataModel<T> entities;
 
-	/** Class of backing bean. */
-	private Class<T> clazz;
+    /** Entity to edit/view. */
+    protected T entity;
 
-	/** List of checked entities in DataModel */
-	protected Map<Long, Boolean> checked = new HashMap<Long, Boolean>();
+    /** Class of backing bean. */
+    private Class<T> clazz;
 
-	/**
-	 * Request parameter. Used for loading in object by its id.
-	 */
-	// TODO: request parameter. @RequestParameter
-	private Long objectId;
+    /** List of checked entities in DataModel */
+    protected Map<Long, Boolean> checked = new HashMap<Long, Boolean>();
 
-	private String sortField;
-	private String sortOrder;
+    /**
+     * Request parameter. Used for loading in object by its id.
+     */
+    @Inject
+    @RequestParam
+    private Instance<Long> objectId;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param clazz
-	 *            Class.
-	 */
-	public BaseBean(Class<T> clazz) {
-		super();
-		this.clazz = clazz;
-	}
+    private String sortField;
+    private String sortOrder;
 
-	/**
-	 * Returns entity class
-	 * 
-	 * @return Class
-	 */
-	public Class<T> getClazz() {
-		return clazz;
-	}
+    /**
+     * Constructor
+     */
+    public BaseBean(){
+        super();
+    }
+    
+    /**
+     * Constructor.
+     * 
+     * @param clazz Class.
+     */
+    public BaseBean(Class<T> clazz) {
+        super();
+        this.clazz = clazz;
+    }
 
-	/**
-	 * Initiates entity from request parameter id.
-	 * 
-	 * @param objectClass
-	 *            Class of the object.
-	 * @return Entity from database.
-	 */
-	@SuppressWarnings("unchecked")
-	public T initEntity() {
+    /**
+     * Returns entity class
+     * 
+     * @return Class
+     */
+    public Class<T> getClazz() {
+        return clazz;
+    }
 
-		if (getObjectId() != null) {
-			if (getFormFieldsToFetch() == null) {
-				entity = (T) getPersistenceService().findById(getObjectId());
-			} else {
-				entity = (T) getPersistenceService()
-						.findById(getObjectId(), getFormFieldsToFetch());
-			}
-			// getPersistenceService().detach(entity);
-		} else {
-			try {
-				entity = getInstance();
-				if (entity instanceof BaseEntity) {
-					((BaseEntity) entity).setProvider(currentProvider);
-				}
-				// FIXME: If entity is Auditable, set here the creator and
-				// creation time
-			} catch (InstantiationException e) {
-				log.error("Unexpected error!", e);
-				throw new IllegalStateException("could not instantiate a class, abstract class");
-			} catch (IllegalAccessException e) {
-				log.error("Unexpected error!", e);
-				throw new IllegalStateException(
-						"could not instantiate a class, constructor not accessible");
-			}
-		}
-		return entity;
-	}
+    /**
+     * Initiates entity from request parameter id.
+     * 
+     * @param objectClass Class of the object.
+     * @return Entity from database.
+     */
+    @SuppressWarnings("unchecked")
+    public T initEntity() {
 
-	/**
-	 * Refresh entities data model and adds search filters. Usually it is enough
-	 * to invoke this method in factory on concrete seam bean which subclasses
-	 * BaseBean.
-	 */
-	public void list() {
-		if (entities == null) {
-			entities = new PaginationDataModel<T>(getPersistenceService());
-		}
-		getFilters();
-		// if (!filters.containsKey("provider")) {
-		// filters.put("provider", currentProvider);
-		// }
-		entities.addFilters(filters);
-		entities.addFetchFields(getListFieldsToFetch());
-		entities.forceRefresh();
-	}
+        if (getObjectId() != null) {
+            if (getFormFieldsToFetch() == null) {
+                entity = (T) getPersistenceService().findById(getObjectId());
+            } else {
+                entity = (T) getPersistenceService().findById(getObjectId(), getFormFieldsToFetch());
+            }
+            // getPersistenceService().detach(entity);
+        } else {
+            try {
+                entity = getInstance();
+                if (entity instanceof BaseEntity) {
+                    ((BaseEntity) entity).setProvider(getCurrentUser().getCurrentProvider());
+                }
+                // FIXME: If entity is Auditable, set here the creator and
+                // creation time
+            } catch (InstantiationException e) {
+                log.error("Unexpected error!", e);
+                throw new IllegalStateException("could not instantiate a class, abstract class");
+            } catch (IllegalAccessException e) {
+                log.error("Unexpected error!", e);
+                throw new IllegalStateException("could not instantiate a class, constructor not accessible");
+            }
+        }
+        return entity;
+    }
 
-	/**
-	 * Refresh entities data model and removes search filters.
-	 */
-	public void clean() {
-		if (entities == null) {
-			entities = new PaginationDataModel<T>(getPersistenceService());
-		}
-		filters.clear();
-		filters.put("provider", currentProvider);
-		entities.addFilters(filters);
-		entities.addFetchFields(getListFieldsToFetch());
-		entities.forceRefresh();
-	}
+    /**
+     * Refresh entities data model and adds search filters. Usually it is enough to invoke this method in factory on concrete seam bean which subclasses BaseBean.
+     */
+    public void list() {
+        if (entities == null) {
+            entities = new PaginationDataModel<T>(getPersistenceService());
+        }
+        getFilters();
+        if (!filters.containsKey("provider")) {
+            filters.put("provider", getCurrentUser().getCurrentProvider());
+        }
+        entities.addFilters(filters);
+        entities.addFetchFields(getListFieldsToFetch());
+        entities.forceRefresh();
+    }
 
-	/**
-	 * Save or update entity depending on if entity is transient.
-	 * 
-	 * @param entity
-	 *            Entity to save.
-	 */
-	@SuppressWarnings("unchecked")
-	public String saveOrUpdate(IEntity entity) {
-		if (entity.isTransient()) {
-			getPersistenceService().create(entity);
-			// TODO
-			/*
-			 * statusMessages.addFromResourceBundle(Severity.INFO,
-			 * "save.successful");
-			 */
-		} else {
-			getPersistenceService().update(entity);
-			// TODO
-			/*
-			 * statusMessages.addFromResourceBundle(Severity.INFO,
-			 * "update.successful");
-			 */
-		}
+    /**
+     * Refresh entities data model and removes search filters.
+     */
+    public void clean() {
+        if (entities == null) {
+            entities = new PaginationDataModel<T>(getPersistenceService());
+        }
+        filters.clear();
+        filters.put("provider", getCurrentUser().getCurrentProvider());
+        entities.addFilters(filters);
+        entities.addFetchFields(getListFieldsToFetch());
+        entities.forceRefresh();
+    }
 
-		return back();
-	}
+    /**
+     * Save or update entity depending on if entity is transient.
+     * 
+     * @param entity Entity to save.
+     */
+    @SuppressWarnings("unchecked")
+    public String saveOrUpdate(IEntity entity) {
+        if (entity.isTransient()) {
+            getPersistenceService().create(entity);
+            messages.info(new BundleKey("messages", "save.successful"));
 
-	/**
-	 * Method to get Back link. If default view name is different than override
-	 * the method. Default name: entity's name + s;
-	 * 
-	 * @return string for navigation
-	 */
-	public String back() {
-		Object backViewParameter = null;
-		if (FacesContext.getCurrentInstance() != null) {
-			backViewParameter = FacesContext.getCurrentInstance().getExternalContext()
-					.getRequestMap().get("backView");
-		}
-		if (backViewParameter != null) {
-			return backViewParameter.toString();
-		} else {
-			return getDefaultViewName();
-		}
-	}
+        } else {
+            getPersistenceService().update(entity);
+            messages.info(new BundleKey("messages", "update.successful"));
+        }
 
-	/**
-	 * Go back and end conversation. BeforeRedirect flag is set to true, so
-	 * conversation is first ended and then redirect is proceeded, that means
-	 * that after redirect new conversation will have to be created (temp or
-	 * long running) so that view will have all most up to date info because it
-	 * will load everything from db when starting new conversation.
-	 * 
-	 * @return string for navigation
-	 */
-	// TODO: @End(beforeRedirect = true, root = false)
-	public String backAndEndConversation() {
-		return back();
-	}
+        return back();
+    }
 
-	/**
-	 * TODO
-	 */
-	public String getEditViewName() {
-		String className = clazz.getSimpleName();
-		StringBuilder sb = new StringBuilder(className);
-		sb.append("Detail");
-		char[] dst = new char[1];
-		sb.getChars(0, 1, dst, 0);
-		sb.replace(0, 1, new String(dst).toLowerCase());
-		return sb.toString();
-	}
+    /**
+     * Method to get Back link. If default view name is different than override the method. Default name: entity's name + s;
+     * 
+     * @return string for navigation
+     */
+    public String back() {
+        Object backViewParameter = null;
+        if (FacesContext.getCurrentInstance() != null) {
+            backViewParameter = FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("backView");
+        }
+        if (backViewParameter != null) {
+            return backViewParameter.toString();
+        } else {
+            return getDefaultViewName();
+        }
+    }
 
-	/**
-	 * Generating back link.
-	 */
-	protected String getDefaultViewName() {
-		String className = clazz.getSimpleName();
-		StringBuilder sb = new StringBuilder(className);
-		char[] dst = new char[1];
-		sb.getChars(0, 1, dst, 0);
-		sb.replace(0, 1, new String(dst).toLowerCase());
-		sb.append("s");
-		return sb.toString();
-	}
+    /**
+     * Go back and end conversation. BeforeRedirect flag is set to true, so conversation is first ended and then redirect is proceeded, that means that after redirect new
+     * conversation will have to be created (temp or long running) so that view will have all most up to date info because it will load everything from db when starting new
+     * conversation.
+     * 
+     * @return string for navigation
+     */
+    // TODO: @End(beforeRedirect = true, root = false)
+    public String backAndEndConversation() {
+        return back();
+    }
 
-	/**
-	 * Delete Entity using it's ID. Add error message to {@link statusMessages}
-	 * if unsuccessful.
-	 * 
-	 * @param id
-	 *            Entity id to delete
-	 */
-	public void delete(Long id) {
-		try {
-			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
-			getPersistenceService().remove(id);
-			// TODO
-			/*
-			 * statusMessages.addFromResourceBundle(Severity.INFO,
-			 * "delete.successful");
-			 */
-		} catch (Throwable t) {
-			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				// TODO
-				/*
-				 * statusMessages.addFromResourceBundle(Severity.ERROR,
-				 * "error.delete.entityUsed");
-				 */
-			} else {
-				log.info("unexpected exception when deleting!", t);
-				// TODO
-				/*
-				 * statusMessages.addFromResourceBundle(Severity.ERROR,
-				 * "error.delete.unexpected");
-				 */
-			}
-		}
-		entities.forceRefresh();
-	}
+    /**
+     * TODO
+     */
+    public String getEditViewName() {
+        String className = clazz.getSimpleName();
+        StringBuilder sb = new StringBuilder(className);
+        sb.append("Detail");
+        char[] dst = new char[1];
+        sb.getChars(0, 1, dst, 0);
+        sb.replace(0, 1, new String(dst).toLowerCase());
+        return sb.toString();
+    }
 
-	/**
-	 * Delete checked entities. Add error message to {@link statusMessages} if
-	 * unsuccessful.
-	 */
-	@SuppressWarnings("unchecked")
-	public void deleteMany() {
-		try {
-			// log.info(String.format("Deleting entities %s with id = %s",
-			// clazz.getName(), id));
-			Set<Long> idsToDelete = new HashSet<Long>();
-			for (Long id : checked.keySet()) {
-				if (checked.get(id)) {
-					idsToDelete.add(id);
-				}
-			}
-			getPersistenceService().remove(idsToDelete);
-			// TODO
-			/*
-			 * statusMessages.addFromResourceBundle(Severity.INFO,
-			 * "delete.entitities.successful");
-			 */
-		} catch (Throwable t) {
-			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				// TODO
-				/*
-				 * statusMessages.addFromResourceBundle(Severity.ERROR,
-				 * "error.delete.entityUsed");
-				 */
-			} else {
-				log.info("unexpected exception when deleting!", t);
-				// TODO
-				/*
-				 * statusMessages.addFromResourceBundle(Severity.ERROR,
-				 * "error.delete.unexpected");
-				 */
-			}
-		}
-		entities.forceRefresh();
-	}
+    /**
+     * Generating back link.
+     */
+    protected String getDefaultViewName() {
+        String className = clazz.getSimpleName();
+        StringBuilder sb = new StringBuilder(className);
+        char[] dst = new char[1];
+        sb.getChars(0, 1, dst, 0);
+        sb.replace(0, 1, new String(dst).toLowerCase());
+        sb.append("s");
+        return sb.toString();
+    }
 
-	/**
-	 * Gets search filters map.
-	 * 
-	 * @return Filters map.
-	 */
-	public Map<String, Object> getFilters() {
-		if (filters == null)
-			filters = new HashMap<String, Object>();
-		return filters;
-	}
+    /**
+     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to delete
+     */
+    public void delete(Long id) {
+        try {
+            log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
+            getPersistenceService().remove(id);
+            messages.info(new BundleKey("messages", "delete.successful"));
+            // TODO
+            /*
+             * statusMessages.addFromResourceBundle(Severity.INFO, "delete.successful");
+             */
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
-	/**
-	 * Get new instance for backing bean class.
-	 * 
-	 * @return New instance.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public T getInstance() throws InstantiationException, IllegalAccessException {
-		return clazz.newInstance();
-	}
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
+        entities.forceRefresh();
+    }
 
-	/**
-	 * Method that returns concrete PersistenceService. That service is then
-	 * used for operations on concrete entities (eg. save, delete etc).
-	 * 
-	 * @return Persistence service
-	 */
-	@SuppressWarnings("unchecked")
-	protected abstract IPersistenceService getPersistenceService();
+    /**
+     * Delete checked entities. Add error message to {@link statusMessages} if unsuccessful.
+     */
+    @SuppressWarnings("unchecked")
+    public void deleteMany() {
+        try {
+            // log.info(String.format("Deleting entities %s with id = %s",
+            // clazz.getName(), id));
+            Set<Long> idsToDelete = new HashSet<Long>();
+            for (Long id : checked.keySet()) {
+                if (checked.get(id)) {
+                    idsToDelete.add(id);
+                }
+            }
+            getPersistenceService().remove(idsToDelete);
+            messages.info(new BundleKey("messages", "delete.entitities.successful"));
 
-	/**
-	 * Override this method if you need to fetch any fields when selecting list
-	 * of entities in data table. Return list of field names that has to be
-	 * fetched.
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return null;
-	}
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
-	/**
-	 * Override this method if you need to fetch any fields when selecting one
-	 * entity to show it a form. Return list of field names that has to be
-	 * fetched.
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return null;
-	}
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
+        entities.forceRefresh();
+    }
 
-	/**
-	 * Override this method when pop up with additional entity information is
-	 * needed.
-	 */
-	protected String getPopupInfo() {
-		return "No popup information. Override BaseBean.getPopupInfo() method.";
-	}
+    /**
+     * Gets search filters map.
+     * 
+     * @return Filters map.
+     */
+    public Map<String, Object> getFilters() {
+        if (filters == null)
+            filters = new HashMap<String, Object>();
+        return filters;
+    }
 
-	/**
-	 * Delete Entity using it's ID. Add error message to {@link statusMessages}
-	 * if unsuccessful.
-	 * 
-	 * @param id
-	 *            Entity id to delete
-	 */
-	public void disable(Long id) {
-		try {
-			log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
-			getPersistenceService().disable(id);
-			// TODO: statusMessages.addFromResourceBundle(Severity.INFO,
-			// "disabled.successful");
-		} catch (Throwable t) {
-			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				// TODO: statusMessages.addFromResourceBundle(Severity.ERROR,
-				// "error.delete.entityUsed");
-			} else {
-				log.info("unexpected exception when deleting!", t);
-				// TODO: statusMessages.addFromResourceBundle(Severity.ERROR,
-				// "error.delete.unexpected");
-			}
-		}
-		entities.forceRefresh();
-	}
+    /**
+     * Get new instance for backing bean class.
+     * 
+     * @return New instance.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public T getInstance() throws InstantiationException, IllegalAccessException {
+        return clazz.newInstance();
+    }
 
-	public String getSortField() {
-		if (sortField == null) {
-			return "";
-		} else
-			return sortField;
-	}
+    /**
+     * Method that returns concrete PersistenceService. That service is then used for operations on concrete entities (eg. save, delete etc).
+     * 
+     * @return Persistence service
+     */
+    @SuppressWarnings("rawtypes")
+    protected abstract IPersistenceService getPersistenceService();
 
-	public void setSortField(String sortField) {
-		this.sortField = sortField;
-	}
+    /**
+     * Override this method if you need to fetch any fields when selecting list of entities in data table. Return list of field names that has to be fetched.
+     */
+    protected List<String> getListFieldsToFetch() {
+        return null;
+    }
 
-	public String getSortOrder() {
-		return sortOrder;
-	}
+    /**
+     * Override this method if you need to fetch any fields when selecting one entity to show it a form. Return list of field names that has to be fetched.
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return null;
+    }
 
-	public void setSortOrder(String sortOrder) {
-		this.sortOrder = sortOrder;
-	}
+    /**
+     * Override this method when pop up with additional entity information is needed.
+     */
+    protected String getPopupInfo() {
+        return "No popup information. Override BaseBean.getPopupInfo() method.";
+    }
 
-	/**
-	 * Gets checked entities.
-	 * 
-	 * @return Checked entities list
-	 */
-	public Map<Long, Boolean> getChecked() {
-		return checked;
-	}
+    /**
+     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to delete
+     */
+    public void disable(Long id) {
+        try {
+            log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
+            getPersistenceService().disable(id);
+            messages.info(new BundleKey("messages", "disabled.successful"));
 
-	public Long getObjectId() {
-		return objectId;
-	}
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
+        entities.forceRefresh();
+    }
 
-	public void setObjectId(Long objectId) {
-		this.objectId = objectId;
-	}
+    public String getSortField() {
+        if (sortField == null) {
+            return "";
+        } else
+            return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
+
+    public String getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    /**
+     * Gets checked entities.
+     * 
+     * @return Checked entities list
+     */
+    public Map<Long, Boolean> getChecked() {
+        return checked;
+    }
+
+    private Long getObjectId() {
+        return objectId.get();
+    }
+
+    protected MeveoUser getCurrentUser() {
+        return (MeveoUser) identity.getUser();
+    }
 }

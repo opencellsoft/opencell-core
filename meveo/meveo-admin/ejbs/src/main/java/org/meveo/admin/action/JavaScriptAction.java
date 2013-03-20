@@ -23,7 +23,6 @@ import java.text.ParseException;
 import java.util.ResourceBundle;
 
 import javax.ejb.Stateless;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -33,7 +32,6 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
 
 @Stateless
 @Named
-@SessionScoped
 public class JavaScriptAction implements JavaScriptActionLocal {
 
 	@Inject
