@@ -146,9 +146,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /**
      * Refresh entities data model and adds search filters. Usually it is enough to invoke this method in factory on concrete seam bean which subclasses BaseBean.
+     * @return 
      */
     // TODO: @Begin(join = true)
-    public void list() {
+    public PaginationDataModel<T> list() {
         if (entities == null) {
             entities = new PaginationDataModel<T>(getPersistenceService());
         }
@@ -159,6 +160,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         entities.addFilters(filters);
         entities.addFetchFields(getListFieldsToFetch());
         entities.forceRefresh();
+        
+        return entities;
     }
 
     /**

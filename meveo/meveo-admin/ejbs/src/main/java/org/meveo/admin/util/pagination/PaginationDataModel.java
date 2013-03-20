@@ -61,6 +61,10 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
     private Map<String, Object> filters = new HashMap<String, Object>();
     private List<String> fetchFields = new ArrayList<String>();
 
+    public PaginationDataModel(){
+        super();
+    }
+    
     /**
      * Constructor.
      * 
