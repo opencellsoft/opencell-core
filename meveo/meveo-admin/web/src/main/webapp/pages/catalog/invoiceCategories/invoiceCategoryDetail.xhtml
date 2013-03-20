@@ -20,11 +20,10 @@
 		<custom:formPanel edit="#{edit}" label="#{messages['invoiceCategory.panel']}" backingBean="#{invoiceCategoryBean}" entity="#{invoiceCategory}" >
    			<custom:formField label="#{messages['invoiceCategory.code']}" field="code" required="true" validateUnique="true" />
    			
-   			<custom:formField label="#{messages['invoiceCategory.description']}"  field="description" required="true" useConverter="false" size="50" maxlength="50" flag="EN"/>
-            <custom:formField label="" field="descriptionFr" entity="#{invoiceCategoryBean}" useConverter="false" size="50" maxlength="50" flag="FR"/>
-			
+   			<custom:languageFields backingBean="#{invoiceCategoryBean}"/>
    			<!-- <custom:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
    			<custom:formField label="#{messages['invoiceCategory.subcategories']}" field="invoiceSubCategories" edit="true" showFields="invoiceSubCategory.code,code;invoiceSubCategory.accountingCode,accountingCode" deleteButton="false"/>
+			
 		</custom:formPanel>
 
 	</ui:define>

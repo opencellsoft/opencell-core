@@ -15,17 +15,18 @@
 */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.ejb.Stateless;
+
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.local.CatMessagesServiceLocal;
-import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
  
 
 /**
@@ -60,6 +61,16 @@ public class CatMessagesService extends PersistenceService<CatMessages> implemen
            return cats!=null && cats.size()>0?cats.get(0):null;   
        }
 	
- 
+       @SuppressWarnings("unchecked")
+	public List<CatMessages> getCatMessagesList(String messageCode){
+    	   log.info("getCatMessagesList messageCode=#0 ", messageCode);
+    	   if(StringUtils.isBlank(messageCode)){
+    		   return new ArrayList<CatMessages>();
+    	   }
+    	   QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
+    	   qb.addCriterion("c.messageCode", "=", messageCode, true);
+    	   List<CatMessages> cats=(List<CatMessages>)qb.getQuery(em).getResultList();
+           return cats;   
+       }
  
 }

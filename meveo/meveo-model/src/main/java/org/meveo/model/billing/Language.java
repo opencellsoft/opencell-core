@@ -37,6 +37,12 @@ import org.meveo.model.BusinessEntity;
 
 public class Language  extends AuditableEntity{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
 	

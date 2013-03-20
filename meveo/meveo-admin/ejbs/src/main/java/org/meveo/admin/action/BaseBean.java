@@ -16,6 +16,7 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +36,11 @@ import org.jboss.seam.log.Log;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.ComLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.crm.local.ProviderServiceLocal;
 
 /**
  * Base bean class. Other seam backing beans extends this class if they need
@@ -59,6 +63,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @In(required = false)
     protected Provider currentProvider;
+    
+    @In
+    ProviderServiceLocal providerService;
 
     /** Search filters. */
     protected Map<String, Object> filters;
@@ -83,6 +90,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private String sortField;
     private String sortOrder;
+    
+    
+    /** Search filters. */
+    protected Map<String, String> languageMessagesMap=new HashMap<String, String>();
 
    
     /**
@@ -421,4 +432,30 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void setObjectId(Long objectId) {
         this.objectId = objectId;
     }
+    
+    
+    
+    public List<ComLanguage> getProviderLanguages(){
+    	List<ComLanguage> result=new ArrayList<ComLanguage>();
+    	if(currentProvider!=null){
+    		currentProvider=providerService.findById(currentProvider.getId());//to avoid entity not managed exception 
+    			for (ComLanguage comLanguage:currentProvider.getComLanguage()){
+    				if(!currentProvider.getLanguageCode().equalsIgnoreCase(comLanguage.getLanguage().getLanguageCode())){
+    					result.add(comLanguage);
+    				}
+    			}
+    	}
+    	
+    	log.info("getProviderLanguages result size=#0", result!=null?result.size():null);
+    	return result;
+    }
+
+	public Map<String, String> getLanguageMessagesMap() {
+		return languageMessagesMap;
+	}
+
+	public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
+		this.languageMessagesMap = languageMessagesMap;
+	}
+    
 }

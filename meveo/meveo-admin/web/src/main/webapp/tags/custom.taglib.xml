@@ -104,4 +104,9 @@
 		<tag-name>hierarchyPanel</tag-name>
 		<source>hierarchyPanel.xhtml</source>
 	</tag>
+	<tag>
+	<tag-name>languageFields</tag-name>
+		<source>languageFields.xhtml</source>
+	</tag>
+	
 </facelet-taglib>

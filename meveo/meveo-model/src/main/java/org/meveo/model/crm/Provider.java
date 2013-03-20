@@ -34,14 +34,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ComLanguage;
 import org.meveo.model.billing.CountryCom;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -154,7 +154,8 @@ public class Provider extends BusinessEntity {
     @Length(max = 100)
     protected String email;
 
-    
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    private List<ComLanguage> comLanguage;
     
     
     public List<CountryCom> getComCountries() {
@@ -387,5 +388,14 @@ public class Provider extends BusinessEntity {
     public void setEmail(String email) {
         this.email = email;
     }
+
+	public List<ComLanguage> getComLanguage() {
+		return comLanguage;
+	}
+
+	public void setComLanguage(List<ComLanguage> comLanguage) {
+		this.comLanguage = comLanguage;
+	}
+    
 
 }

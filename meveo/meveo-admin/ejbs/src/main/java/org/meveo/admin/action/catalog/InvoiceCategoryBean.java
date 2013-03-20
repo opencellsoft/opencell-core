@@ -51,7 +51,6 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
    @In
    private CatMessagesServiceLocal catMessagesService;
     
-    private String descriptionFr;
     
    
     /**
@@ -80,7 +79,13 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
     @Begin(nested = true)
     public InvoiceCategory init() { 
         InvoiceCategory invoicecat= initEntity();
-        descriptionFr=catMessagesService.getMessageDescription(InvoiceCategory.class.getSimpleName()+"_"+invoicecat.getId(),LanguageEnum.FR.toString());
+        languageMessagesMap.clear();
+        if(invoicecat.getId()!=null){
+        	for(CatMessages msg:catMessagesService.getCatMessagesList(InvoiceCategory.class.getSimpleName()+"_"+invoicecat.getId())){
+            	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+            }
+        }
+        
         return invoicecat;
     }
 
@@ -119,16 +124,30 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
     
     		
     		if(entity.getId()!=null ){
-        		
-        		CatMessages catMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
-        		catMsFr.setDescription(descriptionFr);
-        	    catMessagesService.update(catMsFr); 
+    			for(String msgKey:languageMessagesMap.keySet()){
+    				CatMessages catMsg=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey); 
+    				if(catMsg!=null){
+    					String description=languageMessagesMap.get(msgKey);
+    					catMsg.setDescription(description);
+                	    catMessagesService.update(catMsg);
+    				}else{
+    					String description=languageMessagesMap.get(msgKey);
+    					CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+                    	catMessagesService.create(catMessages);	
+    				}
+            		
+    			}
+        		 
         	    back=saveOrUpdate(entity);
         	 
         	}else{
         		back=saveOrUpdate(entity);
-        		CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr);  
-            	catMessagesService.create(catMessagesFr);	
+        		for(String msgKey:languageMessagesMap.keySet()){
+        			String description=languageMessagesMap.get(msgKey);
+        			CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+                	catMessagesService.create(catMessages);	
+        		}
+        		
         	}
  
         return back;
@@ -151,14 +170,7 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
     protected IPersistenceService<InvoiceCategory> getPersistenceService() {
         return invoiceCategoryService;
     }
-    
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
-
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
-	}
+  
     
 
 	

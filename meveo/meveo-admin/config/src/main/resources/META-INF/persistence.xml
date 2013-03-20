@@ -66,7 +66,7 @@
 		<class>org.meveo.model.billing.Country</class>
 		<class>org.meveo.model.billing.CountryCom</class>
 		<class>org.meveo.model.billing.CurrencyCom</class>
-		<class>org.meveo.model.billing.LanguageCom</class>
+		<class>org.meveo.model.billing.ComLanguage</class>
 		<class>org.meveo.model.billing.TaxLanguage</class>
 		<class>org.meveo.model.billing.Discount</class>
 		<class>org.meveo.model.billing.DiscountLanguage</class>
