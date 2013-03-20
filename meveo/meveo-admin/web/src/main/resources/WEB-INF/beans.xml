@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:s="urn:java:ee" xmlns:security="urn:java:org.jboss.seam.security"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://jboss.org/schema/cdi/beans_1_0.xsd">
+
+	<interceptors>
+		<class>org.jboss.seam.security.SecurityInterceptor</class>
+	</interceptors>
+
+	<security:IdentityImpl>
+		<s:modifies />
+		<security:authenticatorClass>org.meveo.admin.action.Authenticator</security:authenticatorClass>
+	</security:IdentityImpl>
+
+</beans>
