@@ -59,8 +59,9 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	private String discountCode;
 	
 	
-	@Column(name = "TAX_CODE", length = 20)
-	private String taxCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TAX_ID")
+	private Tax tax;
 	
 		
 
@@ -95,14 +96,17 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	}
 
 
-	public String getTaxCode() {
-		return taxCode;
+	public Tax getTax() {
+		return tax;
 	}
 
 
-	public void setTaxCode(String taxCode) {
-		this.taxCode = taxCode;
+	public void setTax(Tax tax) {
+		this.tax = tax;
 	}
+
+
+
 
 	
 }

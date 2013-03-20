@@ -15,10 +15,15 @@
 */
 package org.meveo.service.billing.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.PersistenceService;
@@ -36,5 +41,18 @@ import org.meveo.service.billing.remote.InvoiceSubCategoryCountryServiceRemote;
 @AutoCreate
 public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> implements InvoiceSubCategoryCountryServiceLocal,
         InvoiceSubCategoryCountryServiceRemote {
+	
+	 public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) {
+	        try {
+	            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
+	            qb.addCriterionEntity("i.invoiceSubCategory.id", invoiceSubCategoryId);
+	            qb.addCriterionWildcard("i.countryCom.id", countryCode, true);
+	            List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb.getQuery(em).getResultList();
+	            return InvoiceSubcategoryCountries.size()>0?InvoiceSubcategoryCountries.get(0):null;
+	        } catch (NoResultException ex) {
+	            ex.printStackTrace();
+	        }
+	        return null;
+	    }
 
 }

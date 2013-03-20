@@ -17,6 +17,7 @@ package org.meveo.service.billing.local;
 
 import javax.ejb.Local;
 
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.local.IPersistenceService;
@@ -27,5 +28,5 @@ import org.meveo.service.base.local.IPersistenceService;
  */
 @Local
 public interface InvoiceSubCategoryCountryServiceLocal extends IPersistenceService<InvoiceSubcategoryCountry> {
-
+	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) ;
 }

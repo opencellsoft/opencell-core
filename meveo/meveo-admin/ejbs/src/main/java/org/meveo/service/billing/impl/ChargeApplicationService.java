@@ -38,6 +38,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -53,6 +54,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.local.BillingAccountServiceLocal;
 import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
+import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
 import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
 
 /**
@@ -65,8 +67,8 @@ import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
 public class ChargeApplicationService extends BusinessService<ChargeApplication> implements
         ChargeApplicationServiceLocal {
 
-    // @In
-    // private SubscriptionServiceLocal subscriptionService;
+    @In
+    private InvoiceSubCategoryCountryServiceLocal invoiceSubCategoryCountryService;
 
     private DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private String str_tooPerceived = ResourceBundle.getBundle("messages").getString("str_tooPerceived");
@@ -101,7 +103,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                     + chargeTemplate.getCode());
         }
-        Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
+        
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(), subscription.getUserAccount().getBillingAccount().getCountryCode());
+        Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
             throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
                     + invoiceSubCategory.getCode());
@@ -158,7 +162,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                     + chargeTemplate.getCode());
         }
-        Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(), subscription.getUserAccount().getBillingAccount().getCountryCode());
+        Tax tax = invoiceSubcategoryCountry.getTax();
 
         ChargeApplication chargeApplication = new ChargeApplication(chargeTemplate.getCode(), chargeInstance
                 .getDescription(), subscription, chargeInstance, chargeTemplate.getCode(),
@@ -246,7 +252,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                     + recurringChargeTemplate.getCode());
         }
-        Tax tax = recurringChargeTemplate.getInvoiceSubCategory().getTax();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+        Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
             throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
                     + invoiceSubCategory.getCode());
@@ -348,7 +356,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
                 throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                         + recurringChargeTemplate.getCode());
             }
-            Tax tax = recurringChargeTemplate.getInvoiceSubCategory().getTax();
+
+            InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+            Tax tax = invoiceSubcategoryCountry.getTax();
             if (tax == null) {
                 throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
                         + invoiceSubCategory.getCode());
@@ -418,7 +428,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                     + recurringChargeTemplate.getCode());
         }
-        Tax tax = recurringChargeTemplate.getInvoiceSubCategory().getTax();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+        Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
             throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
                     + invoiceSubCategory.getCode());
@@ -488,7 +500,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                     + recurringChargeTemplate.getCode());
         }
-        Tax tax = recurringChargeTemplate.getInvoiceSubCategory().getTax();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+        Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
             throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
                     + invoiceSubCategory.getCode());
@@ -603,7 +617,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                     + recurringChargeTemplate.getCode());
         }
-        Tax tax = recurringChargeTemplate.getInvoiceSubCategory().getTax();
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+        Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
             throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
                     + invoiceSubCategory.getCode());
@@ -758,7 +774,9 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
                 throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code="
                         + recurringChargeTemplate.getCode());
             }
-            Tax tax = recurringChargeTemplate.getInvoiceSubCategory().getTax();
+
+            InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+            Tax tax = invoiceSubcategoryCountry.getTax();
             if (tax == null) {
                 throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
                         + invoiceSubCategory.getCode());
