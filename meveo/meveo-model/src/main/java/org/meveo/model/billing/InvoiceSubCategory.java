@@ -58,9 +58,6 @@ public class InvoiceSubCategory extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TAX_ID")
     private Tax tax;
- 
-    @Column(name = "PR_DESCRIPTION", length = 50)
-    private String prDescription;
 
     
     @Column(name = "DISCOUNT_CODE", length = 20)
@@ -118,13 +115,6 @@ public class InvoiceSubCategory extends BusinessEntity {
 		this.discount = discount;
 	}
 
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
 
 
 }

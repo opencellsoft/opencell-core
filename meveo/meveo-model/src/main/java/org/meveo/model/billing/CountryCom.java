@@ -39,7 +39,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_COUNTRY_COM")
+@Table(name = "BILLING_TRADING_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTRY_COM_SEQ")
 
 public class CountryCom  extends AuditableEntity{

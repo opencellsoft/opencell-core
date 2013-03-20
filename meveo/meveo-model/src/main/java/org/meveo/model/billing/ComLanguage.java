@@ -49,7 +49,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
  */
 
 @Entity
-@Table(name = "BILLING_LANGUAGE_COM")
+@Table(name = "BILLING_TRADING_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_COM_SEQ")
 
 public class ComLanguage  extends AuditableEntity{
