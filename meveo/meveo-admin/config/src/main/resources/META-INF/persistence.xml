@@ -75,6 +75,7 @@
 		<class>org.meveo.model.billing.InvoiceSubcategoryCountry</class>
 		<class>org.meveo.model.billing.PriceplanInstanciation</class>
 		<class>org.meveo.model.billing.DiscountplanInstanciation</class>
+		<class>org.meveo.model.billing.CatMessages</class>
 		
 		
 		<class>org.meveo.model.AccountEntity</class>

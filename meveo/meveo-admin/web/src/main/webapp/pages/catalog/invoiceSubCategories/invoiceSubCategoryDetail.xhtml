@@ -83,10 +83,7 @@
                             <custom:formField label="#{messages['invoiceSubCategory.code']}"
                                 field="code" required="true" validateUnique="true"
                                 useConverter="false" />
-                            <custom:formField
-                                label="#{messages['invoiceSubCategory.description']}"
-                                field="description" required="true" useConverter="false"
-                                size="50" maxlength="50" />
+                            <custom:languageFields/>
                             <custom:fieldset
                                 name="#{messages['invoiceSubCategory.accountingCode']}"
                                 columns="3">
@@ -179,14 +176,6 @@
 
                     </rich:tab>
                     <rich:tab label="#{messages['invoiceSubCategory.tab2']}">
-
-
-
-
-
-                        <h:outputText
-                            value="#{messages['invoiceSubCategory.description']} : "
-                            style="font-weight:bold;" />
 
                         <br />
                         <br />

@@ -29,6 +29,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.LanguageEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
@@ -88,10 +89,17 @@ public class TaxBean extends BaseBean<Tax> {
     @Begin(nested = true)
     public Tax init() {
         Tax tax=initEntity();
-        descriptionFr=catMessagesService.getMessageDescription(Tax.class.getSimpleName()+"_"+tax.getId(),LanguageEnum.FR.toString());
+        languageMessagesMap.clear();
+        if(tax.getId()!=null){
+        	for(CatMessages msg:catMessagesService.getCatMessagesList(Tax.class.getSimpleName()+"_"+tax.getId())){
+            	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+            }
+        }
         parseAccountingCode();
         return tax;    
     }
+   
+    
 
     /**
      * Data model of entities for data table in GUI.
@@ -126,17 +134,26 @@ public class TaxBean extends BaseBean<Tax> {
     public String saveOrUpdate() {
     	String back=null;
     	if(entity.getId()!=null){	
-    		CatMessages taxMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
-    		taxMsFr.setDescription(descriptionFr);
-    	    catMessagesService.update(taxMsFr); 
+    		for(String msgKey:languageMessagesMap.keySet()){
+				String description=languageMessagesMap.get(msgKey);
+				CatMessages catMsg=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey); 
+				if(catMsg!=null){
+					catMsg.setDescription(description);
+            	    catMessagesService.update(catMsg);
+				}else{
+					CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+                	catMessagesService.create(catMessages);	
+				}
+    		}
     	    back=saveOrUpdate(entity);
     	}else{
-    		  entity.setAccountingCode(generateAccountingCode());
-    	       back=saveOrUpdate(entity); 
-    	    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr);  
-    	    	catMessagesService.create(catMessagesFr);
+    		back=saveOrUpdate(entity);
+    		for(String msgKey:languageMessagesMap.keySet()){
+    			String description=languageMessagesMap.get(msgKey);
+    			CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+            	catMessagesService.create(catMessages);	
+    		}	
     	}
-      
         return back;
     }
 

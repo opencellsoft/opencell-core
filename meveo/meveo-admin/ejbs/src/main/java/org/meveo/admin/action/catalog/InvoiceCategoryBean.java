@@ -121,23 +121,18 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
     @End(beforeRedirect = true, root=false)
 	public String saveOrUpdate() {
     	String back=null;
-    
-    		
     		if(entity.getId()!=null ){
     			for(String msgKey:languageMessagesMap.keySet()){
+					String description=languageMessagesMap.get(msgKey);
     				CatMessages catMsg=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey); 
     				if(catMsg!=null){
-    					String description=languageMessagesMap.get(msgKey);
     					catMsg.setDescription(description);
                 	    catMessagesService.update(catMsg);
     				}else{
-    					String description=languageMessagesMap.get(msgKey);
     					CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
                     	catMessagesService.create(catMessages);	
-    				}
-            		
-    			}
-        		 
+    				}	
+    			} 
         	    back=saveOrUpdate(entity);
         	 
         	}else{

@@ -84,9 +84,13 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
     @Factory("recurringChargeTemplate")
     public RecurringChargeTemplate init() {
     	RecurringChargeTemplate recuChargeTemplate= initEntity();
-          descriptionFr=catMessagesService.getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+recuChargeTemplate.getId(),LanguageEnum.FR.toString());
-        return recuChargeTemplate;
+    	 if(recuChargeTemplate.getId()!=null){
+         	for(CatMessages msg:catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName()+"_"+recuChargeTemplate.getId())){
+             	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+             }
+         }return recuChargeTemplate;
     }
+     
 
     /**
      * Data model of entities for data table in GUI.
@@ -126,17 +130,28 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
     public String saveOrUpdate() {
     	String back=null;
     	if(entity.getId()!=null){
-    		CatMessages oneRecMsfr=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
-    		oneRecMsfr.setDescription(descriptionFr);
-    	    catMessagesService.update(oneRecMsfr); 
+    		for(String msgKey:languageMessagesMap.keySet()){
+    		String description=languageMessagesMap.get(msgKey);
+    		CatMessages catMsg=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey);
+    		if(catMsg!=null){
+				catMsg.setDescription(description);
+        	    catMessagesService.update(catMsg);
+    		}else{
+    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
+            	catMessagesService.create(catMessages);	
+    		}
+    		} 
     	    back=saveOrUpdate(entity);
+    	    
     	}else{
-    		 back=saveOrUpdate(entity); 
-    		   	CatMessages catMessagesFr=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr); 
-    		   	catMessagesService.create(catMessagesFr);	   
+    		back=saveOrUpdate(entity);
+    		for(String msgKey:languageMessagesMap.keySet()){
+    			String description=languageMessagesMap.get(msgKey);
+    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
+            	catMessagesService.create(catMessages);	
+    		}
     	}
-    	return back ;
-	   
+	   	return back;
     }
     
     

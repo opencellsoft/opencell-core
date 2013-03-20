@@ -19,8 +19,7 @@
 
 		<custom:formPanel edit="#{edit}" label="#{messages['tax.panel']}" backingBean="#{taxBean}" entity="#{tax}" >
    			<custom:formField label="#{messages['tax.code']}" field="code" required="true" validateUnique="true"/>
-			 <custom:formField label="#{messages['tax.description']}" field="description" required="true"  useConverter="false" size="50" maxlength="50" flag="EN"/>
-   			 <custom:formField label="" field="descriptionFr" entity="#{taxBean}" useConverter="false" size="50" maxlength="50" flag="FR"/>
+   			<custom:languageFields/>
    			<custom:formField label="#{messages['tax.percent']}" field="percent" required="true"/>
    			<custom:fieldset name="#{messages['invoiceSubCategory.accountingCode']}" columns="3">	
 	   			<s:decorate template="/layout/edit.xhtml">

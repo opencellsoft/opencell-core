@@ -82,9 +82,14 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
     @Factory("oneShotChargeTemplate")
     public OneShotChargeTemplate init() {
         OneShotChargeTemplate oneShotChargeTemplate= initEntity();
-        descriptionFr=catMessagesService.getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+oneShotChargeTemplate.getId(),LanguageEnum.FR.toString());
+        if(oneShotChargeTemplate.getId()!=null){
+        	for(CatMessages msg:catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName()+"_"+oneShotChargeTemplate.getId())){
+            	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+            }
+        }
         return oneShotChargeTemplate; 
     }
+ 
 
     /**
      * Data model of entities for data table in GUI.
@@ -150,23 +155,33 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-    	String back;
+    	String back=null;
     	if(entity.getId()!=null){
-    		CatMessages oneShorMsfr=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
-    		oneShorMsfr.setDescription(descriptionFr);
-    	    catMessagesService.update(oneShorMsfr); 
+    		for(String msgKey:languageMessagesMap.keySet()){
+    		String description=languageMessagesMap.get(msgKey);
+    		CatMessages catMsg=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey);
+    		if(catMsg!=null){
+				catMsg.setDescription(description);
+        	    catMessagesService.update(catMsg);
+    		}else{
+    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
+            	catMessagesService.create(catMessages);	
+    		}
+    		} 
     	    back=saveOrUpdate(entity);
+    	    
     	}else{
-    		back=saveOrUpdate(entity); 
-    	   	CatMessages catMessagesFr=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr); 
-    	   	catMessagesService.create(catMessagesFr);
+    		back=saveOrUpdate(entity);
+    		for(String msgKey:languageMessagesMap.keySet()){
+    			String description=languageMessagesMap.get(msgKey);
+    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
+            	catMessagesService.create(catMessages);	
+    		}
     	}
-    	
 	   	return back;
     }
     
- 
-
+    
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */

@@ -36,12 +36,12 @@
 						 <h:dataTable value="">
 						 
 						 <h:column>
-						 <h:graphicImage value="/img/img#{entity.provider.languageCode}.png" style="height:17px; width:33px;"/>
+						 <h:graphicImage value="/img/img#{entity.provider.languageCode}.png" style="height:17px; width:33px;" />
 						 </h:column>
 						 <h:column>
 						<h:inputText rendered="#{edit}"  
-							value="#{entity.description}"  size="50" maxlength="100"/>
-							<h:outputText rendered="#{!edit}" value="#{entity.description}" style="font-weight:bold;"  />
+							value="#{entity.description}"  size="50" maxlength="100" required="true"/>
+							<h:outputText rendered="#{!edit}" value="#{entity.description}" style="font-weight:bold;"/>
 							</h:column>
 						 </h:dataTable>	
 						<h:dataTable  value="#{backingBean.getProviderLanguages()}" var="languageCom">

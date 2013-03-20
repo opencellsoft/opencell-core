@@ -28,11 +28,15 @@ import org.jboss.seam.international.StatusMessage.Severity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
+import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.local.CatMessagesServiceLocal;
 import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
 
@@ -58,6 +62,9 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
     @In
     private InvoiceSubCategoryServiceLocal invoiceSubCategoryService;
+    
+    @In
+    private CatMessagesServiceLocal catMessagesService;
     
     @In
     private InvoiceSubCategoryCountryServiceLocal invoiceSubCategoryCountryService;
@@ -142,13 +149,20 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     @Factory("invoiceSubCategory")
     @Begin(nested = true)
     public InvoiceSubCategory init() {
-         initEntity();
+    	InvoiceSubCategory invoiceCatSub= initEntity();
+    	 languageMessagesMap.clear();
+    	 if(invoiceCatSub.getId()!=null){
+         	for(CatMessages msg:catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceCatSub.getId())){
+             	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+             }
+         }
         if (invoiceCategoryId != null) {
             entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
         }
         parseAccountingCode();
-        return entity;
+        return invoiceCatSub;
     }
+  
 
     /**
      * Data model of entities for data table in GUI.
@@ -179,12 +193,37 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
+ 
     @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
-        entity.setAccountingCode(generateAccountingCode());
-        return saveOrUpdate(entity);
+	public String saveOrUpdate() {
+    	String back=null;
+    		if(entity.getId()!=null ){
+    			for(String msgKey:languageMessagesMap.keySet()){
+					String description=languageMessagesMap.get(msgKey);
+    				CatMessages catMsg=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey); 
+    				if(catMsg!=null){
+    					catMsg.setDescription(description);
+                	    catMessagesService.update(catMsg);
+    				}else{
+    					CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+                    	catMessagesService.create(catMessages);	
+    				}	
+    			} 
+        	    back=saveOrUpdate(entity);
+        	 
+        	}else{
+        		entity.setAccountingCode(generateAccountingCode());
+        		back=saveOrUpdate(entity);
+        		for(String msgKey:languageMessagesMap.keySet()){
+        			String description=languageMessagesMap.get(msgKey);
+        			CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+                	catMessagesService.create(catMessages);	
+        		}
+        		
+        	}
+ 
+        return back;
     }
-
     /**
      * Constructs cost accounting code
      */

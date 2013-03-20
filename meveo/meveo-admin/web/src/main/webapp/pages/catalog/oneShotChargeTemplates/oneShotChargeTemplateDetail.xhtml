@@ -33,9 +33,8 @@
 
 			    <custom:formPanel edit="#{edit}" label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}" backingBean="#{oneShotChargeTemplateBean}" entity="#{oneShotChargeTemplate}" >
 			    <custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
-			    <custom:formField label="#{messages['chargeTemplate.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50" flag="EN"/>
-			    <custom:formField label="" field="descriptionFr" entity="#{oneShotChargeTemplateBean}" useConverter="false" size="50" maxlength="50" flag="FR"/>
-		    	<custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+			   <custom:languageFields/>
+			   <custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
     			<custom:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
     			<custom:formField label="#{messages['oneShotChargeTemplate.type']}" field="oneShotChargeTemplateType" required="true" />
     			<custom:panelGroup columns="2">	
