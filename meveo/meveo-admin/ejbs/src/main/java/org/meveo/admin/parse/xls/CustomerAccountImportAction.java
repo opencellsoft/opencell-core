@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -34,7 +35,7 @@ import org.slf4j.Logger;
  * @created 2010.11.09
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class CustomerAccountImportAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;

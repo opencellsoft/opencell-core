@@ -18,6 +18,7 @@ package org.meveo.admin.action.bi;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,135 +28,97 @@ import javax.persistence.PersistenceContext;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.report.ReportExecution;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.admin.User;
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.bi.impl.ReportService;
 
 /**
- * Standard backing bean for {@link Report} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link Report} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
+ * view, delete operations). It works with Manaty custom JSF components.
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class ReportBean extends BaseBean<Report> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Injected @{link Report} service. Extends {@link PersistenceService}. */
-	@Inject
-	private ReportService reportService;
+    /** Injected @{link Report} service. Extends {@link PersistenceService}. */
+    @Inject
+    private ReportService reportService;
 
-	/** Injected component that generates PDF reports. */
-	@Inject
-	private ReportExecution reportExecution;
+    /** Injected component that generates PDF reports. */
+    @Inject
+    private ReportExecution reportExecution;
 
-	@PersistenceContext(unitName = "meveoDWHentityManager")
-	protected EntityManager dwhEntityManager;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ReportBean() {
-		super(Report.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ReportBean() {
+        super(Report.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("report")
-	 */
-	@Produces
-	@Named("report")
-	public Report init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("report")
+    public Report init() {
+        return initEntity();
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "reports", required = false)
-	@Produces
-	@Named("reports")
-	protected PaginationDataModel<Report> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("reports")
+    @ConversationScoped
+    public void list() {
+        super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("reports")
-	 */
-	@Produces
-	@Named("reports")
-	public void list() {
-		super.list();
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Report> getPersistenceService() {
+        return reportService;
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root = false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("emails");
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Report> getPersistenceService() {
-		return reportService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+     */
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("emails");
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("emails");
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("emails");
-	}
-
-	/**
-	 * Creates report.
-	 */
-	// @End(beforeRedirect = true)
-	public String executeReport() {
-		log.info("executeReport()");
-		String save = saveOrUpdate();
-		log.debug("executeReport : after save");
-		reportExecution.executeReport(entity);
-		log.info("executeReport : result = {0}", save);
-		return save;
-	}
+    /**
+     * Creates report.
+     */
+    // @End(beforeRedirect = true)
+    public String executeReport() {
+        log.info("executeReport()");
+        String save = saveOrUpdate();
+        log.debug("executeReport : after save");
+        reportExecution.executeReport(entity);
+        log.info("executeReport : result = {0}", save);
+        return save;
+    }
 
 }

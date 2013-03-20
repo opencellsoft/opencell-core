@@ -18,6 +18,7 @@ package org.meveo.admin.action.catalog;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,7 +41,7 @@ import org.meveo.service.catalog.impl.ServiceParameterTemplateService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 // TODO: @Restrict("#{s:hasRole('meveo.catalog')}")
 public class ServiceParameterTemplateBean extends BaseBean<ServiceParameterTemplate> {
 

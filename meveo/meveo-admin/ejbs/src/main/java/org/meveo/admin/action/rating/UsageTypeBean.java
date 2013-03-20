@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.rating;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,7 @@ import org.meveo.service.rating.impl.UsageTypeService;
  * @created 2009.09.15
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class UsageTypeBean extends BaseBean<UsageType> {
 
 	private static final long serialVersionUID = 1L;

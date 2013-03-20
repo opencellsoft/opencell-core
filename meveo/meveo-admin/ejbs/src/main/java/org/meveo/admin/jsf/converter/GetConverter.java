@@ -18,9 +18,8 @@ package org.meveo.admin.jsf.converter;
 import java.math.BigDecimal;
 
 import javax.faces.convert.Converter;
+import javax.inject.Named;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.Name;
 import org.meveo.commons.utils.StringUtils;
 
 @Named

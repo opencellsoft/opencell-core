@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +38,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class VertinaConfigurationBean extends BaseBean<VertinaConfiguration> {
 
 	private static final long serialVersionUID = 1L;
@@ -64,28 +65,12 @@ public class VertinaConfigurationBean extends BaseBean<VertinaConfiguration> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested=true)
-	 * 
-	 * @Factory("vertinaConfiguration")
-	 */
 	@Produces
 	@Named("vertinaConfiguration")
 	public VertinaConfiguration init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "vertinaConfigurations", required = false)
-	@Produces
-	@Named("vertinaConfigurations")
-	protected PaginationDataModel<VertinaConfiguration> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -94,27 +79,13 @@ public class VertinaConfigurationBean extends BaseBean<VertinaConfiguration> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("vertinaConfigurations")
-	 */
 	@Produces
 	@Named("vertinaConfigurations")
+    @ConversationScoped
 	public void list() {
 		super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

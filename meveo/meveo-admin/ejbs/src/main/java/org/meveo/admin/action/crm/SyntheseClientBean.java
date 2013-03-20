@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,7 +42,7 @@ import org.meveo.service.selfcare.local.SelfcareServiceLocal;
  * @created 2011.2.15
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class SyntheseClientBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;

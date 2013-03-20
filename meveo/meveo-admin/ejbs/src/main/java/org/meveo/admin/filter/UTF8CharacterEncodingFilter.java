@@ -17,17 +17,12 @@ package org.meveo.admin.filter;
 
 import java.io.IOException;
 
+import javax.ejb.Startup;
+import javax.inject.Scope;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-import org.jboss.seam.web.AbstractFilter;
 
 /**
  * @author Tyshan(tyshanchn@manaty.net)

@@ -18,6 +18,7 @@ package org.meveo.admin.action.admin;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,7 +56,7 @@ public class SystemCurrencyBean implements Serializable {
 	/**
 	 * Load current system currency.
 	 */
-	// TODO: @Create
+	@PostConstruct
 	public void initSystemCurrency() {
 		if (systemCurrency == null) {
 			systemCurrency = currencyService.getSystemCurrency();

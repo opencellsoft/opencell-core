@@ -19,14 +19,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.inject.Scope;
+
+import org.jboss.seam.faces.context.conversation.Begin;
+import org.jboss.seam.faces.context.conversation.End;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.User;
@@ -37,9 +33,7 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.local.DDRequestLOTServiceLocal;
-import org.meveo.service.payments.local.DDRequestLotOpServiceLocal;
-import org.meveo.service.payments.local.RecordedInvoiceServiceLocal;
+import org.testng.annotations.Factory;
 
 /**
  * Standard backing bean for {@link DDRequestLOT} (extends {@link BaseBean} that

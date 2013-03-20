@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;

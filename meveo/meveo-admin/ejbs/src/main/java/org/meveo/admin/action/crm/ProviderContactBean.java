@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.crm;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +38,7 @@ import org.meveo.service.crm.impl.ProviderContactService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class ProviderContactBean extends BaseBean<ProviderContact> {
 
 	private static final long serialVersionUID = 1L;

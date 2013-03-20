@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * @created 2009.10.13
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class OudayaInputHistoryBean extends BaseBean<OudayaInputHistory> {
 
 	private static final long serialVersionUID = 1L;
@@ -63,28 +64,12 @@ public class OudayaInputHistoryBean extends BaseBean<OudayaInputHistory> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("oudayaInputHistory")
-	 */
 	@Produces
 	@Named("oudayaInputHistory")
 	public OudayaInputHistory init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "oudayaInputs", required = false)
-	@Produces
-	@Named("oudayaInputs")
-	protected PaginationDataModel<OudayaInputHistory> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -93,27 +78,13 @@ public class OudayaInputHistoryBean extends BaseBean<OudayaInputHistory> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("oudayaInputs")
-	 */
 	@Produces
 	@Named("oudayaInputs")
+    @ConversationScoped
 	public void list() {
 		super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * Override default list view name. (By default view name is class name

@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +39,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 

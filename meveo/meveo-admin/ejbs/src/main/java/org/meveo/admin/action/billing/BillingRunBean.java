@@ -28,6 +28,7 @@ import javax.inject.Named;
 import javax.inject.Scope;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.admin.utils.ListItemsSelector;
@@ -78,6 +79,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	private DataModel invoicesModel;
 
 	@Inject
+    @CurrentProvider
 	private Provider currentProvider;
 
 	/**

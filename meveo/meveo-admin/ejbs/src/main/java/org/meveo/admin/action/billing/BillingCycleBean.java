@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +38,7 @@ import org.meveo.service.billing.impl.BillingCycleService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class BillingCycleBean extends BaseBean<BillingCycle> {
 
 	private static final long serialVersionUID = 1L;

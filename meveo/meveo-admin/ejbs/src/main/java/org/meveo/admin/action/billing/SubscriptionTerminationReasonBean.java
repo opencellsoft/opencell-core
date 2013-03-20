@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,7 +32,7 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
  * @created 5 avr. 11
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class SubscriptionTerminationReasonBean extends BaseBean<SubscriptionTerminationReason> {
 	private static final long serialVersionUID = 1L;
 

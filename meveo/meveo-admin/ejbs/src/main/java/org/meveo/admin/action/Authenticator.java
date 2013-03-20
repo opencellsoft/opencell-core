@@ -15,8 +15,8 @@
  */
 package org.meveo.admin.action;
 
+import javax.enterprise.inject.Model;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -28,7 +28,6 @@ import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
@@ -163,12 +162,7 @@ public class Authenticator extends BaseAuthenticator {
             homeMessage = "application.home.message";
 
             setStatus(AuthenticationStatus.SUCCESS);
-            MeveoUser meveoUser = new MeveoUser(user);
-            if (user.isOnlyOneProvider()) {
-                meveoUser.setCurrentProvider(user.getProviders().get(0));
-            }
-
-            setUser(meveoUser);
+            setUser(new MeveoUser(user));
 
             // TODO needed to overcome lazy loading issue. Remove once solved
             for (Role role : user.getRoles()) {

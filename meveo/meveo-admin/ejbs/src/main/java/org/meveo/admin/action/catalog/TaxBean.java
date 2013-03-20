@@ -17,6 +17,7 @@ package org.meveo.admin.action.catalog;
 
 import java.sql.BatchUpdateException;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,7 +40,7 @@ import org.meveo.service.catalog.impl.TaxService;
  * @created Dec 20, 2010
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class TaxBean extends BaseBean<Tax> {
 
 	private static final long serialVersionUID = 1L;

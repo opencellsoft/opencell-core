@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,7 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
  * @created Dec 15, 2010
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 
 	private static final long serialVersionUID = 1L;

@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
@@ -30,6 +31,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
@@ -71,7 +73,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -96,6 +98,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	private User currentUser;
 
 	@Inject
+    @CurrentProvider
 	private Provider currentProvider;
 
 	// TODO: @RequestParameter

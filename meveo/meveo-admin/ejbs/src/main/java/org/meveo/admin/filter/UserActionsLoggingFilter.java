@@ -18,23 +18,16 @@ package org.meveo.admin.filter;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.ejb.Startup;
+import javax.faces.lifecycle.Lifecycle;
+import javax.inject.Scope;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-import org.jboss.seam.annotations.web.Filter;
-import org.jboss.seam.contexts.Lifecycle;
-import org.jboss.seam.web.AbstractFilter;
 import org.meveo.model.admin.User;
-import org.meveo.service.admin.local.UserServiceLocal;
 
 @Startup
 @Scope(ScopeType.APPLICATION)

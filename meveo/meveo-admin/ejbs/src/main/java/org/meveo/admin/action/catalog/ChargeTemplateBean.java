@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,7 +40,7 @@ import org.meveo.service.catalog.impl.ChargeTemplateService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 

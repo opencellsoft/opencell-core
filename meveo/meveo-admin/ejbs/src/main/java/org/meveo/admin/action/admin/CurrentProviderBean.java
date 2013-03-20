@@ -15,10 +15,16 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.Serializable;
+
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.security.Identity;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.MeveoUser;
 
 /**
  * Class used to set current system provider
@@ -28,23 +34,35 @@ import org.meveo.model.crm.Provider;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
-public class CurrentProviderBean {
+@SessionScoped
+public class CurrentProviderBean implements Serializable {
 
-	@SuppressWarnings("unused")
-	// TODO: @Out(required = false, scope = ScopeType.SESSION)
-	@Produces
-	@Named("currentProvider")
-	private Provider currentProvider;
+    private static final long serialVersionUID = 2L;
 
-	/**
-	 * Sets current provider
-	 */
-	public void setCurrentProvider(Provider provider) {
-		currentProvider = provider;
-		/*
-		 * TODO: Redirect.instance().setViewId("/home");
-		 * Redirect.instance().execute();
-		 */
-	}
+    private Provider currentProvider;
+
+    @Inject
+    Identity identity;
+
+    /**
+     * Sets current provider
+     */
+    public String setCurrentProvider(Provider provider) {
+        currentProvider = provider;
+
+        return "/home.xhtml?faces-redirect=true";
+    }
+
+    @Produces
+    @Named("currentProvider")
+    @CurrentProvider
+    @SessionScoped
+    public Provider getCurrentProvider() {
+
+        if (((MeveoUser) identity.getUser()).getUser().isOnlyOneProvider()) {
+            currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().get(0);
+        }
+
+        return currentProvider;
+    }
 }

@@ -17,9 +17,6 @@ package org.meveo.admin.jsf.converter;
 
 import java.text.DecimalFormat;
 
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-
 /**
  * 
  * @author anasseh

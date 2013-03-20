@@ -18,7 +18,6 @@ package org.meveo.service.billing.local;
 import javax.ejb.Local;
 
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.remote.ISubscriptionService;
 
 /**

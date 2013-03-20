@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
+import javax.inject.Scope;
 
 import jxl.Workbook;
 import jxl.write.Label;
@@ -33,17 +34,6 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.core.Interpolator;
-import org.jboss.seam.core.Manager;
-import org.jboss.seam.core.ResourceBundle;
-import org.jboss.seam.document.ByteArrayDocumentData;
-import org.jboss.seam.document.DocumentData;
-import org.jboss.seam.document.DocumentStore;
-import org.jboss.seam.document.DocumentData.DocumentType;
-import org.jboss.seam.navigation.Pages;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.BaseEntity;

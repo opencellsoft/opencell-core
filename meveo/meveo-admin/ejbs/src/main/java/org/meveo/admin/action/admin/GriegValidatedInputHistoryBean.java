@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * @created Apr 14, 2011
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class GriegValidatedInputHistoryBean extends BaseBean<GriegValidatedInvoiceInputHistory> {
 
 	private static final long serialVersionUID = 1L;
@@ -63,28 +64,12 @@ public class GriegValidatedInputHistoryBean extends BaseBean<GriegValidatedInvoi
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("griegValidatedInvoiceInputHistory")
-	 */
 	@Produces
 	@Named("griegValidatedInvoiceInputHistory")
 	public GriegValidatedInvoiceInputHistory init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "griegValidatedInputs", required = false)
-	@Produces
-	@Named("griegValidatedInputs")
-	protected PaginationDataModel<GriegValidatedInvoiceInputHistory> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -93,27 +78,13 @@ public class GriegValidatedInputHistoryBean extends BaseBean<GriegValidatedInvoi
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("griegValidatedInputs")
-	 */
 	@Produces
 	@Named("griegValidatedInputs")
+    @ConversationScoped
 	public void list() {
 		super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root = false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * Override default list view name. (By default view name is class name

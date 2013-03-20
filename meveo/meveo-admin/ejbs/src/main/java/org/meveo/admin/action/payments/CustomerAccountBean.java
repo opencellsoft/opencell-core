@@ -18,18 +18,11 @@ package org.meveo.admin.action.payments;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.web.RequestParameter;
-import org.jboss.seam.faces.Redirect;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.util.RandomStringUtils;
+import javax.inject.Scope;
+
+import org.apache.commons.lang.RandomStringUtils;
+import org.jboss.seam.faces.context.conversation.Begin;
+import org.jboss.seam.faces.context.conversation.End;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -40,8 +33,8 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.local.CustomerServiceLocal;
 import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.testng.annotations.Factory;
 
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean}

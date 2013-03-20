@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -36,7 +37,7 @@ import org.slf4j.Logger;
  * @author Gediminas Ubartas
  */
 @Named
-// TODO: Conversation scope. @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class Management implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -75,12 +76,12 @@ public class Management implements Serializable {
 	/**
 	 * List of application logs.
 	 */
-	public List<String> logs = new ArrayList<String>();
+	private List<String> logs = new ArrayList<String>();
 
 	/**
 	 * Is connection established flag.
 	 */
-	public boolean connectionEstablished;
+	private boolean connectionEstablished;
 
 	/**
 	 * Connects to socket server.

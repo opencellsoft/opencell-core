@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.bi;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +39,7 @@ import org.meveo.service.bi.impl.JobExecutionHistoryService;
  * @created 2011.04.14
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class JobExecutionHistoryBean extends BaseBean<JobExecutionHisto> {
 
 	private static final long serialVersionUID = 1L;
@@ -64,28 +65,12 @@ public class JobExecutionHistoryBean extends BaseBean<JobExecutionHisto> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Factory("jobExecutionHistory")
-	 * 
-	 * @Begin(nested = true)
-	 */
 	@Produces
 	@Named("jobExecutionHistory")
 	public JobExecutionHisto init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "jobExecutionHistories", required = false)
-	@Produces
-	@Named("jobExecutionHistories")
-	protected PaginationDataModel<JobExecutionHisto> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -94,26 +79,11 @@ public class JobExecutionHistoryBean extends BaseBean<JobExecutionHisto> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("jobExecutionHistories")
-	 */
 	@Produces
 	@Named("jobExecutionHistories")
+    @ConversationScoped
 	public void list() {
 		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
 	}
 
 	/**

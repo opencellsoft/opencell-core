@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.crm;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * @created 2010.11.15
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class CustomerBean extends BaseBean<Customer> {
 
 	private static final long serialVersionUID = 1L;

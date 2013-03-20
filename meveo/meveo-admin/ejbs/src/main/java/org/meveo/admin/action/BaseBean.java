@@ -85,10 +85,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Constructor
      */
-    public BaseBean(){
+    public BaseBean() {
         super();
     }
-    
+
     /**
      * Constructor.
      * 
@@ -114,6 +114,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @param objectClass Class of the object.
      * @return Entity from database.
      */
+    // TODO: @Begin(nested = true)
     @SuppressWarnings("unchecked")
     public T initEntity() {
 
@@ -146,6 +147,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Refresh entities data model and adds search filters. Usually it is enough to invoke this method in factory on concrete seam bean which subclasses BaseBean.
      */
+    // TODO: @Begin(join = true)
     public void list() {
         if (entities == null) {
             entities = new PaginationDataModel<T>(getPersistenceService());
@@ -160,6 +162,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
+     * Data model of entities for data table in GUI.
+     * 
+     * @return filtered entities.
+     */
+    protected PaginationDataModel<T> getDataModel() {
+        return entities;
+    }
+
+    /**
      * Refresh entities data model and removes search filters.
      */
     public void clean() {
@@ -171,6 +182,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         entities.addFilters(filters);
         entities.addFetchFields(getListFieldsToFetch());
         entities.forceRefresh();
+    }
+
+    /**
+     * Conversation is ended and user is redirected from edit to his previous window.
+     */
+    // TODO: @End(beforeRedirect = true, root = false)
+    public String saveOrUpdate() {
+        return saveOrUpdate(entity);
     }
 
     /**

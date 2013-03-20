@@ -18,6 +18,7 @@ package org.meveo.admin.action.bi;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,7 +41,7 @@ import org.meveo.service.bi.impl.JobService;
  * @created 2010.09.24
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class JobBean extends BaseBean<Job> {
 
 	private static final long serialVersionUID = 1L;
@@ -68,28 +69,12 @@ public class JobBean extends BaseBean<Job> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Factory("job")
-	 * 
-	 * @Begin(nested = true)
-	 */
 	@Produces
 	@Named("job")
 	public Job init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "jobs", required = false)
-	@Produces
-	@Named("jobs")
-	protected PaginationDataModel<Job> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -98,23 +83,13 @@ public class JobBean extends BaseBean<Job> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	// TODO: @Factory("jobs")
 	@Produces
 	@Named("jobs")
+    @ConversationScoped
 	public void list() {
 		super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

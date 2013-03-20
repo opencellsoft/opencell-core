@@ -46,6 +46,7 @@ import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -143,6 +144,7 @@ public class BordereauRemiseCheque {
 	}
 
 	@Inject
+	@CurrentProvider
 	private Provider currentProvider;
 
 	public File generateDataFile(String[] occCodes) {

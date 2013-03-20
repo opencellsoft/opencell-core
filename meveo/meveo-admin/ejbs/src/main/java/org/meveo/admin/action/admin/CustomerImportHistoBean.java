@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * @created 2011.01.18
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class CustomerImportHistoBean extends BaseBean<CustomerImportHisto> {
 
 	private static final long serialVersionUID = 1L;
@@ -63,28 +64,12 @@ public class CustomerImportHistoBean extends BaseBean<CustomerImportHisto> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("customerImportHisto")
-	 */
 	@Produces
 	@Named("customerImportHisto")
 	public CustomerImportHisto init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "customerImportHistories", required = false)
-	@Produces
-	@Named("customerImportHistories")
-	protected PaginationDataModel<CustomerImportHisto> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -93,26 +78,11 @@ public class CustomerImportHistoBean extends BaseBean<CustomerImportHisto> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("customerImportHistories")
-	 */
 	@Produces
 	@Named("customerImportHistories")
+	@ConversationScoped
 	public void list() {
 		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
 	}
 
 	/**

@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.crm;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,7 @@ import org.meveo.service.communication.impl.EmailTemplateService;
  * @created 2011.04.26
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 
 	private static final long serialVersionUID = 1L;

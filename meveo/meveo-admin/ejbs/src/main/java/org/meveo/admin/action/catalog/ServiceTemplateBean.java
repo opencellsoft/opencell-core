@@ -17,6 +17,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,7 +41,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;

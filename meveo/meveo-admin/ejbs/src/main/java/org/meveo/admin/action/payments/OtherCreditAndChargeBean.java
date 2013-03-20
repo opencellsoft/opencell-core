@@ -16,19 +16,17 @@
 package org.meveo.admin.action.payments;
 
 import java.util.Date;
+import java.util.ResourceBundle;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.web.RequestParameter;
-import org.jboss.seam.core.ResourceBundle;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -36,9 +34,9 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.meveo.service.payments.local.OCCTemplateServiceLocal;
-import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.payments.impl.OtherCreditAndChargeService;
 
 /**
  * Standard backing bean for {@link OtherCreditAndCharge} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -47,8 +45,8 @@ import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
  * @author Ignas
  * @created 2009.10.13
  */
-@Name("otherCreditAndChargeBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
     private static final long serialVersionUID = 1L;
@@ -56,33 +54,35 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
     /**
      * Injected @{link OtherCreditAndCharge} service. Extends {@link PersistenceService}.
      */
-    @In
-    private OtherCreditAndChargeServiceLocal otherCreditAndChargeService;
+    @Inject
+    private OtherCreditAndChargeService otherCreditAndChargeService;
 
     /**
      * Injected @{link OCustomerAccountService} service. Extends {@link PersistenceService}.
      */
-    @In(create = true)
-    private CustomerAccountServiceLocal customerAccountService;
+    @Inject
+    private CustomerAccountService customerAccountService;
 
     /**
      * Injected @{link OCCTemplateService} service. Extends {@link PersistenceService}.
      */
-    @In
-    private OCCTemplateServiceLocal occTemplateService;
+    @Inject
+    private OCCTemplateService occTemplateService;
 
-    @In
+    @Inject
+    @CurrentProvider
     private Provider currentProvider;
 
-    @In
+    @Inject
     private CustomerAccount customerAccount;
 
     /**
      * Customer Id passed as a parameter. Used when creating new OtherCreditAndCharge from otherCreditAndCharge window, so default customerAccount will be set on newly created
      * OtherCreditAndCharge.
      */
-    @RequestParameter
-    private Long customerAccountId;
+    @Inject
+    @RequestParam
+    private Instance<Long> customerAccountId;
 
     private Long customerAccountIdToSet;
 
@@ -103,8 +103,9 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Factory("otherCreditAndCharge")
-    @Begin(nested = true)
+    @Produces
+    @Named("otherCreditAndCharge")
+    // TODO @Begin(nested = true)
     public OtherCreditAndCharge init() {
 
         // Initialize a new one from ID or empty
@@ -121,29 +122,20 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
         } else if (initType.equals("loadFromTemplateRejectPayment")) {
             String occTemplateRejectPaymentCode = ResourceBundle.instance().getString("occ.templateRejectPaymentCode");
             OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode, currentProvider.getCode());
-            customerAccountIdToSet = customerAccountId;
-            copyFromTemplate(occ, customerAccountId);
+            customerAccountIdToSet = customerAccountId.get();
+            copyFromTemplate(occ, customerAccountId.get());
 
             // Create a new entity from a paymentCheck template
         } else if (initType.equals("loadFromTemplatePaymentCheck")) {
             String occTemplatePaymentCode = ResourceBundle.instance().getString("occ.templatePaymentCheckCode");
             OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode, currentProvider.getCode());
-            customerAccountIdToSet = customerAccountId;
-            copyFromTemplate(occ, customerAccountId);
+            customerAccountIdToSet = customerAccountId.get();
+            copyFromTemplate(occ, customerAccountId.get());
 
         }
         return entity;
     }
 
-    /**
-     * Data model of entities for data table in GUI.
-     * 
-     * @return filtered entities.
-     */
-    @Out(value = "otherCreditAndCharges", required = false)
-    protected PaginationDataModel<OtherCreditAndCharge> getDataModel() {
-        return entities;
-    }
 
     /**
      * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
@@ -152,8 +144,9 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
      * @see org.meveo.admin.action.BaseBean#list()
      */
     @Override
-    @Begin(join = true)
-    @Factory("otherCreditAndCharges")
+    @Produces
+    @Named("otherCreditAndCharges")
+    @ConversationScoped
     public void list() {
         super.list();
     }
@@ -163,11 +156,10 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    @End(beforeRedirect = true, root = false)
     public String saveOrUpdate() {
         entity.setUnMatchingAmount(entity.getAmount());
         entity.getCustomerAccount().getAccountOperations().add(entity);
-        return saveOrUpdate(entity);
+        return saveOrUpdate();
     }
 
     /**
@@ -183,7 +175,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
      */
     @Override
     public String back() {
-        return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
                 + (customerAccountIdToSet != null ? customerAccountIdToSet : (customerAccount != null ? customerAccount.getId() : null)) + "&edit=false&tab=ops";
     }
 

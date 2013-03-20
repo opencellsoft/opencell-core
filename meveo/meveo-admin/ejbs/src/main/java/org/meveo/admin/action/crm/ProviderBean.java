@@ -18,11 +18,13 @@ package org.meveo.admin.action.crm;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -41,7 +43,7 @@ import org.meveo.service.crm.impl.ProviderService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class ProviderBean extends BaseBean<Provider> {
 
 	private static final long serialVersionUID = 1L;
@@ -56,6 +58,7 @@ public class ProviderBean extends BaseBean<Provider> {
 	private User currentUser;
 
 	@Inject
+    @CurrentProvider
 	private Provider currentProvider;
 
 	/**

@@ -15,25 +15,18 @@
 */
 package org.meveo.admin.action.payments;
 
+import javax.inject.Scope;
 import javax.persistence.EntityExistsException;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.faces.context.conversation.Begin;
+import org.jboss.seam.faces.context.conversation.End;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.local.ActionPlanItemServiceLocal;
-import org.meveo.service.payments.local.DunningPlanServiceLocal;
+import org.testng.annotations.Factory;
 
 /**
  * Standard backing bean for {@link ActionPlanItem} (extends {@link BaseBean}

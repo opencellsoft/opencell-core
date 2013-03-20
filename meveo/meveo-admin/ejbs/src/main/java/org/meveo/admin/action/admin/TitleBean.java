@@ -17,6 +17,7 @@ package org.meveo.admin.action.admin;
 
 import java.sql.BatchUpdateException;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +30,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TitleService;
 
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class TitleBean extends BaseBean<Title> {
 
 	private static final long serialVersionUID = 1L;
@@ -55,28 +56,12 @@ public class TitleBean extends BaseBean<Title> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Factory("title")
-	 * 
-	 * @Begin(nested = true)
-	 */
 	@Produces
 	@Named("title")
 	public Title init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "titles", required = false)
-	@Produces
-	@Named("titles")
-	protected PaginationDataModel<Title> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -85,27 +70,13 @@ public class TitleBean extends BaseBean<Title> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("titles")
-	 */
 	@Produces
 	@Named("titles")
+	@ConversationScoped
 	public void list() {
 		super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * Override default list view name. (By default its class name starting

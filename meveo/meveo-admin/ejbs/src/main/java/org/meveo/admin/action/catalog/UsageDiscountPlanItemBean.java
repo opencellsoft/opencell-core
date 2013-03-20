@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,7 @@ import org.meveo.service.catalog.impl.UsageDiscountPlanItemService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 
 	private static final long serialVersionUID = 1L;

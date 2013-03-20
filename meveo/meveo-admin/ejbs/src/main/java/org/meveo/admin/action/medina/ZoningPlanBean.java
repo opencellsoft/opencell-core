@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.medina;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,7 +32,7 @@ import org.meveo.service.medina.impl.ZoningPlanService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 
 	private static final long serialVersionUID = 1L;

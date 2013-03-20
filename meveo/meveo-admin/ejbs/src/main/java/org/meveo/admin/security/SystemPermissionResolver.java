@@ -22,7 +22,6 @@ import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.permission.PersistentPermissionResolver;
 import org.slf4j.Logger;
 

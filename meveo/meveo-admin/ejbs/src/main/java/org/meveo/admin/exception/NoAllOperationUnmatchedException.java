@@ -15,7 +15,7 @@
 */
 package org.meveo.admin.exception;
 
-import org.jboss.seam.annotations.ApplicationException;
+import javax.ejb.ApplicationException;
 
 
 

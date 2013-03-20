@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.crm;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +38,7 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class CustomerCategoryBean extends BaseBean<CustomerCategory> {
 
 	private static final long serialVersionUID = 1L;

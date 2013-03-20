@@ -21,11 +21,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-import org.jboss.seam.core.SeamResourceBundle;
-import org.jboss.seam.ui.validator.ModelValidator;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.validation.ValidationServiceLocal;
 

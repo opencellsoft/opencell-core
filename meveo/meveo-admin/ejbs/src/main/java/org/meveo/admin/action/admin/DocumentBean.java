@@ -33,6 +33,7 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,7 +46,7 @@ import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 
 @Named
-// TODO: Conversation. @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class DocumentBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -57,6 +58,7 @@ public class DocumentBean implements Serializable {
 	private List<Document> documents;
 
 	@Inject
+	@CurrentProvider
 	private Provider currentProvider;
 
 	private String filename;
@@ -87,13 +89,10 @@ public class DocumentBean implements Serializable {
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@SuppressWarnings("unchecked")
-	/*
-	 * TODO: Conversation. @Begin(join = true)
-	 * 
-	 * @Factory("documents")
-	 */
 	@Produces
 	@Named("documents")
+	@ConversationScoped
+	//@Begin(join = true)
 	public void list() {
 		documents = new ArrayList<Document>();
 		File path = new File(savePath);

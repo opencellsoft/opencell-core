@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
@@ -61,7 +62,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
  * @created Dec 7, 2010
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class SubscriptionBean extends BaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;

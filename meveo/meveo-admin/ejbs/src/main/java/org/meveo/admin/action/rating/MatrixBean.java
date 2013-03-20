@@ -18,6 +18,7 @@ package org.meveo.admin.action.rating;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,7 +40,7 @@ import org.meveo.service.rating.impl.MatrixService;
  * @created 2009.10.13
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class MatrixBean extends BaseBean<MatrixDefinition> {
 
 	private static final long serialVersionUID = 1L;

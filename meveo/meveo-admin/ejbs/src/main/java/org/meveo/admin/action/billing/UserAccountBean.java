@@ -18,6 +18,7 @@ package org.meveo.admin.action.billing;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
@@ -47,7 +48,7 @@ import org.meveo.service.billing.impl.UserAccountService;
  * @created Dec 7, 2010
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class UserAccountBean extends BaseBean<UserAccount> {
 
 	private static final long serialVersionUID = 1L;

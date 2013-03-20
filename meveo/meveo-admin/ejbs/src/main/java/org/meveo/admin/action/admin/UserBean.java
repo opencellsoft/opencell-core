@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,7 +41,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * @created 2010.05.31
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class UserBean extends BaseBean<User> {
 
 	private static final long serialVersionUID = 1L;
@@ -81,27 +82,10 @@ public class UserBean extends BaseBean<User> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("user")
-	 */
 	@Produces
 	@Named("user")
 	public User init() {
 		return initEntity();
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "users", required = false)
-	@Produces
-	@Named("users")
-	protected PaginationDataModel<User> getDataModel() {
-		return entities;
 	}
 
 	/**
@@ -111,13 +95,9 @@ public class UserBean extends BaseBean<User> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("users")
-	 */
 	@Produces
 	@Named("users")
+    @ConversationScoped
 	public void list() {
 		super.list();
 	}
@@ -128,10 +108,9 @@ public class UserBean extends BaseBean<User> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	// @End(beforeRedirect = true, root=false)
 	public String saveOrUpdate() {
 		if (password == null) {
-			return saveOrUpdate(entity);
+			return super.saveOrUpdate();
 		} else {
 			boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
 			if (passwordsDoNotMatch) {
@@ -142,7 +121,7 @@ public class UserBean extends BaseBean<User> {
 				entity.setLastPasswordModification(new Date());
 				entity.setNewPassword(password);
 				entity.setPassword(password);
-				return saveOrUpdate(entity);
+				return super.saveOrUpdate();
 			}
 		}
 	}
