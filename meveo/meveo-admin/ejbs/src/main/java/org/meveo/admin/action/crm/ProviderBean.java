@@ -58,7 +58,7 @@ public class ProviderBean extends BaseBean<Provider> {
 	private User currentUser;
 
 	@Inject
-    @CurrentProvider
+	@CurrentProvider
 	private Provider currentProvider;
 
 	/**
@@ -76,30 +76,12 @@ public class ProviderBean extends BaseBean<Provider> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("provider")
-	 */
 	@Produces
 	@Named("provider")
 	public Provider init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "providers", required = false)
-	@Produces
-	@Named("providers")
-	protected PaginationDataModel<Provider> getDataModel() {
-		return entities;
-	}
-
-	// @Out(value = "userProviders", required = false)
 	@Produces
 	@Named("userProviders")
 	public PaginationDataModel<Provider> userProviders() {
@@ -114,28 +96,15 @@ public class ProviderBean extends BaseBean<Provider> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
+	 * @return
 	 * 
-	 * @Factory("providers")
+	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Produces
 	@Named("providers")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<Provider> list() {
+		return super.list();
 	}
 
 	/**
@@ -164,10 +133,10 @@ public class ProviderBean extends BaseBean<Provider> {
 	 * if current provider is not null continue action, else require to select
 	 * provider in login screen
 	 */
-	public void checkCurrentProvider() {
+	public String checkCurrentProvider() {
 		if (currentUser == null || currentProvider == null) {
-			Redirect.instance().setViewId("/home");
-			Redirect.instance().execute();
+			return "/home.xhtml";
 		}
+		return "";
 	}
 }
