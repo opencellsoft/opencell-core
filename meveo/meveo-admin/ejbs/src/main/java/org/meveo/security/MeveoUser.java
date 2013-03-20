@@ -14,12 +14,12 @@ public class MeveoUser implements User, Serializable {
         this.user = user;
     }
 
-    @Override
+    // TODO: @Override
     public String getKey() {
         return getId();
     }
 
-    @Override
+    // TODO: @Override
     public String getId() {
         return user.getUserName();
     }
@@ -27,5 +27,4 @@ public class MeveoUser implements User, Serializable {
     public org.meveo.model.admin.User getUser() {
         return this.user;
     }
-
 }

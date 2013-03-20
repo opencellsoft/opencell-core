@@ -22,7 +22,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ResourceBundle;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -30,8 +30,8 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 
-@Stateless
 @Named
+@SessionScoped
 public class JavaScriptAction implements JavaScriptActionLocal {
 
 	@Inject

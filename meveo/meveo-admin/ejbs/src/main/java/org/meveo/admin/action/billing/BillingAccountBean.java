@@ -104,7 +104,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	// TODO: @RequestParameter
 	private Long customerAccountId;
 
-	public boolean returnToAgency;
+	private boolean returnToAgency;
 
 	// TODO: SEB: pls explain why you write create=true ?
 	@Inject
