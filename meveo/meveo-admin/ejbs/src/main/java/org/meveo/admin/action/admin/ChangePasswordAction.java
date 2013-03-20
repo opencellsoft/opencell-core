@@ -15,13 +15,17 @@
  */
 package org.meveo.admin.action.admin;
 
-import javax.enterprise.inject.Produces;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.model.admin.User;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 
@@ -36,15 +40,15 @@ public class ChangePasswordAction {
 	protected Logger log;
 
 	@Inject
-	private User currentUser;
-
-	@Named
-	@Produces
-	private User user;
+	private Identity identity;
 
 	@Inject
 	private UserService userService;
 
+	@Inject
+	protected Messages messages;
+
+	private User currentUser;
 	private String currentPassword;
 
 	/*
@@ -52,40 +56,38 @@ public class ChangePasswordAction {
 	 * 
 	 * @Create
 	 */
-	public void init() {
-		if (currentUser != null)
-			user = userService.findById(currentUser.getId());
-		else
-			user = new User();
+	/*
+	 * public void init() { if (currentUser != null) user =
+	 * userService.findById(currentUser.getId()); else user = new User();
+	 * 
+	 * currentPassword = ""; }
+	 */
 
-		currentPassword = "";
+	@PostConstruct
+	private void init() {
+		currentUser = ((MeveoUser) identity.getUser()).getUser();
 	}
 
 	public String update() {
 		String result = null;
+		
 		if (currentUser == null) {
-			User tempUser = userService.findByUsernameAndPassword(user.getUserName(),
+			User tempUser = userService.findByUsernameAndPassword(currentUser.getUserName(),
 					currentPassword);
 			if (tempUser != null) {
-				tempUser.setNewPassword(user.getNewPassword());
-				tempUser.setNewPasswordConfirmation(user.getNewPasswordConfirmation());
-				user = tempUser;
+				tempUser.setNewPassword(currentUser.getNewPassword());
+				tempUser.setNewPasswordConfirmation(currentUser.getNewPasswordConfirmation());
+				currentUser = tempUser;
 			} else {
-				/*
-				 * TODO: FacesMessages.
-				 * FacesMessages.instance().addFromResourceBundle(
-				 * "changePassword.err.badUsernameOrPassword");
-				 */
+				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
 				return null;
 			}
 		}
+		
 		if (validate()) {
 			try {
-				userService.changePassword(user, user.getNewPassword());
-				/*
-				 * TODO: FacesMessages.instance().addFromResourceBundle(
-				 * "changePassword.msg.passwordChanged", user.getUserName());
-				 */
+				userService.changePassword(currentUser, currentUser.getNewPassword());
+				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
 			} catch (BusinessException e) {
 				log.error("Error when update the password of #{currentUser.username} with password="
 						+ currentPassword);
@@ -98,30 +100,19 @@ public class ChangePasswordAction {
 	}
 
 	private boolean validate() {
-		/* TODO: FacesMessages facesMessages = FacesMessages.instance(); */
-
-		if (!Sha1Encrypt.encodePassword(currentPassword).equals(user.getPassword())) {
-			/*
-			 * TODO:
-			 * facesMessages.addToControlFromResourceBundle("currentPassword",
-			 * "changePassword.err.currentPasswordIncorrect");
-			 */
+		if (!Sha1Encrypt.encodePassword(currentPassword).equals(currentUser.getPassword())) {
+			messages.error(new BundleKey("messages", "changePassword.err.currentPasswordIncorrect"));
 			return false;
 		}
 
-		if (Sha1Encrypt.encodePassword(user.getNewPassword()).equals(user.getPassword())) {
-			/*
-			 * TODO: facesMessages.addToControlFromResourceBundle("newPassword",
-			 * "changePassword.err.passwordMustBeDifferent");
-			 */
+		if (Sha1Encrypt.encodePassword(currentUser.getNewPassword()).equals(
+				currentUser.getPassword())) {
+			messages.error(new BundleKey("messages", "changePassword.err.passwordMustBeDifferent"));
 			return false;
 		}
 
-		if (!user.getNewPassword().equals(user.getNewPasswordConfirmation())) {
-			/*
-			 * TODO: facesMessages.addToControlFromResourceBundle("newPassword",
-			 * "changePassword.err.confirmationFailed");
-			 */
+		if (!currentUser.getNewPassword().equals(currentUser.getNewPasswordConfirmation())) {
+			messages.error(new BundleKey("messages", "changePassword.err.confirmationFailed"));
 			return false;
 		}
 
@@ -135,5 +126,4 @@ public class ChangePasswordAction {
 	public void setCurrentPassword(String currentPassword) {
 		this.currentPassword = currentPassword;
 	}
-
 }
