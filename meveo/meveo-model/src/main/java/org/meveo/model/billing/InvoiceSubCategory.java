@@ -16,12 +16,14 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -44,6 +46,9 @@ public class InvoiceSubCategory extends BusinessEntity {
     @Column(name = "DISCOUNT")
     private BigDecimal discount;
     
+    @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
+    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
+    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "INVOICE_CATEGORY_ID")
@@ -60,6 +65,17 @@ public class InvoiceSubCategory extends BusinessEntity {
     @Column(name = "DISCOUNT_CODE", length = 20)
     private String discountCode;
 
+    
+    
+
+	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
+		return invoiceSubcategoryCountries;
+	}
+
+	public void setInvoiceSubcategoryCountries(
+			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
+		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
+	}
 
 	public String getDiscountCode() {
 		return discountCode;

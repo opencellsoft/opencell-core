@@ -24,16 +24,15 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.web.RequestParameter;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.LanguageEnum;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.CatMessagesServiceLocal;
+import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
 import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
 
@@ -51,19 +50,18 @@ import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
 public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
     private static final long serialVersionUID = 1L;
-    
-    @In
-    private CatMessagesServiceLocal catMessagesService;
-     
-     private String descriptionFr;
 
+    
     /**
      * Injected @{link InvoiceSubCategory} service. Extends
      * {@link PersistenceService}.
      */
     @In
     private InvoiceSubCategoryServiceLocal invoiceSubCategoryService;
-
+    
+    @In
+    private InvoiceSubCategoryCountryServiceLocal invoiceSubCategoryCountryService;
+    
     /**
      * Inject InvoiceCategory service, that is used to load default category if
      * its id was passed in parameters.
@@ -81,7 +79,47 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
     private String[] accountingCodeFields = new String[7];
     private String separator;
+    
+    
+    
+    
 
+    @Out(required = false)
+    private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+
+    
+    public void newInvoiceSubcategoryCountryInstance() {
+        this.invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+    }
+    
+
+    public void saveInvoiceSubCategoryCountry() {
+        log.info("saveOneShotChargeIns getObjectId=#0", getObjectId());
+
+        try {
+		if (invoiceSubcategoryCountry != null){
+        	 if (invoiceSubcategoryCountry.getId() != null) {
+        		invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
+				statusMessages.addFromResourceBundle("update.successful");
+            } else {
+            	invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
+            	entity.getInvoiceSubcategoryCountries().add(invoiceSubcategoryCountry);
+				invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
+                statusMessages.addFromResourceBundle("save.successful");
+            }
+		}	
+        } catch (Exception e) {
+            log.error("exception when applying one invoiceSubCategoryCountry !", e);
+            statusMessages.addFromResourceBundle(Severity.ERROR, e.getMessage());
+        }
+    }
+
+   
+    
+    public void editInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+        this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
+    }
+    
     /**
      * Constructor. Invokes super constructor and provides class type of this
      * bean for {@link BaseBean}.
@@ -93,6 +131,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
         accountingCodeFields[4]="ZONE";
     }
 
+    
     /**
      * Factory method for entity to edit. If objectId param set load that entity
      * from database, otherwise create new.
@@ -102,15 +141,13 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
     @Factory("invoiceSubCategory")
     @Begin(nested = true)
-    public InvoiceSubCategory init() { 
-         InvoiceSubCategory invoiceSubcat= initEntity();
-         descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),LanguageEnum.FR.toString());
-         
+    public InvoiceSubCategory init() {
+         initEntity();
         if (invoiceCategoryId != null) {
-        	invoiceSubcat.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
+            entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
         }
         parseAccountingCode();
-        return invoiceSubcat;
+        return entity;
     }
 
     /**
@@ -144,24 +181,11 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-    	String back=null;
-    	if(entity.getId()!=null ){
-    		
-    		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString()); 
-    		catSubMsFr.setDescription(descriptionFr);
-    		catMessagesService.update(catSubMsFr); 
-    		back =saveOrUpdate(entity); 
-    	}else{	
-
-    	entity.setAccountingCode(generateAccountingCode());
-    	back =saveOrUpdate(entity); 
-    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),LanguageEnum.FR.toString(),descriptionFr);
-    	catMessagesService.create(catMessagesFr);
-    
-    	}
-    	 return back;
+        entity.setAccountingCode(generateAccountingCode());
+        return saveOrUpdate(entity);
     }
-   /**
+
+    /**
      * Constructs cost accounting code
      */
     public String generateAccountingCode() {
@@ -260,14 +284,6 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     public void setAccountingCodeField7(String accountingCodeField7) {
         this.accountingCodeFields[6] = accountingCodeField7;
     }
-
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
-
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
-	}
     
     
 }

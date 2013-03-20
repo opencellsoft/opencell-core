@@ -40,8 +40,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.ComLanguage;
+import org.meveo.model.billing.CountryCom;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -55,6 +55,7 @@ public class Provider extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    
     @Column(name = "COUNTRY_CODE", length = 2)
     private String countryCode;
     
@@ -68,15 +69,15 @@ public class Provider extends BusinessEntity {
     
     
     @Column(name = "MULTICOUNTRY_FLAG")
-    private Integer multicountryFlag;
+    private boolean multicountryFlag;
     
     
     @Column(name = "MULTICURRENCY_FLAG")
-    private Integer multicurrencyFlag;
+    private boolean multicurrencyFlag;
     
     
     @Column(name = "MULTILANGUAGE_FLAG")
-    private Integer multilanguageFlag;
+    private boolean multilanguageFlag;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER_ID")
@@ -95,6 +96,10 @@ public class Provider extends BusinessEntity {
     @JoinColumn(name = "USER_ACCOUNT_ID")
     private UserAccount userAccount;
 
+    
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    private List<CountryCom> comCountries;
+    
     
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
@@ -148,12 +153,19 @@ public class Provider extends BusinessEntity {
     @Email
     @Length(max = 100)
     protected String email;
-    
-    
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<ComLanguage> comLanguage;
 
-    public String getSerializedPaymentMethods() {
+    
+    
+    
+    public List<CountryCom> getComCountries() {
+		return comCountries;
+	}
+
+	public void setComCountries(List<CountryCom> comCountries) {
+		this.comCountries = comCountries;
+	}
+
+	public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
     }
 
@@ -185,27 +197,27 @@ public class Provider extends BusinessEntity {
 		this.languageCode = languageCode;
 	}
 
-	public Integer getMulticountryFlag() {
+	public boolean getMulticountryFlag() {
 		return multicountryFlag;
 	}
 
-	public void setMulticountryFlag(Integer multicountryFlag) {
+	public void setMulticountryFlag(boolean multicountryFlag) {
 		this.multicountryFlag = multicountryFlag;
 	}
 
-	public Integer getMulticurrencyFlag() {
+	public boolean getMulticurrencyFlag() {
 		return multicurrencyFlag;
 	}
 
-	public void setMulticurrencyFlag(Integer multicurrencyFlag) {
+	public void setMulticurrencyFlag(boolean multicurrencyFlag) {
 		this.multicurrencyFlag = multicurrencyFlag;
 	}
 
-	public Integer getMultilanguageFlag() {
+	public boolean getMultilanguageFlag() {
 		return multilanguageFlag;
 	}
 
-	public void setMultilanguageFlag(Integer multilanguageFlag) {
+	public void setMultilanguageFlag(boolean multilanguageFlag) {
 		this.multilanguageFlag = multilanguageFlag;
 	}
 
@@ -375,17 +387,5 @@ public class Provider extends BusinessEntity {
     public void setEmail(String email) {
         this.email = email;
     }
-
-	public List<ComLanguage> getComLanguage() {
-		return comLanguage;
-	}
-
-	public void setComLanguage(List<ComLanguage> comLanguage) {
-		this.comLanguage = comLanguage;
-	}
-
- 
-    
-    
 
 }
