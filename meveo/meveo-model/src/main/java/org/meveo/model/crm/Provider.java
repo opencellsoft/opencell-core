@@ -29,6 +29,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -39,6 +40,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CountryCom;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -52,6 +55,7 @@ public class Provider extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    
     @Column(name = "COUNTRY_CODE", length = 2)
     private String countryCode;
     
@@ -92,6 +96,10 @@ public class Provider extends BusinessEntity {
     @JoinColumn(name = "USER_ACCOUNT_ID")
     private UserAccount userAccount;
 
+    
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    private List<CountryCom> comCountries;
+    
     
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
@@ -146,7 +154,18 @@ public class Provider extends BusinessEntity {
     @Length(max = 100)
     protected String email;
 
-    public String getSerializedPaymentMethods() {
+    
+    
+    
+    public List<CountryCom> getComCountries() {
+		return comCountries;
+	}
+
+	public void setComCountries(List<CountryCom> comCountries) {
+		this.comCountries = comCountries;
+	}
+
+	public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
     }
 
