@@ -50,7 +50,7 @@ public class AmountValidator implements Validator {
         if (amountWithoutTax == null && amount2 == null)
             return true;
         // If there are values
-        if (chargeTemplate != null & amountWithoutTax != null & amount2 != null) {
+      /*  if (chargeTemplate != null & amountWithoutTax != null & amount2 != null) {
             amount2.setScale(2, RoundingMode.HALF_UP);
             Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
             BigDecimal calculatedAmount = amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100)).add(
@@ -59,7 +59,7 @@ public class AmountValidator implements Validator {
             if (calculatedAmount.compareTo(amount2) == 0) {
                 return true;
             }
-        }
+        }*/
 
         return false;
     }

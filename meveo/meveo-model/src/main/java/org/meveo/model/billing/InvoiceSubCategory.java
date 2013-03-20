@@ -16,6 +16,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -47,7 +48,7 @@ public class InvoiceSubCategory extends BusinessEntity {
     private BigDecimal discount;
     
     @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
-    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
+    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries=new ArrayList<InvoiceSubcategoryCountry>();
     
     
     @ManyToOne(fetch = FetchType.LAZY)

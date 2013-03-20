@@ -103,8 +103,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 				statusMessages.addFromResourceBundle("update.successful");
             } else {
             	invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
+            	invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
             	entity.getInvoiceSubcategoryCountries().add(invoiceSubcategoryCountry);
-				invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
                 statusMessages.addFromResourceBundle("save.successful");
             }
 		}	
