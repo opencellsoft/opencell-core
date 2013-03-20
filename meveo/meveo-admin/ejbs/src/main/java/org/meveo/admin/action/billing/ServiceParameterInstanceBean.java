@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,104 +28,94 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceParameterInstanceService;
 
 /**
- * Standard backing bean for {@link ServiceParameterInstance} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link ServiceParameterInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Dec 7, 2010
  */
 @Named
-/*
- * TODO: @Scope(ScopeType.CONVERSATION)
- * 
- * @Restrict("#{s:hasRole('meveo.crm')}")
- */
+@ConversationScoped
+// @Restrict("#{s:hasRole('meveo.crm')}")
 public class ServiceParameterInstanceBean extends BaseBean<ServiceParameterInstance> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link ServiceParameterInstance} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private ServiceParameterInstanceService serviceParameterService;
+    /**
+     * Injected @{link ServiceParameterInstance} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private ServiceParameterInstanceService serviceParameterService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ServiceParameterInstanceBean() {
-		super(ServiceParameterInstance.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ServiceParameterInstanceBean() {
+        super(ServiceParameterInstance.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("serviceParameterInstance")
-	 */
-	@Produces
-	@Named("serviceParameterInstance")
-	public ServiceParameterInstance init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    /*
+     * TODO: @Begin(nested = true)
+     * 
+     * @Factory("serviceParameterInstance")
+     */
+    @Produces
+    @Named("serviceParameterInstance")
+    public ServiceParameterInstance init() {
+        return initEntity();
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "serviceParameterInstances", required = false)
-	@Produces
-	@Named("serviceParameterInstances")
-	protected PaginationDataModel<ServiceParameterInstance> getDataModel() {
-		return entities;
-	}
+    /**
+     * Data model of entities for data table in GUI.
+     * 
+     * @return filtered entities.
+     */
+    // @Out(value = "serviceParameterInstances", required = false)
+    @Produces
+    @Named("serviceParameterInstances")
+    protected PaginationDataModel<ServiceParameterInstance> getDataModel() {
+        return entities;
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("serviceParameterInstances")
-	 */
-	@Produces
-	@Named("serviceParameterInstances")
-	public void list() {
-		super.list();
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    /*
+     * TODO: @Begin(join = true)
+     * 
+     * @Factory("serviceParameterInstances")
+     */
+    @Produces
+    @Named("serviceParameterInstances")
+    public void list() {
+        super.list();
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// TODO: @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
+    /**
+     * Conversation is ended and user is redirected from edit to his previous window.
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+     */
+    // TODO: @End(beforeRedirect = true, root=false)
+    public String saveOrUpdate() {
+        return saveOrUpdate(entity);
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<ServiceParameterInstance> getPersistenceService() {
-		return serviceParameterService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<ServiceParameterInstance> getPersistenceService() {
+        return serviceParameterService;
+    }
 
 }

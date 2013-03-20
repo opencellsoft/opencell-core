@@ -29,10 +29,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 
 /**
- * Standard backing bean for {@link OneShotChargeTemplate} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link OneShotChargeTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Nov 18, 2010
@@ -41,123 +39,84 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 @Named
 @ConversationScoped
 public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link OneShotChargeTemplate} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
+    /**
+     * Injected @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public OneShotChargeTemplateBean() {
-		super(OneShotChargeTemplate.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public OneShotChargeTemplateBean() {
+        super(OneShotChargeTemplate.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("oneShotChargeTemplate")
-	 */
-	@Produces
-	@Named("oneShotChargeTemplate")
-	public OneShotChargeTemplate init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("oneShotChargeTemplate")
+    public OneShotChargeTemplate init() {
+        return initEntity();
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "oneShotChargeTemplates", required = false)
-	@Produces
-	@Named("oneShotChargeTemplates")
-	protected PaginationDataModel<OneShotChargeTemplate> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("oneShotChargeTemplates")
+    @ConversationScoped
+    public PaginationDataModel<OneShotChargeTemplate> list() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Factory("oneShotChargeTemplates")
-	 * 
-	 * @Override
-	 * 
-	 * @Begin(join = true)
-	 */
-	@Produces
-	@Named("oneShotChargeTemplates")
-	public void list() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		super.list();
-	}
+    /**
+     * Data model of entities for data table in GUI. Filters charges of Usage type.
+     * 
+     * @return filtered entities.
+     */
+    // @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
+    protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
+        return entities;
+    }
 
-	/**
-	 * Data model of entities for data table in GUI. Filters charges of Usage
-	 * type.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
-	protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it. Filters charges of Usage type.
+     * 
+     * @return
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("oneShotChargeTemplatesForUsageType")
+    public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it. Filters charges of Usage type.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("oneShotChargeTemplatesForUsageType")
-	public void listForUsageType() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// TODO: @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
-		return oneShotChargeTemplateService;
-	}
-
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
+        return oneShotChargeTemplateService;
+    }
 }

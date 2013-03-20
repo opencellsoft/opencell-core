@@ -67,8 +67,6 @@ public class MatrixBean extends BaseBean<MatrixDefinition> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*TODO: @Begin(nested = true)
-	@Factory("matrix")*/
 	@Produces
 	@Named("matrix")
 	public MatrixDefinition init() {
@@ -76,45 +74,19 @@ public class MatrixBean extends BaseBean<MatrixDefinition> {
 	}
 
 	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	//@Out(value = "matrixes", required = false)
-	@Produces
-	@Named("matrixes")
-	protected PaginationDataModel<MatrixDefinition> getDataModel() {
-		return entities;
-	}
-
-	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Factory("matrixes")
+	 * @return
 	 * 
-	 * @Begin(join = true)
+	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Produces
 	@Named("matrixes")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	//@End(beforeRedirect = true, root = false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-
+	@ConversationScoped
+	public PaginationDataModel<MatrixDefinition> list() {
+		return super.list();
 	}
 
 	/**

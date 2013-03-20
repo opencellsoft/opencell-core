@@ -31,10 +31,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 
 /**
- * Standard backing bean for {@link ServiceTemplate} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link ServiceTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Dec 7, 2010
@@ -44,119 +42,93 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 @ConversationScoped
 public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link ServiceTemplate} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
+    /**
+     * Injected
+     * 
+     * @{link ServiceTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ServiceTemplateBean() {
-		super(ServiceTemplate.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ServiceTemplateBean() {
+        super(ServiceTemplate.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("serviceTemplate")
-	 */
-	@Produces
-	@Named("serviceTemplate")
-	public ServiceTemplate init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("serviceTemplate")
+    public ServiceTemplate init() {
+        return initEntity();
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "serviceTemplates", required = false)
-	@Produces
-	@Named("serviceTemplates")
-	protected PaginationDataModel<ServiceTemplate> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("serviceTemplates")
+    @ConversationScoped
+    public PaginationDataModel<ServiceTemplate> list() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.list();
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Factory("serviceTemplates")
-	 * 
-	 * @Begin(join = true)
-	 */
-	@Produces
-	@Named("serviceTemplates")
-	public void list() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		super.list();
-	}
+    /**
+     * Conversation is ended and user is redirected from edit to his previous window.
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+     */
+    public String saveOrUpdate() {
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
+        List<RecurringChargeTemplate> recurringCharges = entity.getRecurringCharges();
+        RecurringChargeTemplate notBillableInAdvanceCharge = null;
+        for (RecurringChargeTemplate recurringCharge : recurringCharges) {
+            if (!recurringCharge.getApplyInAdvance()) {
+                notBillableInAdvanceCharge = recurringCharge;
+                break;
+            }
+        }
 
-		List<RecurringChargeTemplate> recurringCharges = entity.getRecurringCharges();
-		RecurringChargeTemplate notBillableInAdvanceCharge = null;
-		for (RecurringChargeTemplate recurringCharge : recurringCharges) {
-			if (!recurringCharge.getApplyInAdvance()) {
-				notBillableInAdvanceCharge = recurringCharge;
-				break;
-			}
-		}
+        return saveOrUpdate(entity);
+    }
 
-		return saveOrUpdate(entity);
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<ServiceTemplate> getPersistenceService() {
+        return serviceTemplateService;
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<ServiceTemplate> getPersistenceService() {
-		return serviceTemplateService;
-	}
-
-	// /**
-	// * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	// */
-	// protected List<String> getListFieldsToFetch() {
-	// return Arrays.asList("recurringCharges", "subscriptionCharges",
-	// "terminationCharges", "durationTermCalendar");
-	// }
-	//
-	// /**
-	// * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	// */
-	// protected List<String> getFormFieldsToFetch() {
-	// return Arrays.asList("recurringCharges", "subscriptionCharges",
-	// "terminationCharges", "durationTermCalendar");
-	// }
+    // /**
+    // * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+    // */
+    // protected List<String> getListFieldsToFetch() {
+    // return Arrays.asList("recurringCharges", "subscriptionCharges",
+    // "terminationCharges", "durationTermCalendar");
+    // }
+    //
+    // /**
+    // * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+    // */
+    // protected List<String> getFormFieldsToFetch() {
+    // return Arrays.asList("recurringCharges", "subscriptionCharges",
+    // "terminationCharges", "durationTermCalendar");
+    // }
 
 }

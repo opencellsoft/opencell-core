@@ -67,28 +67,12 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("recurringChargeTemplate")
-	 */
 	@Produces
 	@Named("recurringChargeTemplate")
 	public RecurringChargeTemplate init() {
 		return initEntity();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "recurringChargeTemplates", required = false)
-	@Produces
-	@Named("recurringChargeTemplates")
-	protected PaginationDataModel<RecurringChargeTemplate> getDataModel() {
-		return entities;
-	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -97,33 +81,17 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Factory("recurringChargeTemplates")
-	 * 
-	 * @Override
-	 * 
-	 * @Begin(join = true)
-	 */
 	@Produces
 	@Named("recurringChargeTemplates")
-	public void list() {
+	@ConversationScoped
+	public PaginationDataModel<RecurringChargeTemplate>  list() {
 		getFilters();
 		if (!filters.containsKey("disabled")) {
 			filters.put("disabled", false);
 		}
-		super.list();
+		return super.list();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

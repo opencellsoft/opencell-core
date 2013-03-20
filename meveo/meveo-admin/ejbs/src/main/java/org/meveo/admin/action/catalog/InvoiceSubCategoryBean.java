@@ -16,10 +16,12 @@
 package org.meveo.admin.action.catalog;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
@@ -30,10 +32,8 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
- * Standard backing bean for {@link InvoiceSubCategory} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link InvoiceSubCategory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created Dec 15, 2010
@@ -42,207 +42,167 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 @ConversationScoped
 public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link InvoiceSubCategory} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
+    /**
+     * Injected @{link InvoiceSubCategory} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
-	/**
-	 * Inject InvoiceCategory service, that is used to load default category if
-	 * its id was passed in parameters.
-	 */
-	@Inject
-	private InvoiceCategoryService invoiceCategoryService;
+    /**
+     * Inject InvoiceCategory service, that is used to load default category if its id was passed in parameters.
+     */
+    @Inject
+    private InvoiceCategoryService invoiceCategoryService;
 
-	/**
-	 * InvoiceCategory Id passed as a parameter. Used when creating new
-	 * InvoiceSubCategory from InvoiceCategory window, so default
-	 * InvoiceCategory will be set on newly created InvoiceSubCategory.
-	 */
-	// TODO: @RequestParameter
-	private Long invoiceCategoryId;
+    /**
+     * InvoiceCategory Id passed as a parameter. Used when creating new InvoiceSubCategory from InvoiceCategory window, so default InvoiceCategory will be set on newly created
+     * InvoiceSubCategory.
+     */
 
-	private String[] accountingCodeFields = new String[7];
-	private String separator;
+    @Inject
+    @RequestParam
+    private Instance<Long> invoiceCategoryId;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public InvoiceSubCategoryBean() {
-		super(InvoiceSubCategory.class);
-		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-		separator = param.getProperty("reporting.accountingCode.separator", ",");
-		accountingCodeFields[4] = "ZONE";
-	}
+    private String[] accountingCodeFields = new String[7];
+    private String separator;
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	/*
-	 * TODO: @Factory("invoiceSubCategory")
-	 * 
-	 * @Begin(nested = true)
-	 */
-	@Produces
-	@Named("invoiceSubCategory")
-	public InvoiceSubCategory init() {
-		initEntity();
-		if (invoiceCategoryId != null) {
-			entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
-		}
-		parseAccountingCode();
-		return entity;
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public InvoiceSubCategoryBean() {
+        super(InvoiceSubCategory.class);
+        ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+        separator = param.getProperty("reporting.accountingCode.separator", ",");
+        accountingCodeFields[4] = "ZONE";
+    }
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "invoiceSubCategories", required = false)
-	@Produces
-	@Named("invoiceSubCategories")
-	protected PaginationDataModel<InvoiceSubCategory> getDataModel() {
-		return entities;
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("invoiceSubCategory")
+    public InvoiceSubCategory init() {
+        initEntity();
+        if (invoiceCategoryId != null) {
+            entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId.get()));
+        }
+        parseAccountingCode();
+        return entity;
+    }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("invoiceSubCategories")
-	 */
-	@Produces
-	@Named("invoiceSubCategories")
-	public void list() {
-		super.list();
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    @Produces
+    @Named("invoiceSubCategories")
+    @ConversationScoped
+    public PaginationDataModel<InvoiceSubCategory> list() {
+        return super.list();
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		entity.setAccountingCode(generateAccountingCode());
-		return saveOrUpdate(entity);
-	}
+    /**
+     * Constructs cost accounting code
+     */
+    public String generateAccountingCode() {
+        return accountingCodeFields[0] + separator + accountingCodeFields[1] + separator + accountingCodeFields[2] + separator + accountingCodeFields[3] + separator
+                + accountingCodeFields[4] + separator + accountingCodeFields[5] + separator + accountingCodeFields[6];
+    }
 
-	/**
-	 * Constructs cost accounting code
-	 */
-	public String generateAccountingCode() {
-		return accountingCodeFields[0] + separator + accountingCodeFields[1] + separator
-				+ accountingCodeFields[2] + separator + accountingCodeFields[3] + separator
-				+ accountingCodeFields[4] + separator + accountingCodeFields[5] + separator
-				+ accountingCodeFields[6];
-	}
+    /**
+     * Parses cost accounting code
+     * 
+     */
+    public void parseAccountingCode() {
+        if (entity.getAccountingCode() != null) {
+            String[] accountingCodeValues = entity.getAccountingCode().split(separator);
+            if (accountingCodeValues != null) {
+                for (int i = 0; i < accountingCodeFields.length; i++) {
+                    if (i < accountingCodeValues.length) {
+                        accountingCodeFields[i] = accountingCodeValues[i];
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * Parses cost accounting code
-	 * 
-	 */
-	public void parseAccountingCode() {
-		if (entity.getAccountingCode() != null) {
-			String[] accountingCodeValues = entity.getAccountingCode().split(separator);
-			if (accountingCodeValues != null) {
-				for (int i = 0; i < accountingCodeFields.length; i++) {
-					if (i < accountingCodeValues.length) {
-						accountingCodeFields[i] = accountingCodeValues[i];
-					}
-				}
-			}
-		}
-	}
+    /**
+     * Override default list view name. (By default its class name starting lower case + 's').
+     * 
+     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+     */
+    protected String getDefaultViewName() {
+        return "invoiceSubCategories";
+    }
 
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "invoiceSubCategories";
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<InvoiceSubCategory> getPersistenceService() {
+        return invoiceSubCategoryService;
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<InvoiceSubCategory> getPersistenceService() {
-		return invoiceSubCategoryService;
-	}
+    public String getAccountingCodeField1() {
+        return accountingCodeFields[0];
+    }
 
-	public String getAccountingCodeField1() {
-		return accountingCodeFields[0];
-	}
+    public void setAccountingCodeField1(String accountingCodeField1) {
+        this.accountingCodeFields[0] = accountingCodeField1;
+    }
 
-	public void setAccountingCodeField1(String accountingCodeField1) {
-		this.accountingCodeFields[0] = accountingCodeField1;
-	}
+    public String getAccountingCodeField2() {
+        return accountingCodeFields[1];
+    }
 
-	public String getAccountingCodeField2() {
-		return accountingCodeFields[1];
-	}
+    public void setAccountingCodeField2(String accountingCodeField2) {
+        this.accountingCodeFields[1] = accountingCodeField2;
+    }
 
-	public void setAccountingCodeField2(String accountingCodeField2) {
-		this.accountingCodeFields[1] = accountingCodeField2;
-	}
+    public String getAccountingCodeField3() {
+        return accountingCodeFields[2];
+    }
 
-	public String getAccountingCodeField3() {
-		return accountingCodeFields[2];
-	}
+    public void setAccountingCodeField3(String accountingCodeField3) {
+        this.accountingCodeFields[2] = accountingCodeField3;
+    }
 
-	public void setAccountingCodeField3(String accountingCodeField3) {
-		this.accountingCodeFields[2] = accountingCodeField3;
-	}
+    public String getAccountingCodeField4() {
+        return accountingCodeFields[3];
+    }
 
-	public String getAccountingCodeField4() {
-		return accountingCodeFields[3];
-	}
+    public void setAccountingCodeField4(String accountingCodeField4) {
+        this.accountingCodeFields[3] = accountingCodeField4;
+    }
 
-	public void setAccountingCodeField4(String accountingCodeField4) {
-		this.accountingCodeFields[3] = accountingCodeField4;
-	}
+    public String getAccountingCodeField5() {
+        return accountingCodeFields[4];
+    }
 
-	public String getAccountingCodeField5() {
-		return accountingCodeFields[4];
-	}
+    public void setAccountingCodeField5(String accountingCodeField5) {
+        this.accountingCodeFields[4] = accountingCodeField5;
+    }
 
-	public void setAccountingCodeField5(String accountingCodeField5) {
-		this.accountingCodeFields[4] = accountingCodeField5;
-	}
+    public String getAccountingCodeField6() {
+        return accountingCodeFields[5];
+    }
 
-	public String getAccountingCodeField6() {
-		return accountingCodeFields[5];
-	}
+    public void setAccountingCodeField6(String accountingCodeField6) {
+        this.accountingCodeFields[5] = accountingCodeField6;
+    }
 
-	public void setAccountingCodeField6(String accountingCodeField6) {
-		this.accountingCodeFields[5] = accountingCodeField6;
-	}
+    public String getAccountingCodeField7() {
+        return accountingCodeFields[6];
+    }
 
-	public String getAccountingCodeField7() {
-		return accountingCodeFields[6];
-	}
-
-	public void setAccountingCodeField7(String accountingCodeField7) {
-		this.accountingCodeFields[6] = accountingCodeField7;
-	}
+    public void setAccountingCodeField7(String accountingCodeField7) {
+        this.accountingCodeFields[6] = accountingCodeField7;
+    }
 }

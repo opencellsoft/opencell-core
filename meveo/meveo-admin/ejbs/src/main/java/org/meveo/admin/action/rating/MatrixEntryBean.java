@@ -19,10 +19,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.rating.MatrixEntry;
@@ -61,8 +63,9 @@ public class MatrixEntryBean extends BaseBean<MatrixEntry> {
 	 * entry from matrix definition window, so default matrix will be set on
 	 * newly created matrix entry.
 	 */
-	@RequestParameter
-	private Long matrixId;
+	@Inject
+	@RequestParam
+	private Instance<Long> matrixId;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -79,31 +82,14 @@ public class MatrixEntryBean extends BaseBean<MatrixEntry> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("matrixEntry")
-	 */
 	@Produces
 	@Named("matrixEntry")
 	public MatrixEntry init() {
 		initEntity();
-		if (matrixId != null) {
-			entity.setMatrixDefinition(matrixService.findById(matrixId));
+		if (getMatrixId() != null) {
+			entity.setMatrixDefinition(matrixService.findById(getMatrixId()));
 		}
 		return entity;
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "matrixEntries", required = false)
-	@Produces
-	@Named("matrixEntries")
-	protected PaginationDataModel<MatrixEntry> getDataModel() {
-		return entities;
 	}
 
 	/**
@@ -111,28 +97,15 @@ public class MatrixEntryBean extends BaseBean<MatrixEntry> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Factory("matrixEntries")
+	 * @return
 	 * 
-	 * @Begin(join = true)
+	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Produces
 	@Named("matrixEntries")
-	public void list() {
-		super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
+	@ConversationScoped
+	public PaginationDataModel<MatrixEntry> list() {
+		return super.list();
 	}
 
 	/**
@@ -165,5 +138,9 @@ public class MatrixEntryBean extends BaseBean<MatrixEntry> {
 	 */
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("matrixDefinition");
+	}
+
+	private Long getMatrixId() {
+		return matrixId.get();
 	}
 }

@@ -429,8 +429,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return checked;
     }
 
-    private Long getObjectId() {
+    protected Long getObjectId() {
         return objectId.get();
+    }
+    
+    protected void clearObjectId(){
+        objectId=null;
     }
 
     protected MeveoUser getCurrentUser() {
