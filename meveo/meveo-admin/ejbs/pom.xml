@@ -18,8 +18,12 @@
 				<artifactId>maven-ejb-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
-					<!-- Tell Maven we are using EJB 3.1 -->
 					<ejbVersion>3.1</ejbVersion>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -110,7 +114,7 @@
 		<dependency>
 			<groupId>org.jboss.seam.faces</groupId>
 			<artifactId>seam-faces</artifactId>
-		</dependency>		
+		</dependency>
 
 		<dependency>
 			<groupId>com.sun.faces</groupId>
@@ -138,7 +142,7 @@
 			<groupId>org.jboss.seam.security</groupId>
 			<artifactId>seam-security</artifactId>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
