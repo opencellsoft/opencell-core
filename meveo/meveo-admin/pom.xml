@@ -311,6 +311,34 @@
 
 			</properties>
 		</profile>
+			<profile>
+			<id>integration-postgres</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>integr</value>
+				</property>
+			</activation>
+			<properties>
+				<manaty.unpackEarModules>false</manaty.unpackEarModules>
+
+				<jboss.hostname>demo.meveo.info</jboss.hostname>
+				<jboss.home>/home/jboss</jboss.home>
+
+				<db.connection.url>jdbc:postgresql://localhost:5432/meveo</db.connection.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+				<db.driver.class>org.postgresql.Driver</db.driver.class>
+				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+
+				<dbDWH.connection.url>jdbc:postgresql://localhost:5432/meveodwh</dbDWH.connection.url>
+				<dbDWH.username>meveodwh</dbDWH.username>
+				<dbDWH.password>meveodwh</dbDWH.password>
+				<dbDWH.driver.class>org.postgresql.Driver</dbDWH.driver.class>
+				<hibernateDWH.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernateDWH.dialect>
+
+			</properties>
+		</profile>
 
 		<profile>
 			<id>production</id>
