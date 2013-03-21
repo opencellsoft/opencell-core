@@ -78,6 +78,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * Account from customer account window, so default customer account will be
 	 * set on newly created customer Account.
 	 */
+	@Inject
 	@RequestParam
 	private Instance<Long> customerId;
 
