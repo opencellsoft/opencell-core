@@ -28,7 +28,7 @@ import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Scope;
+import javax.inject.Named;
 
 import jxl.Workbook;
 import jxl.write.Label;
@@ -306,7 +306,8 @@ public class ExcelConverter {
 	 * Puts document in store and redirects to user
 	 */
 	private void redirectExport() {
-		String viewId = Pages.getViewId(FacesContext.getCurrentInstance());
+		//TODO: javaee6
+		/*String viewId = Pages.getViewId(FacesContext.getCurrentInstance());
 		String baseName = Pages.getCurrentBaseName();
 		DocumentType documentType = new DocumentData.DocumentType("xls", "application/vnd.ms-excel");
 		DocumentData documentData = new ByteArrayDocumentData(baseName, documentType,
@@ -326,7 +327,7 @@ public class ExcelConverter {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}
+		}*/
 	}
 
 	protected ResourceBundle getResourceBundle() {

@@ -17,7 +17,6 @@ package org.meveo.admin.action.crm;
 
 import java.util.List;
 
-import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,6 +31,8 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
+import org.richfaces.component.html.HtmlTree;
+import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 
@@ -147,8 +148,8 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 	 * @return Richfaces tree hierarchy.
 	 */
 	private TreeNode<TreeNodeData> build(BaseEntity entity) {
-		if (objectId != null) {
-			selected = objectId;
+		if (getObjectId() != null) {
+			selected = getObjectId();
 		}
 		TreeNodeImpl<TreeNodeData> root = new TreeNodeImpl<TreeNodeData>();
 

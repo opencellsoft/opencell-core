@@ -29,11 +29,14 @@ import javax.faces.context.FacesContext;
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
+import org.ajax4jsf.model.SerializableDataModel;
 import org.meveo.commons.utils.PaginationConfiguration;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.rating.impl.UsageTypeService;
 import org.richfaces.model.FilterField;
+import org.richfaces.model.Modifiable;
+import org.richfaces.model.SortField2;
 
 /**
  * Pagination data model. This data model is used together with
@@ -53,8 +56,8 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
     private Serializable currentPk;
     private int currentFirstRow = -1;
 
-    @SuppressWarnings("unchecked")
-    private IPersistenceService service;
+	@SuppressWarnings("unchecked")
+	private IPersistenceService service;
 
     private final List<Serializable> wrappedKeys = new LinkedList<Serializable>();
     private final Map<Serializable, T> wrappedData = new HashMap<Serializable, T>();

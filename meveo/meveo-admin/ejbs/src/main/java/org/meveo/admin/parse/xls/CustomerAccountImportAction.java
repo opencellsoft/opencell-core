@@ -26,6 +26,8 @@ import javax.inject.Named;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 
 /**
