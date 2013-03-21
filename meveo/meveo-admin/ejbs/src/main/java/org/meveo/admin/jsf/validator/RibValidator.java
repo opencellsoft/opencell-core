@@ -21,6 +21,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Named;
@@ -31,8 +32,7 @@ import javax.inject.Named;
  * 
  */
 @Named
-// TODO: @org.jboss.seam.annotations.faces.Validator
-// TODO: @BypassInterceptors
+@FacesValidator("ribValidator")
 public class RibValidator implements Validator {
 	public boolean checkRib(String rib) {
 		StringBuilder extendedRib = new StringBuilder(rib.length());
