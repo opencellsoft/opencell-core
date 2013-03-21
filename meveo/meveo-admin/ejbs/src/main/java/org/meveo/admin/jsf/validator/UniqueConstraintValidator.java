@@ -22,6 +22,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 import org.meveo.model.crm.Provider;
+import org.meveo.service.validation.ValidationService;
 import org.meveo.service.validation.ValidationServiceLocal;
 
 /**
@@ -33,13 +34,13 @@ import org.meveo.service.validation.ValidationServiceLocal;
 @org.jboss.seam.annotations.faces.Validator
 @BypassInterceptors
 public class UniqueConstraintValidator implements Validator {
+	private ValidationService validationService;
 
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
         ModelValidator modelValidator = new ModelValidator();
         modelValidator.validate(context, component, value);
-
-        ValidationServiceLocal validationService = (ValidationServiceLocal) Component.getInstance("validationService");
+        
         Provider currentProvider = (Provider) Component.getInstance("currentProvider");
 
         String className = (String) component.getAttributes().get("className");
