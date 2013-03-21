@@ -9,7 +9,7 @@
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
       <jta-data-source>MeveoAdminDatasource</jta-data-source>
       
-		<class>org.meveo.model.admin.Currency</class>
+		
         <class>org.meveo.model.admin.InputHistory</class>
 		<class>org.meveo.model.admin.MedinaInputHistory</class>
 		<class>org.meveo.model.admin.VertinaInputHistory</class>
@@ -62,6 +62,7 @@
 		<class>org.meveo.model.billing.RatedTransaction</class>
 		<class>org.meveo.model.billing.ChargeApplication</class>
 		
+		<class>org.meveo.model.billing.Currency</class>
 		<class>org.meveo.model.billing.Language</class>
 		<class>org.meveo.model.billing.Country</class>
 		<class>org.meveo.model.billing.CountryCom</class>
