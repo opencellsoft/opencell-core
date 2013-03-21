@@ -16,7 +16,6 @@
 package org.meveo.admin.action.payments;
 
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
@@ -128,7 +127,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
 			// Create a new entity from a rejectPayment template
 		} else if (initType.equals("loadFromTemplateRejectPayment")) {
-			String occTemplateRejectPaymentCode = ResourceBundle.instance().getString(
+			String occTemplateRejectPaymentCode = getResourceBundle().getString(
 					"occ.templateRejectPaymentCode");
 			OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode,
 					currentProvider.getCode());
@@ -137,7 +136,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
 			// Create a new entity from a paymentCheck template
 		} else if (initType.equals("loadFromTemplatePaymentCheck")) {
-			String occTemplatePaymentCode = ResourceBundle.instance().getString(
+			String occTemplatePaymentCode = getResourceBundle().getString(
 					"occ.templatePaymentCheckCode");
 			OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode,
 					currentProvider.getCode());
