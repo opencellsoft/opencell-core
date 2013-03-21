@@ -84,11 +84,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link BillingAccount} service. Extends {@link PersistenceService}.
-	 */
 	@In(create = true)
 	private BillingAccountServiceLocal billingAccountService;
 
@@ -232,7 +227,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.add(e.getMessage());
+			//statusMessages.add(e.getMessage());
 		}
 
 		return back();
