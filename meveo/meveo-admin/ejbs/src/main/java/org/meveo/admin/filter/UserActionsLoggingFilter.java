@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.faces.lifecycle.Lifecycle;
 import javax.inject.Scope;
 import javax.servlet.FilterChain;
@@ -30,11 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.meveo.model.admin.User;
 
 @Startup
-@Scope(ScopeType.APPLICATION)
-@Name("org.meveo.admin.filter.UserActionsLoggingFilter")
+@ApplicationScoped
+/*TODO: javaee6 @Name("org.meveo.admin.filter.UserActionsLoggingFilter")
 @BypassInterceptors
-@Filter(around = "org.jboss.seam.web.ajax4jsfFilter")
-public class UserActionsLoggingFilter extends AbstractFilter {
+@Filter(around = "org.jboss.seam.web.ajax4jsfFilter")*/
+public class UserActionsLoggingFilter /*extends AbstractFilter*/ {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
@@ -62,7 +63,7 @@ public class UserActionsLoggingFilter extends AbstractFilter {
     public void output(User user, String objectId, String edit, String uri) {
         String action = "";
         if (uri.endsWith("seam") && (user != null)) {
-            Lifecycle.beginCall();
+        	/*Lifecycle.beginCall();
             UserServiceLocal userService = (UserServiceLocal) Component.getInstance("userService", true);
 
             if ((!objectId.equals("")) && (!edit.equals(""))) {
@@ -74,7 +75,7 @@ public class UserActionsLoggingFilter extends AbstractFilter {
                 action = "View all list";
             }
             userService.saveActivity(user, objectId, action, uri);
-            Lifecycle.endCall();
+            Lifecycle.endCall();*/
         }
 
     }
