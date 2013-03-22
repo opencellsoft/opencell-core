@@ -288,7 +288,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                // Tax and Category aggregates
 	                for (RatedTransaction ratedTransaction : ratedTransactions) {
 
-                        InvoiceSubcategoryCountry invoiceSubcategoryCountry= findInvoiceSubCategoryCountry(ratedTransaction.getInvoiceSubCategory().getId(), ratedTransaction.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+                        InvoiceSubcategoryCountry invoiceSubcategoryCountry= findInvoiceSubCategoryCountry(ratedTransaction.getInvoiceSubCategory().getId(), ratedTransaction.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getCountry().getCountryCode());
                         Tax tax = invoiceSubcategoryCountry.getTax();
 	                    if (ratedTransaction.getInvoice() == null && ratedTransaction.getWallet() != null
 	                            && ratedTransaction.getWallet().getId() == wallet.getId()) {

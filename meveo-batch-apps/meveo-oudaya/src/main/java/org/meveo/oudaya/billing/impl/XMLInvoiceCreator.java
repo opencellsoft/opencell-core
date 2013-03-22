@@ -469,7 +469,7 @@ public class XMLInvoiceCreator {
 
     public static void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element parent,
             boolean generateSubCat) {
-    	String languageCode=invoice.getBillingAccount().getLanguageCode();
+    	String languageCode=invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
         Element categories = doc.createElement("categories");
         parent.appendChild(categories);
@@ -566,7 +566,7 @@ public class XMLInvoiceCreator {
                                     Long chargeid=ratedTrnsaction.getChargeApplication().getChargeInstance().getChargeTemplate().getId();
                                     String lineDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
                                     String retedTransactionLabel=lineDescription +" "+ ratedTrnsaction.getChargeApplication().getStartDate()+" "+ 
-                                    OudayaConfig.getToLabel(invoice.getBillingAccount().getLanguageCode())+" "+ratedTrnsaction.getChargeApplication().getEndDate();
+                                    OudayaConfig.getToLabel(invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode())+" "+ratedTrnsaction.getChargeApplication().getEndDate();
                                    
                                     Element lebel = doc.createElement("label");
                                     Text lebelTxt = doc
@@ -652,7 +652,7 @@ public class XMLInvoiceCreator {
             tax.setAttribute("id", ++taxId + "");
             tax.setAttribute("code", taxInvoiceAgregate.getTax().getCode() + "");
             Long idTax=taxInvoiceAgregate.getTax().getId();
-            String languageCode=invoice.getBillingAccount().getLanguageCode();
+            String languageCode=invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
             String taxDescription=getMessageDescription(taxInvoiceAgregate.getTax().getClass().getSimpleName()+"_"+idTax,languageCode); 
             Element taxName = doc.createElement("name");
             Text taxNameTxt = doc
@@ -759,7 +759,7 @@ public class XMLInvoiceCreator {
                             } else {
                                 headerRatedTransaction = new RatedTransaction();
                                 headerRatedTransaction.setUsageCode(ratedTrnsaction.getUsageCode());
-                                String languageCode=invoice.getBillingAccount().getLanguageCode();
+                                String languageCode=invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
                                 Long chargeid=ratedTrnsaction.getChargeApplication().getChargeInstance().getChargeTemplate().getId();
                                 String headerRatedDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
                        
