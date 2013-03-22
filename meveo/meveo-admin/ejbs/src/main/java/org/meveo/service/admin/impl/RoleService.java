@@ -32,15 +32,19 @@ import org.meveo.service.base.PersistenceService;
  */
 
 @Stateless
-public class UserRoleService extends PersistenceService<Role> {
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#list()
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<? extends Role> list() {
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-		Query query = queryBuilder.getQuery(em);
-		return query.getResultList();
-	}
+public class RoleService extends PersistenceService<Role> {
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#list()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Role> list() {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+        Query query = queryBuilder.getQuery(em);
+        return query.getResultList();
+    }
+
+    public List<Role> getAllRoles() {
+        return list();
+    }
 }

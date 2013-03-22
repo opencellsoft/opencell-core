@@ -24,6 +24,8 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.User;
@@ -50,6 +52,10 @@ public class UserBean extends BaseBean<User> {
 	@Inject
 	private UserService userService;
 
+
+    @Inject
+    private Messages messages;
+    
 	/**
 	 * Password set by user which is later encoded and set to user before saving
 	 * to db.
@@ -115,8 +121,7 @@ public class UserBean extends BaseBean<User> {
 		} else {
 			boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
 			if (passwordsDoNotMatch) {
-				// TODO: statusMessages.addFromResourceBundle(Severity.ERROR,
-				// "save.passwordsDoNotMatch");
+			    messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
 				return null;
 			} else {
 				entity.setLastPasswordModification(new Date());

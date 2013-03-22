@@ -46,9 +46,13 @@ public class AccountingDetail extends FileProducer implements Reporting {
 	@Inject
 	protected Logger log;
 
+	@Inject
 	private CustomerAccountService customerAccountService;
+	
+	@Inject
 	private DWHAccountOperationService accountOperationTransformationService;
-
+	
+	@Inject
 	private AccountOperationService accountOperationService;
 
 	private String reportsFolder;
@@ -195,17 +199,9 @@ public class AccountingDetail extends FileProducer implements Reporting {
 		reportsFolder = param.getProperty("reportsURL");
 		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder");
 		templateFilename = jasperTemplatesFolder + "accountingDetail.jasper";
-		accountOperationTransformationService = null;/*
-													 * TODO: (
-													 * DWHAccountOperationServiceLocal
-													 * ) Component .getInstance(
-													 * "DWHAccountOperationService"
-													 * );
-													 */
-		customerAccountService = null; // TODO: (CustomerAccountServiceLocal)
-										// Component.getInstance("customerAccountService");
-		accountOperationService = null; // TODO: (AccountOperationServiceLocal)
-										// Component.getInstance("accountOperationService");
+		accountOperationTransformationService = null;
+		customerAccountService = null; 
+		accountOperationService = null; 
 
 		generateAccountingDetailFile(report.getProvider() == null ? null : report.getProvider()
 				.getCode(), report.getStartDate(), report.getEndDate(), report.getOutputFormat());

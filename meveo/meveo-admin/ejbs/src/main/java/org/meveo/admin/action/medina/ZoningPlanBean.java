@@ -74,8 +74,6 @@ public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-
-	// @Factory("zoningPlans")
 	@Produces
 	@Named("zoningPlans")
 	@ConversationScoped

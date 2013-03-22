@@ -15,25 +15,16 @@
  */
 package org.meveo.admin.security.user;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//TODO: import org.jboss.seam.annotations.security.PermissionCheck;
+import org.jboss.seam.security.annotations.SecurityBindingType;
 
-@Target({ METHOD, PARAMETER })
-@Documented
-@Retention(RUNTIME)
-@Inherited
-// TODO: @PermissionCheck("create")
+@SecurityBindingType
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface UserCreate {
-
-	@SuppressWarnings("unchecked")
-	Class value() default UserPermissions.class;
 
 }

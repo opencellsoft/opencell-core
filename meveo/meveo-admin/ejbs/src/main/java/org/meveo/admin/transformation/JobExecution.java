@@ -21,9 +21,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.JobExecutionHisto;
 import org.meveo.service.bi.impl.JobExecutionHistoryService;
 import org.meveo.service.bi.impl.JobService;
@@ -58,41 +60,30 @@ public class JobExecution {
 
 	@Inject
 	protected Logger log;
+	
 
-	// TODO Use ParamBean
-	private static String REPORTS_FILEPATH = "";// TODO:
-												// ResourceBundle.instance().getString("reportsURL");
-	private static String DATABASE_NAME = "";// TODO:
-												// ResourceBundle.instance().getString("kettleRepo.databaseName");
-	private static String DATABASE_TYPE = "";// TODO:
-												// ResourceBundle.instance().getString("kettleRepo.databaseType");
-	private static String DATABASE_ACCES = "";// TODO:
-												// ResourceBundle.instance().getString("kettleRepo.databaseAcces");
-	private static String DATABASE_HOST = "";// TODO:
-												// ResourceBundle.instance().getString("kettleRepo.databaseHost");
-	private static String DATABASE = "";// TODO:
-										// ResourceBundle.instance().getString("kettleRepo.database");
-	private static String DATABASE_PORT = "";// TODO:
-												// ResourceBundle.instance().getString("kettleRepo.databasePort");
-	private static String DATABASE_USER = "";// TODO:
-												// ResourceBundle.instance().getString("kettleRepo.databaseUser");
-	private static String DATABASE_PASSWORD = "";// TODO:
-													// ResourceBundle.instance().getString("kettleRepo.databasePassword");
-	private static String DATABASE_SCHEMA = "";// TODO:
-												// ResourceBundle.instance().getString("kettleRepo.databaseSchema");
+    @Inject
+    private JobExecutionHistoryService jobExecutionHistoryService;
 
-	private static String OPERATIONAL_DATABASE_NAME = "";// TODO:
-															// ResourceBundle.instance().getString("kettleRepo.operationalDBName");
-	private static String OPERATIONAL_DATABASE_HOST = "";// TODO:
-															// ResourceBundle.instance().getString("kettleRepo.operationalDBHost");
-	private static String OPERATIONAL_DATABASE_PORT = "";// TODO:
-															// ResourceBundle.instance().getString("kettleRepo.operationalDBPort");
-	private static String OPERATIONAL_DATABASE_USER = "";// TODO:
-															// ResourceBundle.instance().getString("kettleRepo.operationalDBUser");
-	private static String OPERATIONAL_DATABASE_PASSWORD = "";// TODO:
-																// ResourceBundle.instance().getString("kettleRepo.operationalDBPassword");
-	private static String OPERATIONAL_DATABASE_SCHEMA = "";// TODO:
-															// ResourceBundle.instance().getString("kettleRepo.operationalDBSchema");
+	@Inject
+    private ParamBean paramBean;
+	
+	private  String REPORTS_FILEPATH ;
+	private  String DATABASE_NAME ;
+	private  String DATABASE_TYPE ;
+	private  String DATABASE_ACCES ;
+	private  String DATABASE_HOST ;
+	private  String DATABASE ;
+	private  String DATABASE_PORT ;
+	private  String DATABASE_USER ;
+	private  String DATABASE_PASSWORD ;
+	private  String DATABASE_SCHEMA ;
+	private  String OPERATIONAL_DATABASE_NAME ;
+	private  String OPERATIONAL_DATABASE_HOST ;
+	private  String OPERATIONAL_DATABASE_PORT ;
+	private  String OPERATIONAL_DATABASE_USER ;
+	private  String OPERATIONAL_DATABASE_PASSWORD;
+	private  String OPERATIONAL_DATABASE_SCHEMA ;
 
 	// Constants for repository records should be same in JobService class
 	private static final String SCHEDULER_TYPE_STRING = "schedulerType";
@@ -106,6 +97,30 @@ public class JobExecution {
 	public KettleDatabaseRepository repo;
 	public KettleDatabaseRepositoryJobDelegate repoDelegate;
 
+	
+	@PostConstruct
+	public void init(){
+        REPORTS_FILEPATH = paramBean.getProperty("reportsURL");
+        DATABASE_NAME = paramBean.getProperty("kettleRepo.databaseName");
+        DATABASE_TYPE = paramBean.getProperty("kettleRepo.databaseType");
+        DATABASE_ACCES = paramBean.getProperty("kettleRepo.databaseAcces");
+        DATABASE_HOST = paramBean.getProperty("kettleRepo.databaseHost");
+        DATABASE = paramBean.getProperty("kettleRepo.database");
+        DATABASE_PORT = paramBean.getProperty("kettleRepo.databasePort");
+        DATABASE_USER = paramBean.getProperty("kettleRepo.databaseUser");
+        DATABASE_PASSWORD = paramBean.getProperty("kettleRepo.databasePassword");
+        DATABASE_SCHEMA = paramBean.getProperty("kettleRepo.databaseSchema");
+
+        OPERATIONAL_DATABASE_NAME = paramBean.getProperty("kettleRepo.operationalDBName");
+        OPERATIONAL_DATABASE_HOST = paramBean.getProperty("kettleRepo.operationalDBHost");
+        OPERATIONAL_DATABASE_PORT = paramBean.getProperty("kettleRepo.operationalDBPort");
+        OPERATIONAL_DATABASE_USER = paramBean.getProperty("kettleRepo.operationalDBUser");
+        OPERATIONAL_DATABASE_PASSWORD = paramBean.getProperty("kettleRepo.operationalDBPassword");
+        OPERATIONAL_DATABASE_SCHEMA = paramBean.getProperty("kettleRepo.operationalDBSchema");
+
+	}
+	
+	
 	/**
 	 * Initiates repository connection
 	 * 
@@ -175,9 +190,6 @@ public class JobExecution {
 	 * @param jobId
 	 *            Job entity id
 	 */
-	@Inject
-	private JobExecutionHistoryService jobExecutionHistoryService;
-
 	public void history(Date nextExecutionDate, Date executionDate, long jobId) {
 		log.info("Job executed, calculating next execution date:", nextExecutionDate);
 		org.meveo.model.bi.Job job = jobService.findById(jobId);

@@ -23,6 +23,8 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -59,6 +61,10 @@ public class CustomerAccountImportAction implements Serializable {
 	private Integer imported;
 
 	private Integer failed;
+	
+
+    @Inject
+    private Messages messages;
 
 	/*
 	 * TODO: @Create
@@ -77,9 +83,7 @@ public class CustomerAccountImportAction implements Serializable {
 	 */
 	public String doImport() throws BusinessException {
 		if (xls == null) {
-			// TODO:
-			// FacesMessages.instance().addFromResourceBundle(Severity.ERROR,
-			// "customerAccount.import.noFileUploaded");
+		    messages.error(new BundleKey("messages", "customerAccount.import.noFileUploaded"));
 			return null;
 		}
 		List<CustomerAccount> failedImports = customerAccountService
@@ -89,9 +93,7 @@ public class CustomerAccountImportAction implements Serializable {
 		imported = customerAccountsTotal - failed;
 
 		// TODO show failed imports somewhere (probably write to other file)
-		// TODO: FacesMessages.instance().addFromResourceBundle(Severity.INFO,
-		// "customerAccount.import.success", new Object[] {
-		// customerAccountsTotal, imported, failed });
+		messages.info(new BundleKey("messages", "customerAccount.import.success"),customerAccountsTotal, imported, failed);
 		return "customerAccounts";
 	}
 
@@ -169,16 +171,12 @@ public class CustomerAccountImportAction implements Serializable {
 			String fileExt = item.getFileName().substring(dot + 1);
 			if (!fileExt.toUpperCase().equals("XLS") && !fileExt.toUpperCase().equals("TXT")) {
 				log.debug("#{currentUser.username} > File name validation failed!");
-				// TODO:
-				// FacesMessages.instance().addToControlFromResourceBundle("fileUpload",
-				// "import.badFileExtension");
+				messages.error(new BundleKey("messages", "import.badFileExtension"));
 				valid = false;
 			}
 		} else {
 			log.debug("#{currentUser.username} > File name validation failed!");
-			// TODO:
-			// FacesMessages.instance().addToControlFromResourceBundle("fileUpload",
-			// "import.fileNotFound");
+			messages.error(new BundleKey("messages", "import.fileNotFound"));
 			valid = false;
 		}
 

@@ -243,9 +243,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		log.info("terminateAccount billingAccountId:" + entity.getId());
 		try {
 			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),
-					getCurrentUser().getUser());
+					getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -261,9 +261,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
 			billingAccountService.billingAccountCancellation(entity.getCode(), new Date(),
-					getCurrentUser().getUser());
+					getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -278,9 +278,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String closeAccount() {
 		log.info("closeAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.closeBillingAccount(entity.getCode(), getCurrentUser().getUser());
+			billingAccountService.closeBillingAccount(entity.getCode(), getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.seam?objectId="
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -389,7 +389,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 				billingAccountService.update(billingAccount);
 			}
 			billingRunService.create(billingRun);
-			return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
 			log.error("lunchExceptionelInvoicing", e);
 			messages.error(e.getMessage());

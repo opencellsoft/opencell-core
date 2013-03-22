@@ -19,9 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.enterprise.inject.Instance;
@@ -33,9 +31,12 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -59,6 +60,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	@Inject
 	protected Identity identity;
+	
+	@Inject
+	@CurrentProvider
+	private Provider currentProvider;
 
 	/** Search filters. */
 	protected Map<String, Object> filters;
@@ -135,7 +140,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			try {
 				entity = getInstance();
 				if (entity instanceof BaseEntity) {
-					((BaseEntity) entity).setProvider(getCurrentUser().getCurrentProvider());
+					((BaseEntity) entity).setProvider(currentProvider);
 				}
 				// FIXME: If entity is Auditable, set here the creator and
 				// creation time
@@ -165,7 +170,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		}
 		getFilters();
 		if (!filters.containsKey("provider")) {
-			filters.put("provider", getCurrentUser().getCurrentProvider());
+			filters.put("provider", currentProvider);
 		}
 		entities.addFilters(filters);
 		entities.addFetchFields(getListFieldsToFetch());
@@ -191,7 +196,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			entities = new PaginationDataModel<T>(getPersistenceService());
 		}
 		filters.clear();
-		filters.put("provider", getCurrentUser().getCurrentProvider());
+		filters.put("provider", currentProvider);
 		entities.addFilters(filters);
 		entities.addFetchFields(getListFieldsToFetch());
 		entities.forceRefresh();
@@ -297,11 +302,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
 			getPersistenceService().remove(id);
 			messages.info(new BundleKey("messages", "delete.successful"));
-			// TODO
-			/*
-			 * statusMessages.addFromResourceBundle(Severity.INFO,
-			 * "delete.successful");
-			 */
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
 				log.info("delete was unsuccessful because entity is used in the system", t);
@@ -465,13 +465,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		objectId = null;
 	}
 
-	protected MeveoUser getCurrentUser() {
-		return (MeveoUser) identity.getUser();
-	}
-
-	protected ResourceBundle getResourceBundle() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", locale);
-		return resourceBundle;
-	}
+    protected User getCurrentUser() {
+        return ((MeveoUser) identity.getUser()).getUser();
+    }
 }

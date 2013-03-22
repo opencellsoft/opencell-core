@@ -31,8 +31,7 @@ import javax.inject.Named;
  * @created Feb 17, 2011
  * 
  */
-@Named
-@FacesConverter
+@FacesConverter("nullableStringConverter")
 public class NullableStringConverter implements Converter {
 
 	/**

@@ -15,23 +15,16 @@
  */
 package org.meveo.admin.security.catalog;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ METHOD, PARAMETER })
-@Documented
-@Retention(RUNTIME)
-@Inherited
-// TODO: @PermissionCheck("catalogVisualization")
-public @interface CatalogVisualization {
+import org.jboss.seam.security.annotations.SecurityBindingType;
 
-	@SuppressWarnings("unchecked")
-	Class value() default CatalogPermissions.class;
+@SecurityBindingType
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD })
+public @interface CatalogVisualization {
 
 }

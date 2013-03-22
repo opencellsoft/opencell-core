@@ -24,7 +24,6 @@ import org.meveo.commons.utils.StringUtils;
  */
 
 @Named
-// TODO: @Scope(ScopeType.EVENT)
 public class StringUtil {
 
 	public String merge(String... s) {

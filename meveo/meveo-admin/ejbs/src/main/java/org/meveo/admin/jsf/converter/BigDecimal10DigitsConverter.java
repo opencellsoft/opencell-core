@@ -18,21 +18,19 @@ package org.meveo.admin.jsf.converter;
 import java.text.DecimalFormat;
 
 import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
 
 /**
  * 
  * @author anasseh
  * @created 18.01.2011
  */
-@Named
-@FacesConverter
+@FacesConverter("bigDecimal10DigitsConverter")
 public class BigDecimal10DigitsConverter extends BigDecimalConverter {
 
-	private DecimalFormat format = new DecimalFormat("#,##0.0000000000");
+    private DecimalFormat format = new DecimalFormat("#,##0.0000000000");
 
-	@Override
-	protected DecimalFormat getDecimalFormat() {
-		return format;
-	}
+    @Override
+    protected DecimalFormat getDecimalFormat() {
+        return format;
+    }
 }

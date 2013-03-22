@@ -26,8 +26,7 @@ import javax.inject.Named;
  * @author Gediminas Ubartas
  * @created 2010.12.10
  */
-@Named
-@FacesConverter
+@FacesConverter("stringConverter")
 public class StringConverter implements Converter {
 	@Override
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {

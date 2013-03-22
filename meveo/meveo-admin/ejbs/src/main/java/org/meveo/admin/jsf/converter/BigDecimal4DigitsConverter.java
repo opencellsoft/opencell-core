@@ -25,8 +25,7 @@ import javax.inject.Named;
  * @author anasseh
  * @created 18.01.2011
  */
-@Named
-@FacesConverter
+@FacesConverter("bigDecimal4DigitsConverter")
 public class BigDecimal4DigitsConverter extends BigDecimalConverter {
 
     private DecimalFormat format = new DecimalFormat("#,##0.0000");

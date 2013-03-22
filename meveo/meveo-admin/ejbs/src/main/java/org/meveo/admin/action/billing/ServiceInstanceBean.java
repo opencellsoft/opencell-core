@@ -124,7 +124,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
     public String serviceInstanciation(ServiceInstance serviceInstance) {
         log.info("serviceInstanciation serviceInstanceId:" + serviceInstance.getId());
         try {
-            serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser().getUser());
+            serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
         } catch (BusinessException e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -150,9 +150,9 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
     public String activateService() {
         log.info("activateService serviceInstanceId:" + entity.getId());
         try {
-            serviceInstanceService.serviceActivation(entity, null, null, getCurrentUser().getUser());
+            serviceInstanceService.serviceActivation(entity, null, null, getCurrentUser());
             messages.info(new BundleKey("messages", "activation.activateSuccessful"));
-            return "/pages/resource/serviceInstances/serviceInstanceDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -169,7 +169,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             // serviceInstanceService.serviceTermination(serviceInstance, new
             // Date(), currentUser);
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-            return "/pages/resource/serviceInstances/serviceInstanceDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,7 +184,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             // serviceInstanceService.serviceCancellation(serviceInstance, new
             // Date(), currentUser);
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-            return "/pages/resource/serviceInstances/serviceInstanceDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (Exception e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -196,9 +196,9 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
         log.info("cancelService serviceInstanceId:" + entity.getId());
         try {
             entity.setStatus(InstanceStatusEnum.CANCELED);
-            serviceInstanceService.update(entity, getCurrentUser().getUser());
+            serviceInstanceService.update(entity, getCurrentUser());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-            return "/pages/resource/serviceInstances/serviceInstanceDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (Exception e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -209,9 +209,9 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
     public String suspendService() {
         log.info("closeAccount serviceInstanceId:" + entity.getId());
         try {
-            serviceInstanceService.serviceSusupension(entity, new Date(), getCurrentUser().getUser());
+            serviceInstanceService.serviceSusupension(entity, new Date(), getCurrentUser());
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
-            return "/pages/resource/serviceInstances/serviceInstanceDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {
             e.printStackTrace();
             messages.error(e.getMessage());

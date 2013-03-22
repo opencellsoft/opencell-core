@@ -26,7 +26,7 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.security.Role;
-import org.meveo.service.admin.impl.UserRoleService;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -47,7 +47,7 @@ public class UserRoleBean extends BaseBean<Role> {
 
 	/** Injected @{link Role} service. Extends {@link PersistenceService}. */
 	@Inject
-	private UserRoleService userRoleService;
+	private RoleService userRoleService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

@@ -151,10 +151,10 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     public String saveOrUpdate(UserAccount entity) {
         try {
             if (entity.isTransient()) {
-                userAccountService.createUserAccount(entity.getBillingAccount().getCode(), entity, getCurrentUser().getUser());
+                userAccountService.createUserAccount(entity.getBillingAccount().getCode(), entity, getCurrentUser());
                 messages.info(new BundleKey("messages", "save.successful"));
             } else {
-                userAccountService.updateUserAccount(entity, getCurrentUser().getUser());
+                userAccountService.updateUserAccount(entity, getCurrentUser());
                 messages.info(new BundleKey("messages", "update.successful"));
             }
 
@@ -169,9 +169,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     public String terminateAccount() {
         log.info("resiliateAccount userAccountId:" + entity.getId());
         try {
-            userAccountService.userAccountTermination(entity.getCode(), new Date(), getCurrentUser().getUser());
+            userAccountService.userAccountTermination(entity.getCode(), new Date(), getCurrentUser());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-            return "/pages/billing/userAccounts/userAccountDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -185,9 +185,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     public String cancelAccount() {
         log.info("cancelAccount userAccountId:" + entity.getId());
         try {
-            userAccountService.userAccountCancellation(entity.getCode(), new Date(), getCurrentUser().getUser());
+            userAccountService.userAccountCancellation(entity.getCode(), new Date(), getCurrentUser());
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-            return "/pages/billing/userAccounts/userAccountDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -201,9 +201,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     public String reactivateAccount() {
         log.info("reactivateAccount userAccountId:" + entity.getId());
         try {
-            userAccountService.userAccountReactivation(entity.getCode(), new Date(), getCurrentUser().getUser());
+            userAccountService.userAccountReactivation(entity.getCode(), new Date(), getCurrentUser());
             messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
-            return "/pages/billing/userAccounts/userAccountDetail.seam?objectId=" + entity.getId() + "&edit=false";
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {
             e.printStackTrace(); // TODO WTF printStackTrace??
             messages.error(e.getMessage());

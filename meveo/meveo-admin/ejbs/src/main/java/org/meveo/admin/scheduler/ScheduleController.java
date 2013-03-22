@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.scheduler;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -34,9 +35,9 @@ import org.meveo.commons.utils.ParamBean;
 public class ScheduleController {
 
 	@Inject
-	ScheduleProcessor scheduleProcessor;
+	private ScheduleProcessor scheduleProcessor;
 
-	// TODO: @Create
+	@PostConstruct
 	public void scheduleTimer() throws NumberFormatException, InterruptedException {
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 		String importCustomersCron = param.getProperty("connectorCRM.importCustomers.cron");

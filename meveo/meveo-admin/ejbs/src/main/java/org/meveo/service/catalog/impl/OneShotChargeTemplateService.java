@@ -37,10 +37,7 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	 */
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getTerminationChargeTemplates() {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
+
 		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
 				.addCriterionEnum("oneShotChargeTemplateType",
 						OneShotChargeTemplateTypeEnum.TERMINATION).startOrClause()
@@ -54,10 +51,7 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	 */
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates() {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
+
 		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
 				.addCriterionEnum("oneShotChargeTemplateType",
 						OneShotChargeTemplateTypeEnum.SUBSCRIPTION).startOrClause()

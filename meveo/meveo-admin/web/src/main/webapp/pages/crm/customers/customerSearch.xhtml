@@ -32,10 +32,10 @@
 					<h:selectOneMenu value="#{customerSearchBean.customerPage}" onchange="submit()"
 				        valueChangeListener="#{customerSearchBean.changeCustomerPage}">
 				        <f:selectItem itemLabel="" />
-					    <f:selectItem itemLabel="#{messages['customer.type']}" itemValue="/pages/crm/customers/customers.seam" />
-					    <f:selectItem itemLabel="#{messages['customerAccount.type']}" itemValue="/pages/payments/customerAccounts/customerAccounts.seam" />
-					    <f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="/pages/billing/billingAccounts/billingAccounts.seam" />
-					    <f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="/pages/billing/userAccounts/userAccounts.seam" />
+					    <f:selectItem itemLabel="#{messages['customer.type']}" itemValue="/pages/crm/customers/customers.xhtml" />
+					    <f:selectItem itemLabel="#{messages['customerAccount.type']}" itemValue="/pages/payments/customerAccounts/customerAccounts.xhtml" />
+					    <f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="/pages/billing/billingAccounts/billingAccounts.xhtml" />
+					    <f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="/pages/billing/userAccounts/userAccounts.xhtml" />
 				    </h:selectOneMenu>
 					
 				</s:decorate>

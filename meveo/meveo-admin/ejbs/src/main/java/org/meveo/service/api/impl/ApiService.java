@@ -24,6 +24,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
@@ -126,7 +127,7 @@ public class ApiService implements ApiServiceRemote {
 	@Inject
 	private Logger log;
 
-	@Inject
+    @PersistenceContext(unitName = "entityManager")
 	private EntityManager entityManager;
 
 	/*
@@ -1204,11 +1205,6 @@ public class ApiService implements ApiServiceRemote {
 			Integer billingCycle, boolean sumarizeConsumption)
 			throws IncorrectSusbcriptionException {
 
-		/*
-		 * TODO: Component. RatedTransactionServiceLocal service =
-		 * (RatedTransactionServiceLocal) Component
-		 * .getInstance("ratedTransactionService");
-		 */
 		return ratedTransactionService.getConsumption(subscriptionCode, infoType, billingCycle,
 				sumarizeConsumption);
 	}

@@ -50,14 +50,14 @@
 
 					<s:link view="/loginInternal.xhtml" value="#{messages['menutop.login']}" rendered="#{not identity.loggedIn and messages['authentification.mode']!='SAML'}" propagation="none" styleClass="headerLink"/>
 		            <s:link view="/login.xhtml" value="#{messages['menutop.login']}" rendered="#{not identity.loggedIn and messages['authentification.mode']=='SAML'}" propagation="none" styleClass="headerLink">
-		           	 <f:param name="returnUrl" value="/meveo/home.seam" />	
+		           	 <f:param name="returnUrl" value="/home.seam" />	
 		            </s:link>
 		            
 				    <s:link view="/home.xhtml" value="#{messages['menutop.home']}" rendered="#{identity.loggedIn}" propagation="none" styleClass="headerLink"/><h:outputText value="&#160;" />
 		            <s:link view="/changePassword.xhtml" value="#{messages['menutop.changePassword']}" rendered="#{identity.loggedIn}" styleClass="headerLink" propagation="none"/><h:outputText value="&#160;" />  
 	   				
 	   				<s:link action="#{externalAuthenticator.singleLogout}" value="#{messages['menutop.logout']}" rendered="#{identity.loggedIn and messages['authentification.mode']=='SAML'}" propagation="none" styleClass="headerLink">
-	   					<f:param name="returnUrl" value="/meveo/home.seam" />
+	   					<f:param name="returnUrl" value="/home.seam" />
 	   				</s:link>
 	   				<s:link action="#{authenticator.localLogout}" value="#{messages['menutop.logout']}" rendered="#{identity.loggedIn and messages['authentification.mode']!='SAML'}" styleClass="headerLink"/>
 	   				

@@ -24,19 +24,26 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
+import javax.inject.Inject;
+
+import org.meveo.commons.utils.ParamBean;
 
 /**
  * 
  * @author anasseh
  * @created 18.01.2011
  */
-@Named
-@FacesConverter
+@FacesConverter("bigDecimalConverter")
 public class BigDecimalConverter implements Converter {
 
-	private DecimalFormat format = new DecimalFormat("#,##0.00");
+    @Inject
+    private ResourceBundle resourceMessages;
 
+    @Inject
+    private ParamBean paramBean;
+    
+	private DecimalFormat format = new DecimalFormat("#,##0.00");
+	
 	@Override
 	public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
 		if (obj == null) {
@@ -55,8 +62,8 @@ public class BigDecimalConverter implements Converter {
 		if (str == null || str.equals("")) {
 			return null;
 		}
-		if (!str.matches(ResourceBundle.getBundle("messages").getString("bigDecimal.pattern"))) {
-			throw new ConverterException(ResourceBundle.getBundle("messages").getString(
+		if (!str.matches(paramBean.getProperty("bigDecimal.pattern"))) {
+			throw new ConverterException(resourceMessages.getString(
 					"javax.faces.converter.BigDecimalConverter.DECIMAL_detail"));
 		}
 		str = str.replace(" ", "");

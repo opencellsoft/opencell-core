@@ -39,6 +39,7 @@ import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.JobNameEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.bi.impl.ReportService;
@@ -52,9 +53,7 @@ import org.slf4j.Logger;
  */
 @Named
 public class ReportExecution {
-	private static String REPORTS_URL = "";// TODO:
-											// ResourceBundle.instance().getString("reportsURL");
-
+	
 	private static String DATE_PATERN = "yyyy.MM.dd";
 
 	@Inject
@@ -63,6 +62,9 @@ public class ReportExecution {
 	@Inject
 	private ReportService reportService;
 
+    @Inject
+    private ParamBean paramBean;
+    
 	// @In(create=true)
 	// private RecurringChargeCron recurringChargeCron;
 
@@ -147,7 +149,8 @@ public class ReportExecution {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		StringBuilder sb = new StringBuilder(name);
 		sb.delete(name.length() - 4, name.length());
-		return REPORTS_URL + sb.toString() + df.format(date) + ".pdf";
+		String reportsUrl = paramBean.getProperty("reportsURL");
+		return reportsUrl + sb.toString() + df.format(date) + ".pdf";
 	}
 
 	/**
@@ -158,8 +161,8 @@ public class ReportExecution {
 	 * @param params
 	 *            Parameters to report.
 	 */
-	@SuppressWarnings("unchecked")
-	public void executeReport(Report report) {
+	@SuppressWarnings("rawtypes")
+    public void executeReport(Report report) {
 		log.info("executeReport({0})", report.getName());
 		try {
 			Class clazz = Class.forName(report.getProducerClassName());

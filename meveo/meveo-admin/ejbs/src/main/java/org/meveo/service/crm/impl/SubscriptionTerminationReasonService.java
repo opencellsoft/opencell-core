@@ -47,10 +47,7 @@ public class SubscriptionTerminationReasonService extends
 
 	@SuppressWarnings("unchecked")
 	public List<SubscriptionTerminationReason> listReasons() {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
+
 		Query query = new QueryBuilder(SubscriptionTerminationReason.class,
 				"c", null).startOrClause()
 				.addCriterionEntity("c.provider", currentProvider)

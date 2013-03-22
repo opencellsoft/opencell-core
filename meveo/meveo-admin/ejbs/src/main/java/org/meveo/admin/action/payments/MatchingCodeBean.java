@@ -16,6 +16,7 @@
 package org.meveo.admin.action.payments;
 
 import javax.enterprise.inject.Produces;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,6 +41,7 @@ import org.meveo.service.payments.impl.MatchingCodeService;
  */
 @Named
 // TODO: @Scope(ScopeType.PAGE)
+@ViewScoped
 public class MatchingCodeBean extends BaseBean<MatchingCode> {
 
 	private static final long serialVersionUID = 1L;
@@ -49,9 +51,6 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	 */
 	@Inject
 	private MatchingCodeService matchingCodeService;
-
-	@Inject
-	private User currentUser;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -100,7 +99,7 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	public String backToCA() {
 		String returnPage = null;
 
-		returnPage = "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+		returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount()
 						.getId() + "&edit=false&tab=ops";
 
@@ -110,10 +109,10 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	public String unmatching() {
 		String returnPage = null;
 		try {
-			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 					+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount()
 							.getId() + "&edit=false&tab=ops";
-			matchingCodeService.unmatching(entity.getId(), currentUser);
+			matchingCodeService.unmatching(entity.getId(), getCurrentUser());
 			messages.info(new BundleKey("messages", "matchingCode.unmatchingOK"));
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages", "matchingCode.unmatchingKO"));

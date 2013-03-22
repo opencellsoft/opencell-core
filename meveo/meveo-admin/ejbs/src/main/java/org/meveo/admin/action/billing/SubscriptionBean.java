@@ -272,7 +272,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                 Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
                     oneShotChargeInstance.getChargeDate() == null ? new Date() : oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(),
                     oneShotChargeInstance.getAmount2(), oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(),
-                    oneShotChargeInstance.getCriteria3(), getCurrentUser().getUser());
+                    oneShotChargeInstance.getCriteria3(), getCurrentUser());
                 oneShotChargeInstance.setId(id);
                 oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate().getProvider());
                 entity.getOneShotChargeInstances().add(oneShotChargeInstance);
@@ -309,7 +309,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                     recurringChargeInstance.setSubscription(entity);
                     Long id = recurringChargeInstanceService.recurringChargeApplication(entity, (RecurringChargeTemplate) recurringChargeInstance.getChargeTemplate(),
                         recurringChargeInstance.getChargeDate(), recurringChargeInstance.getAmountWithoutTax(), recurringChargeInstance.getAmount2(), 1,
-                        recurringChargeInstance.getCriteria1(), recurringChargeInstance.getCriteria2(), recurringChargeInstance.getCriteria3(), getCurrentUser().getUser());
+                        recurringChargeInstance.getCriteria1(), recurringChargeInstance.getCriteria2(), recurringChargeInstance.getCriteria3(), getCurrentUser());
                     recurringChargeInstance.setId(id);
                     recurringChargeInstance.setProvider(recurringChargeInstance.getChargeTemplate().getProvider());
                     entity.getRecurringChargeInstances().add(recurringChargeInstance);
@@ -431,7 +431,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                     serviceInstance.setQuantity(quantity);
-                    serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser().getUser());
+                    serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
                     serviceInstances.add(serviceInstance);
                     servicetemplates.remove(serviceTemplate);
                 }
@@ -467,7 +467,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                     return;
                 }
 
-                serviceInstanceService.serviceActivation(serviceInstance, null, null, getCurrentUser().getUser());
+                serviceInstanceService.serviceActivation(serviceInstance, null, null, getCurrentUser());
             } else {
                 log.error("activateService id=#0 is NOT a serviceInstance");
             }
@@ -491,9 +491,9 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                 selectedServiceInstance.getStatus());
 
             if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, getCurrentUser().getUser());
+                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, getCurrentUser());
             } else {
-                serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate, getCurrentUser().getUser());
+                serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate, getCurrentUser());
             }
 
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
@@ -513,7 +513,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                 messages.error(new BundleKey("messages", "error.termination.inactiveService"));
                 return;
             }
-            serviceInstanceService.cancelService(serviceInstance, getCurrentUser().getUser());
+            serviceInstanceService.cancelService(serviceInstance, getCurrentUser());
 
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
         } catch (Exception e) {
@@ -525,7 +525,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     public void suspendService() {
         try {
             ServiceInstance serviceInstance = serviceInstanceService.findById(selectedServiceInstanceId);
-            serviceInstanceService.serviceSusupension(serviceInstance, new Date(), getCurrentUser().getUser());
+            serviceInstanceService.serviceSusupension(serviceInstance, new Date(), getCurrentUser());
 
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
         } catch (BusinessException e1) {

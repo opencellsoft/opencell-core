@@ -51,9 +51,6 @@ public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 	@Inject
 	private RecordedInvoiceService recordedInvoiceService;
 
-	@Inject
-	private User currentUser;
-
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -112,7 +109,7 @@ public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 
 	public String addLitigation() {
 		try {
-			recordedInvoiceService.addLitigation(entity, currentUser);
+			recordedInvoiceService.addLitigation(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "customerAccount.addLitigationSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,7 +121,7 @@ public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 	public String cancelLitigation() {
 
 		try {
-			recordedInvoiceService.cancelLitigation(entity, currentUser);
+			recordedInvoiceService.cancelLitigation(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "customerAccount.cancelLitigationSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();

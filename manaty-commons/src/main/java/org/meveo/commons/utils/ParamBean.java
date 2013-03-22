@@ -33,7 +33,7 @@ public class ParamBean {
 	private String _propertyFile;
 
 	/**
-	 * Stocke les donnï¿½ees lues ï¿½ partir du fichier.
+	 * Save properties imported from the file
 	 */
 	private Properties properties;
 
@@ -49,6 +49,10 @@ public class ParamBean {
 
 	private static boolean reload = false;
 
+	public ParamBean(){
+	    
+	}
+	
 	/**
 	 * Constructeur de ParamBean.
 	 * 
@@ -121,6 +125,14 @@ public class ParamBean {
 		return getProperties().getProperty(property_p);
 	}
 
+    public int getPropertyAsInt(String property) {
+        try {
+            return Integer.parseInt(getProperty(property));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+	
 	/**
 	 * 
 	 * @param new_valid

@@ -15,7 +15,6 @@
  */
 package org.meveo.admin.jsf.validator;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
@@ -24,7 +23,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import javax.inject.Named;
+import javax.inject.Inject;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.service.validation.ValidationService;
@@ -34,10 +33,12 @@ import org.meveo.service.validation.ValidationService;
  * @created Jan 5, 2011
  * 
  */
-@Named
 @FacesValidator("uniqueConstraintValidator")
 public class UniqueConstraintValidator implements Validator {
 	private ValidationService validationService;
+	
+    @Inject
+    private ResourceBundle resourceMessages;
 
 	public void validate(FacesContext context, UIComponent component, Object value)
 			throws ValidatorException {
@@ -56,7 +57,7 @@ public class UniqueConstraintValidator implements Validator {
 		if (!validationService
 				.validateUniqueField(className, fieldName, id, value, currentProvider)) {
 			FacesMessage facesMessage = new FacesMessage();
-			String message = getResourceBundle().getString("commons.unqueField");
+			String message = resourceMessages.getString("commons.unqueField");
 			facesMessage.setDetail(message);
 			facesMessage.setSummary(message);
 			facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -64,9 +65,4 @@ public class UniqueConstraintValidator implements Validator {
 		}
 	}
 
-	private ResourceBundle getResourceBundle() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", locale);
-		return resourceBundle;
-	}
 }

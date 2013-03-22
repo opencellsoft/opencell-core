@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import jxl.Workbook;
@@ -48,7 +49,6 @@ import org.meveo.model.BaseEntity;
  * @created 2010.06.10
  */
 @Named
-@RequestScoped
 public class ExcelConverter {
 
 	private int CUSTOM_CELL_WIDTH = 40;
@@ -58,12 +58,15 @@ public class ExcelConverter {
 	private WritableWorkbook workbook;
 	private WritableSheet sheet;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private PaginationDataModel dataModel;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	private BaseBean dataListBean;
 
+	@Inject
+    private ResourceBundle resourceMessages;
+	
 	/**
 	 * Generates file for export
 	 * 
@@ -74,7 +77,7 @@ public class ExcelConverter {
 	 * @throws RowsExceededException
 	 * @throws WriteException
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void export(PaginationDataModel dataModel, BaseBean backingBean)
 			throws RowsExceededException, WriteException {
 		this.dataModel = dataModel;
@@ -164,7 +167,7 @@ public class ExcelConverter {
 	 */
 	public String getMessage(String messageText) {
 		try {
-			return getResourceBundle().getString(messageText);
+			return resourceMessages.getString(messageText);
 
 		} catch (Throwable t) {
 			return "Error while finding label " + messageText;
@@ -328,12 +331,6 @@ public class ExcelConverter {
 				e1.printStackTrace();
 			}
 		}*/
-	}
-
-	protected ResourceBundle getResourceBundle() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", locale);
-		return resourceBundle;
 	}
 
 }

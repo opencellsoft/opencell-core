@@ -16,6 +16,7 @@
 package org.meveo.admin.jsf.validator;
 
 import java.math.BigDecimal;
+import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -24,16 +25,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import javax.inject.Named;
+import javax.inject.Inject;
 
 /**
  * @author Gediminas Ubartas
  * @created Jan 31, 2011
  * 
  */
-@Named
 @FacesValidator("ribValidator")
 public class RibValidator implements Validator {
+    
+    @Inject
+    private ResourceBundle resourceMessages;
+    
 	public boolean checkRib(String rib) {
 		StringBuilder extendedRib = new StringBuilder(rib.length());
 		for (char currentChar : rib.toCharArray()) {
@@ -79,8 +83,7 @@ public class RibValidator implements Validator {
 
 		if (!checkRib(rib.toString())) {
 			FacesMessage facesMessage = new FacesMessage();
-			String message = ""; // TODO:
-									// SeamResourceBundle.getBundle().getString("commons.ribValidation");
+			String message = resourceMessages.getString("commons.ribValidation");
 			facesMessage.setDetail(message);
 			facesMessage.setSummary(message);
 			facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);

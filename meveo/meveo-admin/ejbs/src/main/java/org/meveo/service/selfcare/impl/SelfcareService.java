@@ -38,7 +38,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.local.InvoiceServiceLocal;
 import org.meveo.service.crm.impl.EmailService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
 import org.slf4j.Logger;
 
@@ -59,7 +59,10 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 	private InvoiceServiceLocal invoiceService;
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
+	
+	@Inject
+	private ResourceBundle resourceMessages;
 
 	public Boolean authenticate(String username, String password) throws BusinessException,
 			EmailNotFoundException {
@@ -86,9 +89,8 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		log.info("start sendPassword with email:#0", email);
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 		String from = param.getProperty("selfcare.email.from");
-		ResourceBundle resource = ResourceBundle.getBundle("messages");
-		String sendpasswordSubject = resource.getString("selfcareemail.sendpassword.subject");// "Your password to log into Seflcare!";
-		String sendpasswordBody = resource.getString("selfcareemail.sendpassword.body");// "\n\nyour username:%s\nyour password:%s\n\n";
+		String sendpasswordSubject = resourceMessages.getString("selfcareemail.sendpassword.subject");// "Your password to log into Seflcare!";
+		String sendpasswordBody = resourceMessages.getString("selfcareemail.sendpassword.body");// "\n\nyour username:%s\nyour password:%s\n\n";
 
 		log.info("send password for selfcare with email:" + email + ",subject:"
 				+ sendpasswordSubject);
@@ -237,9 +239,8 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		log.info("start sendEmailCreationSpace with email:#0", email);
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 		String from = param.getProperty("selfcare.email.from");
-		ResourceBundle resource = ResourceBundle.getBundle("messages");
-		String sendpasswordSubject = resource.getString("selfcareemail.creationSpace.subject");
-		String sendpasswordBody = resource.getString("selfcareemail.creationSpace.body");
+		String sendpasswordSubject = resourceMessages.getString("selfcareemail.creationSpace.subject");
+		String sendpasswordBody = resourceMessages.getString("selfcareemail.creationSpace.body");
 		CustomerAccount customerAccount = findCustomerAccoundByEmail(email);
 		sendpasswordBody = String.format(sendpasswordBody, customerAccount.getPassword());
 		sendpasswordSubject = String.format(sendpasswordSubject, customerAccount.getName()

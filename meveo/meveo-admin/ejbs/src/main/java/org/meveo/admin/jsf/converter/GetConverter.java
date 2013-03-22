@@ -17,7 +17,11 @@ package org.meveo.admin.jsf.converter;
 
 import java.math.BigDecimal;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.faces.convert.Converter;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.StringUtils;
@@ -25,48 +29,54 @@ import org.meveo.commons.utils.StringUtils;
 @Named
 public class GetConverter {
 
-	/**
-	 * Gets converter for type and by parameter.
-	 * 
-	 * @param obj
-	 *            Obj for which converter is searched.
-	 * 
-	 * @return Converter.
-	 */
-	public Converter forType(Object obj) {
-		return forType(obj, null);
-	}
+    @Inject
+    BeanManager beanManager;
 
-	/**
-	 * Gets converter for type and by parameter.
-	 * 
-	 * @param obj
-	 *            Obj for which converter is searched.
-	 * @param param
-	 *            Parameter that can be used for finding out converter.
-	 * 
-	 * @return Converter.
-	 */
-	public Converter forType(Object obj, String param) {
+    /**
+     * Gets converter for type and by parameter.
+     * 
+     * @param obj Obj for which converter is searched.
+     * 
+     * @return Converter.
+     */
+    public Converter forType(Object obj) {
+        return forType(obj, null);
+    }
 
-		if (obj == null) {
-			return null;
-		}
+    /**
+     * Gets converter for type and by parameter.
+     * 
+     * @param obj Obj for which converter is searched.
+     * @param param Parameter that can be used for finding out converter.
+     * 
+     * @return Converter.
+     */
+    @SuppressWarnings("unchecked")
+    public Converter forType(Object obj, String param) {
 
-		if (StringUtils.isBlank(param) && obj.getClass() == BigDecimal.class) {
-			// TODO: javaee6 return (Converter)
-			// Component.getInstance("bigDecimalConverter");
-			return new BigDecimalConverter();
-		} else if ("4digits".equals(param) && obj.getClass() == BigDecimal.class) {
-			// TODO: javaee6 return (Converter)
-			// Component.getInstance("bigDecimal4DigitsConverter");
-			return new BigDecimal4DigitsConverter();
-		} else if ("10digits".equals(param) && obj.getClass() == BigDecimal.class) {
-			// TODO: javaee6 return (Converter)
-			// Component.getInstance("bigDecimal10DigitsConverter");
-			return new BigDecimal10DigitsConverter();
+        if (obj == null) {
+            return null;
+        }
 
-		}
-		return null;
-	}
+        if (StringUtils.isBlank(param) && obj.getClass() == BigDecimal.class) {
+
+            Bean<BigDecimalConverter> bean = (Bean<BigDecimalConverter>) beanManager.getBeans(BigDecimalConverter.class).iterator().next();
+            CreationalContext<BigDecimalConverter> ctx = beanManager.createCreationalContext(bean);
+            return (BigDecimalConverter) beanManager.getReference(bean, BigDecimalConverter.class, ctx);
+
+        } else if ("4digits".equals(param) && obj.getClass() == BigDecimal.class) {
+
+            Bean<BigDecimal4DigitsConverter> bean = (Bean<BigDecimal4DigitsConverter>) beanManager.getBeans(BigDecimal4DigitsConverter.class).iterator().next();
+            CreationalContext<BigDecimal4DigitsConverter> ctx = beanManager.createCreationalContext(bean);
+            return (BigDecimal4DigitsConverter) beanManager.getReference(bean, BigDecimal4DigitsConverter.class, ctx);
+
+        } else if ("10digits".equals(param) && obj.getClass() == BigDecimal.class) {
+
+            Bean<BigDecimal10DigitsConverter> bean = (Bean<BigDecimal10DigitsConverter>) beanManager.getBeans(BigDecimal10DigitsConverter.class).iterator().next();
+            CreationalContext<BigDecimal10DigitsConverter> ctx = beanManager.createCreationalContext(bean);
+            return (BigDecimal10DigitsConverter) beanManager.getReference(bean, BigDecimal10DigitsConverter.class, ctx);
+
+        }
+        return null;
+    }
 }

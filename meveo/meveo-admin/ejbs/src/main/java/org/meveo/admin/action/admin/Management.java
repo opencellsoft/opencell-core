@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.log4j.spi.LoggingEvent;
+import org.meveo.commons.utils.ParamBean;
 import org.slf4j.Logger;
 
 /**
@@ -45,13 +46,9 @@ public class Management implements Serializable {
 	@Inject
 	protected Logger log;
 
-	// TODO Use ParamBean
-	private static String CONNECTION_URL = "";// TODO: ResourceBundle.
-												// ResourceBundle.instance().getString("connectionUrl");
-
-	private static int CONNECTION_PORT = 8080;// TODO: ResourceBundle.
-												// Integer.parseInt(ResourceBundle.instance().getString("connectionPort"));
-
+	@Inject
+	private ParamBean paramBean;
+	
 	/**
 	 * Application name for daemon to know what application info to send back.
 	 */
@@ -87,10 +84,14 @@ public class Management implements Serializable {
 	 * Connects to socket server.
 	 */
 	public void connect() {
+	    
+	    String connectionUrl= paramBean.getProperty("connectionUrl");
+	    int connectionPort = paramBean.getPropertyAsInt("connectionPort");
+	    	    
 		connectionEstablished = false;
 		// open a socket connection
 		try {
-			socket = new Socket(CONNECTION_URL, CONNECTION_PORT);
+			socket = new Socket(connectionUrl, connectionPort);
 			connectionEstablished = true;
 			// open I/O streams for objects
 			oos = new ObjectOutputStream(socket.getOutputStream());

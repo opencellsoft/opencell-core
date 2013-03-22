@@ -41,10 +41,6 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listChargeApplicationCalendars() {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
 		Query query = new QueryBuilder(Calendar.class, "c", null)
 				.addCriterionEnum("type", CalendarTypeEnum.CHARGE_IMPUTATION)
 				.startOrClause()
@@ -58,10 +54,6 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listDurationTermCalendars() {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
 		Query query = new QueryBuilder(Calendar.class, "c", null)
 				.addCriterionEnum("type", CalendarTypeEnum.DURATION_TERM)
 				.startOrClause()
@@ -75,10 +67,6 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listBillingCalendars() {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
 		Query query = new QueryBuilder(Calendar.class, "c", null)
 				.addCriterionEnum("type", CalendarTypeEnum.BILLING)
 				.startOrClause()

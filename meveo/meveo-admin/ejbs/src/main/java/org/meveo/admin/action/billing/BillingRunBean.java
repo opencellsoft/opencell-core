@@ -178,7 +178,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             billingRunService.create(entity);
             entity.setProvider(entity.getBillingCycle().getProvider());
 
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -192,7 +192,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             // statusMessages.add("facturation confirmee avec succes");
             entity.setStatus(BillingRunStatusEnum.ON_GOING);
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -205,7 +205,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             entity.setStatus(BillingRunStatusEnum.VALIDATED);
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -217,7 +217,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             entity.setStatus(BillingRunStatusEnum.CANCELED);
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -231,7 +231,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             billingRunService.cleanBillingRun(entity);
 
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -243,7 +243,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             billingRunService.retateBillingRunTransactions(entity);
             cancelConfirmedInvoicing();
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -255,7 +255,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             billingRunService.retateBillingRunTransactions(entity);
             cancelInvoicing();
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
             messages.error(e.getMessage());
@@ -266,7 +266,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
     public String preInvoicingRepport(long id) {
         try {
 
-            return "/pages/billing/invoicing/preInvoicingReports.seam?edit=false&preReport=true&objectId=" + id;
+            return "/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false&preReport=true&objectId=" + id;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -277,7 +277,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
     public String postInvoicingRepport(long id) {
         try {
-            return "/pages/billing/invoicing/postInvoicingReports.seam?edit=false&postReport=true&objectId=" + id;
+            return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + id;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -300,7 +300,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             messages.error(e.getMessage());
         }
 
-        return "/pages/billing/invoicing/postInvoicingReports.seam?edit=false&postReport=true&objectId=" + entity.getId();
+        return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + entity.getId();
     }
 
     /**

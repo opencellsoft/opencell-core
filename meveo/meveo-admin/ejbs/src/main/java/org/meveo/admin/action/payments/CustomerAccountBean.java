@@ -68,9 +68,6 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	@Inject
 	private CustomerService customerService;
 
-	@Inject
-	private User currentUser;
-
 	private String selectedTab = "compte";
 
 	/**
@@ -179,7 +176,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	public String transferAccount() {
 		try {
 			customerAccountService.transferAccount(entity, getCustomerAccountTransfer(),
-					getAmountToTransfer(), currentUser);
+					getAmountToTransfer(), getCurrentUser());
 			messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
 			setCustomerAccountTransfer(null);
 			setAmountToTransfer(BigDecimal.ZERO);
@@ -189,7 +186,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 			messages.error(new BundleKey("messages", "customerAccount.transfertKO"));
 		}
 
-		return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ entity.getId() + "&edit=false&tab=ops";
 	}
 
@@ -246,7 +243,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	public String closeCustomerAccount() {
 		log.info("closeAccount customerAccountId:" + entity.getId());
 		try {
-			customerAccountService.closeCustomerAccount(entity, currentUser);
+			customerAccountService.closeCustomerAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
 		} catch (BusinessException e) {
 			e.printStackTrace();

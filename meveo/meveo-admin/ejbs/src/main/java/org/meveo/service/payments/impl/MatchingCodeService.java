@@ -39,7 +39,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 import org.slf4j.Logger;
 
 /**
@@ -52,7 +51,7 @@ import org.slf4j.Logger;
 public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
 	private AccountOperationService accountOperationService;

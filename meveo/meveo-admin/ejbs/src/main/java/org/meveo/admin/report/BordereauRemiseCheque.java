@@ -46,7 +46,10 @@ import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -56,18 +59,17 @@ import org.slf4j.Logger;
 @Named
 public class BordereauRemiseCheque {
 
-	private static String REPORTS_URL = "";// TODO:
-											// ResourceBundle.instance().getString("reportsURL");
-	// private static String OCC_CODE =
-	// ResourceBundle.instance().getString("occ.templatePaymentCheckCode");
 	private static String REPORT_NAME = "REMISE-CHEQUE";
 	
 	@Inject
 	protected Logger log;
 
-	/** Status messages. */
-	/*TODO: @Inject
-	protected StatusMessages statusMessages;*/
+
+    @Inject
+    private Messages messages;
+    
+    @Inject
+    private ParamBean paramBean;
 	
 	@Inject
 	private AccountOperationService accountOperationService;
@@ -88,7 +90,7 @@ public class BordereauRemiseCheque {
 		parameters.put("date", new Date());
 		String providerCode = currentProvider.getCode();
 
-		String[] occCodes = null; //TODO: ResourceBundle.instance().getString("report.occ.templatePaymentCheckCodes").split(",");
+		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes").split(",");
 		try {
 			jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
 			File dataSourceFile = generateDataFile(occCodes);
@@ -104,7 +106,7 @@ public class BordereauRemiseCheque {
 				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 				JasperExportManager.exportReportToPdfFile(jasperPrint,
 						generateFileName(providerCode));
-				//TODO: statusMessages.addFromResourceBundle(Severity.INFO, "report.reportCreted");
+				messages.info(new BundleKey("messages", "report.reportCreted"));
 				OutputStream os;
 				try {
 					os = response.getOutputStream();
@@ -118,7 +120,7 @@ public class BordereauRemiseCheque {
 				}
 
 			} else {
-				//TODO: statusMessages.addFromResourceBundle(Severity.INFO, "bordereauRemiseCheque.noData");
+			    messages.info(new BundleKey("messages", "bordereauRemiseCheque.noData"));
 			}
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
@@ -161,6 +163,7 @@ public class BordereauRemiseCheque {
 			writer.append("customerAccountId;title;name;firstname;amount");
 			writer.append('\n');
 			if (records.size() == 0) {
+			    writer.close();
 				return null;
 			}
 
@@ -191,7 +194,9 @@ public class BordereauRemiseCheque {
 		sb.append("_");
 		sb.append(df.format(this.date));
 		sb.append(".pdf");
-		return REPORTS_URL + sb.toString();
+		
+		String reportsUrl = paramBean.getProperty("reportsURL");
+		return reportsUrl + sb.toString();
 	}
 
 	public Date getDate() {

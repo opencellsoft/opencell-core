@@ -23,10 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.commons.utils.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
@@ -60,6 +62,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@PersistenceContext(unitName = "meveoDWHentityManager")
 	protected EntityManager dwhEntityManager;
 
+	@Inject
+	@CurrentProvider
+	protected Provider currentProvider;
+	
 	protected Logger log;
 
 	/**
@@ -200,10 +206,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
 	 */
 	public void remove(Set<Long> ids) {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
 		Query query = em.createQuery("delete from " + getEntityClass().getName()
 				+ " where id in (:ids) and provider.id = :providerId");
 		query.setParameter("ids", ids);
@@ -234,10 +236,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 *      org.manaty.model.user.User)
 	 */
 	public void create(E e, User creator) {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
 		create(e, creator, currentProvider);
 	}
 
@@ -265,11 +263,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
 		if (BaseEntity.class.isAssignableFrom(entityClass)) {
-			Provider currentProvider = null; /*
-											 * TODO: Provider. (Provider)
-											 * Component
-											 * .getInstance("currentProvider");
-											 */
 			queryBuilder.startOrClause();
 			queryBuilder.addCriterionEntity("a.provider", currentProvider);
 			// queryBuilder.addSql("a.provider is null");
@@ -309,11 +302,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
 		if (BaseEntity.class.isAssignableFrom(entityClass)) {
-			Provider currentProvider = null;/*
-											 * TODO: Provider. (Provider)
-											 * Component
-											 * .getInstance("currentProvider");
-											 */
 			queryBuilder.startOrClause();
 			queryBuilder.addCriterionEntity("a.provider", currentProvider);
 			// queryBuilder.addSql("a.provider is null");
@@ -353,17 +341,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 *            PaginationConfiguration data holding object
 	 * @return query to filter entities according pagination configuration data.
 	 */
-	@SuppressWarnings("unchecked")
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
 		if (BaseEntity.class.isAssignableFrom(entityClass)) {
-			Provider currentProvider = null; /*
-											 * TODO: Provider. (Provider)
-											 * Component
-											 * .getInstance("currentProvider");
-											 */
 			queryBuilder.startOrClause();
 			queryBuilder.addCriterionEntity("a.provider", currentProvider);
 			// queryBuilder.addSql("a.provider is null");
@@ -448,10 +430,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * modify (update or delete) entity.
 	 */
 	private void checkProvider(E e) {
-		Provider currentProvider = null; /*
-										 * TODO: Provider. (Provider) Component
-										 * .getInstance("currentProvider");
-										 */
+
 		if (currentProvider != null) {
 			if (e instanceof BaseEntity) {
 				Provider provider = ((BaseEntity) e).getProvider();

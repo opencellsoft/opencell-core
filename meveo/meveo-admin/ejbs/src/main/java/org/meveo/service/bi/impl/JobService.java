@@ -94,7 +94,7 @@ public class JobService extends PersistenceService<Job> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public Job getJobInfo(String jobName) {
 		Query query = dwhEntityManager.createNativeQuery(SELECT_JOB);
 		query.setParameter("name", jobName);

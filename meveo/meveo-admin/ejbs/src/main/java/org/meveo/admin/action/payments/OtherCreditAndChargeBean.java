@@ -27,6 +27,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -77,6 +78,9 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	@Inject
 	@CurrentProvider
 	private Provider currentProvider;
+	
+	@Inject
+	ParamBean paramBean;
 
 	@Inject
 	private CustomerAccount customerAccount;
@@ -127,8 +131,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
 			// Create a new entity from a rejectPayment template
 		} else if (initType.equals("loadFromTemplateRejectPayment")) {
-			String occTemplateRejectPaymentCode = getResourceBundle().getString(
-					"occ.templateRejectPaymentCode");
+            String occTemplateRejectPaymentCode = paramBean.getProperty("occ.templateRejectPaymentCode");
 			OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode,
 					currentProvider.getCode());
 			customerAccountIdToSet = customerAccountId.get();
@@ -136,8 +139,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
 			// Create a new entity from a paymentCheck template
 		} else if (initType.equals("loadFromTemplatePaymentCheck")) {
-			String occTemplatePaymentCode = getResourceBundle().getString(
-					"occ.templatePaymentCheckCode");
+            String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode");
 			OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode,
 					currentProvider.getCode());
 			customerAccountIdToSet = customerAccountId.get();

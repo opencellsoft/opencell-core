@@ -63,7 +63,6 @@ public class JobExecutionHistoryService extends PersistenceService<JobExecutionH
 	 * 
 	 * @see org.meveo.service.base.PersistenceService#getQuery(org.meveo.admin.util.pagination.PaginationConfiguration)
 	 */
-	@SuppressWarnings("unchecked")
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends JobExecutionHisto> entityClass = getEntityClass();

@@ -17,6 +17,7 @@ package org.meveo.admin.jsf.validator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -25,7 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import javax.inject.Named;
+import javax.inject.Inject;
 
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -35,60 +36,50 @@ import org.meveo.model.catalog.ChargeTemplate;
  * @created Jul 28, 2011
  * 
  */
-@Named
 @FacesValidator("amountValidator")
 public class AmountValidator implements Validator {
-	private static String amountWithoutTaxID = "amountWithoutTax";
-	private static String chargeTemplateID = "chargeTemplate";
+    private static String amountWithoutTaxID = "amountWithoutTax";
+    private static String chargeTemplateID = "chargeTemplate";
 
-	public boolean validateOneShotChargeInstanceAmount(ChargeTemplate chargeTemplate,
-			BigDecimal amountWithoutTax, BigDecimal amount2) {
-		// If fields are blank
-		if (amountWithoutTax == null && amount2 == null)
-			return true;
-		// If there are values
-		if (chargeTemplate != null & amountWithoutTax != null & amount2 != null) {
-			amount2.setScale(2, RoundingMode.HALF_UP);
-			Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
-			BigDecimal calculatedAmount = amountWithoutTax.multiply(tax.getPercent())
-					.divide(new BigDecimal(100)).add(amountWithoutTax)
-					.setScale(2, RoundingMode.HALF_UP);
-			System.out.println("CALCULATED" + calculatedAmount + "aaa"
-					+ calculatedAmount.compareTo(amount2));
-			if (calculatedAmount.compareTo(amount2) == 0) {
-				return true;
-			}
-		}
+    @Inject
+    ResourceBundle resourceMessages;
 
-		return false;
-	}
+    public boolean validateOneShotChargeInstanceAmount(ChargeTemplate chargeTemplate, BigDecimal amountWithoutTax, BigDecimal amount2) {
+        // If fields are blank
+        if (amountWithoutTax == null && amount2 == null)
+            return true;
+        // If there are values
+        if (chargeTemplate != null & amountWithoutTax != null & amount2 != null) {
+            amount2.setScale(2, RoundingMode.HALF_UP);
+            Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
+            BigDecimal calculatedAmount = amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100)).add(amountWithoutTax).setScale(2, RoundingMode.HALF_UP);
+            System.out.println("CALCULATED" + calculatedAmount + "aaa" + calculatedAmount.compareTo(amount2));
+            if (calculatedAmount.compareTo(amount2) == 0) {
+                return true;
+            }
+        }
 
-	public void validate(FacesContext context, UIComponent component, Object value)
-			throws ValidatorException {
-		/*
-		 * TODO: ModelValidator modelValidator = new ModelValidator();
-		 * modelValidator.validate(context, component, value);
-		 */
+        return false;
+    }
 
-		UIInput accountNumberField = (UIInput) context.getViewRoot().findComponent(
-				"#{rich:clientId('amountWithoutTax')}");
-		System.out
-				.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa"
-						+ accountNumberField);
+    public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        /*
+         * TODO: ModelValidator modelValidator = new ModelValidator(); modelValidator.validate(context, component, value);
+         */
 
-		BigDecimal amountWithoutTax = (BigDecimal) component.getAttributes()
-				.get(amountWithoutTaxID);
-		BigDecimal amount2 = (BigDecimal) value;
-		ChargeTemplate chargeTemplate = (ChargeTemplate) component.getAttributes().get(
-				chargeTemplateID);
-		if (!validateOneShotChargeInstanceAmount(chargeTemplate, amountWithoutTax, amount2)) {
-			FacesMessage facesMessage = new FacesMessage();
-			String message = "";// TODO:
-								// SeamResourceBundle.getBundle().getString("commons.checkAmountHTandTTC");
-			facesMessage.setDetail(message);
-			facesMessage.setSummary(message);
-			facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-			// throw new ValidatorException(facesMessage);
-		}
-	}
+        UIInput accountNumberField = (UIInput) context.getViewRoot().findComponent("#{rich:clientId('amountWithoutTax')}");
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa" + accountNumberField);
+
+        BigDecimal amountWithoutTax = (BigDecimal) component.getAttributes().get(amountWithoutTaxID);
+        BigDecimal amount2 = (BigDecimal) value;
+        ChargeTemplate chargeTemplate = (ChargeTemplate) component.getAttributes().get(chargeTemplateID);
+        if (!validateOneShotChargeInstanceAmount(chargeTemplate, amountWithoutTax, amount2)) {
+            FacesMessage facesMessage = new FacesMessage();
+            String message = resourceMessages.getString("commons.checkAmountHTandTTC");
+            facesMessage.setDetail(message);
+            facesMessage.setSummary(message);
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(facesMessage);
+        }
+    }
 }

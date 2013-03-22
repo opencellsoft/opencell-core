@@ -28,7 +28,7 @@ import org.meveo.model.crm.Provider;
  * 
  */
 @Stateless
-public class ValidationService implements ValidationServiceLocal {
+public class ValidationService {
 
 	@PersistenceContext(unitName = "entityManager")
 	private EntityManager em;

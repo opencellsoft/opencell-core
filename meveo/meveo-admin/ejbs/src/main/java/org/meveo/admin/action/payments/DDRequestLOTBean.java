@@ -26,7 +26,9 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
@@ -74,6 +76,11 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 */
 	private Date endDueDate;
 
+	@Inject
+	@CurrentProvider
+	private Provider currentProvider;
+	
+	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -122,8 +129,8 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.FILE);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser().getUser(),
-					getCurrentUser().getCurrentProvider());
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
+					currentProvider);
 			messages.info(new BundleKey("messages", "ddrequestLot.generateFileSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -144,8 +151,8 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.PAYMENT);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser().getUser(),
-					getCurrentUser().getCurrentProvider());
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
+			    currentProvider);
 			messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -167,8 +174,8 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setToDueDate(getEndDueDate());
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser().getUser(),
-					getCurrentUser().getCurrentProvider());
+			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
+			    currentProvider);
 			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();

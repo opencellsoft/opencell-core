@@ -56,6 +56,9 @@ public abstract class CSVFile<T extends CSVLineData> {
 				String header = reader.readLine();
 				String[] headers = header.split(getSplit());
 				if (!checkHeader(headers)) {
+				    reader.close();
+		            read.close();
+		            fis.close();
 					throw new FileContentException();
 				}
 				setHeader(header);

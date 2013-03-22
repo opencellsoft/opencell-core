@@ -16,6 +16,7 @@
 package org.meveo.admin.action.admin;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,6 +29,7 @@ import org.meveo.model.admin.User;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
+import java.io.Serializable;
 
 /**
  * 
@@ -35,9 +37,12 @@ import org.slf4j.Logger;
  * @created 2010.12.08
  */
 @Named
-// TODO: Conversation. @Scope(ScopeType.CONVERSATION)
-public class ChangePasswordAction {
-	protected Logger log;
+@ConversationScoped
+public class ChangePasswordAction implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    protected Logger log;
 
 	@Inject
 	private Identity identity;
@@ -65,7 +70,11 @@ public class ChangePasswordAction {
 
 	@PostConstruct
 	private void init() {
-		currentUser = ((MeveoUser) identity.getUser()).getUser();
+	    if (identity.isLoggedIn()){
+	        currentUser = ((MeveoUser) identity.getUser()).getUser();
+	    } else {
+	        currentUser=new User();
+	    }
 	}
 
 	public String update() {

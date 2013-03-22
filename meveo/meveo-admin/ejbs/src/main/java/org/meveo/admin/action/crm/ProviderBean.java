@@ -55,9 +55,6 @@ public class ProviderBean extends BaseBean<Provider> {
 	private ProviderService providerService;
 
 	@Inject
-	private User currentUser;
-
-	@Inject
 	@CurrentProvider
 	private Provider currentProvider;
 
@@ -87,7 +84,7 @@ public class ProviderBean extends BaseBean<Provider> {
 	public PaginationDataModel<Provider> userProviders() {
 		super.list();
 		getFilters();
-		filters.put("list-users", currentUser);
+		filters.put("list-users", getCurrentUser());
 		return entities;
 	}
 
@@ -134,7 +131,7 @@ public class ProviderBean extends BaseBean<Provider> {
 	 * provider in login screen
 	 */
 	public String checkCurrentProvider() {
-		if (currentUser == null || currentProvider == null) {
+		if (getCurrentUser() == null || currentProvider == null) {
 			return "/home.xhtml";
 		}
 		return "";

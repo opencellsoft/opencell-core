@@ -29,7 +29,6 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
-import org.meveo.model.admin.User;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.MatchingAmount;
@@ -39,7 +38,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.local.MatchingCodeServiceLocal;
+import org.meveo.service.payments.impl.MatchingCodeService;
 
 /**
  * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean}
@@ -64,10 +63,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	private AccountOperationService accountOperationService;
 
 	@Inject
-	private User currentUser;
-
-	@Inject
-	private MatchingCodeServiceLocal matchingCodeService;
+	private MatchingCodeService matchingCodeService;
 
 	@SuppressWarnings("unused")
 	// TODO: @Out(required = false)
@@ -179,12 +175,12 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 		try {
 			MatchingReturnObject result = matchingCodeService.matchOperations(customerAccountId,
-					null, operationIds, null, currentUser);
+					null, operationIds, null, getCurrentUser());
 			if (result.isOk()) {
 				messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
 			} else {
 				setPartialMatchingOps(result.getPartialMatchingOcc());
-				return "/pages/payments/customerAccounts/partialMatching.seam?objectId="
+				return "/pages/payments/customerAccounts/partialMatching.xhtml?objectId="
 						+ customerAccountId + "";
 			}
 
@@ -194,7 +190,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			e.printStackTrace();
 			messages.error(e.getMessage());
 		}
-		return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ customerAccountId + "&edit=false&tab=ops";
 	}
 
@@ -208,7 +204,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			MatchingReturnObject result = matchingCodeService.matchOperations(
 					partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId(),
 					null, operationIds, partialMatchingOccSelected.getAccountOperation().getId(),
-					currentUser);
+					getCurrentUser());
 			if (result.isOk()) {
 				messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
 			} else {
@@ -220,7 +216,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			e.printStackTrace();
 			messages.error(e.getMessage());
 		}
-		return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId()
 				+ "&edit=false&tab=ops";
 	}
@@ -252,10 +248,10 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 		matchingAmounts = accountOperation.getMatchingAmounts();
 		if (matchingAmounts.size() == 1) {
-			return "/pages/payments/matchingCode/matchingCodeDetail.seam?objectId="
+			return "/pages/payments/matchingCode/matchingCodeDetail.xhtml?objectId="
 					+ matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false";
 		}
-		return "/pages/payments/matchingCode/selectMatchingCode.seam?objectId="
+		return "/pages/payments/matchingCode/selectMatchingCode.xhtml?objectId="
 				+ accountOperation.getId() + "&edit=false";
 	}
 

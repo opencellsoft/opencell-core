@@ -69,7 +69,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	@Inject
 	private TitleService titleService;
 
-	ResourceBundle recourceMessage = ResourceBundle.getBundle("messages");
+	@Inject
+	private ResourceBundle recourceMessages;
+	
+	@Inject
+	private ParamBean paramBean;
 
 	/**
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#isCustomerAccountWithIdExists(java.lang.Long)
@@ -409,7 +413,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			log.debug("closeCustomerAccount  balanceDue:" + balanceDue);
 			if (balanceDue.compareTo(BigDecimal.ZERO) < 0) {
 				throw new BusinessException(
-						recourceMessage
+				    recourceMessages
 								.getString("closeCustomerAccount.balanceDueNegatif"));
 			}
 			if (balanceDue.compareTo(BigDecimal.ZERO) > 0) {
@@ -476,11 +480,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 					.getProperty("occ.templateTransferAccountCredit");
 			String occTransferAccountDebit = param
 					.getProperty("occ.templateTransferAccountDebit");
-			ResourceBundle resource = ResourceBundle.getBundle("messages");
-			String descTransfertFrom = resource
-					.getString("occ.descTransfertFrom");
-			String descTransfertTo = resource
-					.getString("occ.descTransfertFrom");
+			String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom");
+			String descTransfertTo = paramBean.getProperty("occ.descTransfertFrom");
 
 			otherCreditAndChargeService.addOCC(occTransferAccountDebit,
 					descTransfertFrom + " " + toCustomerAccount.getCode(),

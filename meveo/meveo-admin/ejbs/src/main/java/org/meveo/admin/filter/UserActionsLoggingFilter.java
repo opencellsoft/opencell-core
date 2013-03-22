@@ -39,30 +39,34 @@ public class UserActionsLoggingFilter /*extends AbstractFilter*/ {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
-        HttpServletRequest httpReq = (HttpServletRequest) request;
-        User user = null;
-        if (httpReq.getSession().getAttribute("currentUser") != null) {
-            user = (User) httpReq.getSession().getAttribute("currentUser");
-        }
-        String objectId = "";
-        String edit = "";
-
-        Map<?, ?> parametersMap = httpReq.getParameterMap();
-        String uri = httpReq.getRequestURI();
-        if (parametersMap.containsKey("objectId")) {
-            objectId = ((String[]) parametersMap.get("objectId"))[0];
-        }
-        if (parametersMap.containsKey("edit")) {
-            edit = ((String[]) parametersMap.get("edit"))[0];
-        }
-        output(user, objectId, edit, uri);
+        
+        // TODO
+//        HttpServletRequest httpReq = (HttpServletRequest) request;
+//        User user = null;
+//        if (httpReq.getSession().getAttribute("currentUser") != null) {
+//            user = (User) httpReq.getSession().getAttribute("currentUser");
+//        }
+//        String objectId = "";
+//        String edit = "";
+//
+//        Map<?, ?> parametersMap = httpReq.getParameterMap();
+//        String uri = httpReq.getRequestURI();
+//        if (parametersMap.containsKey("objectId")) {
+//            objectId = ((String[]) parametersMap.get("objectId"))[0];
+//        }
+//        if (parametersMap.containsKey("edit")) {
+//            edit = ((String[]) parametersMap.get("edit"))[0];
+//        }
+//        output(user, objectId, edit, uri);
         chain.doFilter(request, response);
 
     }
 
     public void output(User user, String objectId, String edit, String uri) {
         String action = "";
-        if (uri.endsWith("seam") && (user != null)) {
+        if (uri.endsWith("jsf") && (user != null)) {
+            
+            // TODO
         	/*Lifecycle.beginCall();
             UserServiceLocal userService = (UserServiceLocal) Component.getInstance("userService", true);
 

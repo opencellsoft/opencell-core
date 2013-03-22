@@ -20,12 +20,12 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ResourceBundle;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
@@ -37,6 +37,9 @@ public class JavaScriptAction implements JavaScriptActionLocal {
 	@Inject
 	private ChargeTemplateService chargeTemplateService;
 
+	@Inject
+	private ParamBean paramBean;
+	
 	public String calculateOneShotChargeInstanceAmount(String chargeTemplateCode,
 			String amountWithoutTaxString) {
 		BigDecimal amountWithoutTax = bigDecimalConverterAsObject(amountWithoutTaxString);
@@ -83,7 +86,7 @@ public class JavaScriptAction implements JavaScriptActionLocal {
 	}
 
 	public String getBigDecimalAsString(BigDecimal value) {
-		String pattern = ResourceBundle.getBundle("messages").getString("bigDecimal.format");
+		String pattern = paramBean.getProperty("bigDecimal.format");
 		DecimalFormat format = new DecimalFormat(pattern);
 		String bigDecimalString = format.format(value);
 		return bigDecimalString;
