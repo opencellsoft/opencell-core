@@ -41,7 +41,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
-import org.meveo.model.billing.Currency;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry; 
 import org.meveo.model.billing.TradingLanguage;

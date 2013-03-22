@@ -24,6 +24,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import org.meveo.model.admin.Currency;
 
 import org.meveo.model.AuditableEntity;
 
