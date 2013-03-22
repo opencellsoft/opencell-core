@@ -55,11 +55,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		IPersistenceService<E> {
 	protected final Class<E> entityClass;
 
-	@PersistenceContext(unitName = "entityManager")
+	@PersistenceContext(unitName = "MeveoAdmin")
 	protected EntityManager em;
 
 	// TODO move to places where it is needed
-	@PersistenceContext(unitName = "meveoDWHentityManager")
+	@PersistenceContext(unitName = "MeveoDWH")
 	protected EntityManager dwhEntityManager;
 
 	@Inject

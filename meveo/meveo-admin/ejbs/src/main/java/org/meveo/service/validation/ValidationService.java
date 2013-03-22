@@ -30,7 +30,7 @@ import org.meveo.model.crm.Provider;
 @Stateless
 public class ValidationService {
 
-	@PersistenceContext(unitName = "entityManager")
+	@PersistenceContext(unitName = "MeveoAdmin")
 	private EntityManager em;
 
 	/**

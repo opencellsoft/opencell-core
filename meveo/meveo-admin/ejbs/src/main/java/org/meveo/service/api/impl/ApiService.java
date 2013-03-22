@@ -127,7 +127,7 @@ public class ApiService implements ApiServiceRemote {
 	@Inject
 	private Logger log;
 
-    @PersistenceContext(unitName = "entityManager")
+    @PersistenceContext(unitName = "MeveoAdmin")
 	private EntityManager entityManager;
 
 	/*
