@@ -116,6 +116,7 @@
 		<profile>
 			<id>development</id>
 			<activation>
+				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
 					<value>dev</value>
@@ -146,7 +147,6 @@
 		<profile>
 			<id>edward</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
 					<value>edward</value>
