@@ -36,12 +36,15 @@ import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessEntity; 
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ComLanguage;
-import org.meveo.model.billing.CountryCom;
+import org.meveo.model.billing.Country;
+import org.meveo.model.billing.Currency;
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingCountry; 
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -56,17 +59,18 @@ public class Provider extends BusinessEntity {
     private static final long serialVersionUID = 1L;
 
     
-    @Column(name = "COUNTRY_CODE", length = 2)
-    private String countryCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CURRENCY_ID")
+    private Currency currency ;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COUNTRY_ID")
+    private Country country; 
     
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
-    
-    
-    @Column(name = "LANGUAGE_CODE", length = 3)
-    private String languageCode;
-    
+
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "LANGUAGE_ID")
+   private Language language;
     
     @Column(name = "MULTICOUNTRY_FLAG")
     private boolean multicountryFlag;
@@ -98,7 +102,7 @@ public class Provider extends BusinessEntity {
 
     
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<CountryCom> comCountries;
+    private List<TradingCountry> tradingCountries;
     
     
     @ManyToMany(fetch = FetchType.LAZY)
@@ -155,17 +159,8 @@ public class Provider extends BusinessEntity {
     protected String email;
 
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<ComLanguage> comLanguage;
+    private List<TradingLanguage> tradingLanguage;
     
-    
-    public List<CountryCom> getComCountries() {
-		return comCountries;
-	}
-
-	public void setComCountries(List<CountryCom> comCountries) {
-		this.comCountries = comCountries;
-	}
-
 	public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
     }
@@ -173,29 +168,32 @@ public class Provider extends BusinessEntity {
     public void setSerializedPaymentMethods(String serializedPaymentMethods) {
         this.serializedPaymentMethods = serializedPaymentMethods;
     }
+ 
+	 
+	 
 
-    public String getCountryCode() {
-		return countryCode;
+	public Currency getCurrency() {
+		return currency;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
 	}
 
-	public String getCurrencyCode() {
-		return currencyCode;
+	public Country getCountry() {
+		return country;
 	}
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public Language getLanguage() {
+		return language;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 
 	public boolean getMulticountryFlag() {
@@ -389,13 +387,24 @@ public class Provider extends BusinessEntity {
         this.email = email;
     }
 
-	public List<ComLanguage> getComLanguage() {
-		return comLanguage;
+	public List<TradingCountry> getTradingCountries() {
+		return tradingCountries;
 	}
 
-	public void setComLanguage(List<ComLanguage> comLanguage) {
-		this.comLanguage = comLanguage;
+	public void setTradingCountries(List<TradingCountry> tradingCountries) {
+		this.tradingCountries = tradingCountries;
 	}
+
+	public List<TradingLanguage> getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(List<TradingLanguage> tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+
+
     
 
 }

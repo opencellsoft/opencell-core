@@ -113,7 +113,7 @@ public class RecurringChargeCron {
                             DateUtils.addDaysToDate(applicationDate, -1));
                     InvoiceSubCategory invoiceSubCat = activeRecurringChargeInstance.getRecurringChargeTemplate()
                             .getInvoiceSubCategory();
-                    InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCountryCode());
+                    InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getId());
                     Tax tax = invoiceSubcategoryCountry.getTax();
 
                     String param2 = "du " + sdf.format(previousapplicationDate) + " au "
@@ -125,7 +125,7 @@ public class RecurringChargeCron {
                             activeRecurringChargeInstance, activeRecurringChargeInstance.getCode(),
                             ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.RECURRENT, previousapplicationDate,
                             activeRecurringChargeInstance.getAmountWithoutTax(), activeRecurringChargeInstance
-                                    .getAmount2(), activeRecurringChargeInstance.getServiceInstance().getQuantity(),
+                                    .getPrAmountWithoutTax(), activeRecurringChargeInstance.getServiceInstance().getQuantity(),
                             tax.getCode(), tax.getPercent(), null, applicationDate, invoiceSubCat, "1", param2, null,
                             null, activeRecurringChargeInstance.getCriteria1(), activeRecurringChargeInstance
                                     .getCriteria2(), activeRecurringChargeInstance.getCriteria3());

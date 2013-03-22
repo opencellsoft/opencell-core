@@ -28,5 +28,5 @@ import org.meveo.service.base.local.IPersistenceService;
  */
 @Local
 public interface InvoiceSubCategoryCountryServiceLocal extends IPersistenceService<InvoiceSubcategoryCountry> {
-	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) ;
+	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,Long countryId) ;
 }

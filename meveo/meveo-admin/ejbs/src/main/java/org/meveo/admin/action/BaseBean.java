@@ -36,10 +36,9 @@ import org.jboss.seam.log.Log;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.ComLanguage;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.local.ProviderServiceLocal;
 
 /**
@@ -435,19 +434,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     
     
     
-    public List<ComLanguage> getProviderLanguages(){
-    	List<ComLanguage> result=new ArrayList<ComLanguage>();
+    public List<TradingLanguage> getProviderLanguages(){
+    	List<TradingLanguage> result=new ArrayList<TradingLanguage>();
     	if(currentProvider!=null){
     		currentProvider=providerService.findById(currentProvider.getId());//to avoid entity not managed exception 
-    			for (ComLanguage comLanguage:currentProvider.getComLanguage()){
-    				if(!currentProvider.getLanguageCode().equalsIgnoreCase(comLanguage.getLanguage().getLanguageCode())){
-    					result.add(comLanguage);
+    			for (TradingLanguage tradingLanguage:currentProvider.getTradingLanguage()){
+    				if(!currentProvider.getLanguage().getLanguageCode().equalsIgnoreCase(tradingLanguage.getLanguage().getLanguageCode())){
+    					result.add(tradingLanguage);
     				}
     			}
     	}
     	
     	log.info("getProviderLanguages result size=#0", result!=null?result.size():null);
     	return result;
+    }
+    
+    public String getProviderLanguageCode(){
+    	if(currentProvider!=null){
+    		currentProvider=providerService.findById(currentProvider.getId());
+    		return currentProvider.getLanguage().getLanguageCode();
+    	}
+    	return "";	
     }
 
 	public Map<String, String> getLanguageMessagesMap() {

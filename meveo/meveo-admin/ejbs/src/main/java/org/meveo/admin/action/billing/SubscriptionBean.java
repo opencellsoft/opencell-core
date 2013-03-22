@@ -292,7 +292,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                 Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity,
                     (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), oneShotChargeInstance
                             .getChargeDate() == null ? new Date() : oneShotChargeInstance.getChargeDate(),
-                    oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmount2(),
+                    oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getPrAmountWithoutTax(),
                     oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(), oneShotChargeInstance
                             .getCriteria2(), oneShotChargeInstance.getCriteria3(), currentUser);
                 oneShotChargeInstance.setId(id);
@@ -334,7 +334,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                             .recurringChargeApplication(entity, (RecurringChargeTemplate) recurringChargeInstance
                                     .getChargeTemplate(), recurringChargeInstance.getChargeDate(),
                                     recurringChargeInstance.getAmountWithoutTax(),
-                                    recurringChargeInstance.getAmount2(), 1, recurringChargeInstance.getCriteria1(),
+                                    recurringChargeInstance.getPrAmountWithoutTax(), 1, recurringChargeInstance.getCriteria1(),
                                     recurringChargeInstance.getCriteria2(), recurringChargeInstance.getCriteria3(),
                                     currentUser);
                     recurringChargeInstance.setId(id);

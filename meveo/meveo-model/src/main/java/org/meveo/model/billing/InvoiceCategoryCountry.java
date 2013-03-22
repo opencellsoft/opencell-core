@@ -48,13 +48,11 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
     @JoinColumn(name = "INVOICE_CATEGORY_ID")
 	private InvoiceCategory invoiceCategory;
 	
-	
-	@Column(name = "COUNTRY_CODE", length = 2)
-	private String countryCode;
-	
-	
-	
-	
+	 @ManyToOne(fetch = FetchType.LAZY)
+	    @JoinColumn(name = "TRADING_COUNTRY_ID")
+	    private TradingCountry tradingCountry; 
+	    
+	 
 	@Column(name = "DISCOUNT_CODE", length = 20)
 	private String discountCode;
 	
@@ -69,16 +67,6 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 
 	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
 		this.invoiceCategory = invoiceCategory;
-	}
-
-
-	public String getCountryCode() {
-		return countryCode;
-	}
-
-
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
 	}
 
 

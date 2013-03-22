@@ -27,14 +27,13 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.CountryCom;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.local.CountryComServiceLocal;
 
 /**
- * Standard backing bean for {@link CountryCom} (extends {@link BaseBean} that provides
+ * Standard backing bean for {@link TradingCountry} (extends {@link BaseBean} that provides
  * almost all common methods to handle entities filtering/sorting in datatable,
  * their create, edit, view, delete operations). It works with Manaty custom JSF
  * components.
@@ -44,11 +43,11 @@ import org.meveo.service.catalog.local.CountryComServiceLocal;
  */
 @Name("countryComBean")
 @Scope(ScopeType.CONVERSATION)
-public class CountryComBean extends BaseBean<CountryCom> {
+public class CountryComBean extends BaseBean<TradingCountry> {
 
     private static final long serialVersionUID = 1L;
     /**
-     * Injected @{link CountryCom} service. Extends {@link PersistenceService}.
+     * Injected @{link TradingCountry} service. Extends {@link PersistenceService}.
      */
     @In
     private CountryComServiceLocal countryComService;
@@ -59,7 +58,7 @@ public class CountryComBean extends BaseBean<CountryCom> {
      * bean for {@link BaseBean}.
      */
     public CountryComBean() {
-        super(CountryCom.class);
+        super(TradingCountry.class);
         
     }
 
@@ -72,7 +71,7 @@ public class CountryComBean extends BaseBean<CountryCom> {
      */
     @Factory("countryCom")
     @Begin(nested = true)
-    public CountryCom init() {
+    public TradingCountry init() {
         initEntity();
         return entity;
     }
@@ -83,7 +82,7 @@ public class CountryComBean extends BaseBean<CountryCom> {
      * @return filtered entities.
      */
     @Out(value = "comCountries", required = false)
-    protected PaginationDataModel<CountryCom> getDataModel() {
+    protected PaginationDataModel<TradingCountry> getDataModel() {
         return entities;
     }
 
@@ -126,7 +125,7 @@ public class CountryComBean extends BaseBean<CountryCom> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<CountryCom> getPersistenceService() {
+    protected IPersistenceService<TradingCountry> getPersistenceService() {
         return countryComService;
     }
 

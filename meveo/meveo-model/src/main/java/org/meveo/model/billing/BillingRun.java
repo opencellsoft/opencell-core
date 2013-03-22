@@ -123,20 +123,21 @@ public class BillingRun extends AuditableEntity {
     @Column(name = "REJECTION_REASON")
     private String rejectionReason;
 
-    @Column(name = "PR_CURRENCY_CODE", length = 3)
-    private String prCurrencyCode;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
     
-    @Column(name = "PR_COUNTRY_CODE", length = 2)
-    private String prCountryCode;
-    
-    
-    @Column(name = "PR_LANGUAGE_CODE", length = 3)
-    private String prLanguageCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
     
 
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
     
-    
+ 
     @Transient
     PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
@@ -230,13 +231,12 @@ public class BillingRun extends AuditableEntity {
     public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
         this.producibleAmountWithTax = producibleAmountWithTax;
     }
+ 
+    public void setPrAmountTax(BigDecimal prAmountTax) {
+		this.prAmountTax = prAmountTax;
+	}
 
-   
-    public void setPrAmountTax(BigDecimal amountTax) {
-        amountTax = amountTax;
-    }
-
-    public List<Invoice> getInvoices() {
+	public List<Invoice> getInvoices() {
         return invoices;
     }
 
@@ -332,28 +332,29 @@ public class BillingRun extends AuditableEntity {
 		this.prAmountWithTax = prAmountWithTax;
 	}
 
-	public String getPrCurrencyCode() {
-		return prCurrencyCode;
+	 
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
 	}
 
-	public void setPrCurrencyCode(String prCurrencyCode) {
-		this.prCurrencyCode = prCurrencyCode;
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
 	}
 
-	public String getPrCountryCode() {
-		return prCountryCode;
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
-	public void setPrCountryCode(String prCountryCode) {
-		this.prCountryCode = prCountryCode;
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
 
-	public String getPrLanguageCode() {
-		return prLanguageCode;
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
 	}
 
-	public void setPrLanguageCode(String prLanguageCode) {
-		this.prLanguageCode = prLanguageCode;
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
 
 	public BigDecimal getPrAmountTax() {

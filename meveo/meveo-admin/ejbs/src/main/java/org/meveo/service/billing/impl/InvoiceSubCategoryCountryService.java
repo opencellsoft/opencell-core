@@ -42,11 +42,11 @@ import org.meveo.service.billing.remote.InvoiceSubCategoryCountryServiceRemote;
 public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> implements InvoiceSubCategoryCountryServiceLocal,
         InvoiceSubCategoryCountryServiceRemote {
 	
-	 public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) {
+	 public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,Long countryId) {
 	        try {
 	            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
 	            qb.addCriterionEntity("i.invoiceSubCategory.id", invoiceSubCategoryId);
-	            qb.addCriterionWildcard("i.countryCom.id", countryCode, true);
+	            qb.addCriterionEntity("i.tradingCountry.id", countryId);
 	            List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb.getQuery(em).getResultList();
 	            return InvoiceSubcategoryCountries.size()>0?InvoiceSubcategoryCountries.get(0):null;
 	        } catch (NoResultException ex) {

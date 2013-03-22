@@ -122,13 +122,14 @@ public class BillingAccount extends AccountEntity {
     @Column(name = "INVOICE_PREFIX")
     private String invoicePrefix;
 
-    @Column(name = "COUNTRY_CODE", length = 2)
-    private String countryCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
     
-    
-    @Column(name = "LANGUAGE_CODE", length = 3)
-    private String languageCode;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
     
     public List<UserAccount> getUsersAccounts() {
         return usersAccounts;
@@ -292,20 +293,22 @@ public class BillingAccount extends AccountEntity {
 		this.invoiceAgregates = invoiceAgregates;
 	}
 
-	public String getCountryCode() {
-		return countryCode;
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
+
+	 
 	
 }

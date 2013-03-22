@@ -18,8 +18,8 @@ package org.meveo.service.admin.impl;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.meveo.model.billing.ComLanguage;
+import org.jboss.seam.annotations.Name; 
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.admin.local.ComLanguageServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
@@ -29,5 +29,5 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @Name("comLanguageService")
 @AutoCreate
-public class ComLanguageService extends PersistenceService<ComLanguage> implements ComLanguageServiceLocal {
+public class ComLanguageService extends PersistenceService<TradingLanguage> implements ComLanguageServiceLocal {
 }

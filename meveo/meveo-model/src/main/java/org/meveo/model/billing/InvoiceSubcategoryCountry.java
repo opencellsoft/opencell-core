@@ -16,8 +16,6 @@
 
 package org.meveo.model.billing;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,8 +23,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.meveo.model.AuditableEntity;
 
@@ -51,8 +47,8 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COUNTRY_CODE")
-	private CountryCom countryCom;
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+	private TradingCountry tradingCountry;
 	
 
 	@Column(name = "DISCOUNT_CODE", length = 20)
@@ -75,15 +71,15 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
 
-	public CountryCom getCountryCom() {
-		return countryCom;
+	 
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
 
-	public void setCountryCom(CountryCom countryCom) {
-		this.countryCom = countryCom;
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
-	
 
 
 	public String getDiscountCode() {

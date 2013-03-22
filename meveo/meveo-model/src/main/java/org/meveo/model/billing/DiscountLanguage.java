@@ -51,8 +51,9 @@ public class DiscountLanguage  extends AuditableEntity{
 	private Discount discount;
 	
 	
-	@Column(name = "LANGUAGE_CODE", length = 3)
-	private String languageCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	private TradingLanguage tradingLanguage;
 	
 	
 	@Column(name = "DESCRIPTION", length = 50)
@@ -70,15 +71,14 @@ public class DiscountLanguage  extends AuditableEntity{
 	}
 
 
-	public String getLanguageCode() {
-		return languageCode;
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
 	}
 
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
-
 
 
 	public String getDescription() {

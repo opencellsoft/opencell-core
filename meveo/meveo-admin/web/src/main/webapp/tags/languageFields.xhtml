@@ -33,10 +33,9 @@
 					
 					<h:column>
 					     <h:panelGrid column="1">
-						 <h:dataTable value="">
-						 
+						 <h:dataTable value="" > 
 						 <h:column>
-						 <h:graphicImage value="/img/img#{entity.provider.languageCode}.png" style="height:17px; width:33px;" />
+						 <h:graphicImage value="/img/img#{backingBean.getProviderLanguageCode()}.png" style="height:17px; width:33px;" />
 						 </h:column>
 						 <h:column>
 						<h:inputText rendered="#{edit}"  
@@ -60,11 +59,7 @@
 				
 				</a:outputPanel> 
 				 
-			  </custom:panelGroup> 
-			  
-				
-				
-	           	
+			  </custom:panelGroup>   	
 			</a:form> 	
 		</a:outputPanel>
 	    

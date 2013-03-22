@@ -42,7 +42,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 
 /**
- * ComLanguage entity.
+ * TradingLanguage entity.
  * 
  * @author Marouane ALAMI
  * @created 2013.03.07
@@ -50,9 +50,9 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 
 @Entity
 @Table(name = "BILLING_TRADING_LANGUAGE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_COM_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_LANGUAGE_SEQ")
 
-public class ComLanguage  extends AuditableEntity{
+public class TradingLanguage extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
  
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +29,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
@@ -63,45 +65,42 @@ public class Customer extends AccountEntity {
     @Embedded
     private ContactInformation contactInformation = new ContactInformation();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
     
-    
-    
-    
-    @Column(name = "COUNTRY_CODE", length = 2)
-    private String countryCode;
-    
-    
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
-    
-    
-    @Column(name = "LANGUAGE_CODE", length = 3)
-    private String languageCode;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
     
 
-	public String getCountryCode() {
-		return countryCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
+    
+	 
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
 	}
 
-	public String getCurrencyCode() {
-		return currencyCode;
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
 
 	public CustomerCategory getCustomerCategory() {

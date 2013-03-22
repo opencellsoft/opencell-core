@@ -16,14 +16,14 @@
 package org.meveo.service.admin.local;
 
 import javax.ejb.Local;
- 
-import org.meveo.model.billing.ComLanguage;
+
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**  
  * @author MBAREK 
  */
 @Local
-public interface ComLanguageServiceLocal extends IPersistenceService<ComLanguage> {
+public interface ComLanguageServiceLocal extends IPersistenceService<TradingLanguage> {
  
 }

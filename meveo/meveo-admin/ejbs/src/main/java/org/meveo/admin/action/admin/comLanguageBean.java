@@ -27,8 +27,8 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.billing.Language;
-import org.meveo.model.billing.ComLanguage;
+import org.meveo.model.billing.Language; 
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.PriceCode;
 import org.meveo.service.admin.local.ComLanguageServiceLocal;
 import org.meveo.service.base.local.IPersistenceService;
@@ -38,21 +38,21 @@ import org.meveo.service.base.local.IPersistenceService;
  */
 @Name("comLanguageBean")
 @Scope(ScopeType.CONVERSATION)
-public class comLanguageBean extends BaseBean<ComLanguage> {
+public class ComLanguageBean extends BaseBean<TradingLanguage> {
 
     private static final long serialVersionUID = 1L;
   
     @In
     private ComLanguageServiceLocal comLanguageService;
  
-    public comLanguageBean() {
-        super(ComLanguage.class); 
+    public ComLanguageBean() {
+        super(TradingLanguage.class); 
     }
  
 
     @Begin(nested = true)
     @Factory("comLanguage")
-    public ComLanguage init() {
+    public TradingLanguage init() {
     	return initEntity();    
     }
  
@@ -63,7 +63,7 @@ public class comLanguageBean extends BaseBean<ComLanguage> {
      * @return filtered entities.
      */
     @Out(value = "comLanguages", required = false)
-    protected PaginationDataModel<ComLanguage> getDataModel() {
+    protected PaginationDataModel<TradingLanguage> getDataModel() {
         return entities;
     }
  
@@ -105,7 +105,7 @@ public class comLanguageBean extends BaseBean<ComLanguage> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<ComLanguage> getPersistenceService() {
+    protected IPersistenceService<TradingLanguage> getPersistenceService() {
         return comLanguageService;
     }
 

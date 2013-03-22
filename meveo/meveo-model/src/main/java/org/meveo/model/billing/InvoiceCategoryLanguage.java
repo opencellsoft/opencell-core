@@ -51,8 +51,9 @@ public class InvoiceCategoryLanguage  extends AuditableEntity{
 	private InvoiceCategory invoiceCategory;
 	
 	
-	@Column(name = "LANGUAGE_CODE", length = 3)
-	private String languageCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	private TradingLanguage tradingLanguage;
 	
 
 	
@@ -71,15 +72,13 @@ public class InvoiceCategoryLanguage  extends AuditableEntity{
 		this.invoiceCategory = invoiceCategory;
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
-
-
 
 	public String getDescription() {
 		return description;

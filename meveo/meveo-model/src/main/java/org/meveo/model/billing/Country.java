@@ -19,6 +19,9 @@ package org.meveo.model.billing;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -46,12 +49,14 @@ public class Country  extends AuditableEntity{
 	private String descriptionEn;
 
 
-	@Column(name = "CURRENCY_CODE", length = 3)
-	private String currencyCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CURRENCY_ID")
+    private Currency currency;
 
 
-	@Column(name = "LANGUAGE_CODE", length = 3)
-	private String languageCode;
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "LANGUAGE_ID")
+	 private Language language;
 
 
 	public String getCountryCode() {
@@ -74,26 +79,27 @@ public class Country  extends AuditableEntity{
 	}
 
 
-	public String getCurrencyCode() {
-		return currencyCode;
+	public Currency getCurrency() {
+		return currency;
 	}
 
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
 	}
 
 
-	public String getLanguageCode() {
-		return languageCode;
+	public Language getLanguage() {
+		return language;
 	}
 
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 
 
+	 
 
 
 }

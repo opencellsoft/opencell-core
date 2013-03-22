@@ -19,11 +19,9 @@ import javax.ejb.Stateless;
 
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
-import org.meveo.model.billing.CountryCom;
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.local.CountryComServiceLocal;
-import org.meveo.service.catalog.local.TaxServiceLocal;
 
 /**
  * Tax service implementation.
@@ -35,6 +33,6 @@ import org.meveo.service.catalog.local.TaxServiceLocal;
 @Stateless
 @Name("countryComService")
 @AutoCreate
-public class CountryComService extends PersistenceService<CountryCom> implements CountryComServiceLocal {
+public class CountryComService extends PersistenceService<TradingCountry> implements CountryComServiceLocal {
 
 }

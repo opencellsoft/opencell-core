@@ -17,8 +17,7 @@ package org.meveo.service.catalog.local;
 
 import javax.ejb.Local;
 
-import org.meveo.model.billing.CountryCom;
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**
@@ -28,6 +27,6 @@ import org.meveo.service.base.local.IPersistenceService;
  * @created 19-03-2013
  */
 @Local
-public interface CountryComServiceLocal extends IPersistenceService<CountryCom> {
+public interface CountryComServiceLocal extends IPersistenceService<TradingCountry> {
 
 }

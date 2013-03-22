@@ -20,6 +20,9 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,7 +32,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.AuditableEntity; 
 
 /**
  * Price plan matrix entity used when rating transactions.
@@ -97,8 +100,7 @@ public class PricePlanMatrix extends AuditableEntity {
     private Integer businessIntermediaryId;
     
     
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
+    
 
     
     public Integer getBusinessIntermediaryId() {
@@ -108,17 +110,9 @@ public class PricePlanMatrix extends AuditableEntity {
 	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
 		this.businessIntermediaryId = businessIntermediaryId;
 	}
-
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
-
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-
 	
-    public String getEventCode() {
+    
+	public String getEventCode() {
         return eventCode;
     }
 
