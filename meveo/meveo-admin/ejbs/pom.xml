@@ -13,8 +13,7 @@
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<build>
-		<plugins>
-	
+		<plugins>	
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -119,7 +118,7 @@
 		<dependency>
 			<groupId>org.jboss.seam.security</groupId>
 			<artifactId>seam-security</artifactId>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.seam.faces</groupId>
