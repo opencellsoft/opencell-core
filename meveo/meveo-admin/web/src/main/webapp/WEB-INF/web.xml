@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+
+	<!-- RichFaces -->
+<!-- 	<context-param> -->
+<!-- 		<param-name>org.richfaces.SKIN</param-name> -->
+<!-- 		<param-value>classic</param-value> -->
+<!-- 	</context-param> -->
+	<!-- Suppress spurious stylesheets -->
+<!-- 	<context-param> -->
+<!-- 		<param-name>org.richfaces.CONTROL_SKINNING</param-name> -->
+<!-- 		<param-value>disable</param-value> -->
+<!-- 	</context-param> -->
+<!-- 	<context-param> -->
+<!-- 		<param-name>org.richfaces.CONTROL_SKINNING_CLASSES</param-name> -->
+<!-- 		<param-value>disable</param-value> -->
+<!-- 	</context-param> -->
+	<!-- Change load strategy to DEFAULT to disable sending scripts/styles as packs -->
+<!-- 	<context-param> -->
+<!-- 		<param-name>org.richfaces.LoadStyleStrategy</param-name> -->
+<!-- 		<param-value>ALL</param-value> -->
+<!-- 	</context-param> -->
+<!-- 	<context-param> -->
+<!-- 		<param-name>org.richfaces.LoadScriptStrategy</param-name> -->
+<!-- 		<param-value>ALL</param-value> -->
+<!-- 	</context-param> -->
+	<!-- JSF -->
+<!-- 	<context-param> -->
+<!-- 		<param-name>javax.faces.DEFAULT_SUFFIX</param-name> -->
+<!-- 		<param-value>.xhtml</param-value> -->
+<!-- 	</context-param> -->
+	<!-- Facelets taglib -->
+	<context-param>
+		<param-name>facelets.LIBRARIES</param-name>
+		<param-value>/tags/custom.taglib.xml;/tags/manaty.taglib.xml</param-value>
+	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>facelets.SKIP_COMMENTS</param-name> -->
+<!-- 		<param-value>true</param-value> -->
+<!-- 	</context-param> -->
+<!-- 	<filter> -->
+<!-- 		<filter-name>User Actions Logging Filter</filter-name> -->
+<!-- 		<filter-class>org.meveo.admin.filter.UserActionsLoggingFilter</filter-class> -->
+<!-- 	</filter> -->
+<!-- 	<filter> -->
+<!-- 		<filter-name>UTF8CharacterEncodingFilter</filter-name> -->
+<!-- 		<filter-class>org.meveo.admin.filter.UTF8CharacterEncodingFilter</filter-class> -->
+<!-- 	</filter> -->
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>User Actions Logging Filter</filter-name> -->
+<!-- 		<url-pattern>*.jsf</url-pattern> -->
+<!-- 	</filter-mapping> -->
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>UTF8CharacterEncodingFilter</filter-name> -->
+<!-- 		<url-pattern>*.jsf</url-pattern> -->
+<!-- 	</filter-mapping> -->
+	
+	<!-- JSF -->
+<!-- 	<servlet> -->
+<!-- 		<servlet-name>Document Store Servlet</servlet-name> -->
+<!-- 		<servlet-class>org.jboss.seam.pdf.DocumentStoreServlet</servlet-class> -->
+<!-- 	</servlet> -->
+
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>Document Store Servlet</servlet-name> -->
+<!-- 		<url-pattern>*.pdf</url-pattern> -->
+<!-- 	</servlet-mapping> -->
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>Document Store Servlet</servlet-name> -->
+<!-- 		<url-pattern>*.rtf</url-pattern> -->
+<!-- 	</servlet-mapping> -->
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	<!-- Error page -->
+	<error-page>
+		<error-code>500</error-code>
+		<location>/applicationerror.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.IllegalStateException</exception-type>
+		<location>/toomanysessionserror.html</location>
+	</error-page>
+	<!-- Security -->
+<!-- 	<security-constraint> -->
+<!-- 		<display-name>Restrict raw XHTML Documents</display-name> -->
+<!-- 		<web-resource-collection> -->
+<!-- 			<web-resource-name>XHTML</web-resource-name> -->
+<!-- 			<url-pattern>*.xhtml</url-pattern> -->
+<!-- 		</web-resource-collection> -->
+<!-- 		<auth-constraint /> -->
+<!-- 	</security-constraint> -->
+</web-app>

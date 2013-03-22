@@ -15,33 +15,12 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>src/main/resources/classes</directory>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources/WEB-INF</directory>
-				<targetPath>${project.build.directory}/${project.build.finalName}/WEB-INF</targetPath>
+				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-
-		<plugins>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -63,11 +42,14 @@
 			<artifactId>seam-faces</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
-			<version>${project.version}</version>
-			<type>ejb</type>
 		</dependency>
+		<dependency>
+			<groupId>org.manaty</groupId>
+			<artifactId>meveo-admin-config</artifactId>
+			<classifier>${env}</classifier>
+		</dependency>		
 	</dependencies>
 
 	<profiles>

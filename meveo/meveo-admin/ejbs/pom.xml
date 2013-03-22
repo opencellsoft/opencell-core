@@ -14,18 +14,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-ejb-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<ejbVersion>3.1</ejbVersion>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
+	
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -40,26 +29,6 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
 				<executions>
-					<!-- Copy properties file from EAR module for testing -->
-					<execution>
-						<id>copy-ear-properties-file</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.basedir}/../ear/src/main/resources</directory>
-									<filtering>true</filtering>
-									<includes>
-										<include>meveo-admin.properties</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
 					<!-- Copy message, authentication and other configuration files from 
 						configuration module for testing -->
 					<execution>
@@ -79,6 +48,7 @@
 										<include>messages*.properties</include>
 										<include>external-authentication-config.xml</include>
 										<include>saml-entities.xml</include>
+										<include>meveo-admin.properties</include>
 									</includes>
 								</resource>
 								<resource>
@@ -98,24 +68,14 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>manaty-commons</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>meveo-model</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.security</groupId>
-			<artifactId>seam-security</artifactId>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.seam.faces</groupId>
-			<artifactId>seam-faces</artifactId>
-		</dependency>
-
+		
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
@@ -159,8 +119,12 @@
 		<dependency>
 			<groupId>org.jboss.seam.security</groupId>
 			<artifactId>seam-security</artifactId>
-			<scope>compile</scope>
+			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.seam.faces</groupId>
+			<artifactId>seam-faces</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
@@ -330,7 +294,6 @@
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
 		</dependency>
 	</dependencies>
 
@@ -345,38 +308,6 @@
 					<value>dev</value>
 				</property>
 			</activation>
-			<build>
-				<plugins>
-					<!-- Copies JAR files to Jboss server after the build (tied to install 
-						phase) -->
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<!-- Copy JAR files to Jboss server -->
-							<execution>
-								<id>deploy_to_Jboss_jar</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${jboss.home}/server/default/deploy/${manaty.serverArchiveName}.ear/meveo-admin.jar</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.outputDirectory}</directory>
-											<filtering>false</filtering>
-											<includes>
-												<include>**/*.*</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 
 		<profile>

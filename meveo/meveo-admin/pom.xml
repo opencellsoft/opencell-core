@@ -16,13 +16,11 @@
 		<module>config</module>
 		<module>ejbs</module>
 		<module>web</module>
-		<module>ear</module>
 	</modules>
 
 	<properties>
 		<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
 		<manaty.serverArchiveName>meveo-admin-ejb</manaty.serverArchiveName>
-		<manaty.jndiPattern>java:app/${manaty.serverArchiveName}/#{ejbName}</manaty.jndiPattern>
 		<manaty.unpackEarModules>true</manaty.unpackEarModules>
 	</properties>
 
@@ -35,39 +33,20 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>${project.parent.groupId}</groupId>
+				<groupId>org.manaty</groupId>
 				<artifactId>meveo-admin-config</artifactId>
 				<version>${project.version}</version>
-				<type>ejb</type>
 				<classifier>${env}</classifier>
 			</dependency>
 			<dependency>
-				<groupId>${project.parent.groupId}</groupId>
+				<groupId>org.manaty</groupId>
 				<artifactId>meveo-admin-ejbs</artifactId>
 				<version>${project.version}</version>
-				<type>ejb</type>
 			</dependency>
 			<dependency>
-				<groupId>${project.parent.groupId}</groupId>
-				<artifactId>meveo-admin-web</artifactId>
-				<version>${project.version}</version>
-				<type>war</type>
-			</dependency>
-			<dependency>
-				<groupId>${project.parent.groupId}</groupId>
-				<artifactId>manaty-commons</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.parent.groupId}</groupId>
+				<groupId>org.manaty</groupId>
 				<artifactId>meveo-model</artifactId>
 				<version>${project.parent.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.hibernate</groupId>
-						<artifactId>ejb3-persistence</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.faces</groupId>
@@ -89,23 +68,6 @@
 					<value>dev</value>
 				</property>
 			</activation>
-			<properties>
-				<jboss.home>${project.build.directory}/jboss</jboss.home>
-
-				<manaty.unpackEarModules>true</manaty.unpackEarModules>
-
-				<!-- These DB setting are present here only so update SQL scripts could 
-					be run on DB. Real values should be present in each user's profile -->
-				<db.connection.url>jdbc:oracle:thin:@192.168.0.1:1521:XE
-				</db.connection.url>
-				<db.username>MEVEO</db.username>
-				<db.password>meveo</db.password>
-				<dbDWH.connection.url>jdbc:oracle:thin:@192.168.0.1:1521:XE
-				</dbDWH.connection.url>
-				<dbDWH.username>meveoDWH</dbDWH.username>
-				<dbDWH.password>meveoDWH</dbDWH.password>
-
-			</properties>
 		</profile>
 
 		<profile>
@@ -116,9 +78,6 @@
 					<value>integr</value>
 				</property>
 			</activation>
-			<properties>
-				<manaty.unpackEarModules>false</manaty.unpackEarModules>
-			</properties>
 		</profile>
 
 		<profile>
@@ -129,25 +88,6 @@
 					<value>integr</value>
 				</property>
 			</activation>
-			<properties>
-				<manaty.unpackEarModules>false</manaty.unpackEarModules>
-
-				<jboss.hostname>demo.meveo.info</jboss.hostname>
-				<jboss.home>/home/jboss</jboss.home>
-
-				<db.connection.url>jdbc:mysql://db.meveo.info:3306/meveo</db.connection.url>
-				<db.username>meveo</db.username>
-				<db.password>projetMEVEO</db.password>
-				<db.driver.class>com.mysql.jdbc.Driver</db.driver.class>
-				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
-
-				<dbDWH.connection.url>jdbc:mysql://db.meveo.info:3306/meveoDWH</dbDWH.connection.url>
-				<dbDWH.username>meveoDWH</dbDWH.username>
-				<dbDWH.password>projetMEVEO</dbDWH.password>
-				<dbDWH.driver.class>com.mysql.jdbc.Driver</dbDWH.driver.class>
-				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
-
-			</properties>
 		</profile>
 
 		<profile>
@@ -158,9 +98,6 @@
 					<value>prod</value>
 				</property>
 			</activation>
-			<properties>
-				<manaty.unpackEarModules>false</manaty.unpackEarModules>
-			</properties>
 		</profile>
 
 		<!-- User related profiles -->
@@ -185,29 +122,7 @@
 			</properties>
 
 		</profile>
-		<profile>
-			<id>andrius-local</id>
-			<properties>
-				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
-			</properties>
-		</profile>
 
-		<profile>
-			<id>gediminas</id>
-			<properties>
-				<manaty.filterFile>meveo-admin-filter-gediminas.properties</manaty.filterFile>
-				<jboss.hostname>localhost</jboss.hostname>
-				<jboss.home>/opt/manaty/meveo-EDF/jboss-4.2.2.GA</jboss.home>
-				<db.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</db.connection.url>
-				<db.username>MEVEOEDF</db.username>
-				<db.password>meveoedf</db.password>
-				<dbDWH.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</dbDWH.connection.url>
-				<dbDWH.username>meveoedfDWH</dbDWH.username>
-				<dbDWH.password>meveoedfDWH</dbDWH.password>
-			</properties>
-		</profile>
 
 		<profile>
 			<id>anasseh</id>
