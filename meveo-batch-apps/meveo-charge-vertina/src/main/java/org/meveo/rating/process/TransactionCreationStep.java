@@ -107,7 +107,7 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 unitPrice1 = BigDecimal.ZERO;
             }
 
-            BigDecimal unitPrice2 = chargeApplication.getAmount2();
+            BigDecimal unitPrice2 = chargeApplication.getAmountWithoutTax();
             if (unitPrice2 == null && ratePrice != null && ratePrice.getAmountWithoutTax2() != null) {
                 unitPrice2 = ratePrice.getAmountWithoutTax2();
             }
