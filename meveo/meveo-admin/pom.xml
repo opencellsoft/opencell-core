@@ -44,6 +44,11 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>${project.parent.groupId}</groupId>
+				<artifactId>meveo-admin-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.manaty</groupId>
 				<artifactId>meveo-model</artifactId>
 				<version>${project.parent.version}</version>
@@ -62,7 +67,6 @@
 		<profile>
 			<id>development</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
 					<value>dev</value>
@@ -166,6 +170,7 @@
 		<profile>
 			<id>edward</id>
 			<activation>
+				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
 					<value>edward</value>

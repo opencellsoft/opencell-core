@@ -91,16 +91,19 @@
 			<artifactId>meveo-admin-config</artifactId>
 			<type>ejb</type>
 			<classifier>${env}</classifier>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
 			<type>ejb</type>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>meveo-admin-web</artifactId>
 			<type>war</type>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>postgresql</groupId>
