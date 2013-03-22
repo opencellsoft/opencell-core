@@ -16,8 +16,7 @@
 package org.meveo.service.admin.local;
 
 import javax.ejb.Local;
- 
-import org.meveo.model.billing.ComLanguage;
+
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.service.base.local.IPersistenceService;
 
