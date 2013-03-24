@@ -322,8 +322,6 @@
 			<properties>
 				<manaty.unpackEarModules>false</manaty.unpackEarModules>
 
-				<jboss.hostname>demo.meveo.info</jboss.hostname>
-				<jboss.home>/home/jboss4/jboss-4.2.3.GA/lastEAR/</jboss.home>
 
 				<db.connection.url>jdbc:postgresql://localhost:5432/meveo</db.connection.url>
 				<db.username>meveo</db.username>
