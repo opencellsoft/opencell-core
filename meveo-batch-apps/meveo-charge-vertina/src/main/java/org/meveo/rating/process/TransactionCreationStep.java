@@ -204,7 +204,7 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
             transaction.setAmountWithoutTax(amount1Discounted); // en
             transaction.setAmountTax(amount1Tax);
             transaction.setAmountWithTax(amount1WithTax);
-            transaction.setPrAmount(amount2);
+            //transaction.setPrAmount(amount2);
             transaction.setPrAmountWithoutTax(amount2Discounted);
             transaction.setPrAmountTax(amount2Tax);
             transaction.setPrAmountWithTax(amount2WithTax);
@@ -317,7 +317,7 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 transaction.setAmountWithoutTax(amount1Discounted); // en
                 transaction.setAmountTax(amount1Tax);
                 transaction.setAmountWithTax(amount1WithTax);
-                transaction.setPrAmount(amount2);
+                //transaction.setPrAmount(amount2);
                 transaction.setPrAmountWithoutTax(amount2Discounted);
                 transaction.setPrAmountTax(amount2Tax);
                 transaction.setPrAmountWithTax(amount2WithTax);

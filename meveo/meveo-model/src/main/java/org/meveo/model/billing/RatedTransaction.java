@@ -106,9 +106,6 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
     private BigDecimal amountWithTax = BigDecimal.ZERO;
 
-    @Column(name = "PR_AMOUNT", precision = 23, scale = 12)
-    private BigDecimal prAmount = BigDecimal.ZERO;
-
     @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
     private BigDecimal prAmountWithoutTax = BigDecimal.ZERO;
 
@@ -417,14 +414,6 @@ public class RatedTransaction extends BaseEntity {
 
     public void setAmountWithTax(BigDecimal amountWithTax) {
         this.amountWithTax = amountWithTax;
-    }
-
-    public BigDecimal getPrAmount() {
-        return prAmount;
-    }
-
-    public void setPrAmount(BigDecimal prAmount) {
-        this.prAmount = prAmount;
     }
 
     public BigDecimal getPrAmountWithoutTax() {

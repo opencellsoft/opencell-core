@@ -93,10 +93,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     private String discountCode;
     
     
-    @Column(name = "PR_AMOUNT")
-    private Integer prAmount;
-    
-    
     @Column(name = "PR_AMOUNT_WITHOUT_TAX")
     private Integer prAmountWithoutTax;
     
@@ -142,13 +138,6 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		this.discountCode = discountCode;
 	}
 
-	public Integer getPrAmount() {
-		return prAmount;
-	}
-
-	public void setPrAmount(Integer prAmount) {
-		this.prAmount = prAmount;
-	}
 
 	public Integer getPrAmountWithoutTax() {
 		return prAmountWithoutTax;

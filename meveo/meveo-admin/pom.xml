@@ -355,7 +355,28 @@
 
 
 		<!-- User related profiles -->
+		<profile>
+			<id>malami</id>
+			<properties>
+				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
 
+				<jboss.hostname>localhost</jboss.hostname>
+				<jboss.home>C:/Users/Administrateur/Desktop/ASG-BILLING/jboss-4.2.3.GA</jboss.home>
+
+				<db.connection.url>jdbc:mysql://localhost:3306/meveo</db.connection.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+				<db.driver.class>com.mysql.jdbc.Driver</db.driver.class>
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+
+				<dbDWH.connection.url>jdbc:mysql://localhost:3306/meveodwh</dbDWH.connection.url>
+				<dbDWH.username>meveodwh</dbDWH.username>
+				<dbDWH.password>meveodwh</dbDWH.password>
+				<dbDWH.driver.class>com.mysql.jdbc.Driver</dbDWH.driver.class>
+				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
+
+			</properties>
+		</profile>
 		<profile>
 			<id>andrius</id>
 			<properties>

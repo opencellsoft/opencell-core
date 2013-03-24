@@ -112,8 +112,7 @@ public class Invoice extends AuditableEntity {
     @Column(name = "DISCOUNT_CODE", length = 20)
     private String discountCode;
     
-    @Column(name = "PR_AMOUNT")
-    private Integer prAmount;
+    
     
     @Column(name = "PR_AMOUNT_WITHOUT_TAX")
     private Integer prAmountWithoutTax;
@@ -150,14 +149,6 @@ public class Invoice extends AuditableEntity {
 
 	public void setDiscountCode(String discountCode) {
 		this.discountCode = discountCode;
-	}
-
-	public Integer getPrAmount() {
-		return prAmount;
-	}
-
-	public void setPrAmount(Integer prAmount) {
-		this.prAmount = prAmount;
 	}
 
 	public Integer getPrAmountWithoutTax() {
