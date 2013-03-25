@@ -17,6 +17,7 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -28,7 +29,7 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
  * Charge Template service implementation.
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate> {
 
 	/**

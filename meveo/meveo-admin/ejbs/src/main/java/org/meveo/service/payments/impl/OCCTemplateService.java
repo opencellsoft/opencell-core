@@ -17,6 +17,7 @@ package org.meveo.service.payments.impl;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -29,7 +30,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Ignas
  * @created 2009.09.04
  */
-@Stateless
+@Stateless @LocalBean
 public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
 	public OCCTemplate findByCode(String code, String providerCode) {

@@ -15,6 +15,7 @@
  */
 package org.meveo.service.crm.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -27,7 +28,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2010.11.15
  */
-@Stateless
+@Stateless @LocalBean
 public class CustomerService extends PersistenceService<Customer> {
 
 	public Customer findByCode(String code) {

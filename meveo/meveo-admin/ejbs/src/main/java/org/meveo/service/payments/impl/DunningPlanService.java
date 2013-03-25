@@ -15,6 +15,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.DunningPlan;
@@ -23,7 +24,7 @@ import org.meveo.service.base.PersistenceService;
 /**
  * @author Tyshan(tyshan@manaty.net)
  */
-@Stateless
+@Stateless @LocalBean
 public class DunningPlanService extends PersistenceService<DunningPlan> {
 
 }

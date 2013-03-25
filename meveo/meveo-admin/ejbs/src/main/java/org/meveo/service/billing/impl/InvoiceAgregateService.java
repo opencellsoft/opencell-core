@@ -15,6 +15,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.billing.InvoiceAgregate;
@@ -26,7 +27,7 @@ import org.meveo.service.billing.remote.InvoiceAgregateServiceRemote;
  * @author R.AITYAAZZA
  * @created 29 d�c. 10
  */
-@Stateless
+@Stateless 
 public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate>
 		implements InvoiceAgregateServiceLocal, InvoiceAgregateServiceRemote {
 

@@ -15,6 +15,7 @@
  */
 package org.meveo.service.admin.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.VertinaConfiguration;
@@ -26,7 +27,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2010-08-26
  */
-@Stateless
+@Stateless @LocalBean
 public class VertinaConfigurationService extends
 		PersistenceService<VertinaConfiguration> {
 

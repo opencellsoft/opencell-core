@@ -37,7 +37,7 @@ import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
@@ -47,7 +47,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
 	protected Logger log;
 
 	@Inject
-	private CustomerAccountService customerAccountService;
+	private CustomerAccountServiceLocal customerAccountService;
 	
 	@Inject
 	private DWHAccountOperationService accountOperationTransformationService;

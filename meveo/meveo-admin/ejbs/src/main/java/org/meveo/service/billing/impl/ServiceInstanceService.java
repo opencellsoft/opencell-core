@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -54,38 +55,38 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 
 /**
  * Service instance service implementation.
  * 
  * @author R.AITYAAZZA
  */
-@Stateless
+@Stateless @LocalBean
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
-    @Inject
+    @EJB
     private SubscriptionService subscriptionService;
 
-    @Inject
+    @EJB
     private ServiceTemplateService serviceTemplateService;
 
-    @Inject
+    @EJB
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
-    @Inject
+    @EJB
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
-    @Inject
+    @EJB
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
-    @Inject
+    @EJB
     private ChargeApplicationService chargeApplicationService;
     
-    @Inject
-    private CustomerAccountService customerAccountService;
+    @EJB
+    private CustomerAccountServiceLocal customerAccountService;
     
-	@Inject
+	@EJB
     private RatedTransactionService ratedTransactionService;
 
     public ServiceInstance findByCodeAndSubscription(String code, String subscriptionCode) {

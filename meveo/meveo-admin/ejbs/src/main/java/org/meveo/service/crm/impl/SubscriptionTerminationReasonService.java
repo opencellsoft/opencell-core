@@ -17,6 +17,7 @@ package org.meveo.service.crm.impl;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -28,7 +29,7 @@ import org.meveo.service.base.PersistenceService;
  * Service SubscriptionTerminationReason implementation.
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class SubscriptionTerminationReasonService extends
 		PersistenceService<SubscriptionTerminationReason> {
 

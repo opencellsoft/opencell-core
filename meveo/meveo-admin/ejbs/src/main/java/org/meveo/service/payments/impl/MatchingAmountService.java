@@ -15,6 +15,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.MatchingAmount;
@@ -26,6 +27,6 @@ import org.meveo.service.base.PersistenceService;
  * @author anasseh
  * @created 28.11.2010
  */
-@Stateless
+@Stateless @LocalBean
 public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 }

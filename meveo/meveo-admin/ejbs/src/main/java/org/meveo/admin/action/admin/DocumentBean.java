@@ -93,7 +93,7 @@ public class DocumentBean implements Serializable {
 	@Named("documents")
 	@ConversationScoped
 	//@Begin(join = true)
-	public void list() {
+	public List<Document> list() {
 		documents = new ArrayList<Document>();
 		File path = new File(savePath);
 		if (!path.exists()) {
@@ -120,6 +120,8 @@ public class DocumentBean implements Serializable {
 			comparator = new DocumetCreateDateDESCComparator();
 		}
 		Collections.sort(documents, comparator);
+		
+		return documents;
 	}
 
 	public synchronized String compress(Document document) {

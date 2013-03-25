@@ -32,10 +32,10 @@
 <!-- 		<param-value>.xhtml</param-value> -->
 <!-- 	</context-param> -->
 	<!-- Facelets taglib -->
-	<context-param>
-		<param-name>facelets.LIBRARIES</param-name>
-		<param-value>/tags/custom.taglib.xml;/tags/manaty.taglib.xml</param-value>
-	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>facelets.LIBRARIES</param-name> -->
+<!-- 		<param-value>/tags/custom.taglib.xml;/tags/manaty.taglib.xml</param-value> -->
+<!-- 	</context-param> -->
 <!-- 	<context-param> -->
 <!-- 		<param-name>facelets.SKIP_COMMENTS</param-name> -->
 <!-- 		<param-value>true</param-value> -->

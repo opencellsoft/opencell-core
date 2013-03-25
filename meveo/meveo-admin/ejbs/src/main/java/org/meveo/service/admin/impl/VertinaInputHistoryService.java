@@ -17,6 +17,7 @@ package org.meveo.service.admin.impl;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -32,7 +33,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Ignas
  * @created 2009.10.15
  */
-@Stateless
+@Stateless @LocalBean
 public class VertinaInputHistoryService extends
 		PersistenceService<VertinaInputHistory> {
 

@@ -46,8 +46,8 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.local.BillingRunServiceLocal;
 import org.meveo.service.crm.impl.ProviderService;
 
 @Named
@@ -62,7 +62,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
      * @{link Invoice} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private BillingRunService billingRunService;
+    private BillingRunServiceLocal billingRunService;
 
     @Inject
     private InvoiceService invoiceService;

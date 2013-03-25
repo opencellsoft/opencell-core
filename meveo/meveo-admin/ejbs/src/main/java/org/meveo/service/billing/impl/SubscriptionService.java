@@ -18,8 +18,9 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementAlreadyExistsException;
@@ -45,17 +46,17 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class SubscriptionService extends BusinessService<Subscription>
 		implements SubscriptionServiceLocal, SubscriptionServiceRemote {
 
-	@Inject
+	@EJB
 	private UserAccountService userAccountService;
 
-	@Inject
+	@EJB
 	private ServiceInstanceService serviceInstanceService;
 
-	@Inject
+	@EJB
 	private OfferTemplateService offerTemplateService;
 
 	public void createSubscription(String userAccountCode,

@@ -20,8 +20,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -49,17 +50,17 @@ import org.meveo.service.crm.impl.ProviderService;
  * @author R.AITYAAZZA
  * @created 29 d�c. 10
  */
-@Stateless
+@Stateless 
 public class BillingRunService extends PersistenceService<BillingRun> implements
 		BillingRunServiceRemote, BillingRunServiceLocal {
 
-	@Inject
+	@EJB
 	private RatedTransactionService ratedTransactionService;
 
-	@Inject
+	@EJB
 	private ProviderService providerService;
 
-	@Inject
+	@EJB
 	InvoiceServiceLocal invoiceService;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun)

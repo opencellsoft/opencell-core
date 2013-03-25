@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -38,28 +39,26 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.local.InvoiceServiceLocal;
 import org.meveo.service.crm.impl.EmailService;
-import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
-import org.slf4j.Logger;
 
 @Stateless
 public class SelfcareService extends PersistenceService<CustomerAccount> implements
-		SelfcareServiceRemote {
+		SelfcareServiceLocal, SelfcareServiceRemote {
 
-	@Inject
-	private Logger log;
 
-	@Inject
+	@EJB
 	private EmailService emailService;
 
-	@Inject
+	@EJB
 	private BillingAccountService billingAccountService;
 
-	@Inject
+	@EJB
 	private InvoiceServiceLocal invoiceService;
 
-	@Inject
-	private CustomerAccountService customerAccountService;
+	@EJB
+	private CustomerAccountServiceLocal customerAccountService;
 	
 	@Inject
 	private ResourceBundle resourceMessages;

@@ -15,6 +15,7 @@
  */
 package org.meveo.service.admin.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 
@@ -27,7 +28,7 @@ import org.meveo.service.base.PersistenceService;
  * @author anasseh
  * @created 06.01.2011
  */
-@Stateless
+@Stateless @LocalBean
 @Named
 public class AccountImportHistoService extends
 		PersistenceService<AccountImportHisto> {

@@ -19,8 +19,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,13 +35,13 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> {
 
-    @Inject
+    @EJB
     private ChargeApplicationService chargeApplicationService;
 
-	// @Inject
+	// @EJB
     // private RecurringChargeTemplateServiceLocal
     // recurringChargeTemplateService;
 

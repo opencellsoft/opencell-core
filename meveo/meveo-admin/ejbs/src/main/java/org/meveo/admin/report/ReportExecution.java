@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,9 +53,11 @@ import org.slf4j.Logger;
  * @created 2010.10.07
  */
 @Named
-public class ReportExecution {
+public class ReportExecution implements Serializable{
 	
-	private static String DATE_PATERN = "yyyy.MM.dd";
+    private static final long serialVersionUID = -5414660392138922700L;
+
+    private static String DATE_PATERN = "yyyy.MM.dd";
 
 	@Inject
 	protected Logger log;

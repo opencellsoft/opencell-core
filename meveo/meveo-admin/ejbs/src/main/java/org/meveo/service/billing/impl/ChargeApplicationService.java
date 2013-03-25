@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -55,7 +57,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class ChargeApplicationService extends BusinessService<ChargeApplication> {
 
     // @In
@@ -66,10 +68,10 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
 
     private DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    @Inject
+    @EJB
     private BillingAccountService billingAccountService;
 
-    @Inject
+    @EJB
     private OneShotChargeTemplateService oneShotChargeTemplateService;
 
     public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate, User creator)

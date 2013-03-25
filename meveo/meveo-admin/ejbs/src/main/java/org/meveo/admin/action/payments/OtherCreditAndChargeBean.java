@@ -35,9 +35,9 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 
 /**
  * Standard backing bean for {@link OtherCreditAndCharge} (extends
@@ -66,7 +66,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private CustomerAccountService customerAccountService;
+	private CustomerAccountServiceLocal customerAccountService;
 
 	/**
 	 * Injected @{link OCCTemplateService} service. Extends
@@ -82,7 +82,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	@Inject
 	ParamBean paramBean;
 
-	@Inject
+//	TODO - what to inject @Inject SyntheseClientBean.synCustomerAccount or CustomerAccountBean.init()
 	private CustomerAccount customerAccount;
 
 	/**

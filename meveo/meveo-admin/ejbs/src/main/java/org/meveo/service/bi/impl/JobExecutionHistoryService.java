@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -37,7 +38,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2011.04.14
  */
-@Stateless
+@Stateless @LocalBean
 public class JobExecutionHistoryService extends PersistenceService<JobExecutionHisto> {
 	@Override
 	public long count(PaginationConfiguration config) {

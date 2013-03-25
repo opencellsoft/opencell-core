@@ -19,8 +19,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
@@ -41,13 +42,13 @@ import org.meveo.service.base.AccountService;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class UserAccountService extends AccountService<UserAccount> {
 
-	@Inject
+	@EJB
 	private BillingAccountService billingAccountService;
 
-	@Inject
+	@EJB
 	private WalletService walletService;
 
 	public List<Subscription> subscriptionList(String code)

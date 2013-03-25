@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -74,7 +76,7 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 import org.slf4j.Logger;
 
 /**
@@ -82,46 +84,46 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  */
-@Stateless
+@Stateless @LocalBean
 public class ApiService implements ApiServiceRemote {
 
-	@Inject
+	@EJB
 	private CustomerService customerService;
 
-	@Inject
-	private CustomerAccountService customerAccountService;
+	@EJB
+	private CustomerAccountServiceLocal customerAccountService;
 
-	@Inject
+	@EJB
 	private BillingAccountService billingAccountService;
 
-	@Inject
+	@EJB
 	private UserAccountService userAccountService;
 
-	@Inject
+	@EJB
 	private SubscriptionService subscriptionService;
 
-	@Inject
+	@EJB
 	private ServiceInstanceService serviceInstanceService;
 
-	@Inject
+	@EJB
 	private ServiceTemplateService serviceTemplateService;
 
-	@Inject
+	@EJB
 	private CustomerBrandService customerBrandService;
 
-	@Inject
+	@EJB
 	private CustomerCategoryService customerCategoryService;
 
-	@Inject
+	@EJB
 	private TitleService titleService;
 
-	@Inject
+	@EJB
 	private BillingCycleService billingCycleService;
 
-	@Inject
+	@EJB
 	private ProviderService providerService;
 
-	@Inject
+	@EJB
 	private RatedTransactionService ratedTransactionService;
 
 	@Inject

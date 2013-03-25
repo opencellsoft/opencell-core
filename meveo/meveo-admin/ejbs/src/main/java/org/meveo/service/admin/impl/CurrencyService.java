@@ -15,6 +15,7 @@
  */
 package org.meveo.service.admin.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
@@ -27,7 +28,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Ignas
  * @created 2009.09.16
  */
-@Stateless
+@Stateless @LocalBean
 public class CurrencyService extends PersistenceService<Currency> {
 
 	private static final String SYSTEM_CURRENCY_QUERY = "select c from Currency c where c.systemCurrency = true";

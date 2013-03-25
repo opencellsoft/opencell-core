@@ -23,10 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.commons.utils.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
@@ -58,9 +60,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	// TODO move to places where it is needed
 	@PersistenceContext(unitName = "MeveoDWH")
 	protected EntityManager dwhEntityManager;
-// TODO
-//	@Inject
-//	@CurrentProvider
+
+	@Inject
+	@CurrentProvider
 	protected Provider currentProvider;
 	
 

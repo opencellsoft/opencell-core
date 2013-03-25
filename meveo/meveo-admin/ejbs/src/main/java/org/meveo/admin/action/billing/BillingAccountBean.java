@@ -50,9 +50,9 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.billing.local.BillingRunServiceLocal;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -92,7 +92,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	private InvoiceService invoiceService;
 
 	@Inject
-	private BillingRunService billingRunService;
+	private BillingRunServiceLocal billingRunService;
 
 	@Inject
 	@CurrentProvider
@@ -108,7 +108,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	private boolean returnToAgency;
 
 	@Inject
-	private CustomerAccountService customerAccountService;
+	private CustomerAccountServiceLocal customerAccountService;
 
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;

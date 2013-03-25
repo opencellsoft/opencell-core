@@ -15,6 +15,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.DDRequestLotOp;
@@ -23,7 +24,7 @@ import org.meveo.service.base.PersistenceService;
 /**
  * @author anasseh
  */
-@Stateless
+@Stateless @LocalBean
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
 }

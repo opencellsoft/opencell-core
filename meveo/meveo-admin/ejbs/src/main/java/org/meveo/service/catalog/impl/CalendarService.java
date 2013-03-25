@@ -17,6 +17,7 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -32,7 +33,7 @@ import org.meveo.service.base.PersistenceService;
  * @created Nov 22, 2010
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class CalendarService extends PersistenceService<Calendar> {
 
 	/**

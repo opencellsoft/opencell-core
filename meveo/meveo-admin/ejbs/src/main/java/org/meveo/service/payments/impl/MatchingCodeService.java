@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
@@ -39,7 +39,9 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.local.MatchingCodeServiceLocal;
+import org.meveo.service.payments.remote.MatchingCodeServiceRemote;
 
 /**
  * MatchingCode service implementation.
@@ -47,16 +49,14 @@ import org.slf4j.Logger;
  * @author anasseh
  * @created 28.11.2010
  */
-@Stateless
-public class MatchingCodeService extends PersistenceService<MatchingCode> {
+@Stateless 
+public class MatchingCodeService extends PersistenceService<MatchingCode> implements MatchingCodeServiceLocal, MatchingCodeServiceRemote{
 
-	@Inject
-	private CustomerAccountService customerAccountService;
+	@EJB
+	private CustomerAccountServiceLocal customerAccountService;
 
-	@Inject
+	@EJB
 	private AccountOperationService accountOperationService;
-
-	protected Logger log;
 
 	@Transactional
 	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode,

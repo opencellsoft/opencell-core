@@ -23,7 +23,9 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.mail.Message.RecipientType;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -47,12 +49,13 @@ import org.slf4j.Logger;
  * @author Gediminas Ubartas
  * @created 2010.10.05
  */
-@Stateless
+@Stateless @LocalBean
 public class EmailService extends PersistenceService<Email> {
 
 //	TODO @Resource(mappedName = "java:/Mail")
 	private static Session mailSession;
 
+	@Inject
 	private static Logger log;
 
 	public void sendEmail(String from, List<String> to, List<String> cc,

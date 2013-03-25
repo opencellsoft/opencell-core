@@ -15,6 +15,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.billing.ServiceParameterInstance;
@@ -24,7 +25,7 @@ import org.meveo.service.base.PersistenceService;
  * Service Parameter Instance service implementation.
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class ServiceParameterInstanceService extends
 		PersistenceService<ServiceParameterInstance> {
 

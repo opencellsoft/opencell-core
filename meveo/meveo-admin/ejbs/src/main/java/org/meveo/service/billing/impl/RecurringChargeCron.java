@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -44,14 +45,15 @@ import org.slf4j.Logger;
 @Named
 public class RecurringChargeCron {
 
-	@Inject
+	@EJB
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
-	@Inject
+	@EJB
 	private ChargeApplicationService chargeApplicationService;
 
-	protected Logger log;
-
+    @Inject
+    protected Logger log;
+    
 	public void recurringChargeApplication() {
 		log.debug("start recurringChargeApplication....");
 		DateFormat sdf = SimpleDateFormat.getDateInstance();

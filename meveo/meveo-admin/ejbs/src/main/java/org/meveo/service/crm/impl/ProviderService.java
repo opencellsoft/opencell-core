@@ -17,8 +17,9 @@ package org.meveo.service.crm.impl;
 
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.model.admin.User;
@@ -32,9 +33,9 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2011.03.01
  */
-@Stateless
+@Stateless @LocalBean
 public class ProviderService extends PersistenceService<Provider> {
-	@Inject
+	@EJB
     private UserService userService;
 
     public Provider findByCode(String code) {

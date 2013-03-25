@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.transformation;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,9 +54,14 @@ import org.slf4j.Logger;
  * @created 2010.09.22
  */
 @Named
-public class JobExecution {
+public class JobExecution  implements Serializable{
 
-	@Inject
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 2060927874567045135L;
+
+    @Inject
 	private JobService jobService;
 
 	@Inject

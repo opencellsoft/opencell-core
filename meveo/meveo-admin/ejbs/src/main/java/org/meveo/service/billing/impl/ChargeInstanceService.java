@@ -18,8 +18,8 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 
 import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -39,24 +39,24 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class ChargeInstanceService<P extends ChargeInstance> extends BusinessService<P> {
 
 	@EJB
 	private SubscriptionService subscriptionService;
 
-	@Inject
+	@EJB
 	private ServiceInstanceService serviceInstanceService;
-	@Inject
+	@EJB
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
-	@Inject
+	@EJB
 	private RecurringChargeTemplateService recurringChargeTemplateService;
 
-	@Inject
+	@EJB
 	private ChargeApplicationService chargeApplicationService;
 
-	@Inject
+	@EJB
 	private RatedTransactionService ratedTransactionService;
 
 	@SuppressWarnings("unchecked")

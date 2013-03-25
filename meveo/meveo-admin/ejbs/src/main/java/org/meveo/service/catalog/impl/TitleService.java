@@ -15,6 +15,7 @@
  */
 package org.meveo.service.catalog.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.StringUtils;
@@ -29,7 +30,7 @@ import org.meveo.service.base.PersistenceService;
  * @created Dec 20, 2010
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class TitleService extends PersistenceService<Title> {
 
 	public Title findByCode(Provider provider, String code) {

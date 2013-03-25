@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -49,7 +50,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2010.05.31
  */
-@Stateless
+@Stateless @LocalBean
 public class UserService extends PersistenceService<User> {
 
     static User systemUser = null;

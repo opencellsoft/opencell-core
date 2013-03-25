@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -36,7 +37,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2010.09.23
  */
-@Stateless
+@Stateless @LocalBean
 public class JobService extends PersistenceService<Job> {
 	private static final String SELECT_JOB = "SELECT R_JOB.NAME, R_JOBENTRY_ATTRIBUTE.VALUE_NUM, MODIFIED_DATE, R_JOB.JOB_STATUS, R_JOB.ID_JOB FROM R_JOB INNER JOIN R_JOBENTRY_ATTRIBUTE ON R_JOB.ID_JOB=R_JOBENTRY_ATTRIBUTE.ID_JOB where R_JOBENTRY_ATTRIBUTE.CODE = 'schedulerType' and R_JOB.NAME= :name";
 	private static final String SELECT_JOB_INFO = "SELECT CODE, VALUE_NUM FROM R_JOBENTRY_ATTRIBUTE where ID_JOB=:id";

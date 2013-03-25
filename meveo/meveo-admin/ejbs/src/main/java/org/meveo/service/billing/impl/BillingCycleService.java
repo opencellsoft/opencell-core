@@ -15,6 +15,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -30,7 +31,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas
  * @created 2010.05.14
  */
-@Stateless
+@Stateless @LocalBean
 public class BillingCycleService extends PersistenceService<BillingCycle> {
 	/**
 	 * Find BillingCycle by its billing cycle code.

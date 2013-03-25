@@ -27,7 +27,7 @@ import org.meveo.model.crm.Provider;
  * @created Jan 5, 2011
  * 
  */
-@Stateless
+@Stateless 
 public class ValidationService {
 
 	@PersistenceContext(unitName = "MeveoAdmin")

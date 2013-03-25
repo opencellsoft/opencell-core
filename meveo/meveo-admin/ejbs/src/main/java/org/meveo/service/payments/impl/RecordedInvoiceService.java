@@ -15,6 +15,7 @@
  */
 package org.meveo.service.payments.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
@@ -29,7 +30,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Ignas
  * @created 2009.09.04
  */
-@Stateless
+@Stateless @LocalBean
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
 
 	public void addLitigation(Long recordedInvoiceId, User user) throws BusinessException {

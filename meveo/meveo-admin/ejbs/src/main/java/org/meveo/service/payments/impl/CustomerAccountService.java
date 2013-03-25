@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
@@ -47,6 +48,8 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.remote.CustomerAccountServiceRemote;
 import org.slf4j.Logger;
 
 /**
@@ -56,22 +59,20 @@ import org.slf4j.Logger;
  * @created 2009.09.04
  */
 @Stateless
-public class CustomerAccountService extends AccountService<CustomerAccount> {
+public class CustomerAccountService extends AccountService<CustomerAccount> implements CustomerAccountServiceLocal, CustomerAccountServiceRemote {
 
-	@Inject
+	@EJB
 	private CustomerService customerService;
 
-	@Inject
+	@EJB
 	private OtherCreditAndChargeService otherCreditAndChargeService;
 
-	protected Logger log;
-
-	@Inject
-	private TitleService titleService;
+	@EJB
+    private TitleService titleService;
 
 	@Inject
 	private ResourceBundle recourceMessages;
-	
+
 	@Inject
 	private ParamBean paramBean;
 

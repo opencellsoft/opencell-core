@@ -18,6 +18,7 @@ package org.meveo.service.payments.local;
 import javax.ejb.Local;
 
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.remote.ICustomerAccountService;
 
 /**
@@ -27,7 +28,9 @@ import org.meveo.service.payments.remote.ICustomerAccountService;
  * @created 2009.09.04
  */
 @Local
-public interface CustomerAccountServiceLocal extends ICustomerAccountService {
+public interface CustomerAccountServiceLocal extends ICustomerAccountService,IPersistenceService<CustomerAccount>{
 	public boolean isDuplicationExist(CustomerAccount customerAccount);
 	public boolean isAllServiceInstancesTerminated(CustomerAccount customerAccount);
+    public CustomerAccount findByCode(String code);
+    public CustomerAccount findByExternalRef1(String externalRef1);
 }

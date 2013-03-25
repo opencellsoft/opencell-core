@@ -17,8 +17,9 @@ package org.meveo.service.billing.impl;
 
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -39,14 +40,11 @@ import org.slf4j.Logger;
  * @author Gediminas
  * @created 2010.05.14
  */
-@Stateless
+@Stateless @LocalBean
 public class InvoiceService extends PersistenceService<Invoice> implements
 		InvoiceServiceLocal, InvoiceServiceRemote {
 
-	@Inject
-	private Logger log;
-
-	@Inject
+	@EJB
 	private ProviderService providerService;
 
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode)

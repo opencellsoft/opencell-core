@@ -18,8 +18,9 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
@@ -30,7 +31,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
 
 /**
  * OtherCreditAndCharge service implementation.
@@ -38,16 +38,14 @@ import org.slf4j.Logger;
  * @author Ignas
  * @created 2009.09.04
  */
-@Stateless
+@Stateless @LocalBean
 public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> {
 
-//	@Inject
+//	@EJB
 //	private CustomerAccountService customerAccountService;
 
-	@Inject
+	@EJB
 	private OCCTemplateService occTemplateService;
-
-	protected Logger log;
 
 	@Transactional
 	public void addOCC(String codeOCCTemplate, String descToAppend, CustomerAccount customerAccount, BigDecimal amount, Date dueDate, User user)

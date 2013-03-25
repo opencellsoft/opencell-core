@@ -27,7 +27,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.local.CustomerAccountServiceLocal;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class CustomerAccountImportAction implements Serializable {
 	protected Logger log;
 
 	@Inject
-	private CustomerAccountService customerAccountService;
+	private CustomerAccountServiceLocal customerAccountService;
 
 	private XLSFile xls;
 

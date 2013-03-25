@@ -15,6 +15,7 @@
  */
 package org.meveo.service.crm.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
@@ -25,7 +26,7 @@ import org.meveo.service.base.PersistenceService;
  * Service Template service implementation.
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class CustomerCategoryService extends
 		PersistenceService<CustomerCategory> {
 

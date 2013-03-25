@@ -22,8 +22,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -38,10 +39,10 @@ import org.meveo.service.base.PersistenceService;
  * @author R.AITYAAZZA
  * @created 16 d�c. 10
  */
-@Stateless
+@Stateless @LocalBean
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
-	@Inject
+	@EJB
 	private SubscriptionService subscriptionService;
 	
 	@SuppressWarnings("unchecked")

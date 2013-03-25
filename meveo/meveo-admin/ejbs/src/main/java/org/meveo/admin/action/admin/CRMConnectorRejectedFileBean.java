@@ -91,7 +91,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
     // TODO @Begin(join = true)
     @Produces
     @Named("crmConnectorRejectedFiles")
-    public void list() {
+    public List<Document>  list() {
         crmConnectorRejectedFiles = new ArrayList<Document>();
         loadFiles(errorPath);
         loadFiles(allertPath);
@@ -104,7 +104,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
             }
 
         });
-
+        return crmConnectorRejectedFiles;
     }
 
     public void loadFiles(String documentsPath) {

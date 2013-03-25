@@ -15,6 +15,7 @@
  */
 package org.meveo.service.resource.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.resource.OfferInstance;
@@ -24,7 +25,7 @@ import org.meveo.service.base.PersistenceService;
  * Offer instance service implementation.
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class OfferInstanceService extends PersistenceService<OfferInstance> {
 
 }

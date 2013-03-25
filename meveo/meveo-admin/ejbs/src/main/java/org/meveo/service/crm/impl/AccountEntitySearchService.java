@@ -15,6 +15,7 @@
  */
 package org.meveo.service.crm.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.AccountEntity;
@@ -26,7 +27,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2010.11.22
  */
-@Stateless
+@Stateless @LocalBean
 public class AccountEntitySearchService extends
 		PersistenceService<AccountEntity> {
 

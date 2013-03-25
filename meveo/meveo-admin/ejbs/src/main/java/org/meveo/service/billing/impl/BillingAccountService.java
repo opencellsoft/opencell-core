@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
@@ -41,7 +42,7 @@ import org.meveo.service.base.AccountService;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class BillingAccountService extends AccountService<BillingAccount> {
 
 	@EJB

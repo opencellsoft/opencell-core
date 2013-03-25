@@ -15,6 +15,7 @@
  */
 package org.meveo.service.catalog.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.catalog.UsageDiscountPlanItem;
@@ -24,7 +25,7 @@ import org.meveo.service.base.PersistenceService;
  * Offer Template service implementation.
  * 
  */
-@Stateless
+@Stateless @LocalBean
 public class UsageDiscountPlanItemService extends
 		PersistenceService<UsageDiscountPlanItem> {
 
