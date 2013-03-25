@@ -39,12 +39,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.seam.security.Identity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Document;
 import org.meveo.model.crm.Provider;
-import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 @Named
@@ -89,7 +87,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     // TODO @Begin(join = true)
     @Produces
     @Named("crmConnectorRejectedFiles")

@@ -15,6 +15,8 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.Serializable;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -29,7 +31,6 @@ import org.meveo.model.admin.User;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
-import java.io.Serializable;
 
 /**
  * 

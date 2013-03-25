@@ -18,7 +18,6 @@ package org.meveo.admin.jsf.converter;
 import java.text.DecimalFormat;
 
 import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
 
 /**
  * 

@@ -23,7 +23,6 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.crm.Provider;
 
 /**
  * Charge Template service implementation.

@@ -80,7 +80,7 @@
 			<artifactId>jsf-api</artifactId>
 		</dependency>
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.richfaces.ui</groupId>
 			<artifactId>richfaces-components-ui</artifactId>
 			<version>${manaty.richfaces.version}</version>
@@ -94,27 +94,8 @@
 			<groupId>org.richfaces.core</groupId>
 			<artifactId>richfaces-core-impl</artifactId>
 			<version>${manaty.richfaces.version}</version>
-		</dependency> -->
-		
-		<dependency>
-			<groupId>org.richfaces.framework</groupId>
-			<artifactId>richfaces-api</artifactId>
-			<version>${manaty.richfaces.version}</version>
-			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.richfaces.framework</groupId>
-			<artifactId>richfaces-impl</artifactId>
-			<version>${manaty.richfaces.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.richfaces.ui</groupId>
-			<artifactId>richfaces-ui</artifactId>
-			<version>${manaty.richfaces.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		
+				
 		<dependency>
 			<groupId>org.jboss.seam.security</groupId>
 			<artifactId>seam-security</artifactId>

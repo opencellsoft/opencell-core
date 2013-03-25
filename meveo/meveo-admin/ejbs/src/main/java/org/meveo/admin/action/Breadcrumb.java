@@ -15,16 +15,20 @@
  */
 package org.meveo.admin.action;
 
+import java.io.Serializable;
+
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 @Named
 @SessionScoped
-public class Breadcrumb {
+public class Breadcrumb implements Serializable {
 
-	// private List<Page> sessionCrumb;
+    private static final long serialVersionUID = -6053968861740813024L;
 
-	public void log() {
+    // private List<Page> sessionCrumb;
+
+    public void log() {
 		// try {
 		// if (sessionCrumb == null) {
 		// sessionCrumb = new LinkedList<Page>();

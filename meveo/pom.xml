@@ -8,13 +8,20 @@
 	<version>3.0-SNAPSHOT</version>
 	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
+
+	<modules>
+		<module>meveo-model</module>
+		<module>meveo-admin</module>
+	</modules>
+
+
 	<properties>
 		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some 
 			files for a specific configuration (e.g. import.sql) -->
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<manaty.richfaces.version>3.3.3.Final</manaty.richfaces.version>
+		<manaty.richfaces.version>4.3.0.Final</manaty.richfaces.version>
 		<manaty.jsf.version>2.1.19</manaty.jsf.version>
 		<manaty.hibernate.version>4.1.7.Final</manaty.hibernate.version>
 		<manaty.hibernateValidator.version>4.3.0.Final</manaty.hibernateValidator.version>

@@ -31,9 +31,6 @@ import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.admin.security.user.UserCreate;
-import org.meveo.admin.security.user.UserDelete;
-import org.meveo.admin.security.user.UserUpdate;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -41,6 +38,9 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Title;
+import org.meveo.security.authorization.UserCreate;
+import org.meveo.security.authorization.UserDelete;
+import org.meveo.security.authorization.UserUpdate;
 import org.meveo.service.base.PersistenceService;
 
 /**

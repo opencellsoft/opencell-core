@@ -28,8 +28,8 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
+import org.richfaces.event.FileUploadEvent;
+import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 
 /**
@@ -122,9 +122,9 @@ public class CustomerAccountImportAction implements Serializable {
 	 * @throws Exception
 	 */
 	// TODO why synchronized??
-	public synchronized void uploadListener(UploadEvent event) throws Exception {
+	public synchronized void uploadListener(FileUploadEvent  event) throws Exception {
 
-		UploadItem item = event.getUploadItem();
+		UploadedFile item = event.getUploadedFile();
 
 		log.debug("#{currentUser.username} > Start processing uploaded XLS file (name='{0}') ..",
 				item);
@@ -134,11 +134,11 @@ public class CustomerAccountImportAction implements Serializable {
 			return;
 		}
 
-		filename = item.getFileName();
+		filename = item.getName();
 		log.debug("#{currentUser.username} > Start parsing uploaded file ..");
 
 		try {
-			xls = new XLSFile(item.getFile());
+// TODO			xls = new XLSFile(item.getData());
 			xls.parse();
 			importCustomerAccountData = xls.getContexts();
 			customerAccountsTotal = xls.getContexts().size();
@@ -152,7 +152,7 @@ public class CustomerAccountImportAction implements Serializable {
 		log.debug("#{currentUser.username} > Uploaded file parsed successfully");
 
 		log.debug("#{currentUser.username} > End processing uploaded XML file (name='{0}')",
-				item.getFileName());
+				item.getName());
 	}
 
 	/**
@@ -162,13 +162,13 @@ public class CustomerAccountImportAction implements Serializable {
 	 *            Upload file
 	 * @return Null if valid and error code otherwise.
 	 */
-	private boolean validateFileNameAndExtention(UploadItem item) {
+	private boolean validateFileNameAndExtention(UploadedFile item) {
 		log.debug("#{currentUser.username} > Start uploaded file name and extention validation ..");
 		boolean valid = true;
 
-		if (item != null && item.getFileName() != null) {
-			int dot = item.getFileName().lastIndexOf(".");
-			String fileExt = item.getFileName().substring(dot + 1);
+		if (item != null && item.getName() != null) {
+			int dot = item.getName().lastIndexOf(".");
+			String fileExt = item.getName().substring(dot + 1);
 			if (!fileExt.toUpperCase().equals("XLS") && !fileExt.toUpperCase().equals("TXT")) {
 				log.debug("#{currentUser.username} > File name validation failed!");
 				messages.error(new BundleKey("messages", "import.badFileExtension"));

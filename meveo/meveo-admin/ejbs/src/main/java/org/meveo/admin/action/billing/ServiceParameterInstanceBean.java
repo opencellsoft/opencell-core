@@ -65,27 +65,10 @@ public class ServiceParameterInstanceBean extends BaseBean<ServiceParameterInsta
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("serviceParameterInstance")
-	 */
 	@Produces
 	@Named("serviceParameterInstance")
 	public ServiceParameterInstance init() {
 		return initEntity();
-	}
-
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "serviceParameterInstances", required = false)
-	@Produces
-	@Named("serviceParameterInstances")
-	protected PaginationDataModel<ServiceParameterInstance> getDataModel() {
-		return entities;
 	}
 
 	/**
@@ -97,26 +80,11 @@ public class ServiceParameterInstanceBean extends BaseBean<ServiceParameterInsta
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("serviceParameterInstances")
-	 */
 	@Produces
 	@Named("serviceParameterInstances")
+    @ConversationScoped
 	public PaginationDataModel<ServiceParameterInstance> list() {
 		return super.list();
-	}
-
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	// TODO: @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-		return saveOrUpdate(entity);
 	}
 
 	/**

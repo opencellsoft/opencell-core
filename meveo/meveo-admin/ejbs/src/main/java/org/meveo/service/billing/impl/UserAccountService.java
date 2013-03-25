@@ -45,13 +45,10 @@ import org.meveo.service.base.AccountService;
 public class UserAccountService extends AccountService<UserAccount> {
 
 	@Inject
-	BillingAccountService billingAccountService;
+	private BillingAccountService billingAccountService;
 
 	@Inject
-	WalletService walletService;
-
-	@Inject
-	SubscriptionService subscriptionService;
+	private WalletService walletService;
 
 	public List<Subscription> subscriptionList(String code)
 			throws BusinessException {
@@ -90,7 +87,9 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	public void userAccountTermination(String code, Date terminationDate,
 			User updater) throws BusinessException {
-		if (terminationDate == null) {
+		
+	    SubscriptionService subscriptionService=getManagedBeanInstance(SubscriptionService.class);
+	    if (terminationDate == null) {
 			terminationDate = new Date();
 		}
 		UserAccount userAccount = findByCode(code);
@@ -106,7 +105,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	public void userAccountCancellation(String code, Date terminationDate,
 			User updater) throws BusinessException {
-		if (terminationDate == null) {
+		
+	    SubscriptionService subscriptionService=getManagedBeanInstance(SubscriptionService.class);
+	    
+	    if (terminationDate == null) {
 			terminationDate = new Date();
 		}
 		UserAccount userAccount = findByCode(code);

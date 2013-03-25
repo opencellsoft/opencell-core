@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.meveo.admin.security.accounts;
+package org.meveo.security.authorization;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,7 +25,6 @@ import org.jboss.seam.security.annotations.SecurityBindingType;
 @SecurityBindingType
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-public @interface AccountVisualization {
+public @interface CatalogVisualization {
 
-    // maybe should be catalogVisualization
 }

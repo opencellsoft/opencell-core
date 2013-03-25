@@ -243,7 +243,6 @@ public class DocumentBean implements Serializable {
 		this.toDate = toDate;
 	}
 
-	@SuppressWarnings("unchecked")
 	class DocumetCreateDateDESCComparator implements Comparator {
 
 		public int compare(Object d1, Object d2) {
@@ -257,7 +256,6 @@ public class DocumentBean implements Serializable {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	class DocumetCreateDateASCComparator implements Comparator {
 
 		public int compare(Object d1, Object d2) {

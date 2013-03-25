@@ -31,9 +31,6 @@ public class Role extends BaseEntity {
         }
     };
 
-    @Id
-    private Long id;
-
     @Column(name = "ROLE_NAME", nullable = false)
     private String name;
 
@@ -45,14 +42,6 @@ public class Role extends BaseEntity {
     private List<Permission> permissions;
 
     public Role() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {

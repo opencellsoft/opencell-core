@@ -17,6 +17,7 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -41,7 +42,7 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 @Stateless
 public class ChargeInstanceService<P extends ChargeInstance> extends BusinessService<P> {
 
-	@Inject
+	@EJB
 	private SubscriptionService subscriptionService;
 
 	@Inject

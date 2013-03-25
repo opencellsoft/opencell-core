@@ -17,6 +17,9 @@ package org.meveo.service.base;
 
 import java.util.Random;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.jboss.seam.security.Identity;
@@ -25,19 +28,29 @@ import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 public abstract class BaseService {
-	private static final Random RANDOM = new Random();
+    private static final Random RANDOM = new Random();
 
-	@Inject
-	Identity identity;
+    @Inject
+    Identity identity;
 
-	@Inject
-	protected Logger log;
+    @Inject
+    protected Logger log;
 
-	protected User getCurrentUser() {
-		return ((MeveoUser) identity.getUser()).getUser();
-	}
+    @Inject
+    BeanManager beanManager;
 
-	protected String generateRequestId() {
-		return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());
-	}
+    protected User getCurrentUser() {
+        return ((MeveoUser) identity.getUser()).getUser();
+    }
+
+    protected String generateRequestId() {
+        return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <E> E getManagedBeanInstance(Class<E> beanClazz) {
+        Bean<E> bean = (Bean<E>) beanManager.getBeans(beanClazz).iterator().next();
+        CreationalContext<E> ctx = beanManager.createCreationalContext(bean);
+        return (E) beanManager.getReference(bean, beanClazz, ctx);
+    }
 }

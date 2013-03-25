@@ -41,8 +41,8 @@ import org.slf4j.Logger;
 @Stateless
 public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> {
 
-	@Inject
-	private CustomerAccountService customerAccountService;
+//	@Inject
+//	private CustomerAccountService customerAccountService;
 
 	@Inject
 	private OCCTemplateService occTemplateService;
@@ -107,16 +107,16 @@ public class OtherCreditAndChargeService extends PersistenceService<OtherCreditA
 				dueDate);
 	}
 
-	public void addOCC(String codeOCCTemplate, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate, User user)
-			throws BusinessException, Exception {
-		addOCC(codeOCCTemplate, null, customerAccountId, customerAccountCode, amount, dueDate, user);
-	}
-
-	public void addOCC(String codeOCCTemplate, String descToAppend, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate,
-			User user) throws BusinessException, Exception {
-		log.info("addOCC  codeOCCTemplate:{0}  customerAccountId:{1} customerAccountCode:{2} amount:{3} dueDate:{4}", codeOCCTemplate, customerAccountId,
-				customerAccountCode, amount, dueDate);
-		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
-		addOCC(codeOCCTemplate, descToAppend, customerAccount, amount, dueDate, user);
-	}
+//	public void addOCCk(String codeOCCTemplate, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate, User user)
+//			throws BusinessException, Exception {
+//		addOCC(codeOCCTemplate, null, customerAccountId, customerAccountCode, amount, dueDate, user);
+//	}
+//
+//	public void addOCC(String codeOCCTemplate, String descToAppend, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate,
+//			User user) throws BusinessException, Exception {
+//		log.info("addOCC  codeOCCTemplate:{0}  customerAccountId:{1} customerAccountCode:{2} amount:{3} dueDate:{4}", codeOCCTemplate, customerAccountId,
+//				customerAccountCode, amount, dueDate);
+//		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
+//		addOCC(codeOCCTemplate, descToAppend, customerAccount, amount, dueDate, user);
+//	}
 }

@@ -16,17 +16,13 @@
 package org.meveo.admin.filter;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
-import javax.faces.lifecycle.Lifecycle;
-import javax.inject.Scope;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import org.meveo.model.admin.User;
 

@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.mail.Message.RecipientType;
 import javax.mail.Multipart;
@@ -51,7 +50,7 @@ import org.slf4j.Logger;
 @Stateless
 public class EmailService extends PersistenceService<Email> {
 
-	@Resource(mappedName = "java:/Mail")
+//	TODO @Resource(mappedName = "java:/Mail")
 	private static Session mailSession;
 
 	private static Logger log;

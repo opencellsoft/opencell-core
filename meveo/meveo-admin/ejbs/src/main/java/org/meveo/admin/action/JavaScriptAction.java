@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -28,14 +29,16 @@ import javax.inject.Named;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 
 @Named
 @SessionScoped
-public class JavaScriptAction implements JavaScriptActionLocal {
+public class JavaScriptAction implements Serializable, JavaScriptActionLocal {
 
-	@Inject
-	private ChargeTemplateService chargeTemplateService;
+    private static final long serialVersionUID = 1566090776694906061L;
+
+    @Inject
+	private ChargeTemplateServiceAll chargeTemplateService;
 
 	@Inject
 	private ParamBean paramBean;

@@ -22,13 +22,10 @@ import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.report.ReportExecution;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.admin.User;
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;

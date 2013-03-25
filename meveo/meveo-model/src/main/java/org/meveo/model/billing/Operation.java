@@ -47,7 +47,8 @@ public class Operation implements IEntity {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.TABLE)
+//    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "ID")
     private Long id;
 

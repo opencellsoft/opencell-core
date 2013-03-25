@@ -26,7 +26,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 
 /**
  * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -46,7 +46,7 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
      * Injected @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
+    private ChargeTemplateServiceAll chargeTemplateService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.

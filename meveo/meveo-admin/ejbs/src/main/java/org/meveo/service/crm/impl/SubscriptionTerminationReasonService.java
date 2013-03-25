@@ -22,7 +22,6 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**

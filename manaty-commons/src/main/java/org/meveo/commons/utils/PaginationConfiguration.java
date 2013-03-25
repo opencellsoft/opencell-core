@@ -29,6 +29,7 @@ public class PaginationConfiguration implements Serializable {
 	
 	/** Search filters (key = field name, value = search pattern or value). */
 	private Map<String, Object> filters;
+    private Map<String, String> sortOrdering;
 	
 	/** Fields that needs to be fetched when selecting (like lists or other entities). */
 	private List<String> fetchFields;
@@ -44,12 +45,12 @@ public class PaginationConfiguration implements Serializable {
 	 * @param sortField
 	 * @param ordering
 	 */
-	public PaginationConfiguration(int firstRow, int numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, Ordering ordering) {
+	public PaginationConfiguration(int firstRow, int numberOfRows, Map<String, Object> filters, List<String> fetchFields, String sortField, Ordering ordering,Map<String, String> sortOrdering) {
 		this.firstRow = firstRow;
 		this.numberOfRows = numberOfRows;
 		this.filters = filters;
 		this.sortField = sortField;
-		this.ordering = ordering;
+		this.sortOrdering = sortOrdering;
 		this.fetchFields = fetchFields;
 	}
 	
@@ -71,6 +72,10 @@ public class PaginationConfiguration implements Serializable {
 	public String getSortField() {
 		return sortField;
 	}
+	
+    public Map<String, String> getOrderings() {
+        return sortOrdering;
+    }
 
 	public Ordering getOrdering() {
 		return ordering;

@@ -15,8 +15,6 @@
  */
 package org.meveo.admin.action.crm;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,10 +29,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
-import org.richfaces.component.html.HtmlTree;
-import org.richfaces.event.NodeSelectedEvent;
-import org.richfaces.model.TreeNode;
-import org.richfaces.model.TreeNodeImpl;
 
 /**
  * Standard backing bean for {@link AccountEntity} that allows build accounts
@@ -93,127 +87,128 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 		return accountEntitySearchService;
 	}
 
-	/**
-	 * Build account hierarchy for richfaces tree component. Check entity type
-	 * that was provided then loads {@link Customer} entity that is on top on
-	 * hierarchy, and delegates building logic to private build() recursion.
-	 */
-	public TreeNode<TreeNodeData> buildAccountsHierarchy(BaseEntity entity) {
-		Customer customer = null;
-
-		if (entity instanceof Customer) {
-			customer = (Customer) entity;
-		} else if (entity instanceof CustomerAccount) {
-			CustomerAccount acc = (CustomerAccount) entity;
-			customer = acc.getCustomer();
-		} else if (entity instanceof BillingAccount) {
-			BillingAccount acc = (BillingAccount) entity;
-			// this kind of check is not really necessary, because tree
-			// hierarchy should not be shown when creating new page
-			if (acc.getCustomerAccount() != null) {
-				customer = acc.getCustomerAccount().getCustomer();
-			}
-		} else if (entity instanceof UserAccount) {
-			UserAccount acc = (UserAccount) entity;
-			if (acc.getBillingAccount() != null
-					&& acc.getBillingAccount().getCustomerAccount() != null) {
-				customer = acc.getBillingAccount().getCustomerAccount().getCustomer();
-			}
-		} else if (entity instanceof Subscription) {
-			Subscription s = (Subscription) entity;
-			if (s.getUserAccount() != null && s.getUserAccount().getBillingAccount() != null
-					&& s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {
-				customer = s.getUserAccount().getBillingAccount().getCustomerAccount()
-						.getCustomer();
-				accountEntitySearchService.refresh(s.getUserAccount());
-			}
-		}
-		if (customer != null && customer.getCode() != null) {
-			accountEntitySearchService.refresh(customer);
-			return build(customer);
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Builds accounts hierarchy for richfaces tree component. Customer has list
-	 * of CustomerAccounts which has list of BillingAccounts which has list of
-	 * UserAccounts which has list of Susbcriptions. Any of those entities can
-	 * be provided for this method and it will return remaining hierarchy in
-	 * richfaces tree format.
-	 * 
-	 * @param entity
-	 *            Customer entity.
-	 * @return Richfaces tree hierarchy.
-	 */
-	private TreeNode<TreeNodeData> build(BaseEntity entity) {
-		if (getObjectId() != null) {
-			selected = getObjectId();
-		}
-		TreeNodeImpl<TreeNodeData> root = new TreeNodeImpl<TreeNodeData>();
-
-		if (entity instanceof Customer) {
-			TreeNodeImpl<TreeNodeData> tree = new TreeNodeImpl<TreeNodeData>();
-			Customer customer = (Customer) entity;
-			root.setData(new TreeNodeData(customer.getId(), customer.getCode(), null, null, false,
-					Customer.ACCOUNT_TYPE));
-			tree.addChild(0, root);
-			List<CustomerAccount> customerAccounts = customer.getCustomerAccounts();
-			for (int i = 0; i < customerAccounts.size(); i++) {
-				root.addChild(i, build(customerAccounts.get(i)));
-			}
-			return tree;
-		} else if (entity instanceof CustomerAccount) {
-			CustomerAccount customerAccount = (CustomerAccount) entity;
-			String firstName = (customerAccount.getName() != null && customerAccount.getName()
-					.getFirstName() != null) ? customerAccount.getName().getFirstName() : "";
-			String lastName = (customerAccount.getName() != null && customerAccount.getName()
-					.getLastName() != null) ? customerAccount.getName().getLastName() : "";
-			root.setData(new TreeNodeData(customerAccount.getId(), customerAccount.getCode(),
-					firstName, lastName, false, CustomerAccount.ACCOUNT_TYPE));
-			List<BillingAccount> billingAccounts = customerAccount.getBillingAccounts();
-			for (int i = 0; i < billingAccounts.size(); i++) {
-				root.addChild(i, build(billingAccounts.get(i)));
-			}
-			return root;
-		} else if (entity instanceof BillingAccount) {
-			BillingAccount billingAccount = (BillingAccount) entity;
-
-			String firstName = (billingAccount.getName() != null && billingAccount.getName()
-					.getFirstName() != null) ? billingAccount.getName().getFirstName() : "";
-			String lastName = (billingAccount.getName() != null && billingAccount.getName()
-					.getLastName() != null) ? billingAccount.getName().getLastName() : "";
-			root.setData(new TreeNodeData(billingAccount.getId(), billingAccount.getCode(),
-					firstName, lastName, false, BillingAccount.ACCOUNT_TYPE));
-			List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-			for (int i = 0; i < userAccounts.size(); i++) {
-				root.addChild(i, build(userAccounts.get(i)));
-			}
-			return root;
-		} else if (entity instanceof UserAccount) {
-			UserAccount userAccount = (UserAccount) entity;
-			String firstName = (userAccount.getName() != null && userAccount.getName()
-					.getFirstName() != null) ? userAccount.getName().getFirstName() : "";
-			String lastName = (userAccount.getName() != null && userAccount.getName().getLastName() != null) ? userAccount
-					.getName().getLastName() : "";
-			root.setData(new TreeNodeData(userAccount.getId(), userAccount.getCode(), firstName,
-					lastName, false, UserAccount.ACCOUNT_TYPE));
-			List<Subscription> subscriptions = userAccount.getSubscriptions();
-			if (subscriptions != null) {
-				for (int i = 0; i < subscriptions.size(); i++) {
-					root.addChild(i, build(subscriptions.get(i)));
-				}
-			}
-			return root;
-		} else if (entity instanceof Subscription) {
-			Subscription subscription = (Subscription) entity;
-			root.setData(new TreeNodeData(subscription.getId(), subscription.getCode(), null, null,
-					false, SUBSCRIPTION_KEY));
-			return root;
-		}
-		throw new IllegalStateException("Unsupported entity for hierarchy");
-	}
+	// TODO
+//	/**
+//	 * Build account hierarchy for richfaces tree component. Check entity type
+//	 * that was provided then loads {@link Customer} entity that is on top on
+//	 * hierarchy, and delegates building logic to private build() recursion.
+//	 */
+//	public TreeNode<TreeNodeData> buildAccountsHierarchy(BaseEntity entity) {
+//		Customer customer = null;
+//
+//		if (entity instanceof Customer) {
+//			customer = (Customer) entity;
+//		} else if (entity instanceof CustomerAccount) {
+//			CustomerAccount acc = (CustomerAccount) entity;
+//			customer = acc.getCustomer();
+//		} else if (entity instanceof BillingAccount) {
+//			BillingAccount acc = (BillingAccount) entity;
+//			// this kind of check is not really necessary, because tree
+//			// hierarchy should not be shown when creating new page
+//			if (acc.getCustomerAccount() != null) {
+//				customer = acc.getCustomerAccount().getCustomer();
+//			}
+//		} else if (entity instanceof UserAccount) {
+//			UserAccount acc = (UserAccount) entity;
+//			if (acc.getBillingAccount() != null
+//					&& acc.getBillingAccount().getCustomerAccount() != null) {
+//				customer = acc.getBillingAccount().getCustomerAccount().getCustomer();
+//			}
+//		} else if (entity instanceof Subscription) {
+//			Subscription s = (Subscription) entity;
+//			if (s.getUserAccount() != null && s.getUserAccount().getBillingAccount() != null
+//					&& s.getUserAccount().getBillingAccount().getCustomerAccount() != null) {
+//				customer = s.getUserAccount().getBillingAccount().getCustomerAccount()
+//						.getCustomer();
+//				accountEntitySearchService.refresh(s.getUserAccount());
+//			}
+//		}
+//		if (customer != null && customer.getCode() != null) {
+//			accountEntitySearchService.refresh(customer);
+//			return build(customer);
+//		} else {
+//			return null;
+//		}
+//	}
+//
+//	/**
+//	 * Builds accounts hierarchy for richfaces tree component. Customer has list
+//	 * of CustomerAccounts which has list of BillingAccounts which has list of
+//	 * UserAccounts which has list of Susbcriptions. Any of those entities can
+//	 * be provided for this method and it will return remaining hierarchy in
+//	 * richfaces tree format.
+//	 * 
+//	 * @param entity
+//	 *            Customer entity.
+//	 * @return Richfaces tree hierarchy.
+//	 */
+//	private TreeNode<TreeNodeData> build(BaseEntity entity) {
+//		if (getObjectId() != null) {
+//			selected = getObjectId();
+//		}
+//		TreeNodeImpl<TreeNodeData> root = new TreeNodeImpl<TreeNodeData>();
+//
+//		if (entity instanceof Customer) {
+//			TreeNodeImpl<TreeNodeData> tree = new TreeNodeImpl<TreeNodeData>();
+//			Customer customer = (Customer) entity;
+//			root.setData(new TreeNodeData(customer.getId(), customer.getCode(), null, null, false,
+//					Customer.ACCOUNT_TYPE));
+//			tree.addChild(0, root);
+//			List<CustomerAccount> customerAccounts = customer.getCustomerAccounts();
+//			for (int i = 0; i < customerAccounts.size(); i++) {
+//				root.addChild(i, build(customerAccounts.get(i)));
+//			}
+//			return tree;
+//		} else if (entity instanceof CustomerAccount) {
+//			CustomerAccount customerAccount = (CustomerAccount) entity;
+//			String firstName = (customerAccount.getName() != null && customerAccount.getName()
+//					.getFirstName() != null) ? customerAccount.getName().getFirstName() : "";
+//			String lastName = (customerAccount.getName() != null && customerAccount.getName()
+//					.getLastName() != null) ? customerAccount.getName().getLastName() : "";
+//			root.setData(new TreeNodeData(customerAccount.getId(), customerAccount.getCode(),
+//					firstName, lastName, false, CustomerAccount.ACCOUNT_TYPE));
+//			List<BillingAccount> billingAccounts = customerAccount.getBillingAccounts();
+//			for (int i = 0; i < billingAccounts.size(); i++) {
+//				root.addChild(i, build(billingAccounts.get(i)));
+//			}
+//			return root;
+//		} else if (entity instanceof BillingAccount) {
+//			BillingAccount billingAccount = (BillingAccount) entity;
+//
+//			String firstName = (billingAccount.getName() != null && billingAccount.getName()
+//					.getFirstName() != null) ? billingAccount.getName().getFirstName() : "";
+//			String lastName = (billingAccount.getName() != null && billingAccount.getName()
+//					.getLastName() != null) ? billingAccount.getName().getLastName() : "";
+//			root.setData(new TreeNodeData(billingAccount.getId(), billingAccount.getCode(),
+//					firstName, lastName, false, BillingAccount.ACCOUNT_TYPE));
+//			List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+//			for (int i = 0; i < userAccounts.size(); i++) {
+//				root.addChild(i, build(userAccounts.get(i)));
+//			}
+//			return root;
+//		} else if (entity instanceof UserAccount) {
+//			UserAccount userAccount = (UserAccount) entity;
+//			String firstName = (userAccount.getName() != null && userAccount.getName()
+//					.getFirstName() != null) ? userAccount.getName().getFirstName() : "";
+//			String lastName = (userAccount.getName() != null && userAccount.getName().getLastName() != null) ? userAccount
+//					.getName().getLastName() : "";
+//			root.setData(new TreeNodeData(userAccount.getId(), userAccount.getCode(), firstName,
+//					lastName, false, UserAccount.ACCOUNT_TYPE));
+//			List<Subscription> subscriptions = userAccount.getSubscriptions();
+//			if (subscriptions != null) {
+//				for (int i = 0; i < subscriptions.size(); i++) {
+//					root.addChild(i, build(subscriptions.get(i)));
+//				}
+//			}
+//			return root;
+//		} else if (entity instanceof Subscription) {
+//			Subscription subscription = (Subscription) entity;
+//			root.setData(new TreeNodeData(subscription.getId(), subscription.getCode(), null, null,
+//					false, SUBSCRIPTION_KEY));
+//			return root;
+//		}
+//		throw new IllegalStateException("Unsupported entity for hierarchy");
+//	}
 
 	public String getIcon(String type) {
 		if (type.equals(Customer.ACCOUNT_TYPE)) {
@@ -268,21 +263,22 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
 		}
 	}
 
-	/**
-	 * @see org.richfaces.event.NodeSelectedListener#processSelection(org.richfaces.event.NodeSelectedEvent)
-	 */
-	public String processSelection(NodeSelectedEvent event) {
-		HtmlTree tree = ((HtmlTree) event.getComponent());
-		TreeNodeData selectedNodeData = (TreeNodeData) tree.getRowData();
-		selected = selectedNodeData.getId();
-		if (selectedNodeData.getType().equals(SUBSCRIPTION_KEY)) {
-			return "/pages/billing/subscriptions/subscriptionDetail.xhtml?objectId="
-					+ selectedNodeData.getId() + "&faces-redirect=true";
-		} else {
-			String view = getView(selectedNodeData.getType());
-			return view + "?objectId=" + selectedNodeData.getId() + "&faces-redirect=true";
-		}
-	}
+	// TODO
+//	/**
+//	 * @see org.richfaces.event.NodeSelectedListener#processSelection(org.richfaces.event.NodeSelectedEvent)
+//	 */
+//	public String processSelection(NodeSelectedEvent event) {
+//		HtmlTree tree = ((HtmlTree) event.getComponent());
+//		TreeNodeData selectedNodeData = (TreeNodeData) tree.getRowData();
+//		selected = selectedNodeData.getId();
+//		if (selectedNodeData.getType().equals(SUBSCRIPTION_KEY)) {
+//			return "/pages/billing/subscriptions/subscriptionDetail.xhtml?objectId="
+//					+ selectedNodeData.getId() + "&faces-redirect=true";
+//		} else {
+//			String view = getView(selectedNodeData.getType());
+//			return view + "?objectId=" + selectedNodeData.getId() + "&faces-redirect=true";
+//		}
+//	}
 
 	public long getSelected() {
 		return selected;

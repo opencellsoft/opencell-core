@@ -128,11 +128,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	/*
-	 * TODO: @Begin(nested = true)
-	 * 
-	 * @Factory("billingAccount")
-	 */
 	@Produces
 	@Named("billingAccount")
 	public BillingAccount init() {
@@ -148,18 +143,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	}
 
 	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	// TODO: @Out(value = "billingAccounts", required = false)
-	@Produces
-	@Named("billingAccounts")
-	protected PaginationDataModel<BillingAccount> getDataModel() {
-		return entities;
-	}
-
-	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
@@ -167,11 +150,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * @return
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	/*
-	 * TODO: @Begin(join = true)
-	 * 
-	 * @Factory("billingAccounts")
 	 */
 	@Produces
 	@Named("billingAccounts")

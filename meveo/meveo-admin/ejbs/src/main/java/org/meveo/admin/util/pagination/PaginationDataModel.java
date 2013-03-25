@@ -15,7 +15,6 @@
 */
 package org.meveo.admin.util.pagination;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,16 +26,15 @@ import java.util.Set;
 import javax.faces.context.FacesContext;
 
 import org.ajax4jsf.model.DataVisitor;
+import org.ajax4jsf.model.ExtendedDataModel;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
-import org.ajax4jsf.model.SerializableDataModel;
 import org.meveo.commons.utils.PaginationConfiguration;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.rating.impl.UsageTypeService;
-import org.richfaces.model.FilterField;
-import org.richfaces.model.Modifiable;
-import org.richfaces.model.SortField2;
+import org.richfaces.model.Arrangeable;
+import org.richfaces.model.ArrangeableState;
 
 /**
  * Pagination data model. This data model is used together with
@@ -47,13 +45,14 @@ import org.richfaces.model.SortField2;
  * @author Ignas
  * @created 2009.09.24
  */
-public class PaginationDataModel<T> extends SerializableDataModel implements Modifiable {
+public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arrangeable, Serializable  {
 
     private static final long serialVersionUID = 1L;
 
     private Integer rowCount;
     private boolean isDetached = false;
-    private Serializable currentPk;
+    private Serializable rowKey;
+    private ArrangeableState arrangeableState;
     private int currentFirstRow = -1;
 
 	@SuppressWarnings("unchecked")
@@ -140,7 +139,7 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
      * times during request processing.
      */
     @Override
-    public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) throws IOException {
+    public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) {
 
         final int firstRow = ((SequenceRange) range).getFirstRow();
         final int numberOfRows = ((SequenceRange) range).getRows();
@@ -154,7 +153,7 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
             wrappedKeys.clear();
             wrappedData.clear();
             final List<T> objects = loadData(new PaginationConfiguration(firstRow, numberOfRows, filters, fetchFields,
-                    getSortField(), getSortOrdering()));
+                    getSortField(), getSortOrdering(),null));
             for (T object : objects) {
                 final Serializable id = getId(object);
                 wrappedKeys.add(id);
@@ -172,31 +171,31 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
     public List<T> list() {
         final int numberOfRows = this.getRowCount();
         final List<T> objects = loadData(new PaginationConfiguration(0, numberOfRows, filters, fetchFields,
-                getSortField(), getSortOrdering()));
+                getSortField(), getSortOrdering(),null));
 
         return objects;
     }
 
-    /**
-     * This method suppose to produce SerializableDataModel that will be
-     * serialized into View State and used on a post-back.
-     */
-    @Override
-    public SerializableDataModel getSerializableModel(Range range) {
-        if (wrappedKeys != null) {
-            isDetached = true;
-            return this;
-        }
-
-        return null;
-    }
-
-    /**
-     * This is helper method that is called by framework after model update.
-     */
-    @Override
-    public void update() {
-    }
+//    /**
+//     * This method suppose to produce SerializableDataModel that will be
+//     * serialized into View State and used on a post-back.
+//     */
+//    @Override
+//    public SerializableDataModel getSerializableModel(Range range) {
+//        if (wrappedKeys != null) {
+//            isDetached = true;
+//            return this;
+//        }
+//
+//        return null;
+//    }
+//
+//    /**
+//     * This is helper method that is called by framework after model update.
+//     */
+//    @Override
+//    public void update() {
+//    }
 
     /**
      * This method must return actual data rows count from the Data Provider. It
@@ -215,7 +214,7 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
      * (Recommend use of local cache in that method).
      */
     @Override
-    public Object getRowData() {
+    public T getRowData() {
         return getRowDataT();
     }
 
@@ -224,10 +223,10 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
      * (not as object).
      */
     public T getRowDataT() {
-        if (currentPk == null) {
+        if (rowKey == null) {
             return null;
         } else {
-            T object = wrappedData.get(currentPk);
+            T object = wrappedData.get(rowKey);
             /**
              * if (object == null) { object = getObjectById(currentPk);
              * wrappedData.put(currentPk, object); }
@@ -257,13 +256,13 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
      */
     @Override
     public boolean isRowAvailable() {
-        if (currentPk == null) {
+        if (rowKey == null) {
             return false;
         }
-        if (wrappedKeys.contains(currentPk)) {
+        if (wrappedKeys.contains(rowKey)) {
             return true;
         }
-        if (wrappedData.entrySet().contains(currentPk)) {
+        if (wrappedData.entrySet().contains(rowKey)) {
             return true;
         }
         /**
@@ -272,6 +271,14 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
         return false;
     }
 
+    public void arrange(FacesContext context, ArrangeableState state) {
+        arrangeableState = state;
+    }
+
+    protected ArrangeableState getArrangeableState() {
+        return arrangeableState;
+    }
+    
     /**
      * This method never called from framework.
      * 
@@ -279,7 +286,7 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
      */
     @Override
     public Object getRowKey() {
-        return currentPk;
+        return rowKey;
     }
 
     /**
@@ -287,7 +294,7 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
      */
     @Override
     public void setRowKey(final Object key) {
-        this.currentPk = (Serializable) key;
+        this.rowKey = (Serializable) key;
     }
 
     /**
@@ -331,7 +338,7 @@ public class PaginationDataModel<T> extends SerializableDataModel implements Mod
         return 0;
     }
 
-    public void modify(List<FilterField> filterFields, List<SortField2> sortFields) {
-        isDetached = false;
-    }
+//    public void modify(List<FilterField> filterFields, List<SortField2> sortFields) {
+//        isDetached = false;
+//    }
 }

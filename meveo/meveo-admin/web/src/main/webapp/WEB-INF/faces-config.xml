@@ -165,11 +165,11 @@
 			<redirect />
 		</navigation-case>
 
-		<navigation-case>
-			<from-outcome>bankOperations</from-outcome>
-			<to-view-id>/pages/admin/history/bankOperations.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
+<!-- 		<navigation-case> -->
+<!-- 			<from-outcome>bankOperations</from-outcome> -->
+<!-- 			<to-view-id>/pages/admin/history/bankOperations.xhtml</to-view-id> -->
+<!-- 			<redirect /> -->
+<!-- 		</navigation-case> -->
 
 		<navigation-case>
 			<from-outcome>medinaConfigurationDetail</from-outcome>
@@ -221,15 +221,15 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>titleDetail</from-outcome>
-			<to-view-id>/pages/admin/titles/titleDetail.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>documentDetail</from-outcome>
-			<to-view-id>/pages/admin/documents/documentDetail.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
+<!-- 			<from-outcome>titleDetail</from-outcome> -->
+<!-- 			<to-view-id>/pages/admin/titles/titleDetail.xhtml</to-view-id> -->
+<!-- 			<redirect /> -->
+<!-- 		</navigation-case> -->
+<!-- 		<navigation-case> -->
+<!-- 			<from-outcome>documentDetail</from-outcome> -->
+<!-- 			<to-view-id>/pages/admin/documents/documentDetail.xhtml</to-view-id> -->
+<!-- 			<redirect /> -->
+<!-- 		</navigation-case> -->
 		<navigation-case>
 			<from-outcome>documents</from-outcome>
 			<to-view-id>/pages/admin/documents/documents.xhtml</to-view-id>
@@ -707,11 +707,11 @@
 			<redirect />
 		</navigation-case>
 
-		<navigation-case>
-			<from-outcome>pricePlanInstances</from-outcome>
-			<to-view-id>/pages/rating/pricePlanInstances/pricePlanInstances.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
+<!-- 		<navigation-case> -->
+<!-- 			<from-outcome>pricePlanInstances</from-outcome> -->
+<!-- 			<to-view-id>/pages/rating/pricePlanInstances/pricePlanInstances.xhtml</to-view-id> -->
+<!-- 			<redirect /> -->
+<!-- 		</navigation-case> -->
 		<navigation-case>
 			<from-outcome>pricePlanInstanceDetail</from-outcome>
 			<to-view-id>/pages/rating/pricePlanInstances/pricePlanInstanceDetail.xhtml</to-view-id>

@@ -11,7 +11,7 @@ import javax.faces.context.FacesContext;
 
 import org.meveo.commons.utils.ParamBean;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.jboss.solder.logging.Logger;
 
 public class ComponentResources implements Serializable {
 
@@ -32,6 +32,7 @@ public class ComponentResources implements Serializable {
 
     @Produces
     Logger createLogger(InjectionPoint injectionPoint) {
-        return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+        return null;
+//        return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
     }
 }

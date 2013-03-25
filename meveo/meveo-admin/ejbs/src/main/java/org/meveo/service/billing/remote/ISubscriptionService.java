@@ -29,6 +29,8 @@ import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 
 /**
  * @author R.AITYAAZZA

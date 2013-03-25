@@ -21,8 +21,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -44,7 +44,7 @@ import org.meveo.service.base.AccountService;
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
 
-	@Inject
+	@EJB
 	private UserAccountService userAccountService;
 
 	public List<UserAccount> UserAccountList(String code)
