@@ -15,8 +15,12 @@
 */
 package org.meveo.model.admin;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -31,10 +35,16 @@ import org.meveo.model.ProviderlessEntity;
 @Entity
 @Table(name = "ADM_CURRENCY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_CURRENCY_SEQ")
-public class Currency extends ProviderlessEntity {
+public class Currency implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR")
+    @Column(name = "ID")
+    private Long id;
+    
+    
     /** Currency code e.g. EUR for euros. */
     @Column(name = "CURRENCY_CODE", length = 3, unique = true)
     private String currencyCode;
@@ -51,7 +61,17 @@ public class Currency extends ProviderlessEntity {
     @Column(name = "SYSTEM_CURRENCY")
     private Boolean systemCurrency;
 
-    public String getIsoCode() {
+    
+    
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getIsoCode() {
         return isoCode;
     }
 
