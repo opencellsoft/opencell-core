@@ -1,20 +1,20 @@
 /*----------IMPORT FOR POSTGRES-----------*/
 
 
-INSERT INTO billing_language (id, language_code, description_en) VALUES (1, 'FR', 'descriptionFR');
-INSERT INTO billing_language (id, language_code, description_en) VALUES (2, 'EN', 'descriptionEN');
+INSERT INTO billing_language (id, language_code, description_en) VALUES (1, 'FR', 'french');
+INSERT INTO billing_language (id, language_code, description_en) VALUES (2, 'EN', 'english');
 
 DROP SEQUENCE BILLING_LANGUAGE_SEQ;
 CREATE SEQUENCE BILLING_LANGUAGE_SEQ START WITH 3;
 
 
-INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (1, 'tx1', NULL, 'descirption_tax', true);
-INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (2, 'tx2', NULL, 'description_tax2', true);
+INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (1, 'EUR', NULL, 'euro', true);
+INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (2, 'USD', NULL, 'dollar', true);
 
 DROP SEQUENCE ADM_CURRENCY_SEQ;
 CREATE SEQUENCE ADM_CURRENCY_SEQ START WITH 3;
 
-INSERT INTO billing_country (id, country_code, description_en, language_id, currency_id) VALUES (1, 'FR', 'description_france', NULL, NULL);
+INSERT INTO billing_country (id, country_code, description_en, language_id, currency_id) VALUES (1, 'FR', 'description_fr', NULL, NULL);
 INSERT INTO billing_country (id, country_code, description_en, language_id, currency_id) VALUES (2, 'EN', 'description_en', NULL, NULL);
 
 
