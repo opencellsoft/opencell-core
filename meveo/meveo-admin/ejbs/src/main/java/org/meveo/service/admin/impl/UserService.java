@@ -31,6 +31,7 @@ import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
+import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
@@ -188,6 +189,11 @@ public class UserService extends PersistenceService<User> {
     }
 
     public User loginChecks(User user, boolean skipPasswordExpiracy) throws LoginException {
+    	//check if the user exists
+        if (user == null) {
+            throw new UnknownUserException(null);
+        }
+        
         // Check if the user is active
         if (!user.isActive()) {
             log.info("The user #" + user.getId() + " is not active");
