@@ -30,6 +30,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
 
@@ -61,6 +62,9 @@ public class TradingCountry  extends AuditableEntity{
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
 	
+	@Transient
+	String countryCode;
+	
 	public String getPrDescription() {
 		return prDescription;
 	}
@@ -90,6 +94,15 @@ public class TradingCountry  extends AuditableEntity{
 	public void setCountry(Country country) {
 		this.country = country;
 	}
+
+
+	public String getCountryCode() {
+		return country.getCountryCode();
+	}
+
+ 
+
+	 
 
 
 }

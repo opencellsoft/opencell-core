@@ -21,10 +21,12 @@
             header="#{messages['invoiceSubCategoryCountry.header']}"
             backingBean="#{countryComBean}" dataModel="#{comCountries}"
             
-            column1Label="#{messages['countryCom.countryCode']}"
-            column1="#{country[countryCode]}"
-            column2Label="#{messages['countryCom.prDescription']}"
-            column2="prDescription" filtersMap="#{countryComBean.filters}">
+            column1Label="#{messages['countryCom.id']}"
+            column1="id"
+			
+			 column2Label="#{messages['countryCom.countryCode']}"
+            column2="countryCode">
+			
             <!-- select link -->
             <a:commandLink value="#{messages['commons.select']}"
                 reRender="invSubCatCountForm1"
@@ -173,8 +175,9 @@
                             </custom:fieldset>
                         </custom:formPanel>
 
-                    </rich:tab>
-                    <rich:tab label="#{messages['invoiceSubCategory.tab2']}">
+                    </rich:tab>  
+                     
+                    <rich:tab label="#{messages['invoiceSubCategory.tab2']}" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
 
                         <br />
                         <br />
@@ -184,11 +187,17 @@
                                 dataModel="#{invoiceSubCategory.invoiceSubcategoryCountries}"
                                 resultsId="invoiceSubCategoryCountries_results"
                                 checkMany="false" backingBean="#{invoiceSubCategoryBean}">
-                                <custom:column
-                                    label="#{messages['invoiceSubCategoryCountry.id']}" field="id" />
-                                <custom:column
-                                    label="#{messages['invoiceSubCategoryCountry.countryCode']}"
-                                    field="tradingCountry"  chilfField="#{country[countryCode]}" isMessage="true" />
+              	
+	         
+			         <rich:column styleClass="actions-column">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['invoiceSubCategoryCountry.countryCode']}" />
+                                    </f:facet>
+                     <h:column >
+                    <h:outputText value="#{entity.tradingCountry.country.countryCode}" style="font-weight:bold;" /> 
+			        </h:column>
+                     </rich:column>
+		
                                 <custom:column
                                     label="#{messages['invoiceSubCategoryCountry.taxe']}"
                                     field="tax" childField="code" />
@@ -231,21 +240,24 @@
                                         <custom:formField
                                             label="#{messages['invoiceSubCategoryCountry.id']}"
                                             field="id" disabled="true" />
-                                         <s:decorate template="/layout/edit.xhtml">
+											
+         <s:decorate template="/layout/edit.xhtml">
         <ui:define name="label">
          <h:outputText value="Code pays" />
         </ui:define>
         <h:panelGrid columns="3" >
-         <h:inputText  rendered="#{edit}" value="#{invoiceSubcategoryCountry[country][countryCode]}" required="true" disabled="true"/>
+         <h:inputText  rendered="#{edit}" value="#{entity.tradingCountry.countryCode}" required="true" disabled="true"/>
          <h:inputHidden rendered="#{edit}"/>
          <a:commandLink  rendered="#{edit}" id="selectLink" onclick="Richfaces.showModalPanel('invSubCatCountryPopup');" >
                     <h:graphicImage value="/img/search.gif" style="border:0"/>
                </a:commandLink>
       <rich:toolTip for="selectLink" value="#{messages['commons.search']}"/>
-               <h:outputText rendered="#{!edit}" value="#{invoiceSubcategoryCountry[country][countryCode]}" style="font-weight:bold;" />
+               <h:outputText rendered="#{!edit}" value="#{entity.tradingCountry.countryCode}" style="font-weight:bold;" />
            </h:panelGrid>
           </s:decorate>
-		  
+		   
+											
+											
 		  
                                         <custom:formEntityField id="ISCTSelectId"
                                             label="#{messages['invoiceSubCategoryCountry.taxe']}"
@@ -269,6 +281,7 @@
                         </rich:panel>
 
                     </rich:tab>
+				 
                 </rich:tabPanel>
             </rich:panel>
 

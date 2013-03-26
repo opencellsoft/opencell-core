@@ -17,9 +17,13 @@
 package org.meveo.model.billing;
 
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -39,9 +43,14 @@ import org.meveo.model.AuditableEntity;
 @Table(name = "BILLING_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTRY_SEQ")
 
-public class Country  extends AuditableEntity{
+public class Country  implements Serializable{
 	private static final long serialVersionUID = 1L;
 
+	@Id
+    @GeneratedValue(generator = "ID_GENERATOR")
+    @Column(name = "ID")
+    private Long id;
+	
 	@Column(name = "COUNTRY_CODE", length = 2)
 	private String countryCode;
 
@@ -58,6 +67,18 @@ public class Country  extends AuditableEntity{
 	 @ManyToOne(fetch = FetchType.LAZY)
 	 @JoinColumn(name = "LANGUAGE_ID")
 	 private Language language;
+
+
+	 
+	 
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 
 	public String getCountryCode() {

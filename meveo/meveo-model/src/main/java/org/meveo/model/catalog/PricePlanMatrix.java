@@ -33,6 +33,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.meveo.model.AuditableEntity; 
+import org.meveo.model.billing.TradingCurrency;
 
 /**
  * Price plan matrix entity used when rating transactions.
@@ -94,6 +95,11 @@ public class PricePlanMatrix extends AuditableEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX2", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithoutTax2;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "TRADING_CURRENCY_ID")
+	 private TradingCurrency tradingCurrency ;
+	     
 
     
     @Column(name = "BUSINESS_INTERMEDIARY_ID")
@@ -207,8 +213,18 @@ public class PricePlanMatrix extends AuditableEntity {
     public void setAmountWithoutTax2(BigDecimal amountWithoutTax2) {
         this.amountWithoutTax2 = amountWithoutTax2;
     }
+    
+    
 
-    @Override
+    public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

@@ -33,6 +33,7 @@
 			</a:commandLink>
 				
 		</custom:entityPopup>
+		
     	
     	<custom:listPanel label="#{messages['customerAccount.title']}" backingBean="#{customerAccountBean}">
     	
@@ -45,7 +46,8 @@
     			<custom:searchField label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" />
     			<custom:searchField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" />
     			<custom:searchField label="#{messages['customerAccount.customer']}" field="customer" />
-    		</custom:searchPanel>
+    		   
+			</custom:searchPanel>
     		
     		<custom:dataList backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}">    			
 				<custom:column label="#{messages['businessEntity.code']}" field="code" />
@@ -54,7 +56,8 @@
     			<custom:column label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />	   
     			<custom:column label="#{messages['customerAccount.status']}" field="status" childField="label" isMessage="true" />	   
     			<custom:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory" childField="label" isMessage="true" />	       			      				    	
-    			<custom:column label="#{messages['customerAccount.customer']}" field="customer" childField="code"/>       			      				    	
+    			<custom:column label="#{messages['customerAccount.customer']}" field="customer" childField="code"/>   
+               <custom:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency" childField="currencyCode"/> 				
 		   	   	<custom:actionsColumn editView="/pages/payments/customerAccounts/customerAccountDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}"/>
 		    </custom:dataList>
     	</custom:listPanel>	

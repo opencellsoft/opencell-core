@@ -16,8 +16,12 @@
 
 package org.meveo.model.billing;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -35,13 +39,17 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "BILLING_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_SEQ")
 
-public class Language  extends AuditableEntity{
+public class Language  implements Serializable{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@Id
+    @GeneratedValue(generator = "ID_GENERATOR")
+    @Column(name = "ID")
+    private Long id;
 
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
@@ -49,6 +57,16 @@ public class Language  extends AuditableEntity{
 	
 	@Column(name = "DESCRIPTION_EN", length = 100)
 	private String descriptionEn;
+
+
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 
 	public String getLanguageCode() {
