@@ -10,8 +10,8 @@ import javax.inject.Inject;
 
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.permission.PermissionResolver;
-import org.jboss.solder.logging.Logger;
 import org.meveo.model.security.Role;
+import org.slf4j.Logger;
 
 @Model
 public class MeveoPermissionResolver implements Serializable, PermissionResolver {
@@ -34,7 +34,6 @@ public class MeveoPermissionResolver implements Serializable, PermissionResolver
 	 * .lang.Object, java.lang.String)
 	 */
 	public boolean hasPermission(Object resource, String permission) {
-
 		if (!identity.isLoggedIn()) {
 			return false;
 		}
@@ -56,8 +55,9 @@ public class MeveoPermissionResolver implements Serializable, PermissionResolver
 			cachedPermissions.put(cacheKey, has);
 		}
 
-		// log.error("AKK check has permission " + cacheKey + " " +
+		// log.debug("AKK check has permission " + cacheKey + " " +
 		// cachedPermissions.get(cacheKey));
+
 		return cachedPermissions.get(cacheKey);
 
 	}
