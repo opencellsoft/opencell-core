@@ -15,8 +15,11 @@
 */
 package org.meveo.service.admin.local;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.base.local.IPersistenceService;
 
@@ -25,5 +28,10 @@ import org.meveo.service.base.local.IPersistenceService;
  */
 @Local
 public interface ComLanguageServiceLocal extends IPersistenceService<TradingLanguage> {
+
+ 
+	public List<TradingLanguage> getTradingLanguageList(String messageCode);  
+	public TradingLanguage getTradingLanguages(String languageCode);
+ 	   
  
 }

@@ -18,25 +18,25 @@
 	<ui:define name="body">
 	<c:if test="${edit}">
 		<custom:entityPopup id="languagePopup"
-			header="#{messages['language.popup.header']}"
+			header="#{messages['tradingLanguage.popup.header']}"
 			backingBean="#{languageBean}" dataModel="#{languages}"
 			
 			searchField1Label="#{messages['language.languageCode']}" 
 			searchField1="languageCode" 
 			
 			column1Label="#{messages['language.languageCode']}" column1="languageCode"
-			column2Label="#{messages['language.descriptionEn']}"
+			column2Label="#{messages['tradingLanguage.prDescription']}"
 			column2="descriptionEn" 
 			filtersMap="#{languageBean.filters}">
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
-				reRender="languagesFormId" action="#{comLanguageBean.populateLanguages(entity)}"
+				reRender="languagesFormId" action="#{tradingLanguageBean.populateLanguages(entity)}"
 				oncomplete="Richfaces.hideModalPanel('languagePopup')">
 			</a:commandLink>
 		</custom:entityPopup>
 		</c:if>
 		
-		<custom:formPanel formId="languagesFormId" edit="#{edit}" label="#{messages['comLanguage.comLanguagePanel']}" backingBean="#{comLanguageBean}" entity="#{comLanguage}" > 
+		<custom:formPanel formId="languagesFormId" edit="#{edit}" label="#{messages['comLanguage.comLanguagePanel']}" backingBean="#{tradingLanguageBean}" entity="#{tradingLanguage}" > 
 	 
 	    <custom:formEntityField id="languageSelectedId" label="#{messages['comLanguage.languageCode']}" 
 		 field="language"  childField="languageCode"  popup="true" popupId="languagePopup" showOnlyOnConsult="true" clearButton="true" required="true"/>

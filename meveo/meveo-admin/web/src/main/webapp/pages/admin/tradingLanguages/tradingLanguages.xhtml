@@ -16,17 +16,17 @@
     
     <ui:define name="body">
     	
-    	<custom:listPanel label="#{messages['comLanguage.title']}" backingBean="#{comLanguageBean}">
+    	<custom:listPanel label="#{messages['comLanguage.title']}" backingBean="#{tradingLanguageBean}">
     	
-    		<custom:searchPanel label="#{messages['comLanguage.search']}" newButtonView="/pages/admin/comLanguages/comLanguagesDetail.xhtml">
+    		<custom:searchPanel label="#{messages['comLanguage.search']}" newButtonView="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml">
     			<custom:searchEntityField label="#{messages['comLanguage.languageCode']}" field="language" childField="languageCode"  service="#{languageService}"/>
     				 
     		</custom:searchPanel>	
     		
-    		<custom:dataList dataModel="#{comLanguages}">
+    		<custom:dataList dataModel="#{tradingLanguages}">
     			<custom:column label="#{messages['comLanguage.languageCode']}" field="language" childField="languageCode"  />
     			<custom:column label="#{messages['comLanguage.prDescription']}" field="prDescription" />
-    			<custom:actionsColumn editView="/pages/admin/comLanguages/comLanguagesDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}"/>
+    			<custom:actionsColumn editView="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}"/>
 		    </custom:dataList>
 		   
 		</custom:listPanel>

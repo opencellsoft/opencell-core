@@ -42,12 +42,7 @@ public class Currency extends ProviderlessEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
-    @Column(name = "ID")
-    private Long id;
   
-    
     /** Currency code e.g. EUR for euros. */
     @Column(name = "CURRENCY_CODE", length = 3, unique = true)
     private String currencyCode;
@@ -61,16 +56,6 @@ public class Currency extends ProviderlessEntity {
     private Boolean systemCurrency;
 
     
-    
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	
 	public String getCurrencyCode() {
 		return currencyCode;
 	}

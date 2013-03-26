@@ -64,9 +64,7 @@
 		<class>org.meveo.model.catalog.OfferTemplate</class>
 		<class>org.meveo.model.catalog.OneShotChargeTemplate</class>
 		<class>org.meveo.model.catalog.DiscountPlanMatrix</class>
-		<class>org.meveo.model.catalog.PricePlanMatrix</class>
-		<class>org.meveo.model.catalog.UsagePricePlanItem</class>
-		<class>org.meveo.model.catalog.PriceCode</class>
+		<class>org.meveo.model.catalog.PricePlanMatrix</class> 
 		<class>org.meveo.model.catalog.RecurringChargeTemplate</class>
 		<class>org.meveo.model.catalog.ServiceTemplate</class>
 		<class>org.meveo.model.communication.Campaign</class>

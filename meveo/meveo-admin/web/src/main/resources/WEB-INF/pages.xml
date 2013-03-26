@@ -191,11 +191,11 @@
 		    	<redirect view-id="/pages/admin/communication/emailTemplateDetail.xhtml"/>
 		   </rule>
 		   
-		     <rule if-outcome="comLanguages">
-		    	<redirect view-id="/pages/admin/comLanguages/comLanguages.xhtml"/>
+		     <rule if-outcome="tradingLanguages">
+		    	<redirect view-id="/pages/admin/tradingLanguages/tradingLanguages.xhtml"/>
 		   </rule>
-		   <rule if-outcome="comLanguagesDetail">
-		    	 <redirect view-id="/pages/admin/comLanguages/comLanguagesDetail.xhtml"/> 
+		   <rule if-outcome="tradingLanguagesDetail">
+		    	 <redirect view-id="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml"/> 
 		    	
 		   </rule>
 		   

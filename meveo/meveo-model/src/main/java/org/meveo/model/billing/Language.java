@@ -47,11 +47,6 @@ public class Language  extends ProviderlessEntity{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
-    @GeneratedValue(generator = "ID_GENERATOR")
-    @Column(name = "ID")
-    private Long id;
-
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
 	
@@ -59,15 +54,6 @@ public class Language  extends ProviderlessEntity{
 	@Column(name = "DESCRIPTION_EN", length = 100)
 	private String descriptionEn;
 
-
-	public Long getId() {
-		return id;
-	}
-
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 
 	public String getLanguageCode() {
