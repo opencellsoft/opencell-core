@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import org.meveo.model.admin.Currency;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ProviderlessEntity;
 
 /**
  * Country entity.
@@ -40,10 +41,10 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_COUNTRY")
+@Table(name = "ADM_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTRY_SEQ")
 
-public class Country  implements Serializable{
+public class Country  extends ProviderlessEntity{
 	private static final long serialVersionUID = 1L;
 
 	@Id

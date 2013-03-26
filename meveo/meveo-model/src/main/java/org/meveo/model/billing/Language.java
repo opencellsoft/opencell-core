@@ -27,6 +27,7 @@ import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderlessEntity;
 
 /**
  * Language entity.
@@ -36,10 +37,10 @@ import org.meveo.model.BusinessEntity;
  */
 
 @Entity
-@Table(name = "BILLING_LANGUAGE")
+@Table(name = "ADM_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_SEQ")
 
-public class Language  implements Serializable{
+public class Language  extends ProviderlessEntity{
 	
 	/**
 	 * 
