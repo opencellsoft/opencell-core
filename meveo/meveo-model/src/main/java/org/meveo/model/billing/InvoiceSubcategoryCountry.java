@@ -34,15 +34,15 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_INVOIC_SUBCAT_COUNTRY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_SUBCAT_COUNT_SEQ")
+@Table(name = "BILLING_INVOICE_SUB_CAT_COUNTRY")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_COUNTRY_SEQ")
 
 public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INVOICE_SUBCATEGORY_ID")
+    @JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
 	
 	
