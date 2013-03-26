@@ -34,7 +34,7 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_INVOIC_SUBCAT_COUNT")
+@Table(name = "BILLING_INVOIC_SUBCAT_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_SUBCAT_COUNT_SEQ")
 
 public class InvoiceSubcategoryCountry  extends AuditableEntity{
