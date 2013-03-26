@@ -25,68 +25,43 @@
 
 	<script type="text/javascript"
 		src="#{facesContext.externalContext.requestContextPath}/js/equalHeight.js"></script>
-</h:head>
-<body>
 	<script type="text/javascript">
 		jQuery(function() {
 			jQuery('.panels').equalHeights();
 		});
 	</script>
-	<div id="header">
-		<div id="logo">
-			<h:graphicImage value="/img/logo_cobilling.png" style="border:0" />
+</h:head>
+<h:body>
+	<h:form>
+		<div id="header">
+			<div id="logo">
+				<h:graphicImage value="/img/logo_cobilling.png" style="border:0" />
+			</div>
+
+			<div id="headerleft"></div>
+			<div id="headerright">
+				<h:link outcome="/home.xhtml" value="#{messages['menutop.home']}"
+					styleClass="headerLink" />
+				<span style="width: 20px" />
+				<h:link outcome="/changePassword.xhtml"
+					value="#{messages['menutop.changePassword']}"
+					rendered="#{identity.loggedIn}" styleClass="headerLink" />
+				<span style="width: 20px" />
+				<h:commandLink action="#{identity.logout}"
+					value="#{messages['menutop.logout']}"
+					rendered="#{identity.loggedIn}" styleClass="headerLink"
+					immediate="true" />
+				<br></br>
+				<h:outputText
+					value="#{messages['commons.connectedUsers']} : #{identity.user.user.userName} "
+					rendered="#{identity.loggedIn}" style="font-weight:bold;" />
+				<br></br>
+				<h:outputText
+					value="#{messages['commons.connectedProvider']} : #{currentProvider.code} "
+					rendered="#{identity.loggedIn}" style="font-weight:bold;" />
+			</div>
 		</div>
-
-		<div id="headerleft"></div>
-		<div id="headerright">
-
-			<!--<ui:include src="language.xhtml" />
-<rich:spacer width="30"/>-->
-
-			<s:link view="/loginInternal.xhtml"
-				value="#{messages['menutop.login']}"
-				rendered="#{not identity.loggedIn and messages['authentification.mode']!='SAML'}"
-				propagation="none" styleClass="headerLink" />
-			<s:link view="/login.xhtml" value="#{messages['menutop.login']}"
-				rendered="#{not identity.loggedIn and messages['authentification.mode']=='SAML'}"
-				propagation="none" styleClass="headerLink">
-				<f:param name="returnUrl" value="/home.seam" />
-			</s:link>
-
-			<s:link view="/home.xhtml" value="#{messages['menutop.home']}"
-				rendered="#{identity.loggedIn}" propagation="none"
-				styleClass="headerLink" />
-			<h:outputText value="&#160;" />
-			<s:link view="/changePassword.xhtml"
-				value="#{messages['menutop.changePassword']}"
-				rendered="#{identity.loggedIn}" styleClass="headerLink"
-				propagation="none" />
-			<h:outputText value="&#160;" />
-
-			<s:link action="#{externalAuthenticator.singleLogout}"
-				value="#{messages['menutop.logout']}"
-				rendered="#{identity.loggedIn and messages['authentification.mode']=='SAML'}"
-				propagation="none" styleClass="headerLink">
-				<f:param name="returnUrl" value="/home.seam" />
-			</s:link>
-			<s:link action="#{authenticator.localLogout}"
-				value="#{messages['menutop.logout']}"
-				rendered="#{identity.loggedIn and messages['authentification.mode']!='SAML'}"
-				styleClass="headerLink" />
-
-
-			<br></br>
-			<h:outputText
-				value="#{messages['commons.connectedUsers']} : #{identity.user.user.userName} "
-				rendered="#{identity.loggedIn}" style="font-weight:bold;" />
-			<br></br>
-			<h:outputText
-				value="#{messages['commons.connectedProvider']} : #{currentProvider.code} "
-				rendered="#{identity.loggedIn}" style="font-weight:bold;" />
-		</div>
-
-	</div>
-
+	</h:form>
 	<ui:insert name="navigation">
 			NAVIGATION
 	   </ui:insert>
@@ -101,6 +76,6 @@
 	</div>
 
 	<div class="footer">Cobilling v1.0</div>
-</body>
+</h:body>
 	</html>
 </f:view>

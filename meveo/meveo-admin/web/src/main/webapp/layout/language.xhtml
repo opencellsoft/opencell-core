@@ -8,29 +8,23 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:p="http://primefaces.org/ui">
 
-	<h:panelGroup id="languagePanel">
-
-		<a:commandButton action="#{localeSelector.selectLanguage('fr')}"
-			image="/img/imgFrenchFlag.png"
-			style="height:16px; width:25px;" render="loginPanel"
-			limitRender="true">
-		</a:commandButton>
-
-		<div style="width: 8px"></div>
-
-		<a:commandButton action="#{localeSelector.selectLanguage('en')}"
-			image="/img/imgEnglishFlag.png"
-			style="height:16px; width:25px;" render="loginPanel"
-			limitRender="true">
-		</a:commandButton>
-
-		<div style="width: 8px"></div>
-
-		<a:commandButton action="#{localeSelector.selectLanguage('pt')}"
-			image="/img/imgBrazilFlag.png"
-			style="height:16px; width:25px;" render="loginPanel"
-			limitRender="true">
-		</a:commandButton>
-
-	</h:panelGroup>
+	<div id="languagePanel">
+		<ul>
+			<li><a:commandButton
+					action="#{localeSelector.selectLanguage('fr')}"
+					image="/img/imgFrenchFlag.png" style="height:16px; width:25px;"
+					render="loginPanel" limitRender="true">
+				</a:commandButton></li>
+			<li><a:commandButton
+					action="#{localeSelector.selectLanguage('en')}"
+					image="/img/imgEnglishFlag.png" style="height:16px; width:25px;"
+					render="loginPanel" limitRender="true">
+				</a:commandButton></li>
+			<li><a:commandButton
+					action="#{localeSelector.selectLanguage('pt')}"
+					image="/img/imgBrazilFlag.png" style="height:16px; width:25px;"
+					render="loginPanel" limitRender="true">
+				</a:commandButton></li>
+		</ul>
+	</div>
 </ui:composition>

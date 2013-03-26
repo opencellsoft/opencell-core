@@ -133,7 +133,7 @@ public class Authenticator extends BaseAuthenticator {
 
 		} catch (LoginException e) {
 			log.info(
-					"Login failed for the user {0} for reason {1} {2}" + credentials.getUsername(),
+					"Login failed for the user {} for reason {} {}", credentials.getUsername(),
 					e.getClass().getName(), e.getMessage());
 			if (e instanceof InactiveUserException) {
 				inactiveUserError = true;

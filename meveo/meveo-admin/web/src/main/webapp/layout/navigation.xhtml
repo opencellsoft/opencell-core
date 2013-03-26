@@ -11,15 +11,20 @@
 	<rich:toolbar>
 		<rich:toolbarGroup rendered="#{identity.loggedIn}">
 
-			<rich:dropDownMenu id="admin" value="#{messages['menu.admin']}"
-				rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization') or persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
+			<rich:dropDownMenu id="admin"
+				rendered="#{identity.hasPermission('user','manage')}">
+				<f:facet name="label">
+					<h:panelGrid cellpadding="0" cellspacing="0" columns="2">
+						<h:outputText value="#{messages['menu.admin']}" />
+					</h:panelGrid>
+				</f:facet>
 
-				<rich:menuItem id="users" value="#{messages['menu.users']}"
-					action="users"
-					rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
-					<s:conversationPropagation type="none" />
+				<rich:menuItem id="users"
+					rendered="#{identity.hasPermission('user','manage')}">
+					<h:link outcome="/admin/meveousers/users.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.users']}" />
+					</h:link>
 				</rich:menuItem>
-
 
 			</rich:dropDownMenu>
 
@@ -95,7 +100,7 @@
 					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')or persistentPermissionResolver.hasPermission('customerSummary','customerSummaryVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
-			</rich:dropDownMenu>			
+			</rich:dropDownMenu>
 
 			<rich:dropDownMenu value="#{messages['menu.medina']}"
 				rendered="#{persistentPermissionResolver.hasPermission('billing','billingManagement') or persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
