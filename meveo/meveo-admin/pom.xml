@@ -16,12 +16,13 @@
 		<module>config</module>
 		<module>ejbs</module>
 		<module>web</module>
+		<module>ear</module>		
 	</modules>
 
 	<properties>
 		<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
 		<manaty.serverArchiveName>meveo-admin-ejb</manaty.serverArchiveName>
-		<manaty.unpackEarModules>true</manaty.unpackEarModules>
+		<manaty.unpackEarModules>false</manaty.unpackEarModules>
 	</properties>
 
 	<build>
@@ -40,12 +41,31 @@
 			</dependency>
 			<dependency>
 				<groupId>org.manaty</groupId>
+				<artifactId>meveo-admin-config</artifactId>
+				<type>ejb</type>
+				<version>${project.version}</version>
+				<classifier>${env}</classifier>
+			</dependency>			
+			<dependency>
+				<groupId>org.manaty</groupId>
 				<artifactId>meveo-admin-ejbs</artifactId>
+				<version>${project.version}</version>
+			</dependency>		
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-admin-ejbs</artifactId>
+				<type>ejb</type>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.parent.groupId}</groupId>
 				<artifactId>meveo-admin-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>			
+			<dependency>
+				<groupId>${project.parent.groupId}</groupId>
+				<artifactId>meveo-admin-web</artifactId>
+				<type>war</type>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

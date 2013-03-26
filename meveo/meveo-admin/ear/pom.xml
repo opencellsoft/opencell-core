@@ -40,15 +40,15 @@
 					<version>6</version>
 					<defaultLibBundleDir>lib/</defaultLibBundleDir>
 					<displayName>meveo-admin</displayName>
-					<modules></modules>
+					<modules>
+					</modules>
 				</configuration>
 			</plugin>
 		</plugins>
 
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -65,7 +65,7 @@
 											maven-ear-plugin
 										</artifactId>
 										<versionRange>
-											[2.5,)
+											[2.6,)
 										</versionRange>
 										<goals>
 											<goal>
@@ -87,28 +87,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-config</artifactId>
 			<type>ejb</type>
 			<classifier>${env}</classifier>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
 			<type>ejb</type>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-web</artifactId>
 			<type>war</type>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901.jdbc4</version>
 		</dependency>
 	</dependencies>
 
@@ -152,6 +144,14 @@
 					<value>edward</value>
 				</property>
 			</activation>
+
+			<dependencies>
+				<dependency>
+					<groupId>postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.1-901.jdbc4</version>
+				</dependency>
+			</dependencies>
 			<build>
 				<plugins>
 					<plugin>
@@ -233,8 +233,7 @@
 												<pool-name>MeveoAdminPool</pool-name>
 												<driver-name>postgresql.jar</driver-name>
 											</properties>
-											<!-- Add the XA data source properties. The nested addresses will 
-												prepended the address above. -->
+											<!-- Add the XA data source properties. The nested addresses will prepended the address above. -->
 											<resources>
 												<resource>
 													<address>
@@ -280,8 +279,7 @@
 												<pool-name>MeveoAdminPool</pool-name>
 												<driver-name>postgresql.jar</driver-name>
 											</properties>
-											<!-- Add the XA data source properties. The nested addresses will 
-												prepended the address above. -->
+											<!-- Add the XA data source properties. The nested addresses will prepended the address above. -->
 											<resources>
 												<resource>
 													<address>
