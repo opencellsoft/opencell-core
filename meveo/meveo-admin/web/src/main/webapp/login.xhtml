@@ -15,14 +15,13 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		Hello World 12345
 		<rich:panel styleClass="loginPanel">
 			<f:facet name="header">#{messages['login.loginPanel']}</f:facet>
 
 			<a:outputPanel id="messagesPanel" layout="block" ajaxRendered="true">
-				<h:messages id="messages" globalOnly="true" styleClass="message"
-					errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-					rendered="#{showGlobalMessages != 'false'}" />
+				<h:messages id="messages" globalOnly="true"
+					rendered="#{authenticator.noLoginError or authenticator.inactiveUserError or authenticator.noRoleError or authenticator.passwordExpired}" />
 			</a:outputPanel>
 
 			<h:form id="login" onsubmit="" prependId="false">

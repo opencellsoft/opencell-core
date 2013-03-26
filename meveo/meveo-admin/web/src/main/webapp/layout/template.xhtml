@@ -1,91 +1,106 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <f:view xmlns="http://www.w3.org/1999/xhtml"
-   xmlns:ui="http://java.sun.com/jsf/facelets"
-   xmlns:f="http://java.sun.com/jsf/core"
-   xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:a="http://richfaces.org/a4j"
-   xmlns:rich="http://richfaces.org/rich"
-   xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:p="http://primefaces.prime.com.tr/ui"
-    xmlns:custom="http://manaty.net/custom"
-   contentType="text/html">
-<html>
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-      <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
-      <title>MeveoAdmin</title>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:p="http://primefaces.prime.com.tr/ui"
+	xmlns:custom="http://manaty.net/custom" contentType="text/html">
+	<html>
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+	<title>MEVEO Admin</title>
+	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="stylesheet/theme.xcss" />
+	<h:outputStylesheet library="css" name="site2.css" target="head"></h:outputStylesheet>
+	<link rel="stylesheet" type="text/css" href="stylesheet/theme.css" />
+	<link rel="stylesheet" type="text/css" href="stylesheet/main.css" />
+	<s:remote include="javaScriptAction" />
+	<ui:insert name="head" />
+	<p:resources />
 
+	<script type="text/javascript"
+		src="#{facesContext.externalContext.requestContextPath}/js/equalHeight.js"></script>
+</h:head>
+<body>
+	<script type="text/javascript">
+		jQuery(function() {
+			jQuery('.panels').equalHeights();
+		});
+	</script>
+	<div id="header">
+		<div id="logo">
+			<h:graphicImage value="/img/logo_cobilling.png" style="border:0" />
+		</div>
 
+		<div id="headerleft"></div>
+		<div id="headerright">
 
-      <link rel="shortcut icon" href="#{request.contextPath}/favicon.ico"/>
-
-      <a:loadStyle src="resource:///stylesheet/theme.xcss"/>
-      
-      <a:loadStyle src="/stylesheet/theme.css"/>
-      <a:loadStyle src="/stylesheet/main.css"/>
-      <s:remote include="javaScriptAction"/>
-      <ui:insert name="head"/>
-      <p:resources />
-      
-      <a:loadScript src="resource://jquery.js" />
-      <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/equalHeight.js"></script>
-   </head>
-   <body>
-          <script type="text/javascript"> 
-       jQuery(function(){ jQuery('.panels').equalHeights();});
-       
-    </script> 
-   		<div id="header">
-	   		<div id="logo">
-	   			<h:graphicImage value="/img/logo_cobilling.png" style="border:0"/>
-			</div>
-
-			<div id="headerleft">
-			</div>		
-			<div id="headerright">
-			
-			 <!--<ui:include src="language.xhtml" />
+			<!--<ui:include src="language.xhtml" />
 <rich:spacer width="30"/>-->
 
-					<s:link view="/loginInternal.xhtml" value="#{messages['menutop.login']}" rendered="#{not identity.loggedIn and messages['authentification.mode']!='SAML'}" propagation="none" styleClass="headerLink"/>
-		            <s:link view="/login.xhtml" value="#{messages['menutop.login']}" rendered="#{not identity.loggedIn and messages['authentification.mode']=='SAML'}" propagation="none" styleClass="headerLink">
-		           	 <f:param name="returnUrl" value="/home.seam" />	
-		            </s:link>
-		            
-				    <s:link view="/home.xhtml" value="#{messages['menutop.home']}" rendered="#{identity.loggedIn}" propagation="none" styleClass="headerLink"/><h:outputText value="&#160;" />
-		            <s:link view="/changePassword.xhtml" value="#{messages['menutop.changePassword']}" rendered="#{identity.loggedIn}" styleClass="headerLink" propagation="none"/><h:outputText value="&#160;" />  
-	   				
-	   				<s:link action="#{externalAuthenticator.singleLogout}" value="#{messages['menutop.logout']}" rendered="#{identity.loggedIn and messages['authentification.mode']=='SAML'}" propagation="none" styleClass="headerLink">
-	   					<f:param name="returnUrl" value="/home.seam" />
-	   				</s:link>
-	   				<s:link action="#{authenticator.localLogout}" value="#{messages['menutop.logout']}" rendered="#{identity.loggedIn and messages['authentification.mode']!='SAML'}" styleClass="headerLink"/>
-	   				
-	   				
-	   			<br></br>
-	   			 	<h:outputText value="#{messages['commons.connectedUsers']} : #{identity.user.user.userName} " rendered="#{identity.loggedIn}" style="font-weight:bold;"/>		
-	   			<br></br>
-	   			 	<h:outputText value="#{messages['commons.connectedProvider']} : #{currentProvider.code} " rendered="#{identity.loggedIn}" style="font-weight:bold;"/>		
-	   		</div>
-		    
-        </div>	
-   
-	   <ui:insert name="navigation">
+			<s:link view="/loginInternal.xhtml"
+				value="#{messages['menutop.login']}"
+				rendered="#{not identity.loggedIn and messages['authentification.mode']!='SAML'}"
+				propagation="none" styleClass="headerLink" />
+			<s:link view="/login.xhtml" value="#{messages['menutop.login']}"
+				rendered="#{not identity.loggedIn and messages['authentification.mode']=='SAML'}"
+				propagation="none" styleClass="headerLink">
+				<f:param name="returnUrl" value="/home.seam" />
+			</s:link>
+
+			<s:link view="/home.xhtml" value="#{messages['menutop.home']}"
+				rendered="#{identity.loggedIn}" propagation="none"
+				styleClass="headerLink" />
+			<h:outputText value="&#160;" />
+			<s:link view="/changePassword.xhtml"
+				value="#{messages['menutop.changePassword']}"
+				rendered="#{identity.loggedIn}" styleClass="headerLink"
+				propagation="none" />
+			<h:outputText value="&#160;" />
+
+			<s:link action="#{externalAuthenticator.singleLogout}"
+				value="#{messages['menutop.logout']}"
+				rendered="#{identity.loggedIn and messages['authentification.mode']=='SAML'}"
+				propagation="none" styleClass="headerLink">
+				<f:param name="returnUrl" value="/home.seam" />
+			</s:link>
+			<s:link action="#{authenticator.localLogout}"
+				value="#{messages['menutop.logout']}"
+				rendered="#{identity.loggedIn and messages['authentification.mode']!='SAML'}"
+				styleClass="headerLink" />
+
+
+			<br></br>
+			<h:outputText
+				value="#{messages['commons.connectedUsers']} : #{identity.user.user.userName} "
+				rendered="#{identity.loggedIn}" style="font-weight:bold;" />
+			<br></br>
+			<h:outputText
+				value="#{messages['commons.connectedProvider']} : #{currentProvider.code} "
+				rendered="#{identity.loggedIn}" style="font-weight:bold;" />
+		</div>
+
+	</div>
+
+	<ui:insert name="navigation">
 			NAVIGATION
 	   </ui:insert>
-	   
-   		<div class="body">
-		  <a:outputPanel layout="block" ajaxRendered="true">
-		   <h:messages id="messages" globalOnly="true" styleClass="message"
-		       errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-		       rendered="#{showGlobalMessages != 'false'}"/>
-	      </a:outputPanel>
-		  <ui:insert name="body"/>
-		</div>
-   	  
-      <div class="footer">
-         Cobilling v1.0
-      </div>
-   </body>
-</html>
+
+	<div class="body">
+		<a:outputPanel layout="block" ajaxRendered="true">
+			<h:messages id="messages" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+		</a:outputPanel>
+		<ui:insert name="body" />
+	</div>
+
+	<div class="footer">Cobilling v1.0</div>
+</body>
+	</html>
 </f:view>
