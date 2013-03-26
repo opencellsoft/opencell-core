@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
@@ -50,6 +51,8 @@ public class TradingCurrency  extends AuditableEntity{
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
 
+	@Transient
+	String currencyCode;
  
 	public String getPrDescription() {
 		return prDescription;
@@ -67,7 +70,15 @@ public class TradingCurrency  extends AuditableEntity{
 		this.currency = currency;
 	}
 
+	public String getCurrencyCode() {
+		return currency.getCurrencyCode();
+	}
 
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	
 
 	
 }

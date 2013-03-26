@@ -46,8 +46,11 @@
     			<custom:column label="#{messages['pricePlanMatrix.table.criteria3Value']}" field="criteria3Value" />
     			<custom:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converterParam="10digits" wrapHeader="true" />
     			<custom:column label="#{messages['pricePlanMatrix.amountWithoutTax2']}" field="amountWithoutTax2"  converterParam="10digits" wrapHeader="true" />
-		    	<custom:actionsColumn editView="/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}" />
-		    </custom:dataList>
+                <custom:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency" childField="currencyCode"/> 	
+						   
+		       <custom:actionsColumn editView="/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}" />
+		   
+		   </custom:dataList>
 		   
 		</custom:listPanel>
 		

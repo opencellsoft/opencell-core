@@ -464,5 +464,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
 		this.languageMessagesMap = languageMessagesMap;
 	}
+
+	public T getEntity() {
+		return entity;
+	}
+
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
+	
+	
     
 }

@@ -26,10 +26,7 @@
 					<s:conversationPropagation type="none" />
 				</rich:menuItem> -->
 				
-				<rich:menuItem id="comLanguages" value="#{messages['menu.comLanguages']}" 
-						action="comLanguages" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
-					<s:conversationPropagation type="none" />
-				</rich:menuItem>
+				
 				
 				<rich:menuItem id="invoiceCategories" value="#{messages['menu.invoiceCategories']}" 
 						action="invoiceCategories" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
@@ -75,6 +72,12 @@
 						action="providerContacts" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
+				
+				<rich:menuItem id="comLanguages" value="#{messages['menu.comLanguages']}" 
+						action="comLanguages" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				
 				<rich:menuItem id="tradingCurrencies" value="#{messages['menu.tradingCurrencies']}" 
 						action="tradingCurrencies" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<s:conversationPropagation type="none" />
@@ -170,6 +173,11 @@
 				</rich:menuItem>
 				<rich:menuItem id="oneShotChargeTemplates" value="#{messages['menu.oneShotChargeTemplates']}" 
 						action="oneShotChargeTemplates" rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				
+				<rich:menuItem id="pricePlanMatrixes" value="#{messages['menu.pricePlanMatrixes']}" 
+						action="pricePlanMatrixes" rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
 				 

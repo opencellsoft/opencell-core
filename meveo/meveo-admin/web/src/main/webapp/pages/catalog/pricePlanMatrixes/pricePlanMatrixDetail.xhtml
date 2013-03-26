@@ -31,8 +31,23 @@
 					oncomplete="Richfaces.hideModalPanel('searchChargePopup')">
 				</a:commandLink>
 			</custom:entityPopup>
+			<custom:entityPopup id="pricPlanMatCurrencyPopup"
+            header="#{messages['pricePlanMatrixCurrencyPopup.header']}"
+            backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
+            
+            column1Label="#{messages['countryCom.id']}"
+            column1="id"
 			
-		<custom:formPanel formId="formPricePlan" edit="#{edit}" label="#{messages['pricePlanMatrix.panel']}" backingBean="#{pricePlanMatrixBean}" entity="#{pricePlanMatrix}" >
+			column2Label="#{messages['currency.codeCurrency']}"
+            column2="currencyCode" >
+            <a:commandLink value="#{messages['commons.select']}" 
+			reRender="formPricePlan"
+					action="#{pricePlanMatrix.setTradingCurrency(entity)}"
+					oncomplete="Richfaces.hideModalPanel('pricPlanMatCurrencyPopup')">
+			</a:commandLink>
+        </custom:entityPopup>
+			
+		<custom:formPanel edit="#{edit}" label="#{messages['pricePlanMatrix.panel']}" backingBean="#{pricePlanMatrixBean}" entity="#{pricePlanMatrix}" formId="formPricePlan" >
     			<custom:panelGroup columns="2">	
 	    			<custom:formField label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode" required="true" popup="true"
 										popupId="searchChargePopup"/>
@@ -45,6 +60,14 @@
 	    			<custom:formField label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converterParam="10digits" />
 	    			<custom:formField label="#{messages['pricePlanMatrix.endRatingDate']}" field="endRatingDate" />
 	    			<custom:formField label="#{messages['pricePlanMatrix.amountWithoutTax2']}" field="amountWithoutTax2" converterParam="10digits"/>
+					<custom:panelGroup columns="1">	
+									<custom:formEntityField id="pricPlanMatCurrencySelectId"
+										label="#{messages['currency.codeCurrency']}"  field="tradingCurrency" childField="currencyCode" 
+										 popup="true"  
+										popupId="pricPlanMatCurrencyPopup" />
+							    </custom:panelGroup>
+								
+								 
     			</custom:panelGroup>
     			<custom:formField label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}" field="minSubscriptionAgeInMonth" />
     			<custom:formField label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}" field="maxSubscriptionAgeInMonth" />

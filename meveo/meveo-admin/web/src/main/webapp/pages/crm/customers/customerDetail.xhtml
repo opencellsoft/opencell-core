@@ -28,7 +28,7 @@
 				column2="prDescription" filtersMap="#{tradingCountryBean.filters}">
 				<!-- select link -->
 				<a:commandLink value="#{messages['commons.select']}"
-					reRender="formId"
+					reRender="formCustomer"
 					action="#{customer.setTradingCountry(entity)}"
 					oncomplete="Richfaces.hideModalPanel('tradingCountryPopup')">
 				</a:commandLink>
@@ -45,11 +45,26 @@
 				column2="prDescription" filtersMap="#{tradingLanguageBean.filters}">
 				<!-- select link -->
 				<a:commandLink value="#{messages['commons.select']}"
-					reRender="formId"
+					reRender="formCustomer"
 					action="#{customer.setTradingLanguage(entity)}"
 					oncomplete="Richfaces.hideModalPanel('tradingLanguagePopup')">
 				</a:commandLink>
 			</custom:entityPopup>
+			<custom:entityPopup id="customerCurrencyPopup"
+            header="#{messages['customerCurrencyPopup.header']}"
+            backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
+            
+            column1Label="#{messages['countryCom.id']}"
+            column1="id"
+			
+			column2Label="#{messages['currency.codeCurrency']}"
+            column2="currencyCode" filtersMap="#{tradingCurrencyBean.filters}">
+            <a:commandLink value="#{messages['commons.select']}" 
+			reRender="formCustomer"
+					action="#{customer.setTradingCurrency(entity)}"
+					oncomplete="Richfaces.hideModalPanel('customerCurrencyPopup')">
+			</a:commandLink>
+        </custom:entityPopup>
 
 		<h:panelGrid columns="1" width="100%">
 			<h:panelGroup>
@@ -57,7 +72,7 @@
 					<custom:hierarchyPanel
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(customer)}"
 						entity="#{customer}" />
-					<custom:formPanel edit="#{edit}"
+					<custom:formPanel edit="#{edit}" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						backingBean="#{customerBean}" entity="#{customer}"
 						style="formPanel">
@@ -81,6 +96,12 @@
 									label="#{messages['customer.customerBrand']}"
 									field="customerBrand" childField="description" popup="false"
 									service="#{customerBrandService}" required="true" />
+									<custom:panelGroup columns="1">	
+									<custom:formEntityField id="customerCurrencySelectId"
+										label="#{messages['currency.codeCurrency']}"  field="tradingCurrency" childField="currencyCode" 
+										  popup="true"  
+										popupId="customerCurrencyPopup" />
+							    </custom:panelGroup>
 								<custom:formEntityField id="trCountrySelectId"
 									label="#{messages['tradingCountry.tradingCountry']}"
 									field="tradingCountry" childField="id" popup="true"

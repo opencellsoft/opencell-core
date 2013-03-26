@@ -69,6 +69,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     @In
     private InvoiceSubCategoryCountryServiceLocal invoiceSubCategoryCountryService;
     
+    
     /**
      * Inject InvoiceCategory service, that is used to load default category if
      * its id was passed in parameters.
@@ -323,6 +324,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     public void setAccountingCodeField7(String accountingCodeField7) {
         this.accountingCodeFields[6] = accountingCodeField7;
     }
+    
+
     
     
 }

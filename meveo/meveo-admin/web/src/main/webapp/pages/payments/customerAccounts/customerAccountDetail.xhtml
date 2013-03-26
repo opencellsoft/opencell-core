@@ -31,7 +31,27 @@
 					reRender="formCustomerAccount" action="#{customerAccountBean.populateAccounts(entity)}"
 					oncomplete="Richfaces.hideModalPanel('searchCustomerPopup')">
 				</a:commandLink>
-			</custom:entityPopup>
+			</custom:entityPopup> 
+			
+			
+		<custom:entityPopup id="customerAccCurrencyPopup"
+            header="#{messages['customerAccountCurrencyPopup.header']}"
+            backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
+            
+            column1Label="#{messages['countryCom.id']}"
+            column1="id"
+			
+			column2Label="#{messages['currency.codeCurrency']}"
+            column2="currencyCode" filtersMap="#{tradingCurrencyBean.filters}">
+            <a:commandLink value="#{messages['commons.select']}"
+					reRender="formCustomerAccount" 
+					action="#{customerAccount.setTradingCurrency(entity)}"
+					oncomplete="Richfaces.hideModalPanel('customerAccCurrencyPopup')">
+			</a:commandLink>
+        </custom:entityPopup>
+		
+		
+	
 		</c:if>
 	<h:panelGrid columns="1" width="100%">
 	<h:panelGroup>
@@ -40,7 +60,7 @@
 				<rich:tabPanel switchType="ajax" selectedTab="#{customerAccountBean.selectedTab}" styleClass="formPanel">
 				<rich:tab  name="compte" label="#{messages['customerAccount.tab.account']}" action="#{customerAccountBean.setSelectedTab('compte')}">				
 				<custom:formPanel edit="#{edit}" formId="formCustomerAccount"
-					label="#{messages['customerAccount.form']}"
+					label="#{messages['customerAccount.form']}" 
 					backingBean="#{customerAccountBean}" entity="#{customerAccount}"
 					showFormButtons="false"  >
 					<rich:tabPanel switchType="client">
@@ -134,6 +154,15 @@
 										required="true" field="creditCategory" childField="label"
 										isMessage="true" />
 								</custom:panelGroup>
+								
+								<custom:panelGroup columns="1">	
+									<custom:formEntityField id="currencySelectId"
+										label="#{messages['currency.codeCurrency']}"  field="tradingCurrency" childField="currencyCode" 
+										  popup="true"  
+										popupId="customerAccCurrencyPopup" />
+							    </custom:panelGroup>
+								
+								
 								<custom:panelGroup columns="1">	
 									<custom:formField label="#{messages['customerAccount.status']}"
 										field="status" childField="label" isMessage="true" edit="false" />
