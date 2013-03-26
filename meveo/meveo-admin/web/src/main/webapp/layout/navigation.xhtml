@@ -12,228 +12,300 @@
 		<rich:toolbarGroup rendered="#{identity.loggedIn}">
 
 			<rich:dropDownMenu id="admin"
-				rendered="#{identity.hasPermission('user','manage')}">
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 				<f:facet name="label">
-					<h:panelGrid cellpadding="0" cellspacing="0" columns="2">
+					<h:panelGrid>
 						<h:outputText value="#{messages['menu.admin']}" />
 					</h:panelGrid>
 				</f:facet>
 
 				<rich:menuItem id="users"
-					rendered="#{identity.hasPermission('user','manage')}">
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 					<h:link outcome="/admin/meveousers/users.xhtml?faces-redirect=true">
 						<h:outputText value="#{messages['menu.users']}" />
+					</h:link>
+				</rich:menuItem>
+			</rich:dropDownMenu>
+
+			<rich:dropDownMenu id="catalog" value="#{messages['menu.catalog']}"
+				rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+				<f:facet name="label">
+					<h:panelGrid>
+						<h:outputText value="#{messages['menu.catalog']}" />
+					</h:panelGrid>
+				</f:facet>
+
+				<rich:menuItem id="offerTemplates"
+					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+					<h:link
+						outcome="/pages/catalog/offerTemplates/offerTemplates.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.offerTemplates']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="serviceTemplates"
+					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+					<h:link
+						outcome="/pages/catalog/serviceTemplates/serviceTemplates.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.serviceTemplates']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="recurringChargeTemplate"
+					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+					<h:link
+						outcome="/pages/catalog/recurringChargeTemplates/recurringChargeTemplates.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.recurringChargeTemplates']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="oneShotChargeTemplates"
+					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+					<h:link
+						outcome="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.oneShotChargeTemplates']}" />
 					</h:link>
 				</rich:menuItem>
 
 			</rich:dropDownMenu>
 
-			<rich:dropDownMenu id="catalog" value="#{messages['menu.catalog']}"
-				rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
-
-				<rich:menuItem id="offerTemplates"
-					value="#{messages['menu.offerTemplates']}" action="offerTemplates"
-					rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
-					<s:conversationPropagation type="none" />
-				</rich:menuItem>
-
-
-				<rich:menuItem id="serviceTemplates"
-					value="#{messages['menu.serviceTemplates']}"
-					action="serviceTemplates"
-					rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
-					<s:conversationPropagation type="none" />
-				</rich:menuItem>
-				<rich:menuItem id="recurringChargeTemplate"
-					value="#{messages['menu.recurringChargeTemplates']}"
-					action="recurringChargeTemplates"
-					rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
-					<s:conversationPropagation type="none" />
-				</rich:menuItem>
-				<rich:menuItem id="oneShotChargeTemplates"
-					value="#{messages['menu.oneShotChargeTemplates']}"
-					action="oneShotChargeTemplates"
-					rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
-					<s:conversationPropagation type="none" />
-				</rich:menuItem>
-
-
-			</rich:dropDownMenu>
-
-			<rich:dropDownMenu id="crm" value="#{messages['menu.crm']}"
-				rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization') or persistentPermissionResolver.hasPermission('customerSummary','customerSummaryVisualization')}">
+			<rich:dropDownMenu id="crm"
+				rendered="#{identity.hasPermission('account','accountVisualization') or identity.hasPermission('customerSummary','customerSummaryVisualization')}">
+				<f:facet name="label">
+					<h:panelGrid>
+						<h:outputText value="#{messages['menu.crm']}" />
+					</h:panelGrid>
+				</f:facet>
 
 				<rich:menuItem id="customerSearch"
 					value="#{messages['menu.customerSearch']}" action="customerSearch"
-					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('account','accountVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.serviceTemplates']}" />
+					</h:link>
 				</rich:menuItem>
-				<rich:menuItem id="customers" value="#{messages['menu.customers']}"
-					action="customers"
-					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
-					<s:conversationPropagation type="none" />
+
+				<rich:menuItem id="customers"
+					rendered="#{identity.hasPermission('account','accountVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.customers']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="customerAccounts"
-					value="#{messages['menu.customerAccounts']}"
-					action="customerAccounts"
-					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('account','accountVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.customerAccounts']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="billingAccounts"
-					value="#{messages['menu.billingAccounts']}"
-					action="billingAccounts"
-					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('account','accountVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.billingAccounts']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="userAccounts"
-					value="#{messages['menu.userAccounts']}" action="userAccounts"
-					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('account','accountVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.userAccounts']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="subscriptions"
-					value="#{messages['menu.subscriptions']}" action="subscriptions"
-					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('account','accountVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.subscriptions']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="syntheseClient"
-					value="#{messages['menu.syntheseClient']}" action="syncheseClients"
-					rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')or persistentPermissionResolver.hasPermission('customerSummary','customerSummaryVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('account','accountVisualization')or identity.hasPermission('customerSummary','customerSummaryVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.syntheseClient']}" />
+					</h:link>
 				</rich:menuItem>
+
 			</rich:dropDownMenu>
 
-			<rich:dropDownMenu value="#{messages['menu.medina']}"
-				rendered="#{persistentPermissionResolver.hasPermission('billing','billingManagement') or persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+			<rich:dropDownMenu
+				rendered="#{identity.hasPermission('billing','billingManagement') or identity.hasPermission('billing','billingVisualization')}">
+				<f:facet name="label">
+					<h:panelGrid>
+						<h:outputText value="#{messages['menu.medina']}" />
+					</h:panelGrid>
+				</f:facet>
 
-				<rich:menuItem id="accesss" value="#{messages['menu.access']}"
-					action="accesss">
-					<s:conversationPropagation type="none" />
+				<rich:menuItem id="accesss">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.access']}" />
+					</h:link>
 				</rich:menuItem>
 
-				<rich:menuItem id="zonningPlans" value="#{messages['menu.zoning']}"
-					action="zonningPlans">
-					<s:conversationPropagation type="none" />
-				</rich:menuItem>
-				<rich:menuItem id="timePlans" value="#{messages['menu.time']}"
-					action="timePlans">
-					<s:conversationPropagation type="none" />
+				<rich:menuItem id="zonningPlans">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.zoning']}" />
+					</h:link>
 				</rich:menuItem>
 
-				<rich:menuItem id="numberingPlans"
-					value="#{messages['menu.numbering']}" action="numberingPlans">
-					<s:conversationPropagation type="none" />
+				<rich:menuItem id="timePlans">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.time']}" />
+					</h:link>
 				</rich:menuItem>
 
-				<rich:menuItem id="priceCodes" value="#{messages['menu.priceCode']}"
-					action="priceCodes">
-					<s:conversationPropagation type="none" />
+				<rich:menuItem id="numberingPlans">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.numbering']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="priceCodes">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.priceCode']}" />
+					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="usagePricePlanItems"
-					value="#{messages['menu.usagePricePlanItem']}"
-					action="usagePricePlanItems"
-					rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.usagePricePlanItem']}" />
+					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="usageDiscountPlanItems"
-					value="#{messages['menu.usageDiscountPlanItem']}"
-					action="usageDiscountPlanItems"
-					rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.usageDiscountPlanItem']}" />
+					</h:link>
 				</rich:menuItem>
 
 			</rich:dropDownMenu>
-			<rich:dropDownMenu id="billing" value="#{messages['menu.billing']}"
-				rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+
+			<rich:dropDownMenu id="billing"
+				rendered="#{identity.hasPermission('billing','billingVisualization')}">
+				<f:facet name="label">
+					<h:panelGrid>
+						<h:outputText value="#{messages['menu.billing']}" />
+					</h:panelGrid>
+				</f:facet>
 
 				<!--  <rich:menuItem id="invoices" value="#{messages['menu.invoices']}"
-					action="invoices"  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+					action="invoices"  rendered="#{identity.hasPermission('billing','billingVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
 				<rich:menuItem id="invoiceTasks" value="#{messages['menu.invoiceTasks']}"
-					action="invoiceTasks" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+					action="invoiceTasks" rendered="#{identity.hasPermission('billing','billingVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem> -->
 				<!-- <rich:menuItem id="wallets" value="#{messages['menu.wallets']}"
-					action="wallets" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+					action="wallets" rendered="#{identity.hasPermission('billing','billingVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>-->
 
 				<rich:menuItem id="recurringInvoicing"
-					value="#{messages['menu.recurringInvoicing']}"
-					action="recurringInvoicing"
-					rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('billing','billingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.recurringInvoicing']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="exceptionalInvoicing"
-					value="#{messages['menu.exceptionalInvoicing']}"
-					action="exceptionelInvoicing"
-					rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('billing','billingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.exceptionalInvoicing']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="billingRuns"
-					value="#{messages['menu.billingRuns']}" action="billingRuns"
-					rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('billing','billingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.billingRuns']}" />
+					</h:link>
 				</rich:menuItem>
+
 			</rich:dropDownMenu>
 
 			<rich:dropDownMenu value="#{messages['menu.payments']}"
-				rendered="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}">
+				rendered="#{identity.hasPermission('billing','billingManagement')}">
+				<f:facet name="label">
+					<h:panelGrid>
+						<h:outputText value="#{messages['menu.medina']}" />
+					</h:panelGrid>
+				</f:facet>
 
 				<rich:menuItem id="dunningPlan"
-					value="#{messages['menu.dunningPlan']}" action="dunningPlans"
-					rendered="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('billing','billingManagement')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.dunningPlan']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<!-- <rich:menuItem id="matchingCode" value="#{messages['menu.matchingCode']}"
-					action="matchingCodes" rendered="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}">
+					action="matchingCodes" rendered="#{identity.hasPermission('billing','billingManagement')}">
 					<s:conversationPropagation type="none" /> 
 				</rich:menuItem>-->
+
 				<rich:menuItem id="ddrequestLot"
-					value="#{messages['menu.ddrequestLot']}" action="ddrequestLots"
-					rendered="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('billing','billingManagement')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.ddrequestLot']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="ddrequestLotOps"
-					value="#{messages['menu.ddrequestLotOp']}" action="ddrequestLotOps"
-					rendered="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('billing','billingManagement')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.ddrequestLotOp']}" />
+					</h:link>
 				</rich:menuItem>
 
 			</rich:dropDownMenu>
 
 			<rich:dropDownMenu id="reporting"
-				value="#{messages['menu.reporting']}"
-				rendered="#{persistentPermissionResolver.hasPermission('reporting','reportingVisualization')}">
+				rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
+				<f:facet name="label">
+					<h:panelGrid>
+						<h:outputText value="#{messages['menu.reporting']}" />
+					</h:panelGrid>
+				</f:facet>
 
-				<rich:menuItem id="jobs" value="#{messages['menu.jobs']}"
-					action="jobs"
-					rendered="#{persistentPermissionResolver.hasPermission('reporting','reportingVisualization')}">
-					<s:conversationPropagation type="none" />
+				<rich:menuItem id="jobs"
+					rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.jobs']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="jobHistory"
-					value="#{messages['menu.jobHistory']}" action="jobHistory"
-					rendered="#{persistentPermissionResolver.hasPermission('reporting','reportingVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.jobHistory']}" />
+					</h:link>
 				</rich:menuItem>
-				<rich:menuItem id="reports" value="#{messages['menu.reports']}"
-					action="reports"
-					rendered="#{persistentPermissionResolver.hasPermission('reporting','reportingVisualization')}">
-					<s:conversationPropagation type="none" />
+
+				<rich:menuItem id="reports"
+					rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.reports']}" />
+					</h:link>
 				</rich:menuItem>
+
 				<rich:menuItem id="bordereauRemiseCheque"
-					value="#{messages['menu.bordereauRemiseCheque']}"
-					action="bordereauRemiseCheque"
-					rendered="#{persistentPermissionResolver.hasPermission('reporting','reportingVisualization')}">
-					<s:conversationPropagation type="none" />
+					rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.bordereauRemiseCheque']}" />
+					</h:link>
 				</rich:menuItem>
-				<rich:menuItem id="documents" value="#{messages['menu.documents']}"
-					action="documents"
-					rendered="#{persistentPermissionResolver.hasPermission('reporting','reportingVisualization')}">
-					<s:conversationPropagation type="none" />
+
+				<rich:menuItem id="documents"
+					rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
+					<h:link outcome="">
+						<h:outputText value="#{messages['menu.documents']}" />
+					</h:link>
 				</rich:menuItem>
+
 			</rich:dropDownMenu>
 
 		</rich:toolbarGroup>

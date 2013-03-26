@@ -73,33 +73,71 @@ INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 5);
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 6);
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (2, 6);
 
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','administration','administrationVisualization,administrationManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','catalog','catalogVisualization,catalogManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','reporting','reportingVisualization,reportingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','customerSummary','customerSummaryVisualization', 'role');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (1,'administrateur','administration','administrationVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (2,'administrateur','administration','administrationManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (3,'administrateur','catalog','catalogVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (4,'administrateur','catalog','catalogManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (5,'administrateur','account','accountVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (6,'administrateur','reporting','reportingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (7,'administrateur','reporting','reportingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (8,'administrateur','customerSummary','customerSummaryVisualization');
 
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','administration','administrationVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','account','accountVisualization,accountManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','billing','billingVisualization,billingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','reporting','reportingVisualization,reportingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','customerSummary','customerSummaryVisualization', 'role');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (9,'adv','administration','administrationVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (10,'adv','catalog','catalogVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (11,'adv','account','accountVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (12,'adv','account','accountManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (13,'adv','billing','billingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (14,'adv','billing','billingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (15,'adv','reporting','reportingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (16,'adv','reporting','reportingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (17,'adv','customerSummary','customerSummaryVisualization');
 
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','billing','billingVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','customerSummary','customerSummaryVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationClient','customerSummary','customerSummaryVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','billing','billingVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','customerSummary','customerSummaryVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','reporting','reportingVisualization', 'role');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (18,'visualisationGenerale','catalog','catalogVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (19,'visualisationGenerale','account','accountVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (20,'visualisationGenerale','billing','billingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (21,'visualisationGenerale','billing','billingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (22,'visualisationGenerale','reporting','reportingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (23,'visualisationGenerale','reporting','reportingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (24,'visualisationGenerale','customerSummary','customerSummaryVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (25,'encaissement','catalog','catalogVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (26,'encaissement','account','accountVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (27,'encaissement','billing','billingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (28,'encaissement','customerSummary','customerSummaryVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (29,'encaissement','reporting','reportingVisualization');
 
-INSERT INTO CRM_CUSTOMER_BRAND (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, CREATOR_ID,CODE,DESCRIPTION) VALUES (NEXTVAL('CRM_CUSTOMER_BRAND_SEQ'), 0, false, now(), 1, 1, 'MYBRAND','MYBRAND');
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 1);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 2);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 3);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 4);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 5);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 6);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 7);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 8);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 9);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 10);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 11);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 12);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 13);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 14);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 15);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 16);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 17);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 18);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 19);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 20);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 21);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 22);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 23);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 24);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 25);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 26);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 27);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 28);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 29);
 
-INSERT INTO CRM_CUSTOMER_CATEGORY (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, CREATOR_ID,CODE,DESCRIPTION) VALUES (NEXTVAL('CRM_CUSTOMER_CATEGORY_SEQ'), 0, false, now(), 1, 1, 'PART','Particulier');
+INSERT INTO CRM_CUSTOMER_BRAND (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, CREATOR_ID,CODE,DESCRIPTION) VALUES (1, 0, false, now(), 1, 1, 'MYBRAND','MYBRAND');
+
+INSERT INTO CRM_CUSTOMER_CATEGORY (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, CREATOR_ID,CODE,DESCRIPTION) VALUES (1, 0, false, now(), 1, 1, 'PART','Particulier');
 
 INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (1, 0, false, now(), 1, null, 'RG_CHQ', 'Règlement par chèque', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
 INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (2, 0, false, now(), 1, null, 'RG_TIP', 'Règlement par TIP', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
@@ -694,19 +732,20 @@ INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, 
 INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID) VALUES (29, 0, false, now(), 1, null, 'CHARGE_TMPL_F3', TIMESTAMP '2000-01-01 12:00:00', null, null, null, null, null, null, null, null, 93.839, 99, null, 6);
 INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID) VALUES (30, 0, false, now(), 1, null, 'CHARGE_TMPL_F2', TIMESTAMP '2000-01-01 12:00:00', null, null, null, null, null, null, null, null, 46.445, 49, null, 6);
 
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (NEXTVAL('BILLING_TERM_REASON_SEQ'),0,'D','Address change',false,true,false,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (NEXTVAL('BILLING_TERM_REASON_SEQ'),0,'P','Offer upgrade',false,true,false,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (NEXTVAL('BILLING_TERM_REASON_SEQ'),0,'M','Offer downgrade',true,true,false,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (NEXTVAL('BILLING_TERM_REASON_SEQ'),0,'L','Cancellation provider',false,true,true,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (NEXTVAL('BILLING_TERM_REASON_SEQ'),0,'C','Cancellation customer',true,true,false,1);
+INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (1,0,'D','Address change',false,true,false,1);
+INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (2,0,'P','Offer upgrade',false,true,false,1);
+INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (3,0,'M','Offer downgrade',true,true,false,1);
+INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (4,0,'L','Cancellation provider',false,true,true,1);
+INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES (5,0,'C','Cancellation customer',true,true,false,1);
 
-INSERT INTO COM_MESSAGE_TEMPLATE (ID,PROVIDER_ID,VERSION,MEDIA,CREATED,DISABLED,CODE,TAG_END,TAG_START,TYPE,HTMLCONTENT,SUBJECT,TEXTCONTENT) VALUES (NEXTVAL('COM_MSG_TMPL_SEQ'),1,0,'EMAIL',now(),false,'PART_RAPPEL','>','#<','DUNNING','<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Manaty <br />128 rue Berbisey<br /><br />21000 Dijon<br /><br />Service client  +33 9 51 39 51 51 <br />Du lundi au vendredi de 8h &agrave;18h<br /><br />Adresse internet : www.manaty.net<br /><br /><br />Votre identifiant client : #<CUSTOMER_ACCOUNT_CODE><br /><br /><div align="right" style="width: 70%">#<CUSTOMER_ACCOUNT_NAME><br />#<CUSTOMER_ACCOUNT_ADDRESS_1><br />#<CUSTOMER_ACCOUNT_ADDRESS_2><br />#<CUSTOMER_ACCOUNT_ADDRESS_3><br />#<CUSTOMER_ACCOUNT_ZIP_CITY></div><br /><strong>RAPPEL au #<LETTER_DATE></strong><br /><br />#<CUSTOMER_ACCOUNT_TITLE>,<br /><br />A ce jour et sauf erreur de notre part, vous restez nous devoir la somme de  <strong>#<AMOUNT_EXIGIBLE> &euro;</strong>.<br /><br />Si vous avez effectu&eacute; votre paiement r&eacute;cemment, nous vous prions de ne pas tenir compte de cette relance.<br /><br />S''il s''agit d''un oubli, nous vous invitons &agrave; r&eacute;gler votre facture d&egrave;s aujourd''hui.<strong> A d&eacute;faut de r&egrave;glement dans un d&eacute;lai de 15 jours, une p&eacute;nalit&eacute; de 10,00 &euro; viendra s''ajouter &agrave; votre solde d&ucirc;</strong>.<br /><br />En cas de difficult&eacute; ou pour toute autre raison, n''h&eacute;sitez pas &agrave; contacter rapidement notre service client&egrave;le aux num&eacute;ro et horaires pr&eacute;cis&eacute;s en haut &agrave; gauche de ce courriel.<br /><br />Dans l''attente de votre r&egrave;glement, nous vous prions d''agr&eacute;er,#<CUSTOMER_ACCOUNT_TITLE>, l''expression de nos sentiments d&eacute;vou&eacute;s.<br /><br /><div align="right" style="width: 70%">Le Service Client Manaty </div></body></html>','RAPPEL #<LETTER_DATE>',null);
-INSERT INTO COM_MESSAGE_TEMPLATE (ID,PROVIDER_ID,VERSION,MEDIA,CREATED,DISABLED,CODE,TAG_END,TAG_START,TYPE,HTMLCONTENT,SUBJECT,TEXTCONTENT) VALUES (NEXTVAL('COM_MSG_TMPL_SEQ'),1,0,'EMAIL',now(),false,'A','>','#<','INVOICE','<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Votre facture Manaty</title></head><body>Manaty<br />128 rue Berbisey<br />21000 DIJON<br /><br />Service client +33 9 51 39 51 51<br />Du lundi au vendredi de 8h &agrave; 18h<br /><br />Adresse internet : www.manaty.net<br /><br /><br /><strong><span style="color: red">Consultez votre facture en ligne</span></strong><br /><br />Votre identifiant client : #<CUSTOMER_ACCOUNT_CODE><br /><br />Bonjour #<CUSTOMER_NAME>,<br /><br />Votre facture Manaty #<INVOICE_NUMBER> du #<INVOICE_DATE> est en ligne.<br /><br />Rendez-vouz dans la rubrique "Mon Compte" de votre <a href="https://www.myselfcare.com/">espace client</a>.<br />Saisissez ou cr&eacute;er votre identifiant ou mot de passe et acc&eacute;dez &agrave; la rubrique "visualiser mes factures".<div align="right" style="width: 70%">Le Service Client Manaty </div></body></html>','Votre facture du #<INVOICE_DATE>',null );
+INSERT INTO COM_MESSAGE_TEMPLATE (ID,PROVIDER_ID,VERSION,MEDIA,CREATED,DISABLED,CODE,TAG_END,TAG_START,TYPE,HTMLCONTENT,SUBJECT,TEXTCONTENT) VALUES (1,1,0,'EMAIL',now(),false,'PART_RAPPEL','>','#<','DUNNING','<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Manaty <br />128 rue Berbisey<br /><br />21000 Dijon<br /><br />Service client  +33 9 51 39 51 51 <br />Du lundi au vendredi de 8h &agrave;18h<br /><br />Adresse internet : www.manaty.net<br /><br /><br />Votre identifiant client : #<CUSTOMER_ACCOUNT_CODE><br /><br /><div align="right" style="width: 70%">#<CUSTOMER_ACCOUNT_NAME><br />#<CUSTOMER_ACCOUNT_ADDRESS_1><br />#<CUSTOMER_ACCOUNT_ADDRESS_2><br />#<CUSTOMER_ACCOUNT_ADDRESS_3><br />#<CUSTOMER_ACCOUNT_ZIP_CITY></div><br /><strong>RAPPEL au #<LETTER_DATE></strong><br /><br />#<CUSTOMER_ACCOUNT_TITLE>,<br /><br />A ce jour et sauf erreur de notre part, vous restez nous devoir la somme de  <strong>#<AMOUNT_EXIGIBLE> &euro;</strong>.<br /><br />Si vous avez effectu&eacute; votre paiement r&eacute;cemment, nous vous prions de ne pas tenir compte de cette relance.<br /><br />S''il s''agit d''un oubli, nous vous invitons &agrave; r&eacute;gler votre facture d&egrave;s aujourd''hui.<strong> A d&eacute;faut de r&egrave;glement dans un d&eacute;lai de 15 jours, une p&eacute;nalit&eacute; de 10,00 &euro; viendra s''ajouter &agrave; votre solde d&ucirc;</strong>.<br /><br />En cas de difficult&eacute; ou pour toute autre raison, n''h&eacute;sitez pas &agrave; contacter rapidement notre service client&egrave;le aux num&eacute;ro et horaires pr&eacute;cis&eacute;s en haut &agrave; gauche de ce courriel.<br /><br />Dans l''attente de votre r&egrave;glement, nous vous prions d''agr&eacute;er,#<CUSTOMER_ACCOUNT_TITLE>, l''expression de nos sentiments d&eacute;vou&eacute;s.<br /><br /><div align="right" style="width: 70%">Le Service Client Manaty </div></body></html>','RAPPEL #<LETTER_DATE>',null);
+INSERT INTO COM_MESSAGE_TEMPLATE (ID,PROVIDER_ID,VERSION,MEDIA,CREATED,DISABLED,CODE,TAG_END,TAG_START,TYPE,HTMLCONTENT,SUBJECT,TEXTCONTENT) VALUES (2,1,0,'EMAIL',now(),false,'A','>','#<','INVOICE','<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Votre facture Manaty</title></head><body>Manaty<br />128 rue Berbisey<br />21000 DIJON<br /><br />Service client +33 9 51 39 51 51<br />Du lundi au vendredi de 8h &agrave; 18h<br /><br />Adresse internet : www.manaty.net<br /><br /><br /><strong><span style="color: red">Consultez votre facture en ligne</span></strong><br /><br />Votre identifiant client : #<CUSTOMER_ACCOUNT_CODE><br /><br />Bonjour #<CUSTOMER_NAME>,<br /><br />Votre facture Manaty #<INVOICE_NUMBER> du #<INVOICE_DATE> est en ligne.<br /><br />Rendez-vouz dans la rubrique "Mon Compte" de votre <a href="https://www.myselfcare.com/">espace client</a>.<br />Saisissez ou cr&eacute;er votre identifiant ou mot de passe et acc&eacute;dez &agrave; la rubrique "visualiser mes factures".<div align="right" style="width: 70%">Le Service Client Manaty </div></body></html>','Votre facture du #<INVOICE_DATE>',null );
 
-INSERT INTO COM_SENDER_CONFIG (ID,VERSION,CREATED,DISABLED,PROVIDER_ID,CODE,MEDIA,SMTP_HOST,SMTP_PORT,LOGIN,PASSWORD,DELAY_MIN,DEFAULT_FROM_EMAIL,DEFAULT_REPLY_EMAIL) VALUES (NEXTVAL('COM_SNDR_CONF_SEQ'),0,now(),false,1,'MANATY SMTP','EMAIL','zimbra.manaty.net','25','yourlogin','yourpass',5000,'projetmeveo@manaty.net','projetmeveo@manaty.net');
+INSERT INTO COM_SENDER_CONFIG (ID,VERSION,CREATED,DISABLED,PROVIDER_ID,CODE,MEDIA,SMTP_HOST,SMTP_PORT,LOGIN,PASSWORD,DELAY_MIN,DEFAULT_FROM_EMAIL,DEFAULT_REPLY_EMAIL) VALUES (1,0,now(),false,1,'MANATY SMTP','EMAIL','zimbra.manaty.net','25','yourlogin','yourpass',5000,'projetmeveo@manaty.net','projetmeveo@manaty.net');
 
 CREATE SEQUENCE ADM_USER_LOG_SEQ;
 CREATE TABLE ADM_USER_LOG(ID NUMERIC(19,0) NOT NULL DEFAULT nextval('ADM_USER_LOG_SEQ'), USER_NAME VARCHAR(255) NOT NULL,USER_ID NUMERIC(19,0) NOT NULL,DATE_EXECUTED DATE,ACTION VARCHAR(255),URL VARCHAR(255) NOT NULL, OBJECT_ID VARCHAR(50),PRIMARY KEY (ID));
 ALTER SEQUENCE ADM_USER_LOG_SEQ OWNED BY ADM_USER_LOG.ID;
 
 CREATE SEQUENCE USER_LOG_SEQ start with 1 increment by 1;
+
