@@ -1,22 +1,21 @@
 /*----------IMPORT FOR POSTGRES-----------*/
 
 
-INSERT INTO billing_language (id, language_code, description_en) VALUES (1, 'FR', 'french');
-INSERT INTO billing_language (id, language_code, description_en) VALUES (2, 'EN', 'english');
+INSERT INTO billing_language (id, version, disabled, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (1, 1, true,now(), NULL, 'FR', 'descriptionFR', NULL, NULL);
+INSERT INTO billing_language (id, version, disabled, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (2, 1, true,now(), NULL, 'EN', 'descriptionEN', NULL, NULL);
 
 DROP SEQUENCE BILLING_LANGUAGE_SEQ;
 CREATE SEQUENCE BILLING_LANGUAGE_SEQ START WITH 3;
 
 
-INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (1, 'EUR', NULL, 'euro', true);
-INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (2, 'USD', NULL, 'dollar', true);
+INSERT INTO adm_currency (id, version, currency_code, iso_code, description_en, system_currency, disabled, created, updated, creator_id,  updater_id) VALUES (1, 1, 'tx1', NULL, 'descirption_tax', true, true, now(), NULL, NULL, NULL);
+INSERT INTO adm_currency (id, version, currency_code, iso_code, description_en, system_currency, disabled, created, updated, creator_id,  updater_id) VALUES (2, 1, 'tx2', NULL, 'description_tax2', true, true, now(), NULL, NULL, NULL);
 
 DROP SEQUENCE ADM_CURRENCY_SEQ;
 CREATE SEQUENCE ADM_CURRENCY_SEQ START WITH 3;
 
-INSERT INTO billing_country (id, country_code, description_en, language_id, currency_id) VALUES (1, 'FR', 'description_fr', NULL, NULL);
-INSERT INTO billing_country (id, country_code, description_en, language_id, currency_id) VALUES (2, 'EN', 'description_en', NULL, NULL);
-
+INSERT INTO billing_country (id, version, disabled, created, updated, country_code, description_en, language_id, creator_id, updater_id, currency_id) VALUES (1, 1, true, now(), NULL, 'FR', 'description_france',NULL, NULL, NULL, NULL);
+INSERT INTO billing_country (id, version, disabled, created, updated, country_code, description_en, language_id, creator_id, updater_id, currency_id) VALUES (2, 1, true, now(), NULL, 'EN', 'description_en',NULL, NULL, NULL, NULL);
 
 DROP SEQUENCE BILLING_COUNTRY_SEQ;
 CREATE SEQUENCE BILLING_COUNTRY_SEQ START WITH 3;

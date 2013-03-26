@@ -20,13 +20,13 @@
     	
     		<custom:searchPanel label="#{messages['currency.search']}" newButtonView="/pages/admin/currencies/currencyDetail.xhtml">
     			<custom:searchField label="#{messages['currency.code']}" field="code" />
-    			<custom:searchField label="#{messages['currency.isoCode']}" field="isoCode" />
+
     			<custom:searchField label="#{messages['currency.name']}" field="name" />
     		</custom:searchPanel>
     		
 	    	<custom:dataList dataModel="#{currencies}">
 	    		<custom:column label="#{messages['currency.code']}" field="code" />
-	    		<custom:column label="#{messages['currency.isoCode']}" field="isoCode" />
+	    		
 	    		<custom:column label="#{messages['currency.name']}" field="name" />
 				<custom:actionsColumn editView="/pages/admin/currencies/currencyDetail.xhtml"  />    	
 		    </custom:dataList>
