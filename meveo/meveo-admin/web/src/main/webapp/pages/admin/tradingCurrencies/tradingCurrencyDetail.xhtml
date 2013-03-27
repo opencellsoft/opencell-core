@@ -39,13 +39,16 @@
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
 			backingBean="#{tradingCurrencyBean}" entity="#{tradingCurrency}">
 
-			<custom:formEntityField id="currencySelectedId"
+			<custom:formEntityField id="currencySelectedId" edit="false"
 				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
 				childField="currencyCode" popup="true" popupId="currencyPopup"
 				showOnlyOnConsult="true" clearButton="true" required="true" />
 			<custom:formField
 				label="#{messages['tradingCurrency.prDescription']}"
-				field="prDescription" />
+				field="prDescription" size="100" />
+			<custom:formField
+				label="#{messages['tradingCurrency.prCurrencyToThis']}"
+				field="prCurrencyToThis" />
 		</custom:formPanel>
 
 	</ui:define>

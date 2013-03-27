@@ -16,6 +16,8 @@
 
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,9 +53,20 @@ public class TradingCurrency  extends AuditableEntity{
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
 
+	@Column(name = "PR_CURRENCY_TO_THIS", precision = 23, scale = 12)
+	private BigDecimal prCurrencyToThis;
+	
 	@Transient
 	String currencyCode;
  
+	public BigDecimal getPrCurrencyToThis() {
+		return prCurrencyToThis;
+	}
+
+	public void setPrCurrencyToThis(BigDecimal prCurrencyToThis) {
+		this.prCurrencyToThis = prCurrencyToThis;
+	}
+
 	public String getPrDescription() {
 		return prDescription;
 	}

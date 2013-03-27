@@ -21,18 +21,22 @@
 
 			<custom:searchPanel label="#{messages['tradingCurrency.search']}"
 				newButtonView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml">
-				<custom:searchEntityField
+				<custom:searchField
 					label="#{messages['tradingCurrency.trCurrencyCode']}"
-					field="currency" childField="currencyCode"
-					service="#{currencyService}" />
+					field="currencyCode"
+					 />
 
 			</custom:searchPanel>
 
 			<custom:dataList dataModel="#{tradingCurrencies}">
 				<custom:column label="#{messages['tradingCurrency.trCurrencyCode']}"
-					field="currency" childField="currencyCode" />
+					field="currency" childField="currencyCode" width="10%"/>
 				<custom:column label="#{messages['tradingCurrency.prDescription']}"
 					field="prDescription" />
+				<custom:column label="#{messages['tradingCurrency.disabled']}"
+					field="disabled" isMessage="true"/>
+				<custom:column label="#{messages['tradingCurrency.prCurrencyToThis']}"
+					field="prCurrencyToThis" /> 
 				<custom:actionsColumn
 					editView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml"
 					permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}" />
