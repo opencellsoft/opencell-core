@@ -31,6 +31,7 @@ import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.Calendar;
@@ -51,17 +52,19 @@ public class RecurringChargeCron {
 	@EJB
 	private ChargeApplicationService chargeApplicationService;
 
-    @Inject
-    protected Logger log;
-    
+	@Inject
+	protected Logger log;
+
+	@Inject
+	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+
 	public void recurringChargeApplication() {
 		log.debug("start recurringChargeApplication....");
 		DateFormat sdf = SimpleDateFormat.getDateInstance();
 		try {
 			// TODO: ajouter le filtre sur nextapplicationDate<today+1
 			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
-					.findByStatus(InstanceStatusEnum.ACTIVE,
-							DateUtils.addDaysToDate(new Date(), 1));
+					.findByStatus(InstanceStatusEnum.ACTIVE, DateUtils.addDaysToDate(new Date(), 1));
 
 			for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
 				RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
@@ -74,101 +77,78 @@ public class RecurringChargeCron {
 				}
 				Date applicationDate = null;
 				if (recurringChargeTemplate.getApplyInAdvance()) {
-					applicationDate = activeRecurringChargeInstance
-							.getNextChargeDate();
+					applicationDate = activeRecurringChargeInstance.getNextChargeDate();
 				} else {
-					applicationDate = activeRecurringChargeInstance
-							.getChargeDate();
+					applicationDate = activeRecurringChargeInstance.getChargeDate();
 				}
 
 				log.debug("nextapplicationDate=" + applicationDate);
 
-				applicationDate = DateUtils.parseDateWithPattern(
-						applicationDate, "dd/MM/yyyy");
+				applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
 
 				ServiceTemplate serviceTemplate = activeRecurringChargeInstance
 						.getServiceInstance().getServiceTemplate();
 				Calendar durationTermCalendar = null;
 				Date nextDurationDate = null;
 				try {
-					durationTermCalendar = serviceTemplate
-							.getDurationTermCalendar();
-					nextDurationDate = durationTermCalendar
-							.nextCalendarDate(applicationDate);
+					durationTermCalendar = serviceTemplate.getDurationTermCalendar();
+					nextDurationDate = durationTermCalendar.nextCalendarDate(applicationDate);
 					log.debug("nextDurationDate=" + nextDurationDate);
 				} catch (Exception e) {
-					log.error(
-							"Cannot find duration term calendar for serviceTemplate.id=#0",
+					log.error("Cannot find duration term calendar for serviceTemplate.id=#0",
 							serviceTemplate.getId());
 				}
 				if (!recurringChargeTemplate.getApplyInAdvance()) {
-					chargeApplicationService
-							.applyNotAppliedinAdvanceReccuringCharge(
-									activeRecurringChargeInstance, false,
-									recurringChargeTemplate, null);
+					chargeApplicationService.applyNotAppliedinAdvanceReccuringCharge(
+							activeRecurringChargeInstance, false, recurringChargeTemplate, null);
 				} else if (nextDurationDate != null
-						&& nextDurationDate.getTime() >= applicationDate
-								.getTime()) {
-					chargeApplicationService.applyReccuringCharge(
-							activeRecurringChargeInstance, false,
-							recurringChargeTemplate, null);
+						&& nextDurationDate.getTime() >= applicationDate.getTime()) {
+					chargeApplicationService.applyReccuringCharge(activeRecurringChargeInstance,
+							false, recurringChargeTemplate, null);
 
 				} else {
-					Date previousapplicationDate = recurringChargeTemplate
-							.getCalendar()
-							.previousCalendarDate(
-									DateUtils
-											.addDaysToDate(applicationDate, -1));
+					Date previousapplicationDate = recurringChargeTemplate.getCalendar()
+							.previousCalendarDate(DateUtils.addDaysToDate(applicationDate, -1));
 					InvoiceSubCategory invoiceSubCat = activeRecurringChargeInstance
-							.getRecurringChargeTemplate()
-							.getInvoiceSubCategory();
-					Tax tax = invoiceSubCat.getTax();
+							.getRecurringChargeTemplate().getInvoiceSubCategory();
+					InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+							.findInvoiceSubCategoryCountry(invoiceSubCat.getId(),
+									activeRecurringChargeInstance.getSubscription()
+											.getUserAccount().getBillingAccount()
+											.getTradingCountry().getId());
+					Tax tax = invoiceSubcategoryCountry.getTax();
 
-					String param2 = "du "
-							+ sdf.format(previousapplicationDate)
-							+ " au "
-							+ sdf.format(DateUtils.addDaysToDate(
-									applicationDate, -1));
+					String param2 = "du " + sdf.format(previousapplicationDate) + " au "
+							+ sdf.format(DateUtils.addDaysToDate(applicationDate, -1));
 
 					ChargeApplication chargeApplication = new ChargeApplication(
 							activeRecurringChargeInstance.getCode(),
 							activeRecurringChargeInstance.getDescription(),
-							activeRecurringChargeInstance.getServiceInstance()
-									.getSubscription(),
-							activeRecurringChargeInstance,
-							activeRecurringChargeInstance.getCode(),
-							ApplicationChgStatusEnum.WAITING,
-							ApplicationTypeEnum.RECURRENT,
+							activeRecurringChargeInstance.getServiceInstance().getSubscription(),
+							activeRecurringChargeInstance, activeRecurringChargeInstance.getCode(),
+							ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.RECURRENT,
 							previousapplicationDate,
 							activeRecurringChargeInstance.getAmountWithoutTax(),
-							activeRecurringChargeInstance.getAmount2(),
-							activeRecurringChargeInstance.getServiceInstance()
-									.getQuantity(), tax.getCode(), tax
-									.getPercent(), null, applicationDate,
-							invoiceSubCat, "1", param2, null, null,
-							activeRecurringChargeInstance.getCriteria1(),
+							activeRecurringChargeInstance.getPrAmountWithoutTax(),
+							activeRecurringChargeInstance.getServiceInstance().getQuantity(),
+							tax.getCode(), tax.getPercent(), null, applicationDate, invoiceSubCat,
+							"1", param2, null, null, activeRecurringChargeInstance.getCriteria1(),
 							activeRecurringChargeInstance.getCriteria2(),
 							activeRecurringChargeInstance.getCriteria3());
 					log.info("set application date to "
-							+ activeRecurringChargeInstance
-									.getServiceInstance().getSubscriptionDate());
-					chargeApplication
-							.setSubscriptionDate(activeRecurringChargeInstance
-									.getServiceInstance().getSubscriptionDate());
-					chargeApplicationService
-							.create(chargeApplication, null,
-									activeRecurringChargeInstance
-											.getRecurringChargeTemplate()
-											.getProvider());
+							+ activeRecurringChargeInstance.getServiceInstance()
+									.getSubscriptionDate());
+					chargeApplication.setSubscriptionDate(activeRecurringChargeInstance
+							.getServiceInstance().getSubscriptionDate());
+					chargeApplicationService.create(chargeApplication, null,
+							activeRecurringChargeInstance.getRecurringChargeTemplate()
+									.getProvider());
 
-					Date nextApplicationDate = recurringChargeTemplate
-							.getCalendar().nextCalendarDate(applicationDate);
-					activeRecurringChargeInstance
-							.setChargeDate(applicationDate);
-					activeRecurringChargeInstance
-							.setNextChargeDate(nextApplicationDate);
-					recurringChargeInstanceService
-							.update(activeRecurringChargeInstance);
+					Date nextApplicationDate = recurringChargeTemplate.getCalendar()
+							.nextCalendarDate(applicationDate);
+					activeRecurringChargeInstance.setChargeDate(applicationDate);
+					activeRecurringChargeInstance.setNextChargeDate(nextApplicationDate);
+					recurringChargeInstanceService.update(activeRecurringChargeInstance);
 				}
 
 			}

@@ -45,7 +45,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @Entity
 @Table(name = "BILLING_BILLING_ACCOUNT")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_ACCOUNT_SEQ")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "BILLING_BILLING_ACCOUNT_SEQ")
 public class BillingAccount extends AccountEntity {
 
 	public static final String ACCOUNT_TYPE = "billingAccount.type";
@@ -91,18 +92,21 @@ public class BillingAccount extends AccountEntity {
 	private PaymentMethodEnum paymentMethod;
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	//TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	// TODO : Add orphanRemoval annotation.
+	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();
 
 	@OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Invoice> invoices = new ArrayList<Invoice>();
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	//TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	// TODO : Add orphanRemoval annotation.
+	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<BillingRunList> billingRunLists = new ArrayList<BillingRunList>();
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	//TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	// TODO : Add orphanRemoval annotation.
+	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
 	@Column(name = "DISCOUNT_RATE", precision = 19, scale = 8)
@@ -111,6 +115,14 @@ public class BillingAccount extends AccountEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_CYCLE")
 	private BillingCycle billingCycle;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	private TradingCountry tradingCountry;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	private TradingLanguage tradingLanguage;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN")
@@ -281,4 +293,19 @@ public class BillingAccount extends AccountEntity {
 		this.invoiceAgregates = invoiceAgregates;
 	}
 
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
 }

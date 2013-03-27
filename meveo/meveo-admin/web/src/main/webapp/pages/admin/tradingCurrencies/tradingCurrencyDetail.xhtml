@@ -1,0 +1,53 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<c:if test="${edit}">
+			<custom:entityPopup id="currencyPopup"
+				header="#{messages['currency.popup.header']}"
+				backingBean="#{currencyBean}" dataModel="#{currencies}"
+				searchField1Label="#{messages['currency.currencyCode']}"
+				searchField1="currencyCode"
+				column1Label="#{messages['currency.currencyCode']}"
+				column1="currencyCode"
+				column2Label="#{messages['currency.DescriotionEn']}"
+				column2="descriotionEn" filtersMap="#{currencyBean.filters}">
+				<!-- select link -->
+				<a:commandLink value="#{messages['commons.select']}"
+					reRender="currenciesFormId"
+					action="#{tradingCurrencyBean.populateCurrencies(entity)}"
+					oncomplete="Richfaces.hideModalPanel('currencyPopup')">
+				</a:commandLink>
+			</custom:entityPopup>
+		</c:if>
+
+		<custom:formPanel formId="currenciesFormId" edit="#{edit}"
+			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
+			backingBean="#{tradingCurrencyBean}" entity="#{tradingCurrency}">
+
+			<custom:formEntityField id="currencySelectedId"
+				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
+				childField="currencyCode" popup="true" popupId="currencyPopup"
+				showOnlyOnConsult="true" clearButton="true" required="true" />
+			<custom:formField
+				label="#{messages['tradingCurrency.prDescription']}"
+				field="prDescription" />
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>

@@ -13,24 +13,20 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.meveo.service.payments.local;
+package org.meveo.service.admin.impl;
 
-import javax.ejb.Local;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Named;
 
-import org.meveo.service.payments.remote.IMatchingCodeService;
+import org.meveo.model.billing.Language;
+import org.meveo.service.base.PersistenceService;
 
-/**
- * MatchingCode service local interface.
- * 
- * @author anasseh
- * @created 28.11.2010
+/** 
+ * @author MBAREK 
  */
-@Local
-public interface MatchingCodeServiceLocal extends IMatchingCodeService {
-
-	// /////////////////////////////////////////
-	//
-	// add methods in IMatchingCodeService
-	//
-	// /////////////////////////////////////////
+@Stateless
+@LocalBean
+@Named
+public class LanguageService extends PersistenceService<Language> {
 }

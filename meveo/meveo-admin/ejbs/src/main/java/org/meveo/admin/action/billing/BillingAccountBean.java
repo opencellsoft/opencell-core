@@ -50,9 +50,9 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.local.BillingRunServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -92,7 +92,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	private InvoiceService invoiceService;
 
 	@Inject
-	private BillingRunServiceLocal billingRunService;
+	private BillingRunService billingRunService;
 
 	@Inject
 	@CurrentProvider
@@ -108,7 +108,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	private boolean returnToAgency;
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;
@@ -164,7 +164,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	// TODO: @End(beforeRedirect = true, root = false)
 	public String saveOrUpdate() {
 		try {
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
@@ -211,7 +210,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			messages.error(e.getMessage());
+			// messages.error(e.getMessage());
 		}
 
 		return back();
@@ -274,7 +273,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	@Produces
 	@Named("getInvoices")
 	public List<Invoice> getInvoices() {
-
 		return entity != null ? entity.getInvoices() : null;
 	}
 

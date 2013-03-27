@@ -25,9 +25,11 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.TaxService;
 
 /**
@@ -42,7 +44,6 @@ import org.meveo.service.catalog.impl.TaxService;
 @Named
 @ConversationScoped
 public class TaxBean extends BaseBean<Tax> {
-
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Injected @{link Tax} service. Extends {@link PersistenceService}.
@@ -50,6 +51,10 @@ public class TaxBean extends BaseBean<Tax> {
 	@Inject
 	private TaxService taxService;
 
+	@Inject
+	private CatMessagesService catMessagesService;
+
+	private String descriptionFr;
 	private String[] accountingCodeFields = new String[7];
 	private String separator;
 
@@ -73,17 +78,59 @@ public class TaxBean extends BaseBean<Tax> {
 	@Produces
 	@Named("tax")
 	public Tax init() {
-		initEntity();
+		Tax tax = initEntity();
+		languageMessagesMap.clear();
+		if (tax.getId() != null) {
+			for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName()
+					+ "_" + tax.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			}
+		}
 		parseAccountingCode();
-		return entity;
+		return tax;
 	}
 
+	/**
+	 * Conversation is ended and user is redirected from edit to his previous
+	 * window.
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 */
+	public String saveOrUpdate() {
+		String back = null;
+		if (entity.getId() != null) {
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(entity.getClass()
+						.getSimpleName() + "_" + entity.getId(), msgKey);
+				if (catMsg != null) {
+					catMsg.setDescription(description);
+					catMessagesService.update(catMsg);
+				} else {
+					CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName()
+							+ "_" + entity.getId(), msgKey, description);
+					catMessagesService.create(catMessages);
+				}
+			}
+			back = saveOrUpdate(entity);
+		} else {
+			back = saveOrUpdate(entity);
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_"
+						+ entity.getId(), msgKey, description);
+				catMessagesService.create(catMessages);
+			}
+		}
+		return back;
+	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
-	 * @return 
+	 * 
+	 * @return
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
@@ -197,5 +244,13 @@ public class TaxBean extends BaseBean<Tax> {
 
 	public void setAccountingCodeField7(String accountingCodeField7) {
 		this.accountingCodeFields[6] = accountingCodeField7;
+	}
+
+	public String getDescriptionFr() {
+		return descriptionFr;
+	}
+
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
 	}
 }

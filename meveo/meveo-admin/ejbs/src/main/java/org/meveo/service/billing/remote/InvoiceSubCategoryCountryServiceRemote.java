@@ -13,18 +13,19 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.meveo.service.billing.local;
+package org.meveo.service.billing.remote;
 
-import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**
- * @author R.AITYAAZZA
- * @created 29 déc. 10
+ * @author Marouane ALAMI
+ * @created 18-03-2013
  */
-@Local
-public interface InvoiceAgregateServiceLocal extends IPersistenceService<InvoiceAgregate> {
+@Remote
+public interface InvoiceSubCategoryCountryServiceRemote extends IPersistenceService<InvoiceSubcategoryCountry> {
 
 }

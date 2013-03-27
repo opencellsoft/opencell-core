@@ -20,7 +20,7 @@
 			</resource>
 		</resources>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -49,7 +49,7 @@
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-config</artifactId>
 			<classifier>${env}</classifier>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 	<profiles>

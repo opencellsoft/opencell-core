@@ -37,9 +37,9 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.local.InvoiceServiceLocal;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.EmailService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
 
@@ -55,10 +55,10 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 	private BillingAccountService billingAccountService;
 
 	@EJB
-	private InvoiceServiceLocal invoiceService;
+	private InvoiceService invoiceService;
 
 	@EJB
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 	
 	@Inject
 	private ResourceBundle resourceMessages;

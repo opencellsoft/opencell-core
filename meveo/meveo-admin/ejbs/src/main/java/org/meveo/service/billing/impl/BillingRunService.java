@@ -41,8 +41,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.Wallet;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.local.BillingRunServiceLocal;
-import org.meveo.service.billing.local.InvoiceServiceLocal;
 import org.meveo.service.billing.remote.BillingRunServiceRemote;
 import org.meveo.service.crm.impl.ProviderService;
 
@@ -50,9 +48,10 @@ import org.meveo.service.crm.impl.ProviderService;
  * @author R.AITYAAZZA
  * @created 29 d�c. 10
  */
-@Stateless 
+@Stateless
+@LocalBean
 public class BillingRunService extends PersistenceService<BillingRun> implements
-		BillingRunServiceRemote, BillingRunServiceLocal {
+		BillingRunServiceRemote {
 
 	@EJB
 	private RatedTransactionService ratedTransactionService;
@@ -61,7 +60,7 @@ public class BillingRunService extends PersistenceService<BillingRun> implements
 	private ProviderService providerService;
 
 	@EJB
-	InvoiceServiceLocal invoiceService;
+	InvoiceService invoiceService;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun)
 			throws BusinessException {
@@ -74,7 +73,7 @@ public class BillingRunService extends PersistenceService<BillingRun> implements
 		preInvoicingReportsDTO.setBillingAccountNumber(billingRun.getBillingAccountNumber());
 		preInvoicingReportsDTO.setBillableBillingAccountNumber(billingRun
 				.getBillableBillingAcountNumber());
-		preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getAmountWithoutTax());
+		preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getPrAmountWithoutTax());
 
 		Set<BillingRunList> billingRunLists = billingRun.getBillingRunLists();
 
@@ -153,9 +152,10 @@ public class BillingRunService extends PersistenceService<BillingRun> implements
 				for (RatedTransaction ratedTransaction : ratedTransactions) {
 					preInvoicingReportsDTO.getInvoiceSubCategories().add(
 							ratedTransaction.getInvoiceSubCategory());
-					preInvoicingReportsDTO.setSubCategoriesAmountHT(preInvoicingReportsDTO
-							.getSubCategoriesAmountHT()
-							.add(ratedTransaction.getAmount1WithoutTax()));
+					preInvoicingReportsDTO
+							.setSubCategoriesAmountHT(preInvoicingReportsDTO
+									.getSubCategoriesAmountHT().add(
+											ratedTransaction.getAmountWithoutTax()));
 				}
 			}
 		}

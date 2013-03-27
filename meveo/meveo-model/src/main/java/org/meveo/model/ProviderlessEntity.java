@@ -18,11 +18,14 @@ package org.meveo.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
+
+import org.meveo.model.admin.User;
 
 /**
  * Base class for entities that does not have providers.
@@ -32,7 +35,7 @@ import javax.persistence.Version;
  *
  */
 @MappedSuperclass
-public abstract class ProviderlessEntity implements Serializable, IEntity {
+public abstract class ProviderlessEntity implements Serializable, IEntity,IAuditable {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,6 +48,27 @@ public abstract class ProviderlessEntity implements Serializable, IEntity {
     @Version
     @Column(name = "VERSION")
     private Integer version;
+    
+    @Embedded
+	private Auditable auditable;
+
+
+
+	public Auditable getAuditable() {
+		return auditable;
+	}
+
+	public void setAuditable(Auditable auditable) {
+		this.auditable = auditable;
+	}
+
+	public void updateAudit(User u) {
+		if (auditable == null) {
+			auditable = new Auditable(u);
+		} else {
+			auditable.updateWith(u);
+		}
+	}
 
     public Long getId() {
         return id;

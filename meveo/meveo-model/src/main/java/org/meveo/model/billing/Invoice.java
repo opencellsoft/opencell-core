@@ -76,19 +76,19 @@ public class Invoice extends AuditableEntity {
     private Date dueDate;
 
     @Column(name = "AMOUNT", precision = 23, scale = 12)
-    private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal amount;
 
     @Column(name = "DISCOUNT", precision = 23, scale = 12)
-    private BigDecimal discount = BigDecimal.ZERO;
+    private BigDecimal discount;
 
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    private BigDecimal amountWithoutTax;
 
     @Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountTax = BigDecimal.ZERO;
+    private BigDecimal amountTax;
 
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithTax = BigDecimal.ZERO;
+    private BigDecimal amountWithTax;
 
     @Column(name = "PAYMENT_METHOD")
     @Enumerated(EnumType.STRING)
@@ -105,15 +105,74 @@ public class Invoice extends AuditableEntity {
     @Basic(fetch = FetchType.LAZY)
     //private Blob pdfBlob;
     private byte[] pdf;
+     
+    @Column(name = "DISCOUNT_CODE", length = 20)
+    private String discountCode;
     
+    
+    
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX")
+    private Integer prAmountWithoutTax;
+    
+    @Column(name = "PR_AMOUNT_TAX")
+    private Integer prAmountTax;
+    
+    @Column(name = "PR_AMOUNT_WITH_TAX")
+    private Integer prAmountWithTax;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
     
     @Column(name = "INVOICE_TYPE",length = 20)
     private String invoiceType;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
+  
 
-    public List<RatedTransaction> getRatedTransactions() {
+	public String getDiscountCode() {
+		return discountCode;
+	}
+
+	public void setDiscountCode(String discountCode) {
+		this.discountCode = discountCode;
+	}
+
+	public Integer getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
+
+	public void setPrAmountWithoutTax(Integer prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
+
+	public Integer getPrAmountTax() {
+		return prAmountTax;
+	}
+
+	public void setPrAmountTax(Integer prAmountTax) {
+		this.prAmountTax = prAmountTax;
+	}
+
+	public Integer getPrAmountWithTax() {
+		return prAmountWithTax;
+	}
+
+	public void setPrAmountWithTax(Integer prAmountWithTax) {
+		this.prAmountWithTax = prAmountWithTax;
+	}
+
+	public List<RatedTransaction> getRatedTransactions() {
         return ratedTransactions;
     }
 
@@ -311,6 +370,30 @@ public class Invoice extends AuditableEntity {
 
 	public void setInvoiceType(String invoiceType) {
 		this.invoiceType = invoiceType;
+	}
+
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
     
     

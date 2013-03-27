@@ -77,8 +77,8 @@ public class ChargeApplication extends BusinessEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
     private BigDecimal amountWithoutTax;
 
-    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
-    private BigDecimal amount2;
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+    private BigDecimal prAmountWithoutTax;
 
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
@@ -140,14 +140,33 @@ public class ChargeApplication extends BusinessEntity {
      */
     @Column(name = "INPUT_HISTORY_ID")
     private Long inputHistoryId;
-
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "START_DATE")
+    private Date startDate;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "END_DATE")
+    private Date endDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_LANGUAGE_ID")
+    private TradingLanguage tradingLanguage;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    @Column(name = "PR_DESCRIPTION", length = 100)
+	private String prDescription;
+  
     public ChargeApplication() {
         super();
     }
 
     public ChargeApplication(String code, String description, Subscription subscription, ChargeInstance chargeInstance,
             String chargeCode, ApplicationChgStatusEnum status, ApplicationTypeEnum applicationType,
-            Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amount2, int quantity, String taxCode,
+            Date applicationDate, BigDecimal amountWithoutTax, BigDecimal prAmountWithoutTax, int quantity, String taxCode,
             BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3,
             String parameter4, String criteria1, String criteria2, String criteria3) {
@@ -162,7 +181,7 @@ public class ChargeApplication extends BusinessEntity {
         this.status = status;
         this.applicationDate = applicationDate;
         this.amountWithoutTax = amountWithoutTax;
-        this.amount2 = amount2;
+        this.prAmountWithoutTax = prAmountWithoutTax;
         this.parameter1 = parameter1;
         this.parameter2 = parameter2;
         this.parameter3 = parameter3;
@@ -297,15 +316,16 @@ public class ChargeApplication extends BusinessEntity {
         this.amountWithoutTax = amountWithoutTax;
     }
 
-    public BigDecimal getAmount2() {
-        return amount2;
-    }
+   
+    public BigDecimal getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
 
-    public void setAmount2(BigDecimal amount2) {
-        this.amount2 = amount2;
-    }
+	public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
 
-    public ApplicationTypeEnum getApplicationType() {
+	public ApplicationTypeEnum getApplicationType() {
         return applicationType;
     }
 
@@ -435,5 +455,49 @@ public class ChargeApplication extends BusinessEntity {
     public void setInputHistoryId(Long inputHistoryId) {
         this.inputHistoryId = inputHistoryId;
     }
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
+
+	 
+    
+    
     
 }

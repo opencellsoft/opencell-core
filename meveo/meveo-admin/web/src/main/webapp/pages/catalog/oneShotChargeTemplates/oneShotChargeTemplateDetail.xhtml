@@ -31,10 +31,10 @@
 			</a:commandLink>
 		</custom:entityPopup>
 
-		<custom:formPanel edit="#{edit}" label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}" backingBean="#{oneShotChargeTemplateBean}" entity="#{oneShotChargeTemplate}" >
-    			<custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
-    			<custom:formField label="#{messages['chargeTemplate.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
-		    	<custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+			    <custom:formPanel edit="#{edit}" label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}" backingBean="#{oneShotChargeTemplateBean}" entity="#{oneShotChargeTemplate}" >
+			    <custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
+			   <custom:languageFields/>
+			   <custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
     			<custom:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
     			<custom:formField label="#{messages['oneShotChargeTemplate.type']}" field="oneShotChargeTemplateType" required="true" />
     			<custom:panelGroup columns="2">	

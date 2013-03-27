@@ -38,12 +38,15 @@ import org.meveo.model.AuditableEntity;
  * 
  */
 @Entity
-@Table(name = "CAT_DISCOUNT_PLAN_MATRIX", uniqueConstraints = { @UniqueConstraint(columnNames = { "EVENT_CODE",
-        "START_SUBSCRIPTION_DATE", "END_SUBSCRIPTION_DATE", "PROVIDER_ID"}) })
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DISCOUNT_PLAN_MATRIX_SEQ")
+@Table(name = "CAT_DISCOUNT_PLAN_MATRIX", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"EVENT_CODE", "START_SUBSCRIPTION_DATE", "END_SUBSCRIPTION_DATE", "PROVIDER_ID" }) })
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "CAT_DISCOUNT_PLAN_MATRIX_SEQ")
 public class DiscountPlanMatrix extends AuditableEntity {
-
 	private static final long serialVersionUID = 1L;
+
+	@Column(name = "BUSINESS_INTERMEDIARY_ID")
+	private Integer businessIntermediaryId;
 
 	@Column(name = "EVENT_CODE", length = 20, nullable = false)
 	@Size(max = 20, min = 1)
@@ -68,6 +71,14 @@ public class DiscountPlanMatrix extends AuditableEntity {
 
 	public String getEventCode() {
 		return eventCode;
+	}
+
+	public Integer getBusinessIntermediaryId() {
+		return businessIntermediaryId;
+	}
+
+	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
+		this.businessIntermediaryId = businessIntermediaryId;
 	}
 
 	public void setEventCode(String eventCode) {
@@ -110,8 +121,7 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((eventCode == null) ? 0 : eventCode.hashCode());
+		result = prime * result + ((eventCode == null) ? 0 : eventCode.hashCode());
 		return result;
 	}
 

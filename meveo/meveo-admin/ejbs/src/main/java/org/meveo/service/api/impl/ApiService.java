@@ -76,7 +76,7 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 /**
@@ -91,7 +91,7 @@ public class ApiService implements ApiServiceRemote {
 	private CustomerService customerService;
 
 	@EJB
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@EJB
 	private BillingAccountService billingAccountService;

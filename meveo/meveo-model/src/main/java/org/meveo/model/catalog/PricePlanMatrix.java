@@ -20,6 +20,9 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,6 +31,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.billing.TradingCurrency;
 
 /**
  * Price plan matrix entity used when rating transactions.
@@ -38,7 +42,8 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "CAT_PRICE_PLAN_MATRIX")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "CAT_PRICE_PLAN_MATRIX_SEQ")
 public class PricePlanMatrix extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -87,6 +92,21 @@ public class PricePlanMatrix extends AuditableEntity {
 	@Column(name = "AMOUNT_WITHOUT_TAX2", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal amountWithoutTax2;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_CURRENCY_ID")
+	private TradingCurrency tradingCurrency;
+
+	@Column(name = "BUSINESS_INTERMEDIARY_ID")
+	private Integer businessIntermediaryId;
+
+	public Integer getBusinessIntermediaryId() {
+		return businessIntermediaryId;
+	}
+
+	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
+		this.businessIntermediaryId = businessIntermediaryId;
+	}
 
 	public String getEventCode() {
 		return eventCode;
@@ -184,38 +204,32 @@ public class PricePlanMatrix extends AuditableEntity {
 		this.amountWithoutTax2 = amountWithoutTax2;
 	}
 
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
+		result = prime * result + ((criteria2Value == null) ? 0 : criteria2Value.hashCode());
+		result = prime * result + ((criteria3Value == null) ? 0 : criteria3Value.hashCode());
+		result = prime * result + ((endRatingDate == null) ? 0 : endRatingDate.hashCode());
 		result = prime * result
-				+ ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
+				+ ((endSubscriptionDate == null) ? 0 : endSubscriptionDate.hashCode());
+		result = prime * result + ((eventCode == null) ? 0 : eventCode.hashCode());
 		result = prime * result
-				+ ((criteria2Value == null) ? 0 : criteria2Value.hashCode());
+				+ ((maxSubscriptionAgeInMonth == null) ? 0 : maxSubscriptionAgeInMonth.hashCode());
 		result = prime * result
-				+ ((criteria3Value == null) ? 0 : criteria3Value.hashCode());
+				+ ((minSubscriptionAgeInMonth == null) ? 0 : minSubscriptionAgeInMonth.hashCode());
+		result = prime * result + ((startRatingDate == null) ? 0 : startRatingDate.hashCode());
 		result = prime * result
-				+ ((endRatingDate == null) ? 0 : endRatingDate.hashCode());
-		result = prime
-				* result
-				+ ((endSubscriptionDate == null) ? 0 : endSubscriptionDate
-						.hashCode());
-		result = prime * result
-				+ ((eventCode == null) ? 0 : eventCode.hashCode());
-		result = prime
-				* result
-				+ ((maxSubscriptionAgeInMonth == null) ? 0
-						: maxSubscriptionAgeInMonth.hashCode());
-		result = prime
-				* result
-				+ ((minSubscriptionAgeInMonth == null) ? 0
-						: minSubscriptionAgeInMonth.hashCode());
-		result = prime * result
-				+ ((startRatingDate == null) ? 0 : startRatingDate.hashCode());
-		result = prime
-				* result
-				+ ((startSubscriptionDate == null) ? 0 : startSubscriptionDate
-						.hashCode());
+				+ ((startSubscriptionDate == null) ? 0 : startSubscriptionDate.hashCode());
 		return result;
 	}
 
@@ -261,14 +275,12 @@ public class PricePlanMatrix extends AuditableEntity {
 		if (maxSubscriptionAgeInMonth == null) {
 			if (other.maxSubscriptionAgeInMonth != null)
 				return false;
-		} else if (!maxSubscriptionAgeInMonth
-				.equals(other.maxSubscriptionAgeInMonth))
+		} else if (!maxSubscriptionAgeInMonth.equals(other.maxSubscriptionAgeInMonth))
 			return false;
 		if (minSubscriptionAgeInMonth == null) {
 			if (other.minSubscriptionAgeInMonth != null)
 				return false;
-		} else if (!minSubscriptionAgeInMonth
-				.equals(other.minSubscriptionAgeInMonth))
+		} else if (!minSubscriptionAgeInMonth.equals(other.minSubscriptionAgeInMonth))
 			return false;
 		if (startRatingDate == null) {
 			if (other.startRatingDate != null)

@@ -38,7 +38,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
 import org.meveo.service.billing.remote.SubscriptionServiceRemote;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
@@ -48,7 +47,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
  */
 @Stateless @LocalBean
 public class SubscriptionService extends BusinessService<Subscription>
-		implements SubscriptionServiceLocal, SubscriptionServiceRemote {
+		implements SubscriptionServiceRemote {
 
 	@EJB
 	private UserAccountService userAccountService;

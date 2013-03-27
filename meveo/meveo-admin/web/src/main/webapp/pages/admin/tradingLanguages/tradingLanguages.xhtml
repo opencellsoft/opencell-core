@@ -1,0 +1,36 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:custom="http://manaty.net/custom"
+    template="/layout/template.xhtml">
+    
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['comLanguage.title']}" backingBean="#{tradingLanguageBean}">
+    	
+    		<custom:searchPanel label="#{messages['comLanguage.search']}" newButtonView="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml">
+    			<custom:searchEntityField label="#{messages['comLanguage.languageCode']}" field="language" childField="languageCode"  service="#{languageService}"/>
+    				 
+    		</custom:searchPanel>	
+    		
+    		<custom:dataList dataModel="#{tradingLanguages}">
+    			<custom:column label="#{messages['comLanguage.languageCode']}" field="language" childField="languageCode"  />
+    			<custom:column label="#{messages['comLanguage.prDescription']}" field="prDescription" />
+    			<custom:actionsColumn editView="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}"/>
+		    </custom:dataList>
+		   
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

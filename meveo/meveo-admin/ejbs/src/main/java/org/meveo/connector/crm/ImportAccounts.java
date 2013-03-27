@@ -54,7 +54,7 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 /**
@@ -66,7 +66,7 @@ import org.slf4j.Logger;
 public class ImportAccounts extends InputFiles {
 
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
 	private BillingAccountService billingAccountService;

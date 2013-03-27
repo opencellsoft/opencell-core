@@ -77,8 +77,8 @@ public class ChargeInstance extends BusinessEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
     protected BigDecimal amountWithoutTax;
 
-    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
-    protected BigDecimal amount2;
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+    protected BigDecimal prAmountWithoutTax;
 
     @Column(name = "CRITERIA_1")
     protected String criteria1;
@@ -91,6 +91,18 @@ public class ChargeInstance extends BusinessEntity {
 
     @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ChargeApplication> chargeApplications = new HashSet<ChargeApplication>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_LANGUAGE_ID")
+    private TradingLanguage tradingLanguage;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    
+    @Column(name = "PR_DESCRIPTION", length = 100)
+	private String prDescription;
 
     public String getCriteria1() {
         return criteria1;
@@ -124,15 +136,17 @@ public class ChargeInstance extends BusinessEntity {
         this.amountWithoutTax = amountWithoutTax;
     }
 
-    public BigDecimal getAmount2() {
-        return amount2;
-    }
+  
 
-    public void setAmount2(BigDecimal amount2) {
-        this.amount2 = amount2;
-    }
+    public BigDecimal getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
 
-    public InstanceStatusEnum getStatus() {
+	public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
+
+	public InstanceStatusEnum getStatus() {
         return status;
     }
 
@@ -182,5 +196,32 @@ public class ChargeInstance extends BusinessEntity {
     public void setChargeApplications(Set<ChargeApplication> chargeApplications) {
         this.chargeApplications = chargeApplications;
     }
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
+
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+	
+	
+    
 
 }

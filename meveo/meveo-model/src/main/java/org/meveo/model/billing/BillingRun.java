@@ -86,14 +86,14 @@ public class BillingRun extends AuditableEntity {
     @Column(name = "PRODUCIBLE_AMOUNT_WITH_TAX", precision = 23, scale = 12)
     private BigDecimal producibleAmountWithTax;
 
-    @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax;
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+    private BigDecimal prAmountWithoutTax;
 
-    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal AmountWithTax;
+    @Column(name = "PR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+    private BigDecimal prAmountWithTax;
 
-    @Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal AmountTax;
+    @Column(name = "PR_AMOUNT_TAX", precision = 23, scale = 12)
+    private BigDecimal prAmountTax;
 
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<Invoice>();
@@ -122,6 +122,21 @@ public class BillingRun extends AuditableEntity {
     @Column(name = "REJECTION_REASON")
     private String rejectionReason;
 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
+    
+ 
     @Transient
     PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
@@ -215,32 +230,12 @@ public class BillingRun extends AuditableEntity {
     public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
         this.producibleAmountWithTax = producibleAmountWithTax;
     }
+ 
+    public void setPrAmountTax(BigDecimal prAmountTax) {
+		this.prAmountTax = prAmountTax;
+	}
 
-    public BigDecimal getAmountWithoutTax() {
-        return amountWithoutTax;
-    }
-
-    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.amountWithoutTax = amountWithoutTax;
-    }
-
-    public BigDecimal getAmountWithTax() {
-        return AmountWithTax;
-    }
-
-    public void setAmountWithTax(BigDecimal amountWithTax) {
-        AmountWithTax = amountWithTax;
-    }
-
-    public BigDecimal getAmountTax() {
-        return AmountTax;
-    }
-
-    public void setAmountTax(BigDecimal amountTax) {
-        AmountTax = amountTax;
-    }
-
-    public List<Invoice> getInvoices() {
+	public List<Invoice> getInvoices() {
         return invoices;
     }
 
@@ -319,5 +314,52 @@ public class BillingRun extends AuditableEntity {
     public void setRejectionReason(String rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
+
+	public BigDecimal getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
+
+	public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
+
+	public BigDecimal getPrAmountWithTax() {
+		return prAmountWithTax;
+	}
+
+	public void setPrAmountWithTax(BigDecimal prAmountWithTax) {
+		this.prAmountWithTax = prAmountWithTax;
+	}
+
+	 
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+	public BigDecimal getPrAmountTax() {
+		return prAmountTax;
+	}
+    
+    
 
 }
