@@ -87,9 +87,6 @@
 		<class>org.meveo.model.catalog.OneShotChargeTemplate</class>
 		<class>org.meveo.model.catalog.DiscountPlanMatrix</class>
 		<class>org.meveo.model.catalog.PricePlanMatrix</class>
-		<class>org.meveo.model.catalog.UsageDiscountPlanItem</class>
-		<class>org.meveo.model.catalog.UsagePricePlanItem</class>
-		<class>org.meveo.model.catalog.PriceCode</class>
 		<class>org.meveo.model.catalog.RecurringChargeTemplate</class>
 		<class>org.meveo.model.catalog.ServiceTemplate</class>
 		<class>org.meveo.model.communication.Campaign</class>
@@ -139,7 +136,6 @@
 		<class>org.meveo.model.shared.Title</class>
 		<class>org.meveo.model.security.Permission</class>
 		<class>org.meveo.model.payments.BankOperation</class>  
-		<class>org.meveo.model.rating.EDRRatingPlan</class> 
 		<class>org.meveo.model.mediation.Access</class> 
 		<class>org.meveo.model.mediation.ZonningPlan</class>
 		<class>org.meveo.model.mediation.TimePlan</class>

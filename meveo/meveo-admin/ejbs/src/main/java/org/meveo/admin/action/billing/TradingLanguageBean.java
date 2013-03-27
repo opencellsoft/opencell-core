@@ -15,6 +15,9 @@
 */
 package org.meveo.admin.action.billing;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.End;
@@ -23,12 +26,18 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.local.TradingLanguageServiceLocal;
+import org.meveo.service.crm.local.ProviderServiceLocal;
 
 /**
  * Standard backing bean for {@link TradingLanguage} (extends {@link BaseBean} that
@@ -52,6 +61,9 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
      */
     @In
     private TradingLanguageServiceLocal tradingLanguageService;
+    
+    @In
+    private ProviderServiceLocal providerService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this
@@ -105,9 +117,37 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-        return saveOrUpdate(entity);
+    	String back=null; 
+
+		boolean alreadyExist=false;
+		currentProvider=providerService.findById(currentProvider.getId());
+    		for(TradingLanguage tr : currentProvider.getTradingLanguage()){
+        		if(tr.getLanguage().getLanguageCode().equals(entity.getLanguage().getLanguageCode())
+        				&& !tr.getId().equals(entity.getId())){
+        			alreadyExist=true;
+        			break;
+        		}
+    		}
+			if(alreadyExist){
+				 statusMessages.addFromResourceBundle(Severity.ERROR, "cette langue existe déjà pour ce provider");
+	                
+			}else{
+				back=saveOrUpdate(entity);
+				statusMessages.addFromResourceBundle("update.successful");
+				 }
+    	   
+    
+        return back;
     }
 
+	public void populateLanguages(Language language){
+	      log.info("populatLanguages language", language!=null?language.getLanguageCode():null);
+		  if(language!=null){
+		      entity.setLanguage(language);
+		      entity.setPrDescription(language.getDescriptionEn());
+	     }
+	}
+    
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */

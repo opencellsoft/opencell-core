@@ -1,29 +1,28 @@
 /*----------IMPORT FOR POSTGRES-----------*/
 
 
-INSERT INTO billing_language (id, language_code, description_en) VALUES (1, 'FR', 'french');
-INSERT INTO billing_language (id, language_code, description_en) VALUES (2, 'EN', 'english');
+INSERT INTO adm_language (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (1, 1, now(), NULL, 'FR', 'descriptionFR', NULL, NULL);
+INSERT INTO adm_language (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (2, 1, now(), NULL, 'EN', 'descriptionEN', NULL, NULL);
 
 DROP SEQUENCE BILLING_LANGUAGE_SEQ;
 CREATE SEQUENCE BILLING_LANGUAGE_SEQ START WITH 3;
 
 
-INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (1, 'EUR', NULL, 'euro', true);
-INSERT INTO adm_currency (id, currency_code, iso_code, description_en, system_currency) VALUES (2, 'USD', NULL, 'dollar', true);
+INSERT INTO adm_currency (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (1, 1, 'EUR', 'euro', true, now(), NULL, NULL, NULL);
+INSERT INTO adm_currency (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (2, 1, 'USD', 'dollar', true, now(), NULL, NULL, NULL);
 
 DROP SEQUENCE ADM_CURRENCY_SEQ;
 CREATE SEQUENCE ADM_CURRENCY_SEQ START WITH 3;
 
-INSERT INTO billing_country (id, country_code, description_en, language_id, currency_id) VALUES (1, 'FR', 'description_fr', NULL, NULL);
-INSERT INTO billing_country (id, country_code, description_en, language_id, currency_id) VALUES (2, 'EN', 'description_en', NULL, NULL);
-
+INSERT INTO adm_country (id, version, created, updated, country_code, description_en, language_id, creator_id, updater_id, currency_id) VALUES (1, 1, now(), NULL, 'FR', 'description_fr',NULL, NULL, NULL, NULL);
+INSERT INTO adm_country (id, version, created, updated, country_code, description_en, language_id, creator_id, updater_id, currency_id) VALUES (2, 1, now(), NULL, 'EN', 'description_en',NULL, NULL, NULL, NULL);
 
 DROP SEQUENCE BILLING_COUNTRY_SEQ;
 CREATE SEQUENCE BILLING_COUNTRY_SEQ START WITH 3;
 
 
 INSERT INTO crm_provider (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id, customer_account_id, user_account_id, creator_id, customer_id, language_id, billing_account_id) VALUES (1, 1, false, now(), NULL, 'MYCOMPANY', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'PROV1', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, 1, NULL);
-INSERT INTO crm_provider (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id, customer_account_id, user_account_id, creator_id, customer_id, language_id, billing_account_id) VALUES (2, 1, false,now(), NULL, 'OTHERCOPANY', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'CIC', '54321', '22222222222', '22', '22', '22', 'owner2', 'CIC', '12', '2222', 'PROV22', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 2, NULL, 2, NULL, NULL, NULL, NULL, NULL, 2, NULL);
+INSERT INTO crm_provider (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id, customer_account_id, user_account_id, creator_id, customer_id, language_id, billing_account_id) VALUES (2, 1, false,now(), NULL, 'OTHERCOPANY', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'CIC', '54321', '22222222222', '22', '22', '22', 'owner2', 'CIC', '12', '2222', 'PROV22', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 2, NULL, 2, NULL, NULL, NULL, NULL, NULL, 2, NULL);
 
 DROP SEQUENCE CRM_PROVIDER_SEQ;
 CREATE SEQUENCE CRM_PROVIDER_SEQ start with 3 increment by 1;

@@ -18,12 +18,15 @@ package org.meveo.model.admin;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.Auditable;
+import org.meveo.model.IEntity;
 import org.meveo.model.ProviderlessEntity;
 
 /**
@@ -35,23 +38,14 @@ import org.meveo.model.ProviderlessEntity;
 @Entity
 @Table(name = "ADM_CURRENCY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_CURRENCY_SEQ")
-public class Currency implements Serializable {
+public class Currency extends ProviderlessEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
-    @Column(name = "ID")
-    private Long id;
-    
-    
+  
     /** Currency code e.g. EUR for euros. */
     @Column(name = "CURRENCY_CODE", length = 3, unique = true)
     private String currencyCode;
-
-    /** Currency ISO code e.g. 987 for euros. */
-    @Column(name = "ISO_CODE")
-    private String isoCode;
 
     /** Currency name. */
     @Column(name = "DESCRIPTION_EN")
@@ -62,27 +56,7 @@ public class Currency implements Serializable {
     private Boolean systemCurrency;
 
     
-    
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getIsoCode() {
-        return isoCode;
-    }
-
-    public void setIsoCode(String isoCode) {
-        this.isoCode = isoCode;
-    }
-
-   
-   
-
-    public String getCurrencyCode() {
+	public String getCurrencyCode() {
 		return currencyCode;
 	}
 
@@ -134,4 +108,9 @@ public class Currency implements Serializable {
     public String toString() {
         return DescriotionEn;
     }
+
+	public boolean isTransient() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
