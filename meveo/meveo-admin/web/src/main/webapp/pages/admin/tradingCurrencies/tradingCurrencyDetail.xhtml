@@ -19,13 +19,13 @@
 		<c:if test="${edit}">
 			<custom:entityPopup id="currencyPopup"
 				header="#{messages['currency.popup.header']}"
-				backingBean="#{currencyBean}" dataModel="#{currencies}"
+				backingBean="#{tradingCurrencyBean}" dataModel="#{currencies}"
 				searchField1Label="#{messages['currency.currencyCode']}"
 				searchField1="currencyCode"
 				column1Label="#{messages['currency.currencyCode']}"
 				column1="currencyCode"
 				column2Label="#{messages['currency.DescriotionEn']}"
-				column2="descriotionEn" filtersMap="#{currencyBean.filters}">
+				column2="descriotionEn" filtersMap="#{tradingCurrencyBean.filters}">
 				<!-- select link -->
 				<a:commandLink value="#{messages['commons.select']}"
 					reRender="currenciesFormId"
@@ -39,10 +39,11 @@
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
 			backingBean="#{tradingCurrencyBean}" entity="#{tradingCurrency}">
 
-			<custom:formEntityField id="currencySelectedId" edit="false"
+			<custom:formEntityField id="currencySelectedId"
 				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
-				childField="currencyCode" popup="false" popupId="currencyPopup"
-				clearButton="true" required="true" />
+				childField="currencyCode" popup="true" popupId="currencyPopup"
+				required="true" />
+				
 			<custom:formField
 				label="#{messages['tradingCurrency.prDescription']}"
 				field="prDescription" size="100" />

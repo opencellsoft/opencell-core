@@ -70,6 +70,8 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     @Factory("tradingCurrencies")
     @Begin(join = true)
     public void list() {
+    	setSortField("currency.currencyCode");
+    	setSortOrder("DESC");
         super.list();
     }
 
