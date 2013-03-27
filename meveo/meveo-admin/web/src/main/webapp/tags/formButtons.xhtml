@@ -34,13 +34,13 @@
 			
 			<ui:insert />
 			
-			<!--  s:button value="#{messages['action.cancel']}" rendered="#{edit}">
+			<!-- s:button value="#{messages['action.cancel']}" rendered="#{edit}">
 				<f:param name="edit" value="false"/>
 				<f:param name="objectId" value="#{entity.id}" />
-			</s:button> -->
-			
-			<h:commandButton value="#{messages['action.back']}" action="#{backingBean.backAndEndConversation}" immediate="true" rendered="#{endConversationOnBack}"/>
-			<h:commandButton value="#{messages['action.back']}" action="#{backingBean.back}" immediate="true" rendered="#{!endConversationOnBack}"/>
+			</s:button-->
+			<h:commandButton value="#{messages['action.cancel']}" action="#{backingBean.back}" immediate="true" rendered="#{edit}"/>
+			<h:commandButton value="#{messages['action.back']}" action="#{backingBean.backAndEndConversation}" immediate="true" rendered="#{endConversationOnBack and !edit}"/>
+			<h:commandButton value="#{messages['action.back']}" action="#{backingBean.back}" immediate="true" rendered="#{!endConversationOnBack and !edit}"/>
 		</h:panelGrid>
 	    
 	</ui:composition>
