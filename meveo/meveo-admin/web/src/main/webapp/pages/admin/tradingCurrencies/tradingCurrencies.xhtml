@@ -37,7 +37,7 @@
 					field="disabled" isMessage="true"/>
 				<custom:column label="#{messages['tradingCurrency.prCurrencyToThis']}"
 					field="prCurrencyToThis" /> 
-				<custom:actionsColumn
+				<custom:actionsColumn noDelete="true"
 					editView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml"
 					permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}" />
 			</custom:dataList>

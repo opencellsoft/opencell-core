@@ -35,20 +35,29 @@
 			</custom:entityPopup>
 		</c:if>
 
-		<custom:formPanel formId="currenciesFormId" edit="#{edit}"
+		<custom:formPanel formId="currenciesFormId" edit="#{edit}" 
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
 			backingBean="#{tradingCurrencyBean}" entity="#{tradingCurrency}">
 
 			<custom:formEntityField id="currencySelectedId" edit="false"
 				label="#{messages['tradingCurrency.currencyCode']}" field="currency"
-				childField="currencyCode" popup="true" popupId="currencyPopup"
-				showOnlyOnConsult="true" clearButton="true" required="true" />
+				childField="currencyCode" popup="false" popupId="currencyPopup"
+				clearButton="true" required="true" />
 			<custom:formField
 				label="#{messages['tradingCurrency.prDescription']}"
 				field="prDescription" size="100" />
 			<custom:formField
 				label="#{messages['tradingCurrency.prCurrencyToThis']}"
 				field="prCurrencyToThis" />
+			<custom:formField
+				label="#{messages['tradingCurrency.disabled']}"
+				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
+			<!-- <custom:formField
+				label="#{messages['tradingCurrency.created']}"
+				field="created" showOnlyOnConsult="true"/> 
+				<custom:formField
+				label="#{messages['tradingCurrency.updated']}"
+				field="updated" showOnlyOnConsult="true"/>-->
 		</custom:formPanel>
 
 	</ui:define>
