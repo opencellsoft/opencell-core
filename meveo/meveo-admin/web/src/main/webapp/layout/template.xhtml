@@ -15,16 +15,15 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
 	<title>MEVEO Admin</title>
 	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
-	<link rel="stylesheet" type="text/css" href="stylesheet/theme.xcss" />
-	<h:outputStylesheet library="css" name="site2.css" target="head"></h:outputStylesheet>
-	<link rel="stylesheet" type="text/css" href="stylesheet/theme.css" />
-	<link rel="stylesheet" type="text/css" href="stylesheet/main.css" />
-	<s:remote include="javaScriptAction" />
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/theme.xcss" />
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/theme.css" />
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/main.css" />
+
 	<ui:insert name="head" />
 	<p:resources />
 
 	<script type="text/javascript"
-		src="#{facesContext.externalContext.requestContextPath}/js/equalHeight.js"></script>
+		src="#{request.contextPath}/js/equalHeight.js"></script>
 	<script type="text/javascript">
 		jQuery(function() {
 			jQuery('.panels').equalHeights();
