@@ -28,6 +28,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.meveo.model.AccountEntity;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
@@ -61,7 +64,45 @@ public class Customer extends AccountEntity {
     @Embedded
     private ContactInformation contactInformation = new ContactInformation();
 
-    public CustomerCategory getCustomerCategory() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
+    
+	 
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+	public CustomerCategory getCustomerCategory() {
         return customerCategory;
     }
 

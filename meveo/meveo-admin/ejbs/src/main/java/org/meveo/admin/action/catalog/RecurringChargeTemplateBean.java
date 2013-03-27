@@ -25,9 +25,12 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.billing.CatMessages;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
 /**
@@ -44,13 +47,17 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 @ConversationScoped
 public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplate> {
 	private static final long serialVersionUID = 1L;
-
 	/**
 	 * Injected @{link RecurringChargeTemplate} service. Extends
 	 * {@link PersistenceService}.
 	 */
 	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;
+
+	@Inject
+	private CatMessagesService catMessagesService;
+
+	private String descriptionFr;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -70,9 +77,15 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	@Produces
 	@Named("recurringChargeTemplate")
 	public RecurringChargeTemplate init() {
-		return initEntity();
+		RecurringChargeTemplate recuChargeTemplate = initEntity();
+		if (recuChargeTemplate.getId() != null) {
+			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
+					.getSimpleName() + "_" + recuChargeTemplate.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			}
+		}
+		return recuChargeTemplate;
 	}
-
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -84,7 +97,7 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	@Produces
 	@Named("recurringChargeTemplates")
 	@ConversationScoped
-	public PaginationDataModel<RecurringChargeTemplate>  list() {
+	public PaginationDataModel<RecurringChargeTemplate> list() {
 		getFilters();
 		if (!filters.containsKey("disabled")) {
 			filters.put("disabled", false);
@@ -92,6 +105,41 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 		return super.list();
 	}
 
+	/**
+	 * Conversation is ended and user is redirected from edit to his previous
+	 * window.
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 */
+	public String saveOrUpdate() {
+		String back = null;
+		if (entity.getId() != null) {
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(
+						ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
+				if (catMsg != null) {
+					catMsg.setDescription(description);
+					catMessagesService.update(catMsg);
+				} else {
+					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
+							+ "_" + entity.getId(), msgKey, description);
+					catMessagesService.create(catMessages);
+				}
+			}
+			back = saveOrUpdate(entity);
+
+		} else {
+			back = saveOrUpdate(entity);
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
+						+ "_" + entity.getId(), msgKey, description);
+				catMessagesService.create(catMessages);
+			}
+		}
+		return back;
+	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -113,5 +161,13 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	 */
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("calendar");
+	}
+
+	public String getDescriptionFr() {
+		return descriptionFr;
+	}
+
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
 	}
 }

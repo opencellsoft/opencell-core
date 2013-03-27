@@ -37,7 +37,7 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean}
@@ -59,7 +59,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	/**
 	 * Injected @{link Custome} service. Extends {@link PersistenceService}.

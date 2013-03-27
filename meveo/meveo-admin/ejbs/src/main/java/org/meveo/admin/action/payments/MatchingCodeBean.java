@@ -27,7 +27,7 @@ import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.local.MatchingCodeServiceLocal;
+import org.meveo.service.payments.impl.MatchingCodeService;
 
 /**
  * Standard backing bean for {@link MatchingCode} (extends {@link BaseBean} that
@@ -49,7 +49,7 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 	 * Injected @{link MatchingCode} service. Extends {@link PersistenceService}
 	 */
 	@Inject
-	private MatchingCodeServiceLocal matchingCodeService;
+	private MatchingCodeService matchingCodeService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

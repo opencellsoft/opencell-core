@@ -16,12 +16,15 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
@@ -40,9 +43,13 @@ public class InvoiceSubCategory extends BusinessEntity {
     @Column(name = "ACCOUNTING_CODE", length = 255)
     private String accountingCode;
 
-    @Column(name = "DISCOUNT", precision = 23, scale = 12)
+    @Column(name = "DISCOUNT")
     private BigDecimal discount;
-
+    
+    @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
+    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries=new ArrayList<InvoiceSubcategoryCountry>();
+    
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "INVOICE_CATEGORY_ID")
     private InvoiceCategory invoiceCategory;
@@ -51,7 +58,31 @@ public class InvoiceSubCategory extends BusinessEntity {
     @JoinColumn(name = "TAX_ID")
     private Tax tax;
 
-    public String getAccountingCode() {
+    
+    @Column(name = "DISCOUNT_CODE", length = 20)
+    private String discountCode;
+
+    
+    
+
+	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
+		return invoiceSubcategoryCountries;
+	}
+
+	public void setInvoiceSubcategoryCountries(
+			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
+		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
+	}
+
+	public String getDiscountCode() {
+		return discountCode;
+	}
+
+	public void setDiscountCode(String discountCode) {
+		this.discountCode = discountCode;
+	}
+
+	public String getAccountingCode() {
         return accountingCode;
     }
 
@@ -75,12 +106,14 @@ public class InvoiceSubCategory extends BusinessEntity {
         this.tax = tax;
     }
 
-    public BigDecimal getDiscount() {
-        return discount;
-    }
+	public BigDecimal getDiscount() {
+		return discount;
+	}
 
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
-    }
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+
 
 }

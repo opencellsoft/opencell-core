@@ -16,6 +16,7 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,12 +37,14 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
@@ -60,12 +63,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     protected Messages messages;
 
-    @Inject
-    protected Identity identity;
+	@Inject
+	protected Identity identity;
 
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
+	@Inject
+	@CurrentProvider
+	private Provider currentProvider;
+
+	@Inject
+	ProviderService providerService;
 
     /** Search filters. */
     protected Map<String, Object> filters;
@@ -85,6 +91,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private String sortField;
     private String sortOrder;
+
+    
+	/** Search filters. */
+	protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
 
     /**
      * Datamodel for lazy dataloading in datatable.
@@ -513,7 +523,48 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         objectId = null;
     }
 
-    protected User getCurrentUser() {
-        return ((MeveoUser) identity.getUser()).getUser();
-    }
+	protected User getCurrentUser() {
+		return ((MeveoUser) identity.getUser()).getUser();
+	}
+
+	public List<TradingLanguage> getProviderLanguages() {
+		List<TradingLanguage> result = new ArrayList<TradingLanguage>();
+		if (currentProvider != null) {
+			currentProvider = providerService.findById(currentProvider.getId());// to
+																				// avoid
+																				// entity
+																				// not
+																				// managed
+																				// exception
+			for (TradingLanguage tradingLanguage : currentProvider.getTradingLanguage()) {
+				if (!currentProvider.getLanguage().getLanguageCode()
+						.equalsIgnoreCase(tradingLanguage.getLanguage().getLanguageCode())) {
+					result.add(tradingLanguage);
+				}
+			}
+		}
+
+		log.info("getProviderLanguages result size=#0", result != null ? result.size() : null);
+		return result;
+	}
+
+	public String getProviderLanguageCode() {
+		if (currentProvider != null) {
+			currentProvider = providerService.findById(currentProvider.getId());
+			return currentProvider.getLanguage().getLanguageCode();
+		}
+		return "";
+	}
+
+	public Map<String, String> getLanguageMessagesMap() {
+		return languageMessagesMap;
+	}
+
+	public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
+		this.languageMessagesMap = languageMessagesMap;
+	}
+
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
 }

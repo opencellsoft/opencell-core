@@ -107,7 +107,7 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 unitPrice1 = BigDecimal.ZERO;
             }
 
-            BigDecimal unitPrice2 = chargeApplication.getAmount2();
+            BigDecimal unitPrice2 = chargeApplication.getAmountWithoutTax();
             if (unitPrice2 == null && ratePrice != null && ratePrice.getAmountWithoutTax2() != null) {
                 unitPrice2 = ratePrice.getAmountWithoutTax2();
             }
@@ -200,14 +200,14 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 amount2WithTax = NumberUtils.round(amount2WithTax, provider.getRounding());
             }
 
-            transaction.setAmount1(amount1);
-            transaction.setAmount1WithoutTax(amount1Discounted); // en
-            transaction.setAmount1Tax(amount1Tax);
-            transaction.setAmount1WithTax(amount1WithTax);
-            transaction.setAmount2(amount2);
-            transaction.setAmount2WithoutTax(amount2Discounted);
-            transaction.setAmount2Tax(amount2Tax);
-            transaction.setAmount2WithTax(amount2WithTax);
+            transaction.setAmount(amount1);
+            transaction.setAmountWithoutTax(amount1Discounted); // en
+            transaction.setAmountTax(amount1Tax);
+            transaction.setAmountWithTax(amount1WithTax);
+            //transaction.setPrAmount(amount2);
+            transaction.setPrAmountWithoutTax(amount2Discounted);
+            transaction.setPrAmountTax(amount2Tax);
+            transaction.setPrAmountWithTax(amount2WithTax);
             transaction.setProvider(chargeApplication.getProvider());
             transaction.setParameter1(chargeApplication.getCriteria1());
             transaction.setParameter2(chargeApplication.getCriteria2());
@@ -313,14 +313,14 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 transaction.setUnitPrice1(unitPrice1);
                 transaction.setUnitPrice2(unitPrice2);
                 transaction.setDiscountPercent(discountPrice != null ? discountPrice.getPercent() : null);
-                transaction.setAmount1(amount1);
-                transaction.setAmount1WithoutTax(amount1Discounted); // en
-                transaction.setAmount1Tax(amount1Tax);
-                transaction.setAmount1WithTax(amount1WithTax);
-                transaction.setAmount2(amount2);
-                transaction.setAmount2WithoutTax(amount2Discounted);
-                transaction.setAmount2Tax(amount2Tax);
-                transaction.setAmount2WithTax(amount2WithTax);
+                transaction.setAmount(amount1);
+                transaction.setAmountWithoutTax(amount1Discounted); // en
+                transaction.setAmountTax(amount1Tax);
+                transaction.setAmountWithTax(amount1WithTax);
+                //transaction.setPrAmount(amount2);
+                transaction.setPrAmountWithoutTax(amount2Discounted);
+                transaction.setPrAmountTax(amount2Tax);
+                transaction.setPrAmountWithTax(amount2WithTax);
             }
 
             transaction.setStatus(RatedTransactionStatusEnum.OPEN);

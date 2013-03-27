@@ -61,14 +61,14 @@ public class RecurringChargeInstance extends ChargeInstance {
     protected Date nextChargeDate;
 
     public RecurringChargeInstance(String code, String description, Date subscriptionDate, BigDecimal amountWithoutTax,
-            BigDecimal amount2, Subscription subscription, RecurringChargeTemplate recurringChargeTemplate,
+            BigDecimal prAmountWithoutTax, Subscription subscription, RecurringChargeTemplate recurringChargeTemplate,
             ServiceInstance serviceInstance) {
         this.code = code;
         this.description = description;
         this.subscriptionDate = subscriptionDate;
         this.chargeDate = subscriptionDate;
         this.amountWithoutTax = amountWithoutTax;
-        this.amount2 = amount2;
+        this.prAmountWithoutTax = prAmountWithoutTax;
         this.chargeTemplate = recurringChargeTemplate;
         this.serviceInstance = serviceInstance;
         this.subscription = subscription;

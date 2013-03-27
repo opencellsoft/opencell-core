@@ -74,21 +74,143 @@ public abstract class InvoiceAgregate extends AuditableEntity {
     private Integer quantity = 0;
 
     @Column(name = "AMOUNT", precision = 23, scale = 12)
-    private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal amount;
 
     @Column(name = "DISCOUNT", precision = 23, scale = 12)
     private BigDecimal discount;
 
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    private BigDecimal amountWithoutTax;
 
     @Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountTax = BigDecimal.ZERO;
+    private BigDecimal amountTax;
 
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithTax = BigDecimal.ZERO;
+    private BigDecimal amountWithTax;
 
-    public BillingAccount getBillingAccount() {
+    @Column(name = "DISCOUNT_CODE", length = 20)
+    private String discountCode;
+    
+    
+    @Column(name = "PR_AMOUNT_WITHOUT_TAX")
+    private Integer prAmountWithoutTax;
+    
+    
+    @Column(name = "PR_AMOUNT_TAX")
+    private Integer prAmountTax;
+    
+    
+    @Column(name = "PR_AMOUNT_WITH_TAX")
+    private Integer prAmountWithTax;
+    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
+    
+    
+    @Column(name = "PR_DESCRIPTION", length = 50)
+    private String prDescription;
+    
+    
+    @Column(name = "PR_DESCRIPTION_DISCOUNT", length = 50)
+    private String prDescriptionDiscount;
+    
+    
+    @Column(name = "DESCRIPTION_DISCOUNT", length = 50)
+    private String descriptionDiscount;
+
+	public String getDiscountCode() {
+		return discountCode;
+	}
+
+	public void setDiscountCode(String discountCode) {
+		this.discountCode = discountCode;
+	}
+
+
+	public Integer getPrAmountWithoutTax() {
+		return prAmountWithoutTax;
+	}
+
+	public void setPrAmountWithoutTax(Integer prAmountWithoutTax) {
+		this.prAmountWithoutTax = prAmountWithoutTax;
+	}
+
+	public Integer getPrAmountTax() {
+		return prAmountTax;
+	}
+
+	public void setPrAmountTax(Integer prAmountTax) {
+		this.prAmountTax = prAmountTax;
+	}
+
+	public Integer getPrAmountWithTax() {
+		return prAmountWithTax;
+	}
+
+	public void setPrAmountWithTax(Integer prAmountWithTax) {
+		this.prAmountWithTax = prAmountWithTax;
+	}
+
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
+
+	public String getPrDescriptionDiscount() {
+		return prDescriptionDiscount;
+	}
+
+	public void setPrDescriptionDiscount(String prDescriptionDiscount) {
+		this.prDescriptionDiscount = prDescriptionDiscount;
+	}
+
+	public String getDescriptionDiscount() {
+		return descriptionDiscount;
+	}
+
+	public void setDescriptionDiscount(String descriptionDiscount) {
+		this.descriptionDiscount = descriptionDiscount;
+	}
+
+	public BillingAccount getBillingAccount() {
         return billingAccount;
     }
 

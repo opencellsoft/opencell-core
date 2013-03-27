@@ -284,9 +284,12 @@ public class ImportSubscriptions extends InputFiles {
 															.getAmountWithoutTax());
 										}
 										if (serviceInst.getRecurringCharges().getAmountWithoutTax() != null) {
-											recurringChargeInstance.setAmount2(new BigDecimal(
-													serviceInst.getRecurringCharges()
-															.getAmountWithTax().replace(',', '.')));
+
+											recurringChargeInstance
+													.setPrAmountWithoutTax(new BigDecimal(
+															serviceInst.getRecurringCharges()
+																	.getAmountWithTax()
+																	.replace(',', '.')));
 											log.debug("file:"
 													+ fileName
 													+ ", typeEntity:Subscription, index:"
@@ -328,15 +331,19 @@ public class ImportSubscriptions extends InputFiles {
 															.getAmountWithoutTax());
 										}
 										if (serviceInst.getOneshotCharges().getAmountWithoutTax() != null) {
-											subscriptionChargeInstance.setAmount2(new BigDecimal(
-													serviceInst.getOneshotCharges()
-															.getAmountWithTax().replace(',', '.')));
+
+											subscriptionChargeInstance
+													.setPrAmountWithoutTax(new BigDecimal(
+															serviceInst.getOneshotCharges()
+																	.getAmountWithTax()
+																	.replace(',', '.')));
 											log.debug("file:"
 													+ fileName
 													+ ", typeEntity:Subscription, index:"
 													+ i
 													+ ", code:"
 													+ subscrip.getCode()
+
 													+ ", subscriptionChargeInstance.setAmount2:"
 													+ serviceInst.getOneshotCharges()
 															.getAmountWithTax());

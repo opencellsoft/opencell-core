@@ -62,12 +62,11 @@ public class TitleBean extends BaseBean<Title> {
 		return initEntity();
 	}
 
-
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
-	 * @return 
+	 * @return
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
@@ -77,7 +76,6 @@ public class TitleBean extends BaseBean<Title> {
 	public PaginationDataModel<Title> list() {
 		return super.list();
 	}
-
 
 	/**
 	 * Override default list view name. (By default its class name starting

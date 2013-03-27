@@ -40,13 +40,35 @@ public class InvoiceCategory extends BusinessEntity {
     @OneToMany(mappedBy = "invoiceCategory", fetch = FetchType.LAZY)
     private List<InvoiceSubCategory> invoiceSubCategories;
 
-    @Column(name = "DISCOUNT", precision = 23, scale = 12)
-    private BigDecimal discount;
     
     @Column(name = "SORT_INDEX")
     private Integer sortIndex;
 
-    public List<InvoiceSubCategory> getInvoiceSubCategories() {
+
+    @Column(name = "DISCOUNT")
+    private BigDecimal discount;
+    
+    @Column(name = "DISCOUNT_CODE", length = 20)
+    private String discountCode;
+
+
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+	public String getDiscountCode() {
+		return discountCode;
+	}
+
+	public void setDiscountCode(String discountCode) {
+		this.discountCode = discountCode;
+	}
+
+	public List<InvoiceSubCategory> getInvoiceSubCategories() {
         return invoiceSubCategories;
     }
 
@@ -54,13 +76,6 @@ public class InvoiceCategory extends BusinessEntity {
         this.invoiceSubCategories = invoiceSubCategories;
     }
 
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
-    }
 
     public Integer getSortIndex() {
         return sortIndex;

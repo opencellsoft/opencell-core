@@ -55,7 +55,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * Service instance service implementation.
@@ -84,7 +84,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private ChargeApplicationService chargeApplicationService;
     
     @EJB
-    private CustomerAccountServiceLocal customerAccountService;
+    private CustomerAccountService customerAccountService;
     
 	@EJB
     private RatedTransactionService ratedTransactionService;

@@ -30,6 +30,7 @@
 				<custom:column label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" isMessage="true" />
 				<custom:column label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" isMessage="true" />
 	    		<custom:column label="#{messages['businessEntity.description']}" field="description" />
+				 <custom:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency" childField="currencyCode"/> 	
 				<custom:actionsColumn editView="/pages/crm/customers/customerDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}"/>
 		    </custom:dataList>
 		    

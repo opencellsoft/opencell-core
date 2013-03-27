@@ -38,7 +38,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.local.MatchingCodeServiceLocal;
+import org.meveo.service.payments.impl.MatchingCodeService;
 
 /**
  * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean}
@@ -63,7 +63,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	private AccountOperationService accountOperationService;
 
 	@Inject
-	private MatchingCodeServiceLocal matchingCodeService;
+	private MatchingCodeService matchingCodeService;
 
 	@SuppressWarnings("unused")
 	// TODO: @Out(required = false)

@@ -40,7 +40,21 @@ public class Tax extends BusinessEntity {
     @Column(name = "PERCENT", precision = 19, scale = 8)
     private BigDecimal percent;
 
-    public String getAccountingCode() {
+    @Column(name = "PR_DESCRIPTION", length = 50)
+    private String prDescription;
+
+   
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
+
+
+	public String getAccountingCode() {
         return accountingCode;
     }
 

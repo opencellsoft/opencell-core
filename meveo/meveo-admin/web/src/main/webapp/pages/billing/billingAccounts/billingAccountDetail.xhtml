@@ -53,6 +53,43 @@
 					oncomplete="Richfaces.hideModalPanel('billingCyclePopup')">
 			</a:commandLink>
 		</custom:entityPopup>
+		
+		<custom:entityPopup id="tradingCountryPopup"
+				header="#{messages['tradingCountry.popup.header']}"
+				backingBean="#{tradingCountryBean}" dataModel="#{tradingCountries}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}"
+				searchField2="name"
+				column1Label="#{messages['businessEntity.code']}" column1="id"
+				column2Label="#{messages['businessEntity.description']}" column2="prDescription" 
+				filtersMap="#{tradingCountryBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{billingAccount.setTradingCountry(entity)}"
+					oncomplete="Richfaces.hideModalPanel('tradingCountryPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
+		<custom:entityPopup id="tradingLanguagePopup"
+				header="#{messages['tradingLanguage.popup.header']}"
+				backingBean="#{tradingLanguageBean}" dataModel="#{tradingLanguages}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}"
+				searchField2="name"
+				column1Label="#{messages['businessEntity.code']}" column1="id"
+				column2Label="#{messages['businessEntity.description']}" column2="prDescription" 
+				filtersMap="#{tradingLanguageBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{billingAccount.setTradingLanguage(entity)}"
+					oncomplete="Richfaces.hideModalPanel('tradingLanguagePopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		
 	</c:if>
 		
 	<h:panelGrid columns="1" width="100%">
@@ -162,6 +199,10 @@
 											<custom:formField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
 											<custom:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate"  show="#{!edit}"/>
 											<custom:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
+											
+											<custom:formEntityField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry"  childField="id"  popup="true" popupId="tradingCountryPopup"/>
+											<custom:formEntityField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage"  childField="id"  popup="true" popupId="tradingLanguagePopup"/>															
+											
 											
 										</custom:panelGroup>
 										

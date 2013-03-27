@@ -35,6 +35,7 @@ import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.ContactInformation;
 
@@ -54,6 +55,11 @@ public class CustomerAccount extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    
     @Column(name = "STATUS", length = 10)
     @Enumerated(EnumType.STRING)
     private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
@@ -108,7 +114,15 @@ public class CustomerAccount extends AccountEntity {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://java.sun.com/xml/ns/persistence
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
@@ -10,12 +11,15 @@
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="@hibernate.hbm2ddl.auto@" />
 			<property name="hibernate.show_sql" value="false" />
-			<property name="hibernate.cache.use_second_level_cache" value="true" />
+			<property name="hibernate.cache.use_second_level_cache"
+				value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="true" />
-<!-- 			<property name="hibernate.cache.provider_configuration_file_resource_path" value="ehcache.xml"></property> -->
-<!-- 			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" /> -->
+			<!-- <property name="hibernate.cache.provider_configuration_file_resource_path" 
+				value="ehcache.xml"></property> -->
+			<!-- <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" 
+				/> -->
 		</properties>
-<!-- 		<jar-file>meveo-admin-ejbs-${project.version}.jar</jar-file> -->
+		<!-- <jar-file>meveo-admin-ejbs-${project.version}.jar</jar-file> -->
 		<class>org.meveo.model.admin.Currency</class>
 		<class>org.meveo.model.admin.InputHistory</class>
 		<class>org.meveo.model.admin.MedinaInputHistory</class>
@@ -69,17 +73,31 @@
 		<class>org.meveo.model.billing.TaxInvoiceAgregate</class>
 		<class>org.meveo.model.billing.RatedTransaction</class>
 		<class>org.meveo.model.billing.ChargeApplication</class>
+
+		<class>org.meveo.model.admin.Currency</class>
+		<class>org.meveo.model.billing.Language</class>
+		<class>org.meveo.model.billing.Country</class>
+		<class>org.meveo.model.billing.TradingCountry</class>
+		<class>org.meveo.model.billing.TradingCurrency</class>
+		<class>org.meveo.model.billing.TradingLanguage</class>
+		<class>org.meveo.model.billing.TaxLanguage</class>
+		<class>org.meveo.model.billing.Discount</class>
+		<class>org.meveo.model.billing.DiscountLanguage</class>
+		<class>org.meveo.model.billing.InvoiceCategoryCountry</class>
+		<class>org.meveo.model.billing.InvoiceCategoryLanguage</class>
+		<class>org.meveo.model.billing.InvoiceSubcategoryCountry</class>
+		<class>org.meveo.model.billing.PriceplanInstanciation</class>
+		<class>org.meveo.model.billing.DiscountplanInstanciation</class>
+		<class>org.meveo.model.billing.CatMessages</class>
 		<class>org.meveo.model.AccountEntity</class>
 		<class>org.meveo.model.catalog.Calendar</class>
 		<class>org.meveo.model.catalog.ChargeTemplate</class>
 		<class>org.meveo.model.catalog.DayInYear</class>
 		<class>org.meveo.model.catalog.OfferTemplate</class>
 		<class>org.meveo.model.catalog.OneShotChargeTemplate</class>
+		<class>org.meveo.model.catalog.PriceCode</class>
 		<class>org.meveo.model.catalog.DiscountPlanMatrix</class>
 		<class>org.meveo.model.catalog.PricePlanMatrix</class>
-		<class>org.meveo.model.catalog.UsageDiscountPlanItem</class>
-		<class>org.meveo.model.catalog.UsagePricePlanItem</class>
-		<class>org.meveo.model.catalog.PriceCode</class>
 		<class>org.meveo.model.catalog.RecurringChargeTemplate</class>
 		<class>org.meveo.model.catalog.ServiceTemplate</class>
 		<class>org.meveo.model.communication.Campaign</class>
@@ -143,12 +161,15 @@
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="@hibernateDWH.hbm2ddl.auto@" />
 			<property name="hibernate.show_sql" value="false" />
-			<property name="hibernate.cache.use_second_level_cache" value="true" />
+			<property name="hibernate.cache.use_second_level_cache"
+				value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="true" />
-<!-- 			<property name="hibernate.cache.provider_configuration_file_resource_path" value="ehcache.xml"></property> -->
-<!-- 			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" /> -->
+			<!-- <property name="hibernate.cache.provider_configuration_file_resource_path" 
+				value="ehcache.xml"></property> -->
+			<!-- <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" 
+				/> -->
 		</properties>
-	
+
 		<class>org.meveo.model.datawarehouse.DWHAccountOperation</class>
 		<class>org.meveo.model.datawarehouse.JournalEntry</class>
 

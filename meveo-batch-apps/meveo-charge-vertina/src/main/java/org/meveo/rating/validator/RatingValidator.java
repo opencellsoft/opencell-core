@@ -44,7 +44,7 @@ public class RatingValidator implements Validator<RatingTicket> {
     		ticket.providerCode=ticket.chargeApplication.getProvider().getCode();
     		ticket.chargeCode = ticket.chargeApplication.getChargeCode();
     		ticket.amountWithoutTax = ticket.chargeApplication.getAmountWithoutTax();
-    		ticket.amount2 = ticket.chargeApplication.getAmount2();
+    		ticket.amount2 = ticket.chargeApplication.getAmountWithoutTax();
     		ticket.applicationDate = ticket.chargeApplication.getApplicationDate();
     		ticket.subscriptionDate = ticket.chargeApplication.getSubscriptionDate();
     		ticket.criteria1 = ticket.chargeApplication.getCriteria1();

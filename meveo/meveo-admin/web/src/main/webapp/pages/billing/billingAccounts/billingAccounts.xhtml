@@ -26,6 +26,8 @@
 				<custom:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
 				<custom:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
 				<custom:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
+				<custom:searchField label="#{messages['billingAccount.countryCode']}" field="tradingCountry" childField="prDescription" />
+				<custom:searchField label="#{messages['billingAccount.languageCode']}" field="tradingLanguage" childField="prDescription"  />
     		</custom:searchPanel>
 
 	    	<custom:dataList backingBean="#{billingAccountBean}" dataModel="#{billingAccounts}">

@@ -29,10 +29,8 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.local.InvoiceServiceLocal;
 import org.meveo.service.billing.remote.InvoiceServiceRemote;
 import org.meveo.service.crm.impl.ProviderService;
-import org.slf4j.Logger;
 
 /**
  * Invoice service implementation.
@@ -42,7 +40,7 @@ import org.slf4j.Logger;
  */
 @Stateless @LocalBean
 public class InvoiceService extends PersistenceService<Invoice> implements
-		InvoiceServiceLocal, InvoiceServiceRemote {
+		InvoiceServiceRemote {
 
 	@EJB
 	private ProviderService providerService;

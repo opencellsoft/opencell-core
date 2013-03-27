@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.transaction.Transactional;
@@ -39,8 +40,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.meveo.service.payments.local.MatchingCodeServiceLocal;
 import org.meveo.service.payments.remote.MatchingCodeServiceRemote;
 
 /**
@@ -49,11 +48,13 @@ import org.meveo.service.payments.remote.MatchingCodeServiceRemote;
  * @author anasseh
  * @created 28.11.2010
  */
-@Stateless 
-public class MatchingCodeService extends PersistenceService<MatchingCode> implements MatchingCodeServiceLocal, MatchingCodeServiceRemote{
+@Stateless
+@LocalBean
+public class MatchingCodeService extends PersistenceService<MatchingCode> implements
+		MatchingCodeServiceRemote {
 
 	@EJB
-	private CustomerAccountServiceLocal customerAccountService;
+	private CustomerAccountService customerAccountService;
 
 	@EJB
 	private AccountOperationService accountOperationService;

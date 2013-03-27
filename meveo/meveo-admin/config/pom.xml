@@ -41,7 +41,8 @@
 							<tasks>
 								<copy file="src/main/resources/import-${env}.sql" tofile="${project.build.outputDirectory}/import.sql"
 									overwrite="true" failonerror="false" />
-								<copy file="src/main/resources/importDWH-${env}.sql" tofile="${project.build.outputDirectory}/importDWH.sql"
+								<copy file="src/main/resources/importDWH-${env}.sql"
+									tofile="${project.build.outputDirectory}/importDWH.sql"
 									overwrite="true" failonerror="false" />
 							</tasks>
 						</configuration>
@@ -59,8 +60,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on 
-					the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
