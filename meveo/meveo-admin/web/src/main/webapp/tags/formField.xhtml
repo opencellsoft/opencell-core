@@ -38,15 +38,7 @@
 	<c:if test="${empty show}">
 		<c:set var="show" value="true" />
 	</c:if>
-	<c:if test="${!empty objectId and !empty showOnlyOnNew}">
-		<c:set var="show" value="false" />
-	</c:if>
-	<c:if test="${empty objectId and !empty showOnlyOnNew}">
-		<c:set var="show" value="true" />
-	</c:if>	
-	<c:if test="${empty objectId and !empty showOnlyOnConsult}">
-		<c:set var="show" value="false" />
-	</c:if>	
+
 	
 	<!-- Default size -->
 	<c:if test="${empty size}">
@@ -101,6 +93,16 @@
       <c:if test="${empty disabled}">
         <c:set var="disabled" value="false" />
      </c:if>
+     
+     	<c:if test="${!empty objectId and !empty showOnlyOnNew}">
+		<c:set var="show" value="false" />
+	</c:if>
+	<c:if test="${empty objectId and !empty showOnlyOnNew}">
+		<c:set var="show" value="true" />
+	</c:if>	
+	<c:if test="${edit and !empty showOnlyOnConsult}">
+		<c:set var="show" value="false" />
+	</c:if>	
      
 	<c:if test="${show}">
 		<!--  Initialize the value binding -->
