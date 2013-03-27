@@ -26,6 +26,7 @@ import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.service.admin.impl.AccountImportHistoService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link AccountImportHisto} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -73,7 +74,7 @@ public class AccountImportHistoBean extends BaseBean<AccountImportHisto> {
     @Produces
     @Named("accountImportHistories")
     @ConversationScoped
-    public PaginationDataModel<AccountImportHisto> list() {
+    public DataTable list() {
         return super.list();
     }
 

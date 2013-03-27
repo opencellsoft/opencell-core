@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:p="http://primefaces.org/ui"  
+	xmlns:cc="http://java.sun.com/jsf/composite">
+
+	<cc:interface componentType="formEntityField">
+		<cc:attribute name="label" required="true" />
+		<cc:attribute name="field" required="true" />
+		<cc:attribute name="backingBean" required="false" />
+		<cc:attribute name="entity" required="false" />
+		<cc:attribute name="childField" required="true" />
+		<cc:attribute name="required" default="false" />
+		<cc:attribute name="size" default="20" />
+		<cc:attribute name="popup" default="false" />
+		<cc:attribute name="disabled" default="false" />
+		<cc:attribute name="listBean" />
+		<cc:attribute name="maxlength" default="40" />
+		<cc:attribute name="textArea" default="false" />
+		<cc:attribute name="cols" default="20" />
+		<cc:attribute name="rows" default="5" />
+	</cc:interface>
+
+
+	<cc:implementation>
+		<ui:fragment rendered="#{cc.attrs.popup}">
+			<h:panelGrid columns="2">
+				<p:outputLabel for="#{cc.attrs.id}" value="#{cc.attrs.label}" />
+				<h:panelGrid columns="3">
+					<p:inputText id="#{cc.attrs.id}" rendered="#{cc.backingBeanFromParentOrCurrent.edit}" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}" disabled="true" />
+					<p:commandButton rendered="#{cc.backingBeanFromParentOrCurrent.edit}" id="selectLink" onclick="dlg.show()" icon="ui-icon-search"/>
+					<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+					<h:outputText rendered="#{!cc.backingBeanFromParentOrCurrent.edit}" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" style="font-weight:bold;" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</ui:fragment>
+		
+		<ui:fragment rendered="#{not cc.attrs.popup}">
+
+			<!-- if service is set, then load list of all entities from db and show as drop down list -->
+			<ui:fragment rendered="#{!empty cc.attrs.listBean}">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="#{cc.attrs.id}_level" value="#{cc.attrs.label}" />
+					<p:selectOneMenu rendered="#{cc.backingBeanFromParentOrCurrent.edit}" id="#{cc.attrs.id}_level" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}">
+						<f:selectItem itemLabel="" itemValue="" />
+						<f:selectItems value="#{cc.attrs.listBean.listAll()}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
+						<f:converter binding="#{entityConverter}" />
+					</p:selectOneMenu>
+					<h:outputText rendered="#{not cc.backingBeanFromParentOrCurrent.edit}" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" style="font-weight:bold;" />
+				</h:panelGrid>
+			</ui:fragment>
+
+		</ui:fragment>
+	</cc:implementation>
+
+</html>

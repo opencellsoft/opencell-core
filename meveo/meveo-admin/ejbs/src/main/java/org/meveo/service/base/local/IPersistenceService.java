@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.PaginationConfiguration;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
@@ -177,7 +177,7 @@ public interface IPersistenceService<E extends IEntity> {
 	 * 
 	 * @return List of entities.
 	 */
-	public List<? extends E> list();
+	public List<E> list();//? extends E
 
 	/**
 	 * Load and return the list of the entities from database according to
@@ -185,7 +185,7 @@ public interface IPersistenceService<E extends IEntity> {
 	 * 
 	 * @return List of entities.
 	 */
-	public List<? extends E> list(PaginationConfiguration config);
+	public List<E> list(PaginationConfiguration config); //? extends E
 
 	/**
 	 * Count number of entities in database.

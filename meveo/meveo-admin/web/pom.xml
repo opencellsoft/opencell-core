@@ -45,17 +45,8 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.primefaces</groupId>
-			<artifactId>primefaces</artifactId>
-			<version>3.4.2</version>
-		</dependency>
-		<dependency>
 			<groupId>com.ocpsoft</groupId>
 			<artifactId>prettyfaces-jsf2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.faces</groupId>
-			<artifactId>seam-faces</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.manaty</groupId>
