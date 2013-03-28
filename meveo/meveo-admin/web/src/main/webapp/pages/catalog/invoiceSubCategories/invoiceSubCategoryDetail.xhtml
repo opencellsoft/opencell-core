@@ -83,15 +83,9 @@
                                 field="invoiceCategory" childField="code" required="true"
                                 popup="true" popupId="searchInvoiceCategoryPopup" />
 								
-		<s:decorate template="/layout/edit.xhtml">
-        <ui:define name="label">
-         <h:outputText value="#{messages['address.country']}" />
-        </ui:define>
-        <h:panelGrid columns="3" >
-         <h:inputText rendered="#{invoiceSubCategoryBean.entity.id==null}" value="#{entity.code}" required="true" disabled="false"/>
-         <h:inputText  rendered="#{invoiceSubCategoryBean.entity.id!=null}" value="#{entity.code}" required="true" disabled="true"/>
-          </h:panelGrid>
-          </s:decorate>	
+		  <custom:formField label="#{messages['invoiceSubCategory.code']}"
+                         field="code" required="true" validateUnique="true"
+                         useConverter="false" disabled="#{invoiceSubCategoryBean.entity.id!=null}" />
                             <custom:languageFields/>
                             <custom:fieldset
                                 name="#{messages['invoiceSubCategory.accountingCode']}"
@@ -195,7 +189,7 @@
          <h:outputText value="#{messages['invoiceSubCategory.code']}"  />
         </ui:define>
         <h:panelGrid columns="2" >
-         <h:outputText rendered="#{edit}" value="#{invoiceSubCategory.code}" required="true" disabled="true" style="font-weight:bold;"/> 
+         <h:outputText value="#{invoiceSubCategory.code}" required="true" disabled="true" style="font-weight:bold;"/> 
 		  <h:inputHidden rendered="#{edit}"/>
            </h:panelGrid>
           </s:decorate>	 
@@ -204,7 +198,7 @@
          <h:outputText value="#{messages['invoiceSubCategory.description']}" />
         </ui:define>
         <h:panelGrid columns="2" >
-         <h:outputText rendered="#{edit}" value="#{invoiceSubCategory.description}" required="true" disabled="true" style="font-weight:bold;"/> 
+         <h:outputText  value="#{invoiceSubCategory.description}" required="true" disabled="true" style="font-weight:bold;"/> 
 		  <h:inputHidden rendered="#{edit}"/>
            </h:panelGrid>
           </s:decorate> 
