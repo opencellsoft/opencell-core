@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
+    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -18,26 +18,26 @@
     	
     	<custom:listPanel label="#{messages['oneShotChargeTemplate.title']}" backingBean="#{oneShotChargeTemplateBean}" >
     	
-    		<custom:searchPanel label="#{messages['oneShotChargeTemplate.search']}" newButtonView="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml">
-    			<custom:searchField label="#{messages['chargeTemplate.code']}" field="code" />
-    			<custom:searchField label="#{messages['chargeTemplate.description']}" field="description" />
-    			<custom:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
-    			<custom:searchField label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label"/>
-    			<custom:searchField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true"/>
+    		<hf:searchPanel label="#{messages['oneShotChargeTemplate.search']}" newButtonView="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml">
+    			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
+    			<hf:searchField label="#{messages['chargeTemplate.description']}" field="description" />
+    			<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
+    			<hf:searchField label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label"/>
+    			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true"/>
     			
-    		</custom:searchPanel>	
+    		</hf:searchPanel>	
 
-    		<custom:dataList dataModel="#{oneShotChargeTemplates}"  noDelete="true" noClose="false">
-    			<custom:column label="#{messages['chargeTemplate.code']}" field="code" />
-    			<custom:column label="#{messages['chargeTemplate.description']}" field="description" />
-    			<custom:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
-    			<custom:column label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" isMessage="true" />
-    			<custom:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"  childField="code" isMessage="true" />
-    		    <custom:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-		    	<custom:column label="#{messages['oneShotChargeTemplate.immediateInvoicing']}" field="immediateInvoicing" isMessage="true" />
+    		<hftl:dataList dataModel="#{oneShotChargeTemplates}"  noDelete="true" noClose="false">
+    			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
+    			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
+    			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
+    			<hftl:column label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" isMessage="true" />
+    			<hftl:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"  childField="code" isMessage="true" />
+    		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+		    	<hftl:column label="#{messages['oneShotChargeTemplate.immediateInvoicing']}" field="immediateInvoicing" isMessage="true" />
     			
-		    	<custom:actionsColumn editView="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}"  />
-		    </custom:dataList>
+		    	<hftl:actionsColumn editView="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"  />
+		    </hftl:dataList>
 		   
 		</custom:listPanel>
 		

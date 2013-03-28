@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
+    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core"
     template="/layout/template.xhtml">
     
@@ -53,26 +53,26 @@
 		
     	<custom:listPanel label="#{messages['usageDiscountPlanItem.title']}" backingBean="#{usageDiscountPlanItemBean}">
     	
-    		<custom:searchPanel label="#{messages['usageDiscountPlanItem.search']}" newButtonView="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml">
+    		<hf:searchPanel label="#{messages['usageDiscountPlanItem.search']}" newButtonView="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml">
     			<custom:searchEntityField label="#{messages['usagePricePlanItem.serviceTemplate']}" field="serviceTemplate" childField="code" popup="true" popupId="serviceTemplatePopup" clearButton="true"/>
     			<custom:searchEntityField label="#{messages['usagePricePlanItem.customerAccount']}" field="customerAccount" childField="code" popup="true" popupId="customerAccountPopup" clearButton="true"/>
-    			<custom:searchField label="#{messages['usagePricePlanItem.type']}" field="type" />
-    		</custom:searchPanel>	
+    			<hf:searchField label="#{messages['usagePricePlanItem.type']}" field="type" />
+    		</hf:searchPanel>	
     		
-    		<custom:dataList dataModel="#{usageDiscountPlanItems}" noDelete="true" noClose="false">
-    			<custom:column label="#{messages['usagePricePlanItem.serviceTemplate']}" field="serviceTemplate" childField="code"/>
-    			<custom:column label="#{messages['usagePricePlanItem.customerAccount']}" field="customerAccount" childField="code"/>
-    			<custom:column label="#{messages['usagePricePlanItem.type']}" field="type" />
-    			<custom:column label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
-	    		<custom:column label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" /> 
-	    	    <custom:column label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" />
-	    	    <custom:column label="#{messages['usageDiscountPlanItem.percentage']}" field="percentage" />
-	    	    <custom:column label="#{messages['access.startDate']}" field="startDate"  />
-	    	    <custom:column label="#{messages['access.endDate']}" field="endDate"  />
+    		<hftl:dataList dataModel="#{usageDiscountPlanItems}" noDelete="true" noClose="false">
+    			<hftl:column label="#{messages['usagePricePlanItem.serviceTemplate']}" field="serviceTemplate" childField="code"/>
+    			<hftl:column label="#{messages['usagePricePlanItem.customerAccount']}" field="customerAccount" childField="code"/>
+    			<hftl:column label="#{messages['usagePricePlanItem.type']}" field="type" />
+    			<hftl:column label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
+	    		<hftl:column label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" /> 
+	    	    <hftl:column label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" />
+	    	    <hftl:column label="#{messages['usageDiscountPlanItem.percentage']}" field="percentage" />
+	    	    <hftl:column label="#{messages['access.startDate']}" field="startDate"  />
+	    	    <hftl:column label="#{messages['access.endDate']}" field="endDate"  />
 	    	    
 	    	     
-    			<custom:actionsColumn editView="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}"/>
-		    </custom:dataList>
+    			<hftl:actionsColumn editView="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"/>
+		    </hftl:dataList>
 		   
 		</custom:listPanel>
 		

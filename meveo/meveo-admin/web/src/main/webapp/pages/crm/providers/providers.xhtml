@@ -1,41 +1,33 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['provider.title']}" backingBean="#{providerBean}">
-    	
-    		<custom:searchPanel label="#{messages['provider.search']}" newButtonView="/pages/crm/providers/providerDetail.xhtml">
-				<custom:searchField label="#{messages['provider.code']}" field="code" />
-				<custom:searchField label="#{messages['provider.description']}" field="description" />
-    			<custom:searchField label="#{messages['provider.serializedPaymentMethods']}" field="serializedPaymentMethods" />
-    			<custom:searchField label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" />
-    		</custom:searchPanel>
 
-	    	<custom:dataList dataModel="#{providers}">
-	    		    <custom:column label="#{messages['provider.code']}" field="code" />
-	    		    <custom:column label="#{messages['provider.description']}" field="description" />
-	    			<custom:column label="#{messages['provider.serializedPaymentMethods']}" field="serializedPaymentMethods" />
-	    			<custom:column label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" />
-	    		    <custom:column label="#{messages['provider.paymentMethods']}" field="paymentMethods" isList="true" childField="label" />
-					<custom:actionsColumn editView="/pages/crm/providers/providerDetail.xhtml"/>
-		    </custom:dataList>
-		    
-		</custom:listPanel>
-		
-    </ui:define>
-    
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['provider.search']}" backingBean="#{providerBean}">
+			<hf:searchField label="#{messages['provider.code']}" field="code" />
+			<hf:searchField label="#{messages['provider.description']}" field="description" />
+			<hf:searchField label="#{messages['provider.serializedPaymentMethods']}" field="serializedPaymentMethods" />
+			<hf:searchField label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" />
+		</hf:searchPanel>
+
+		<hftl:dataList backingBean="#{providerBean}" label="#{messages['provider.title']}">
+			<hftl:column label="#{messages['provider.code']}" field="code" />
+			<hftl:column label="#{messages['provider.description']}" field="description" />
+			<hftl:column label="#{messages['provider.serializedPaymentMethods']}" field="serializedPaymentMethods" />
+			<hftl:column label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" />
+			<hftl:column label="#{messages['provider.paymentMethods']}" field="paymentMethods" isList="true" childField="label" />
+			<hftl:actionsColumn />
+		</hftl:dataList>
+
+
+	</ui:define>
+
 </ui:composition>

@@ -30,12 +30,11 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
- * Standard backing bean for {@link Provider} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link Provider} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Gediminas Ubartas
  * @created 2011-02-28
@@ -45,79 +44,70 @@ import org.meveo.service.crm.impl.ProviderService;
 @ConversationScoped
 public class ProviderBean extends BaseBean<Provider> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link Provider} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private ProviderService providerService;
+    /**
+     * Injected @{link Provider} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private ProviderService providerService;
 
-	@Inject
-	@CurrentProvider
-	private Provider currentProvider;
+    @Inject
+    @CurrentProvider
+    private Provider currentProvider;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ProviderBean() {
-		super(Provider.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ProviderBean() {
+        super(Provider.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("provider")
-	public Provider init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     */
+    @Produces
+    @Named("provider")
+    public Provider init() {
+        return initEntity();
+    }
 
-//	@Produces
-//	@Named("userProviders")
-//	public PaginationDataModel<Provider> userProviders() {
-//		super.list();
-//		getFilters();
-//		filters.put("list-users", getCurrentUser());
-//		return entities;
-//	}
+    @Override
+    public DataTable search() {
+        getFilters();
+        filters.put("list-users", getCurrentUser());
+        return super.search();
+    }
 
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Provider> getPersistenceService() {
+        return providerService;
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Provider> getPersistenceService() {
-		return providerService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("users");
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("users");
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+     */
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("users");
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("users");
-	}
-
-	/**
-	 * if current provider is not null continue action, else require to select
-	 * provider in login screen
-	 */
-	public String checkCurrentProvider() {
-		if (getCurrentUser() == null || currentProvider == null) {
-			return "/home.xhtml";
-		}
-		return "";
-	}
+    /**
+     * if current provider is not null continue action, else require to select provider in login screen
+     */
+    public String checkCurrentProvider() {
+        if (getCurrentUser() == null || currentProvider == null) {
+            return "/home.xhtml";
+        }
+        return "";
+    }
 }

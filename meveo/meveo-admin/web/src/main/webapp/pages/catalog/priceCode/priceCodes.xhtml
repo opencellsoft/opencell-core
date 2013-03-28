@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
+    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -18,17 +18,17 @@
     	
     	<custom:listPanel label="#{messages['priceCode.title']}" backingBean="#{priceCodeBean}">
     	
-    		<custom:searchPanel label="#{messages['priceCode.search']}" newButtonView="/pages/catalog/priceCode/priceCodeDetail.xhtml">
-    			<custom:searchField label="#{messages['priceCode.code']}" field="code"/>
-    		</custom:searchPanel>	
+    		<hf:searchPanel label="#{messages['priceCode.search']}" newButtonView="/pages/catalog/priceCode/priceCodeDetail.xhtml">
+    			<hf:searchField label="#{messages['priceCode.code']}" field="code"/>
+    		</hf:searchPanel>	
     		
-    		<custom:dataList dataModel="#{priceCodes}" noDelete="true" noClose="false">
-	    		<custom:column label="#{messages['priceCode.code']}" field="code"/>
-				<custom:column label="#{messages['priceCode.chargeTemplateIn']}" field="chargeTemplateIn" childField="code"/>
-				<custom:column label="#{messages['priceCode.chargeTemplateOut']}" field="chargeTemplateOut" childField="code"/>
+    		<hftl:dataList dataModel="#{priceCodes}" noDelete="true" noClose="false">
+	    		<hftl:column label="#{messages['priceCode.code']}" field="code"/>
+				<hftl:column label="#{messages['priceCode.chargeTemplateIn']}" field="chargeTemplateIn" childField="code"/>
+				<hftl:column label="#{messages['priceCode.chargeTemplateOut']}" field="chargeTemplateOut" childField="code"/>
 	    		
-    			<custom:actionsColumn editView="/pages/catalog/priceCode/priceCodeDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}"/>
-		    </custom:dataList>
+    			<hftl:actionsColumn editView="/pages/catalog/priceCode/priceCodeDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"/>
+		    </hftl:dataList>
 		   
 		</custom:listPanel>
 		

@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
+    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -18,21 +18,21 @@
     	
     	<custom:listPanel label="#{messages['invoiceCategory.title']}" backingBean="#{invoiceCategoryBean}">
     	
-    		<custom:searchPanel label="#{messages['invoiceCategory.search']}" newButtonView="/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml">
-    			<custom:searchField label="#{messages['invoiceCategory.code']}" field="code" />
-    			<custom:searchField label="#{messages['invoiceCategory.description']}" field="description" />
-    		<!-- 	<custom:searchField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
-    		</custom:searchPanel>	
+    		<hf:searchPanel label="#{messages['invoiceCategory.search']}" newButtonView="/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml">
+    			<hf:searchField label="#{messages['invoiceCategory.code']}" field="code" />
+    			<hf:searchField label="#{messages['invoiceCategory.description']}" field="description" />
+    		<!-- 	<hf:searchField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+    		</hf:searchPanel>	
     		
-    		<custom:dataList dataModel="#{invoiceCategories}" checkMany="false">
-    			<custom:column label="#{messages['invoiceCategory.code']}" field="code" />
-    			<custom:column label="#{messages['invoiceCategory.description']}" field="description" />
-    			<!-- <custom:column label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
-    			<custom:column label="#{messages['invoiceCategory.subcategories']}" field="invoiceSubCategories" childField="code" isList="true" childFieldId="id" 
+    		<hftl:dataList dataModel="#{invoiceCategories}" checkMany="false">
+    			<hftl:column label="#{messages['invoiceCategory.code']}" field="code" />
+    			<hftl:column label="#{messages['invoiceCategory.description']}" field="description" />
+    			<!-- <hftl:column label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+    			<hftl:column label="#{messages['invoiceCategory.subcategories']}" field="invoiceSubCategories" childField="code" isList="true" childFieldId="id" 
     							view="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml" 
     							backView="invoiceCategories" showPopup="true" popupFields="accountingCode" />
-    			<custom:actionsColumn editView="/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}"/>
-		    </custom:dataList>
+    			<hftl:actionsColumn editView="/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"/>
+		    </hftl:dataList>
 		   
 		</custom:listPanel>
 		

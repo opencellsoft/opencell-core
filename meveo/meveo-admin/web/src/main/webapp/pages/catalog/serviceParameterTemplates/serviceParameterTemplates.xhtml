@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -17,21 +17,21 @@
 	<ui:define name="body">
 
 		<custom:listPanel label="#{messages['serviceParameterTemplate.title']}" backingBean="#{serviceParameterTemplateBean}">
-			<custom:searchPanel
+			<hf:searchPanel
 				label="#{messages['serviceParameterTemplate.search']}"
 				newButtonView="/pages/catalog/serviceParameters/serviceParameterInstancesDetail.xhtml">
-				<custom:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
-				<custom:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
+				<hf:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
+				<hf:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
 				
-			</custom:searchPanel>
+			</hf:searchPanel>
 
-			<custom:dataList dataModel="#{serviceParameterTemplates}">
-				<custom:column label="#{messages['serviceParameterTemplate.code']}" field="code" />
-				<custom:column label="#{messages['serviceParameterTemplate.name']}" field="name" />
-				<custom:column label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="name" childFieldId="id" view="/pages/crm/serviceTemplates/serviceTemplateDetail.xhtml" backView="serviceParameterTemplates"/>
-				<custom:actionsColumn
+			<hftl:dataList dataModel="#{serviceParameterTemplates}">
+				<hftl:column label="#{messages['serviceParameterTemplate.code']}" field="code" />
+				<hftl:column label="#{messages['serviceParameterTemplate.name']}" field="name" />
+				<hftl:column label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="name" childFieldId="id" view="/pages/crm/serviceTemplates/serviceTemplateDetail.xhtml" backView="serviceParameterTemplates"/>
+				<hftl:actionsColumn
 					editView="/pages/catalog/serviceParameterTemplates/serviceParameterTemplateDetail.xhtml" />
-			</custom:dataList>
+			</hftl:dataList>
 
 		</custom:listPanel>
 

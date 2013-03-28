@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
+    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -18,33 +18,33 @@
     	
     	<custom:listPanel label="#{messages['recurringChargeTemplate.title']}" backingBean="#{recurringChargeTemplateBean}">
     	
-    		<custom:searchPanel label="#{messages['recurringChargeTemplate.search']}" newButtonView="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml">
-    			<custom:searchField label="#{messages['chargeTemplate.code']}" field="code" />
-    			<custom:searchField label="#{messages['chargeTemplate.description']}" field="description"/>
-    			<custom:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+    		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}" newButtonView="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml">
+    			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
+    			<hf:searchField label="#{messages['chargeTemplate.description']}" field="description"/>
+    			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
     			
-    		<!--	<custom:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable"/>
-    			<custom:searchField label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label"/>
-    		 	<custom:searchField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
-    			<custom:searchField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
-    			<custom:searchField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
-    			<custom:searchField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" /> -->
-    		</custom:searchPanel>	
+    		<!--	<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable"/>
+    			<hf:searchField label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label"/>
+    		 	<hf:searchField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
+    			<hf:searchField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
+    			<hf:searchField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
+    			<hf:searchField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" /> -->
+    		</hf:searchPanel>	
     		
-    		<custom:dataList dataModel="#{recurringChargeTemplates}" noDelete="true" noClose="false">
-    			<custom:column label="#{messages['chargeTemplate.code']}" field="code" />
-    			<custom:column label="#{messages['chargeTemplate.description']}" field="description" />
-    			<custom:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
-    			<custom:column label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
-    			<!-- <custom:column label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label" isMessage="true" />
-    			<custom:column label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" isMessage="true" />
-    			<custom:column label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" isMessage="true" />
+    		<hftl:dataList dataModel="#{recurringChargeTemplates}" noDelete="true" noClose="false">
+    			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
+    			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
+    			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
+    			<hftl:column label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
+    			<!-- <hftl:column label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label" isMessage="true" />
+    			<hftl:column label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" isMessage="true" />
+    			<hftl:column label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" isMessage="true" />
     			 -->
-    			<custom:column label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" isMessage="true" />
-    			<custom:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"  childField="code" isMessage="true" />
-    		    <custom:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-    			<custom:actionsColumn editView="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}" />
-		    </custom:dataList>
+    			<hftl:column label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" isMessage="true" />
+    			<hftl:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"  childField="code" isMessage="true" />
+    		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+    			<hftl:actionsColumn editView="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		    </hftl:dataList>
 		   
 		</custom:listPanel>
 		

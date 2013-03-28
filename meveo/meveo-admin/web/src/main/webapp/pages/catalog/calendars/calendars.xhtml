@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
+    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -18,19 +18,19 @@
     	
     	<custom:listPanel label="#{messages['calendar.title']}" backingBean="#{calendarBean}">
     	
-    		<custom:searchPanel label="#{messages['calendar.search']}" newButtonView="/pages/catalog/calendars/calendarDetail.xhtml" columns="1">
-    			<custom:searchField label="#{messages['calendar.name']}" field="name" />
-    			<custom:searchField label="#{messages['calendar.type']}" field="type" />
-    			<custom:searchField label="#{messages['calendar.description']}" field="description" size="100"/>
+    		<hf:searchPanel label="#{messages['calendar.search']}" newButtonView="/pages/catalog/calendars/calendarDetail.xhtml" columns="1">
+    			<hf:searchField label="#{messages['calendar.name']}" field="name" />
+    			<hf:searchField label="#{messages['calendar.type']}" field="type" />
+    			<hf:searchField label="#{messages['calendar.description']}" field="description" size="100"/>
     			
-    		</custom:searchPanel>	
+    		</hf:searchPanel>	
     		
-    		<custom:dataList dataModel="#{calendars}">
-    			<custom:column label="#{messages['calendar.name']}" field="name" />
-    			<custom:column label="#{messages['calendar.type']}" field="type" childField="label" isMessage="true" />
-    			<custom:column label="#{messages['calendar.description']}" field="description" />
-    			<custom:actionsColumn editView="/pages/catalog/calendars/calendarDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}"/>
-		    </custom:dataList>
+    		<hftl:dataList dataModel="#{calendars}">
+    			<hftl:column label="#{messages['calendar.name']}" field="name" />
+    			<hftl:column label="#{messages['calendar.type']}" field="type" childField="label" isMessage="true" />
+    			<hftl:column label="#{messages['calendar.description']}" field="description" />
+    			<hftl:actionsColumn editView="/pages/catalog/calendars/calendarDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"/>
+		    </hftl:dataList>
 		   
 		</custom:listPanel>
 		

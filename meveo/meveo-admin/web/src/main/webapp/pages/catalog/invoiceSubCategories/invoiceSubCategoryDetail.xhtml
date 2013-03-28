@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
@@ -183,7 +183,7 @@
                         <br />
 
                         <a:outputPanel id="invoiceSubCategoryCountries_panel">
-                            <custom:dataList
+                            <hftl:dataList
                                 dataModel="#{invoiceSubCategory.invoiceSubcategoryCountries}"
                                 resultsId="invoiceSubCategoryCountries_results"
                                 checkMany="false" backingBean="#{invoiceSubCategoryBean}">
@@ -198,10 +198,10 @@
 			        </h:column>
                      </rich:column>
 		
-                                <custom:column
+                                <hftl:column
                                     label="#{messages['invoiceSubCategoryCountry.taxe']}"
                                     field="tax" childField="code" />
-                                <!-- <custom:column label="#{messages['invoiceSubCategoryCountry.creationDate']}" field="created"/>
+                                <!-- <hftl:column label="#{messages['invoiceSubCategoryCountry.creationDate']}" field="created"/>
                   -->
                                 <rich:column styleClass="actions-column">
                                     <f:facet name="header">
@@ -217,7 +217,7 @@
                                     <rich:toolTip for="editSubCategoryCountryLink"
                                         value="#{messages['commons.edit']}" />
                                 </rich:column>
-                            </custom:dataList>
+                            </hftl:dataList>
                         </a:outputPanel>
                         <rich:panel>
                             <h:form>

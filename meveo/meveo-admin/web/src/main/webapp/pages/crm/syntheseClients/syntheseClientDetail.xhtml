@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -89,9 +89,9 @@
 					</rich:tab>
 					<rich:tab label="#{messages['Mes Factures']}">
 						<custom:fieldset name="#{messages['Mes Factures']}" columns="1">
-							<custom:dataList backingBean="#{syntheseClientBean}"
+							<hftl:dataList backingBean="#{syntheseClientBean}"
 								dataModel="#{synInvoices}" edit="false">
-								<custom:column label="#{messages['Votre facture du']}"
+								<hftl:column label="#{messages['Votre facture du']}"
 									field="invoiceDate" />
 								<rich:column styleClass="textOnRight">
 									<f:facet name="header">
@@ -143,7 +143,7 @@
 									
 									<h:commandLink action="#{syntheseClientBean.downloadPdf(entity.invoiceNumber)}" value="#{entity.invoiceNumber}" />
 								</rich:column>
-							</custom:dataList>
+							</hftl:dataList>
 						</custom:fieldset>
 					</rich:tab>
 				</rich:tabPanel>

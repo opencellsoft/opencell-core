@@ -19,6 +19,10 @@
 		<c:if test="${empty renderDeleteLink}">
 			<c:set var="renderDeleteLink" value="true" />
 		</c:if>
+		
+		<c:if test="${empty editView">
+			<c:set var="editView" value="#{backingBean.getEditViewName()}" />
+		</c:if>
 	
 		<p:column style="width: 160px;" exportable="false">
              <f:facet name="header">
@@ -26,12 +30,12 @@
              </f:facet>
              
              <p:tooltip for="viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide"/>
-             <p:button id="viewlink" outcome="#{backingBean.getEditViewName()}" icon="ui-icon-search" rendered="#{renderViewLink}">
+             <p:button id="viewlink" outcome="#{editView}" icon="ui-icon-search" rendered="#{renderViewLink}">
              	<f:param name="objectId" value="#{entity.id}"/>
              	<f:param name="edit" value="false"/>
              </p:button>
              <p:tooltip for="editlink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide"/>
-             <p:button id="editlink" outcome="#{backingBean.getEditViewName()}" icon="ui-icon-document" rendered="#{renderEditLink}">
+             <p:button id="editlink" outcome="#{editView}" icon="ui-icon-document" rendered="#{renderEditLink}">
              	<f:param name="objectId" value="#{entity.id}"/>
              	<f:param name="edit" value="true"/>
              </p:button>
