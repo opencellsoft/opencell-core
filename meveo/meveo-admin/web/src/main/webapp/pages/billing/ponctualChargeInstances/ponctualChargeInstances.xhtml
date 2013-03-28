@@ -1,33 +1,38 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['ponctualChargeInstance.title']}" backingBean="#{ponctualChargeInstanceBean}">
-    	
-    		<custom:searchPanel label="#{messages['ponctualChargeInstance.search']}" newButtonView="/pages/billing/ponctualChargeInstances/ponctualChargeInstanceDetail.xhtml">
-    			<custom:searchField label="#{messages['ponctualChargeInstance.chargeDate']}" field="chargeDate" />			
-    		</custom:searchPanel>
-    		
-    		<custom:dataList dataModel="#{ponctualChargeInstances}">    			
-    			<custom:column label="#{messages['ponctualChargeInstance.chargeDate']}" field="chargeDate" />	
-		   	   	<custom:actionsColumn editView="/pages/billing/ponctualChargeInstances/ponctualChargeInstances.xhtml"/>
-		    </custom:dataList>
-    	</custom:listPanel>	
-		
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['ponctualChargeInstance.search']}"
+			backingBean="#{ponctualChargeInstanceBean}">
+			<hf:searchField
+				label="#{messages['ponctualChargeInstance.chargeDate']}"
+				field="chargeDate" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['ponctualChargeInstance.title']}"
+			backingBean="#{ponctualChargeInstanceBean}">
+			<hftl:column
+				label="#{messages['ponctualChargeInstance.chargeDate']}"
+				field="chargeDate" />
+				
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('billing','billingManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

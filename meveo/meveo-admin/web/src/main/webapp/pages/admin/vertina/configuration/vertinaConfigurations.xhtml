@@ -1,39 +1,45 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['vertinaConfiguration.title']}" backingBean="#{vertinaConfigurationBean}">
-    	
-    		<custom:searchPanel label="#{messages['vertinaConfiguration.search']}" newButtonView="/pages/admin/vertina/configuration/vertinaConfigurationDetail.xhtml">
-    			<custom:searchField label="#{messages['vertinaConfiguration.field']}" field="field" />
-				<custom:searchField label="#{messages['vertinaConfiguration.value']}" field="value" />
-				<custom:searchField label="#{messages['vertinaConfiguration.description']}" field="description" />
-    		</custom:searchPanel>
-    		
-	    	<custom:dataList dataModel="#{vertinaConfigurations}">
-				<custom:column label="#{messages['vertinaConfiguration.field']}" field="field" />
-				<custom:column label="#{messages['vertinaConfiguration.value']}" field="value" />
-				<custom:column label="#{messages['vertinaConfiguration.description']}" field="description" />
-				<custom:actionsColumn editView="/pages/admin/vertina/configuration/vertinaConfigurationDetail.xhtml"  />
-				
-		    </custom:dataList>
-		    
-		</custom:listPanel>
-		
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['vertinaConfiguration.search']}"
+			backingBean="#{vertinaConfigurationBean}">
+			<hf:searchField label="#{messages['vertinaConfiguration.field']}"
+				field="field" />
+			<hf:searchField label="#{messages['vertinaConfiguration.value']}"
+				field="value" />
+			<hf:searchField
+				label="#{messages['vertinaConfiguration.description']}"
+				field="description" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['vertinaConfiguration.title']}"
+			backingBean="#{vertinaConfigurationBean}">
+			<hftl:column label="#{messages['vertinaConfiguration.field']}"
+				field="field" />
+			<hftl:column label="#{messages['vertinaConfiguration.value']}"
+				field="value" />
+			<hftl:column label="#{messages['vertinaConfiguration.description']}"
+				field="description" />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

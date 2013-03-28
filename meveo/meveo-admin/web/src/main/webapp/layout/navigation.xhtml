@@ -21,8 +21,41 @@
 
 				<rich:menuItem id="users"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-					<h:link outcome="/pages/admin/meveoUsers/users.xhtml?faces-redirect=true">
+					<h:link
+						outcome="/pages/admin/meveoUsers/users.xhtml?faces-redirect=true">
 						<h:outputText value="#{messages['menu.users']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="currencies"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+					<h:link
+						outcome="/pages/admin/currencies/currencies.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.currencies']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="taxes"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+					<h:link
+						outcome="/pages/admin/taxes/taxes.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.taxes']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="titles"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+					<h:link
+						outcome="/pages/admin/title/titles.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.titles']}" />
+					</h:link>
+				</rich:menuItem>
+
+				<rich:menuItem id="userroles"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+					<h:link
+						outcome="/pages/admin/userRoles/userRoles.xhtml?faces-redirect=true">
+						<h:outputText value="#{messages['menu.userRoles']}" />
 					</h:link>
 				</rich:menuItem>
 			</rich:dropDownMenu>

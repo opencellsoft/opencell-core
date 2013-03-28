@@ -1,22 +1,22 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    xmlns:c="http://java.sun.com/jstl/core"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	<!-- Entity select popup. -->
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<!-- Entity select popup. -->
 		<c:set var="filtersMap" value="#{walletBean.filters}" />
 		<c:set var="field" value="userAccount" />
 		<custom:entityPopup id="searchUserAccountPopup"
@@ -25,34 +25,41 @@
 			searchField1Label="#{messages['userAccount.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['userAccount.name']}"
-			searchField2="name"
-			column1Label="#{messages['userAccount.code']}" column1="code"
-			column2Label="#{messages['userAccount.name']}" column2="name" >
+			searchField2="name" column1Label="#{messages['userAccount.code']}"
+			column1="code" column2Label="#{messages['userAccount.name']}"
+			column2="name">
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
-					reRender="formId" 
-					action="#{filtersMap.put(field, entity)}"
-					oncomplete="Richfaces.hideModalPanel('searchUserAccountPopup')">
+				reRender="formId" action="#{filtersMap.put(field, entity)}"
+				oncomplete="Richfaces.hideModalPanel('searchUserAccountPopup')">
 			</a:commandLink>
-				
-		</custom:entityPopup>
-    	
-    	<custom:listPanel label="#{messages['wallet.title']}" backingBean="#{walletBean}">
-    		<custom:searchPanel label="#{messages['wallet.search']}" newButtonView="/pages/billing/wallets/walletDetail.xhtml">
-    			<custom:searchEntityField label="#{messages['wallet.userAccount']}" field="userAccount" childField="code" popup="true" popupId="searchUserAccountPopup" clearButton="true"/>
-    			<custom:searchField label="#{messages['wallet.name']}" field="name" />
-    			<custom:searchField label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" />
-    		</custom:searchPanel>	
 
-    		<custom:dataList dataModel="#{wallets}" pdf="true">
-    			<custom:column label="#{messages['wallet.userAccount']}" field="userAccount" childField="code"/>
-	    		<custom:column label="#{messages['wallet.name']}" field="name" />
-    			<custom:column label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" />
-    			<custom:actionsColumn editView="/pages/billing/wallets/walletDetail.xhtml"  />
-		    </custom:dataList>
-		   
+		</custom:entityPopup>
+
+		<custom:listPanel label="#{messages['wallet.title']}"
+			backingBean="#{walletBean}">
+			<custom:searchPanel label="#{messages['wallet.search']}"
+				newButtonView="/pages/billing/wallets/walletDetail.xhtml">
+				<custom:searchEntityField label="#{messages['wallet.userAccount']}"
+					field="userAccount" childField="code" popup="true"
+					popupId="searchUserAccountPopup" clearButton="true" />
+				<custom:searchField label="#{messages['wallet.name']}" field="name" />
+				<custom:searchField label="#{messages['wallet.walletType']}"
+					field="walletType" childField="label" isMessage="true" />
+			</custom:searchPanel>
+
+			<custom:dataList dataModel="#{wallets}" pdf="true">
+				<custom:column label="#{messages['wallet.userAccount']}"
+					field="userAccount" childField="code" />
+				<custom:column label="#{messages['wallet.name']}" field="name" />
+				<custom:column label="#{messages['wallet.walletType']}"
+					field="walletType" childField="label" isMessage="true" />
+				<custom:actionsColumn
+					editView="/pages/billing/wallets/walletDetail.xhtml" />
+			</custom:dataList>
+
 		</custom:listPanel>
-		
-    </ui:define>
-    
+
+	</ui:define>
+
 </ui:composition>

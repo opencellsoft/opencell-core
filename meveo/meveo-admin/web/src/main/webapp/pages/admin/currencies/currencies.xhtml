@@ -1,38 +1,35 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['currency.title']}" backingBean="#{currencyBean}">
-    	
-    		<custom:searchPanel label="#{messages['currency.search']}" newButtonView="/pages/admin/currencies/currencyDetail.xhtml">
-    			<custom:searchField label="#{messages['currency.code']}" field="code" />
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
-    			<custom:searchField label="#{messages['currency.name']}" field="name" />
-    		</custom:searchPanel>
-    		
-	    	<custom:dataList dataModel="#{currencies}">
-	    		<custom:column label="#{messages['currency.code']}" field="code" />
-	    		
-	    		<custom:column label="#{messages['currency.name']}" field="name" />
-				<custom:actionsColumn editView="/pages/admin/currencies/currencyDetail.xhtml"  />    	
-		    </custom:dataList>
-		    
-		</custom:listPanel>
-		
-    </ui:define>
-    
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['currency.search']}" columns="3"
+			backingBean="#{currencyBean}">
+			<hf:searchField label="#{messages['currency.code']}" field="currencyCode" />
+			<hf:searchField label="#{messages['currency.name']}" field="DescriotionEn" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['currency.title']}"
+			backingBean="#{currencyBean}">
+			<hftl:column label="#{messages['currency.code']}" field="currencyCode" />
+			<hftl:column label="#{messages['currency.name']}" field="DescriotionEn" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

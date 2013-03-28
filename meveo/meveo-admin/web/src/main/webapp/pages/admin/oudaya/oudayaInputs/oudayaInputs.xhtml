@@ -1,44 +1,54 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['oudayaInputHistory.title']}" backingBean="#{oudayaInputHistoryBean}">
-    	
-    		<custom:searchPanel label="#{messages['oudayaInputHistory.search']}" newButtonView="/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml">
-    			<custom:searchField label="#{messages['inputHistory.name']}" field="name" />
-				<custom:searchField label="#{messages['inputHistory.analysisStartDate']}" field="analysisStartDate" />
-				<custom:searchField label="#{messages['inputHistory.analysisEndDate']}" field="analysisEndDate" />
-				<custom:searchField label="#{messages['inputHistory.parsedTickets']}" field="parsedTickets" />
-				<custom:searchField label="#{messages['inputHistory.succeededTickets']}" field="succeededTickets" />
-				<custom:searchField label="#{messages['inputHistory.rejectedTickets']}" field="rejectedTickets" />
-    		</custom:searchPanel>
-    		
-	    	<custom:dataList dataModel="#{oudayaInputs}">
-	    		<custom:column label="#{messages['inputHistory.name']}" field="name" />
-				<custom:column label="#{messages['inputHistory.analysisStartDate']}" field="analysisStartDate" isDate="true"/>
-				<custom:column label="#{messages['inputHistory.analysisEndDate']}" field="analysisEndDate" isDate="true"/>
-				<custom:column label="#{messages['inputHistory.parsedTickets']}" field="parsedTickets" />
-				<custom:column label="#{messages['inputHistory.succeededTickets']}" field="succeededTickets" />
-				<custom:column label="#{messages['inputHistory.rejectedTickets']}" field="rejectedTickets" />
-				<custom:actionsColumn editView="/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml" />    	
-		    </custom:dataList>
-		    
-		</custom:listPanel>
-		
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel backingBean="#{oudayaInputHistoryBean}"
+			label="#{messages['oudayaInputHistory.search']}">
+			<hf:searchField label="#{messages['inputHistory.name']}" field="name" />
+			<hf:searchField label="#{messages['inputHistory.analysisStartDate']}"
+				field="analysisStartDate" />
+			<hf:searchField label="#{messages['inputHistory.analysisEndDate']}"
+				field="analysisEndDate" />
+			<hf:searchField label="#{messages['inputHistory.parsedTickets']}"
+				field="parsedTickets" />
+			<hf:searchField label="#{messages['inputHistory.succeededTickets']}"
+				field="succeededTickets" />
+			<hf:searchField label="#{messages['inputHistory.rejectedTickets']}"
+				field="rejectedTickets" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['oudayaInputHistory.title']}"
+			backingBean="#{oudayaInputHistoryBean}">
+			<hftl:column label="#{messages['inputHistory.name']}" field="name" />
+			<hftl:column label="#{messages['inputHistory.analysisStartDate']}"
+				field="analysisStartDate" isDate="true" />
+			<hftl:column label="#{messages['inputHistory.analysisEndDate']}"
+				field="analysisEndDate" isDate="true" />
+			<hftl:column label="#{messages['inputHistory.parsedTickets']}"
+				field="parsedTickets" />
+			<hftl:column label="#{messages['inputHistory.succeededTickets']}"
+				field="succeededTickets" />
+			<hftl:column label="#{messages['inputHistory.rejectedTickets']}"
+				field="rejectedTickets" />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>
