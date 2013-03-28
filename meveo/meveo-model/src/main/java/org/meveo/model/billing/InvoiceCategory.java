@@ -25,7 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -34,7 +34,7 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "BILLING_INVOICE_CAT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_SEQ")
-public class InvoiceCategory extends BusinessEntity {
+public class InvoiceCategory extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,31 +44,8 @@ public class InvoiceCategory extends BusinessEntity {
     
     @Column(name = "SORT_INDEX")
     private Integer sortIndex;
-
-
-    @Column(name = "DISCOUNT")
-    private BigDecimal discount;
+ 
     
-    @Column(name = "DISCOUNT_CODE", length = 20)
-    private String discountCode;
-
-
-	public BigDecimal getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
-
-	public String getDiscountCode() {
-		return discountCode;
-	}
-
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
-	}
-
 	public List<InvoiceSubCategory> getInvoiceSubCategories() {
         return invoiceSubCategories;
     }

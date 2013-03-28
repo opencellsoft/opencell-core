@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -40,7 +41,7 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "BILLING_RATED_TRANSACTION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RATED_TRANSACTION_SEQ")
-public class RatedTransaction extends BaseEntity {
+public class RatedTransaction extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,8 +62,6 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "SUBUSAGE2_CODE", length = 20)
     private String subUsageCode2;
 
-    @Column(name = "DESCRIPTION", length = 50)
-    private String description;
 
     @Column(name = "USAGE_DESCRIPTION", length = 255)
     private String usageDescription;
@@ -106,14 +105,17 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
     private BigDecimal amountWithTax = BigDecimal.ZERO;
 
-    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountWithoutTax = BigDecimal.ZERO;
+    @Column(name = "AMOUNT_2_WITHOUT_TAX", precision = 23, scale = 12)
+    private BigDecimal amount2WithoutTax = BigDecimal.ZERO;
+    
+    @Column(name = "AMOUNT_2_TAX", precision = 23, scale = 12)
+    private BigDecimal amount2Tax = BigDecimal.ZERO;
 
-    @Column(name = "PR_AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountTax = BigDecimal.ZERO;
-
-    @Column(name = "PR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountWithTax = BigDecimal.ZERO;
+    @Column(name = "AMOUNT_2_WITH_TAX", precision = 23, scale = 12)
+    private BigDecimal amount2WithTax = BigDecimal.ZERO;
+    
+    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
+    private BigDecimal amount2 = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUBSCRIPTION_ID")
@@ -163,9 +165,6 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "UNIT_PRICE_RATIO", precision = 23, scale = 12)
     private BigDecimal unitPriceRatio;
 
-    @Column(name = "TAX_CODE")
-    private String taxCode;
-
     @Column(name = "DISCOUNT_PERCENT", precision = 23, scale = 12)
     private BigDecimal discountPercent;
 
@@ -209,8 +208,6 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "DISCOUNT_CODE", length = 20)
     private String discountCode;
     
-    @Column(name = "PR_DESCRIPTION", length = 50)
-    private String prDescription;
 
 	public String getDiscountCode() {
 		return discountCode;
@@ -219,14 +216,7 @@ public class RatedTransaction extends BaseEntity {
 	public void setDiscountCode(String discountCode) {
 		this.discountCode = discountCode;
 	}
-
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+ 
 
 	public BigDecimal getUnitPriceRatio() {
         return unitPriceRatio;
@@ -236,20 +226,7 @@ public class RatedTransaction extends BaseEntity {
         this.unitPriceRatio = unitPriceRatio;
     }
 
-    /**
-     * @return the taxCode
-     */
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    /**
-     * @param taxCode the taxCode to set
-     */
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
+  
     /**
      * @return the discountPercent
      */
@@ -416,27 +393,31 @@ public class RatedTransaction extends BaseEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public BigDecimal getPrAmountWithoutTax() {
-        return prAmountWithoutTax;
-    }
+    public BigDecimal getAmount2WithoutTax() {
+		return amount2WithoutTax;
+	}
 
-    public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
-        this.prAmountWithoutTax = prAmountWithoutTax;
-    }
+	public void setAmount2WithoutTax(BigDecimal amount2WithoutTax) {
+		this.amount2WithoutTax = amount2WithoutTax;
+	}
 
-    public BigDecimal getPrAmountTax() {
-        return prAmountTax;
-    }
+	public BigDecimal getAmount2Tax() {
+		return amount2Tax;
+	}
 
-    public void setPrAmountTax(BigDecimal prAmountTax) {
-        this.prAmountTax = prAmountTax;
-    }
+	public void setAmount2Tax(BigDecimal amount2Tax) {
+		this.amount2Tax = amount2Tax;
+	}
 
-    public BigDecimal getPrAmountWithTax() {
-        return prAmountWithTax;
-    }
+	public BigDecimal getAmount2() {
+		return amount2;
+	}
 
-    public void setAmount2WithTax(BigDecimal prAmountWithTax) {
+	public void setAmount2(BigDecimal amount2) {
+		this.amount2 = amount2;
+	}
+
+	public void setAmount2WithTax(BigDecimal prAmountWithTax) {
     }
 
     public Invoice getInvoice() {
@@ -628,8 +609,9 @@ public class RatedTransaction extends BaseEntity {
 		this.doNotTriggerInvoicing = doNotTriggerInvoicing;
 	}
 
-	public void setPrAmountWithTax(BigDecimal prAmountWithTax) {
-		this.prAmountWithTax = prAmountWithTax;
+ 
+	public BigDecimal getAmount2WithTax() {
+		return amount2WithTax;
 	}
 
 	public TradingCurrency getTradingCurrency() {

@@ -28,14 +28,14 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.service.base.local.BusinessServiceLocal;
+import org.meveo.service.base.local.ProviderBusinessServiceLocal;
 
 /**
  * @author R.AITYAAZZA
  * 
  */
 @Local
-public interface ChargeApplicationServiceLocal extends BusinessServiceLocal<ChargeApplication> {
+public interface ChargeApplicationServiceLocal extends ProviderBusinessServiceLocal<ChargeApplication> {
 
     public void oneShotChargeApplication(Subscription subscription, OneShotChargeInstance chargeInstance,
             Integer quantity, Date applicationDate, User creator) throws BusinessException;

@@ -23,10 +23,10 @@ import org.jboss.seam.annotations.remoting.WebRemote;
 public interface JavaScriptActionLocal {
 
     @WebRemote
-    public String calculateOneShotChargeInstanceAmount(String chargeTemplateCode, String amountWithoutTaxString);
+    public String calculateOneShotChargeInstanceAmount(String subscriptionId, String chargeTemplateCode, String amountWithoutTaxString);
 
     @WebRemote
-    public String calculateOneShotChargeInstanceAmountWithoutTax(String chargeTemplateCode, String amount2String);
+    public String calculateOneShotChargeInstanceAmountWithoutTax(String subscriptionId,String chargeTemplateCode, String amount2String);
 
     @WebRemote
     public String getFormatedAmountString(String value);

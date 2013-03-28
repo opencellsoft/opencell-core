@@ -30,7 +30,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 
@@ -42,7 +42,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 @Table(name = "CAT_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CHARGE_TEMPLATE_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class ChargeTemplate extends BusinessEntity {
+public class ChargeTemplate extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 

@@ -33,6 +33,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.meveo.model.AuditableEntity; 
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCurrency;
 
 /**
@@ -100,7 +101,9 @@ public class PricePlanMatrix extends AuditableEntity {
 	 @JoinColumn(name = "TRADING_CURRENCY_ID")
 	 private TradingCurrency tradingCurrency ;
 	     
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TAX_ID")
+	private Tax tax;
     
     @Column(name = "BUSINESS_INTERMEDIARY_ID")
     private Integer businessIntermediaryId;
@@ -222,6 +225,15 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	public void setTradingCurrency(TradingCurrency tradingCurrency) {
 		this.tradingCurrency = tradingCurrency;
+	}
+	
+
+	public Tax getTax() {
+		return tax;
+	}
+
+	public void setTax(Tax tax) {
+		this.tax = tax;
 	}
 
 	@Override

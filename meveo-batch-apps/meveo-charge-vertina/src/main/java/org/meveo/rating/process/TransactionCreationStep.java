@@ -205,9 +205,9 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
             transaction.setAmountTax(amount1Tax);
             transaction.setAmountWithTax(amount1WithTax);
             //transaction.setPrAmount(amount2);
-            transaction.setPrAmountWithoutTax(amount2Discounted);
-            transaction.setPrAmountTax(amount2Tax);
-            transaction.setPrAmountWithTax(amount2WithTax);
+            transaction.setAmount2WithoutTax(amount2Discounted);
+            transaction.setAmount2Tax(amount2Tax);
+            transaction.setAmount2WithTax(amount2WithTax);
             transaction.setProvider(chargeApplication.getProvider());
             transaction.setParameter1(chargeApplication.getCriteria1());
             transaction.setParameter2(chargeApplication.getCriteria2());
@@ -318,9 +318,9 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 transaction.setAmountTax(amount1Tax);
                 transaction.setAmountWithTax(amount1WithTax);
                 //transaction.setPrAmount(amount2);
-                transaction.setPrAmountWithoutTax(amount2Discounted);
-                transaction.setPrAmountTax(amount2Tax);
-                transaction.setPrAmountWithTax(amount2WithTax);
+                transaction.setAmount2WithoutTax(amount2Discounted);
+                transaction.setAmount2Tax(amount2Tax);
+                transaction.setAmount2WithTax(amount2WithTax);
             }
 
             transaction.setStatus(RatedTransactionStatusEnum.OPEN);

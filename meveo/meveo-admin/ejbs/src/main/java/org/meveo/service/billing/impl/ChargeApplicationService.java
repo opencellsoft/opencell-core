@@ -51,7 +51,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ProviderBusinessService;
 import org.meveo.service.billing.local.BillingAccountServiceLocal;
 import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
 import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
@@ -64,7 +64,7 @@ import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
 @Stateless
 @Name("chargeApplicationService")
 @AutoCreate
-public class ChargeApplicationService extends BusinessService<ChargeApplication> implements
+public class ChargeApplicationService extends ProviderBusinessService<ChargeApplication> implements
         ChargeApplicationServiceLocal {
 
     @In
@@ -113,7 +113,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
         ChargeApplication chargeApplication = new ChargeApplication(chargeTemplate.getCode(), chargeInstance
                 .getDescription(), subscription, chargeInstance, chargeTemplate.getCode(),
                 ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance
-                        .getAmountWithoutTax(), chargeInstance.getPrAmountWithoutTax(), quantity, tax.getCode(), tax.getPercent(),
+                        .getAmountWithoutTax(), chargeInstance.getAmount2(), quantity, tax.getCode(), tax.getPercent(),
                 null, null, invoiceSubCategory, null, null, null, null, chargeInstance.getCriteria1(), chargeInstance
                         .getCriteria2(), chargeInstance.getCriteria3());
 
@@ -169,7 +169,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
         ChargeApplication chargeApplication = new ChargeApplication(chargeTemplate.getCode(), chargeInstance
                 .getDescription(), subscription, chargeInstance, chargeTemplate.getCode(),
                 ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance
-                        .getAmountWithoutTax(), chargeInstance.getPrAmountWithoutTax(), quantity, tax.getCode(), tax.getPercent(),
+                        .getAmountWithoutTax(), chargeInstance.getAmount2(), quantity, tax.getCode(), tax.getPercent(),
                 null, null, invoiceSubCategory, null, null, null, null, chargeInstance.getCriteria1(), chargeInstance
                         .getCriteria2(), chargeInstance.getCriteria3());
 
@@ -266,7 +266,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
                 .getDescription(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
                     chargeInstance.getCode(), ApplicationChgStatusEnum.WAITING,
                     ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate, chargeInstance.getAmountWithoutTax(),
-                    chargeInstance.getPrAmountWithoutTax(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
+                    chargeInstance.getAmount2(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
                             .getPercent(), null, nextapplicationDate, recurringChargeTemplate.getInvoiceSubCategory(),
                     param1, param2, param3, null, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
                     chargeInstance.getCriteria3());
@@ -368,7 +368,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
                     .getDescription(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
                     chargeInstance.getCode(), ApplicationChgStatusEnum.WAITING,
                     ApplicationTypeEnum.PRORATA_TERMINATION, applicationDate, chargeInstance.getAmountWithoutTax(),
-                    chargeInstance.getPrAmountWithoutTax(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
+                    chargeInstance.getAmount2(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
                             .getPercent(), null, nextapplicationDate, invoiceSubCategory, param1, param2, param3, null,
                     chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
             chargeApplication.setApplicationMode(ChargeApplicationModeEnum.REIMBURSMENT);
@@ -448,7 +448,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
                     .getDescription(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
                     chargeInstance.getCode(), ApplicationChgStatusEnum.WAITING,
                     reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : ApplicationTypeEnum.RECURRENT,
-                    applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getPrAmountWithoutTax(), chargeInstance
+                    applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmount2(), chargeInstance
                             .getServiceInstance().getQuantity(), tax.getCode(), tax.getPercent(), null,
                     nextapplicationDate, invoiceSubCategory, reimbursement ? "-1" : null, param2, null, null,
                     chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
@@ -566,7 +566,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
                     .getDescription(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
                     chargeInstance.getCode(), ApplicationChgStatusEnum.WAITING,
                     reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum, applicationDate,
-                    chargeInstance.getAmountWithoutTax(), chargeInstance.getPrAmountWithoutTax(), chargeInstance
+                    chargeInstance.getAmountWithoutTax(), chargeInstance.getAmount2(), chargeInstance
                             .getServiceInstance().getQuantity(), tax.getCode(), tax.getPercent(), null,
                     nextapplicationDate, invoiceSubCategory, reimbursement ? "-1" : param1, param2, param3, null,
                     chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
@@ -653,7 +653,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
             ChargeApplication chargeApplication = new ChargeApplication(chargeInstance.getCode(), chargeInstance
                     .getDescription(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
                     chargeInstance.getCode(), ApplicationChgStatusEnum.WAITING, type, applicationDate, chargeInstance
-                            .getAmountWithoutTax(), chargeInstance.getPrAmountWithoutTax(), chargeInstance.getServiceInstance()
+                            .getAmountWithoutTax(), chargeInstance.getAmount2(), chargeInstance.getServiceInstance()
                             .getQuantity(), tax.getCode(), tax.getPercent(), null, nextapplicationDate,
                     invoiceSubCategory, param1, param2, null, null, chargeInstance.getCriteria1(), chargeInstance
                             .getCriteria2(), chargeInstance.getCriteria3());
@@ -786,7 +786,7 @@ public class ChargeApplicationService extends BusinessService<ChargeApplication>
                     .getDescription(), chargeInstance.getServiceInstance().getSubscription(), chargeInstance,
                     chargeInstance.getCode(), ApplicationChgStatusEnum.WAITING,
                     ApplicationTypeEnum.PRORATA_TERMINATION, applicationDate, chargeInstance.getAmountWithoutTax(),
-                    chargeInstance.getPrAmountWithoutTax(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
+                    chargeInstance.getAmount2(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
                             .getPercent(), null, nextapplicationDate, invoiceSubCategory, param1, param2, param3, null,
                     chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
             create(chargeApplication, creator, chargeInstance.getProvider());

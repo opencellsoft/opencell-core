@@ -37,6 +37,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -46,7 +47,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "BILLING_CHARGE_APPLIC")
 @AttributeOverrides( { @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CHARGE_APPLIC_SEQ")
-public class ChargeApplication extends BusinessEntity {
+public class ChargeApplication extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -78,8 +79,8 @@ public class ChargeApplication extends BusinessEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
     private BigDecimal amountWithoutTax;
 
-    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountWithoutTax;
+    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
+    private BigDecimal amount2;
 
     @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
@@ -157,9 +158,6 @@ public class ChargeApplication extends BusinessEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TRADING_CURRENCY_ID")
     private TradingCurrency tradingCurrency ;
-    
-    @Column(name = "PR_DESCRIPTION", length = 100)
-	private String prDescription;
   
     public ChargeApplication() {
         super();
@@ -167,7 +165,7 @@ public class ChargeApplication extends BusinessEntity {
 
     public ChargeApplication(String code, String description, Subscription subscription, ChargeInstance chargeInstance,
             String chargeCode, ApplicationChgStatusEnum status, ApplicationTypeEnum applicationType,
-            Date applicationDate, BigDecimal amountWithoutTax, BigDecimal prAmountWithoutTax, int quantity, String taxCode,
+            Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amount2, int quantity, String taxCode,
             BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3,
             String parameter4, String criteria1, String criteria2, String criteria3) {
@@ -182,7 +180,7 @@ public class ChargeApplication extends BusinessEntity {
         this.status = status;
         this.applicationDate = applicationDate;
         this.amountWithoutTax = amountWithoutTax;
-        this.prAmountWithoutTax = prAmountWithoutTax;
+        this.amount2 = amount2;
         this.parameter1 = parameter1;
         this.parameter2 = parameter2;
         this.parameter3 = parameter3;
@@ -317,13 +315,13 @@ public class ChargeApplication extends BusinessEntity {
         this.amountWithoutTax = amountWithoutTax;
     }
 
-   
-    public BigDecimal getPrAmountWithoutTax() {
-		return prAmountWithoutTax;
+
+	public BigDecimal getAmount2() {
+		return amount2;
 	}
 
-	public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
-		this.prAmountWithoutTax = prAmountWithoutTax;
+	public void setAmount2(BigDecimal amount2) {
+		this.amount2 = amount2;
 	}
 
 	public ApplicationTypeEnum getApplicationType() {
@@ -489,13 +487,6 @@ public class ChargeApplication extends BusinessEntity {
 		this.tradingCurrency = tradingCurrency;
 	}
 
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
 
 	 
     

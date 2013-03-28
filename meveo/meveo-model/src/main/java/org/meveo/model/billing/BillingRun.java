@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Currency;
 
 /**
  * @author R.AITYAAZZA
@@ -125,17 +126,17 @@ public class BillingRun extends AuditableEntity {
 
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_CURRENCY_ID")
-    private TradingCurrency tradingCurrency ;
+    @JoinColumn(name = "PR_CURRENCY_ID")
+    private Currency currency ;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_COUNTRY_ID")
-    private TradingCountry tradingCountry; 
+    @JoinColumn(name = "PR_COUNTRY_ID")
+    private Country country; 
     
 
     @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "TRADING_LANGUAGE_ID")
-   private TradingLanguage tradingLanguage;
+   @JoinColumn(name = "PR_LANGUAGE_ID")
+   private Language language;
     
  
     @Transient
@@ -332,33 +333,32 @@ public class BillingRun extends AuditableEntity {
 		this.prAmountWithTax = prAmountWithTax;
 	}
 
-	 
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
-	}
-
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
-	}
-
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
-
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
-
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
-
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
-
 	public BigDecimal getPrAmountTax() {
 		return prAmountTax;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public Language getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
     
     

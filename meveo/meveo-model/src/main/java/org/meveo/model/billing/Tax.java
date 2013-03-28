@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -31,7 +31,7 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "BILLING_TAX")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
-public class Tax extends BusinessEntity {
+public class Tax extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,20 +40,6 @@ public class Tax extends BusinessEntity {
 
     @Column(name = "PERCENT", precision = 19, scale = 8)
     private BigDecimal percent;
-
-    @Column(name = "PR_DESCRIPTION", length = 50)
-    private String prDescription;
-
-   
-
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
-
 
 	public String getAccountingCode() {
         return accountingCode;

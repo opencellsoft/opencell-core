@@ -108,21 +108,7 @@ public class Invoice extends AuditableEntity {
     @Basic(fetch = FetchType.LAZY)
     //private Blob pdfBlob;
     private byte[] pdf;
-     
-    @Column(name = "DISCOUNT_CODE", length = 20)
-    private String discountCode;
-    
-    
-    
-    @Column(name = "PR_AMOUNT_WITHOUT_TAX")
-    private Integer prAmountWithoutTax;
-    
-    @Column(name = "PR_AMOUNT_TAX")
-    private Integer prAmountTax;
-    
-    @Column(name = "PR_AMOUNT_WITH_TAX")
-    private Integer prAmountWithTax;
-    
+ 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TRADING_CURRENCY_ID")
     private TradingCurrency tradingCurrency ;
@@ -142,38 +128,6 @@ public class Invoice extends AuditableEntity {
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
   
-
-	public String getDiscountCode() {
-		return discountCode;
-	}
-
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
-	}
-
-	public Integer getPrAmountWithoutTax() {
-		return prAmountWithoutTax;
-	}
-
-	public void setPrAmountWithoutTax(Integer prAmountWithoutTax) {
-		this.prAmountWithoutTax = prAmountWithoutTax;
-	}
-
-	public Integer getPrAmountTax() {
-		return prAmountTax;
-	}
-
-	public void setPrAmountTax(Integer prAmountTax) {
-		this.prAmountTax = prAmountTax;
-	}
-
-	public Integer getPrAmountWithTax() {
-		return prAmountWithTax;
-	}
-
-	public void setPrAmountWithTax(Integer prAmountWithTax) {
-		this.prAmountWithTax = prAmountWithTax;
-	}
 
 	public List<RatedTransaction> getRatedTransactions() {
         return ratedTransactions;

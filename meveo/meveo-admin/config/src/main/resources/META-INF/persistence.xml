@@ -68,9 +68,7 @@
 		<class>org.meveo.model.billing.TradingCountry</class>
 		<class>org.meveo.model.billing.TradingCurrency</class>
 		<class>org.meveo.model.billing.TradingLanguage</class>
-		<class>org.meveo.model.billing.TaxLanguage</class>
-		<class>org.meveo.model.billing.Discount</class>
-		<class>org.meveo.model.billing.DiscountLanguage</class>
+		<class>org.meveo.model.billing.TaxLanguage</class>  
 		<class>org.meveo.model.billing.InvoiceCategoryCountry</class>
 		<class>org.meveo.model.billing.InvoiceCategoryLanguage</class>
 		<class>org.meveo.model.billing.InvoiceSubcategoryCountry</class>

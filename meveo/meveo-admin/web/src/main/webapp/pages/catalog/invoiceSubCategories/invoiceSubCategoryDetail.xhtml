@@ -77,13 +77,21 @@
                             label="#{messages['invoiceSubCategory.panel']}"
                             backingBean="#{invoiceSubCategoryBean}"
                             entity="#{invoiceSubCategory}">
+							
                             <custom:formEntityField id="categorySelectId"
                                 label="#{messages['invoiceSubCategory.invoiceCategory']}"
                                 field="invoiceCategory" childField="code" required="true"
                                 popup="true" popupId="searchInvoiceCategoryPopup" />
-                            <custom:formField label="#{messages['invoiceSubCategory.code']}"
-                                field="code" required="true" validateUnique="true"
-                                useConverter="false" />
+								
+		<s:decorate template="/layout/edit.xhtml">
+        <ui:define name="label">
+         <h:outputText value="#{messages['address.country']}" />
+        </ui:define>
+        <h:panelGrid columns="3" >
+         <h:inputText rendered="#{invoiceSubCategoryBean.entity.id==null}" value="#{entity.code}" required="true" disabled="false"/>
+         <h:inputText  rendered="#{invoiceSubCategoryBean.entity.id!=null}" value="#{entity.code}" required="true" disabled="true"/>
+          </h:panelGrid>
+          </s:decorate>	
                             <custom:languageFields/>
                             <custom:fieldset
                                 name="#{messages['invoiceSubCategory.accountingCode']}"
@@ -177,11 +185,32 @@
 
                     </rich:tab>  
                      
-                    <rich:tab label="#{messages['invoiceSubCategory.tab2']}" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
-
+					 
+           <rich:tab label="#{messages['invoiceSubCategory.tab2']}" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
+       
+        <h:panelGrid columns="2">
+		 
+	   <s:decorate template="/layout/edit.xhtml">
+        <ui:define name="label">
+         <h:outputText value="#{messages['invoiceSubCategory.code']}"  />
+        </ui:define>
+        <h:panelGrid columns="2" >
+         <h:outputText rendered="#{edit}" value="#{invoiceSubCategory.code}" required="true" disabled="true" style="font-weight:bold;"/> 
+		  <h:inputHidden rendered="#{edit}"/>
+           </h:panelGrid>
+          </s:decorate>	 
+		  <s:decorate template="/layout/edit.xhtml">
+        <ui:define name="label">
+         <h:outputText value="#{messages['invoiceSubCategory.description']}" />
+        </ui:define>
+        <h:panelGrid columns="2" >
+         <h:outputText rendered="#{edit}" value="#{invoiceSubCategory.description}" required="true" disabled="true" style="font-weight:bold;"/> 
+		  <h:inputHidden rendered="#{edit}"/>
+           </h:panelGrid>
+          </s:decorate> 
+		  </h:panelGrid>
                         <br />
-                        <br />
-
+						
                         <a:outputPanel id="invoiceSubCategoryCountries_panel">
                             <custom:dataList
                                 dataModel="#{invoiceSubCategory.invoiceSubcategoryCountries}"
@@ -189,6 +218,9 @@
                                 checkMany="false" backingBean="#{invoiceSubCategoryBean}">
               	
 	         
+			 
+			 
+			 
 			         <rich:column styleClass="actions-column">
                                     <f:facet name="header">
                                         <h:outputText value="#{messages['invoiceSubCategoryCountry.countryCode']}" />
@@ -240,10 +272,10 @@
                                         <custom:formField
                                             label="#{messages['invoiceSubCategoryCountry.id']}"
                                             field="id" disabled="true" />
-											
+																	 
          <s:decorate template="/layout/edit.xhtml">
         <ui:define name="label">
-         <h:outputText value="Code pays" />
+         <h:outputText value="#{messages['address.country']}" />
         </ui:define>
         <h:panelGrid columns="3" >
          <h:inputText  rendered="#{edit}" value="#{entity.tradingCountry.countryCode}" required="true" disabled="true"/>

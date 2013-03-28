@@ -13,24 +13,13 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.meveo.service.catalog.impl;
+package org.meveo.service.base.local;
 
-import javax.ejb.Stateless;
+import org.meveo.model.ProviderBusinessEntity;
+import org.meveo.model.crm.Provider;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.service.base.ProviderBusinessService;
-import org.meveo.service.catalog.local.ChargeTemplateServiceLocal;
+public interface ProviderBusinessServiceLocal<P extends ProviderBusinessEntity> extends IPersistenceService<P> {
+    public P findByCode(String code);
 
-/**
- * Charge Template service implementation.
- * 
- */
-@Stateless
-@Name("chargeTemplateService")
-@AutoCreate
-public class ChargeTemplateService<P extends ChargeTemplate> extends ProviderBusinessService<P> implements
-        ChargeTemplateServiceLocal<P> {
-
+    public P findByCode(String code, Provider provider);
 }

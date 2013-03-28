@@ -82,25 +82,7 @@ public class Provider extends BusinessEntity {
     
     @Column(name = "MULTILANGUAGE_FLAG")
     private boolean multilanguageFlag;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ID")
-    private Customer customer;
-    
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
-    private CustomerAccount customerAccount;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_ACCOUNT_ID")
-    private BillingAccount billingAccount;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID")
-    private UserAccount userAccount;
-
-    
+   
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<TradingCountry> tradingCountries;
     
@@ -219,41 +201,7 @@ public class Provider extends BusinessEntity {
 	public void setMultilanguageFlag(boolean multilanguageFlag) {
 		this.multilanguageFlag = multilanguageFlag;
 	}
-
-	
-	
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
-	public CustomerAccount getCustomerAccount() {
-		return customerAccount;
-	}
-
-	public void setCustomerAccount(CustomerAccount customerAccount) {
-		this.customerAccount = customerAccount;
-	}
-
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
-
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
-
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
-
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+ 
 
 	public List<PaymentMethodEnum> getPaymentMethods() {
         if (paymentMethods == null) {

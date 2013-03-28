@@ -125,7 +125,7 @@ public class RecurringChargeCron {
                             activeRecurringChargeInstance, activeRecurringChargeInstance.getCode(),
                             ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.RECURRENT, previousapplicationDate,
                             activeRecurringChargeInstance.getAmountWithoutTax(), activeRecurringChargeInstance
-                                    .getPrAmountWithoutTax(), activeRecurringChargeInstance.getServiceInstance().getQuantity(),
+                                    .getAmount2(), activeRecurringChargeInstance.getServiceInstance().getQuantity(),
                             tax.getCode(), tax.getPercent(), null, applicationDate, invoiceSubCat, "1", param2, null,
                             null, activeRecurringChargeInstance.getCriteria1(), activeRecurringChargeInstance
                                     .getCriteria2(), activeRecurringChargeInstance.getCriteria3());

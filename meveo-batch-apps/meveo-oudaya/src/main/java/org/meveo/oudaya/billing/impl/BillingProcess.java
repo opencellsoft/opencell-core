@@ -44,7 +44,6 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunList;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -319,7 +318,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                        invoiceAgregateF.setProvider(billingRun.getProvider());
 	                        if (!entreprise) {
 	                            nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(ratedTransaction
-	                                    .getPrAmountWithoutTax());
+	                                    .getAmount2WithoutTax());
 	                        }
 
 	                        // start agregate T
@@ -488,7 +487,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	            boolean createXmlInvoice = false;
 	            for (RatedTransaction ratedTrnsaction : invoice.getRatedTransactions()) {
 	                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax() : ratedTrnsaction
-	                        .getPrAmountWithoutTax();
+	                        .getAmount2WithoutTax();
 	                if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO) && !ratedTrnsaction.isDoNotTriggerInvoicing()) {
 	                    createXmlInvoice = true;
 	                    break;

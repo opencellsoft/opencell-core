@@ -43,7 +43,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -62,7 +61,6 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.oudaya.OudayaConfig;
@@ -529,7 +527,7 @@ public class XMLInvoiceCreator {
                             boolean createSubCatElement = false;
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
-                                        : ratedTrnsaction.getPrAmountWithoutTax();
+                                        : ratedTrnsaction.getAmount2WithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
                                     createSubCatElement = true;
                                     break;
@@ -555,7 +553,7 @@ public class XMLInvoiceCreator {
 
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
-                                        : ratedTrnsaction.getPrAmountWithoutTax();
+                                        : ratedTrnsaction.getAmount2WithoutTax();
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
 
                                     Element line = doc.createElement("line");
@@ -583,7 +581,7 @@ public class XMLInvoiceCreator {
 
                                     Element lineAmountWithTax = doc.createElement("amountWithTax");
                                     Text lineAmountWithTaxTxt = doc.createTextNode(round(entreprise ? ratedTrnsaction
-                                            .getAmountWithTax() : ratedTrnsaction.getPrAmountWithoutTax()));
+                                            .getAmountWithTax() : ratedTrnsaction.getAmount2WithoutTax()));
                                     lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
                                     line.appendChild(lineAmountWithTax);
 

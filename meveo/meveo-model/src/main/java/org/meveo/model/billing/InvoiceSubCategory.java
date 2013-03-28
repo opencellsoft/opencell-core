@@ -28,7 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -37,7 +37,7 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "BILLING_INVOICE_SUB_CAT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
-public class InvoiceSubCategory extends BusinessEntity {
+public class InvoiceSubCategory extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,16 +55,6 @@ public class InvoiceSubCategory extends BusinessEntity {
     @JoinColumn(name = "INVOICE_CATEGORY_ID")
     private InvoiceCategory invoiceCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TAX_ID")
-    private Tax tax;
-
-    
-    @Column(name = "DISCOUNT_CODE", length = 20)
-    private String discountCode;
-
-    
-    
 
 	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
 		return invoiceSubcategoryCountries;
@@ -74,15 +64,7 @@ public class InvoiceSubCategory extends BusinessEntity {
 			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
 		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
 	}
-
-	public String getDiscountCode() {
-		return discountCode;
-	}
-
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
-	}
-
+ 
 	public String getAccountingCode() {
         return accountingCode;
     }
@@ -98,14 +80,7 @@ public class InvoiceSubCategory extends BusinessEntity {
     public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
         this.invoiceCategory = invoiceCategory;
     }
-
-    public Tax getTax() {
-        return tax;
-    }
-
-    public void setTax(Tax tax) {
-        this.tax = tax;
-    }
+ 
 
 	public BigDecimal getDiscount() {
 		return discount;
