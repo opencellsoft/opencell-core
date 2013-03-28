@@ -38,11 +38,9 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getTerminationChargeTemplates() {
 
-		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
+		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null,currentProvider)
 				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.TERMINATION).startOrClause()
-				.addCriterionEntity("c.provider", currentProvider).addSql("c.provider is null")
-				.endOrClause().getQuery(em);
+						OneShotChargeTemplateTypeEnum.TERMINATION).getQuery(em);
 		return query.getResultList();
 	}
 
@@ -52,11 +50,9 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates() {
 
-		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
+		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null, currentProvider)
 				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.SUBSCRIPTION).startOrClause()
-				.addCriterionEntity("c.provider", currentProvider).addSql("c.provider is null")
-				.endOrClause().getQuery(em);
+						OneShotChargeTemplateTypeEnum.SUBSCRIPTION).getQuery(em);
 		return query.getResultList();
 	}
 }

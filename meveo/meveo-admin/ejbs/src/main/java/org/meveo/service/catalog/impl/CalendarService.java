@@ -41,11 +41,9 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listChargeApplicationCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null)
+		Query query = new QueryBuilder(Calendar.class, "c", null, currentProvider)
 				.addCriterionEnum("type", CalendarTypeEnum.CHARGE_IMPUTATION)
-				.startOrClause()
-				.addCriterionEntity("c.provider", currentProvider)
-				.addSql("c.provider is null").endOrClause().getQuery(em);
+				.getQuery(em);
 		return query.getResultList();
 	}
 
@@ -54,11 +52,9 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listDurationTermCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null)
+		Query query = new QueryBuilder(Calendar.class, "c", null, currentProvider)
 				.addCriterionEnum("type", CalendarTypeEnum.DURATION_TERM)
-				.startOrClause()
-				.addCriterionEntity("c.provider", currentProvider)
-				.addSql("c.provider is null").endOrClause().getQuery(em);
+				.getQuery(em);
 		return query.getResultList();
 	}
 
@@ -67,11 +63,9 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listBillingCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null)
+		Query query = new QueryBuilder(Calendar.class, "c", null, currentProvider)
 				.addCriterionEnum("type", CalendarTypeEnum.BILLING)
-				.startOrClause()
-				.addCriterionEntity("c.provider", currentProvider)
-				.addSql("c.provider is null").endOrClause().getQuery(em);
+				.getQuery(em);
 		return query.getResultList();
 	}
 

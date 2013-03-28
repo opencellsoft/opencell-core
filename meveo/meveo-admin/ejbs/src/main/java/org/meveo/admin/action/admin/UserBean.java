@@ -136,7 +136,7 @@ public class UserBean extends BaseBean<User> {
 	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
 	 */
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("providers");
+	    return Arrays.asList("providers");
 	}
 
 	public String getPassword() {

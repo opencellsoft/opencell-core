@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.commons.utils;
 
 import java.util.Calendar;
@@ -27,6 +27,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.crm.Provider;
 
 /**
  * Query builder class for building JPA queries.
@@ -83,17 +85,23 @@ public class QueryBuilder {
      * @param clazz Class for which query is created.
      * @param alias Alias in query.
      */
-    public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
+    public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, Provider provider) {
         this(getInitQuery(clazz, alias, fetchFields));
+// TODO uncomment when solved issue with object detaching
+//        if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
+//            addCriterionEntity("provider", provider);
+//        }
     }
 
     private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
-                query.append(" left join fetch " + alias + "." + fetchField);
+//TODO uncomment when solved issue with left join fetch
+                //                query.append(" left join fetch " + alias + "." + fetchField);
             }
         }
+
         return query.toString();
     }
 

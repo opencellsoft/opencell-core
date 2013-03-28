@@ -67,7 +67,7 @@ public class JobExecutionHistoryService extends PersistenceService<JobExecutionH
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends JobExecutionHisto> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), null);
 		Map<String, Object> filters = config.getFilters();
 		if (filters != null) {
 			if (!filters.isEmpty()) {

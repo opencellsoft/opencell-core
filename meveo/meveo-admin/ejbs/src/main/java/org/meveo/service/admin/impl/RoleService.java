@@ -40,7 +40,7 @@ public class RoleService extends PersistenceService<Role> {
     @SuppressWarnings("unchecked")
     @Override
     public List<Role> list() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
         Query query = queryBuilder.getQuery(em);
         return query.getResultList();
     }

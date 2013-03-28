@@ -260,13 +260,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@SuppressWarnings("unchecked")
 	public List<E> list() {
 		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-		if (BaseEntity.class.isAssignableFrom(entityClass)) {
-			queryBuilder.startOrClause();
-			queryBuilder.addCriterionEntity("a.provider", currentProvider);
-			// queryBuilder.addSql("a.provider is null");
-			queryBuilder.endOrClause();
-		}
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, currentProvider);
 		Query query = queryBuilder.getQuery(em);
 		return query.getResultList();
 	}
@@ -288,7 +282,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 
 	public long count(PaginationConfiguration config) {
-	    System.out.println("AKKK currentProvider is "+currentProvider);
         
 		QueryBuilder queryBuilder = getQuery(config);
 		return queryBuilder.count(em);
@@ -300,14 +293,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	public long count() {
 		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null,null);
 		
-		if (BaseEntity.class.isAssignableFrom(entityClass)) {
-			queryBuilder.startOrClause();
-			queryBuilder.addCriterionEntity("a.provider", currentProvider);
-			// queryBuilder.addSql("a.provider is null");
-			queryBuilder.endOrClause();
-		}
 		return queryBuilder.count(em);
 	}
 
@@ -345,14 +332,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends E> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
-		if (BaseEntity.class.isAssignableFrom(entityClass)) {
-		    queryBuilder.
-			queryBuilder.startOrClause();
-			queryBuilder.addCriterionEntity("a.provider", currentProvider);
-			// queryBuilder.addSql("a.provider is null");
-			queryBuilder.endOrClause();
-		}
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(),currentProvider);
+		
 		Map<String, Object> filters = config.getFilters();
 		if (filters != null) {
 			if (!filters.isEmpty()) {
@@ -423,7 +404,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			}
 		}
 		queryBuilder.addPaginationConfiguration(config, "a");
-		System.out.println("AKKK queryBuilder is "+queryBuilder.toString());
         
 		return queryBuilder;
 	}
