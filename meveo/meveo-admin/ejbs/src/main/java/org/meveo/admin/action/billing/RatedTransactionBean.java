@@ -66,24 +66,6 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
     }
 
     /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    /*
-     * TODO: @Begin(join = true)
-     * 
-     * @Factory("ratedTransactions")
-     */
-    @Produces
-    @Named("ratedTransactions")
-    @ConversationScoped
-    public PaginationDataModel<RatedTransaction> list() {
-        return super.list();
-    }
-
-    /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override

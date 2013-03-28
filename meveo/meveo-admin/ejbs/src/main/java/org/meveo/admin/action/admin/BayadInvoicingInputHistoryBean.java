@@ -21,11 +21,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.BayadInvoicingInputHistory;
 import org.meveo.service.admin.impl.BayadInvoicingInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link BayadInvoicingInputHistory} (extends
@@ -70,21 +70,7 @@ public class BayadInvoicingInputHistoryBean extends BaseBean<BayadInvoicingInput
 		return initEntity();
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("bayadInvoicingInputs")
-	@ConversationScoped
-	public PaginationDataModel<BayadInvoicingInputHistory> list() {
-		return super.list();
-	}
+
 
 	/**
 	 * Override default list view name. (By default view name is class name

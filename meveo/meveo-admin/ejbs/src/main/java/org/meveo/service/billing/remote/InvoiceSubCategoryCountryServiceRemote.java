@@ -17,7 +17,6 @@ package org.meveo.service.billing.remote;
 
 import javax.ejb.Remote;
 
-import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.local.IPersistenceService;
 

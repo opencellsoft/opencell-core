@@ -50,13 +50,6 @@ public class LanguageBean extends BaseBean<Language> {
 		return initEntity();
 	}
 
-	@Produces
-	@Named("languages")
-	@ConversationScoped
-	public PaginationDataModel<Language> list() {
-		return super.list();
-	}
-
 	/**
 	 * Override default list view name. (By default its class name starting
 	 * lower case + 's').

@@ -64,21 +64,6 @@ public class AccessBean extends BaseBean<Access> {
 		return initEntity();
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("accesses")
-	@ConversationScoped
-	public PaginationDataModel<Access> list() {
-		return super.list();
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

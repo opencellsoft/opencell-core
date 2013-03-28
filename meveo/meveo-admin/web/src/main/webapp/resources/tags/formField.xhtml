@@ -3,6 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite">
 
 	<cc:interface componentType="formField">
@@ -193,7 +194,7 @@
 				<h:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_picklist" value="#{cc.attrs.label}" />  
 					<p:pickList id="#{cc.attrs.id}_picklist" value="#{cc.backingBeanFromParentOrCurrent.dualListModel}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" disabled="#{not cc.backingBeanFromParentOrCurrent.edit}" >
-						<f:converter binding="#{entityConverter}" />
+						<s:objectConverter />
 					</p:pickList>
 				</h:panelGrid>
 			</ui:fragment>

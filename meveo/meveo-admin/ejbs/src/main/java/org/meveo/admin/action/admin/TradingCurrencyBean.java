@@ -51,12 +51,6 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 		return initEntity();
 	}
 
-	@Produces
-	@Named("tradingCurrencies")
-	@ConversationScoped
-	public PaginationDataModel<TradingCurrency> list() {
-		return super.list();
-	}
 
 	/**
 	 * Override default list view name. (By default its class name starting

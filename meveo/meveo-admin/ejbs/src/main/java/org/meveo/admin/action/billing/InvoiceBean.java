@@ -28,6 +28,8 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -38,7 +40,7 @@ import org.meveo.service.billing.impl.InvoiceService;
  * 
  */
 @Named
-// TODO: @Scope(ScopeType.CONVERSATION)
+@ConversationScoped
 public class InvoiceBean extends BaseBean<Invoice> {
 
     private static final long serialVersionUID = 1L;
@@ -74,24 +76,10 @@ public class InvoiceBean extends BaseBean<Invoice> {
     }
 
     /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("invoices")
-    @ConversationScoped
-    public PaginationDataModel<Invoice> list() {
-        return super.list();
-    }
-
-    /**
      * Method, that is invoked in billing account screen. This method returns invoices associated with current Billing Account.
      * 
      */
-    public PaginationDataModel<Invoice> getBillingAccountInvoices(BillingAccount ba) {
-        super.list();
+    public LazyDataModel<Invoice> getBillingAccountInvoices(BillingAccount ba) {
         getFilters();
         if (ba.getCode() == null) {
             log.warn("No billingAccount code");
@@ -99,7 +87,7 @@ public class InvoiceBean extends BaseBean<Invoice> {
             filters.put("billingAccount", ba);
         }
 
-        return entities;
+        return getLazyDataModel();
     }
 
     /**

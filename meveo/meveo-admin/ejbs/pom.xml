@@ -28,8 +28,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
 				<executions>
-					<!-- Copy message, authentication and other configuration files from 
-						configuration module for testing -->
+					<!-- Copy message, authentication and other configuration files from configuration module for testing -->
 					<execution>
 						<id>copy-config-properties-file</id>
 						<phase>process-test-resources</phase>
@@ -101,7 +100,7 @@
 			<artifactId>primefaces</artifactId>
 			<version>3.4.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jboss.seam.security</groupId>
 			<artifactId>seam-security</artifactId>

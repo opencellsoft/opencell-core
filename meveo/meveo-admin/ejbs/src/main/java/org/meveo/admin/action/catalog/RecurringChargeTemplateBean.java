@@ -32,6 +32,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link RecurringChargeTemplate} (extends
@@ -87,23 +88,14 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 		return recuChargeTemplate;
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("recurringChargeTemplates")
-	@ConversationScoped
-	public PaginationDataModel<RecurringChargeTemplate> list() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		return super.list();
-	}
+    @Override
+    public DataTable search() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.search();
+    }
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous

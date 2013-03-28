@@ -70,22 +70,6 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
     }
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("offerTemplates")
-    @ConversationScoped
-    public PaginationDataModel<OfferTemplate> list() {
-        getFilters();
-        if (!filters.containsKey("disabled")) {
-            filters.put("disabled", false);
-        }
-        return super.list();
-    }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()

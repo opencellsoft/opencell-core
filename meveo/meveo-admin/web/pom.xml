@@ -19,22 +19,22 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-		
-<!-- 		<plugins> -->
-<!-- 			<plugin> -->
-<!-- 				<artifactId>maven-war-plugin</artifactId> -->
-<!-- 				<version>2.3</version> -->
-<!-- 				<configuration> -->
-<!-- 					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes> -->
-<!-- 					<archive> -->
-<!-- 						<manifest> -->
-<!-- 							<addClasspath>true</addClasspath> -->
-<!-- 							<classpathPrefix>lib/</classpathPrefix> -->
-<!-- 						</manifest> -->
-<!-- 					</archive> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
-<!-- 		</plugins> -->
+
+		<!-- <plugins> -->
+		<!-- <plugin> -->
+		<!-- <artifactId>maven-war-plugin</artifactId> -->
+		<!-- <version>2.3</version> -->
+		<!-- <configuration> -->
+		<!-- <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes> -->
+		<!-- <archive> -->
+		<!-- <manifest> -->
+		<!-- <addClasspath>true</addClasspath> -->
+		<!-- <classpathPrefix>lib/</classpathPrefix> -->
+		<!-- </manifest> -->
+		<!-- </archive> -->
+		<!-- </configuration> -->
+		<!-- </plugin> -->
+		<!-- </plugins> -->
 	</build>
 
 	<dependencies>
@@ -56,6 +56,11 @@
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-config</artifactId>
 			<classifier>${env}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.omnifaces</groupId>
+			<artifactId>omnifaces</artifactId>
+			<version>1.3</version>
 		</dependency>
 	</dependencies>
 

@@ -26,7 +26,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
-import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.payments.AccountOperation;
@@ -115,21 +115,6 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return initEntity();
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("accountOperations")
-	@ConversationScoped
-	public PaginationDataModel<AccountOperation> list() {
-		return super.list();
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -162,14 +147,12 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 */
 	public String matching(Long customerAccountId) {
 		List<Long> operationIds = new ArrayList<Long>();
-		log.debug("getChecked():" + getChecked());
-		for (Long id : getChecked().keySet()) {
-			if (getChecked().get(id)) {
-				operationIds.add(id);
-			}
+		log.debug("getChecked():" + getSelectedEntities());
+		for (IEntity operation : getSelectedEntities()) {
+		    operationIds.add((Long)operation.getId());
 		}
 		log.info("operationIds    " + operationIds);
-		if (operationIds.isEmpty()) {
+		if (getSelectedEntities().length==0) {
 			messages.error(new BundleKey("messages", "customerAccount.matchingUnselectedOperation"));
 			return null;
 		}
@@ -230,11 +213,10 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 	public String consultMatching() {
 		List<Long> operationIds = new ArrayList<Long>();
-		for (Long id : getChecked().keySet()) {
-			if (getChecked().get(id)) {
-				operationIds.add(id);
-			}
-		}
+		log.debug("getChecked():" + getSelectedEntities());
+        for (IEntity operation : getSelectedEntities()) {
+            operationIds.add((Long)operation.getId());
+        }
 		log.info(" consultMatching operationIds " + operationIds);
 		if (operationIds.isEmpty() || operationIds.size() > 1) {
 			messages.info(new BundleKey("messages", "consultMatching.noOperationSelected"));

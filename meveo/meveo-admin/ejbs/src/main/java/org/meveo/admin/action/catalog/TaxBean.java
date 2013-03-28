@@ -125,21 +125,6 @@ public class TaxBean extends BaseBean<Tax> {
 		return back;
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("taxes")
-	@ConversationScoped
-	public PaginationDataModel<Tax> list() {
-		return super.list();
-	}
 
 	/**
 	 * Override default list view name. (By default its class name starting

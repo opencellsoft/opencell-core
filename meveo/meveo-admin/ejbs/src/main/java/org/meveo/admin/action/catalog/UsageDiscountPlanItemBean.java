@@ -27,6 +27,7 @@ import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.UsageDiscountPlanItemService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link UsagePricePlanItem} (extends
@@ -72,24 +73,14 @@ public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 	}
 
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("usageDiscountPlanItems")
-	@ConversationScoped
-	public PaginationDataModel<UsageDiscountPlanItem>  list() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		return super.list();
-	}
-
+    @Override
+    public DataTable search() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.search();
+    }
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

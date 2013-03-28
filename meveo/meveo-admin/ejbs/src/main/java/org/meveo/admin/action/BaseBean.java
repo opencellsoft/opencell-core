@@ -41,10 +41,10 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
@@ -83,15 +83,18 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Class<T> clazz;
 
     /**
+     * Request parameter.
+     */
+    @Inject
+    @RequestParam
+    private Instance<Boolean>  edit;
+    
+    /**
      * Request parameter. Used for loading in object by its id.
      */
     @Inject
     @RequestParam
     private Instance<Long> objectId;
-
-    private String sortField;
-    private String sortOrder;
-
     
 	/** Search filters. */
 	protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
@@ -223,7 +226,22 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         return back();
     }
+    
+    /**
+     * Lists all entities.
+     */
+    public List<T> listAll() {
+        return getPersistenceService().list();
+    }
 
+    /**
+     * Returns view after save() operation. By default it goes back to list
+     * view. Override if need different logic (for example return to one view
+     * for save and another for update operations)
+     */
+    public String getViewAfterSave() {
+        return getListViewName();
+    }
     /**
      * Method to get Back link. If default view name is different than override the method. Default name: entity's name + s;
      * 
@@ -237,7 +255,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         if (backViewParameter != null) {
             return backViewParameter.toString();
         } else {
-            return getDefaultViewName();
+            return getListViewName();
         }
     }
 
@@ -254,6 +272,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
+     * Generating action name to get to entity creation page. Override this
+     * method if its view name does not fit.
+     */
+    public String getNewViewName() {
+        return getEditViewName();
+    }
+    
+    /**
      * TODO
      */
     public String getEditViewName() {
@@ -269,7 +295,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Generating back link.
      */
-    protected String getDefaultViewName() {
+    protected String getListViewName() {
         String className = clazz.getSimpleName();
         StringBuilder sb = new StringBuilder(className);
         char[] dst = new char[1];
@@ -343,6 +369,21 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         if (filters == null)
             filters = new HashMap<String, Object>();
         return filters;
+    }
+
+    /**
+     * Clean search fields in datatable.
+     */
+    public void clean() {
+        filters = new HashMap<String, Object>();
+    }
+    
+    /**
+     * Reset values to the last state.
+     */
+    public void resetFormEntity() {
+        entity = null;
+        entity = getEntity();
     }
 
     /**
@@ -494,7 +535,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return dataModel;
     }
 
-    public DataTable list() {
+    public DataTable search() {
         dataTable.reset();
         return dataTable;
     }
@@ -519,6 +560,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return objectId.get();
     }
 
+    public boolean isEdit() {
+        return edit.get();
+    }
+    
     protected void clearObjectId() {
         objectId = null;
     }
@@ -564,7 +609,4 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		this.languageMessagesMap = languageMessagesMap;
 	}
 
-	public void setEntity(T entity) {
-		this.entity = entity;
-	}
 }

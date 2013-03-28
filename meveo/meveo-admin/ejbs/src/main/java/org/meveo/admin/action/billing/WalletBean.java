@@ -77,18 +77,6 @@ public class WalletBean extends BaseBean<Wallet> {
         return entity;
     }
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("wallets")
-    @ConversationScoped
-    public PaginationDataModel<Wallet> list() {
-        return super.list();
-    }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()

@@ -82,21 +82,6 @@ public class OCCTemplateBean extends BaseBean<OCCTemplate> {
 				.getCode());
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("occTemplates")
-	@ConversationScoped
-	public PaginationDataModel<OCCTemplate> list() {
-		return super.list();
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

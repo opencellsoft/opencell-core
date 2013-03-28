@@ -34,6 +34,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -203,19 +204,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("subscriptions")
-	@ConversationScoped
-	public PaginationDataModel<Subscription> list() {
-		return super.list();
-	}
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous
@@ -437,29 +425,26 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				quantity = 1;
 			}
 			boolean isChecked = false;
-			for (Long id : checked.keySet()) {
-				log.debug("instanciateManyServices id=#0", id);
-				if (checked.get(id)) {
-					isChecked = true;
-					log.debug("instanciateManyServices id=#0 checked, quantity=#1", id, quantity);
-					ServiceTemplate serviceTemplate = serviceTemplateService.findById(id);
-					ServiceInstance serviceInstance = new ServiceInstance();
-					serviceInstance.setProvider(serviceTemplate.getProvider());
-					serviceInstance.setCode(serviceTemplate.getCode());
-					serviceInstance.setDescription(serviceTemplate.getDescription());
-					serviceInstance.setServiceTemplate(serviceTemplate);
-					serviceInstance.setSubscription(entity);
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(new Date());
-					calendar.set(Calendar.HOUR_OF_DAY, 0);
-					calendar.set(Calendar.MINUTE, 0);
+			for (IEntity selectedEntity : getSelectedEntities()) {
+				isChecked = true;
+				log.debug("instanciateManyServices id=#0 checked, quantity=#1", selectedEntity.getId(), quantity);
+				ServiceTemplate serviceTemplate = (ServiceTemplate)selectedEntity;
+				ServiceInstance serviceInstance = new ServiceInstance();
+				serviceInstance.setProvider(serviceTemplate.getProvider());
+				serviceInstance.setCode(serviceTemplate.getCode());
+				serviceInstance.setDescription(serviceTemplate.getDescription());
+				serviceInstance.setServiceTemplate(serviceTemplate);
+				serviceInstance.setSubscription((Subscription)entity);
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
 
-					serviceInstance.setSubscriptionDate(calendar.getTime());
-					serviceInstance.setQuantity(quantity);
-					serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
-					serviceInstances.add(serviceInstance);
-					servicetemplates.remove(serviceTemplate);
-				}
+				serviceInstance.setSubscriptionDate(calendar.getTime());
+				serviceInstance.setQuantity(quantity);
+				serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
+				serviceInstances.add(serviceInstance);
+				servicetemplates.remove(serviceTemplate);
 			}
 			if (!isChecked) {
 				messages.warn(new BundleKey("messages", "instanciation.selectService"));
@@ -472,7 +457,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			log.error("error in SubscriptionBean.instanciateManyServices", e);
 			messages.error(e.getMessage());
 		}
-		checked.clear();
+		setSelectedEntities(new IEntity[0]);
 	}
 
 	public void activateService() {

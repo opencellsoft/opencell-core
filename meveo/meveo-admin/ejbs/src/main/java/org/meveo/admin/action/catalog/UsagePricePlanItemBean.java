@@ -26,6 +26,7 @@ import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.UsagePricePlanItemService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link UsagePricePlanItem} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -65,23 +66,13 @@ public class UsagePricePlanItemBean extends BaseBean<UsagePricePlanItem> {
 
     }
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @return
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("usagePricePlanItems")
-    @ConversationScoped
-    public PaginationDataModel<UsagePricePlanItem> list() {
+    @Override
+    public DataTable search() {
         getFilters();
         if (!filters.containsKey("disabled")) {
             filters.put("disabled", false);
         }
-        return super.list();
+        return super.search();
     }
 
     /**

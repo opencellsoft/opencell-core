@@ -78,30 +78,15 @@ public class ProviderBean extends BaseBean<Provider> {
 		return initEntity();
 	}
 
-	@Produces
-	@Named("userProviders")
-	public PaginationDataModel<Provider> userProviders() {
-		super.list();
-		getFilters();
-		filters.put("list-users", getCurrentUser());
-		return entities;
-	}
+//	@Produces
+//	@Named("userProviders")
+//	public PaginationDataModel<Provider> userProviders() {
+//		super.list();
+//		getFilters();
+//		filters.put("list-users", getCurrentUser());
+//		return entities;
+//	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("providers")
-	@ConversationScoped
-	public PaginationDataModel<Provider> list() {
-		return super.list();
-	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

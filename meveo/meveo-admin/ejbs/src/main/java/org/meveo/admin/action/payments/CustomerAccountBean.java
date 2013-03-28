@@ -118,21 +118,6 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 		return entity;
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("customerAccounts")
-	@ConversationScoped
-	public PaginationDataModel<CustomerAccount> list() {
-		return super.list();
-	}
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous

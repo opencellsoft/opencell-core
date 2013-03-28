@@ -201,7 +201,7 @@ public class UserService extends PersistenceService<User> {
         }
 
         // Check if the user password has expired
-        String passwordExpiracy = ParamBean.getInstance("meveo.properties").getProperty("password.Expiracy", "90");
+        String passwordExpiracy = paramBean.getProperty("password.Expiracy", "90");
 
         if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
             log.info("The password of user #" + user.getId() + " has expired.");

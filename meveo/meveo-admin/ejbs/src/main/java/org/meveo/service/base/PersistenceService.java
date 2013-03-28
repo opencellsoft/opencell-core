@@ -30,7 +30,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.ProviderNotAllowedException;
-import org.meveo.commons.utils.PaginationConfiguration;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
@@ -91,7 +91,30 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public Class<E> getEntityClass() {
 		return entityClass;
 	}
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
+     */
+    public void create(E e) {
+        create(e, getCurrentUser());
+    }
 
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
+     */
+    public void update(E e) {
+        update(e, getCurrentUser());
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
+     */
+    public void remove(Long id) {
+        E e = findById(id);
+        if (e != null) {
+            remove(e);
+        }
+    }
+    
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
 	 */
@@ -153,29 +176,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		return e;
 	}
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
-	 */
-	public void create(E e) {
-		create(e, getCurrentUser());
-	}
 
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
-	 */
-	public void update(E e) {
-		update(e, getCurrentUser());
-	}
-
-	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
-	 */
-	public void remove(Long id) {
-		E e = findById(id);
-		if (e != null) {
-			remove(e);
-		}
-	}
 
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
@@ -257,7 +258,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#list()
 	 */
 	@SuppressWarnings("unchecked")
-	public List<? extends E> list() {
+	public List<E> list() {
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
 		if (BaseEntity.class.isAssignableFrom(entityClass)) {
@@ -275,7 +276,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 
 	@SuppressWarnings({ "unchecked" })
-	public List<? extends E> list(PaginationConfiguration config) {
+	public List<E> list(PaginationConfiguration config) {
 		QueryBuilder queryBuilder = getQuery(config);
 		Query query = queryBuilder.getQuery(em);
 		return query.getResultList();
@@ -287,7 +288,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 
 	public long count(PaginationConfiguration config) {
-
+	    System.out.println("AKKK currentProvider is "+currentProvider);
+        
 		QueryBuilder queryBuilder = getQuery(config);
 		return queryBuilder.count(em);
 	}
@@ -299,6 +301,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public long count() {
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+		
 		if (BaseEntity.class.isAssignableFrom(entityClass)) {
 			queryBuilder.startOrClause();
 			queryBuilder.addCriterionEntity("a.provider", currentProvider);
@@ -344,6 +347,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
 		if (BaseEntity.class.isAssignableFrom(entityClass)) {
+		    queryBuilder.
 			queryBuilder.startOrClause();
 			queryBuilder.addCriterionEntity("a.provider", currentProvider);
 			// queryBuilder.addSql("a.provider is null");
@@ -419,6 +423,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			}
 		}
 		queryBuilder.addPaginationConfiguration(config, "a");
+		System.out.println("AKKK queryBuilder is "+queryBuilder.toString());
+        
 		return queryBuilder;
 	}
 

@@ -65,18 +65,6 @@ public class OperationBean extends BaseBean<Operation> {
     }
 
     /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("operations")
-    public PaginationDataModel<Operation> list() {
-        return super.list();
-    }
-
-    /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override

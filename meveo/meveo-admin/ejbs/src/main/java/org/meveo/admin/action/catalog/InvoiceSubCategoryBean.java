@@ -157,19 +157,6 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		return invoiceCatSub;
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("invoiceSubCategories")
-	@ConversationScoped
-	public PaginationDataModel<InvoiceSubCategory> list() {
-		return super.list();
-	}
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous

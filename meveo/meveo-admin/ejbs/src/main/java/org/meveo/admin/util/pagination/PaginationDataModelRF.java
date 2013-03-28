@@ -14,7 +14,6 @@ import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.ExtendedDataModel;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
-import org.meveo.commons.utils.PaginationConfiguration;
 import org.meveo.model.IEntity;
 import org.richfaces.component.SortOrder;
 import org.richfaces.model.Arrangeable;
@@ -29,7 +28,7 @@ import org.richfaces.model.SortField;
  * 
  * @param <T> Base class
  */
-public abstract class PaginationDataModelFree<T> extends ExtendedDataModel<T> implements Arrangeable, Serializable {
+public abstract class PaginationDataModelRF<T> extends ExtendedDataModel<T> implements Arrangeable, Serializable {
 
     private static final long serialVersionUID = -4528523844716548059L;
 
@@ -58,7 +57,7 @@ public abstract class PaginationDataModelFree<T> extends ExtendedDataModel<T> im
 
     protected abstract int countRecords(PaginationConfiguration paginatingData);
 
-    public PaginationDataModelFree() {
+    public PaginationDataModelRF() {
         super();
     }
 
@@ -69,7 +68,7 @@ public abstract class PaginationDataModelFree<T> extends ExtendedDataModel<T> im
      * @param sortAscending Sort order for default sorting field
      * @param unsortedFields Remaining fields
      */
-    public PaginationDataModelFree(String defaultSortField, boolean sortAscending, String... unsortedFields) {
+    public PaginationDataModelRF(String defaultSortField, boolean sortAscending, String... unsortedFields) {
         super();
 
         for (String fieldName : unsortedFields) {

@@ -26,6 +26,8 @@ import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+
 /**
  * Query builder class for building JPA queries.
  * 

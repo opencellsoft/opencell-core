@@ -66,19 +66,6 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
     }
 
     /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("pricePlanMatrixes")
-    @ConversationScoped
-    public PaginationDataModel<PricePlanMatrix> list() {
-        return super.list();
-    }
-
-    /**
      * Override default list view name. (By default its class name starting lower case + 's').
      * 
      * @see org.meveo.admin.action.BaseBean#getDefaultViewName()

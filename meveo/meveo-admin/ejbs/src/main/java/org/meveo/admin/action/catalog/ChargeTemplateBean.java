@@ -68,19 +68,6 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
     }
 
     /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("chargeTemplates")
-    @ConversationScoped
-    public PaginationDataModel<ChargeTemplate> list() {
-        return super.list();
-    }
-
-    /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override

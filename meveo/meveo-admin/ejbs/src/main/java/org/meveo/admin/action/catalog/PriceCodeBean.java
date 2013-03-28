@@ -26,6 +26,7 @@ import org.meveo.model.catalog.PriceCode;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.PriceCodeService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link PriceCode} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -65,21 +66,14 @@ public class PriceCodeBean extends BaseBean<PriceCode> {
 
     }
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("priceCodes")
-    @ConversationScoped
-    public PaginationDataModel<PriceCode> list() {
+    
+    @Override
+    public DataTable search() {
         getFilters();
         if (!filters.containsKey("disabled")) {
             filters.put("disabled", false);
         }
-        return super.list();
+        return super.search();
     }
 
     /**

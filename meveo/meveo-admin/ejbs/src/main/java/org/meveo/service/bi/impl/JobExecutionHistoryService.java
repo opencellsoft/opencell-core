@@ -24,7 +24,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
-import org.meveo.commons.utils.PaginationConfiguration;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IdentifiableEnum;

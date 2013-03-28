@@ -67,18 +67,6 @@ public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> 
         return initEntity();
     }
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("ponctualChargeInstances")
-    @ConversationScoped
-    public PaginationDataModel<OneShotChargeInstance> list() {
-        return super.list();
-    }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()

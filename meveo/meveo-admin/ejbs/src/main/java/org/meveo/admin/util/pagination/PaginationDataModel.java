@@ -29,10 +29,10 @@ import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.ExtendedDataModel;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
-import org.meveo.commons.utils.PaginationConfiguration;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.rating.impl.UsageTypeService;
+import org.primefaces.model.SortOrder;
 import org.richfaces.model.Arrangeable;
 import org.richfaces.model.ArrangeableState;
 
@@ -106,11 +106,11 @@ public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arran
     /**
      * @return
      */
-    private PaginationConfiguration.Ordering getSortOrdering() {
+    private SortOrder getSortOrdering() {
         final FacesContext context = FacesContext.getCurrentInstance();
         final String sortField = context.getExternalContext().getRequestParameterMap().get("sortOrder");
-        return "desc".equals(sortField) ? PaginationConfiguration.Ordering.DESCENDING
-                : PaginationConfiguration.Ordering.ASCENDING;
+        return "desc".equals(sortField) ? SortOrder.DESCENDING
+                : SortOrder.ASCENDING;
     }
 
     /**

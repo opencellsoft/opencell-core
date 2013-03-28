@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:p="http://primefaces.org/ui"  
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
 	<cc:interface componentType="formEntityField">
@@ -48,7 +49,7 @@
 					<p:selectOneMenu rendered="#{cc.backingBeanFromParentOrCurrent.edit}" id="#{cc.attrs.id}_level" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}">
 						<f:selectItem itemLabel="" itemValue="" />
 						<f:selectItems value="#{cc.attrs.listBean.listAll()}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
-						<f:converter binding="#{entityConverter}" />
+						<s:objectConverter />
 					</p:selectOneMenu>
 					<h:outputText rendered="#{not cc.backingBeanFromParentOrCurrent.edit}" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" style="font-weight:bold;" />
 				</h:panelGrid>

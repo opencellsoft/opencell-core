@@ -71,22 +71,6 @@ public class BayadDunningInputHistoryBean extends BaseBean<BayadDunningInputHist
 	}
 
 	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("bayadDunningInputs")
-	@ConversationScoped
-	public PaginationDataModel<BayadDunningInputHistory> list() {
-		return super.list();
-	}
-
-	/**
 	 * Override default list view name. (By default view name is class name
 	 * starting lower case + ending 's').
 	 * 

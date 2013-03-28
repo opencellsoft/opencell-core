@@ -29,6 +29,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link ServiceTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -71,21 +72,13 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
         return initEntity();
     }
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
-     * it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Produces
-    @Named("serviceTemplates")
-    @ConversationScoped
-    public PaginationDataModel<ServiceTemplate> list() {
+    @Override
+    public DataTable search() {
         getFilters();
         if (!filters.containsKey("disabled")) {
             filters.put("disabled", false);
         }
-        return super.list();
+        return super.search();
     }
 
     /**

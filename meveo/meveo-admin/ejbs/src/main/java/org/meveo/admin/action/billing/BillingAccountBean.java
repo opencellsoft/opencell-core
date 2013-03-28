@@ -143,22 +143,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	}
 
 	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("billingAccounts")
-	@ConversationScoped
-	public PaginationDataModel<BillingAccount> list() {
-		return super.list();
-	}
-
-	/**
 	 * Conversation is ended and user is redirected from edit to his previous
 	 * window.
 	 * 
@@ -407,13 +391,11 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * Listener of select changed event.
 	 */
 	public void selectChanged(ValueChangeEvent event) {
-		if (entities != null) {
-			BillingAccount entity = entities.getRowDataT();
-			if (entity != null) {
-				itemSelector.check(entity);
-			}
-		}
-	}
+        BillingAccount entity = getLazyDataModel().getRowData();
+        if (entity != null) {
+            itemSelector.check(entity);
+        }
+    }
 
 	/**
 	 * Resets item selector.

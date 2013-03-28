@@ -27,7 +27,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
@@ -94,20 +93,6 @@ public class UserBean extends BaseBean<User> {
 		return initEntity();
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * @return 
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("users")
-    @ConversationScoped
-	public PaginationDataModel<User> list() {
-		return super.list();
-	}
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous

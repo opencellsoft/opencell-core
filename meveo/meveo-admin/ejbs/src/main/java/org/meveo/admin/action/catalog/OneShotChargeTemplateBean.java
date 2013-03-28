@@ -30,6 +30,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link OneShotChargeTemplate} (extends
@@ -86,34 +87,26 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 		return oneShotChargeTemplate;
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("oneShotChargeTemplates")
-	@ConversationScoped
-	public PaginationDataModel<OneShotChargeTemplate> list() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		return super.list();
+	
+	@Override
+	public DataTable search() {
+	    getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.search();
 	}
 
-	/**
-	 * Data model of entities for data table in GUI. Filters charges of Usage
-	 * type.
-	 * 
-	 * @return filtered entities.
-	 */
-	// @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
-	protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
-		return entities;
-	}
+//	/**
+//	 * Data model of entities for data table in GUI. Filters charges of Usage
+//	 * type.
+//	 * 
+//	 * @return filtered entities.
+//	 */
+//	// @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
+//	protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
+//		return entities;
+//	}
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes
@@ -124,16 +117,16 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	@Produces
-	@Named("oneShotChargeTemplatesForUsageType")
-	public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
-		getFilters();
-		if (!filters.containsKey("disabled")) {
-			filters.put("disabled", false);
-		}
-		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
-		return super.list();
-	}
+//	@Produces
+//	@Named("oneShotChargeTemplatesForUsageType")
+//	public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
+//		getFilters();
+//		if (!filters.containsKey("disabled")) {
+//			filters.put("disabled", false);
+//		}
+//		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
+//		return super.list();
+//	}
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous

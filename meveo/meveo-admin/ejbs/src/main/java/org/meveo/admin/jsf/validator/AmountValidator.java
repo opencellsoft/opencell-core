@@ -16,7 +16,6 @@
 package org.meveo.admin.jsf.validator;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
@@ -28,7 +27,6 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
-import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
 
 /**

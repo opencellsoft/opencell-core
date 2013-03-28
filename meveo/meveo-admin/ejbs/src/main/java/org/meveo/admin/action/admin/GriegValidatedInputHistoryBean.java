@@ -70,21 +70,6 @@ public class GriegValidatedInputHistoryBean extends BaseBean<GriegValidatedInvoi
 		return initEntity();
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("griegValidatedInputs")
-	@ConversationScoped
-	public PaginationDataModel<GriegValidatedInvoiceInputHistory> list() {
-		return super.list();
-	}
 
 	/**
 	 * Override default list view name. (By default view name is class name

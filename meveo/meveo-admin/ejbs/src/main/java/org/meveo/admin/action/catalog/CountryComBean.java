@@ -74,20 +74,6 @@ public class CountryComBean extends BaseBean<TradingCountry> {
 		return entity;
 	}
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * @return 
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Produces
-	@Named("comCountries")
-	@ConversationScoped
-	public PaginationDataModel<TradingCountry> list() {
-		return super.list();
-	}
 
 	/**
 	 * Override default list view name. (By default its class name starting
