@@ -16,29 +16,42 @@
 
 	<ui:define name="body">
 
-		<custom:listPanel label="#{messages['tradingCurrency.title']}"
-			backingBean="#{tradingCurrencyBean}">
+		<custom:listPanel label="#{messages['tradingCountry.title']}"
+			backingBean="#{tradingCountryBean}">
 
-			<custom:searchPanel label="#{messages['tradingCurrency.search']}"
-				newButtonView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml">
+			<custom:searchPanel label="#{messages['tradingCountry.search']}"
+				newButtonView="/pages/admin/tradingCountries/tradingCountryDetail.xhtml">
 				<custom:searchEntityField
-					label="#{messages['tradingCurrency.trCurrencyCode']}"
-					field="currency" childField="currencyCode"
-					service="#{tradingCurrencyService}" />
+					label="#{messages['tradingCountry.trCountryCode']}" field="country"
+					childField="countryCode" service="#{tradingCountryService}" />
 
 			</custom:searchPanel>
 
-			<custom:dataList dataModel="#{tradingCurrencies}" >
-				<custom:column label="#{messages['tradingCurrency.trCurrencyCode']}"
-					field="currency" childField="currencyCode" width="10%"/>
-				<custom:column label="#{messages['tradingCurrency.prDescription']}"
-					field="prDescription" />
-				<custom:column label="#{messages['tradingCurrency.disabled']}"
-					field="disabled" isMessage="true"/>
-				<custom:column label="#{messages['tradingCurrency.prCurrencyToThis']}"
-					field="prCurrencyToThis" /> 
+			<custom:dataList dataModel="#{tradingCountries}">
+				<custom:column label="#{messages['tradingCountry.trCountryCode']}"
+					field="country" childField="countryCode" width="10%" />
+				<custom:column label="#{messages['tradingCountry.prDescription']}"
+					width="30%" field="prDescription" />
+				<custom:column label="#{messages['tradingCountry.disabled']}"
+					field="disabled" isMessage="true" />
+				<h:column>
+					<f:facet name="header">
+						<div style="float: left;">
+							#{messages['tradingCountry.languageCode']}</div>
+					</f:facet>
+					<h:outputText value="#{entity.country.language.languageCode}"
+						align="left" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<div style="float: left;">
+							#{messages['tradingCountry.currencyCode']}</div>
+					</f:facet>
+					<h:outputText value="#{entity.country.currency.currencyCode}"
+						align="left" />
+				</h:column>
 				<custom:actionsColumn noDelete="true" noClose="false"
-					editView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml"
+					editView="/pages/admin/tradingCountries/tradingCountryDetail.xhtml"
 					permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}" />
 			</custom:dataList>
 
