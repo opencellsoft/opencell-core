@@ -82,6 +82,12 @@
 						action="tradingCurrencies" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
+				
+				<rich:menuItem id="tradingCountries" value="#{messages['menu.tradingCountries']}" 
+						action="tradingCountries" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					<s:conversationPropagation type="none" />
+				</rich:menuItem>
+				
 				<rich:menuGroup id="history" value="#{messages['menu.history']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<rich:menuItem id="accountImportHisto" value="#{messages['menu.accountImportHisto']}" 
 							action="accountImportHisto" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">

@@ -25,6 +25,8 @@ import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.billing.Country;
+import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -83,6 +85,14 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
     protected PaginationDataModel<TradingCountry> getDataModel() {
         return entities;
     }
+    
+    public void populateCountries(Country country){
+	      log.info("populatCountries country", country!=null?country.getCountryCode():null);
+		  if(country!=null){
+		      entity.setCountry(country);
+		      entity.setPrDescription(country.getDescriptionEn());
+	     }
+	}
 
     /**
      * Factory method, that is invoked if data model is empty. Invokes

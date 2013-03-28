@@ -39,6 +39,14 @@
 		   <rule if-outcome="tradingCurrencies">
 		    	<redirect view-id="/pages/admin/tradingCurrencies/tradingCurrencies.xhtml"/>
 		   </rule>
+		   
+		   <rule if-outcome="tradingCountryDetail">
+		    	<redirect view-id="/pages/admin/tradingCountries/tradingCountryDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="tradingCountries">
+		    	<redirect view-id="/pages/admin/tradingCountries/tradingCountries.xhtml"/>
+		   </rule>
+		   
 		   <rule if-outcome="users">
 		    	<redirect view-id="/pages/admin/meveoUsers/users.xhtml"/>
 		   </rule>
