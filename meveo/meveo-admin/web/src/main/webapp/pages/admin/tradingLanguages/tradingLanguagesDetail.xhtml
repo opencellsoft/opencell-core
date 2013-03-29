@@ -36,11 +36,16 @@
 		</custom:entityPopup>
 		</c:if>
 		
-		<custom:formPanel formId="languagesFormId" edit="#{edit}" label="#{messages['comLanguage.comLanguagePanel']}" backingBean="#{tradingLanguageBean}" entity="#{tradingLanguage}" > 
+		<custom:formPanel formId="languagesFormId" edit="#{edit}" label="#{messages['tradingLanguage.tradingLanguagePanel']}" backingBean="#{tradingLanguageBean}" entity="#{tradingLanguage}" > 
 	 
-	    <custom:formEntityField id="languageSelectedId" label="#{messages['comLanguage.languageCode']}" 
+	    <custom:formEntityField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" 
 		 field="language"  childField="languageCode"  popup="true" popupId="languagePopup" showOnlyOnConsult="true" clearButton="true" required="true"/>
-		 <custom:formField label="#{messages['comLanguage.prDescription']}" field="prDescription"/> 
+		 <custom:formField label="#{messages['tradingLanguage.prDescription']}" field="prDescription" maxlength="100"/> 
+		 <custom:formEntityField label="#{messages['tradingLanguage.created']}" field="auditable" childField="created" time="true" showOnlyOnConsult="false"/> 
+		 <custom:formEntityField label="#{messages['tradingLanguage.updated']}" field="auditable" childField="updated" time="true" showOnlyOnConsult="false"/> 
+		 <custom:formField label="#{messages['tradingLanguage.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="false" />
+		 
+		 
 		</custom:formPanel>
 
 	</ui:define>

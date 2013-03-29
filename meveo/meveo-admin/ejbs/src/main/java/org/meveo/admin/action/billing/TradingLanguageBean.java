@@ -106,6 +106,8 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     @Begin(join = true)
     @Factory("tradingLanguages")
     public void list() {
+    	setSortField("language.descriptionEn");
+    	setSortOrder("ASC");
         super.list();
     }
 
@@ -132,8 +134,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 				 statusMessages.addFromResourceBundle(Severity.ERROR, "cette langue existe déjà pour ce provider");
 	                
 			}else{
-				back=saveOrUpdate(entity);
-				statusMessages.addFromResourceBundle("update.successful");
+				back=saveOrUpdate(entity); 
 				 }
     	   
     
