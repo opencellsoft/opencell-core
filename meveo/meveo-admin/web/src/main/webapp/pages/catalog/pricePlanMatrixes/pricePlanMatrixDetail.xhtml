@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<custom:entityPopup id="searchChargePopup"
+		<hftl:entityPopup id="searchChargePopup"
 				header="#{messages['charge.popup.header']}"
 				backingBean="#{chargeTemplateBean}" dataModel="#{chargeTemplates}"
 				searchField1Label="#{messages['charge.code']}" searchField1="code"
@@ -30,8 +30,8 @@
 					reRender="formPricePlan" action="#{pricePlanMatrix.setEventCode(entity.code)}"
 					oncomplete="Richfaces.hideModalPanel('searchChargePopup')">
 				</a:commandLink>
-			</custom:entityPopup>
-			<custom:entityPopup id="pricPlanMatCurrencyPopup"
+			</hftl:entityPopup>
+			<hftl:entityPopup id="pricPlanMatCurrencyPopup"
             header="#{messages['pricePlanMatrixCurrencyPopup.header']}"
             backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
             
@@ -45,7 +45,7 @@
 					action="#{pricePlanMatrix.setTradingCurrency(entity)}"
 					oncomplete="Richfaces.hideModalPanel('pricPlanMatCurrencyPopup')">
 			</a:commandLink>
-        </custom:entityPopup>
+        </hftl:entityPopup>
 			
 		<custom:formPanel edit="#{edit}" label="#{messages['pricePlanMatrix.panel']}" backingBean="#{pricePlanMatrixBean}" entity="#{pricePlanMatrix}" formId="formPricePlan" >
     			<custom:panelGroup columns="2">	

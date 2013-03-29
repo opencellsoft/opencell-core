@@ -1,12 +1,9 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
@@ -15,32 +12,28 @@
    	</ui:define>
     
     <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['oneShotChargeTemplate.title']}" backingBean="#{oneShotChargeTemplateBean}" >
-    	
-    		<hf:searchPanel label="#{messages['oneShotChargeTemplate.search']}" newButtonView="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml">
-    			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
-    			<hf:searchField label="#{messages['chargeTemplate.description']}" field="description" />
-    			<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
-    			<hf:searchField label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label"/>
-    			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true"/>
-    			
-    		</hf:searchPanel>	
 
-    		<hftl:dataList dataModel="#{oneShotChargeTemplates}"  noDelete="true" noClose="false">
-    			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
-    			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
-    			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
-    			<hftl:column label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" isMessage="true" />
-    			<hftl:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"  childField="code" isMessage="true" />
-    		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-		    	<hftl:column label="#{messages['oneShotChargeTemplate.immediateInvoicing']}" field="immediateInvoicing" isMessage="true" />
-    			
-		    	<hftl:actionsColumn editView="/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"  />
-		    </hftl:dataList>
-		   
-		</custom:listPanel>
-		
-    </ui:define>
+		<hf:searchPanel label="#{messages['oneShotChargeTemplate.search']}" backingBean="#{oneShotChargeTemplateBean}">
+			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
+			<hf:searchField label="#{messages['chargeTemplate.description']}" field="description" />
+			<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
+			<hf:searchField label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" />
+			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" />
+
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}" checkMany="false" noClose="false" backingBean="#{oneShotChargeTemplateBean}">
+			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
+			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
+			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
+			<hftl:column label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory" childField="code" isMessage="true" />
+			<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+			<hftl:column label="#{messages['oneShotChargeTemplate.immediateInvoicing']}" field="immediateInvoicing" isMessage="true" />
+
+			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
     
 </ui:composition>

@@ -21,7 +21,7 @@
 			}
 		</script>
 
-		<custom:entityPopup id="searchInvoiceSubCategoryPopup"
+		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}" dataModel="#{invoiceSubCategories}"
 			searchField1Label="#{messages['invoiceSubCategory.code']}" searchField1="code"
@@ -35,7 +35,7 @@
 				reRender="formId" action="#{recurringChargeTemplate.setInvoiceSubCategory(entity)}"
 				oncomplete="Richfaces.hideModalPanel('searchInvoiceSubCategoryPopup')">
 			</a:commandLink>
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
 		<custom:formPanel edit="#{edit}" label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}" backingBean="#{recurringChargeTemplateBean}" entity="#{recurringChargeTemplate}">
     			<custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />

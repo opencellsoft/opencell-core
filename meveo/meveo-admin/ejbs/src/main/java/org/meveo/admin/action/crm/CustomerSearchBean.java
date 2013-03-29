@@ -105,7 +105,8 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
         if (type.equals(UserAccount.ACCOUNT_TYPE)) {
             return "/pages/billing/userAccounts/userAccountDetail.xhtml";
         } else {
-            throw new IllegalStateException("Wrong customer type provided in EL in .xhtml");
+            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml";
+            //throw new IllegalStateException("Wrong customer type provided in EL in .xhtml");
         }
     }
 

@@ -1,12 +1,9 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core"
     template="/layout/template.xhtml">
@@ -16,66 +13,42 @@
    	</ui:define>
     
     <ui:define name="body">
-    	
-    	<c:set var="filtersMap" value="#{usageDiscountPlanItemBean.filters}" />
-		<c:set var="field" value="serviceTemplate" />
-    	<custom:entityPopup id="serviceTemplatePopup"
-			header="#{messages['usageDiscountPlanItem.serviceTemplate.popup.header']}"
-			backingBean="#{serviceTemplateBean}" dataModel="#{serviceTemplates}"
-			searchField1Label="#{messages['serviceTemplate.code']}" searchField1="code"
-			column1Label="#{messages['serviceTemplate.code']}" column1="code">
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-				reRender="formId"
-				action="#{filtersMap.put(field, entity)}"
-				oncomplete="Richfaces.hideModalPanel('serviceTemplatePopup')">
-			</a:commandLink>
-		</custom:entityPopup>	
-		
-		
-		<custom:entityPopup id="customerAccountPopup"
-				header="#{messages['usageDiscountPlanItem.customerAccount.popup.header']}"
-				backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}"
-				searchField1Label="#{messages['customerAccount.code']}"
-				searchField1="code"
-				column1Label="#{messages['customerAccount.code']}" 
-				column1="code"
-				column2Label="#{messages['businessEntity.description']}" 
-				column2="description"
-				filtersMap="#{usageDiscountPlanItemBean.filters}">
-				<!-- select link -->
-				<a:commandLink value="#{messages['commons.select']}"
-						reRender="formId" 
-						action="#{filtersMap.put('customerAccount', entity)}"
-						oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
-				</a:commandLink>
-		</custom:entityPopup>
-		
-    	<custom:listPanel label="#{messages['usageDiscountPlanItem.title']}" backingBean="#{usageDiscountPlanItemBean}">
-    	
-    		<hf:searchPanel label="#{messages['usageDiscountPlanItem.search']}" newButtonView="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml">
-    			<custom:searchEntityField label="#{messages['usagePricePlanItem.serviceTemplate']}" field="serviceTemplate" childField="code" popup="true" popupId="serviceTemplatePopup" clearButton="true"/>
-    			<custom:searchEntityField label="#{messages['usagePricePlanItem.customerAccount']}" field="customerAccount" childField="code" popup="true" popupId="customerAccountPopup" clearButton="true"/>
-    			<hf:searchField label="#{messages['usagePricePlanItem.type']}" field="type" />
-    		</hf:searchPanel>	
-    		
-    		<hftl:dataList dataModel="#{usageDiscountPlanItems}" noDelete="true" noClose="false">
-    			<hftl:column label="#{messages['usagePricePlanItem.serviceTemplate']}" field="serviceTemplate" childField="code"/>
-    			<hftl:column label="#{messages['usagePricePlanItem.customerAccount']}" field="customerAccount" childField="code"/>
-    			<hftl:column label="#{messages['usagePricePlanItem.type']}" field="type" />
-    			<hftl:column label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
-	    		<hftl:column label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" /> 
-	    	    <hftl:column label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" />
-	    	    <hftl:column label="#{messages['usageDiscountPlanItem.percentage']}" field="percentage" />
-	    	    <hftl:column label="#{messages['access.startDate']}" field="startDate"  />
-	    	    <hftl:column label="#{messages['access.endDate']}" field="endDate"  />
-	    	    
-	    	     
-    			<hftl:actionsColumn editView="/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"/>
-		    </hftl:dataList>
-		   
-		</custom:listPanel>
-		
-    </ui:define>
+
+		<hftl:entityPopup id="serviceTemplatePopup" header="#{messages['usageDiscountPlanItem.serviceTemplate.popup.header']}"
+			backingBean="#{serviceTemplateBean}" dataModel="#{serviceTemplates}" searchField1Label="#{messages['serviceTemplate.code']}" searchField1="code"
+			column1Label="#{messages['serviceTemplate.code']}" column1="code" updateField=":searchPanel:searchForm:serviceTemplateField:serviceTemplate_child">
+		</hftl:entityPopup>
+
+
+		<hftl:entityPopup id="customerAccountPopup" header="#{messages['usageDiscountPlanItem.customerAccount.popup.header']}"
+			backingBean="#{customerAccountBean}" searchField1Label="#{messages['customerAccount.code']}" searchField1="code"
+			column1Label="#{messages['customerAccount.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+			updateField=":searchPanel:searchForm:customerAccountField:customerAccount_child">
+		</hftl:entityPopup>
+
+
+		<hf:searchPanel label="#{messages['usageDiscountPlanItem.search']}" backingBean="#{usageDiscountPlanItemBean}">
+			<hf:searchField id="serviceTemplateField" label="#{messages['usagePricePlanItem.serviceTemplate']}" field="serviceTemplate" childField="code"
+				popup="true" popupId="serviceTemplatePopup" clearButton="true" />
+			<hf:searchField id="customerAccountField" label="#{messages['usagePricePlanItem.customerAccount']}" field="customerAccount" childField="code"
+				popup="true" popupId="customerAccountPopup" clearButton="true" />
+			<hf:searchField label="#{messages['usagePricePlanItem.type']}" field="type" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['usageDiscountPlanItem.title']}" checkMany="false" noClose="false" backingBean="#{usageDiscountPlanItemBean}">
+			<hftl:column label="#{messages['usagePricePlanItem.serviceTemplate']}" field="serviceTemplate" childField="code" />
+			<hftl:column label="#{messages['usagePricePlanItem.customerAccount']}" field="customerAccount" childField="code" />
+			<hftl:column label="#{messages['usagePricePlanItem.type']}" field="type" />
+			<hftl:column label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
+			<hftl:column label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" />
+			<hftl:column label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" />
+			<hftl:column label="#{messages['usageDiscountPlanItem.percentage']}" field="percentage" />
+			<hftl:column label="#{messages['access.startDate']}" field="startDate" />
+			<hftl:column label="#{messages['access.endDate']}" field="endDate" />
+
+			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
     
 </ui:composition>

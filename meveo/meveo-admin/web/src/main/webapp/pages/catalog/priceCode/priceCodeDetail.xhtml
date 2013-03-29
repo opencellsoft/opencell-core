@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<custom:entityPopup id="chargeTemplateInPopup"
+		<hftl:entityPopup id="chargeTemplateInPopup"
 			header="#{messages['priceCode.chargeTemplateIn.popup.header']}"
 			backingBean="#{oneShotChargeTemplateBean}" dataModel="#{oneShotChargeTemplatesForUsageType}"
 			searchField1Label="#{messages['chargeTemplate.code']}" searchField1="code"
@@ -28,9 +28,9 @@
 				action="#{priceCode.setChargeTemplateIn(entity)}"
 				oncomplete="Richfaces.hideModalPanel('chargeTemplateInPopup')">
 			</a:commandLink>
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
-		<custom:entityPopup id="chargeTemplateOutPopup"
+		<hftl:entityPopup id="chargeTemplateOutPopup"
 			header="#{messages['priceCode.chargeTemplateOut.popup.header']}"
 			backingBean="#{oneShotChargeTemplateBean}" dataModel="#{oneShotChargeTemplatesForUsageType}"
 			searchField1Label="#{messages['chargeTemplate.code']}" searchField1="code"
@@ -42,7 +42,7 @@
 				action="#{priceCode.setChargeTemplateOut(entity)}"
 				oncomplete="Richfaces.hideModalPanel('chargeTemplateOutPopup')">
 			</a:commandLink>
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
 
 		<custom:formPanel edit="#{edit}" label="#{messages['priceCode.priceCodePanel']}" backingBean="#{priceCodeBean}" entity="#{priceCode}" >

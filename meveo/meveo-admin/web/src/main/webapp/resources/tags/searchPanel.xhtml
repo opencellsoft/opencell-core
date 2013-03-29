@@ -12,16 +12,16 @@
 
 		<cc:interface>
 			<cc:attribute name="backingBean" required="true" />
-			<cc:attribute name="entity" default="#{backingBean.instance}" />
+			<cc:attribute name="entity" default="#{cc.attrs.backingBean.instance}" />
 			<cc:attribute name="columns" default="2" />
 			<cc:attribute name="renderNewButton" default="true" />
+			<cc:attribute name="newButtonView" default="#{cc.attrs.backingBean.getNewViewName()}" />
 		</cc:interface>
-		
+										
 		<cc:implementation>
 			<f:facet name="header">
-				<h:outputText value="#{label}" />
+				<h:outputText value="#{label}" /> 	
 			</f:facet>
-			
 			<h:form id="searchForm" styleClass="mainForm" >
 				<p:messages />
 				<h:panelGrid columns="#{cc.attrs.columns}">
@@ -30,7 +30,7 @@
 				<h:panelGrid columns="3">
 					<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="false" action="#{cc.attrs.backingBean.search}" />
 					<hf:clearButton label="#{messages['commons.clean']}" resetAction="#{cc.attrs.backingBean.clean}" />
-					<p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{cc.attrs.backingBean.getNewViewName()}" render="#{cc.attrs.renderNewButton}"> 
+					<p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{cc.attrs.newButtonView}" render="#{cc.attrs.renderNewButton}"> 
 						<f:param name="edit" value="true"/>
 					</p:button>
 				</h:panelGrid>

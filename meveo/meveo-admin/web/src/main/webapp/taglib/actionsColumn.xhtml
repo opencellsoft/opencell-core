@@ -20,7 +20,7 @@
 			<c:set var="renderDeleteLink" value="true" />
 		</c:if>
 		
-		<c:if test="${empty editView">
+		<c:if test="${empty editView}">
 			<c:set var="editView" value="#{backingBean.getEditViewName()}" />
 		</c:if>
 	
