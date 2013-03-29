@@ -44,6 +44,7 @@ import org.meveo.service.crm.impl.AccountEntitySearchService;
  * 
  */
 @Named
+@ConversationScoped
 public class CustomerSearchBean extends BaseBean<AccountEntity> {
 
     private static final long serialVersionUID = 1L;
@@ -105,7 +106,7 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
         if (type.equals(UserAccount.ACCOUNT_TYPE)) {
             return "/pages/billing/userAccounts/userAccountDetail.xhtml";
         } else {
-            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml";
+            return "/pages/crm/customers/customerDetail.xhtml";
             //throw new IllegalStateException("Wrong customer type provided in EL in .xhtml");
         }
     }
