@@ -21,14 +21,11 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
 
-/**
- * Billing cycle service interface.
+/** 
  * 
- * @author Marouane ALAMI
- * @created 25-03-2013
+ * @author MBAREK 
  */
 @Local
-public interface TradingLanguageServiceLocal extends IPersistenceService<TradingLanguage> {
-    public TradingLanguage findByTradingLanguageCode(String billingCycleCode, Provider provider);
+public interface TradingLanguageServiceLocal extends IPersistenceService<TradingLanguage> { 
 
 }

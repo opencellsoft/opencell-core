@@ -27,37 +27,12 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.local.TradingLanguageServiceLocal;
 
-/**
- * TradingLanguage service implementation.
- * 
- * @author Gediminas
- * @created 2010.05.14
+/***
+ * @author MBAREK 
  */
 @Stateless
 @Name("tradingLanguageService")
 @AutoCreate
 public class TradingLanguageService extends PersistenceService<TradingLanguage> implements TradingLanguageServiceLocal {
-    /**
-     * Find TradingLanguage by its trading language code.
-     * 
-     * @param tradingLanguageCode
-     *            Trading Language Code
-     * @return Trading language found or null.
-     * @throws ElementNotFoundException
-     */
-    public TradingLanguage findByTradingLanguageCode(String tradingLanguageCode, Provider provider) {
-        try {
-            log.info("findByTradingLanguageCode tradingLanguageCode=#0,provider=#1", tradingLanguageCode,
-                    provider != null ? provider.getCode() : null);
-            Query query = em
-                    .createQuery("select b from TradingLanguage b where b.code = :tradingLanguageCode and b.provider=:provider");
-            query.setParameter("tradingLanguageCode", tradingLanguageCode);
-            query.setParameter("provider", provider);
-            return (TradingLanguage) query.getSingleResult();
-        } catch (NoResultException e) {
-            log.warn("findByTradingLanguageCode billing cycle not found : tradingLanguageCode=#0,provider=#1",
-                    tradingLanguageCode, provider != null ? provider.getCode() : null);
-            return null;
-        }
-    }
+ 
 }

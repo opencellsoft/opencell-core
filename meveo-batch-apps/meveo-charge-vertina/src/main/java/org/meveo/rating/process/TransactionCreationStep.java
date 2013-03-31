@@ -188,7 +188,7 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
             transaction.setUnitPriceRatio(unitPriceRatio);
             transaction.setDiscountPercent(discountPrice != null ? discountPrice.getPercent() : null);
             transaction.setInvoiceSubCategory(chargeApplication.getInvoiceSubCategory());
-            transaction.setTaxCode(chargeApplication.getTaxCode());
+            //transaction.setTaxCode(chargeApplication.getTaxCode());
             transaction.setTaxPercent(chargeApplication.getTaxPercent());
             BigDecimal amount1WithTax = amount1Tax.add(amount1Discounted);
             BigDecimal amount2WithTax = amount2Tax.add(amount2Discounted);
