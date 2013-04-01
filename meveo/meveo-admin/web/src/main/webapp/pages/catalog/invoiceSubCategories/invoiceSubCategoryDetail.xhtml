@@ -18,14 +18,12 @@
     <ui:define name="body">
 
         <custom:entityPopup id="invSubCatCountryPopup"
-            header="#{messages['invoiceSubCategoryCountry.header']}"
-            backingBean="#{countryComBean}" dataModel="#{comCountries}"
+            header="#{messages['tradingCountry.popup.header']}"
+            backingBean="#{tradingCountryBean}" dataModel="#{tradingCountries}"
             
-            column1Label="#{messages['countryCom.id']}"
-            column1="id"
-			
-			 column2Label="#{messages['countryCom.countryCode']}"
-            column2="countryCode">
+            column1Label="#{messages['businessEntity.code']}" column1="countryCode"
+				column2Label="#{messages['businessEntity.description']}"
+				column2="prDescription" filtersMap="#{tradingCountryBean.filters}">
 			
             <!-- select link -->
             <a:commandLink value="#{messages['commons.select']}"
