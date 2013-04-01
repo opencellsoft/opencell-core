@@ -60,7 +60,7 @@
 				searchField1="code"
 				searchField2Label="#{messages['businessEntity.description']}"
 				searchField2="name"
-				column1Label="#{messages['businessEntity.code']}" column1="id"
+				column1Label="#{messages['businessEntity.code']}" column1="countryCode"
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingCountryBean.filters}">
 				<!-- select link -->
@@ -78,7 +78,7 @@
 				searchField1="code"
 				searchField2Label="#{messages['businessEntity.description']}"
 				searchField2="name"
-				column1Label="#{messages['businessEntity.code']}" column1="id"
+				column1Label="#{messages['businessEntity.code']}" column1="languageCode"
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingLanguageBean.filters}">
 				<!-- select link -->
@@ -206,11 +206,11 @@
 												</s:decorate>
 												<custom:formEntityField id="trCountrySelectId"
 													label="#{messages['tradingCountry.tradingCountry']}"
-													field="tradingCountry" childField="id" popup="true"
+													field="tradingCountry" childField="countryCode" popup="true"
 													popupId="tradingCountryPopup" />
 												<custom:formEntityField id="trLanguageSelectId"
 													label="#{messages['tradingLanguage.tradingLanguage']}"
-													field="tradingLanguage" childField="id" popup="true"
+													field="tradingLanguage" childField="languageCode" popup="true"
 													popupId="tradingLanguagePopup" />
 
 											</custom:panelGroup>

@@ -39,10 +39,10 @@
 			<custom:entityPopup id="customerAccCurrencyPopup"
 				header="#{messages['customerAccountCurrencyPopup.header']}"
 				backingBean="#{tradingCurrencyBean}"
-				dataModel="#{tradingCurrencies}"
-				column1Label="#{messages['countryCom.id']}" column1="id"
-				column2Label="#{messages['currency.codeCurrency']}"
-				column2="currencyCode" filtersMap="#{tradingCurrencyBean.filters}">
+				dataModel="#{tradingCurrencies}" 
+				column1Label="#{messages['currency.codeCurrency']}"
+				column1="currencyCode" column2Label="#{messages['businessEntity.description']}"
+				column2="prDescription" filtersMap="#{tradingCurrencyBean.filters}">
 				<a:commandLink value="#{messages['commons.select']}"
 					reRender="formCustomerAccount"
 					action="#{customerAccount.setTradingCurrency(entity)}"

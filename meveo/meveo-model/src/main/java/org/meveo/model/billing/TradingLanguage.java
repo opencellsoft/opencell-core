@@ -34,6 +34,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cascade;
@@ -63,6 +64,9 @@ public class TradingLanguage extends AuditableEntity{
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
 	
+	
+	@Transient
+	String languageCode;
 
 	public String getPrDescription() {
 		return prDescription;
@@ -81,6 +85,16 @@ public class TradingLanguage extends AuditableEntity{
 
 	public void setLanguage(Language language) {
 		this.language = language;
+	}
+
+
+	public String getLanguageCode() {
+		return language.getLanguageCode();
+	}
+
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
 	}
 
 

@@ -185,6 +185,10 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     @Begin(join = true)
     @Factory("invoiceSubCategories")
     public void list() {
+    	getFilters();
+    	for(String key:filters.keySet()){
+    		log.info("invoiceSubCategories filters key=#0,value=#1", key,filters.get(key));
+    	}
         super.list();
     }
 
