@@ -21,7 +21,7 @@
 
 			<custom:searchPanel label="#{messages['tradingCurrency.search']}"
 				newButtonView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml">
-				<custom:searchEntityField
+				<custom:searchField listBean="#{}"
 					label="#{messages['tradingCurrency.trCurrencyCode']}"
 					field="currency" childField="currencyCode"
 					service="#{currencyService}" />

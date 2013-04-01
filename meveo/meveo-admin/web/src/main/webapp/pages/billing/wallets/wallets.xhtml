@@ -19,46 +19,47 @@
 		<!-- Entity select popup. -->
 		<c:set var="filtersMap" value="#{walletBean.filters}" />
 		<c:set var="field" value="userAccount" />
-		<custom:entityPopup id="searchUserAccountPopup"
+
+		<hftl:entityPopup id="searchUserAccountPopup"
 			header="#{messages['customerAccount.popup.header']}"
-			backingBean="#{userAccountBean}" dataModel="#{userAccounts}"
+			backingBean="#{userAccountBean}"
 			searchField1Label="#{messages['userAccount.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['userAccount.name']}"
 			searchField2="name" column1Label="#{messages['userAccount.code']}"
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name">
+
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
 				reRender="formId" action="#{filtersMap.put(field, entity)}"
 				oncomplete="Richfaces.hideModalPanel('searchUserAccountPopup')">
 			</a:commandLink>
 
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
-		<custom:listPanel label="#{messages['wallet.title']}"
-			backingBean="#{walletBean}">
-			<custom:searchPanel label="#{messages['wallet.search']}"
-				newButtonView="/pages/billing/wallets/walletDetail.xhtml">
-				<custom:searchEntityField label="#{messages['wallet.userAccount']}"
-					field="userAccount" childField="code" popup="true"
-					popupId="searchUserAccountPopup" clearButton="true" />
-				<custom:searchField label="#{messages['wallet.name']}" field="name" />
-				<custom:searchField label="#{messages['wallet.walletType']}"
-					field="walletType" childField="label" isMessage="true" />
-			</custom:searchPanel>
+		<hf:searchPanel backingBean="#{walletBean}"
+			label="#{messages['wallet.search']}"
+			newButtonView="/pages/billing/wallets/walletDetail.xhtml">
+			<hf:searchField listBean="" label="#{messages['wallet.userAccount']}"
+				field="userAccount" childField="code" popup="true"
+				popupId="searchUserAccountPopup" clearButton="true" />
+			<hf:searchField label="#{messages['wallet.name']}" field="name" />
+			<hf:searchField label="#{messages['wallet.walletType']}"
+				field="walletType" childField="label" isMessage="true" />
+		</hf:searchPanel>
 
-			<custom:dataList dataModel="#{wallets}" pdf="true">
-				<custom:column label="#{messages['wallet.userAccount']}"
-					field="userAccount" childField="code" />
-				<custom:column label="#{messages['wallet.name']}" field="name" />
-				<custom:column label="#{messages['wallet.walletType']}"
-					field="walletType" childField="label" isMessage="true" />
-				<custom:actionsColumn
-					editView="/pages/billing/wallets/walletDetail.xhtml" />
-			</custom:dataList>
+		<hftl:dataList label="#{messages['wallet.title']}"
+			backingBean="#{walletBean}" pdf="true">
+			<hftl:column label="#{messages['wallet.userAccount']}"
+				field="userAccount" childField="code" />
+			<hftl:column label="#{messages['wallet.name']}" field="name" />
+			<hftl:column label="#{messages['wallet.walletType']}"
+				field="walletType" childField="label" isMessage="true" />
 
-		</custom:listPanel>
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('billing','billingManagement')}" />
+		</hftl:dataList>
 
 	</ui:define>
 

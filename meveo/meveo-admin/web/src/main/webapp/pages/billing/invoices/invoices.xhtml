@@ -18,11 +18,11 @@
 	<ui:define name="body">
 
 		<hf:searchPanel label="#{messages['invoice.search']}"
-			backingBean="#{invoiceBean}">
-			<!-- <custom:searchEntityField
+			backingBean="#{invoiceBean}" columns="3">
+			<hf:searchField listBean=""
 				label="#{messages['invoice.billingAccount']}" field="billingAccount"
 				childField="code" popup="true" popupId="searchBillingAccountPopup"
-				clearButton="true" /> -->
+				clearButton="true" />
 			<hf:searchField label="#{messages['invoice.invoiceNumber']}"
 				field="invoiceNumber" />
 			<hf:searchField label="#{messages['invoice.productDate']}"

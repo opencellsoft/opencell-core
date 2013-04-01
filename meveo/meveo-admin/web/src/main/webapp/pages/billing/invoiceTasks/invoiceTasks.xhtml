@@ -20,22 +20,23 @@
 		<!-- Entity select popup. -->
 		<c:set var="filtersMap" value="#{billingCycleBean.filters}" />
 		<c:set var="field" value="billingCycle" />
-		<custom:entityPopup id="searchBillingCyclePopup"
+
+		<hftl:entityPopup id="searchBillingCyclePopup"
 			header="#{messages['customerAccount.popup.header']}"
-			backingBean="#{billingCycleBean}" dataModel="#{billingCycles}"
+			backingBean="#{billingCycleBean}"
 			searchField1Label="#{messages['billingCycle.id']}" searchField1="id"
 			searchField2Label="#{messages['billingCycle.billingFrequency']}"
 			searchField2="billingFrequency"
 			column1Label="#{messages['billingCycle.id']}" column1="id"
 			column2Label="#{messages['billingCycle.billingFrequency']}"
 			column2="billingFrequency">
+
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
 				reRender="formId" action="#{filtersMap.put(field, entity)}"
 				oncomplete="Richfaces.hideModalPanel('searchBillingCyclePopup')">
 			</a:commandLink>
-
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
 		<hf:searchPanel label="#{messages['invoiceTasks.search']}"
 			backingBean="#{invoiceTaskBean}">
@@ -49,10 +50,10 @@
 				field="accountFilter" />
 			<hf:searchField label="#{messages['invoiceTask.walletFilter']}"
 				field="walletFilter" />
-			<!-- <custom:searchEntityField
+			<hf:searchField listBean=""
 				label="#{messages['invoiceTask.billingCycle']}" field="billingCycle"
 				childField="billingFrequency" popup="true"
-				popupId="searchBillingCyclePopup" clearButton="true" /> -->
+				popupId="searchBillingCyclePopup" clearButton="true" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['invoiceTasks.title']}"
