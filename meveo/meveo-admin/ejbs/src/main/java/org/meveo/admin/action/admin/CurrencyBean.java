@@ -13,10 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.meveo.admin.action.billing;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.meveo.admin.action.admin;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -26,53 +23,38 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.international.StatusMessage.Severity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.Language;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.admin.Currency;
+import org.meveo.service.admin.local.CurrencyServiceLocal;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.TradingLanguageServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
 
 /**
- * Standard backing bean for {@link TradingLanguage} (extends {@link BaseBean} that
+ * Standard backing bean for {@link Currency} (extends {@link BaseBean} that
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
  * 
- * @author Marouane ALAMI
- * @created 25-03-2013
- * 
+ * @author Ignas
+ * @created 2009.10.13
  */
-@Name("tradingLanguageBean")
+@Name("currencyBean")
 @Scope(ScopeType.CONVERSATION)
-public class TradingLanguageBean extends BaseBean<TradingLanguage> {
+public class CurrencyBean extends BaseBean<Currency> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link TradingLanguage} service. Extends {@link PersistenceService}
-     * .
-     */
+    /** Injected @{link Currency} service. Extends {@link PersistenceService}. */
     @In
-    private TradingLanguageServiceLocal tradingLanguageService;
-    
-    @In
-    private ProviderServiceLocal providerService;
-    
-    
+    private CurrencyServiceLocal currencyService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this
      * bean for {@link BaseBean}.
      */
-    public TradingLanguageBean() {
-        super(TradingLanguage.class);
+    public CurrencyBean() {
+        super(Currency.class);
     }
 
     /**
@@ -82,9 +64,9 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
+    @Factory("currency")
     @Begin(nested = true)
-    @Factory("tradingLanguage")
-    public TradingLanguage init() {
+    public Currency init() {
         return initEntity();
     }
 
@@ -93,8 +75,8 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
      * 
      * @return filtered entities.
      */
-    @Out(value = "tradingLanguages", required = false)
-    protected PaginationDataModel<TradingLanguage> getDataModel() {
+    @Out(value = "currencies", required = false)
+    protected PaginationDataModel<Currency> getDataModel() {
         return entities;
     }
 
@@ -106,9 +88,9 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
      * @see org.meveo.admin.action.BaseBean#list()
      */
     @Begin(join = true)
-    @Factory("tradingLanguages")
+    @Factory("currencies")
     public void list() {
-    	super.list();
+        super.list();
     }
 
     /**
@@ -119,41 +101,25 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-    	String back=null; 
-    	try {
-    		currentProvider=providerService.findById(currentProvider.getId());
-    		for(TradingLanguage tr : currentProvider.getTradingLanguage()){
-        		if(tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getLanguage().getLanguageCode())
-        				&& !tr.getId().equals(entity.getId())){
-        			throw new Exception("cette langue existe déjà pour ce provider");
-        		}
-    		}
-		    back=saveOrUpdate(entity); 
-			
-		} catch (Exception e) {
-			statusMessages.addFromResourceBundle(Severity.ERROR,e.getMessage());
-		}
-
-		
-		
-    	   
-    
-        return back;
+        return saveOrUpdate(entity);
     }
 
-	public void populateLanguages(Language language){
-	      log.info("populatLanguages language", language!=null?language.getLanguageCode():null);
-		  if(language!=null){
-		      entity.setLanguage(language);
-		      entity.setPrDescription(language.getDescriptionEn());
-	     }
-	}
-    
+    /**
+     * Override default list view name. (By default view name is class name
+     * starting lower case + ending 's').
+     * 
+     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+     */
+    protected String getDefaultViewName() {
+        return "currencies";
+    }
+
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<TradingLanguage> getPersistenceService() {
-        return tradingLanguageService;
+    protected IPersistenceService<Currency> getPersistenceService() {
+        return currencyService;
     }
+
 }
