@@ -105,10 +105,15 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
         }
         
         InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(), subscription.getUserAccount().getBillingAccount().getTradingCountry().getId());
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
-            throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
+        if (invoiceSubcategoryCountry == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
                     + invoiceSubCategory.getCode());
+        }
+        Tax tax = invoiceSubcategoryCountry.getTax();
+        
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id="
+                    + invoiceSubcategoryCountry.getId());
         }
         ChargeApplication chargeApplication = new ChargeApplication(chargeTemplate.getCode(), chargeInstance
                 .getDescription(), subscription, chargeInstance, chargeTemplate.getCode(),
@@ -164,8 +169,15 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(), subscription.getUserAccount().getBillingAccount().getTradingCountry().getId());
+        if (invoiceSubcategoryCountry == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
+                    + invoiceSubCategory.getCode());
+        }
         Tax tax = invoiceSubcategoryCountry.getTax();
-
+        if (tax == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id="
+                    + invoiceSubcategoryCountry.getId());
+        }
         ChargeApplication chargeApplication = new ChargeApplication(chargeTemplate.getCode(), chargeInstance
                 .getDescription(), subscription, chargeInstance, chargeTemplate.getCode(),
                 ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance
@@ -254,10 +266,14 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getId());
+        if (invoiceSubcategoryCountry == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
+                    + invoiceSubCategory.getCode());
+        }
         Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
-            throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
-                    + invoiceSubCategory.getCode());
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id="
+                    + invoiceSubcategoryCountry.getId());
         }
         if (!recurringChargeTemplate.getApplyInAdvance()) {
             applicationDate = nextapplicationDate;
@@ -358,10 +374,14 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
             }
 
             InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+            if (invoiceSubcategoryCountry == null) {
+                throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
+                        + invoiceSubCategory.getCode());
+            }
             Tax tax = invoiceSubcategoryCountry.getTax();
             if (tax == null) {
-                throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
-                        + invoiceSubCategory.getCode());
+                throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id="
+                        + invoiceSubcategoryCountry.getId());
             }
 
             ChargeApplication chargeApplication = new ChargeApplication(chargeInstance.getCode(), chargeInstance
@@ -430,10 +450,14 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getId());
+        if (invoiceSubcategoryCountry == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
+                    + invoiceSubCategory.getCode());
+        }
         Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
-            throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
-                    + invoiceSubCategory.getCode());
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubcategoryCountry id="
+                    + invoiceSubcategoryCountry.getId());
         }
         while (applicationDate.getTime() < nextDurationDate.getTime()) {
             Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
@@ -502,10 +526,14 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getId());
+        if (invoiceSubcategoryCountry == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
+                    + invoiceSubCategory.getCode());
+        }
         Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
-            throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
-                    + invoiceSubCategory.getCode());
+            throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategoryCountry id="
+                    + invoiceSubcategoryCountry.getId());
         }
 
         while (applicationDate.getTime() < nextChargeDate.getTime()) {
@@ -619,10 +647,14 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getId());
+        if (invoiceSubcategoryCountry == null) {
+            throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
+                    + invoiceSubCategory.getCode());
+        }
         Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
-            throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
-                    + invoiceSubCategory.getCode());
+            throw new IncorrectChargeTemplateException("tax is null for invoiceSubcategoryCountry id="
+                    + invoiceSubcategoryCountry.getId());
         }
         while (applicationDate.getTime() < endAgreementDate.getTime()) {
             Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(applicationDate);
@@ -776,10 +808,14 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
             }
 
             InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getId());
+            if (invoiceSubcategoryCountry == null) {
+                throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
+                        + invoiceSubCategory.getCode());
+            }
             Tax tax = invoiceSubcategoryCountry.getTax();
             if (tax == null) {
-                throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategory code="
-                        + invoiceSubCategory.getCode());
+                throw new IncorrectChargeTemplateException("tax is null for invoiceSubCategoryCountry id="
+                        + invoiceSubcategoryCountry.getId());
             }
 
             ChargeApplication chargeApplication = new ChargeApplication(chargeInstance.getCode(), chargeInstance
