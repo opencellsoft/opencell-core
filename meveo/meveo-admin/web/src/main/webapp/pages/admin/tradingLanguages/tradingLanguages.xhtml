@@ -8,19 +8,39 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
     xmlns:custom="http://manaty.net/custom"
+    xmlns:c="http://java.sun.com/jstl/core"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
-    
-    <ui:define name="body">
     	
+    <ui:define name="body">
+    	<c:set var="filtersMap" value="#{tradingLanguageBean.filters}" />
+		<c:set var="field" value="language" />
+    	<custom:entityPopup id="searchLanguagePopup"
+			header="#{messages['tradingLanguage.popup.header']}"
+			backingBean="#{languageBean}" dataModel="#{languages}"
+			
+			searchField1Label="#{messages['language.languageCode']}" 
+			searchField1="languageCode" 
+			
+			column1Label="#{messages['language.languageCode']}" column1="languageCode"
+			column2Label="#{messages['tradingLanguage.prDescription']}"
+			column2="descriptionEn">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{filtersMap.put(field, entity)}"
+					oncomplete="Richfaces.hideModalPanel('searchLanguagePopup')">
+			</a:commandLink>
+		</custom:entityPopup>
     	<custom:listPanel label="#{messages['comLanguage.title']}" backingBean="#{tradingLanguageBean}">
     	
     		<custom:searchPanel label="#{messages['tradingLanguage.search']}" newButtonView="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml">
-    			<custom:searchEntityField label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode"  service="#{languageService}"/>
-    				 
+    		
+    			<custom:searchEntityField label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode" popup="true" popupId="searchLanguagePopup" clearButton="true"/>
+    			
     		</custom:searchPanel>	
     		
     		<custom:dataList dataModel="#{tradingLanguages}">

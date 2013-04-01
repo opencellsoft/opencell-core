@@ -8,6 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -15,16 +16,31 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+	<!-- Entity select popup. -->
+		<c:set var="filtersMap" value="#{tradingCountryBean.filters}" />
+		<c:set var="field" value="country" />
+		<custom:entityPopup id="searchcountryPopup"
+			header="#{messages['customer.popup.header']}"
+			backingBean="#{countryBean}" dataModel="#{countries}"
+			searchField1Label="#{messages['invoiceCategory.code']}"
+			searchField1="countryCode"
+			column1Label="#{messages['invoiceCategory.code']}" column1="countryCode" >
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{filtersMap.put(field, entity)}"
+					oncomplete="Richfaces.hideModalPanel('searchcountryPopup')">
+			</a:commandLink>
+				
+		</custom:entityPopup>
 		<custom:listPanel label="#{messages['tradingCountry.title']}"
 			backingBean="#{tradingCountryBean}">
 
 			<custom:searchPanel label="#{messages['tradingCountry.search']}"
 				newButtonView="/pages/admin/tradingCountries/tradingCountryDetail.xhtml">
-				<custom:searchEntityField
-					label="#{messages['tradingCountry.trCountryCode']}"
-					field="country" childField="countryCode"
-					service="#{tradingCountryService}" />
+					
+					<custom:searchEntityField label="#{messages['tradingCountry.trCountryCode']}" field="country" childField="countryCode" popup="true" popupId="searchcountryPopup" clearButton="true"/>
+    			
 
 			</custom:searchPanel>
 

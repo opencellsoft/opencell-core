@@ -64,6 +64,8 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     
     @In
     private ProviderServiceLocal providerService;
+    
+    
 
     /**
      * Constructor. Invokes super constructor and provides class type of this
@@ -106,9 +108,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     @Begin(join = true)
     @Factory("tradingLanguages")
     public void list() {
-    	setSortField("language.descriptionEn");
-    	setSortOrder("ASC");
-        super.list();
+    	super.list();
     }
 
     /**
@@ -120,22 +120,22 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
     	String back=null; 
-
-		boolean alreadyExist=false;
-		currentProvider=providerService.findById(currentProvider.getId());
+    	try {
+    		currentProvider=providerService.findById(currentProvider.getId());
     		for(TradingLanguage tr : currentProvider.getTradingLanguage()){
-        		if(tr.getLanguage().getLanguageCode().equals(entity.getLanguage().getLanguageCode())
+        		if(tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getLanguage().getLanguageCode())
         				&& !tr.getId().equals(entity.getId())){
-        			alreadyExist=true;
-        			break;
+        			throw new Exception("cette langue existe déjà pour ce provider");
         		}
     		}
-			if(alreadyExist){
-				 statusMessages.addFromResourceBundle(Severity.ERROR, "cette langue existe déjà pour ce provider");
-	                
-			}else{
-				back=saveOrUpdate(entity); 
-				 }
+		    back=saveOrUpdate(entity); 
+			
+		} catch (Exception e) {
+			statusMessages.addFromResourceBundle(Severity.ERROR,e.getMessage());
+		}
+
+		
+		
     	   
     
         return back;

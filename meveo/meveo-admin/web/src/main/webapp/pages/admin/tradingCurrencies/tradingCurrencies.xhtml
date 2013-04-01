@@ -8,6 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -15,43 +16,46 @@
 	</ui:define>
 
 	<ui:define name="body">
+		<c:set var="filtersMap" value="#{tradingCurrencyBean.filters}" />
+		<c:set var="field" value="currency" />
+    	<custom:entityPopup id="searchCurrencyPopup"
+			header="#{messages['tradingCurrency.popup.header']}"
+			backingBean="#{currencyBean}" dataModel="#{currencies}"
+			
+			searchField1Label="#{messages['currency.currencyCode']}" 
+			searchField1="currencyCode" 
+			
+			column1Label="#{messages['currency.currencyCode']}" column1="currencyCode"
+			column2Label="#{messages['tradingCurrency.prDescription']}"
+			column2="descriptionEn">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{filtersMap.put(field, entity)}"
+					oncomplete="Richfaces.hideModalPanel('searchCurrencyPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+		<custom:listPanel label="#{messages['tradingCurrency.title']}"
+			backingBean="#{tradingCurrencyBean}">
 
-		<custom:listPanel label="#{messages['tradingCountry.title']}"
-			backingBean="#{tradingCountryBean}">
-
-			<custom:searchPanel label="#{messages['tradingCountry.search']}"
-				newButtonView="/pages/admin/tradingCountries/tradingCountryDetail.xhtml">
-				<custom:searchEntityField
-					label="#{messages['tradingCountry.trCountryCode']}" field="country"
-					childField="countryCode" service="#{tradingCountryService}" />
+			<custom:searchPanel label="#{messages['tradingCurrency.search']}"
+				newButtonView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml">
+				<custom:searchEntityField label="#{messages['tradingCurrency.trCurrencyCode']}" field="currency" childField="currencyCode" popup="true" popupId="searchCurrencyPopup" clearButton="true"/>
+    			
 
 			</custom:searchPanel>
 
-			<custom:dataList dataModel="#{tradingCountries}">
-				<custom:column label="#{messages['tradingCountry.trCountryCode']}"
-					field="country" childField="countryCode" width="10%" />
-				<custom:column label="#{messages['tradingCountry.prDescription']}"
-					width="30%" field="prDescription" />
-				<custom:column label="#{messages['tradingCountry.disabled']}"
-					field="disabled" isMessage="true" />
-				<h:column>
-					<f:facet name="header">
-						<div style="float: left;">
-							#{messages['tradingCountry.languageCode']}</div>
-					</f:facet>
-					<h:outputText value="#{entity.country.language.languageCode}"
-						align="left" />
-				</h:column>
-				<h:column>
-					<f:facet name="header">
-						<div style="float: left;">
-							#{messages['tradingCountry.currencyCode']}</div>
-					</f:facet>
-					<h:outputText value="#{entity.country.currency.currencyCode}"
-						align="left" />
-				</h:column>
+			<custom:dataList dataModel="#{tradingCurrencies}" >
+				<custom:column label="#{messages['tradingCurrency.trCurrencyCode']}"
+					field="currency" childField="currencyCode" width="10%"/>
+				<custom:column label="#{messages['tradingCurrency.prDescription']}"
+					field="prDescription" />
+				<custom:column label="#{messages['tradingCurrency.disabled']}"
+					field="disabled" isMessage="true"/>
+				<custom:column label="#{messages['tradingCurrency.prCurrencyToThis']}"
+					field="prCurrencyToThis" /> 
 				<custom:actionsColumn noDelete="true" noClose="false"
-					editView="/pages/admin/tradingCountries/tradingCountryDetail.xhtml"
+					editView="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml"
 					permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}" />
 			</custom:dataList>
 

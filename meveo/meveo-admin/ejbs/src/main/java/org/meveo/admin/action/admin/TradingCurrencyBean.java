@@ -25,12 +25,15 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.admin.local.TradingCurrencyServiceLocal;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.local.ProviderServiceLocal;
 
 /** 
  * @author Marouane ALAMI
@@ -43,6 +46,9 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
   
     @In
     private TradingCurrencyServiceLocal tradingCurrencyService;
+    
+    @In
+    ProviderServiceLocal providerService;
  
     public TradingCurrencyBean() {
         super(TradingCurrency.class); 
@@ -78,7 +84,21 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
    
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-        return saveOrUpdate(entity);
+    	String back=null;
+    	try {
+    		currentProvider=providerService.findById(currentProvider.getId());
+    		for(TradingLanguage tr : currentProvider.getTradingLanguage()){
+        		if(tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getCurrency().getCurrencyCode())
+        				&& !tr.getId().equals(entity.getId())){
+        			throw new Exception("cette devise existe déjà pour ce provider");
+        		}
+    		}
+		    back=saveOrUpdate(entity); 
+			
+		} catch (Exception e) {
+			statusMessages.addFromResourceBundle(Severity.ERROR, e.getMessage());
+		}
+        return back;
         
     }
 
@@ -97,7 +117,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	      log.info("populatCurrencies currency", currency!=null?currency.getCurrencyCode():null);
 		  if(currency!=null){
 		      entity.setCurrency(currency);
-		      entity.setPrDescription(currency.getDescriotionEn());
+		      entity.setPrDescription(currency.getDescriptionEn());
 	     }
 	}
     
