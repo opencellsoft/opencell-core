@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UINamingContainer;
-import javax.inject.Inject;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
@@ -26,8 +25,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
 	private IEntity entity;
 
-	@Inject
-	ParamBean paramBean;
+	ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
 
 	/**
 	 * Get backing bean attribute either from parent component (search panel,
