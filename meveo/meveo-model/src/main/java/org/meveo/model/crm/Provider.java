@@ -44,6 +44,7 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry; 
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.CustomerAccount;
@@ -142,6 +143,9 @@ public class Provider extends BusinessEntity {
 
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<TradingLanguage> tradingLanguage;
+    
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    private List<TradingCurrency> tradingCurrency;
     
 	public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
@@ -349,6 +353,14 @@ public class Provider extends BusinessEntity {
 
 	public void setTradingLanguage(List<TradingLanguage> tradingLanguage) {
 		this.tradingLanguage = tradingLanguage;
+	}
+
+	public List<TradingCurrency> getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(List<TradingCurrency> tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
 	}
 
 

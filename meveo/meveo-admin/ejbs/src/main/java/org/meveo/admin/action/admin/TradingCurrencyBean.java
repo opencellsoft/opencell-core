@@ -87,8 +87,8 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     	String back=null;
     	try {
     		currentProvider=providerService.findById(currentProvider.getId());
-    		for(TradingLanguage tr : currentProvider.getTradingLanguage()){
-        		if(tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getCurrency().getCurrencyCode())
+    		for(TradingCurrency tr : currentProvider.getTradingCurrency()){
+        		if(tr.getCurrency().getCurrencyCode().equalsIgnoreCase(entity.getCurrency().getCurrencyCode())
         				&& !tr.getId().equals(entity.getId())){
         			throw new Exception("cette devise existe déjà pour ce provider");
         		}
