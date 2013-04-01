@@ -181,7 +181,10 @@
                      
 					 
            <rich:tab label="#{messages['invoiceSubCategory.tab2']}" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
-       
+       <a:outputPanel id="invoiceSubCategoryCountries_MSG_panel">
+			 <h:graphicImage value="/img/msgerror.png" style="border:0" rendered="#{validation.failed}"/>
+			<h:outputText value="#{messages['validation.validationFailure']}" rendered="#{validation.failed}" styleClass="errorMessage"/>
+		</a:outputPanel>	
         <h:panelGrid columns="2">
 		 
 	   <s:decorate template="/layout/edit.xhtml">
@@ -251,7 +254,7 @@
                                     value="#{messages['invoiceSubCategory.oneInvSubCountButton']}"
                                     action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
                                     onclick="document.getElementById('subCategoryCountrydiv').style.display='';"
-                                    reRender="subCategoryCountrySdiv" />&nbsp;&nbsp;
+                                    reRender="subCategoryCountrySdiv" rendered="#{edit}" />&nbsp;&nbsp;
                             </h:form>
                             <br />
                             <br />
@@ -267,34 +270,24 @@
                                             label="#{messages['invoiceSubCategoryCountry.id']}"
                                             field="id" disabled="true" />
 																	 
-         <s:decorate template="/layout/edit.xhtml">
-        <ui:define name="label">
-         <h:outputText value="#{messages['address.country']}" />
-        </ui:define>
-        <h:panelGrid columns="3" >
-         <h:inputText  rendered="#{edit}" value="#{entity.tradingCountry.countryCode}" required="true" disabled="true"/>
-         <h:inputHidden rendered="#{edit}"/>
-         <a:commandLink  rendered="#{edit}" id="selectLink" onclick="Richfaces.showModalPanel('invSubCatCountryPopup');" >
-                    <h:graphicImage value="/img/search.gif" style="border:0"/>
-               </a:commandLink>
-      <rich:toolTip for="selectLink" value="#{messages['commons.search']}"/>
-               <h:outputText rendered="#{!edit}" value="#{entity.tradingCountry.countryCode}" style="font-weight:bold;" />
-           </h:panelGrid>
-          </s:decorate>
+         
 		   
-											
+							<custom:formEntityField id="ISCTSelectId"
+                                            label="#{messages['address.country']}"
+                                            field="tradingCountry" childField="countryCode" popup="true"
+                                            popupId="invSubCatCountryPopup" required="true" />				
 											
 		  
                                         <custom:formEntityField id="ISCTSelectId"
                                             label="#{messages['invoiceSubCategoryCountry.taxe']}"
                                             field="tax" childField="code" popup="true"
-                                            popupId="invSubCatCountTaxPopup" />
+                                            popupId="invSubCatCountTaxPopup" required="true" />
                                         <h:panelGrid columns="2">
 
                                             <a:commandButton
                                                 action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
                                                 value="#{messages['action.save']}"
-                                                reRender="invoiceSubCategoryCountries_panel"
+                                                reRender="invoiceSubCategoryCountries_panel,invoiceSubCategoryCountries_MSG_panel"
                                                 oncomplete="document.getElementById('subCategoryCountrydiv').style.display='none';" />
 
 

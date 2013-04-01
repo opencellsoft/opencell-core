@@ -32,6 +32,7 @@ import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
@@ -106,6 +107,13 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
         try {
 		if (invoiceSubcategoryCountry != null){
+			
+			for(InvoiceSubcategoryCountry inc : entity.getInvoiceSubcategoryCountries()){
+        		if(inc.getTradingCountry().getCountry().getCountryCode().equalsIgnoreCase(invoiceSubcategoryCountry.getTradingCountry().getCountry().getCountryCode() )
+        				&& !inc.getId().equals(invoiceSubcategoryCountry.getId())){
+        			throw new Exception("cette taxe existe déjà pour cette sous-rubrique");
+        		}
+    		}
         	 if (invoiceSubcategoryCountry.getId() != null) {
         		invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
 				statusMessages.addFromResourceBundle("update.successful");
@@ -225,6 +233,9 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
  
         return back;
     }
+    
+
+    
     /**
      * Constructs cost accounting code
      */
