@@ -1,40 +1,35 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['offerTemplate.title']}" backingBean="#{offerTemplateBean}">
-    	
-    		<hf:searchPanel label="#{messages['offerTemplate.search']}" newButtonView="/pages/catalog/offerTemplates/offerTemplateDetail.xhtml">
-    			<hf:searchField label="#{messages['offerTemplate.code']}" field="code" />
-    			<hf:searchField label="#{messages['offerTemplate.description']}" field="description" />
-    			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
-    			
-    		</hf:searchPanel>	
-    		
-    		<hftl:dataList dataModel="#{offerTemplates}" noDelete="true" noClose="false">
-    			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />
-    			<hftl:column label="#{messages['offerTemplate.description']}" field="description" />
-    			<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-    			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="code" childFieldId="id" view="/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml" backView="offerTemplates"/>
-    			<hftl:actionsColumn editView="/pages/catalog/offerTemplates/offerTemplateDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}"/>
-		    </hftl:dataList>
-		   
-		</custom:listPanel>
-		
-    </ui:define>
-    
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['offerTemplate.search']}" backingBean="#{offerTemplateBean}">
+			<hf:searchField label="#{messages['offerTemplate.code']}" field="code" />
+			<hf:searchField label="#{messages['offerTemplate.description']}" field="description" />
+			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
+
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['offerTemplate.title']}" checkMany="false" noClose="false" backingBean="#{offerTemplateBean}">
+			<hftl:column label="#{messages['offerTemplate.code']}" field="code" />
+			<hftl:column label="#{messages['offerTemplate.description']}" field="description" />
+			<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="code" childFieldId="id"
+				view="/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml" backView="offerTemplates" />
+			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		</hftl:dataList>
+
+
+	</ui:define>
+
 </ui:composition>

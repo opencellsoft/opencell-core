@@ -1,12 +1,9 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
@@ -16,9 +13,7 @@
     
     <ui:define name="body">
     	
-    	<custom:listPanel label="#{messages['recurringChargeTemplate.title']}" backingBean="#{recurringChargeTemplateBean}">
-    	
-    		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}" newButtonView="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml">
+    		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}" backingBean="#{recurringChargeTemplateBean}">
     			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
     			<hf:searchField label="#{messages['chargeTemplate.description']}" field="description"/>
     			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
@@ -31,7 +26,7 @@
     			<hf:searchField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" /> -->
     		</hf:searchPanel>	
     		
-    		<hftl:dataList dataModel="#{recurringChargeTemplates}" noDelete="true" noClose="false">
+    		<hftl:dataList label="#{messages['recurringChargeTemplate.title']}" checkMany="false" backingBean="#{recurringChargeTemplateBean}">
     			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
     			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
     			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
@@ -43,11 +38,9 @@
     			<hftl:column label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" isMessage="true" />
     			<hftl:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"  childField="code" isMessage="true" />
     		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-    			<hftl:actionsColumn editView="/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml" permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+    			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		    </hftl:dataList>
-		   
-		</custom:listPanel>
-		
+		   		
     </ui:define>
     
 </ui:composition>

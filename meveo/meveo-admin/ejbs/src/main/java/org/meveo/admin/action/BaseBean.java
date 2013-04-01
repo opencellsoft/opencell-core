@@ -74,7 +74,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	ProviderService providerService;
 
     /** Search filters. */
-    protected Map<String, Object> filters;
+    protected Map<String, Object> filters= new HashMap<String, Object>();
 
     /** Entity to edit/view. */
     protected T entity;
@@ -107,7 +107,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Bind datatable for search results.
      */
-    private DataTable dataTable;
+    private DataTable dataTable ;
 
     /**
      * Selected Entities in multiselect datatable.

@@ -5,8 +5,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -16,24 +14,19 @@
 
 	<ui:define name="body">
 
-		<custom:listPanel label="#{messages['serviceParameterTemplate.title']}" backingBean="#{serviceParameterTemplateBean}">
-			<hf:searchPanel
-				label="#{messages['serviceParameterTemplate.search']}"
-				newButtonView="/pages/catalog/serviceParameters/serviceParameterInstancesDetail.xhtml">
-				<hf:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
-				<hf:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
-				
-			</hf:searchPanel>
+		<hf:searchPanel label="#{messages['serviceParameterTemplate.search']}" backingBean="#{serviceParameterTemplateBean}"
+			newButtonView="/pages/catalog/serviceParameters/serviceParameterInstancesDetail.xhtml">
+			<hf:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
+			<hf:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
+		</hf:searchPanel>
 
-			<hftl:dataList dataModel="#{serviceParameterTemplates}">
-				<hftl:column label="#{messages['serviceParameterTemplate.code']}" field="code" />
-				<hftl:column label="#{messages['serviceParameterTemplate.name']}" field="name" />
-				<hftl:column label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="name" childFieldId="id" view="/pages/crm/serviceTemplates/serviceTemplateDetail.xhtml" backView="serviceParameterTemplates"/>
-				<hftl:actionsColumn
-					editView="/pages/catalog/serviceParameterTemplates/serviceParameterTemplateDetail.xhtml" />
-			</hftl:dataList>
-
-		</custom:listPanel>
+		<hftl:dataList label="#{messages['serviceParameterTemplate.title']}" backingBean="#{serviceParameterTemplateBean}">
+			<hftl:column label="#{messages['serviceParameterTemplate.code']}" field="code" />
+			<hftl:column label="#{messages['serviceParameterTemplate.name']}" field="name" />
+			<hftl:column label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" isList="true" childField="name"
+				childFieldId="id" view="/pages/crm/serviceTemplates/serviceTemplateDetail.xhtml" backView="serviceParameterTemplates" />
+			<hftl:actionsColumn />
+		</hftl:dataList>
 
 	</ui:define>
 

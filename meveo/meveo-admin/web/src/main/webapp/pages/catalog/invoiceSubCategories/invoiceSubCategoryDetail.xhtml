@@ -17,7 +17,7 @@
 
     <ui:define name="body">
 
-        <custom:entityPopup id="invSubCatCountryPopup"
+        <hftl:entityPopup id="invSubCatCountryPopup"
             header="#{messages['invoiceSubCategoryCountry.header']}"
             backingBean="#{countryComBean}" dataModel="#{comCountries}"
             
@@ -33,9 +33,9 @@
                 action="#{invoiceSubcategoryCountry.setTradingCountry(entity)}"
                 oncomplete="Richfaces.hideModalPanel('invSubCatCountryPopup')">
             </a:commandLink>
-        </custom:entityPopup>
+        </hftl:entityPopup>
 
-        <custom:entityPopup id="searchInvoiceCategoryPopup"
+        <hftl:entityPopup id="searchInvoiceCategoryPopup"
             header="#{messages['invoiceCategory.panel']}"
             backingBean="#{invoiceCategoryBean}" dataModel="#{invoiceCategories}"
             searchField1Label="#{messages['invoiceCategory.code']}"
@@ -51,10 +51,10 @@
                 action="#{invoiceSubCategory.setInvoiceCategory(entity)}"
                 oncomplete="Richfaces.hideModalPanel('searchInvoiceCategoryPopup')">
             </a:commandLink>
-        </custom:entityPopup>
+        </hftl:entityPopup>
 
 
-        <custom:entityPopup id="invSubCatCountTaxPopup"
+        <hftl:entityPopup id="invSubCatCountTaxPopup"
             header="#{messages['tax.panel']}" backingBean="#{taxBean}"
             dataModel="#{taxes}" searchField1Label="#{messages['tax.code']}"
             searchField1="code"
@@ -68,7 +68,7 @@
                 action="#{invoiceSubcategoryCountry.setTax(entity)}"
                 oncomplete="Richfaces.hideModalPanel('searchTaxPopup')">
             </a:commandLink>
-        </custom:entityPopup>
+        </hftl:entityPopup>
         <div class="panels">
             <rich:panel>
                 <rich:tabPanel switchType="client">

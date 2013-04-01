@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 		
-		<custom:entityPopup id="serviceTemplatePopup"
+		<hftl:entityPopup id="serviceTemplatePopup"
 			header="#{messages['usagePricePlanItem.serviceTemplate.popup.header']}"
 			backingBean="#{serviceTemplateBean}" dataModel="#{serviceTemplates}"
 			searchField1Label="#{messages['serviceTemplate.code']}" searchField1="code"
@@ -28,10 +28,10 @@
 				action="#{usageDiscountPlanItem.setServiceTemplate(entity)}"
 				oncomplete="Richfaces.hideModalPanel('serviceTemplatePopup')">
 			</a:commandLink>
-		</custom:entityPopup>		
+		</hftl:entityPopup>		
 	 
 		
-		<custom:entityPopup id="customerAccountPopup"
+		<hftl:entityPopup id="customerAccountPopup"
 				header="#{messages['usagePricePlanItem.customerAccount.popup.header']}"
 				backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}"
 				searchField1Label="#{messages['customerAccount.code']}"
@@ -47,7 +47,7 @@
 						action="#{usageDiscountPlanItem.setCustomerAccount(entity)}"
 						oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
 				</a:commandLink>
-		</custom:entityPopup>
+		</hftl:entityPopup>
 			
 		<custom:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usageDiscountPlanItemBean}" entity="#{usageDiscountPlanItem}" >
 			<custom:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true" />
