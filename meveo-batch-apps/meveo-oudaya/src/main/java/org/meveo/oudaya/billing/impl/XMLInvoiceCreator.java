@@ -560,15 +560,11 @@ public class XMLInvoiceCreator {
                                     line.setAttribute("code", ratedTrnsaction.getUsageCode() != null ? ratedTrnsaction
                                             .getUsageCode() : "");
                                     line.setAttribute("taxPercent", round(ratedTrnsaction.getTaxPercent()));
-                                    
-                                    Long chargeid=ratedTrnsaction.getChargeApplication().getChargeInstance().getChargeTemplate().getId();
-                                    String lineDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
-                                    String retedTransactionLabel=lineDescription +" "+ ratedTrnsaction.getChargeApplication().getStartDate()+" "+ 
-                                    OudayaConfig.getToLabel(invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode())+" "+ratedTrnsaction.getChargeApplication().getEndDate();
                                    
                                     Element lebel = doc.createElement("label");
                                     Text lebelTxt = doc
-                                    .createTextNode(retedTransactionLabel);
+                                    .createTextNode(ratedTrnsaction.getPrDescription() != null ? ratedTrnsaction
+                                            .getPrDescription() : "");
                                     
                                     lebel.appendChild(lebelTxt);
                                     line.appendChild(lebel);
@@ -757,11 +753,7 @@ public class XMLInvoiceCreator {
                             } else {
                                 headerRatedTransaction = new RatedTransaction();
                                 headerRatedTransaction.setUsageCode(ratedTrnsaction.getUsageCode());
-                                String languageCode=invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-                                Long chargeid=ratedTrnsaction.getChargeApplication().getChargeInstance().getChargeTemplate().getId();
-                                String headerRatedDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
-                       
-                                headerRatedTransaction.setDescription(ratedTrnsaction.getChargeApplication()!=null?headerRatedDescription:"");
+                                headerRatedTransaction.setPrDescription(ratedTrnsaction.getPrDescription() != null ? ratedTrnsaction.getPrDescription() : "");
                                 headerRatedTransaction.setAmountWithoutTax(ratedTrnsaction.getAmountWithoutTax());
                                 headerRatedTransaction.setAmountWithTax(ratedTrnsaction.getAmountWithTax());
                                 headerRatedTransaction.setTaxPercent(ratedTrnsaction.getTaxPercent());
@@ -817,8 +809,8 @@ public class XMLInvoiceCreator {
                     line.setAttribute("taxPercent", round(headerTransaction.getTaxPercent()) + "");
 
                     Element lebel = doc.createElement("label");
-                    Text lebelTxt = doc.createTextNode(headerTransaction.getDescription() != null ? headerTransaction
-                            .getDescription() : "");
+                    Text lebelTxt = doc.createTextNode(headerTransaction.getPrDescription() != null ? headerTransaction
+                            .getPrDescription() : "");
                     lebel.appendChild(lebelTxt);
                     line.appendChild(lebel);
                     logger.info("addHeaderCategories2 headerRatedTransaction amountHT="

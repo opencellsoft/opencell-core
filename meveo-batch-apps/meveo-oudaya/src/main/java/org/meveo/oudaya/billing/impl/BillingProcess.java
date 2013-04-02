@@ -30,6 +30,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
+import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.FileUtils;
@@ -134,6 +135,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
     @SuppressWarnings("unchecked")
     public void createBillingRunLists(BillingRun billingRun) throws BusinessException, Exception {
         logger.info("createBillingRunLists..........");
+        billingRun=em.find(BillingRun.class, billingRun.getId());//to avoid detached entity exception
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
         boolean entreprise = billingRun.getProvider().isEntreprise();
@@ -287,9 +289,19 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                // Tax and Category aggregates
 	                for (RatedTransaction ratedTransaction : ratedTransactions) {
 
-                        InvoiceSubcategoryCountry invoiceSubcategoryCountry= findInvoiceSubCategoryCountry(ratedTransaction.getInvoiceSubCategory().getId(), ratedTransaction.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getCountry().getCountryCode());
-                        Tax tax = invoiceSubcategoryCountry.getTax();
-	                    if (ratedTransaction.getInvoice() == null && ratedTransaction.getWallet() != null
+                       
+                        Tax tax = null;
+                        for(InvoiceSubcategoryCountry invoicesubcatCountry: ratedTransaction.getInvoiceSubCategory().getInvoiceSubcategoryCountries()){
+                        	if(invoicesubcatCountry.getTradingCountry().getCountryCode().
+                        			equalsIgnoreCase(ratedTransaction.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getCountryCode())){
+                        		tax=invoicesubcatCountry.getTax();
+                        	}
+                        }
+                        
+                        if (tax==null){
+                        	throw new BusinessException("this invoice sub-category has no tax. subcategory code="+ratedTransaction.getInvoiceSubCategory().getCode());
+                        }
+                        if (ratedTransaction.getInvoice() == null && ratedTransaction.getWallet() != null
 	                            && ratedTransaction.getWallet().getId() == wallet.getId()) {
 	                        SubCategoryInvoiceAgregate invoiceAgregateF = null;
 	                        long invoiceSubCatId = ratedTransaction.getInvoiceSubCategory().getId();
@@ -587,15 +599,15 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 		// Implemented only for EDF
 		
 	}
-	 public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) {
+	 public Tax findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) {
+		 System.out.println("findInvoiceSubCategoryCountry invoiceSubCategoryId="+invoiceSubCategoryId+",countryCode="+countryCode);
 	        try {
-	        	EntityManager em = MeveoPersistence.getEntityManager();
-	            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
+	            QueryBuilder qb = new QueryBuilder("select tax from InvoiceSubcategoryCountry i");
 	            qb.addCriterionEntity("i.invoiceSubCategory.id", invoiceSubCategoryId);
-	            qb.addCriterionWildcard("i.countryCom.id", countryCode, true);
-	            List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb.getQuery(em).getResultList();
-	            return InvoiceSubcategoryCountries.size()>0?InvoiceSubcategoryCountries.get(0):null;
-	        } catch (NoResultException ex) {
+	            qb.addCriterionWildcard("i.tradingCountry.country.countryCode", countryCode, true);
+	            List<Tax> taxes = qb.getQuery(em).getResultList();
+	            return taxes.size()>0?taxes.get(0):null;
+	        } catch (Exception ex) {
 	            ex.printStackTrace();
 	        }
 	        return null;

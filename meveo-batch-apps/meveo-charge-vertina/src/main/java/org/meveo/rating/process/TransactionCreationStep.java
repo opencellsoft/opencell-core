@@ -17,11 +17,13 @@ package org.meveo.rating.process;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode; 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.config.MeveoConfig;
@@ -200,10 +202,14 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
             if(lineDescription==null){
             	lineDescription=chargeApplication.getDescription();
             }
-           String transactionLabel=lineDescription +" "+ transaction.getChargeApplication().getStartDate()+" "+ 
-            VertinaConfig.getToLabel(chargeApplication.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode())+" "+transaction.getChargeApplication().getEndDate();
-            transaction.setPrDescription(transactionLabel);
-           
+            Date startDate=DateUtils.parseDateWithPattern(transaction.getChargeApplication().getStartDate(), "dd-MM-yyyy");
+            Date endDate=DateUtils.parseDateWithPattern(transaction.getChargeApplication().getStartDate(), "dd-MM-yyyy");
+            if(startDate!=null && endDate!=null){
+            	lineDescription=lineDescription +" "+ startDate+" "+ 
+                 VertinaConfig.getToLabel(chargeApplication.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode())+" "+endDate;    
+            }
+           transaction.setPrDescription(lineDescription);
+            transaction.setSubscription(chargeApplication.getSubscription());
             transaction.setUsageDate(chargeApplication.getApplicationDate());
             transaction.setUsageQuantity(usageQuantity);
             transaction.setUnitPrice1(unitPrice1);
