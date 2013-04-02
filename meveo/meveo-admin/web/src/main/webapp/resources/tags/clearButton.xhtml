@@ -11,6 +11,7 @@
 
 <cc:interface>
 	<cc:attribute name="label" required="true" />
+	<cc:attribute name="edit" required="false" default="true" />
 	<cc:attribute name="resetAction" required="true"
 		method-signature="void reset()" />
 </cc:interface>
@@ -21,6 +22,7 @@
 		update="@form" action="#{cc.attrs.resetAction}">
 		<f:actionListener
 			type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+		<f:param name="edit" value="true" rendered="#{cc.attrs.edit}" />
 	</p:commandButton>
 
 </cc:implementation>
