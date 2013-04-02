@@ -42,7 +42,7 @@ public class OudayaDatabaseInputLoader extends AbstractInputLoader {
             List<BillingRun> billingRuns = (List<BillingRun>) em.createQuery(
                     "from BillingRun where provider.code in ("
                             + StringUtils.getArrayElements(OudayaConfig.getProviderCodes())
-                            + ") and status in ('NEW','ON_GOING','VALIDATED') and disabled=0").getResultList();
+                            + ") and status in ('NEW','ON_GOING','VALIDATED') and disabled=:status").setParameter("status", false).getResultList();
             if (billingRuns != null && billingRuns.size() > 0) {
                 StringBuilder inputNameBuilder = new StringBuilder("_BillingRunIds_");
                 for (BillingRun billingRun : billingRuns) {
