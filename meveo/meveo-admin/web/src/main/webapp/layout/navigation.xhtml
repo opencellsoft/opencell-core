@@ -18,7 +18,8 @@
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
 				
-				<rich:dropDownMenu id="trading" value="#{messages['menu.trading']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+				
+				<rich:menuGroup id="trading" value="#{messages['menu.trading']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<rich:menuItem id="tradingLanguages" value="#{messages['menu.comLanguages']}" 
 							action="tradingLanguages" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 						<s:conversationPropagation type="none" />
@@ -33,14 +34,14 @@
 							action="tradingCountries" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
-				</rich:dropDownMenu>
+				</rich:menuGroup>
 				
 		        <!-- <rich:menuItem id="userRoles" value="#{messages['menu.userRoles']}"
 					action="userRoles" rendered="#{s:hasRole('meveo.admin')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>-->
 				
-				<rich:dropDownMenu id="categories" value="#{messages['menu.invoicing']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+				<rich:menuGroup id="categories" value="#{messages['menu.invoicing']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<rich:menuItem id="invoiceCategories" value="#{messages['menu.invoiceCategories']}" 
 							action="invoiceCategories" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 						<s:conversationPropagation type="none" />
@@ -59,14 +60,14 @@
 						action="billingCycles" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
-				</rich:dropDownMenu>
+				</rich:menuGroup>
 				
 				<!-- <rich:menuItem id="messages" value="#{messages['menu.messages']}"
 					 rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem> -->
 				
-				<rich:dropDownMenu id="provider" value="#{messages['menu.provider']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+				<rich:menuGroup id="provider" value="#{messages['menu.provider']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<rich:menuItem id="providers" value="#{messages['menu.providers']}" 
 							action="providers" rendered="#{s:hasRole('superAdministrateur')}">
 						<s:conversationPropagation type="none" />
@@ -83,7 +84,7 @@
 						action="customerCategories" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
-				</rich:dropDownMenu>
+				</rich:menuGroup>
 				
 				<rich:menuItem id="emailTemplates" value="#{messages['menu.emailTemplates']}" 
 						action="emailTemplates" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
