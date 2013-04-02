@@ -40,7 +40,7 @@
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>-->
 				
-				<rich:dropDownMenu id="invoicing" value="#{messages['menu.invoicing']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+				<rich:dropDownMenu id="categories" value="#{messages['menu.invoicing']}" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<rich:menuItem id="invoiceCategories" value="#{messages['menu.invoiceCategories']}" 
 							action="invoiceCategories" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 						<s:conversationPropagation type="none" />
@@ -62,7 +62,7 @@
 				</rich:dropDownMenu>
 				
 				<!-- <rich:menuItem id="messages" value="#{messages['menu.messages']}"
-					action="" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					 rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem> -->
 				
@@ -91,7 +91,7 @@
 				</rich:menuItem>
 				
 				<rich:menuItem id="sellers" value="#{messages['menu.sellers']}"
-					action="" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
+					 rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>				
 				
@@ -130,7 +130,7 @@
 						action="vertinaInputs"  rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
-					<!--<rich:menuItem id="vertinaManagement" value="#{messages['menu.management']}"
+					<rich:menuItem id="vertinaManagement" value="#{messages['menu.management']}"
 						action="vertinaManagement" rendered="#{persistentPermissionResolver.hasPermission('administration','administrationVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
@@ -203,7 +203,7 @@
 					</rich:menuItem>
 					
 					<rich:menuItem id="usageChargeTemplates" value="#{messages['menu.usageChargeTemplates']}" 
-							action="" rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
+							 rendered="#{persistentPermissionResolver.hasPermission('catalog','catalogVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
 				</rich:dropDownMenu>
@@ -253,7 +253,7 @@
 				</rich:menuItem>
 
 				<rich:menuItem id="accessPoints" value="#{messages['menu.accessPoints']}"
-					action="" rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
+					 rendered="#{persistentPermissionResolver.hasPermission('account','accountVisualization')}">
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>
 				
@@ -358,25 +358,25 @@
 					<s:conversationPropagation type="none" />
 				</rich:menuItem>-->
 				
-				<rich:dropDownMenu id="rating" value="#{messages['menu.rating]}" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">	
+				<rich:dropDownMenu id="rating" value="#{messages['menu.rating']}" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">	
 				    <rich:menuItem id="recurringRating" value="#{messages['menu.globalExecution']}"
-						action=""  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+						  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
 					
 					<rich:menuItem id="exceptionalRating" value="#{messages['menu.exceptionalExecution']}"
-						action=""  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+						  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
 						<s:conversationPropagation type="none" />
-					</rich:menuItem
+					</rich:menuItem>
 					
 					<rich:menuItem id="ratingRuns" value="#{messages['menu.history']}"
-					action=""  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
-					<s:conversationPropagation type="none" />
+						  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+						<s:conversationPropagation type="none" />
 					</rich:menuItem>
 					
 				</rich:dropDownMenu>
 				
-				<rich:dropDownMenu id="invoicing" value="#{messages['menu.invoicing]}" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">	
+				<rich:dropDownMenu id="invoicing" value="#{messages['menu.invoicing']}" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">	
 				    <rich:menuItem id="recurringInvoicing" value="#{messages['menu.globalExecution']}"
 						action="recurringInvoicing"  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
 						<s:conversationPropagation type="none" />
@@ -393,7 +393,7 @@
 					</rich:menuItem>
 				</rich:dropDownMenu>
 				
-				<rich:dropDownMenu id="reports" value="#{messages['menu.reports]}" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">	
+				<rich:dropDownMenu id="reports" value="#{messages['menu.reports']}" rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">	
 				
 					<rich:menuItem id="reportsExecution" value="#{messages['menu.reportsExecution']}"
 						action="reports" rendered="#{persistentPermissionResolver.hasPermission('reporting','reportingVisualization')}">
@@ -401,7 +401,7 @@
 					</rich:menuItem>
 
 					<rich:menuItem id="reportsHistory" value="#{messages['menu.history']}"
-						action=""  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
+						  rendered="#{persistentPermissionResolver.hasPermission('billing','billingVisualization')}">
 						<s:conversationPropagation type="none" />
 					</rich:menuItem>
 					
