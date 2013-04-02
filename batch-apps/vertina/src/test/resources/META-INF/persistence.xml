@@ -5,8 +5,7 @@
 	<persistence-unit name="VertinaPU" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		
-		<class>org.meveo.model.admin.Currency</class>
-        <class>org.meveo.model.admin.InputHistory</class>
+		 <class>org.meveo.model.admin.InputHistory</class>
 		<class>org.meveo.model.admin.MedinaInputHistory</class>
 		<class>org.meveo.model.admin.VertinaInputHistory</class>
 		<class>org.meveo.model.admin.OudayaInputHistory</class>
@@ -57,6 +56,22 @@
 		<class>org.meveo.model.billing.TaxInvoiceAgregate</class>
 		<class>org.meveo.model.billing.RatedTransaction</class>
 		<class>org.meveo.model.billing.ChargeApplication</class>
+		
+		<class>org.meveo.model.admin.Currency</class>
+		<class>org.meveo.model.billing.Language</class>
+		<class>org.meveo.model.billing.Country</class>
+		<class>org.meveo.model.billing.TradingCountry</class>
+		<class>org.meveo.model.billing.TradingCurrency</class>
+		<class>org.meveo.model.billing.TradingLanguage</class>
+		<class>org.meveo.model.billing.TaxLanguage</class>  
+		<class>org.meveo.model.billing.InvoiceCategoryCountry</class>
+		<class>org.meveo.model.billing.InvoiceCategoryLanguage</class>
+		<class>org.meveo.model.billing.InvoiceSubcategoryCountry</class>
+		<class>org.meveo.model.billing.PriceplanInstanciation</class>
+		<class>org.meveo.model.billing.DiscountplanInstanciation</class>
+		<class>org.meveo.model.billing.CatMessages</class>
+		
+		
 		<class>org.meveo.model.AccountEntity</class>
 		<class>org.meveo.model.catalog.Calendar</class>
 		<class>org.meveo.model.catalog.ChargeTemplate</class>
@@ -65,8 +80,6 @@
 		<class>org.meveo.model.catalog.OneShotChargeTemplate</class>
 		<class>org.meveo.model.catalog.DiscountPlanMatrix</class>
 		<class>org.meveo.model.catalog.PricePlanMatrix</class>
-		<class>org.meveo.model.catalog.UsagePricePlanItem</class>
-		<class>org.meveo.model.catalog.PriceCode</class>
 		<class>org.meveo.model.catalog.RecurringChargeTemplate</class>
 		<class>org.meveo.model.catalog.ServiceTemplate</class>
 		<class>org.meveo.model.communication.Campaign</class>
@@ -86,6 +99,7 @@
 		<class>org.meveo.model.crm.CustomerCategory</class>
 		<class>org.meveo.model.crm.Provider</class>
 		<class>org.meveo.model.crm.ProviderContact</class>
+		<class>org.meveo.model.crm.ProviderConfig</class>
 		<class>org.meveo.model.billing.SubscriptionTerminationReason</class>
 		<class>org.meveo.model.datawarehouse.DWHAccountOperation</class>
 		<class>org.meveo.model.datawarehouse.JournalEntry</class>
@@ -114,7 +128,11 @@
 		<class>org.meveo.model.resource.UsageCounter</class>
 		<class>org.meveo.model.shared.Title</class>
 		<class>org.meveo.model.security.Permission</class>
-			
+		<class>org.meveo.model.payments.BankOperation</class>  
+		<class>org.meveo.model.mediation.Access</class> 
+		<class>org.meveo.model.mediation.ZonningPlan</class>
+		<class>org.meveo.model.mediation.TimePlan</class>
+		<class>org.meveo.model.mediation.NumberingPlan</class>
 		
 		<properties>
 <!--
@@ -130,11 +148,11 @@
 			<property name="hibernate.show_sql" value="true" />
 -->
 
-		    <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
+		    <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
  	        <property name="hibernate.connection.username" value="MEVEO" />
-			<property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver" />
+			<property name="hibernate.connection.driver_class" value="PostgreSQL.jdbc.PostgreSQLDriver" />
 			<property name="hibernate.connection.password" value="MEVEO" />
-			<property name="hibernate.connection.url" value="jdbc:oracle:thin:@host:1521:XE" />
+			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost/meveo" />
 			<property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="true" />

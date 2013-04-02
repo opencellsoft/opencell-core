@@ -120,7 +120,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                 ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance
                         .getAmountWithoutTax(), chargeInstance.getAmount2(), quantity, tax.getCode(), tax.getPercent(),
                 null, null, invoiceSubCategory, null, null, null, null, chargeInstance.getCriteria1(), chargeInstance
-                        .getCriteria2(), chargeInstance.getCriteria3());
+                        .getCriteria2(), chargeInstance.getCriteria3(),null,null);
 
         create(chargeApplication, creator, chargeTemplate.getProvider());
         OneShotChargeTemplate oneShotChargeTemplate = null;
@@ -183,7 +183,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                 ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.PUNCTUAL, applicationDate, chargeInstance
                         .getAmountWithoutTax(), chargeInstance.getAmount2(), quantity, tax.getCode(), tax.getPercent(),
                 null, null, invoiceSubCategory, null, null, null, null, chargeInstance.getCriteria1(), chargeInstance
-                        .getCriteria2(), chargeInstance.getCriteria3());
+                        .getCriteria2(), chargeInstance.getCriteria3(),null,null);
 
         create(chargeApplication, creator, chargeTemplate.getProvider());
     }
@@ -285,7 +285,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                     chargeInstance.getAmount2(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
                             .getPercent(), null, nextapplicationDate, recurringChargeTemplate.getInvoiceSubCategory(),
                     param1, param2, param3, null, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
-                    chargeInstance.getCriteria3());
+                    chargeInstance.getCriteria3(),applicationDate,DateUtils.addDaysToDate(nextapplicationDate, -1));
             // one customer want the charge subrscription date to be the date the charge
             // was
         // activated
@@ -390,7 +390,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                     ApplicationTypeEnum.PRORATA_TERMINATION, applicationDate, chargeInstance.getAmountWithoutTax(),
                     chargeInstance.getAmount2(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
                             .getPercent(), null, nextapplicationDate, invoiceSubCategory, param1, param2, param3, null,
-                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
+                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(),periodStart,DateUtils.addDaysToDate(nextapplicationDate, -1));
             chargeApplication.setApplicationMode(ChargeApplicationModeEnum.REIMBURSMENT);
             create(chargeApplication, creator, chargeInstance.getProvider());
 
@@ -475,7 +475,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                     applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmount2(), chargeInstance
                             .getServiceInstance().getQuantity(), tax.getCode(), tax.getPercent(), null,
                     nextapplicationDate, invoiceSubCategory, reimbursement ? "-1" : null, param2, null, null,
-                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
+                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(),applicationDate,DateUtils.addDaysToDate(nextapplicationDate, -1));
             chargeApplication.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
             if (reimbursement) {
                 chargeApplication.setApplicationMode(ChargeApplicationModeEnum.REIMBURSMENT);
@@ -597,7 +597,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                     chargeInstance.getAmountWithoutTax(), chargeInstance.getAmount2(), chargeInstance
                             .getServiceInstance().getQuantity(), tax.getCode(), tax.getPercent(), null,
                     nextapplicationDate, invoiceSubCategory, reimbursement ? "-1" : param1, param2, param3, null,
-                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
+                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(),applicationDate,DateUtils.addDaysToDate(nextapplicationDate, -1));
             chargeApplication.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 
             if (reimbursement) {
@@ -688,7 +688,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                             .getAmountWithoutTax(), chargeInstance.getAmount2(), chargeInstance.getServiceInstance()
                             .getQuantity(), tax.getCode(), tax.getPercent(), null, nextapplicationDate,
                     invoiceSubCategory, param1, param2, null, null, chargeInstance.getCriteria1(), chargeInstance
-                            .getCriteria2(), chargeInstance.getCriteria3());
+                            .getCriteria2(), chargeInstance.getCriteria3(),applicationDate,endDate);
             chargeApplication.setApplicationMode(ChargeApplicationModeEnum.AGREEMENT);
             create(chargeApplication, creator, chargeInstance.getProvider());
             chargeInstance.setChargeDate(applicationDate);
@@ -824,7 +824,7 @@ public class ChargeApplicationService extends ProviderBusinessService<ChargeAppl
                     ApplicationTypeEnum.PRORATA_TERMINATION, applicationDate, chargeInstance.getAmountWithoutTax(),
                     chargeInstance.getAmount2(), chargeInstance.getServiceInstance().getQuantity(), tax.getCode(), tax
                             .getPercent(), null, nextapplicationDate, invoiceSubCategory, param1, param2, param3, null,
-                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3());
+                    chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(),periodStart,DateUtils.addDaysToDate(nextapplicationDate, -1));
             create(chargeApplication, creator, chargeInstance.getProvider());
 
         }

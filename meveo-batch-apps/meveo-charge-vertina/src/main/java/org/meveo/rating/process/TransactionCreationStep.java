@@ -16,22 +16,32 @@
 package org.meveo.rating.process;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.RoundingMode; 
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.config.MeveoConfig;
 import org.meveo.core.inputhandler.TaskExecution;
 import org.meveo.core.process.step.AbstractProcessStep;
 import org.meveo.core.process.step.StepExecution;
+import org.meveo.model.admin.OudayaConfiguration;
 import org.meveo.model.billing.ApplicationTypeEnum;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
+import org.meveo.persistence.MeveoPersistence;
 import org.meveo.rating.ticket.RatingTicket;
+import org.meveo.vertina.VertinaConfig;
 import org.meveo.vertina.constants.VertinaConstants;
 
 /**
@@ -179,8 +189,21 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
             // chargeApplication
             transaction.setWallet(chargeApplication.getSubscription().getUserAccount().getWallet());
             transaction.setUsageCode(chargeApplication.getChargeCode());
-            transaction.setDescription(chargeApplication.getDescription()
-                    + (chargeApplication.getParameter2() == null ? "" : (" " + chargeApplication.getParameter2())));
+            String lineDescription=chargeApplication.getDescription();
+            TradingLanguage tlanguage=chargeApplication.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage();
+            if(tlanguage!=null){
+            	 String languageCode=tlanguage.getLanguage().getLanguageCode();
+                 Long chargeid=chargeApplication.getChargeInstance().getChargeTemplate().getId();
+                 lineDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
+                 
+            }
+            if(lineDescription==null){
+            	lineDescription=chargeApplication.getDescription();
+            }
+           String transactionLabel=lineDescription +" "+ transaction.getChargeApplication().getStartDate()+" "+ 
+            VertinaConfig.getToLabel(chargeApplication.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode())+" "+transaction.getChargeApplication().getEndDate();
+            transaction.setPrDescription(transactionLabel);
+           
             transaction.setUsageDate(chargeApplication.getApplicationDate());
             transaction.setUsageQuantity(usageQuantity);
             transaction.setUnitPrice1(unitPrice1);
@@ -335,5 +358,18 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
 
         return true;
     }
+    
+    
+	private static String  getMessageDescription(String messageCode,String languageCode){ 
+		EntityManager em = MeveoPersistence.getEntityManager();
+		String result="";
+		QueryBuilder qb = new QueryBuilder(CatMessages.class,"c");
+	    	qb.addCriterionWildcard("c.messageCode", messageCode, true);
+	    	qb.addCriterionWildcard("c.languageCode", languageCode, true);
+	        List<CatMessages> catMessages=qb.getQuery(em).getResultList(); 
+	        result= catMessages.size()>0?catMessages.get(0).getDescription():null;
+		
+		return result;	
+	}
 
 }

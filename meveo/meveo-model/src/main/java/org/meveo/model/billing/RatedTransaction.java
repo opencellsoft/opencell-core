@@ -41,7 +41,7 @@ import org.meveo.model.ProviderBusinessEntity;
 @Entity
 @Table(name = "BILLING_RATED_TRANSACTION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RATED_TRANSACTION_SEQ")
-public class RatedTransaction extends ProviderBusinessEntity {
+public class RatedTransaction extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -62,7 +62,9 @@ public class RatedTransaction extends ProviderBusinessEntity {
     @Column(name = "SUBUSAGE2_CODE", length = 20)
     private String subUsageCode2;
 
-
+    @Column(name = "PR_DESCRIPTION", length = 255)
+    private String prDescription;
+    
     @Column(name = "USAGE_DESCRIPTION", length = 255)
     private String usageDescription;
 
@@ -281,13 +283,7 @@ public class RatedTransaction extends ProviderBusinessEntity {
         this.subUsageCode2 = subUsageCode2;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+   
 
     public String getUsageDescription() {
         return usageDescription;
@@ -636,6 +632,14 @@ public class RatedTransaction extends ProviderBusinessEntity {
 
 	public void setTradingLanguage(TradingLanguage tradingLanguage) {
 		this.tradingLanguage = tradingLanguage;
+	}
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
 	}
 	
 	

@@ -45,6 +45,7 @@ public class VertinaConfig implements MeveoConfig {
     private static final String VERTINA_PROVIDER_CODES = "vertina.provider.codes";
     private static final String DEFAULT_PROVIDER_ID = "vertina.defaultProvider.id";
     private static final String DEFAULT_DEFAULT_PROVIDER_ID = "1";
+    private static final String TO_LABEL = "to.label";
     // Defaults
     private static final String DEFAULT_SCANNING_INTERVAL = "500"; // 0.5s
     private static final String DEFAULT_PERSISTENCE_UNIT_NAME = "VertinaPU";
@@ -150,4 +151,13 @@ public class VertinaConfig implements MeveoConfig {
     public Long getDefaultProviderId() {
         return Long.valueOf(ParamBean.getInstance(VERTINA_PROPERTIES_FILENAME).getProperty(DEFAULT_PROVIDER_ID, DEFAULT_DEFAULT_PROVIDER_ID));
     }
+
+    public static String getToLabel(String languageCode) {
+		return ParamBean.getInstance(VERTINA_PROPERTIES_FILENAME).getProperty(TO_LABEL+"."+languageCode,
+				"to");
+	}
+    
+    
+    
+    
 }

@@ -168,7 +168,7 @@ public class ChargeApplication extends ProviderBusinessEntity {
             Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amount2, int quantity, String taxCode,
             BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3,
-            String parameter4, String criteria1, String criteria2, String criteria3) {
+            String parameter4, String criteria1, String criteria2, String criteria3,Date startdate,Date endDate) {
         setCode(code);
         setDescription(description);
         this.subscription = subscription;
@@ -194,6 +194,8 @@ public class ChargeApplication extends ProviderBusinessEntity {
         this.criteria1 = criteria1;
         this.criteria2 = criteria2;
         this.criteria3 = criteria3;
+        this.startDate=startdate;
+        this.endDate=endDate;
     }
 
     /**

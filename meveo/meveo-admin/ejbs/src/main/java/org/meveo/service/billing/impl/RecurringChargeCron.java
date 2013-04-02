@@ -128,7 +128,7 @@ public class RecurringChargeCron {
                                     .getAmount2(), activeRecurringChargeInstance.getServiceInstance().getQuantity(),
                             tax.getCode(), tax.getPercent(), null, applicationDate, invoiceSubCat, "1", param2, null,
                             null, activeRecurringChargeInstance.getCriteria1(), activeRecurringChargeInstance
-                                    .getCriteria2(), activeRecurringChargeInstance.getCriteria3());
+                                    .getCriteria2(), activeRecurringChargeInstance.getCriteria3(),previousapplicationDate,DateUtils.addDaysToDate(applicationDate, -1));
                     log.info("set application date to "
                             + activeRecurringChargeInstance.getServiceInstance().getSubscriptionDate());
                     chargeApplication.setSubscriptionDate(activeRecurringChargeInstance.getServiceInstance()
