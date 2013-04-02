@@ -53,8 +53,11 @@
 			<custom:entityPopup id="customerCurrencyPopup"
             header="#{messages['customerCurrencyPopup.header']}"
             backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
-            
-			column1Label="#{messages['currency.codeCurrency']}"
+            searchField1Label="#{messages['businessEntity.code']}"
+		    searchField1="code"
+		    searchField2Label="#{messages['businessEntity.description']}"
+		    searchField2="name"
+			column1Label="#{messages['businessEntity.code']}"
             column1="currencyCode" column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription"
              filtersMap="#{tradingCurrencyBean.filters}">
@@ -97,7 +100,7 @@
 									service="#{customerBrandService}" required="true" />
 									<custom:panelGroup columns="1">	
 									<custom:formEntityField id="customerCurrencySelectId"
-										label="#{messages['currency.codeCurrency']}"  field="tradingCurrency" childField="currencyCode" 
+										label="#{messages['tradingCurrency.tradingCurrencyPanel']}"  field="tradingCurrency" childField="currencyCode" 
 										  popup="true"  
 										popupId="customerCurrencyPopup" />
 							    </custom:panelGroup>
