@@ -31,7 +31,7 @@
 				<h:panelGrid columns="3">
 					<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="false" action="#{cc.attrs.backingBean.search}" />
 					<hf:clearButton label="#{messages['commons.clean']}" resetAction="#{cc.attrs.backingBean.clean}" />
-					<p:button id="buttonNew" value="#{messages['commons.new']}" outcome="customers" rendered="#{cc.attrs.renderNewButton}"> 
+					<p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{cc.attrs.backingBean.getNewViewName()}" rendered="#{cc.attrs.renderNewButton}"> 
 						<f:param name="edit" value="true"/>
 					</p:button>
 				</h:panelGrid>

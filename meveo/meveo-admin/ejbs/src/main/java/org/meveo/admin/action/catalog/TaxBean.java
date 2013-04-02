@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Tax;
@@ -124,7 +123,6 @@ public class TaxBean extends BaseBean<Tax> {
 		}
 		return back;
 	}
-
 
 	/**
 	 * Override default list view name. (By default its class name starting
@@ -237,5 +235,10 @@ public class TaxBean extends BaseBean<Tax> {
 
 	public void setDescriptionFr(String descriptionFr) {
 		this.descriptionFr = descriptionFr;
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "taxes";
 	}
 }
