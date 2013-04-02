@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -23,11 +23,9 @@
 				field="description" />
 			<hftl:column label="#{messages['chargeApplication.status']}"
 				field="status" />
-			<hftl:column
-				label="#{messages['chargeApplication.rejectionReason']}"
+			<hftl:column label="#{messages['chargeApplication.rejectionReason']}"
 				field="rejectionReason" />
-			<hftl:column
-				label="#{messages['chargeApplication.applicationDate']}"
+			<hftl:column label="#{messages['chargeApplication.applicationDate']}"
 				field="applicationDate" isDate="true" />
 			<hftl:column label="#{messages['chargeApplication.amount2']}"
 				field="amount2" />
@@ -44,8 +42,7 @@
 				field="description" />
 			<hftl:column label="#{messages['ratedTransaction.status']}"
 				field="status" />
-			<hftl:column
-				label="#{messages['ratedTransaction.rejectionReason']}"
+			<hftl:column label="#{messages['ratedTransaction.rejectionReason']}"
 				field="rejectionReason" />
 			<hftl:column label="#{messages['ratedTransaction.usageDate']}"
 				field="usageDate" />
@@ -60,7 +57,7 @@
 				field="amount1WithTax" />
 		</hftl:dataList>
 
-		<s:button value="#{messages['action.back']}"
+		<p:commandButton value="#{messages['action.back']}"
 			action="#{vertinaInputHistoryBean.back}" />
 
 	</ui:define>

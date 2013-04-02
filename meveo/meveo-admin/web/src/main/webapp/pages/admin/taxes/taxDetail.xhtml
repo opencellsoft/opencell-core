@@ -15,12 +15,13 @@
 	</ui:define>
 
 	<ui:define name="body">
-
 		<hf:formPanel edit="#{edit}" label="#{messages['tax.panel']}"
 			backingBean="#{taxBean}" columns="1">
 			<hf:formField label="#{messages['tax.code']}" field="code"
 				required="true" />
-			<hf:formField label="#{messages['tax.description']}" field="prDescription" />
+			<!-- <custom:languageFields /> -->
+			<hf:formField label="#{messages['tax.description']}"
+				field="prDescription" />
 			<hf:formField label="#{messages['tax.percent']}" field="percent"
 				required="true" />
 		</hf:formPanel>

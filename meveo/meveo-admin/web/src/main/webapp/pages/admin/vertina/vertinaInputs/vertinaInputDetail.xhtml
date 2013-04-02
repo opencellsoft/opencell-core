@@ -1,30 +1,39 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-		<custom:formPanel edit="false" label="#{messages['vertinaInputHistory.panel']}" backingBean="#{vertinaInputHistoryBean}" entity="#{vertinaInputHistory}" >
-			<custom:formField label="#{messages['inputHistory.name']}" field="name" size="60" />
-			<custom:formField label="#{messages['inputHistory.analysisStartDate']}" field="analysisStartDate" />
-			<custom:formField label="#{messages['inputHistory.analysisEndDate']}" field="analysisEndDate" />
-			<custom:formField label="#{messages['inputHistory.parsedTickets']}" field="parsedTickets" />
-			<custom:formField label="#{messages['inputHistory.succeededTickets']}" field="succeededTickets" />
-			<custom:formField label="#{messages['inputHistory.rejectedTickets']}" field="rejectedTickets" />
-		</custom:formPanel>
-       
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:formPanel edit="false"
+			label="#{messages['vertinaInputHistory.panel']}"
+			backingBean="#{vertinaInputHistoryBean}"
+			entity="#{vertinaInputHistory}">
+			<hf:formField label="#{messages['inputHistory.name']}" field="name"
+				size="60" />
+			<hf:formField label="#{messages['inputHistory.analysisStartDate']}"
+				field="analysisStartDate" />
+			<hf:formField label="#{messages['inputHistory.analysisEndDate']}"
+				field="analysisEndDate" />
+			<hf:formField label="#{messages['inputHistory.parsedTickets']}"
+				field="parsedTickets" />
+			<hf:formField label="#{messages['inputHistory.succeededTickets']}"
+				field="succeededTickets" />
+			<hf:formField label="#{messages['inputHistory.rejectedTickets']}"
+				field="rejectedTickets" />
+		</hf:formPanel>
+
+	</ui:define>
+
 </ui:composition>
