@@ -163,7 +163,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			try {
 				entity = getInstance();
 				if (entity instanceof BaseEntity) {
-					((BaseEntity) entity).setProvider(currentProvider);
+					((BaseEntity) entity).setProvider(getCurrentProvider());
 				}
 				// FIXME: If entity is Auditable, set here the creator and
 				// creation time
@@ -197,7 +197,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	// entities = new PaginationDataModel<T>(getPersistenceService());
 	// }
 	// filters.clear();
-	// filters.put("provider", currentProvider);
+	// filters.put("provider", getCurrentProvider());
 	// entities.addFilters(filters);
 	// entities.addFetchFields(getListFieldsToFetch());
 	// entities.forceRefresh();
@@ -597,15 +597,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	public List<TradingLanguage> getProviderLanguages() {
 		List<TradingLanguage> result = new ArrayList<TradingLanguage>();
-		if (currentProvider != null) {
-			currentProvider = providerService.findById(currentProvider.getId());// to
-																				// avoid
-																				// entity
-																				// not
-																				// managed
-																				// exception
-			for (TradingLanguage tradingLanguage : currentProvider.getTradingLanguage()) {
-				if (!currentProvider.getLanguage().getLanguageCode()
+		if (getCurrentProvider() != null) {
+			for (TradingLanguage tradingLanguage : getCurrentProvider().getTradingLanguage()) {
+				if (!getCurrentProvider().getLanguage().getLanguageCode()
 						.equalsIgnoreCase(tradingLanguage.getLanguage().getLanguageCode())) {
 					result.add(tradingLanguage);
 				}
@@ -617,9 +611,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public String getProviderLanguageCode() {
-		if (currentProvider != null) {
-			currentProvider = providerService.findById(currentProvider.getId());
-			return currentProvider.getLanguage().getLanguageCode();
+		if (getCurrentProvider() != null) {
+			return getCurrentProvider().getLanguage().getLanguageCode();
 		}
 		return "";
 	}
@@ -632,4 +625,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		this.languageMessagesMap = languageMessagesMap;
 	}
 
+    protected Provider getCurrentProvider(){
+        return currentProvider;
+    }
 }

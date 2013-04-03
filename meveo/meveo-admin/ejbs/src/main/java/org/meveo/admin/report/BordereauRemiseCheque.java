@@ -73,6 +73,10 @@ public class BordereauRemiseCheque {
 	
 	@Inject
 	private AccountOperationService accountOperationService;
+	
+	@Inject
+    @CurrentProvider
+    private Provider currentProvider;
 
 	public JasperReport jasperReport;
 
@@ -144,10 +148,6 @@ public class BordereauRemiseCheque {
 		ds.setColumnNames(columnNames);
 		return ds;
 	}
-
-	@Inject
-	@CurrentProvider
-	private Provider currentProvider;
 
 	public File generateDataFile(String[] occCodes) {
 

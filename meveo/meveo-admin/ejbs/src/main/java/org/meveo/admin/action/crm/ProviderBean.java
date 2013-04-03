@@ -52,10 +52,6 @@ public class ProviderBean extends BaseBean<Provider> {
     @Inject
     private ProviderService providerService;
 
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
-
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -105,7 +101,7 @@ public class ProviderBean extends BaseBean<Provider> {
      * if current provider is not null continue action, else require to select provider in login screen
      */
     public String checkCurrentProvider() {
-        if (getCurrentUser() == null || currentProvider == null) {
+        if (getCurrentUser() == null || getCurrentProvider() == null) {
             return "/home.xhtml";
         }
         return "";

@@ -70,7 +70,7 @@ public class UserService extends PersistenceService<User> {
         user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
         user.setLastPasswordModification(new Date());
         List<Provider> providers = new ArrayList<Provider>();
-        providers.add(currentProvider);
+        providers.add(getCurrentProvider());
         user.setProviders(providers);
         super.create(user);
     }
@@ -213,6 +213,19 @@ public class UserService extends PersistenceService<User> {
             log.info("The user #" + user.getId() + " has no role!");
             throw new NoRoleException("The user #" + user.getId() + " has no role!");
         }
+        
+        // TODO needed to overcome lazy loading issue. Remove once solved
+        for (Role role : user.getRoles()) {
+            for (org.meveo.model.security.Permission permission : role.getPermissions()) {
+                permission.getName();
+            }
+        }
+        
+        for (Provider provider : user.getProviders()){
+            provider.getCode();
+        }
+        // End lazy loading issue
+        
         return user;
     }
 

@@ -55,11 +55,7 @@ public class MeveoPermissionResolver implements Serializable, PermissionResolver
 			cachedPermissions.put(cacheKey, has);
 		}
 
-		// log.debug("AKK check has permission " + cacheKey + " " +
-		// cachedPermissions.get(cacheKey));
-
 		return cachedPermissions.get(cacheKey);
-
 	}
 
 	public void filterSetByAction(Set<Object> resources, String permission) {

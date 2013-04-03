@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.crm.Provider;
@@ -87,18 +89,16 @@ public class QueryBuilder {
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, Provider provider) {
         this(getInitQuery(clazz, alias, fetchFields));
-// TODO uncomment when solved issue with object detaching
-//        if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
-//            addCriterionEntity("provider", provider);
-//        }
+        if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
+            addCriterionEntity("provider", provider);
+        }
     }
 
     private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
-//TODO uncomment when solved issue with left join fetch
-                //                query.append(" left join fetch " + alias + "." + fetchField);
+                query.append(" left join fetch " + alias + "." + fetchField);
             }
         }
 

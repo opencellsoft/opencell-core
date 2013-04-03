@@ -74,10 +74,6 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 	 */
 	@Inject
 	private OCCTemplateService occTemplateService;
-
-	@Inject
-	@CurrentProvider
-	private Provider currentProvider;
 	
 	@Inject
 	ParamBean paramBean;
@@ -132,16 +128,14 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 			// Create a new entity from a rejectPayment template
 		} else if (initType.equals("loadFromTemplateRejectPayment")) {
             String occTemplateRejectPaymentCode = paramBean.getProperty("occ.templateRejectPaymentCode");
-			OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode,
-					currentProvider.getCode());
+            OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode, getCurrentProvider().getCode());
 			customerAccountIdToSet = customerAccountId.get();
 			copyFromTemplate(occ, customerAccountId.get());
 
 			// Create a new entity from a paymentCheck template
 		} else if (initType.equals("loadFromTemplatePaymentCheck")) {
             String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode");
-			OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode,
-					currentProvider.getCode());
+            OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode, getCurrentProvider().getCode());
 			customerAccountIdToSet = customerAccountId.get();
 			copyFromTemplate(occ, customerAccountId.get());
 

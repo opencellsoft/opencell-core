@@ -75,11 +75,6 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * endDueDate parameter for ddRequest batch
 	 */
 	private Date endDueDate;
-
-	@Inject
-	@CurrentProvider
-	private Provider currentProvider;
-	
 	
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -115,7 +110,7 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-					currentProvider);
+			    getCurrentProvider());
 			messages.info(new BundleKey("messages", "ddrequestLot.generateFileSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -137,7 +132,7 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-			    currentProvider);
+			    getCurrentProvider());
 			messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,7 +155,7 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-			    currentProvider);
+			    getCurrentProvider());
 			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();

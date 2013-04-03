@@ -95,10 +95,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	private BillingRunService billingRunService;
 
 	@Inject
-	@CurrentProvider
-	private Provider currentProvider;
-
-	@Inject
 	@RequestParam
 	private Instance<Long> customerAccountId;
 
@@ -333,7 +329,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
 			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
-			if (billingRunService.isActiveBillingRunsExist(currentProvider) && !isAllowed) {
+			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
 				messages.info(new BundleKey("messages", "error.invoicing.alreadyLunched"));
 				return null;
 			}

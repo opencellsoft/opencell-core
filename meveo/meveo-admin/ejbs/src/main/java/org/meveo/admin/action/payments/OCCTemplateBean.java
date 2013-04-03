@@ -52,10 +52,6 @@ public class OCCTemplateBean extends BaseBean<OCCTemplate> {
 	@Inject
 	private OCCTemplateService occTemplateService;
 
-	@Inject
-	@CurrentProvider
-	private Provider currentProvider;
-
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -78,8 +74,7 @@ public class OCCTemplateBean extends BaseBean<OCCTemplate> {
 	}
 
 	public List<OCCTemplate> listOCCTemplate() {
-		return (List<OCCTemplate>) occTemplateService.getListOccSortedByName(currentProvider
-				.getCode());
+        return (List<OCCTemplate>) occTemplateService.getListOccSortedByName(getCurrentProvider().getCode());
 	}
 
 

@@ -28,6 +28,7 @@ import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
 import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
@@ -98,10 +99,6 @@ public class Authenticator extends BaseAuthenticator {
 	// setStatus(AuthenticationStatus.SUCCESS);
 	// setUser(new MeveoUser(user));
 	//
-	// if (user.isOnlyOneProvider()) {
-	// currentProvider = user.getProviders().get(0);
-	// }
-	//
 	// // TODO needed to overcome lazy loading issue. Remove once solved
 	// for (Role role : user.getRoles()) {
 	// for (org.meveo.model.security.Permission permission :
@@ -170,13 +167,7 @@ public class Authenticator extends BaseAuthenticator {
 
 			setStatus(AuthenticationStatus.SUCCESS);
 			setUser(new MeveoUser(user));
-
-			// TODO needed to overcome lazy loading issue. Remove once solved
-			for (Role role : user.getRoles()) {
-				for (org.meveo.model.security.Permission permission : role.getPermissions()) {
-					permission.getName();
-				}
-			}
+			
 			log.info("End of authenticating");
 		}
 	}

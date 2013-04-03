@@ -85,10 +85,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
     private DataModel invoicesModel;
 
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
-
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -152,7 +148,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
             boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
             log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
-            if (billingRunService.isActiveBillingRunsExist(currentProvider) && !isAllowed) {
+            if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
                 messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
                 return null;
             }

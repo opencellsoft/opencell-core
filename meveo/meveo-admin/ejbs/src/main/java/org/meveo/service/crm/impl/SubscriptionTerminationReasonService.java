@@ -49,7 +49,7 @@ public class SubscriptionTerminationReasonService extends
 	public List<SubscriptionTerminationReason> listReasons() {
 
 		Query query = new QueryBuilder(SubscriptionTerminationReason.class,
-				"c", null, currentProvider).getQuery(em);
+				"c", null, getCurrentProvider()).getQuery(em);
 		return query.getResultList();
 	}
 }

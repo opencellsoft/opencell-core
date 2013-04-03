@@ -37,34 +37,34 @@ import org.meveo.security.MeveoUser;
 @SessionScoped
 public class CurrentProviderBean implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 2L;
 
-	private Provider currentProvider;
+    private Provider currentProvider;
 
-	@Inject
-	Identity identity;
+    @Inject
+    private Identity identity;
 
-	/**
-	 * Sets current provider
-	 */
-	public String setCurrentProvider(Provider provider) {
-		currentProvider = provider;
+    /**
+     * Sets current provider
+     */
+    public String setCurrentProvider(Provider provider) {
+        currentProvider = provider;
 
-		return "/home.xhtml?faces-redirect=true";
-	}
+        return "/home.xhtml?faces-redirect=true";
+    }
 
-	@Produces
-	@Named("currentProvider")
-	@CurrentProvider
-	@SessionScoped
-	public Provider getCurrentProvider() {
+    @Produces
+    @Named("currentProvider")
+    @CurrentProvider
+    public Provider getCurrentProvider() {
 
-		if (((MeveoUser) identity.getUser()).getUser().isOnlyOneProvider()) {
-			currentProvider = ((MeveoUser) identity.getUser()).getUser().getProvider();
-		} else {
-			currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().get(0);
-		}
-
-		return currentProvider;
-	}
+        if (currentProvider == null && identity.isLoggedIn()) {
+            if (((MeveoUser) identity.getUser()).getUser().isOnlyOneProvider()) {
+                currentProvider = ((MeveoUser) identity.getUser()).getUser().getProvider();
+            } else {
+                currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().get(0);
+            }
+        }
+        return currentProvider;
+    }
 }

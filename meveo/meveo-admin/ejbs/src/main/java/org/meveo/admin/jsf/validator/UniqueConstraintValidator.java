@@ -25,6 +25,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.validation.ValidationService;
 
@@ -39,6 +40,10 @@ public class UniqueConstraintValidator implements Validator {
 	
     @Inject
     private ResourceBundle resourceMessages;
+    
+    @Inject
+    @CurrentProvider
+    private Provider currentProvider;
 
 	public void validate(FacesContext context, UIComponent component, Object value)
 			throws ValidatorException {
@@ -47,9 +52,6 @@ public class UniqueConstraintValidator implements Validator {
 		 * TODO: ModelValidator modelValidator = new ModelValidator();
 		 * modelValidator.validate(context, component, value);
 		 */
-
-		Provider currentProvider = null; // TODO: (Provider)
-											// Component.getInstance("currentProvider");
 
 		String className = (String) component.getAttributes().get("className");
 		String fieldName = (String) component.getAttributes().get("fieldName");
