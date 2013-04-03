@@ -475,21 +475,16 @@ INSERT INTO adm_country (id, version, created, updated, country_code, descriptio
 
 /*------INSERTS OF TABLE CRM PROVIDER----*/
 
-INSERT INTO crm_provider (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (1, 1, false, now(), NULL, 'MYCOMPANY', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'PROV1', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1);
-INSERT INTO crm_provider (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (2, 1, false,now(), NULL, 'OTHERCOPANY', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'CIC', '54321', '22222222222', '22', '22', '22', 'owner2', 'CIC', '12', '2222', 'PROV22', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 2, NULL, 2, NULL,NULL, 2);
+INSERT INTO crm_provider (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (1, 1, false, now(), NULL, 'ASG', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'PROV1', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1);
 
 /*------INSERTS OF TABLE ADM_USER----*/
 
-INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('1', 0, false, now(),  'ADMIN', 'd033e22ae348aeb5660fc2140aec35850c4da997', now(), 1, 1);
 INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('6', 0, false, now(),  'MEVEO.ADMIN', 'fb93a3221422999ba49eb103977a6d736376505b', now(), 1, 1);
+
 
  /*------INSERTS OF TABLE ADM_ROLE----*/
  
 INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (1, 'administrateur', 'Administrateur');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (2, 'adv', 'ADV');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (3, 'visualisationGenerale', 'Visualization générale');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (4, 'visualisationClient', 'Visualization client');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (5, 'encaissement', 'Encaissement');
 INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (6, 'superAdministrateur', 'Super Administrateur');
 
   /*------INSERTS OF TABLE ADM_USER_ROLE----*/
@@ -502,33 +497,15 @@ INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 5);
 INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 6);
  
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 6);
-INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (2, 6);
 
 /*------INSERTS OF TABLE ADM_ROLE_PERMISSION----*/
 
 INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','administration','administrationVisualization,administrationManagement', 'role');
 INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','catalog','catalogVisualization,catalogManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','account','accountVisualization', 'role');
+INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','account','accountVisualization, accountManagement', 'role');
+INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','billing','billingVisualization,billingManagement', 'role');
 INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','reporting','reportingVisualization,reportingManagement', 'role');
 INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'administrateur','customerSummary','customerSummaryVisualization', 'role');
-
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','administration','administrationVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','account','accountVisualization,accountManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','billing','billingVisualization,billingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','reporting','reportingVisualization,reportingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'adv','customerSummary','customerSummaryVisualization', 'role');
-
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','billing','billingVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationGenerale','customerSummary','customerSummaryVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'visualisationClient','customerSummary','customerSummaryVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','billing','billingVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','customerSummary','customerSummaryVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (nextval('ADM_ROLE_PERMISSION_SEQ'),0,'encaissement','reporting','reportingVisualization', 'role');
 
 
 
