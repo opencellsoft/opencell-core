@@ -1,14 +1,23 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
+
+	<f:metadata>
+		<s:viewAction action="#{conversation.begin}" if="#{conversation.transient}" />
+	</f:metadata>
+	
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{taxBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
