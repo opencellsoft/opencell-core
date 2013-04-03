@@ -10,6 +10,12 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{taxBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -18,14 +24,18 @@
 
 		<hf:searchPanel label="#{messages['currency.search']}" columns="3"
 			backingBean="#{currencyBean}">
-			<hf:searchField label="#{messages['currency.code']}" field="currencyCode" />
-			<hf:searchField label="#{messages['currency.name']}" field="DescriotionEn" />
+			<hf:searchField label="#{messages['currency.code']}"
+				field="currencyCode" />
+			<hf:searchField label="#{messages['currency.name']}"
+				field="descriptionEn" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['currency.title']}"
 			backingBean="#{currencyBean}">
-			<hftl:column label="#{messages['currency.code']}" field="currencyCode" />
-			<hftl:column label="#{messages['currency.name']}" field="DescriotionEn" />
+			<hftl:column label="#{messages['currency.code']}"
+				field="currencyCode" />
+			<hftl:column label="#{messages['currency.name']}"
+				field="descriptionEn" />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />
 		</hftl:dataList>
