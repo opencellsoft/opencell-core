@@ -66,7 +66,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 		log.info("populatCurrencies currency", currency != null ? currency.getCurrencyCode() : null);
 		if (currency != null) {
 			entity.setCurrency(currency);
-			entity.setPrDescription(currency.getDescriotionEn());
+			entity.setPrDescription(currency.getDescriptionEn());
 		}
 	}
 

@@ -15,10 +15,11 @@
  */
 package org.meveo.service.admin.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -51,7 +52,8 @@ import org.meveo.service.base.PersistenceService;
  * @author Gediminas Ubartas
  * @created 2010.05.31
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class UserService extends PersistenceService<User> {
 
     static User systemUser = null;
@@ -63,8 +65,9 @@ public class UserService extends PersistenceService<User> {
     @UserCreate
     public void create(User user) throws UsernameAlreadyExistsException {
 
-        if (isUsernameExists(user.getUserName()))
+        if (isUsernameExists(user.getUserName())) {
             throw new UsernameAlreadyExistsException(user.getUserName());
+        }
 
         user.setUserName(user.getUserName().toUpperCase());
         user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
@@ -134,8 +137,8 @@ public class UserService extends PersistenceService<User> {
     public User findByUsernameAndPassword(String username, String password) {
         try {
             password = Sha1Encrypt.encodePassword(password);
-            return (User) em.createQuery("from User where userName = :userName and password = :password").setParameter("userName", username.toUpperCase())
-                .setParameter("password", password).getSingleResult();
+            return (User) em.createQuery("from User as u left join fetch u.providers where u.userName=:userName and u.password=:password")
+                .setParameter("userName", username.toUpperCase()).setParameter("password", password).getSingleResult();
         } catch (NoResultException ex) {
             return null;
         }
@@ -189,11 +192,11 @@ public class UserService extends PersistenceService<User> {
     }
 
     public User loginChecks(User user, boolean skipPasswordExpiracy) throws LoginException {
-    	//check if the user exists
+        // check if the user exists
         if (user == null) {
             throw new UnknownUserException(null);
         }
-        
+
         // Check if the user is active
         if (!user.isActive()) {
             log.info("The user #" + user.getId() + " is not active");
@@ -203,29 +206,31 @@ public class UserService extends PersistenceService<User> {
         // Check if the user password has expired
         String passwordExpiracy = paramBean.getProperty("password.Expiracy", "90");
 
-        if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-            log.info("The password of user #" + user.getId() + " has expired.");
-            throw new PasswordExpiredException("The password of user #" + user.getId() + " has expired.");
-        }
+
+		if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
+			log.info("The password of user #" + user.getId() + " has expired.");
+			throw new PasswordExpiredException("The password of user #" + user.getId()
+					+ " has expired.");
+		}
 
         // Check the roles
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             log.info("The user #" + user.getId() + " has no role!");
             throw new NoRoleException("The user #" + user.getId() + " has no role!");
         }
-        
+
         // TODO needed to overcome lazy loading issue. Remove once solved
         for (Role role : user.getRoles()) {
             for (org.meveo.model.security.Permission permission : role.getPermissions()) {
                 permission.getName();
             }
         }
-        
-        for (Provider provider : user.getProviders()){
+
+        for (Provider provider : user.getProviders()) {
             provider.getCode();
         }
         // End lazy loading issue
-        
+
         return user;
     }
 
@@ -247,7 +252,7 @@ public class UserService extends PersistenceService<User> {
 
         newUser.setDisabled(newUser.isDisabled());
         newUser.setUserName(user.getUserName() + "_NEW");
-        newUser.setRoles(new ArrayList<Role>(user.getRoles()));
+        newUser.setRoles(new HashSet<Role>(user.getRoles()));
 
         log.debug("End of duplication of User entity");
 

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -73,6 +74,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	@Inject
 	ProviderService providerService;
+
+	@Inject
+	protected Conversation conversation;
 
 	/** Search filters. */
 	protected Map<String, Object> filters = new HashMap<String, Object>();
@@ -142,6 +146,23 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return clazz;
 	}
 
+	protected void beginConversation() {
+		if (conversation.isTransient()) {
+			conversation.begin();
+		}
+	}
+
+	protected void endConversation() {
+		if (!conversation.isTransient()) {
+			conversation.end();
+		}
+	}
+
+	public void preRenderView() {
+		log.debug("start conversation");
+		beginConversation();
+	}
+
 	/**
 	 * Initiates entity from request parameter id.
 	 * 
@@ -150,7 +171,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @return Entity from database.
 	 */
 	public T initEntity() {
-
 		if (getObjectId() != null) {
 			if (getFormFieldsToFetch() == null) {
 				entity = (T) getPersistenceService().findById(getObjectId());
@@ -222,7 +242,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		if (entity.isTransient()) {
 			getPersistenceService().create(entity);
 			messages.info(new BundleKey("messages", "save.successful"));
-
 		} else {
 			getPersistenceService().update(entity);
 			messages.info(new BundleKey("messages", "update.successful"));
@@ -255,6 +274,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public String back() {
 		Object backViewParameter = null;
+		endConversation();
 		if (FacesContext.getCurrentInstance() != null) {
 			backViewParameter = FacesContext.getCurrentInstance().getExternalContext()
 					.getRequestMap().get("backView");

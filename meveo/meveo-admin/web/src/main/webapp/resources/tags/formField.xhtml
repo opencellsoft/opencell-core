@@ -33,12 +33,11 @@
 	<ui:fragment rendered="#{cc.isText(cc.attrs.field)}">
 		<h:panelGrid columns="2">
 			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}" />
-			<p:inputText
+			<p:inputText id="#{cc.attrs.id}_text"
 				rendered="#{not cc.attrs.textArea and cc.backingBeanFromParentOrCurrent.edit}"
-				id="#{cc.attrs.id}_text" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				required="#{cc.attrs.required}" size="#{cc.attrs.size}"
-				maxlength="#{cc.attrs.maxlength}" />
+				disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
+				size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}" />
 			<p:inputTextarea
 				rendered="#{cc.attrs.textArea and cc.backingBeanFromParentOrCurrent.edit}"
 				id="#{cc.attrs.id}_textArea" disabled="#{cc.attrs.disabled}"

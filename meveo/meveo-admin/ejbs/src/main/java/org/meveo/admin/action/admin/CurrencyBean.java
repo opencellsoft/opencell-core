@@ -15,13 +15,15 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.Date;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -61,18 +63,19 @@ public class CurrencyBean extends BaseBean<Currency> {
 	 */
 	@Produces
 	@Named("currency")
-	public Currency init() {
-		return initEntity();
+	public Currency initEntity() {
+		Currency currency = super.initEntity();
+
+		Auditable auditable = new Auditable();
+		auditable.setCreated(new Date());
+		auditable.setCreator(getCurrentUser());
+		currency.setAuditable(auditable);
+
+		return currency;
 	}
 
-
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
+	@Override
+	protected String getListViewName() {
 		return "currencies";
 	}
 

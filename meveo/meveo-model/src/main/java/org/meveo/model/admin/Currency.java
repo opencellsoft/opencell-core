@@ -40,7 +40,7 @@ public class Currency extends ProviderlessEntity {
 
 	/** Currency name. */
 	@Column(name = "DESCRIPTION_EN")
-	private String DescriotionEn;
+	private String descriptionEn;
 
 	/** Flag field that indicates if it is system currency. */
 	@Column(name = "SYSTEM_CURRENCY")
@@ -54,12 +54,12 @@ public class Currency extends ProviderlessEntity {
 		this.currencyCode = currencyCode;
 	}
 
-	public String getDescriotionEn() {
-		return DescriotionEn;
+	public String getDescriptionEn() {
+		return descriptionEn;
 	}
 
-	public void setDescriotionEn(String descriotionEn) {
-		DescriotionEn = descriotionEn;
+	public void setDescriptionEn(String descriptionEn) {
+		this.descriptionEn = descriptionEn;
 	}
 
 	public Boolean getSystemCurrency() {
@@ -96,11 +96,6 @@ public class Currency extends ProviderlessEntity {
 	}
 
 	public String toString() {
-		return DescriotionEn;
-	}
-
-	public boolean isTransient() {
-		// TODO Auto-generated method stub
-		return false;
+		return descriptionEn;
 	}
 }

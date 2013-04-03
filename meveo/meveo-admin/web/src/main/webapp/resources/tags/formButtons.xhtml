@@ -28,7 +28,9 @@
 		<p:commandButton rendered="#{cc.attrs.edit}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate}" icon="ui-icon-check"
-			ajax="#{cc.attrs.ajaxSubmit}" />
+			ajax="#{cc.attrs.ajaxSubmit}">
+			<f:param name="edit" value="#{cc.attrs.edit}" />
+		</p:commandButton>
 
 		<cc:insertChildren />
 

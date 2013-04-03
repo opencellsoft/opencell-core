@@ -3,39 +3,47 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-		xmlns:ui="http://java.sun.com/jsf/facelets"
-		xmlns:h="http://java.sun.com/jsf/html"
-		xmlns:f="http://java.sun.com/jsf/core"
-	    xmlns:p="http://primefaces.org/ui"
-	    xmlns:hf="http://java.sun.com/jsf/composite/tags"
-		xmlns:cc="http://java.sun.com/jsf/composite">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:cc="http://java.sun.com/jsf/composite">
 
-		<cc:interface>
-			<cc:attribute name="backingBean" required="true" />
-			<cc:attribute name="entity" default="#{cc.attrs.backingBean.instance}" />
-			<cc:attribute name="columns" default="2" />
-			<cc:attribute name="renderNewButton" type="java.lang.Boolean" default="true" />
-			<cc:attribute name="newButtonView" default="#{cc.attrs.backingBean.getNewViewName()}" />
-		</cc:interface>
-										
-		<cc:implementation>
-			<f:facet name="header">
-				<h:outputText value="#{label}" /> 	
-			</f:facet>
-						
-			<h:form id="searchForm" styleClass="mainForm" >
-				<p:messages />
-				<h:panelGrid columns="#{cc.attrs.columns}">
-					<cc:insertChildren />
-				</h:panelGrid>
-				<h:panelGrid columns="3">
-					<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" ajax="false" action="#{cc.attrs.backingBean.search}" />
-					<hf:clearButton label="#{messages['commons.clean']}" resetAction="#{cc.attrs.backingBean.clean}" />
-					<p:button id="buttonNew" value="#{messages['commons.new']}" outcome="#{cc.attrs.backingBean.getNewViewName()}" rendered="#{cc.attrs.renderNewButton}"> 
-						<f:param name="edit" value="true"/>
-					</p:button>
-				</h:panelGrid>
-			</h:form>
-		</cc:implementation>
-	    
+<cc:interface>
+	<cc:attribute name="backingBean" required="true" />
+	<cc:attribute name="entity" default="#{cc.attrs.backingBean.instance}" />
+	<cc:attribute name="columns" default="2" />
+	<cc:attribute name="renderNewButton" type="java.lang.Boolean"
+		default="true" />
+	<cc:attribute name="newButtonView"
+		default="#{cc.attrs.backingBean.getNewViewName()}" />
+</cc:interface>
+
+<cc:implementation>
+	<f:facet name="header">
+		<h:outputText value="#{label}" />
+	</f:facet>
+
+	<h:form id="searchForm" styleClass="mainForm">
+		<p:messages />
+		<h:panelGrid columns="#{cc.attrs.columns}">
+			<cc:insertChildren />
+		</h:panelGrid>
+		<h:panelGrid columns="3">
+			<p:commandButton id="buttonSearch"
+				value="#{messages['commons.search']}" ajax="false"
+				action="#{cc.attrs.backingBean.search}" />
+			<hf:clearButton label="#{messages['commons.clean']}"
+				resetAction="#{cc.attrs.backingBean.clean}" />
+			<p:button id="buttonNew" value="#{messages['commons.new']}"
+				outcome="#{cc.attrs.backingBean.getNewViewName()}"
+				rendered="#{cc.attrs.renderNewButton}">
+				<f:param name="cid" value="#{conversation.id}" />
+				<f:param name="edit" value="true" />
+			</p:button>
+		</h:panelGrid>
+	</h:form>
+</cc:implementation>
+
 </html>
