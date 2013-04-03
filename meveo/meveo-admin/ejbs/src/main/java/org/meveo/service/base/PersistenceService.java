@@ -248,7 +248,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			}
 		}
 		if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
-			((BaseEntity) e).setProvider(provider);
+			//((BaseEntity) e).setProvider(provider);
 		}
 		em.persist(e);
 		log.debug("end of create {0}. entity id={1}.", e.getClass().getSimpleName(), e.getId());

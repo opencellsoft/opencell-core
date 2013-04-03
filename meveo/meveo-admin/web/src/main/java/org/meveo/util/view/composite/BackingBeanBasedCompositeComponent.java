@@ -213,4 +213,12 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
 		return field;
 	}
+
+	public BaseBean<? extends IEntity> getBackingBean() {
+		return backingBean;
+	}
+
+	public void setBackingBean(BaseBean<? extends IEntity> backingBean) {
+		this.backingBean = backingBean;
+	}
 }

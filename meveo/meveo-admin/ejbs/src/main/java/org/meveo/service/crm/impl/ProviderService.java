@@ -16,6 +16,7 @@
 package org.meveo.service.crm.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -46,7 +47,7 @@ public class ProviderService extends PersistenceService<Provider> {
         }
     }
 
-    public List<Provider> findUsersProviders(String userName) {
+    public Set<Provider> findUsersProviders(String userName) {
         User user = userService.findByUsername(userName);
         if (user != null) {
             return user.getProviders();

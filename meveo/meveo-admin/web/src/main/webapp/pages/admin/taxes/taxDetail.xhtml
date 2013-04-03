@@ -15,6 +15,7 @@
 	</ui:define>
 
 	<ui:define name="body">
+
 		<hf:formPanel edit="#{edit}" label="#{messages['tax.panel']}"
 			backingBean="#{taxBean}" columns="1">
 			<hf:formField label="#{messages['tax.code']}" field="code"
@@ -24,6 +25,9 @@
 				field="prDescription" />
 			<hf:formField label="#{messages['tax.percent']}" field="percent"
 				required="true" />
+			<hf:formField
+				label="#{messages['invoiceSubCategory.accountingCode']}"
+				field="accountingCode" />
 		</hf:formPanel>
 
 	</ui:define>

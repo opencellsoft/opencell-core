@@ -62,7 +62,8 @@ public class CurrentProviderBean implements Serializable {
 		if (((MeveoUser) identity.getUser()).getUser().isOnlyOneProvider()) {
 			currentProvider = ((MeveoUser) identity.getUser()).getUser().getProvider();
 		} else {
-			currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().get(0);
+			currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().iterator()
+					.next();
 		}
 
 		return currentProvider;

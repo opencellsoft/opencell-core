@@ -16,9 +16,10 @@
 package org.meveo.admin.action.catalog;
 
 import java.sql.BatchUpdateException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -74,10 +75,11 @@ public class TaxBean extends BaseBean<Tax> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("tax")
-	public Tax init() {
-		Tax tax = initEntity();
+	@Override
+	public Tax initEntity() {
+		log.debug("start conversation id: {}", conversation.getId());
+		Tax tax = super.initEntity();
+
 		languageMessagesMap.clear();
 		if (tax.getId() != null) {
 			for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName()
@@ -95,7 +97,9 @@ public class TaxBean extends BaseBean<Tax> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
+	@Override
 	public String saveOrUpdate() {
+		log.debug("end conversation id: {}", conversation.getId());
 		String back = null;
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {
@@ -121,6 +125,7 @@ public class TaxBean extends BaseBean<Tax> {
 				catMessagesService.create(catMessages);
 			}
 		}
+
 		return back;
 	}
 
@@ -240,5 +245,27 @@ public class TaxBean extends BaseBean<Tax> {
 	@Override
 	protected String getListViewName() {
 		return "taxes";
+	}
+
+	/**
+	 * Fetch customer field so no LazyInitialize exception is thrown when we
+	 * access it from account list view.
+	 * 
+	 * @see org.manaty.beans.base.BaseBean#getListFieldsToFetch()
+	 */
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("code", "accountingCode");
+	}
+
+	/**
+	 * Fetch customer field so no LazyInitialize exception is thrown when we
+	 * access it from account edit view.
+	 * 
+	 * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
+	 */
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("code", "accountingCode");
 	}
 }
