@@ -2,6 +2,7 @@
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd">
 
 	<param name="edit" />
+	<param name="backView" />
 	<restrict>#{persistentPermissionResolver.hasPermission('administration','administrationManagement') or (!edit and persistentPermissionResolver.hasPermission('administration','administrationVisualization'))}</restrict>
 
 </page>

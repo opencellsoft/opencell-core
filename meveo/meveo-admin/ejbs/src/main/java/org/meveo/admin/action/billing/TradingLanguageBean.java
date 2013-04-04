@@ -122,12 +122,13 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     	String back=null; 
     	try {
     		currentProvider=providerService.findById(currentProvider.getId());
-    		for(TradingLanguage tr : currentProvider.getTradingLanguage()){
+    		for(TradingLanguage tr : currentProvider.getTradingLanguages()){
         		if(tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getLanguage().getLanguageCode())
         				&& !tr.getId().equals(entity.getId())){
         			throw new Exception("cette langue existe déjà pour ce provider");
         		}
     		}
+    		currentProvider.addTradingLanguage(entity);
 		    back=saveOrUpdate(entity); 
 			
 		} catch (Exception e) {

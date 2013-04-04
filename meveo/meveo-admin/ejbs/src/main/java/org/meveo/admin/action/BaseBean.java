@@ -438,7 +438,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     	List<TradingLanguage> result=new ArrayList<TradingLanguage>();
     	if(currentProvider!=null){
     		currentProvider=providerService.findById(currentProvider.getId());//to avoid entity not managed exception 
-    			for (TradingLanguage tradingLanguage:currentProvider.getTradingLanguage()){
+    			for (TradingLanguage tradingLanguage:currentProvider.getTradingLanguages()){
     				if(!currentProvider.getLanguage().getLanguageCode().equalsIgnoreCase(tradingLanguage.getLanguage().getLanguageCode())){
     					result.add(tradingLanguage);
     				}

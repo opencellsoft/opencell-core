@@ -142,10 +142,10 @@ public class Provider extends BusinessEntity {
     protected String email;
 
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<TradingLanguage> tradingLanguage;
+    private List<TradingLanguage> tradingLanguages;
     
     @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<TradingCurrency> tradingCurrency;
+    private List<TradingCurrency> tradingCurrencies;
     
 	public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
@@ -347,20 +347,41 @@ public class Provider extends BusinessEntity {
 		this.tradingCountries = tradingCountries;
 	}
 
-	public List<TradingLanguage> getTradingLanguage() {
-		return tradingLanguage;
+	public List<TradingLanguage> getTradingLanguages() {
+		return tradingLanguages;
 	}
 
-	public void setTradingLanguage(List<TradingLanguage> tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
+	public void setTradingLanguages(List<TradingLanguage> tradingLanguage) {
+		this.tradingLanguages = tradingLanguage;
 	}
 
-	public List<TradingCurrency> getTradingCurrency() {
-		return tradingCurrency;
+	public List<TradingCurrency> getTradingCurrencies() {
+		return tradingCurrencies;
 	}
 
-	public void setTradingCurrency(List<TradingCurrency> tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
+	public void setTradingCurrencies(List<TradingCurrency> tradingCurrencies) {
+		this.tradingCurrencies = tradingCurrencies;
+	}
+
+	public void addTradingCurrency(TradingCurrency tradingCurrency) {
+		if(tradingCurrencies==null){
+			tradingCurrencies=new ArrayList<TradingCurrency>();
+		}
+		tradingCurrencies.add(tradingCurrency);
+	}
+	
+	public void addTradingLanguage(TradingLanguage tradingLanguage) {
+		if(tradingLanguages==null){
+			tradingLanguages=new ArrayList<TradingLanguage>();
+		}
+		tradingLanguages.add(tradingLanguage);
+	}
+	
+	public void addTradingCountry(TradingCountry tradingCountry) {
+		if(tradingCountries==null){
+			tradingCountries=new ArrayList<TradingCountry>();
+		}
+		tradingCountries.add(tradingCountry);
 	}
 
 
