@@ -18,12 +18,10 @@ package org.meveo.admin.action.admin;
 import java.sql.BatchUpdateException;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -56,12 +54,10 @@ public class TitleBean extends BaseBean<Title> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("title")
-	public Title init() {
-		return initEntity();
+	@Override
+	public Title initEntity() {
+		return super.initEntity();
 	}
-
 
 	/**
 	 * Override default list view name. (By default its class name starting
