@@ -18,7 +18,7 @@
 	<ui:define name="body">
 		<c:if test="${edit}">
 			
-			<custom:entityPopup id="countryPopup"
+			<custom:entityPopup id="countryPopupId"
 			header="#{messages['tradingLanguage.popup.header']}"
 			backingBean="#{countryBean}" dataModel="#{countries}"
 			
@@ -32,7 +32,7 @@
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
 				reRender="countriesFormId" action="#{tradingCountryBean.populateCountries(entity)}"
-				oncomplete="Richfaces.hideModalPanel('countryPopup')">
+				oncomplete="Richfaces.hideModalPanel('countryPopupId')">
 			</a:commandLink>
 		</custom:entityPopup>
 		</c:if>
@@ -43,7 +43,7 @@
 
 			<custom:formEntityField id="countrySelectedId"
 				label="#{messages['tradingCountry.countryCode']}" field="country"
-				childField="countryCode" popup="true" popupId="countryPopup"
+				childField="countryCode" popup="true" popupId="countryPopupId"
 				required="true" />
 
 			<custom:formField label="#{messages['tradingCountry.prDescription']}"

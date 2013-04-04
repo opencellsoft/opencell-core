@@ -125,14 +125,14 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     		for(TradingLanguage tr : currentProvider.getTradingLanguages()){
         		if(tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getLanguage().getLanguageCode())
         				&& !tr.getId().equals(entity.getId())){
-        			throw new Exception("cette langue existe déjà pour ce provider");
+        			throw new Exception();
         		}
     		}
     		currentProvider.addTradingLanguage(entity);
 		    back=saveOrUpdate(entity); 
 			
 		} catch (Exception e) {
-			statusMessages.addFromResourceBundle(Severity.ERROR,e.getMessage());
+			statusMessages.addFromResourceBundle(Severity.ERROR,"tradingLanguage.uniqueField");
 		}
 
 		
