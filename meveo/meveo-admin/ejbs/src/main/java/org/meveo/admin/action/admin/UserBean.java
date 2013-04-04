@@ -15,12 +15,13 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,9 +29,12 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.admin.User;
+import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link User} (extends {@link BaseBean} that
@@ -51,10 +55,14 @@ public class UserBean extends BaseBean<User> {
 	@Inject
 	private UserService userService;
 
+	@Inject
+	private RoleService roleService;
 
-    @Inject
-    private Messages messages;
-    
+	@Inject
+	private Messages messages;
+
+	private DualListModel<Role> perks;
+
 	/**
 	 * Password set by user which is later encoded and set to user before saving
 	 * to db.
@@ -87,12 +95,9 @@ public class UserBean extends BaseBean<User> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("user")
-	public User init() {
-		return initEntity();
+	public User initEntity() {
+		return super.initEntity();
 	}
-
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous
@@ -106,7 +111,7 @@ public class UserBean extends BaseBean<User> {
 		} else {
 			boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
 			if (passwordsDoNotMatch) {
-			    messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
+				messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
 				return null;
 			} else {
 				entity.setLastPasswordModification(new Date());
@@ -129,14 +134,35 @@ public class UserBean extends BaseBean<User> {
 	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
 	 */
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
+		return Arrays.asList("provider", "roles", "providers");
 	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
 	 */
 	protected List<String> getListFieldsToFetch() {
-	    return Arrays.asList("providers");
+		return Arrays.asList("providers", "roles", "provider");
+	}
+
+	/**
+	 * Standard method for custom component with listType="pickList".
+	 */
+	public DualListModel<Role> getDualListModel() {
+		if (perks == null) {
+			List<Role> perksSource = roleService.list();
+			List<Role> perksTarget = new ArrayList<Role>();
+			if (getEntity().getRoles() != null) {
+				perksTarget.addAll(getEntity().getRoles());
+			}
+			perksSource.removeAll(perksTarget);
+			perks = new DualListModel<Role>(perksSource, perksTarget);
+		}
+		return perks;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setDualListModel(DualListModel<Role> perks) {
+		getEntity().setRoles((Set<Role>) perks.getTarget());
 	}
 
 	public String getPassword() {

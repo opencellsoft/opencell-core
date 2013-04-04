@@ -42,12 +42,12 @@
 			<hf:formField label="#{messages['user.roles']}" field="roles"
 				listType="pickUpList" listService="#{userRoleService}"
 				childField="name" required="true" />
-			<c:if test="#{s:hasRole('superAdministrateur')}">
+			<!-- <c:if test="#{identity.hasPermission('superAdministrateur')}"> -->
 				<hf:formField label="#{messages['user.providers']}"
 					field="providers" listType="pickUpList"
 					listService="#{providerService}" listMethod="providers"
-					childField="code" required="true" />
-			</c:if>
+					childField="name" required="true" />
+			<!-- </c:if> -->
 		</hf:formPanel>
 	</ui:define>
 
