@@ -111,7 +111,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 			for(InvoiceSubcategoryCountry inc : entity.getInvoiceSubcategoryCountries()){
         		if(inc.getTradingCountry().getCountry().getCountryCode().equalsIgnoreCase(invoiceSubcategoryCountry.getTradingCountry().getCountry().getCountryCode() )
         				&& !inc.getId().equals(invoiceSubcategoryCountry.getId())){
-        			throw new Exception("cette taxe existe déjà pour cette sous-rubrique");
+        			throw new Exception();
         		}
     		}
         	 if (invoiceSubcategoryCountry.getId() != null) {
@@ -126,7 +126,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		}	
         } catch (Exception e) {
             log.error("exception when applying one invoiceSubCategoryCountry !", e);
-            statusMessages.addFromResourceBundle(Severity.ERROR, e.getMessage());
+            statusMessages.addFromResourceBundle(Severity.ERROR,"invoiceSubCategory.uniqueTaxFlied");
+            
         }
     }
 
@@ -208,8 +209,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      */
  
     @End(beforeRedirect = true, root=false)
-	public String saveOrUpdate() {
-    	String back=null;
+	public String saveOrUpdate() { 
     		if(entity.getId()!=null ){
     			for(String msgKey:languageMessagesMap.keySet()){
 					String description=languageMessagesMap.get(msgKey);
@@ -222,11 +222,12 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
                     	catMessagesService.create(catMessages);	
     				}	
     			} 
-        	    back=saveOrUpdate(entity);
+        	     saveOrUpdate(entity);
         	 
         	}else{
         		entity.setAccountingCode(generateAccountingCode());
-        		back=saveOrUpdate(entity);
+        		 saveOrUpdate(entity);
+        		  statusMessages.addFromResourceBundle(Severity.INFO, "invoiceSubCaterogy.AddTax");
         		for(String msgKey:languageMessagesMap.keySet()){
         			String description=languageMessagesMap.get(msgKey);
         			CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
@@ -235,7 +236,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
         		
         	}
  
-        return back;
+        return null;
     }
     
 
