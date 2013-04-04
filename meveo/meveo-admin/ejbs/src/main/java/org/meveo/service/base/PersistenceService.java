@@ -217,8 +217,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 ((AuditableEntity) e).updateAudit(getCurrentUser());
             }
         }
-        checkProvider(e);
         em.merge(e);
+        checkProvider(e);
         log.debug("end of update {0} entity (id={1}).", e.getClass().getSimpleName(), e.getId());
     }
 
@@ -239,7 +239,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
-            ((BaseEntity) e).setProvider(em.getReference(Provider.class, provider.getId()));
+            ((BaseEntity) e).setProvider(provider);
         }
         em.persist(e);
         log.debug("end of create {0}. entity id={1}.", e.getClass().getSimpleName(), e.getId());

@@ -426,7 +426,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @throws InstantiationException
 	 */
 	public T getInstance() throws InstantiationException, IllegalAccessException {
-		return clazz.newInstance();
+		
+	    return clazz.newInstance();
 	}
 
 	/**

@@ -12,12 +12,9 @@
 
 <cc:interface>
 	<cc:attribute name="backingBean" required="true" />
-	<cc:attribute name="entity" default="#{cc.attrs.backingBean.instance}" />
 	<cc:attribute name="columns" default="2" />
-	<cc:attribute name="renderNewButton" type="java.lang.Boolean"
-		default="true" />
-	<cc:attribute name="newButtonView"
-		default="#{cc.attrs.backingBean.getNewViewName()}" />
+	<cc:attribute name="renderNewButton" type="java.lang.Boolean" default="true" />
+	<cc:attribute name="newButtonView" default="#{cc.attrs.backingBean.getNewViewName()}" />
 </cc:interface>
 
 <cc:implementation>
