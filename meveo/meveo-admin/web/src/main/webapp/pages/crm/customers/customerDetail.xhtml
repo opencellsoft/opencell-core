@@ -32,13 +32,11 @@
 				</a:commandLink>
 			</custom:entityPopup> 
 			
-			<custom:entityPopup id="tradingLanguagesPopup"
+			<custom:entityPopup id="tradingLanguagePopup"
 				header="#{messages['tradingLanguage.popup.header']}"
 				backingBean="#{tradingLanguageBean}" dataModel="#{tradingLanguages}"
 				searchField1Label="#{messages['businessEntity.code']}"
 				searchField1="languageCode"
-				searchField2Label="#{messages['businessEntity.description']}"
-				searchField2="name"
 				column1Label="#{messages['businessEntity.code']}" column1="languageCode"
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingLanguageBean.filters}">
@@ -46,10 +44,9 @@
 				<a:commandLink value="#{messages['commons.select']}"
 					reRender="formCustomer"
 					action="#{customer.setTradingLanguage(entity)}"
-					oncomplete="Richfaces.hideModalPanel('tradingLanguagesPopup')">
+					oncomplete="Richfaces.hideModalPanel('tradingLanguagePopup')">
 				</a:commandLink>
 			</custom:entityPopup> 
-			
 			
 			
 			<custom:entityPopup id="customerCurrencyPopup"
@@ -111,7 +108,7 @@
 								<custom:formEntityField id="trLanguageSelectId"
 									label="#{messages['tradingLanguage.tradingLanguage']}"
 									field="tradingLanguage" childField="languageCode" popup="true"
-									popupId="tradingLanguagesPopup" />
+									popupId="tradingLanguagePopup" />
 
 							</rich:tab>
 							<rich:tab label="Informations">
