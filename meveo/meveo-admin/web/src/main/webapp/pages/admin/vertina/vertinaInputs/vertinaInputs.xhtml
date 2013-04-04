@@ -10,6 +10,12 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{vertinaInputHistoryBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -31,41 +37,41 @@
 				field="rejectedTickets" />
 		</hf:searchPanel>
 
-		<hf:dataList label="#{messages['vertinaInputHistory.title']}"
+		<hftl:dataList label="#{messages['vertinaInputHistory.title']}"
 			backingBean="#{vertinaInputHistoryBean}">
-			<hf:column label="#{messages['inputHistory.name']}" field="name" />
-			<hf:column label="#{messages['inputHistory.analysisStartDate']}"
+			<hftl:column label="#{messages['inputHistory.name']}" field="name" />
+			<hftl:column label="#{messages['inputHistory.analysisStartDate']}"
 				field="analysisStartDate" isDate="true" />
-			<hf:column label="#{messages['inputHistory.analysisEndDate']}"
+			<hftl:column label="#{messages['inputHistory.analysisEndDate']}"
 				field="analysisEndDate" isDate="true" />
-			<hf:column label="#{messages['inputHistory.parsedTickets']}"
+			<hftl:column label="#{messages['inputHistory.parsedTickets']}"
 				sortField="parsedTickets">
 				<s:link value="#{entity.parsedTickets}"
 					view="/pages/admin/vertina/vertinaInputs/vertinaTickets.xhtml">
 					<f:param name="historyId" value="#{entity.getId()}" />
 					<f:param name="status" value="0" />
 				</s:link>
-			</hf:column>
-			<hf:column label="#{messages['inputHistory.succeededTickets']}"
+			</hftl:column>
+			<hftl:column label="#{messages['inputHistory.succeededTickets']}"
 				sortField="succeededTickets">
 				<s:link value="#{entity.succeededTickets}"
 					view="/pages/admin/vertina/vertinaInputs/vertinaTickets.xhtml">
 					<f:param name="historyId" value="#{entity.getId()}" />
 					<f:param name="status" value="1" />
 				</s:link>
-			</hf:column>
-			<hf:column label="#{messages['inputHistory.rejectedTickets']}"
+			</hftl:column>
+			<hftl:column label="#{messages['inputHistory.rejectedTickets']}"
 				sortField="rejectedTickets">
 				<s:link value="#{entity.rejectedTickets}"
 					view="/pages/admin/vertina/vertinaInputs/vertinaTickets.xhtml">
 					<f:param name="historyId" value="#{entity.getId()}" />
 					<f:param name="status" value="2" />
 				</s:link>
-			</hf:column>
+			</hftl:column>
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />
-		</hf:dataList>
+		</hftl:dataList>
 
 	</ui:define>
 

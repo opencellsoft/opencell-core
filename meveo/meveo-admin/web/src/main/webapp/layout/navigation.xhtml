@@ -63,11 +63,27 @@
 							<h:outputText value="#{messages['menu.oudayaInputs']}" />
 						</h:link>
 					</rich:menuItem>
-					
+
 					<rich:menuItem id="oudayaConfigurations"
 						rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 						<h:link outcome="oudayaConfigurations">
 							<h:outputText value="#{messages['oudayaConfiguration.title']}" />
+						</h:link>
+					</rich:menuItem>
+				</rich:menuGroup>
+
+				<rich:menuGroup label="#{messages['menu.vertina']}">
+					<rich:menuItem id="vertina"
+						rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+						<h:link outcome="vertinaInputs">
+							<h:outputText value="#{messages['menu.vertinaInputs']}" />
+						</h:link>
+					</rich:menuItem>
+
+					<rich:menuItem id="vertinaConfigurations"
+						rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+						<h:link outcome="vertinaConfigurations">
+							<h:outputText value="#{messages['vertinaConfiguration.title']}" />
 						</h:link>
 					</rich:menuItem>
 				</rich:menuGroup>

@@ -69,21 +69,18 @@ public class VertinaInputHistoryBean extends BaseBean<VertinaInputHistory> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("vertinaInputHistory")
-	public VertinaInputHistory init() {
-		return initEntity();
+	public VertinaInputHistory initEntity() {
+		return super.initEntity();
 	}
 
-
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
+	@Override
+	protected String getListViewName() {
 		return "vertinaInputs";
+	}
+
+	@Override
+	public String getEditViewName() {
+		return "vertinaInputDetail";
 	}
 
 	/**
