@@ -255,7 +255,7 @@ public class TaxBean extends BaseBean<Tax> {
 	 */
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("code", "accountingCode");
+		return Arrays.asList();
 	}
 
 	/**
@@ -266,6 +266,6 @@ public class TaxBean extends BaseBean<Tax> {
 	 */
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("code", "accountingCode");
+		return Arrays.asList();
 	}
 }
