@@ -2,7 +2,7 @@
 
 /*----------TRUNCATE ALL TABLES-----------*/
 
-truncate table account_entity,adm_country,adm_currency,adm_input_history,adm_language,adm_medina_configuration,
+TRUNCATE TABLE account_entity,adm_country,adm_currency,adm_input_history,adm_language,adm_medina_configuration,
 adm_messages,adm_role,adm_role_permission,adm_title,
 adm_user,adm_user_log,adm_user_provider,adm_user_role,adm_vertina_configuration,
 ar_account_operation,ar_action_dunning,ar_action_plan_item,ar_bank_operation,
