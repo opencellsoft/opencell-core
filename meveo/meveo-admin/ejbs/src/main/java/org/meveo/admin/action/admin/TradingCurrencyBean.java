@@ -60,8 +60,8 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     public TradingCurrency init() {
     	return initEntity();    
     }
- 
-
+    
+  
     /**
      * Data model of entities for data table in GUI.
      * 
@@ -76,9 +76,13 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     @Factory("tradingCurrencies")
     @Begin(join = true)
     public void list() {
-    	setSortField("currency.currencyCode");
-    	setSortOrder("DESC");
-        super.list();
+    	  if(filters.containsKey("currencyCode")){
+    			filters.put("currency.currencyCode", filters.get("currencyCode"));
+    			filters.remove("currencyCode");
+    		}else if (filters.containsKey("currency.currencyCode")){
+    			filters.remove("currency.currencyCode");
+    		}
+    		super.list(); 
     }
 
    

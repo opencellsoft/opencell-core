@@ -104,6 +104,12 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
     @Begin(join = true)
     @Factory("tradingCountries")
     public void list() {
+    	if(filters.containsKey("countryCode")){
+    		filters.put("country.countryCode", filters.get("countryCode"));
+    		filters.remove("countryCode");
+    	}else if (filters.containsKey("country.countryCode")){
+    		filters.remove("country.countryCode");
+    	}
         super.list();
     }
 

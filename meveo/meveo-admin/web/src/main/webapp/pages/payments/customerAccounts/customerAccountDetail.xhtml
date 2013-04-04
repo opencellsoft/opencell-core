@@ -34,14 +34,14 @@
 					oncomplete="Richfaces.hideModalPanel('searchCustomerPopup')">
 				</a:commandLink>
 			</custom:entityPopup>
-
-
+ 
 			<custom:entityPopup id="customerAccCurrencyPopup"
 				header="#{messages['customerAccountCurrencyPopup.header']}"
-				backingBean="#{tradingCurrencyBean}"
-				dataModel="#{tradingCurrencies}" 
-				column1Label="#{messages['currency.codeCurrency']}"
-				column1="currencyCode" column2Label="#{messages['businessEntity.description']}"
+				backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}" 
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="currencyCode"
+				column1Label="#{messages['businessEntity.code']}" column1="currencyCode"
+				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingCurrencyBean.filters}">
 				<a:commandLink value="#{messages['commons.select']}"
 					reRender="formCustomerAccount"
@@ -49,12 +49,7 @@
 					oncomplete="Richfaces.hideModalPanel('customerAccCurrencyPopup')">
 				</a:commandLink>
 			</custom:entityPopup>
-			
-			
-			
-
-
-
+	 
 		</c:if>
 		<h:panelGrid columns="1" width="100%">
 			<h:panelGroup>

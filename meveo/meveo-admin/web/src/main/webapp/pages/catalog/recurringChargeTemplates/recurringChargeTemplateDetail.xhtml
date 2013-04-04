@@ -51,7 +51,7 @@
 										childField="code" required="true" popup="true"
 										popupId="searchInvoiceSubCategoryPopup" />
 				<custom:panelGroup columns="2">	
-	    			<custom:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="false" popup="false"
+	    			<custom:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
 											show="#{entity.recurrenceType == 'CALENDAR'}" service="#{calendarService}" listElements="#{calendarService.listChargeApplicationCalendars()}" />
 					<custom:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
 				</custom:panelGroup>

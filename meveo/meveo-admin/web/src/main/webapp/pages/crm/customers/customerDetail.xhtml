@@ -20,9 +20,7 @@
 				header="#{messages['tradingCountry.popup.header']}"
 				backingBean="#{tradingCountryBean}" dataModel="#{tradingCountries}"
 				searchField1Label="#{messages['businessEntity.code']}"
-				searchField1="code"
-				searchField2Label="#{messages['businessEntity.description']}"
-				searchField2="name"
+				searchField1="countryCode"
 				column1Label="#{messages['businessEntity.code']}" column1="countryCode"
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingCountryBean.filters}">
@@ -32,12 +30,13 @@
 					action="#{customer.setTradingCountry(entity)}"
 					oncomplete="Richfaces.hideModalPanel('tradingCountryPopup')">
 				</a:commandLink>
-			</custom:entityPopup>
-			<custom:entityPopup id="tradingLanguagePopup"
+			</custom:entityPopup> 
+			
+			<custom:entityPopup id="tradingLanguagesPopup"
 				header="#{messages['tradingLanguage.popup.header']}"
 				backingBean="#{tradingLanguageBean}" dataModel="#{tradingLanguages}"
 				searchField1Label="#{messages['businessEntity.code']}"
-				searchField1="code"
+				searchField1="languageCode"
 				searchField2Label="#{messages['businessEntity.description']}"
 				searchField2="name"
 				column1Label="#{messages['businessEntity.code']}" column1="languageCode"
@@ -47,20 +46,21 @@
 				<a:commandLink value="#{messages['commons.select']}"
 					reRender="formCustomer"
 					action="#{customer.setTradingLanguage(entity)}"
-					oncomplete="Richfaces.hideModalPanel('tradingLanguagePopup')">
+					oncomplete="Richfaces.hideModalPanel('tradingLanguagesPopup')">
 				</a:commandLink>
-			</custom:entityPopup>
+			</custom:entityPopup> 
+			
+			
+			
 			<custom:entityPopup id="customerCurrencyPopup"
             header="#{messages['customerCurrencyPopup.header']}"
             backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
             searchField1Label="#{messages['businessEntity.code']}"
-		    searchField1="code"
-		    searchField2Label="#{messages['businessEntity.description']}"
-		    searchField2="name"
-			column1Label="#{messages['businessEntity.code']}"
-            column1="currencyCode" column2Label="#{messages['businessEntity.description']}"
-				column2="prDescription"
-             filtersMap="#{tradingCurrencyBean.filters}">
+		    searchField1="currencyCode"
+		    
+			column1Label="#{messages['businessEntity.code']}" column1="currencyCode"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="prDescription" filtersMap="#{tradingCurrencyBean.filters}">
             <a:commandLink value="#{messages['commons.select']}" 
 			reRender="formCustomer"
 					action="#{customer.setTradingCurrency(entity)}"
@@ -111,7 +111,7 @@
 								<custom:formEntityField id="trLanguageSelectId"
 									label="#{messages['tradingLanguage.tradingLanguage']}"
 									field="tradingLanguage" childField="languageCode" popup="true"
-									popupId="tradingLanguagePopup" />
+									popupId="tradingLanguagesPopup" />
 
 							</rich:tab>
 							<rich:tab label="Informations">
