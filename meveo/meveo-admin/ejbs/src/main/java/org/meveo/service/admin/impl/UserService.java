@@ -72,7 +72,7 @@ public class UserService extends PersistenceService<User> {
         user.setUserName(user.getUserName().toUpperCase());
         user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
         user.setLastPasswordModification(new Date());
-        List<Provider> providers = new ArrayList<Provider>();
+        Set<Provider> providers = new HashSet<Provider>();
         providers.add(getCurrentProvider());
         user.setProviders(providers);
         super.create(user);
