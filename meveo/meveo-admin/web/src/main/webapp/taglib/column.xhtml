@@ -139,7 +139,7 @@
 			<!-- If its list then run through it and show results. -->
 			<c:if test="#{isList}">
 				<c:set var="list" value="#{entity[field]}" />
-				<ui:repeat value="#{entity[field]}" var="c">
+				<ui:repeat value="#{entity[field].toArray()}" var="c">
 					<!-- If childField ID is not provided then we dont need link to entity page. -->
 					<c:if test="#{empty entityView}">
 						<c:if test="#{isMessage}">
