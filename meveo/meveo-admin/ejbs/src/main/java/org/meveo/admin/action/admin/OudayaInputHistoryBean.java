@@ -16,12 +16,10 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.OudayaInputHistory;
 import org.meveo.service.admin.impl.OudayaInputHistoryService;
 import org.meveo.service.base.PersistenceService;
@@ -64,21 +62,19 @@ public class OudayaInputHistoryBean extends BaseBean<OudayaInputHistory> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("oudayaInputHistory")
-	public OudayaInputHistory init() {
-		return initEntity();
+	@Override
+	public OudayaInputHistory initEntity() {
+		return super.initEntity();
 	}
 
-
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
+	@Override
+	protected String getListViewName() {
 		return "oudayaInputs";
+	}
+
+	@Override
+	public String getNewViewName() {
+		return "oudayaInputDetail";
 	}
 
 	/**

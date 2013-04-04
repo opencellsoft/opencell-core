@@ -15,20 +15,22 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link Role} (extends {@link BaseBean} that
@@ -49,6 +51,11 @@ public class UserRoleBean extends BaseBean<Role> {
 	@Inject
 	private RoleService userRoleService;
 
+	@Inject
+	private PermissionService permissionService;
+
+	private DualListModel<Permission> perks;
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -64,21 +71,38 @@ public class UserRoleBean extends BaseBean<Role> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("userRole")
-	public Role init() {
-		return initEntity();
+	@Override
+	public Role initEntity() {
+		return super.initEntity();
 	}
 
-
-
 	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 * Standard method for custom component with listType="pickList".
 	 */
-	protected String getDefaultViewName() {
+	public DualListModel<Permission> getDualListModel() {
+		if (perks == null) {
+			List<Permission> perksSource = permissionService.list();
+			List<Permission> perksTarget = new ArrayList<Permission>();
+			if (getEntity().getPermissions() != null) {
+				perksTarget.addAll(getEntity().getPermissions());
+			}
+			perksSource.removeAll(perksTarget);
+			perks = new DualListModel<Permission>(perksSource, perksTarget);
+		}
+		return perks;
+	}
+
+	public void setDualListModel(DualListModel<Permission> perks) {
+		getEntity().setPermissions(perks.getTarget());
+	}
+
+	@Override
+	public String getNewViewName() {
+		return "userRoleDetail";
+	}
+
+	@Override
+	protected String getListViewName() {
 		return "userRoles";
 	}
 

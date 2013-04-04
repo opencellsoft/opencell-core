@@ -21,43 +21,56 @@
 
 				<rich:menuItem id="users"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-					<h:link
-						outcome="users">
+					<h:link outcome="users">
 						<h:outputText value="#{messages['menu.users']}" />
 					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="currencies"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-					<h:link
-						outcome="currencies">
+					<h:link outcome="currencies">
 						<h:outputText value="#{messages['menu.currencies']}" />
 					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="taxes"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-					<h:link
-						outcome="taxes">
+					<h:link outcome="taxes">
 						<h:outputText value="#{messages['menu.taxes']}" />
 					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="titles"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-					<h:link
-						outcome="titles">
+					<h:link outcome="titles">
 						<h:outputText value="#{messages['menu.titles']}" />
 					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="userroles"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-					<h:link
-						outcome="userRoles">
+					<h:link outcome="userRoles">
 						<h:outputText value="#{messages['menu.userRoles']}" />
 					</h:link>
 				</rich:menuItem>
+
+				<rich:menuSeparator></rich:menuSeparator>
+
+				<rich:menuGroup label="#{messages['menu.oudaya']}">
+					<rich:menuItem id="oudaya"
+						rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+						<h:link outcome="oudayaInputs">
+							<h:outputText value="#{messages['menu.oudayaInputs']}" />
+						</h:link>
+					</rich:menuItem>
+					
+					<rich:menuItem id="oudayaConfigurations"
+						rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+						<h:link outcome="oudayaConfigurations">
+							<h:outputText value="#{messages['oudayaConfiguration.title']}" />
+						</h:link>
+					</rich:menuItem>
+				</rich:menuGroup>
 			</rich:dropDownMenu>
 
 			<rich:dropDownMenu id="catalog" value="#{messages['menu.catalog']}"
@@ -70,32 +83,28 @@
 
 				<rich:menuItem id="offerTemplates"
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-					<h:link
-						outcome="offerTemplates">
+					<h:link outcome="offerTemplates">
 						<h:outputText value="#{messages['menu.offerTemplates']}" />
 					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="serviceTemplates"
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-					<h:link
-						outcome="serviceTemplates">
+					<h:link outcome="serviceTemplates">
 						<h:outputText value="#{messages['menu.serviceTemplates']}" />
 					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="recurringChargeTemplate"
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-					<h:link
-						outcome="recurringChargeTemplates">
+					<h:link outcome="recurringChargeTemplates">
 						<h:outputText value="#{messages['menu.recurringChargeTemplates']}" />
 					</h:link>
 				</rich:menuItem>
 
 				<rich:menuItem id="oneShotChargeTemplates"
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-					<h:link
-						outcome="oneShotChargeTemplates">
+					<h:link outcome="oneShotChargeTemplates">
 						<h:outputText value="#{messages['menu.oneShotChargeTemplates']}" />
 					</h:link>
 				</rich:menuItem>

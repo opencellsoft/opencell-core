@@ -21,9 +21,9 @@
 			<hf:formField label="#{messages['role.name']}" field="name" />
 			<hf:formField label="#{messages['role.description']}"
 				field="description" size="50" maxlength="50" />
-			<hf:formField label="#{messages['role.users']}" field="users"
-				listType="pickUpList" listService="#{userService}"
-				childField="userName" />
+			<hf:formField label="#{messages['role.permission']}"
+				field="permissions" listType="pickUpList"
+				listService="#{roleService}" childField="permission" />
 		</hf:formPanel>
 	</ui:define>
 </ui:composition>

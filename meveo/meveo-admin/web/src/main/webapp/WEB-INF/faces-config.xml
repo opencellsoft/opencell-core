@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This file is not required if you don't need any extra configuration. -->
-<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
@@ -165,14 +166,25 @@
 			<to-view-id>/pages/admin/bayad/bayadInputs/bayadDunningInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
 
 
-<!-- 		<navigation-case> -->
-<!-- 			<from-outcome>bankOperations</from-outcome> -->
-<!-- 			<to-view-id>/pages/admin/history/bankOperations.xhtml</to-view-id> -->
-<!-- 			<redirect /> -->
-<!-- 		</navigation-case> -->
+
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>bankOperations</from-outcome> -->
+		<!-- <to-view-id>/pages/admin/history/bankOperations.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+
+		<navigation-case>
+			<from-outcome>oudayaConfigurationDetail</from-outcome>
+			<to-view-id>/pages/admin/oudaya/configuration/oudayaConfigurationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>oudayaConfigurations</from-outcome>
+			<to-view-id>/pages/admin/oudaya/configuration/oudayaConfigurations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
 
 		<navigation-case>
@@ -224,19 +236,19 @@
 			<to-view-id>/pages/admin/title/titles.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
- 
- 		
-<!-- 		<navigation-case> -->
-<!-- 			<from-outcome>titleDetail</from-outcome> -->
-<!-- 			<to-view-id>/pages/admin/titles/titleDetail.xhtml</to-view-id> -->
-<!-- 			<redirect /> -->
-<!-- 		</navigation-case> -->
-<!-- 		<navigation-case> -->
-<!-- 			<from-outcome>documentDetail</from-outcome> -->
-<!-- 			<to-view-id>/pages/admin/documents/documentDetail.xhtml</to-view-id> -->
-<!-- 			<redirect /> -->
-<!-- 		</navigation-case> -->
+
+
+
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>titleDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/admin/titles/titleDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>documentDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/admin/documents/documentDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
 
 
 		<navigation-case>
@@ -305,9 +317,9 @@
 			<to-view-id>/pages/admin/communication/emailTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
- 		
+
 		<!-- Billing -->
- 		
+
 		<navigation-case>
 			<from-outcome>invoices</from-outcome>
 			<to-view-id>/pages/billing/invoices/invoices.xhtml</to-view-id>
@@ -351,10 +363,10 @@
 			<to-view-id>/pages/billing/billingCycles/billingCycleDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
- 
- 
+
+
 		<!-- Catalog -->
- 		
+
 		<navigation-case>
 			<from-outcome>offerTemplates</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplates/offerTemplates.xhtml</to-view-id>
@@ -500,10 +512,10 @@
 			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
- 
- 
+
+
 		<!-- CRM -->
- 
+
 		<navigation-case>
 			<from-outcome>customers</from-outcome>
 			<to-view-id>/pages/crm/customers/customers.xhtml</to-view-id>
@@ -606,14 +618,14 @@
 			<to-view-id>/pages/payments/accountOperations/accountOperations.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
- 		
-<!-- 		<navigation-case> -->
-<!-- 			<from-outcome>accountOperationDetail</from-outcome> -->
-<!-- 			<to-view-id>/pages/payments/accountOperation/accountOperationDetail.xhtml</to-view-id> -->
-<!-- 			<redirect /> -->
-<!-- 		</navigation-case> -->
 
- 
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>accountOperationDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/payments/accountOperation/accountOperationDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+
+
 		<navigation-case>
 			<from-outcome>billingAccounts</from-outcome>
 			<to-view-id>/pages/billing/billingAccounts/billingAccounts.xhtml</to-view-id>
@@ -723,29 +735,29 @@
 			<to-view-id>/pages/rating/matrixEntries/matrixEntryDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
- 		
 
-<!-- 		<navigation-case> -->
-<!-- 			<from-outcome>pricePlanInstances</from-outcome> -->
-<!-- 			<to-view-id>/pages/rating/pricePlanInstances/pricePlanInstances.xhtml</to-view-id> -->
-<!-- 			<redirect /> -->
-<!-- 		</navigation-case> -->
-<!-- 		<navigation-case> -->
-<!-- 			<from-outcome>pricePlanInstanceDetail</from-outcome> -->
-<!-- 			<to-view-id>/pages/rating/pricePlanInstances/pricePlanInstanceDetail.xhtml</to-view-id> -->
-<!-- 			<redirect /> -->
-<!-- 		</navigation-case> -->
- 
+
+
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>pricePlanInstances</from-outcome> -->
+		<!-- <to-view-id>/pages/rating/pricePlanInstances/pricePlanInstances.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>pricePlanInstanceDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/rating/pricePlanInstances/pricePlanInstanceDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+
 		<navigation-case>
 			<from-outcome>syncheseClients</from-outcome>
 			<to-view-id>/pages/crm/syntheseClients/billingAccounts.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
- 
+
 		<!-- Reporting -->
-		
- 		
+
+
 		<navigation-case>
 			<from-outcome>jobs</from-outcome>
 			<to-view-id>/pages/reporting/jobs/jobs.xhtml</to-view-id>
@@ -777,10 +789,10 @@
 			<to-view-id>/pages/reporting/reports/bordereauRemiseCheque.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
- 
+
 
 		<!-- Resource -->
- 		
+
 		<navigation-case>
 			<from-outcome>offerInstances</from-outcome>
 			<to-view-id>/pages/resource/offerInstances/offerInstances.xhtml</to-view-id>
@@ -854,8 +866,8 @@
 			<to-view-id>/pages/medina/edrRatingPlan/edrRatingPlan.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
- 
- 
+
+
 	</navigation-rule>
 
 
@@ -920,7 +932,8 @@
 	<!-- </redirect> -->
 	<!-- </exception> -->
 
-	<!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace"> -->
+	<!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" 
+		log-level="trace"> -->
 	<!-- <http-error error-code="503"/> -->
 	<!-- </exception> -->
 
