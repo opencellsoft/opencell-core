@@ -25,7 +25,7 @@
 				rendered="#{!(user.id==null) and edit}" style="text-align:right;" />
 			<p:outputPanel id="passwordPanel">
 				<p:panelGrid id="panel" columns="2"
-					rendered="#{(userBean.show or user.id==null) and edit}">
+					rendered="#{(userBean.show or user.id==null) and userBean.edit}">
 					<p:outputLabel for="password" value="#{messages['user.password']}"></p:outputLabel>
 					<p:password autocomplete="off" id="password"
 						value="#{userBean.password}" required="true">
