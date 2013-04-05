@@ -53,6 +53,16 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 	    private TradingCountry tradingCountry; 
 	    
 	 
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+
 	@Column(name = "DISCOUNT_CODE", length = 20)
 	private String discountCode;
 	
@@ -79,6 +89,12 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 	public void setDiscountCode(String discountCode) {
 		this.discountCode = discountCode;
 	}
+	
+	
+	
+	
+	
+	
 
 
 
