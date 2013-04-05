@@ -76,6 +76,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     @Factory("tradingCurrencies")
     @Begin(join = true)
     public void list() {
+    	getFilters();
     	  if(filters.containsKey("currencyCode")){
     			filters.put("currency.currencyCode", filters.get("currencyCode"));
     			filters.remove("currencyCode");

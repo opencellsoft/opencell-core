@@ -108,6 +108,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     @Begin(join = true)
     @Factory("tradingLanguages")
     public void list() {
+    	getFilters();
     	if(filters.containsKey("languageCode")){
     		filters.put("language.languageCode", filters.get("languageCode"));
     		filters.remove("languageCode");
