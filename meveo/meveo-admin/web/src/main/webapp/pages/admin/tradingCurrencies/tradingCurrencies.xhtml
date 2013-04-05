@@ -15,8 +15,7 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
-	<ui:define name="body">
-		<c:set var="filtersMap" value="#{tradingCurrencyBean.filters}" />
+	<ui:define name="body"> 
 		<c:set var="field" value="currency" />
     	<custom:entityPopup id="searchCurrencyPopup"
 			header="#{messages['tradingCurrency.popup.header']}"
@@ -27,14 +26,16 @@
 			
 			column1Label="#{messages['currency.currencyCode']}" column1="currencyCode"
 			column2Label="#{messages['tradingCurrency.prDescription']}"
-			column2="descriptionEn">
+			column2="descriptionEn" 
+		   column2="descriptionEn" filtersMap="#{currencyBean.filters}">
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
 					reRender="formId" 
-					action="#{filtersMap.put(field, entity)}"
+					action="#{tradingCurrencyBean.filters.put(field, entity)}"
 					oncomplete="Richfaces.hideModalPanel('searchCurrencyPopup')">
 			</a:commandLink>
 		</custom:entityPopup>
+		
 		<custom:listPanel label="#{messages['tradingCurrency.title']}"
 			backingBean="#{tradingCurrencyBean}">
 

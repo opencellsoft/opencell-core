@@ -16,23 +16,26 @@
 	</ui:define>
 
 	<ui:define name="body">
-	<!-- Entity select popup. -->
-		<c:set var="filtersMap" value="#{tradingCountryBean.filters}" />
+	<!-- Entity select popup. --> 
 		<c:set var="field" value="country" />
 		<custom:entityPopup id="searchcountryPopup"
 			header="#{messages['customer.popup.header']}"
 			backingBean="#{countryBean}" dataModel="#{countries}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
 			searchField1="countryCode"
-			column1Label="#{messages['invoiceCategory.code']}" column1="countryCode" >
+			column1Label="#{messages['invoiceCategory.code']}" column1="countryCode" 
+				column2Label="#{messages['tradingLanguage.prDescription']}"
+			column2="descriptionEn" filtersMap="#{currencyBean.filters}">
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
 					reRender="formId" 
-					action="#{filtersMap.put(field, entity)}"
+					action="#{tradingCurrencyBean.filters.put(field, entity)}"
 					oncomplete="Richfaces.hideModalPanel('searchcountryPopup')">
 			</a:commandLink>
 				
 		</custom:entityPopup>
+		
+		
 		<custom:listPanel label="#{messages['tradingCountry.title']}"
 			backingBean="#{tradingCountryBean}">
 

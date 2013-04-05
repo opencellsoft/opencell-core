@@ -46,9 +46,7 @@
 		   <rule if-outcome="tradingCountries">
 		    	<redirect view-id="/pages/admin/tradingCountries/tradingCountries.xhtml"/>
 		   </rule>
-		    <rule if-outcome="tradingCountrys">
-		    	<redirect view-id="/pages/admin/tradingCountries/tradingCountries.xhtml"/>
-		   </rule>
+		   
 		   <rule if-outcome="users">
 		    	<redirect view-id="/pages/admin/meveoUsers/users.xhtml"/>
 		   </rule>
