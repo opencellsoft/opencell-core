@@ -18,21 +18,12 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCurrency;
+
+import com.sun.istack.internal.NotNull;
 
 /**
  * Price plan matrix entity used when rating transactions.
@@ -103,6 +94,11 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	@Column(name = "BUSINESS_INTERMEDIARY_ID")
 	private Integer businessIntermediaryId;
+	
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "SELLER_ID")
+	 private Seller seller;
+	
 
 	public Integer getBusinessIntermediaryId() {
 		return businessIntermediaryId;
@@ -222,6 +218,14 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	public void setTax(Tax tax) {
 		this.tax = tax;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 
 	@Override

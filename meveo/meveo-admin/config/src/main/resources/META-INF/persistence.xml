@@ -42,6 +42,7 @@
 		<class>org.meveo.model.admin.SubscriptionImportHisto</class>
 		<class>org.meveo.model.admin.InvoiceImportHisto</class>
 		<class>org.meveo.model.admin.TIPImportHisto</class>
+		<class>org.meveo.model.admin.Seller</class>
 		<class>org.meveo.model.bi.Job</class>
 		<class>org.meveo.model.bi.Job</class>
 		<class>org.meveo.model.bi.JobHistory</class>

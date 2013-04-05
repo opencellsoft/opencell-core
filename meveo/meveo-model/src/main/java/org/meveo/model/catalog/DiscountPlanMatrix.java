@@ -18,19 +18,10 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller;
+
+import com.sun.istack.internal.NotNull;
 
 /**
  * @author Ignas Lelys
@@ -68,6 +59,11 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	@Digits(integer = 19, fraction = 8)
 	@Min(0)
 	private BigDecimal percent;
+	
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "SELLER_ID")
+	 private Seller seller;
+	
 
 	public String getEventCode() {
 		return eventCode;
@@ -115,6 +111,14 @@ public class DiscountPlanMatrix extends AuditableEntity {
 
 	public void setPercent(BigDecimal percent) {
 		this.percent = percent;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 
 	@Override

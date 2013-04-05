@@ -18,7 +18,8 @@
 		<class>org.meveo.model.admin.VertinaConfiguration</class>
 		<class>org.meveo.model.admin.MedinaConfiguration</class>
 		<class>org.meveo.model.admin.Role</class>
-		<class>org.meveo.model.admin.User</class>		
+		<class>org.meveo.model.admin.User</class>
+		<class>org.meveo.model.admin.Seller</class>		
 		<class>org.meveo.model.admin.CustomerImportHisto</class>
 		<class>org.meveo.model.admin.AccountImportHisto</class>
 		<class>org.meveo.model.admin.DunningHistory</class>

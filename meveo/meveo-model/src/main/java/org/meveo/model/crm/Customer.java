@@ -18,16 +18,8 @@ package org.meveo.model.crm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.meveo.model.AccountEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -77,7 +69,19 @@ public class Customer extends AccountEntity {
    @JoinColumn(name = "TRADING_LANGUAGE_ID")
    private TradingLanguage tradingLanguage;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SELLER_ID")
+    private Seller seller;
+    
 	 
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
 	public TradingCurrency getTradingCurrency() {
 		return tradingCurrency;
 	}

@@ -20,24 +20,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ChargeTemplate;
 
 /**
@@ -103,6 +87,10 @@ public class ChargeInstance extends BusinessEntity {
     
     @Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SELLER_ID")
+    private Seller seller;
 
     public String getCriteria1() {
         return criteria1;
@@ -217,6 +205,14 @@ public class ChargeInstance extends BusinessEntity {
 
 	public void setAmount2(BigDecimal amount2) {
 		this.amount2 = amount2;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 	
 	
