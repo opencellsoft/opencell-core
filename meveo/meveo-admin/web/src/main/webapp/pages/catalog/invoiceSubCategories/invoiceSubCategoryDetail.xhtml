@@ -17,21 +17,24 @@
 
     <ui:define name="body">
 
+       
+        
         <custom:entityPopup id="invSubCatCountryPopup"
-            header="#{messages['tradingCountry.popup.header']}"
-            backingBean="#{tradingCountryBean}" dataModel="#{tradingCountries}"
-            
-            column1Label="#{messages['businessEntity.code']}" column1="countryCode"
+				header="#{messages['tradingCountry.popup.header']}"
+				backingBean="#{tradingCountryBean}" dataModel="#{tradingCountries}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="countryCode"
+				column1Label="#{messages['businessEntity.code']}" column1="countryCode"
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingCountryBean.filters}">
-			
-            <!-- select link -->
-            <a:commandLink value="#{messages['commons.select']}"
-                reRender="invSubCatCountForm1"
-                action="#{invoiceSubcategoryCountry.setTradingCountry(entity)}"
-                oncomplete="Richfaces.hideModalPanel('invSubCatCountryPopup')">
-            </a:commandLink>
-        </custom:entityPopup>
+				<!-- select link -->
+				<a:commandLink value="#{messages['commons.select']}"
+					reRender="invSubCatCountForm1"
+					action="#{invoiceSubcategoryCountry.setTradingCountry(entity)}"
+					oncomplete="Richfaces.hideModalPanel('invSubCatCountryPopup')">
+				</a:commandLink>
+			</custom:entityPopup>
+        
 
         <custom:entityPopup id="searchInvoiceCategoryPopup"
             header="#{messages['invoiceCategory.panel']}"
