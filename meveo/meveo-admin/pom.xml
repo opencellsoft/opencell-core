@@ -295,7 +295,7 @@
 				<manaty.unpackEarModules>false</manaty.unpackEarModules>
 
 				<jboss.hostname>demo.meveo.info</jboss.hostname>
-				<jboss.home>/home/jboss</jboss.home>
+				<jboss.home>/home/jboss4/jboss-4.2.3.GA/lastEAR/</jboss.home>
 
 				<db.connection.url>jdbc:mysql://db.meveo.info:3306/meveo</db.connection.url>
 				<db.username>meveo</db.username>
@@ -308,6 +308,31 @@
 				<dbDWH.password>projetMEVEO</dbDWH.password>
 				<dbDWH.driver.class>com.mysql.jdbc.Driver</dbDWH.driver.class>
 				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
+
+			</properties>
+		</profile>
+			<profile>
+			<id>integration-postgres</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>integr-postgres</value>
+				</property>
+			</activation>
+			<properties>
+				<jboss.home>/home/jboss4/jboss-4.2.3.GA/lastEAR</jboss.home>
+
+				<db.connection.url>jdbc:postgresql://localhost:5432/meveo</db.connection.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+				<db.driver.class>org.postgresql.Driver</db.driver.class>
+				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+
+				<dbDWH.connection.url>jdbc:postgresql://localhost:5432/meveodwh</dbDWH.connection.url>
+				<dbDWH.username>meveodwh</dbDWH.username>
+				<dbDWH.password>meveodwh</dbDWH.password>
+				<dbDWH.driver.class>org.postgresql.Driver</dbDWH.driver.class>
+				<hibernateDWH.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernateDWH.dialect>
 
 			</properties>
 		</profile>
@@ -327,7 +352,29 @@
 
 
 		<!-- User related profiles -->
+		
+		<profile>
+			<id>malami</id>
+			<properties>
+				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
 
+				<jboss.hostname>localhost</jboss.hostname>
+				<jboss.home>C:/Users/Administrateur/Desktop/ASG-BILLING/jboss-4.2.3.GA</jboss.home>
+
+				<db.connection.url>jdbc:mysql://localhost:3306/meveo</db.connection.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+				<db.driver.class>com.mysql.jdbc.Driver</db.driver.class>
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+
+				<dbDWH.connection.url>jdbc:mysql://localhost:3306/meveodwh</dbDWH.connection.url>
+				<dbDWH.username>meveodwh</dbDWH.username>
+				<dbDWH.password>meveodwh</dbDWH.password>
+				<dbDWH.driver.class>com.mysql.jdbc.Driver</dbDWH.driver.class>
+				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
+
+			</properties>
+		</profile>
 		<profile>
 			<id>andrius</id>
 			<properties>
@@ -403,6 +450,28 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>rachid</id>
+			<properties>
+				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
+
+				<jboss.hostname>localhost</jboss.hostname>
+				<jboss.home>D:\\Server\\jboss-4.2.3.GA</jboss.home>
+
+				<db.connection.url>jdbc:postgresql://localhost:5432/meveo</db.connection.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+				<db.driver.class>org.postgresql.Driver</db.driver.class>
+				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+
+				<dbDWH.connection.url>jdbc:postgresql://localhost:5432/meveodwh</dbDWH.connection.url>
+				<dbDWH.username>meveodwh</dbDWH.username>
+				<dbDWH.password>meveodwh</dbDWH.password>
+				<dbDWH.driver.class>org.postgresql.Driver</dbDWH.driver.class>
+				<hibernateDWH.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernateDWH.dialect>
+
+			</properties>
+		</profile>
+		<profile>
 			<id>seb</id>
 			<properties>
 				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
@@ -450,6 +519,27 @@
 				<dbDWH.password>meveodwh</dbDWH.password>
 				<dbDWH.driver.class>org.postgresql.Driver</dbDWH.driver.class>
 				<hibernateDWH.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernateDWH.dialect>
+			</properties>
+		</profile>
+		<profile>
+			<id>mbarek</id>
+			<properties>
+				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
+
+				<jboss.hostname>localhost</jboss.hostname>
+				<jboss.home>D:\Manaty\Server\jboss-4.2.3.GA</jboss.home>
+
+				<db.connection.url>jdbc:mysql://localhost:3306/meveo</db.connection.url>
+				<db.username>meveo</db.username>
+				<db.password>meveo</db.password>
+				<db.driver.class>com.mysql.jdbc.Driver</db.driver.class>
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect> 
+				<dbDWH.connection.url>jdbc:mysql://localhost:3306/meveodwh</dbDWH.connection.url>
+				<dbDWH.username>meveodwh</dbDWH.username>
+				<dbDWH.password>meveodwh</dbDWH.password>
+				<dbDWH.driver.class>com.mysql.jdbc.Driver</dbDWH.driver.class>
+				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
+
 			</properties>
 		</profile>
 	</profiles>

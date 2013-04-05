@@ -103,15 +103,11 @@ public class PriceplanInstanciation  extends AuditableEntity{
 	@Column(name = "PR_AMOUNT_WITHOUT_TAX")
 	private BigDecimal prAmountWithoutTax;
 	
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "TRADING_CURRENCY_ID")
+	 private TradingCurrency tradingCurrency ;
+	     
 	
-	@Column(name = "CURRENCY_CODE", length = 3)
-	private String currencyCode;
-	
-	
-	@Column(name = "PR_CURRENCY_CODE", length = 3)
-	private String prCurrencyCode;
-
-
 	public EventTypeEnum getUsageType() {
 		return usageType;
 	}
@@ -242,25 +238,15 @@ public class PriceplanInstanciation  extends AuditableEntity{
 		this.amountWithoutTax = amountWithoutTax;
 	}
 
-
-	public String getCurrencyCode() {
-		return currencyCode;
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
 	}
 
-
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
 	}
-
-
-	public String getPrCurrencyCode() {
-		return prCurrencyCode;
-	}
-
-
-	public void setPrCurrencyCode(String prCurrencyCode) {
-		this.prCurrencyCode = prCurrencyCode;
-	}
+ 
+	 
 
 
 	

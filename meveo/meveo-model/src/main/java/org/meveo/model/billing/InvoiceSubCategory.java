@@ -16,16 +16,19 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -34,7 +37,7 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "BILLING_INVOICE_SUB_CAT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
-public class InvoiceSubCategory extends BusinessEntity {
+public class InvoiceSubCategory extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,31 +47,24 @@ public class InvoiceSubCategory extends BusinessEntity {
     @Column(name = "DISCOUNT")
     private BigDecimal discount;
     
+    @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
+    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries=new ArrayList<InvoiceSubcategoryCountry>();
+    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "INVOICE_CATEGORY_ID")
     private InvoiceCategory invoiceCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TAX_ID")
-    private Tax tax;
+
+	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
+		return invoiceSubcategoryCountries;
+	}
+
+	public void setInvoiceSubcategoryCountries(
+			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
+		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
+	}
  
-    @Column(name = "PR_DESCRIPTION", length = 50)
-    private String prDescription;
-
-    
-    @Column(name = "DISCOUNT_CODE", length = 20)
-    private String discountCode;
-
-
-	public String getDiscountCode() {
-		return discountCode;
-	}
-
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
-	}
-
 	public String getAccountingCode() {
         return accountingCode;
     }
@@ -84,14 +80,7 @@ public class InvoiceSubCategory extends BusinessEntity {
     public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
         this.invoiceCategory = invoiceCategory;
     }
-
-    public Tax getTax() {
-        return tax;
-    }
-
-    public void setTax(Tax tax) {
-        this.tax = tax;
-    }
+ 
 
 	public BigDecimal getDiscount() {
 		return discount;
@@ -101,13 +90,6 @@ public class InvoiceSubCategory extends BusinessEntity {
 		this.discount = discount;
 	}
 
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
 
 
 }

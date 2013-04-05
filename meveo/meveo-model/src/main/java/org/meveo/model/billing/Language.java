@@ -16,12 +16,18 @@
 
 package org.meveo.model.billing;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderlessEntity;
 
 /**
  * Language entity.
@@ -31,17 +37,23 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_LANGUAGE")
+@Table(name = "ADM_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_LANGUAGE_SEQ")
 
-public class Language  extends AuditableEntity{
+public class Language  extends ProviderlessEntity{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Column(name = "LANGUAGE_CODE", length = 3)
 	private String languageCode;
 	
 	
 	@Column(name = "DESCRIPTION_EN", length = 100)
 	private String descriptionEn;
+
 
 
 	public String getLanguageCode() {
@@ -63,6 +75,21 @@ public class Language  extends AuditableEntity{
 		this.descriptionEn = descriptionEn;
 	}
 
-
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Language other = (Language) obj;
+        if (languageCode == null) {
+            if (other.languageCode != null)
+                return false;
+        } else if (!languageCode.equals(other.languageCode))
+            return false;
+        return true;
+    }
 	
 }

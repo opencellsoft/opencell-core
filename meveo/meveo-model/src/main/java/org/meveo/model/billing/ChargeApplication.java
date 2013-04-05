@@ -37,6 +37,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -46,7 +47,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "BILLING_CHARGE_APPLIC")
 @AttributeOverrides( { @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CHARGE_APPLIC_SEQ")
-public class ChargeApplication extends BusinessEntity {
+public class ChargeApplication extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -150,7 +151,14 @@ public class ChargeApplication extends BusinessEntity {
     @Column(name = "END_DATE")
     private Date endDate;
     
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_LANGUAGE_ID")
+    private TradingLanguage tradingLanguage;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+  
     public ChargeApplication() {
         super();
     }
@@ -160,7 +168,7 @@ public class ChargeApplication extends BusinessEntity {
             Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amount2, int quantity, String taxCode,
             BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3,
-            String parameter4, String criteria1, String criteria2, String criteria3) {
+            String parameter4, String criteria1, String criteria2, String criteria3,Date startdate,Date endDate) {
         setCode(code);
         setDescription(description);
         this.subscription = subscription;
@@ -186,6 +194,8 @@ public class ChargeApplication extends BusinessEntity {
         this.criteria1 = criteria1;
         this.criteria2 = criteria2;
         this.criteria3 = criteria3;
+        this.startDate=startdate;
+        this.endDate=endDate;
     }
 
     /**
@@ -307,15 +317,16 @@ public class ChargeApplication extends BusinessEntity {
         this.amountWithoutTax = amountWithoutTax;
     }
 
-    public BigDecimal getAmount2() {
-        return amount2;
-    }
 
-    public void setAmount2(BigDecimal amount2) {
-        this.amount2 = amount2;
-    }
+	public BigDecimal getAmount2() {
+		return amount2;
+	}
 
-    public ApplicationTypeEnum getApplicationType() {
+	public void setAmount2(BigDecimal amount2) {
+		this.amount2 = amount2;
+	}
+
+	public ApplicationTypeEnum getApplicationType() {
         return applicationType;
     }
 
@@ -461,6 +472,25 @@ public class ChargeApplication extends BusinessEntity {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+
+	 
     
     
     

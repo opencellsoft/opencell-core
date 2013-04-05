@@ -20,7 +20,7 @@ import javax.ejb.Stateless;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ProviderBusinessService;
 import org.meveo.service.catalog.local.ChargeTemplateServiceLocal;
 
 /**
@@ -30,7 +30,7 @@ import org.meveo.service.catalog.local.ChargeTemplateServiceLocal;
 @Stateless
 @Name("chargeTemplateService")
 @AutoCreate
-public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessService<P> implements
+public class ChargeTemplateService<P extends ChargeTemplate> extends ProviderBusinessService<P> implements
         ChargeTemplateServiceLocal<P> {
 
 }

@@ -29,16 +29,23 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Email;
-import org.meveo.model.BusinessEntity;
+import org.hibernate.validator.constraints.Length;
+import org.meveo.model.BusinessEntity; 
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Country;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingCountry; 
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -52,46 +59,34 @@ public class Provider extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "COUNTRY_CODE", length = 2)
-    private String countryCode;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CURRENCY_ID")
+    private Currency currency ;
     
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COUNTRY_ID")
+    private Country country; 
     
-    
-    @Column(name = "LANGUAGE_CODE", length = 3)
-    private String languageCode;
-    
+
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "LANGUAGE_ID")
+   private Language language;
     
     @Column(name = "MULTICOUNTRY_FLAG")
-    private Integer multicountryFlag;
+    private boolean multicountryFlag;
     
     
     @Column(name = "MULTICURRENCY_FLAG")
-    private Integer multicurrencyFlag;
+    private boolean multicurrencyFlag;
     
     
     @Column(name = "MULTILANGUAGE_FLAG")
-    private Integer multilanguageFlag;
+    private boolean multilanguageFlag;
+   
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    private List<TradingCountry> tradingCountries;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ID")
-    private Customer customer;
-    
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
-    private CustomerAccount customerAccount;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_ACCOUNT_ID")
-    private BillingAccount billingAccount;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID")
-    private UserAccount userAccount;
-
     
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name = "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
@@ -146,96 +141,71 @@ public class Provider extends BusinessEntity {
     @Length(max = 100)
     protected String email;
 
-    public String getSerializedPaymentMethods() {
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    private List<TradingLanguage> tradingLanguages;
+    
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+    private List<TradingCurrency> tradingCurrencies;
+    
+	public String getSerializedPaymentMethods() {
         return serializedPaymentMethods;
     }
 
     public void setSerializedPaymentMethods(String serializedPaymentMethods) {
         this.serializedPaymentMethods = serializedPaymentMethods;
     }
+ 
+	 
+	 
 
-    public String getCountryCode() {
-		return countryCode;
+	public Currency getCurrency() {
+		return currency;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
 	}
 
-	public String getCurrencyCode() {
-		return currencyCode;
+	public Country getCountry() {
+		return country;
 	}
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public Language getLanguage() {
+		return language;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 
-	public Integer getMulticountryFlag() {
+	public boolean getMulticountryFlag() {
 		return multicountryFlag;
 	}
 
-	public void setMulticountryFlag(Integer multicountryFlag) {
+	public void setMulticountryFlag(boolean multicountryFlag) {
 		this.multicountryFlag = multicountryFlag;
 	}
 
-	public Integer getMulticurrencyFlag() {
+	public boolean getMulticurrencyFlag() {
 		return multicurrencyFlag;
 	}
 
-	public void setMulticurrencyFlag(Integer multicurrencyFlag) {
+	public void setMulticurrencyFlag(boolean multicurrencyFlag) {
 		this.multicurrencyFlag = multicurrencyFlag;
 	}
 
-	public Integer getMultilanguageFlag() {
+	public boolean getMultilanguageFlag() {
 		return multilanguageFlag;
 	}
 
-	public void setMultilanguageFlag(Integer multilanguageFlag) {
+	public void setMultilanguageFlag(boolean multilanguageFlag) {
 		this.multilanguageFlag = multilanguageFlag;
 	}
-
-	
-	
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
-	public CustomerAccount getCustomerAccount() {
-		return customerAccount;
-	}
-
-	public void setCustomerAccount(CustomerAccount customerAccount) {
-		this.customerAccount = customerAccount;
-	}
-
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
-
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
-
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
-
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+ 
 
 	public List<PaymentMethodEnum> getPaymentMethods() {
         if (paymentMethods == null) {
@@ -368,5 +338,54 @@ public class Provider extends BusinessEntity {
     public void setEmail(String email) {
         this.email = email;
     }
+
+	public List<TradingCountry> getTradingCountries() {
+		return tradingCountries;
+	}
+
+	public void setTradingCountries(List<TradingCountry> tradingCountries) {
+		this.tradingCountries = tradingCountries;
+	}
+
+	public List<TradingLanguage> getTradingLanguages() {
+		return tradingLanguages;
+	}
+
+	public void setTradingLanguages(List<TradingLanguage> tradingLanguage) {
+		this.tradingLanguages = tradingLanguage;
+	}
+
+	public List<TradingCurrency> getTradingCurrencies() {
+		return tradingCurrencies;
+	}
+
+	public void setTradingCurrencies(List<TradingCurrency> tradingCurrencies) {
+		this.tradingCurrencies = tradingCurrencies;
+	}
+
+	public void addTradingCurrency(TradingCurrency tradingCurrency) {
+		if(tradingCurrencies==null){
+			tradingCurrencies=new ArrayList<TradingCurrency>();
+		}
+		tradingCurrencies.add(tradingCurrency);
+	}
+	
+	public void addTradingLanguage(TradingLanguage tradingLanguage) {
+		if(tradingLanguages==null){
+			tradingLanguages=new ArrayList<TradingLanguage>();
+		}
+		tradingLanguages.add(tradingLanguage);
+	}
+	
+	public void addTradingCountry(TradingCountry tradingCountry) {
+		if(tradingCountries==null){
+			tradingCountries=new ArrayList<TradingCountry>();
+		}
+		tradingCountries.add(tradingCountry);
+	}
+
+
+
+    
 
 }

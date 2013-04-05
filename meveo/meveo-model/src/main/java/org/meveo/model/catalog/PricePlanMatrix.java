@@ -20,6 +20,9 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,7 +32,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.AuditableEntity; 
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCurrency;
 
 /**
  * Price plan matrix entity used when rating transactions.
@@ -91,14 +96,20 @@ public class PricePlanMatrix extends AuditableEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX2", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithoutTax2;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "TRADING_CURRENCY_ID")
+	 private TradingCurrency tradingCurrency ;
+	     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TAX_ID")
+	private Tax tax;
     
     @Column(name = "BUSINESS_INTERMEDIARY_ID")
     private Integer businessIntermediaryId;
     
     
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
+    
 
     
     public Integer getBusinessIntermediaryId() {
@@ -108,17 +119,9 @@ public class PricePlanMatrix extends AuditableEntity {
 	public void setBusinessIntermediaryId(Integer businessIntermediaryId) {
 		this.businessIntermediaryId = businessIntermediaryId;
 	}
-
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
-
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-
 	
-    public String getEventCode() {
+    
+	public String getEventCode() {
         return eventCode;
     }
 
@@ -213,8 +216,27 @@ public class PricePlanMatrix extends AuditableEntity {
     public void setAmountWithoutTax2(BigDecimal amountWithoutTax2) {
         this.amountWithoutTax2 = amountWithoutTax2;
     }
+    
+    
 
-    @Override
+    public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+	
+
+	public Tax getTax() {
+		return tax;
+	}
+
+	public void setTax(Tax tax) {
+		this.tax = tax;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

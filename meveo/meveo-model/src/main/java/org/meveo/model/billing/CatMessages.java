@@ -43,14 +43,14 @@ import org.meveo.model.payments.CustomerAccount;
  */
 
 @Entity
-@Table(name = "CAT_MESSAGES")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_MESSAGES_SEQ")
+@Table(name = "ADM_MESSAGES")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_MESSAGES_SEQ")
 
 public class CatMessages  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
-    @Column(name = "MESSAGE_CODE")
+    @Column(name = "CODE",length=20)
     private String messageCode;
     
 	

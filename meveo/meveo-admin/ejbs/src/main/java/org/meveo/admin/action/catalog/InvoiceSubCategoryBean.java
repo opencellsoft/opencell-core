@@ -24,14 +24,19 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.web.RequestParameter;
+import org.jboss.seam.international.StatusMessage.Severity;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.local.CatMessagesServiceLocal;
 import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
 import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
@@ -50,19 +55,22 @@ import org.meveo.service.catalog.local.InvoiceSubCategoryServiceLocal;
 public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
     private static final long serialVersionUID = 1L;
-    
-    @In
-    private CatMessagesServiceLocal catMessagesService;
-     
-     private String descriptionFr;
 
+    
     /**
      * Injected @{link InvoiceSubCategory} service. Extends
      * {@link PersistenceService}.
      */
     @In
     private InvoiceSubCategoryServiceLocal invoiceSubCategoryService;
-
+    
+    @In
+    private CatMessagesServiceLocal catMessagesService;
+    
+    @In
+    private InvoiceSubCategoryCountryServiceLocal invoiceSubCategoryCountryService;
+    
+    
     /**
      * Inject InvoiceCategory service, that is used to load default category if
      * its id was passed in parameters.
@@ -80,7 +88,55 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
     private String[] accountingCodeFields = new String[7];
     private String separator;
+    
+    
+    
+    
 
+    @Out(required = false)
+    private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+
+    
+    public void newInvoiceSubcategoryCountryInstance() {
+        this.invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+    }
+    
+
+    public void saveInvoiceSubCategoryCountry() {
+        log.info("saveOneShotChargeIns getObjectId=#0", getObjectId());
+
+        try {
+		if (invoiceSubcategoryCountry != null){
+			
+			for(InvoiceSubcategoryCountry inc : entity.getInvoiceSubcategoryCountries()){
+        		if(inc.getTradingCountry().getCountry().getCountryCode().equalsIgnoreCase(invoiceSubcategoryCountry.getTradingCountry().getCountry().getCountryCode() )
+        				&& !inc.getId().equals(invoiceSubcategoryCountry.getId())){
+        			throw new Exception();
+        		}
+    		}
+        	 if (invoiceSubcategoryCountry.getId() != null) {
+        		invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
+				statusMessages.addFromResourceBundle("update.successful");
+            } else {
+            	invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
+            	invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
+            	entity.getInvoiceSubcategoryCountries().add(invoiceSubcategoryCountry);
+                statusMessages.addFromResourceBundle("save.successful");
+            }
+		}	
+        } catch (Exception e) {
+            log.error("exception when applying one invoiceSubCategoryCountry !", e);
+            statusMessages.addFromResourceBundle(Severity.ERROR,"invoiceSubCategory.uniqueTaxFlied");
+            
+        }
+    }
+
+   
+    
+    public void editInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+        this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
+    }
+    
     /**
      * Constructor. Invokes super constructor and provides class type of this
      * bean for {@link BaseBean}.
@@ -92,6 +148,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
         accountingCodeFields[4]="ZONE";
     }
 
+    
     /**
      * Factory method for entity to edit. If objectId param set load that entity
      * from database, otherwise create new.
@@ -102,16 +159,20 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     @Factory("invoiceSubCategory")
     @Begin(nested = true)
     public InvoiceSubCategory init() {
-    	initEntity();
-         InvoiceSubCategory invoiceSubcat= initEntity();
-         descriptionFr=catMessagesService.getMessageDescription(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceSubcat.getId(),"FR");
-         
+    	InvoiceSubCategory invoiceCatSub= initEntity();
+    	 languageMessagesMap.clear();
+    	 if(invoiceCatSub.getId()!=null){
+         	for(CatMessages msg:catMessagesService.getCatMessagesList(InvoiceSubCategory.class.getSimpleName()+"_"+invoiceCatSub.getId())){
+             	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+             }
+         }
         if (invoiceCategoryId != null) {
             entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
         }
         parseAccountingCode();
-        return entity;
+        return invoiceCatSub;
     }
+  
 
     /**
      * Data model of entities for data table in GUI.
@@ -133,6 +194,10 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     @Begin(join = true)
     @Factory("invoiceSubCategories")
     public void list() {
+    	getFilters();
+    	for(String key:filters.keySet()){
+    		log.info("invoiceSubCategories filters key=#0,value=#1", key,filters.get(key));
+    	}
         super.list();
     }
 
@@ -142,31 +207,41 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
+ 
     @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
-    	String back=null;
-    	if(entity.getId()!=null ){
-    		
-    		CatMessages catSubMsFr=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR"); 
-    		catSubMsFr.setDescription(descriptionFr);
-    		catMessagesService.update(catSubMsFr); 
-    		
-    		CatMessages catSubMsEn=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN");
-    		catSubMsEn.setDescription(entity.getDescription());
-    		catMessagesService.update(catSubMsEn);
-    	}else{	
-
-    	entity.setAccountingCode(generateAccountingCode());
-    	back =saveOrUpdate(entity);
-    	CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
-    	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr);
-    	catMessagesService.create(catMessagesEn);
-    	catMessagesService.create(catMessagesFr);
-    
-    	}
-    	 return back;
+	public String saveOrUpdate() { 
+    		if(entity.getId()!=null ){
+    			for(String msgKey:languageMessagesMap.keySet()){
+					String description=languageMessagesMap.get(msgKey);
+    				CatMessages catMsg=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey); 
+    				if(catMsg!=null){
+    					catMsg.setDescription(description);
+                	    catMessagesService.update(catMsg);
+    				}else{
+    					CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+                    	catMessagesService.create(catMessages);	
+    				}	
+    			} 
+        	     saveOrUpdate(entity);
+        	 
+        	}else{
+        		entity.setAccountingCode(generateAccountingCode());
+        		 saveOrUpdate(entity);
+        		  statusMessages.addFromResourceBundle(Severity.INFO, "invoiceSubCaterogy.AddTax");
+        		for(String msgKey:languageMessagesMap.keySet()){
+        			String description=languageMessagesMap.get(msgKey);
+        			CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
+                	catMessagesService.create(catMessages);	
+        		}
+        		
+        	}
+ 
+        return null;
     }
-   /**
+    
+
+    
+    /**
      * Constructs cost accounting code
      */
     public String generateAccountingCode() {
@@ -265,14 +340,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
     public void setAccountingCodeField7(String accountingCodeField7) {
         this.accountingCodeFields[6] = accountingCodeField7;
     }
+    
 
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
-
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
-	}
     
     
 }

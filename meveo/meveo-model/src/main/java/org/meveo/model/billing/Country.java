@@ -17,12 +17,21 @@
 package org.meveo.model.billing;
 
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import org.meveo.model.admin.Currency;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ProviderlessEntity;
 
 /**
  * Country entity.
@@ -32,12 +41,13 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_COUNTRY")
+@Table(name = "ADM_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTRY_SEQ")
 
-public class Country  extends AuditableEntity{
+public class Country  extends ProviderlessEntity{
 	private static final long serialVersionUID = 1L;
 
+	
 	@Column(name = "COUNTRY_CODE", length = 2)
 	private String countryCode;
 
@@ -46,14 +56,16 @@ public class Country  extends AuditableEntity{
 	private String descriptionEn;
 
 
-	@Column(name = "CURRENCY_CODE", length = 3)
-	private String currencyCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CURRENCY_ID")
+    private Currency currency;
 
 
-	@Column(name = "LANGUAGE_CODE", length = 3)
-	private String languageCode;
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "LANGUAGE_ID")
+	 private Language language;
 
-
+	 
 	public String getCountryCode() {
 		return countryCode;
 	}
@@ -74,26 +86,27 @@ public class Country  extends AuditableEntity{
 	}
 
 
-	public String getCurrencyCode() {
-		return currencyCode;
+	public Currency getCurrency() {
+		return currency;
 	}
 
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
 	}
 
 
-	public String getLanguageCode() {
-		return languageCode;
+	public Language getLanguage() {
+		return language;
 	}
 
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 
 
+	 
 
 
 }

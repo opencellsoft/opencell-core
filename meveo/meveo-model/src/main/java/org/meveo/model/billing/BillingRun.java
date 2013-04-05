@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Currency;
 
 /**
  * @author R.AITYAAZZA
@@ -123,20 +124,21 @@ public class BillingRun extends AuditableEntity {
     @Column(name = "REJECTION_REASON")
     private String rejectionReason;
 
-    @Column(name = "PR_CURRENCY_CODE", length = 3)
-    private String prCurrencyCode;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PR_CURRENCY_ID")
+    private Currency currency ;
     
-    @Column(name = "PR_COUNTRY_CODE", length = 2)
-    private String prCountryCode;
-    
-    
-    @Column(name = "PR_LANGUAGE_CODE", length = 3)
-    private String prLanguageCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PR_COUNTRY_ID")
+    private Country country; 
     
 
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "PR_LANGUAGE_ID")
+   private Language language;
     
-    
+ 
     @Transient
     PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
@@ -230,13 +232,12 @@ public class BillingRun extends AuditableEntity {
     public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
         this.producibleAmountWithTax = producibleAmountWithTax;
     }
+ 
+    public void setPrAmountTax(BigDecimal prAmountTax) {
+		this.prAmountTax = prAmountTax;
+	}
 
-   
-    public void setPrAmountTax(BigDecimal amountTax) {
-        amountTax = amountTax;
-    }
-
-    public List<Invoice> getInvoices() {
+	public List<Invoice> getInvoices() {
         return invoices;
     }
 
@@ -332,32 +333,32 @@ public class BillingRun extends AuditableEntity {
 		this.prAmountWithTax = prAmountWithTax;
 	}
 
-	public String getPrCurrencyCode() {
-		return prCurrencyCode;
-	}
-
-	public void setPrCurrencyCode(String prCurrencyCode) {
-		this.prCurrencyCode = prCurrencyCode;
-	}
-
-	public String getPrCountryCode() {
-		return prCountryCode;
-	}
-
-	public void setPrCountryCode(String prCountryCode) {
-		this.prCountryCode = prCountryCode;
-	}
-
-	public String getPrLanguageCode() {
-		return prLanguageCode;
-	}
-
-	public void setPrLanguageCode(String prLanguageCode) {
-		this.prLanguageCode = prLanguageCode;
-	}
-
 	public BigDecimal getPrAmountTax() {
 		return prAmountTax;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public Language getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
     
     

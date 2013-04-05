@@ -15,11 +15,18 @@
 */
 package org.meveo.model.admin;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.meveo.model.Auditable;
+import org.meveo.model.IEntity;
 import org.meveo.model.ProviderlessEntity;
 
 /**
@@ -35,34 +42,21 @@ public class Currency extends ProviderlessEntity {
 
     private static final long serialVersionUID = 1L;
 
+  
     /** Currency code e.g. EUR for euros. */
     @Column(name = "CURRENCY_CODE", length = 3, unique = true)
     private String currencyCode;
 
-    /** Currency ISO code e.g. 987 for euros. */
-    @Column(name = "ISO_CODE")
-    private String isoCode;
-
     /** Currency name. */
     @Column(name = "DESCRIPTION_EN")
-    private String DescriotionEn;
+    private String descriptionEn;
 
     /** Flag field that indicates if it is system currency. */
     @Column(name = "SYSTEM_CURRENCY")
     private Boolean systemCurrency;
 
-    public String getIsoCode() {
-        return isoCode;
-    }
-
-    public void setIsoCode(String isoCode) {
-        this.isoCode = isoCode;
-    }
-
-   
-   
-
-    public String getCurrencyCode() {
+    
+	public String getCurrencyCode() {
 		return currencyCode;
 	}
 
@@ -70,12 +64,15 @@ public class Currency extends ProviderlessEntity {
 		this.currencyCode = currencyCode;
 	}
 
-	public String getDescriotionEn() {
-		return DescriotionEn;
+	
+
+
+	public String getDescriptionEn() {
+		return descriptionEn;
 	}
 
-	public void setDescriotionEn(String descriotionEn) {
-		DescriotionEn = descriotionEn;
+	public void setDescriptionEn(String descriptionEn) {
+		this.descriptionEn = descriptionEn;
 	}
 
 	public Boolean getSystemCurrency() {
@@ -112,6 +109,11 @@ public class Currency extends ProviderlessEntity {
     }
 
     public String toString() {
-        return DescriotionEn;
+        return descriptionEn;
     }
+
+	public boolean isTransient() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

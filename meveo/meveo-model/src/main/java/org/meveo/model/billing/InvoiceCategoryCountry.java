@@ -38,8 +38,8 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_INVOIC_CAT_COUNTR")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_CAT_COUNTR_SEQ")
+@Table(name = "BILLING_INVOICE_CAT_COUNTRY")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_SUB_COUNTRY_SEQ")
 
 public class InvoiceCategoryCountry  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
@@ -48,13 +48,21 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
     @JoinColumn(name = "INVOICE_CATEGORY_ID")
 	private InvoiceCategory invoiceCategory;
 	
-	
-	@Column(name = "COUNTRY_CODE", length = 2)
-	private String countryCode;
-	
-	
-	
-	
+	 @ManyToOne(fetch = FetchType.LAZY)
+	    @JoinColumn(name = "TRADING_COUNTRY_ID")
+	    private TradingCountry tradingCountry; 
+	    
+	 
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+
 	@Column(name = "DISCOUNT_CODE", length = 20)
 	private String discountCode;
 	
@@ -72,16 +80,6 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 	}
 
 
-	public String getCountryCode() {
-		return countryCode;
-	}
-
-
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
-
-
 
 	public String getDiscountCode() {
 		return discountCode;
@@ -91,6 +89,12 @@ public class InvoiceCategoryCountry  extends AuditableEntity{
 	public void setDiscountCode(String discountCode) {
 		this.discountCode = discountCode;
 	}
+	
+	
+	
+	
+	
+	
 
 
 

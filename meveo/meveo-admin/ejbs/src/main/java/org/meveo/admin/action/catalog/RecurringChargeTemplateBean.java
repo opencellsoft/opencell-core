@@ -29,6 +29,9 @@ import org.jboss.seam.annotations.Scope;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.billing.LanguageEnum;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -80,8 +83,14 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
     @Begin(nested = true)
     @Factory("recurringChargeTemplate")
     public RecurringChargeTemplate init() {
-        return initEntity();
+    	RecurringChargeTemplate recuChargeTemplate= initEntity();
+    	 if(recuChargeTemplate.getId()!=null){
+         	for(CatMessages msg:catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName()+"_"+recuChargeTemplate.getId())){
+             	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+             }
+         }return recuChargeTemplate;
     }
+     
 
     /**
      * Data model of entities for data table in GUI.
@@ -119,12 +128,30 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
      */
     @End(beforeRedirect = true, root=false)
     public String saveOrUpdate() {
-	    String back=saveOrUpdate(entity);
-	    CatMessages catMessagesEn=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"EN",entity.getDescription()); 
-	   	CatMessages catMessagesFr=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),"FR",descriptionFr); 
-	   	catMessagesService.create(catMessagesEn);
-	   	catMessagesService.create(catMessagesFr);
-	   	return back ;
+    	String back=null;
+    	if(entity.getId()!=null){
+    		for(String msgKey:languageMessagesMap.keySet()){
+    		String description=languageMessagesMap.get(msgKey);
+    		CatMessages catMsg=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey);
+    		if(catMsg!=null){
+				catMsg.setDescription(description);
+        	    catMessagesService.update(catMsg);
+    		}else{
+    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
+            	catMessagesService.create(catMessages);	
+    		}
+    		} 
+    	    back=saveOrUpdate(entity);
+    	    
+    	}else{
+    		back=saveOrUpdate(entity);
+    		for(String msgKey:languageMessagesMap.keySet()){
+    			String description=languageMessagesMap.get(msgKey);
+    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
+            	catMessagesService.create(catMessages);	
+    		}
+    	}
+	   	return back;
     }
     
     

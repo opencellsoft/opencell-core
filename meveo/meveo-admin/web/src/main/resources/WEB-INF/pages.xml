@@ -29,8 +29,22 @@
 		   <rule if-outcome="currencies">
 		    	<redirect view-id="/pages/admin/currencies/currencies.xhtml"/>
 		   </rule>
+		   
 		   <rule if-outcome="currencyDetail">
 		    	<redirect view-id="/pages/admin/currencies/currencyDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="tradingCurrencyDetail">
+		    	<redirect view-id="/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="tradingCurrencies">
+		    	<redirect view-id="/pages/admin/tradingCurrencies/tradingCurrencies.xhtml"/>
+		   </rule>
+		   
+		   <rule if-outcome="tradingCountryDetail">
+		    	<redirect view-id="/pages/admin/tradingCountries/tradingCountryDetail.xhtml"/>
+		   </rule>
+		   <rule if-outcome="tradingCountries">
+		    	<redirect view-id="/pages/admin/tradingCountries/tradingCountries.xhtml"/>
 		   </rule>
 		   
 		   <rule if-outcome="users">
@@ -184,6 +198,15 @@
 		    <rule if-outcome="emailTemplateDetail">
 		    	<redirect view-id="/pages/admin/communication/emailTemplateDetail.xhtml"/>
 		   </rule>
+		   
+		     <rule if-outcome="tradingLanguages">
+		    	<redirect view-id="/pages/admin/tradingLanguages/tradingLanguages.xhtml"/>
+		   </rule>
+		   <rule if-outcome="tradingLanguagesDetail">
+		    	 <redirect view-id="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml"/> 
+		    	
+		   </rule>
+		   
 		   <!-- Billing -->
 		   <rule if-outcome="invoices">
 		    	<redirect view-id="/pages/billing/invoices/invoices.xhtml"/>

@@ -155,12 +155,25 @@
 	</build>
 
 	<dependencies>
+	
+	<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>meveo-model</artifactId>
+			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>ejb3-persistence</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>batch-apps-core</artifactId>
 			<version>2.3-SNAPSHOT</version>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>

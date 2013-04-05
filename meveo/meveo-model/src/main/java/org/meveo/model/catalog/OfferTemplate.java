@@ -25,7 +25,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -34,7 +34,7 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "CAT_OFFER_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_SEQ")
-public class OfferTemplate extends BusinessEntity {
+public class OfferTemplate extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 

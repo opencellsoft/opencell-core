@@ -39,20 +39,8 @@
 
 		<custom:formPanel edit="#{edit}" label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}" backingBean="#{recurringChargeTemplateBean}" entity="#{recurringChargeTemplate}">
     			<custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
-    			<custom:formField label="#{messages['chargeTemplate.description']}" field="description" required="true"  useConverter="false" size="50" maxlength="50"/>
-		    	 <h:panelGrid columns="2">  			
-    	   <h:graphicImage value="/img/imgEnglishFlag.png" style="height:16px; width:25px;"/>	
-			  <a:outputPanel id="RecurringChargeMessages" >	 
-					 <s:decorate template="/layout/edit.xhtml">
-		    		<ui:define name="label">
-		    			<h:outputText value="" />
-		    		</ui:define>
-				    	<h:inputText  value="#{recurringChargeTemplateBean.descriptionFr}" size="50" />
-		       	</s:decorate>
-				 </a:outputPanel>		
-		    <h:graphicImage value="/img/imgFrenchFlag.png" style="height:16px; width:25px;"/>	
-			</h:panelGrid>
-		    	<custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+    			<custom:languageFields/>
+    			<custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
     			<custom:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
     			<custom:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
     			<custom:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
@@ -63,7 +51,7 @@
 										childField="code" required="true" popup="true"
 										popupId="searchInvoiceSubCategoryPopup" />
 				<custom:panelGroup columns="2">	
-	    			<custom:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="false" popup="false"
+	    			<custom:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
 											show="#{entity.recurrenceType == 'CALENDAR'}" service="#{calendarService}" listElements="#{calendarService.listChargeApplicationCalendars()}" />
 					<custom:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
 				</custom:panelGroup>

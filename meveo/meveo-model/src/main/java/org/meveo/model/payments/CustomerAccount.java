@@ -35,10 +35,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.ContactInformation;
 
@@ -58,9 +57,10 @@ public class CustomerAccount extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
     
     @Column(name = "STATUS", length = 10)
     @Enumerated(EnumType.STRING)
@@ -116,12 +116,12 @@ public class CustomerAccount extends AccountEntity {
         return customer;
     }
 
-    public String getCurrencyCode() {
-		return currencyCode;
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
 	}
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
 	}
 
 	public void setCustomer(Customer customer) {

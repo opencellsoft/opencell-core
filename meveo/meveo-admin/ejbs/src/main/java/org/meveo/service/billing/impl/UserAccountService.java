@@ -156,9 +156,9 @@ public class UserAccountService extends AccountService<UserAccount> implements U
 
             if (ratedTransaction.getInvoiceAgregateF() == null && ratedTransaction.getInvoiceAgregateR() == null
                     && ratedTransaction.getInvoiceAgregateT() == null) {
-                amount = amount.add(ratedTransaction.getAmount1());
-                amountWithoutTax = amountWithoutTax.add(ratedTransaction.getAmount1WithoutTax());
-                amountTax = amountTax.add(ratedTransaction.getAmount1Tax());
+                amount = amount.add(ratedTransaction.getAmount());
+                amountWithoutTax = amountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
+                amountTax = amountTax.add(ratedTransaction.getAmountTax());
             }
         }
         BillingWalletDetailDTO.setAmount(amount);

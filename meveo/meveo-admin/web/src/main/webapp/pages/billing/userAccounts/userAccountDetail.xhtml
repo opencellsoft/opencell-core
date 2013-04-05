@@ -38,9 +38,9 @@
 				backingBean="#{userAccountBean}" dataModel="#{getRatedTransactionsNoInvoiced}"
 				column1Label="#{messages['ratedTransaction.usageDate']}" column1="usageDate"
 				column2Label="#{messages['ratedTransaction.usageCode']}" column2="usageCode"
-				column3Label="#{messages['ratedTransaction.description']}" column3="usageDescription"
+				column3Label="#{messages['ratedTransaction.description']}" column3="prDescription"
 				column4Label="#{messages['ratedTransaction.usageQuantity']}" column4="usageQuantity"
-				column5Label="#{messages['ratedTransaction.amount1WithoutTax']}" column5="amount1"
+				column5Label="#{messages['ratedTransaction.amount1WithoutTax']}" column5="amount"
 				column6Label="#{messages['ratedTransaction.amount1WithTax']}" column6="amount2"
 				filtersMap="#{ratedTransactionBean.filters}">
 		</custom:entityPopup>
@@ -51,9 +51,9 @@
 				backingBean="#{userAccountBean}" dataModel="#{getRatedTransactionsInvoiced}"
 				column1Label="#{messages['ratedTransaction.usageDate']}" column1="usageDate"
 				column2Label="#{messages['ratedTransaction.usageCode']}" column2="usageCode"
-				column3Label="#{messages['ratedTransaction.description']}" column3="usageDescription"
+				column3Label="#{messages['ratedTransaction.description']}" column3="prDescription"
 				column4Label="#{messages['ratedTransaction.usageQuantity']}" column4="usageQuantity"
-				column5Label="#{messages['ratedTransaction.amount1WithoutTax']}" column5="amount1"
+				column5Label="#{messages['ratedTransaction.amount1WithoutTax']}" column5="amount"
 				column6Label="#{messages['ratedTransaction.amount1WithTax']}" column6="amount2"
 				filtersMap="#{ratedTransactionBean.filters}">
 		</custom:entityPopup>		

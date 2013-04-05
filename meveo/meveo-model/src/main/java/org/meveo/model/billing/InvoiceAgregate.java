@@ -88,150 +88,49 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
     private BigDecimal amountWithTax;
+  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
+    
 
-    
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
-    
-    
-    @Column(name = "COUNTRY_CODE", length = 2)
-    private String countryCode;
-    
-    
-    @Column(name = "LANGUAGE_CODE", length = 3)
-    private String languageCode;
-    
-    
-    @Column(name = "DISCOUNT_CODE", length = 20)
-    private String discountCode;
-    
-    
-    @Column(name = "PR_AMOUNT")
-    private Integer prAmount;
-    
-    
-    @Column(name = "PR_AMOUNT_WITHOUT_TAX")
-    private Integer prAmountWithoutTax;
-    
-    
-    @Column(name = "PR_AMOUNT_TAX")
-    private Integer prAmountTax;
-    
-    
-    @Column(name = "PR_AMOUNT_WITH_TAX")
-    private Integer prAmountWithTax;
-    
-    
-    @Column(name = "PR_CURRENCY_CODE", length = 3)
-    private String prCurrencyCode;
-    
-    
-    @Column(name = "PR_COUNTRY_CODE", length = 2)
-    private String prCountryCode;
-    
-    
-    @Column(name = "PR_LANGUAGE_CODE", length = 3)
-    private String prLanguageCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
     
     
     @Column(name = "PR_DESCRIPTION", length = 50)
     private String prDescription;
-    
-    
-    @Column(name = "PR_DESCRIPTION_DISCOUNT", length = 50)
-    private String prDescriptionDiscount;
-    
-    
+  
     @Column(name = "DESCRIPTION_DISCOUNT", length = 50)
     private String descriptionDiscount;
 
-    
-    public String getCurrencyCode() {
-		return currencyCode;
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
 	}
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
 	}
 
-	public String getCountryCode() {
-		return countryCode;
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
-
-	public String getDiscountCode() {
-		return discountCode;
-	}
-
-	public void setDiscountCode(String discountCode) {
-		this.discountCode = discountCode;
-	}
-
-	public Integer getPrAmount() {
-		return prAmount;
-	}
-
-	public void setPrAmount(Integer prAmount) {
-		this.prAmount = prAmount;
-	}
-
-	public Integer getPrAmountWithoutTax() {
-		return prAmountWithoutTax;
-	}
-
-	public void setPrAmountWithoutTax(Integer prAmountWithoutTax) {
-		this.prAmountWithoutTax = prAmountWithoutTax;
-	}
-
-	public Integer getPrAmountTax() {
-		return prAmountTax;
-	}
-
-	public void setPrAmountTax(Integer prAmountTax) {
-		this.prAmountTax = prAmountTax;
-	}
-
-	public Integer getPrAmountWithTax() {
-		return prAmountWithTax;
-	}
-
-	public void setPrAmountWithTax(Integer prAmountWithTax) {
-		this.prAmountWithTax = prAmountWithTax;
-	}
-
-	public String getPrCurrencyCode() {
-		return prCurrencyCode;
-	}
-
-	public void setPrCurrencyCode(String prCurrencyCode) {
-		this.prCurrencyCode = prCurrencyCode;
-	}
-
-	public String getPrCountryCode() {
-		return prCountryCode;
-	}
-
-	public void setPrCountryCode(String prCountryCode) {
-		this.prCountryCode = prCountryCode;
-	}
-
-	public String getPrLanguageCode() {
-		return prLanguageCode;
-	}
-
-	public void setPrLanguageCode(String prLanguageCode) {
-		this.prLanguageCode = prLanguageCode;
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
 
 	public String getPrDescription() {
@@ -241,15 +140,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	public void setPrDescription(String prDescription) {
 		this.prDescription = prDescription;
 	}
-
-	public String getPrDescriptionDiscount() {
-		return prDescriptionDiscount;
-	}
-
-	public void setPrDescriptionDiscount(String prDescriptionDiscount) {
-		this.prDescriptionDiscount = prDescriptionDiscount;
-	}
-
+ 
 	public String getDescriptionDiscount() {
 		return descriptionDiscount;
 	}

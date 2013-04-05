@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ProviderBusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -61,9 +62,9 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "SUBUSAGE2_CODE", length = 20)
     private String subUsageCode2;
 
-    @Column(name = "DESCRIPTION", length = 50)
-    private String description;
-
+    @Column(name = "PR_DESCRIPTION", length = 255)
+    private String prDescription;
+    
     @Column(name = "USAGE_DESCRIPTION", length = 255)
     private String usageDescription;
 
@@ -106,17 +107,17 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
     private BigDecimal amountWithTax = BigDecimal.ZERO;
 
-    @Column(name = "PR_AMOUNT", precision = 23, scale = 12)
-    private BigDecimal prAmount = BigDecimal.ZERO;
+    @Column(name = "AMOUNT_2_WITHOUT_TAX", precision = 23, scale = 12)
+    private BigDecimal amount2WithoutTax = BigDecimal.ZERO;
+    
+    @Column(name = "AMOUNT_2_TAX", precision = 23, scale = 12)
+    private BigDecimal amount2Tax = BigDecimal.ZERO;
 
-    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountWithoutTax = BigDecimal.ZERO;
-
-    @Column(name = "PR_AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountTax = BigDecimal.ZERO;
-
-    @Column(name = "PR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountWithTax = BigDecimal.ZERO;
+    @Column(name = "AMOUNT_2_WITH_TAX", precision = 23, scale = 12)
+    private BigDecimal amount2WithTax = BigDecimal.ZERO;
+    
+    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
+    private BigDecimal amount2 = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUBSCRIPTION_ID")
@@ -125,6 +126,7 @@ public class RatedTransaction extends BaseEntity {
     /**
      * Specifies value for a combination of national/roaming and upload/download values
      */
+    
     @Column(name = "grouping_id")
     private Integer groupingId;
 
@@ -165,9 +167,6 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "UNIT_PRICE_RATIO", precision = 23, scale = 12)
     private BigDecimal unitPriceRatio;
 
-    @Column(name = "TAX_CODE")
-    private String taxCode;
-
     @Column(name = "DISCOUNT_PERCENT", precision = 23, scale = 12)
     private BigDecimal discountPercent;
 
@@ -194,54 +193,23 @@ public class RatedTransaction extends BaseEntity {
     @Column(name = "INPUT_HISTORY_ID")
     private Long inputHistoryId;
 
-    @Column(name = "CURRENCY_CODE", length = 3)
-    private String currencyCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
     
-    @Column(name = "COUNTRY_CODE", length = 2)
-    private String countryCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
     
-    @Column(name = "LANGUAGE_CODE", length = 3)
-    private String languageCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
+    
     
     @Column(name = "DISCOUNT_CODE", length = 20)
     private String discountCode;
     
-    @Column(name = "PR_CURRENCY_CODE", length = 3)
-    private String prCurrencyCode;
-    
-    @Column(name = "PR_COUNTRY_CODE", length = 2)
-    private String prCountryCode;
-    
-    @Column(name = "PR_LANGUAGE_CODE", length = 3)
-    private String prLanguageCode;
-    
-    @Column(name = "PR_DESCRIPTION", length = 50)
-    private String prDescription;
-
-    
-    public String getCurrencyCode() {
-		return currencyCode;
-	}
-
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-
-	public String getCountryCode() {
-		return countryCode;
-	}
-
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
-
-	public String getLanguageCode() {
-		return languageCode;
-	}
-
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
 
 	public String getDiscountCode() {
 		return discountCode;
@@ -250,38 +218,7 @@ public class RatedTransaction extends BaseEntity {
 	public void setDiscountCode(String discountCode) {
 		this.discountCode = discountCode;
 	}
-
-	public String getPrCurrencyCode() {
-		return prCurrencyCode;
-	}
-
-	public void setPrCurrencyCode(String prCurrencyCode) {
-		this.prCurrencyCode = prCurrencyCode;
-	}
-
-	public String getPrCountryCode() {
-		return prCountryCode;
-	}
-
-	public void setPrCountryCode(String prCountryCode) {
-		this.prCountryCode = prCountryCode;
-	}
-
-	public String getPrLanguageCode() {
-		return prLanguageCode;
-	}
-
-	public void setPrLanguageCode(String prLanguageCode) {
-		this.prLanguageCode = prLanguageCode;
-	}
-
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+ 
 
 	public BigDecimal getUnitPriceRatio() {
         return unitPriceRatio;
@@ -291,20 +228,7 @@ public class RatedTransaction extends BaseEntity {
         this.unitPriceRatio = unitPriceRatio;
     }
 
-    /**
-     * @return the taxCode
-     */
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    /**
-     * @param taxCode the taxCode to set
-     */
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
+  
     /**
      * @return the discountPercent
      */
@@ -359,13 +283,7 @@ public class RatedTransaction extends BaseEntity {
         this.subUsageCode2 = subUsageCode2;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+   
 
     public String getUsageDescription() {
         return usageDescription;
@@ -471,35 +389,31 @@ public class RatedTransaction extends BaseEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public BigDecimal getPrAmount() {
-        return prAmount;
-    }
+    public BigDecimal getAmount2WithoutTax() {
+		return amount2WithoutTax;
+	}
 
-    public void setPrAmount(BigDecimal prAmount) {
-        this.prAmount = prAmount;
-    }
+	public void setAmount2WithoutTax(BigDecimal amount2WithoutTax) {
+		this.amount2WithoutTax = amount2WithoutTax;
+	}
 
-    public BigDecimal getPrAmountWithoutTax() {
-        return prAmountWithoutTax;
-    }
+	public BigDecimal getAmount2Tax() {
+		return amount2Tax;
+	}
 
-    public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
-        this.prAmountWithoutTax = prAmountWithoutTax;
-    }
+	public void setAmount2Tax(BigDecimal amount2Tax) {
+		this.amount2Tax = amount2Tax;
+	}
 
-    public BigDecimal getPrAmountTax() {
-        return prAmountTax;
-    }
+	public BigDecimal getAmount2() {
+		return amount2;
+	}
 
-    public void setPrAmountTax(BigDecimal prAmountTax) {
-        this.prAmountTax = prAmountTax;
-    }
+	public void setAmount2(BigDecimal amount2) {
+		this.amount2 = amount2;
+	}
 
-    public BigDecimal getPrAmountWithTax() {
-        return prAmountWithTax;
-    }
-
-    public void setAmount2WithTax(BigDecimal prAmountWithTax) {
+	public void setAmount2WithTax(BigDecimal prAmountWithTax) {
     }
 
     public Invoice getInvoice() {
@@ -690,6 +604,45 @@ public class RatedTransaction extends BaseEntity {
 	public void setDoNotTriggerInvoicing(boolean doNotTriggerInvoicing) {
 		this.doNotTriggerInvoicing = doNotTriggerInvoicing;
 	}
+
+ 
+	public BigDecimal getAmount2WithTax() {
+		return amount2WithTax;
+	}
+
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
+	}
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
+	}
+
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
+	}
+
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
+	}
+
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
+	}
+
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
+	}
+
+	public String getPrDescription() {
+		return prDescription;
+	}
+
+	public void setPrDescription(String prDescription) {
+		this.prDescription = prDescription;
+	}
+	
+	
     
     
 }

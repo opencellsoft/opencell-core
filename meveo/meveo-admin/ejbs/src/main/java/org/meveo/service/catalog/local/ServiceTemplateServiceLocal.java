@@ -18,13 +18,13 @@ package org.meveo.service.catalog.local;
 import javax.ejb.Local;
 
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.base.local.BusinessServiceLocal;
+import org.meveo.service.base.local.ProviderBusinessServiceLocal;
 
 /**
  * Service Template Service service interface.
  * 
  */
 @Local
-public interface ServiceTemplateServiceLocal extends BusinessServiceLocal<ServiceTemplate> {
+public interface ServiceTemplateServiceLocal extends ProviderBusinessServiceLocal<ServiceTemplate> {
 
 }

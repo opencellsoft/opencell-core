@@ -9,7 +9,7 @@
       <provider>org.hibernate.ejb.HibernatePersistence</provider>
       <jta-data-source>MeveoAdminDatasource</jta-data-source>
       
-		<class>org.meveo.model.admin.Currency</class>
+		
         <class>org.meveo.model.admin.InputHistory</class>
 		<class>org.meveo.model.admin.MedinaInputHistory</class>
 		<class>org.meveo.model.admin.VertinaInputHistory</class>
@@ -62,19 +62,17 @@
 		<class>org.meveo.model.billing.RatedTransaction</class>
 		<class>org.meveo.model.billing.ChargeApplication</class>
 		
+		<class>org.meveo.model.admin.Currency</class>
 		<class>org.meveo.model.billing.Language</class>
 		<class>org.meveo.model.billing.Country</class>
-		<class>org.meveo.model.billing.CountryCom</class>
-		<class>org.meveo.model.billing.CurrencyCom</class>
-		<class>org.meveo.model.billing.LanguageCom</class>
-		<class>org.meveo.model.billing.TaxLanguage</class>
-		<class>org.meveo.model.billing.Discount</class>
-		<class>org.meveo.model.billing.DiscountLanguage</class>
+		<class>org.meveo.model.billing.TradingCountry</class>
+		<class>org.meveo.model.billing.TradingCurrency</class>
+		<class>org.meveo.model.billing.TradingLanguage</class> 
 		<class>org.meveo.model.billing.InvoiceCategoryCountry</class>
-		<class>org.meveo.model.billing.InvoiceCategoryLanguage</class>
 		<class>org.meveo.model.billing.InvoiceSubcategoryCountry</class>
 		<class>org.meveo.model.billing.PriceplanInstanciation</class>
 		<class>org.meveo.model.billing.DiscountplanInstanciation</class>
+		<class>org.meveo.model.billing.CatMessages</class>
 		
 		
 		<class>org.meveo.model.AccountEntity</class>
@@ -85,9 +83,6 @@
 		<class>org.meveo.model.catalog.OneShotChargeTemplate</class>
 		<class>org.meveo.model.catalog.DiscountPlanMatrix</class>
 		<class>org.meveo.model.catalog.PricePlanMatrix</class>
-		<class>org.meveo.model.catalog.UsageDiscountPlanItem</class>
-		<class>org.meveo.model.catalog.UsagePricePlanItem</class>
-		<class>org.meveo.model.catalog.PriceCode</class>
 		<class>org.meveo.model.catalog.RecurringChargeTemplate</class>
 		<class>org.meveo.model.catalog.ServiceTemplate</class>
 		<class>org.meveo.model.communication.Campaign</class>
@@ -137,7 +132,6 @@
 		<class>org.meveo.model.shared.Title</class>
 		<class>org.meveo.model.security.Permission</class>
 		<class>org.meveo.model.payments.BankOperation</class>  
-		<class>org.meveo.model.rating.EDRRatingPlan</class> 
 		<class>org.meveo.model.mediation.Access</class> 
 		<class>org.meveo.model.mediation.ZonningPlan</class>
 		<class>org.meveo.model.mediation.TimePlan</class>

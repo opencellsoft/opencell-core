@@ -75,7 +75,7 @@ public class BillingRunService extends PersistenceService<BillingRun> implements
                 .getCode() : null);
         preInvoicingReportsDTO.setBillingAccountNumber(billingRun.getBillingAccountNumber());
         preInvoicingReportsDTO.setBillableBillingAccountNumber(billingRun.getBillableBillingAcountNumber());
-        preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getAmountWithoutTax());
+        preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getPrAmountWithoutTax());
 
         Set<BillingRunList> billingRunLists = billingRun.getBillingRunLists();
 
@@ -152,7 +152,7 @@ public class BillingRunService extends PersistenceService<BillingRun> implements
                 for (RatedTransaction ratedTransaction : ratedTransactions) {
                     preInvoicingReportsDTO.getInvoiceSubCategories().add(ratedTransaction.getInvoiceSubCategory());
                     preInvoicingReportsDTO.setSubCategoriesAmountHT(preInvoicingReportsDTO.getSubCategoriesAmountHT()
-                            .add(ratedTransaction.getAmount1WithoutTax()));
+                            .add(ratedTransaction.getAmountWithoutTax()));
                 }
             }
         }

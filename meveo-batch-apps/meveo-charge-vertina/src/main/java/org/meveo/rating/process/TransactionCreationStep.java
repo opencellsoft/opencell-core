@@ -16,22 +16,34 @@
 package org.meveo.rating.process;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.RoundingMode; 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.config.MeveoConfig;
 import org.meveo.core.inputhandler.TaskExecution;
 import org.meveo.core.process.step.AbstractProcessStep;
 import org.meveo.core.process.step.StepExecution;
+import org.meveo.model.admin.OudayaConfiguration;
 import org.meveo.model.billing.ApplicationTypeEnum;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
+import org.meveo.persistence.MeveoPersistence;
 import org.meveo.rating.ticket.RatingTicket;
+import org.meveo.vertina.VertinaConfig;
 import org.meveo.vertina.constants.VertinaConstants;
 
 /**
@@ -107,7 +119,7 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 unitPrice1 = BigDecimal.ZERO;
             }
 
-            BigDecimal unitPrice2 = chargeApplication.getAmount2();
+            BigDecimal unitPrice2 = chargeApplication.getAmountWithoutTax();
             if (unitPrice2 == null && ratePrice != null && ratePrice.getAmountWithoutTax2() != null) {
                 unitPrice2 = ratePrice.getAmountWithoutTax2();
             }
@@ -179,8 +191,25 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
             // chargeApplication
             transaction.setWallet(chargeApplication.getSubscription().getUserAccount().getWallet());
             transaction.setUsageCode(chargeApplication.getChargeCode());
-            transaction.setDescription(chargeApplication.getDescription()
-                    + (chargeApplication.getParameter2() == null ? "" : (" " + chargeApplication.getParameter2())));
+            String lineDescription=chargeApplication.getDescription();
+            TradingLanguage tlanguage=chargeApplication.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage();
+            if(tlanguage!=null){
+            	 String languageCode=tlanguage.getLanguage().getLanguageCode();
+                 Long chargeid=chargeApplication.getChargeInstance().getChargeTemplate().getId();
+                 lineDescription=getMessageDescription(ChargeTemplate.class.getSimpleName()+"_"+chargeid,languageCode);
+                 
+            }
+            if(lineDescription==null){
+            	lineDescription=chargeApplication.getDescription();
+            }
+            Date startDate=DateUtils.parseDateWithPattern(transaction.getChargeApplication().getStartDate(), "dd-MM-yyyy");
+            Date endDate=DateUtils.parseDateWithPattern(transaction.getChargeApplication().getStartDate(), "dd-MM-yyyy");
+            if(startDate!=null && endDate!=null){
+            	lineDescription=lineDescription +" "+ startDate+" "+ 
+                 VertinaConfig.getToLabel(chargeApplication.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode())+" "+endDate;    
+            }
+           transaction.setPrDescription(lineDescription);
+            transaction.setSubscription(chargeApplication.getSubscription());
             transaction.setUsageDate(chargeApplication.getApplicationDate());
             transaction.setUsageQuantity(usageQuantity);
             transaction.setUnitPrice1(unitPrice1);
@@ -188,7 +217,7 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
             transaction.setUnitPriceRatio(unitPriceRatio);
             transaction.setDiscountPercent(discountPrice != null ? discountPrice.getPercent() : null);
             transaction.setInvoiceSubCategory(chargeApplication.getInvoiceSubCategory());
-            transaction.setTaxCode(chargeApplication.getTaxCode());
+            //transaction.setTaxCode(chargeApplication.getTaxCode());
             transaction.setTaxPercent(chargeApplication.getTaxPercent());
             BigDecimal amount1WithTax = amount1Tax.add(amount1Discounted);
             BigDecimal amount2WithTax = amount2Tax.add(amount2Discounted);
@@ -200,11 +229,11 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 amount2WithTax = NumberUtils.round(amount2WithTax, provider.getRounding());
             }
 
-            transaction.setAmount1(amount1);
-            transaction.setAmount1WithoutTax(amount1Discounted); // en
-            transaction.setAmount1Tax(amount1Tax);
-            transaction.setAmount1WithTax(amount1WithTax);
-            transaction.setAmount2(amount2);
+            transaction.setAmount(amount1);
+            transaction.setAmountWithoutTax(amount1Discounted); // en
+            transaction.setAmountTax(amount1Tax);
+            transaction.setAmountWithTax(amount1WithTax);
+            //transaction.setPrAmount(amount2);
             transaction.setAmount2WithoutTax(amount2Discounted);
             transaction.setAmount2Tax(amount2Tax);
             transaction.setAmount2WithTax(amount2WithTax);
@@ -313,11 +342,11 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
                 transaction.setUnitPrice1(unitPrice1);
                 transaction.setUnitPrice2(unitPrice2);
                 transaction.setDiscountPercent(discountPrice != null ? discountPrice.getPercent() : null);
-                transaction.setAmount1(amount1);
-                transaction.setAmount1WithoutTax(amount1Discounted); // en
-                transaction.setAmount1Tax(amount1Tax);
-                transaction.setAmount1WithTax(amount1WithTax);
-                transaction.setAmount2(amount2);
+                transaction.setAmount(amount1);
+                transaction.setAmountWithoutTax(amount1Discounted); // en
+                transaction.setAmountTax(amount1Tax);
+                transaction.setAmountWithTax(amount1WithTax);
+                //transaction.setPrAmount(amount2);
                 transaction.setAmount2WithoutTax(amount2Discounted);
                 transaction.setAmount2Tax(amount2Tax);
                 transaction.setAmount2WithTax(amount2WithTax);
@@ -335,5 +364,18 @@ public class TransactionCreationStep extends AbstractProcessStep<RatingTicket> {
 
         return true;
     }
+    
+    
+	private static String  getMessageDescription(String messageCode,String languageCode){ 
+		EntityManager em = MeveoPersistence.getEntityManager();
+		String result="";
+		QueryBuilder qb = new QueryBuilder(CatMessages.class,"c");
+	    	qb.addCriterionWildcard("c.messageCode", messageCode, true);
+	    	qb.addCriterionWildcard("c.languageCode", languageCode, true);
+	        List<CatMessages> catMessages=qb.getQuery(em).getResultList(); 
+	        result= catMessages.size()>0?catMessages.get(0).getDescription():null;
+		
+		return result;	
+	}
 
 }

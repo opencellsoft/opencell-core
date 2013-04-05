@@ -27,11 +27,14 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
+import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.config.MeveoConfig;
 import org.meveo.core.inputhandler.TaskExecution;
 import org.meveo.core.process.step.AbstractProcessStep;
@@ -45,9 +48,11 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.Wallet;
@@ -130,6 +135,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
     @SuppressWarnings("unchecked")
     public void createBillingRunLists(BillingRun billingRun) throws BusinessException, Exception {
         logger.info("createBillingRunLists..........");
+        billingRun=em.find(BillingRun.class, billingRun.getId());//to avoid detached entity exception
         BillingCycle billingCycle = billingRun.getBillingCycle();
 
         boolean entreprise = billingRun.getProvider().isEntreprise();
@@ -176,19 +182,19 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
                     Wallet wallet = userAccount.getWallet();
 
                     List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) em.createQuery(
-                            "from RatedTransaction where wallet=:walletId and invoice is null and status=:status and doNotTriggerInvoicing=:invoicing and amount1WithoutTax<>:zeroValue")
+                            "from RatedTransaction where wallet=:walletId and invoice is null and status=:status and doNotTriggerInvoicing=:invoicing and amountWithoutTax<>:zeroValue")
                             .setParameter("walletId", wallet).setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("invoicing", false).setParameter("zeroValue", BigDecimal.ZERO)
                             .getResultList();
                     ratedTransactionsCount = ratedTransactionsCount + ratedTransactions.size();
                     for (RatedTransaction ratedTransaction : ratedTransactions) {
                         billingRunList.setRatedAmountTax(billingRunList.getRatedAmountTax().add(
-                                ratedTransaction.getAmount1Tax()));
+                                ratedTransaction.getAmountTax()));
                         billingRunList.setRatedAmountWithoutTax(billingRunList.getRatedAmountWithoutTax().add(
-                                ratedTransaction.getAmount1WithoutTax()));
+                                ratedTransaction.getAmountWithoutTax()));
                         billingRunList.setRatedAmountWithTax(billingRunList.getRatedAmountWithTax().add(
-                                ratedTransaction.getAmount1WithTax()));
+                                ratedTransaction.getAmountWithTax()));
                         billingRunList.setRatedAmount2WithoutTax(billingRunList.getRatedAmount2WithoutTax().add(
-                                ratedTransaction.getAmount2WithoutTax()));
+                                ratedTransaction.getAmountWithoutTax()));
                         ratedTransaction.setBillingRun(billingRun);
                         billingRunList.setBillingRun(billingRun);
                         billable = true;
@@ -215,12 +221,12 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 
             }
         }
-        billingRun.setAmountTax(totalAmountTax);
-        billingRun.setAmountWithoutTax(totalAmountWithoutTax);
+        billingRun.setPrAmountTax(totalAmountTax);
+        billingRun.setPrAmountWithoutTax(totalAmountWithoutTax);
         if (entreprise) {
-            billingRun.setAmountWithTax(totalAmountWithTax);
+            billingRun.setPrAmountWithTax(totalAmountWithTax);
         } else {
-            billingRun.setAmountWithTax(totalAmount2WithoutTax);
+            billingRun.setPrAmountWithTax(totalAmount2WithoutTax);
         }
         billingRun.setBillingAccountNumber(billingAccounts.size());
         billingRun.setBillableBillingAcountNumber(billableBillingAccount);
@@ -282,7 +288,20 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                // we first compute Sub Category aggregates and create its empty
 	                // Tax and Category aggregates
 	                for (RatedTransaction ratedTransaction : ratedTransactions) {
-	                    if (ratedTransaction.getInvoice() == null && ratedTransaction.getWallet() != null
+
+                       
+                        Tax tax = null;
+                        for(InvoiceSubcategoryCountry invoicesubcatCountry: ratedTransaction.getInvoiceSubCategory().getInvoiceSubcategoryCountries()){
+                        	if(invoicesubcatCountry.getTradingCountry().getCountryCode().
+                        			equalsIgnoreCase(ratedTransaction.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getCountryCode())){
+                        		tax=invoicesubcatCountry.getTax();
+                        	}
+                        }
+                        
+                        if (tax==null){
+                        	throw new BusinessException("this invoice sub-category has no tax. subcategory code="+ratedTransaction.getInvoiceSubCategory().getCode());
+                        }
+                        if (ratedTransaction.getInvoice() == null && ratedTransaction.getWallet() != null
 	                            && ratedTransaction.getWallet().getId() == wallet.getId()) {
 	                        SubCategoryInvoiceAgregate invoiceAgregateF = null;
 	                        long invoiceSubCatId = ratedTransaction.getInvoiceSubCategory().getId();
@@ -296,16 +315,18 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                            invoiceAgregateF.setBillingRun(billingRun);
 	                            invoiceAgregateF.setAccountingCode(ratedTransaction.getInvoiceSubCategory()
 	                                    .getAccountingCode());
-	                            invoiceAgregateF.setSubCategoryTax(ratedTransaction.getInvoiceSubCategory().getTax());
+
+	                            
+	                            invoiceAgregateF.setSubCategoryTax(tax);
 	                            subCatInvoiceAgregateMap.put(invoiceSubCatId, invoiceAgregateF);
 	                        }
 
 	                        ratedTransaction.setInvoice(invoice);
 	                        fillAgregates(invoiceAgregateF, wallet);
 	                        invoiceAgregateF.addQuantity(ratedTransaction.getUsageQuantity());
-	                        logger.info("createAgregates code=" + ratedTransaction.getAmount1WithoutTax() + ",amoutHT="
-	                                + ratedTransaction.getAmount1WithoutTax());
-	                        invoiceAgregateF.addAmountWithoutTax(ratedTransaction.getAmount1WithoutTax());
+	                        logger.info("createAgregates code=" + ratedTransaction.getAmountWithoutTax() + ",amoutHT="
+	                                + ratedTransaction.getAmountWithoutTax());
+	                        invoiceAgregateF.addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
 	                        invoiceAgregateF.setProvider(billingRun.getProvider());
 	                        if (!entreprise) {
 	                            nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(ratedTransaction
@@ -314,7 +335,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 
 	                        // start agregate T
 	                        TaxInvoiceAgregate invoiceAgregateT = null;
-	                        Long taxId = ratedTransaction.getInvoiceSubCategory().getTax().getId();
+	                        Long taxId = tax.getId();
 	                        if (taxInvoiceAgregateMap.containsKey(taxId)) {
 	                            invoiceAgregateT = taxInvoiceAgregateMap.get(taxId);
 	                        } else {
@@ -323,23 +344,22 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	                            invoiceAgregateT.setProvider(billingRun.getProvider());
 	                            invoiceAgregateT.setInvoice(invoice);
 	                            invoiceAgregateT.setBillingRun(billingRun);
-	                            invoiceAgregateT.setTax(ratedTransaction.getInvoiceSubCategory().getTax());
-	                            invoiceAgregateT.setAccountingCode(ratedTransaction.getInvoiceSubCategory().getTax()
-	                                    .getAccountingCode());
+	                            invoiceAgregateT.setTax(tax);
+	                            invoiceAgregateT.setAccountingCode(tax.getAccountingCode());
 
 	                            taxInvoiceAgregateMap.put(taxId, invoiceAgregateT);
 	                        }
-	                        if(ratedTransaction.getInvoiceSubCategory().getTax().getPercent().compareTo(BigDecimal.ZERO)==0){
-	                        	invoiceAgregateT.addAmountWithoutTax(ratedTransaction.getAmount1WithoutTax());
-	                        	invoiceAgregateT.addAmountWithTax(ratedTransaction.getAmount1WithTax());
-	                        	invoiceAgregateT.addAmountTax(ratedTransaction.getAmount1Tax());
+	                        if(tax.getPercent().compareTo(BigDecimal.ZERO)==0){
+	                        	invoiceAgregateT.addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+	                        	invoiceAgregateT.addAmountWithTax(ratedTransaction.getAmountWithTax());
+	                        	invoiceAgregateT.addAmountTax(ratedTransaction.getAmountTax());
 	                        }
 	                        fillAgregates(invoiceAgregateT, wallet);
 	                        if(invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO)!=0) {
 	                        	invoiceAgregateT.setTaxPercent(invoiceAgregateF.getSubCategoryTax().getPercent());
 	                        }
 	                        invoiceAgregateT.setProvider(billingRun.getProvider());
-	                        invoiceAgregateF.setSubCategoryTax(ratedTransaction.getInvoiceSubCategory().getTax());
+	                        invoiceAgregateF.setSubCategoryTax(tax);
 	                        invoiceAgregateF.setInvoiceSubCategory(ratedTransaction.getInvoiceSubCategory());
 	                        // end agregate T
 
@@ -478,7 +498,7 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 	            logger.info("invoice.getRatedTransactions().size()=" + invoice.getRatedTransactions().size());
 	            boolean createXmlInvoice = false;
 	            for (RatedTransaction ratedTrnsaction : invoice.getRatedTransactions()) {
-	                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmount1WithTax() : ratedTrnsaction
+	                BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax() : ratedTrnsaction
 	                        .getAmount2WithoutTax();
 	                if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO) && !ratedTrnsaction.isDoNotTriggerInvoicing()) {
 	                    createXmlInvoice = true;
@@ -579,5 +599,19 @@ public class BillingProcess extends AbstractProcessStep<InvoicingTicket> {
 		// Implemented only for EDF
 		
 	}
+	 public Tax findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,String countryCode) {
+		 System.out.println("findInvoiceSubCategoryCountry invoiceSubCategoryId="+invoiceSubCategoryId+",countryCode="+countryCode);
+	        try {
+	            QueryBuilder qb = new QueryBuilder("select tax from InvoiceSubcategoryCountry i");
+	            qb.addCriterionEntity("i.invoiceSubCategory.id", invoiceSubCategoryId);
+	            qb.addCriterionWildcard("i.tradingCountry.country.countryCode", countryCode, true);
+	            List<Tax> taxes = qb.getQuery(em).getResultList();
+	            return taxes.size()>0?taxes.get(0):null;
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        return null;
+	    }
+	 
 
 }

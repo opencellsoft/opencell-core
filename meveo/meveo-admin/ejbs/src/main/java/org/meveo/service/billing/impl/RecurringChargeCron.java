@@ -32,12 +32,14 @@ import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
+import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
 import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
 
 /**
@@ -56,6 +58,10 @@ public class RecurringChargeCron {
 
     @Logger
     protected Log log;
+    
+
+    @In
+    private InvoiceSubCategoryCountryServiceLocal invoiceSubCategoryCountryService;
 
     public void recurringChargeApplication() {
         log.debug("start recurringChargeApplication....");
@@ -107,7 +113,8 @@ public class RecurringChargeCron {
                             DateUtils.addDaysToDate(applicationDate, -1));
                     InvoiceSubCategory invoiceSubCat = activeRecurringChargeInstance.getRecurringChargeTemplate()
                             .getInvoiceSubCategory();
-                    Tax tax = invoiceSubCat.getTax();
+                    InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry().getId());
+                    Tax tax = invoiceSubcategoryCountry.getTax();
 
                     String param2 = "du " + sdf.format(previousapplicationDate) + " au "
                             + sdf.format(DateUtils.addDaysToDate(applicationDate, -1));
@@ -121,7 +128,7 @@ public class RecurringChargeCron {
                                     .getAmount2(), activeRecurringChargeInstance.getServiceInstance().getQuantity(),
                             tax.getCode(), tax.getPercent(), null, applicationDate, invoiceSubCat, "1", param2, null,
                             null, activeRecurringChargeInstance.getCriteria1(), activeRecurringChargeInstance
-                                    .getCriteria2(), activeRecurringChargeInstance.getCriteria3());
+                                    .getCriteria2(), activeRecurringChargeInstance.getCriteria3(),previousapplicationDate,DateUtils.addDaysToDate(applicationDate, -1));
                     log.info("set application date to "
                             + activeRecurringChargeInstance.getServiceInstance().getSubscriptionDate());
                     chargeApplication.setSubscriptionDate(activeRecurringChargeInstance.getServiceInstance()

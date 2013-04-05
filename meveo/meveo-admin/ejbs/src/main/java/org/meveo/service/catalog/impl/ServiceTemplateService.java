@@ -20,7 +20,7 @@ import javax.ejb.Stateless;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ProviderBusinessService;
 import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
 
 /**
@@ -30,6 +30,6 @@ import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
 @Stateless
 @Name("serviceTemplateService")
 @AutoCreate
-public class ServiceTemplateService extends BusinessService<ServiceTemplate> implements ServiceTemplateServiceLocal {
+public class ServiceTemplateService extends ProviderBusinessService<ServiceTemplate> implements ServiceTemplateServiceLocal {
 
 }

@@ -15,6 +15,8 @@
 */
 package org.meveo.service.catalog.local;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import org.meveo.model.billing.CatMessages;
@@ -30,5 +32,6 @@ public interface CatMessagesServiceLocal extends IPersistenceService<CatMessages
 	
 	public String getMessageDescription(String messageCode,String languageCode);
 	public CatMessages getCatMessages(String messageCode, String languageCode);
+	 public List<CatMessages> getCatMessagesList(String messageCode);
 
 }

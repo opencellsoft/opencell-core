@@ -49,8 +49,7 @@
     			<custom:column label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory" childField="code"/>
     			<custom:column label="#{messages['invoiceSubCategory.code']}" field="code" />
     			<custom:column label="#{messages['invoiceSubCategory.description']}" field="description" />
-    			<custom:column label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" />
-    		 	<custom:column label="#{messages['invoiceSubCategory.tax']}" field="tax"  childField="code" />
+    			<custom:column label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" /> 
     			<custom:actionsColumn editView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}"/>
 		    </custom:dataList>
 		   

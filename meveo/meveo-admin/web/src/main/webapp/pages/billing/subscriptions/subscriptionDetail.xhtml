@@ -560,7 +560,7 @@
 					<h:outputText value="#{messages['recurringChargeInstance.amountWithoutTax']}" />
 				</ui:define>
 				<h:inputText rendered="#{edit}" id="RCamountWithoutTax" 
-					value="#{entity.amountWithoutTax}" size="5" converter="bigDecimalConverter" onkeyup="validateAmountsRC();" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}">
+					value="#{entity.amountWithoutTax}" size="5" converter="bigDecimalConverter" onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}">
 				</h:inputText>		 			
 					<h:outputText rendered="#{!edit}" value="#{entity.amountWithoutTax}" style="font-weight:bold;"  converter="bigDecimalConverter" />
 				</s:decorate>
@@ -569,7 +569,7 @@
 					<h:outputText value="#{messages['recurringChargeInstance.amount2']}" /> 
 				</ui:define>
 				<h:inputText rendered="#{edit}" id="RCamount2" 
-					value="#{entity.amount2}" size="5" converter="bigDecimalConverter" onkeyup="validateAmountsRC();" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"> 
+					value="#{entity.amount2}" size="5" converter="bigDecimalConverter" onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"> 
 				</h:inputText>						
 					<h:outputText rendered="#{!edit}" value="#{entity.amount2}" style="font-weight:bold;"  converter="bigDecimalConverter" />
 				</s:decorate>

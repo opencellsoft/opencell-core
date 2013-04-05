@@ -28,8 +28,12 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.service.billing.local.InvoiceSubCategoryCountryServiceLocal;
+import org.meveo.service.billing.local.SubscriptionServiceLocal;
 import org.meveo.service.catalog.local.ChargeTemplateServiceLocal;
 
 @Stateless
@@ -40,13 +44,22 @@ public class JavaScriptAction implements JavaScriptActionLocal {
     @SuppressWarnings("unchecked")
     @In
     private ChargeTemplateServiceLocal chargeTemplateService;
+    
+    @In
+    private SubscriptionServiceLocal subscriptionService;
+    
+    @In
+    InvoiceSubCategoryCountryServiceLocal invoiceSubCategoryCountryService;
 
-    public String calculateOneShotChargeInstanceAmount(String chargeTemplateCode, String amountWithoutTaxString) {
+    public String calculateOneShotChargeInstanceAmount(String subscriptionId, String chargeTemplateCode, String amountWithoutTaxString) {
         BigDecimal amountWithoutTax = bigDecimalConverterAsObject(amountWithoutTaxString);
         ChargeTemplate chargeTemplate = (ChargeTemplate) chargeTemplateService.findByCode(chargeTemplateCode);
+        Subscription subscription=subscriptionService.findById(Long.valueOf(subscriptionId));
         // If there are values
-        if (chargeTemplate != null & amountWithoutTax != null) {
-            Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
+        if (subscription!=null && chargeTemplate != null && amountWithoutTax != null) {
+        	
+        	 InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(), subscription.getUserAccount().getBillingAccount().getTradingCountry().getId());
+             Tax tax = invoiceSubcategoryCountry.getTax();
             BigDecimal calculatedAmount = amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100)).add(
                     amountWithoutTax).setScale(2, RoundingMode.HALF_UP);
             return getBigDecimalAsString(calculatedAmount);
@@ -54,12 +67,16 @@ public class JavaScriptAction implements JavaScriptActionLocal {
         return null;
     }
 
-    public String calculateOneShotChargeInstanceAmountWithoutTax(String chargeTemplateCode, String amount2String) {
+    public String calculateOneShotChargeInstanceAmountWithoutTax(String subscriptionId,String chargeTemplateCode, String amount2String) {
         BigDecimal amount2 = bigDecimalConverterAsObject(amount2String);
         ChargeTemplate chargeTemplate = (ChargeTemplate) chargeTemplateService.findByCode(chargeTemplateCode);
+        Subscription subscription=subscriptionService.findById(Long.valueOf(subscriptionId));
         // If there are values
-        if (chargeTemplate != null & amount2 != null) {
-            Tax tax = chargeTemplate.getInvoiceSubCategory().getTax();
+        
+        if (subscription!=null && chargeTemplate != null & amount2 != null) {
+       InvoiceSubcategoryCountry invoiceSubcategoryCountry= invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(), subscription.getUserAccount().getBillingAccount().getTradingCountry().getId());
+             
+            Tax tax = invoiceSubcategoryCountry.getTax();
             BigDecimal aa = BigDecimal.ONE.add(tax.getPercent().divide(new BigDecimal(100)));
 
             BigDecimal calculatedAmountWithoutTax = amount2.divide(aa, 2, RoundingMode.HALF_UP);

@@ -16,8 +16,6 @@
 
 package org.meveo.model.billing;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,8 +23,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.meveo.model.AuditableEntity;
 
@@ -38,34 +34,36 @@ import org.meveo.model.AuditableEntity;
  */
 
 @Entity
-@Table(name = "BILLING_INVOIC_SUBCAT_COUNT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_SUBCAT_COUNT_SEQ")
+@Table(name = "BILLING_INVOICE_SUB_CAT_COUNTRY")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_COUNTRY_SEQ")
 
 public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INVOICE_SUBCATEGORY_ID")
+    @JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
 	
 	
-	@Column(name = "COUNTRY_CODE", length = 2)
-	private String countryCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+	private TradingCountry tradingCountry;
 	
-	
-	
+
 	@Column(name = "DISCOUNT_CODE", length = 20)
 	private String discountCode;
 	
 	
-	@Column(name = "TAX_CODE", length = 20)
-	private String taxCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TAX_ID")
+	private Tax tax;
 	
 		
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
+	
 	}
 
 
@@ -73,16 +71,15 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
 
-
-	public String getCountryCode() {
-		return countryCode;
+	 
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
-
 
 
 	public String getDiscountCode() {
@@ -95,14 +92,16 @@ public class InvoiceSubcategoryCountry  extends AuditableEntity{
 	}
 
 
-	public String getTaxCode() {
-		return taxCode;
+	public Tax getTax() {
+		return tax;
 	}
 
 
-	public void setTaxCode(String taxCode) {
-		this.taxCode = taxCode;
+	public void setTax(Tax tax) {
+		this.tax = tax;
 	}
+
+
 
 
 	

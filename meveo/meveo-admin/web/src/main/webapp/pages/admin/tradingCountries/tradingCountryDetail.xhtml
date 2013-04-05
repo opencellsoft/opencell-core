@@ -1,0 +1,63 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<c:if test="${edit}">
+			
+			<custom:entityPopup id="countryPopupId"
+			header="#{messages['tradingLanguage.popup.header']}"
+			backingBean="#{countryBean}" dataModel="#{countries}"
+			
+			searchField1Label="#{messages['country.countryCode']}" 
+			searchField1="countryCode" 
+			
+			column1Label="#{messages['country.countryCode']}" column1="countryCode"
+			column2Label="#{messages['tradingLanguage.prDescription']}"
+			column2="descriptionEn" 
+			filtersMap="#{countryBean.filters}">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="countriesFormId" action="#{tradingCountryBean.populateCountries(entity)}"
+				oncomplete="Richfaces.hideModalPanel('countryPopupId')">
+			</a:commandLink>
+		</custom:entityPopup>
+		</c:if>
+
+		<custom:formPanel formId="countriesFormId" edit="#{edit}"
+			label="#{messages['tradingCountry.tradingCountryPanel']}"
+			backingBean="#{tradingCountryBean}" entity="#{tradingCountry}">
+
+			<custom:formEntityField id="countrySelectedId"
+				label="#{messages['tradingCountry.countryCode']}" field="country"
+				childField="countryCode" popup="true" popupId="countryPopupId"
+				required="true" />
+
+			<custom:formField label="#{messages['tradingCountry.prDescription']}"
+				field="prDescription" size="100" />
+			<custom:formField label="#{messages['tradingCountry.disabled']}"
+				field="disabled" isMessage="true" showOnlyOnConsult="true" />
+			<!-- <custom:formField
+				label="#{messages['tradingCountry.created']}"
+				field="created" showOnlyOnConsult="true"/> 
+				<custom:formField
+				label="#{messages['tradingCountry.updated']}"
+				field="updated" showOnlyOnConsult="true"/>-->
+		</custom:formPanel>
+
+	</ui:define>
+
+</ui:composition>

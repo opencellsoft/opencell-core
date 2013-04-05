@@ -414,7 +414,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 }
                             } else if (BaseEntity.class.isAssignableFrom(filter.getClass())) {
                                 queryBuilder.addCriterionEntity("a." + key, filter);
-                            } else if (filter instanceof UniqueEntity) {
+                            } else if (filter instanceof UniqueEntity || filter instanceof IEntity ) {
                                 queryBuilder.addCriterionEntity("a." + key, filter);
                             }
                         }
