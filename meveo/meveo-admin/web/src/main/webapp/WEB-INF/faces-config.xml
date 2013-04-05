@@ -186,7 +186,6 @@
 			<redirect />
 		</navigation-case>
 
-
 		<navigation-case>
 			<from-outcome>medinaConfigurationDetail</from-outcome>
 			<to-view-id>/pages/admin/medina/configuration/medinaConfigurationDetail.xhtml</to-view-id>
@@ -225,6 +224,7 @@
 			<to-view-id>/pages/admin/taxes/taxes.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
 		<navigation-case>
 			<from-outcome>taxDetail</from-outcome>
 			<to-view-id>/pages/admin/taxes/taxDetail.xhtml</to-view-id>
@@ -237,8 +237,6 @@
 			<redirect />
 		</navigation-case>
 
-
-
 		<!-- <navigation-case> -->
 		<!-- <from-outcome>titleDetail</from-outcome> -->
 		<!-- <to-view-id>/pages/admin/titles/titleDetail.xhtml</to-view-id> -->
@@ -249,7 +247,6 @@
 		<!-- <to-view-id>/pages/admin/documents/documentDetail.xhtml</to-view-id> -->
 		<!-- <redirect /> -->
 		<!-- </navigation-case> -->
-
 
 		<navigation-case>
 			<from-outcome>documents</from-outcome>
@@ -400,9 +397,6 @@
 			<redirect />
 		</navigation-case>
 
-
-
-
 		<navigation-case>
 			<from-outcome>priceCodes</from-outcome>
 			<to-view-id>/pages/catalog/priceCode/priceCodes.xhtml</to-view-id>
@@ -512,7 +506,6 @@
 			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 
 		<!-- CRM -->
 
@@ -840,14 +833,11 @@
 			<redirect />
 		</navigation-case>
 
-
 		<navigation-case>
 			<from-outcome>zonningPlans</from-outcome>
 			<to-view-id>/pages/medina/zoningPlan/zoningPlan.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
-
 
 		<navigation-case>
 			<from-outcome>timePlans</from-outcome>
@@ -866,11 +856,20 @@
 			<to-view-id>/pages/medina/edrRatingPlan/edrRatingPlan.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
+		
+		<navigation-case>
+			<from-outcome>paymentTerms</from-outcome>
+			<to-view-id>/pages/billing/paymentTerms/paymentTerms.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>paymentTerms</from-outcome>
+			<to-view-id>/pages/billing/paymentTerms/paymentTerms.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
 	</navigation-rule>
-
-
 
 	<!-- Exception handling -->
 	<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->
