@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>meveo-admin</artifactId>
 	<packaging>pom</packaging>
-	<name>Meveo admin web application - parent project</name>
+	<name>Meveo Admin Web Application</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<modules>
@@ -19,12 +19,10 @@
 		<module>ear</module>
 	</modules>
 
-
 	<properties>
 		<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
-		<manaty.serverArchiveName>meveo-admin</manaty.serverArchiveName>
-		<manaty.jndiPattern>${manaty.serverArchiveName}/#{ejbName}/local</manaty.jndiPattern>
-		<manaty.unpackEarModules>true</manaty.unpackEarModules>
+		<manaty.serverArchiveName>meveo-admin-ejb</manaty.serverArchiveName>
+		<manaty.unpackEarModules>false</manaty.unpackEarModules>
 	</properties>
 
 	<build>
@@ -33,241 +31,67 @@
 		</filters>
 	</build>
 
-	<dependencies>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>${manaty.hibernateValidator.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>antlr</artifactId>
-					<groupId>antlr</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>hibernate-core</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam</artifactId>
-			<version>${manaty.seam.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.el</groupId>
-					<artifactId>el-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xpp3_min</artifactId>
-					<groupId>xpp3</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xstream</artifactId>
-					<groupId>xstream</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam-ui</artifactId>
-			<version>${manaty.seam.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.seam</groupId>
-					<artifactId>jboss-seam</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- Provided by jboss -->
-
-		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>el-api</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>${manaty.jsf.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${manaty.hibernate.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${manaty.hibernate.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>hibernate</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-annotations</artifactId> 
-			<version>${manaty.hibernateAnnotation.version}</version> <scope>provided</scope> 
-			<exclusions> <exclusion> <artifactId>hibernate</artifactId> <groupId>org.hibernate</groupId> 
-			</exclusion> </exclusions> </dependency> -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.ejb</groupId>
-			<artifactId>ejb-api</artifactId>
-			<version>3.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.0.4</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
-			<version>${manaty.jsf.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.primefaces</groupId>
-			<artifactId>primefaces</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<artifactId>jta</artifactId>
-			<groupId>javax.transaction</groupId>
-			<version>1.1</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-admin-config</artifactId>
+				<version>${project.version}</version>
+				<classifier>${env}</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-admin-config</artifactId>
+				<type>ejb</type>
+				<version>${project.version}</version>
+				<classifier>${env}</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-admin-ejbs</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-admin-ejbs</artifactId>
+				<type>ejb</type>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.parent.groupId}</groupId>
+				<artifactId>meveo-admin-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.parent.groupId}</groupId>
+				<artifactId>meveo-admin-web</artifactId>
+				<type>war</type>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-model</artifactId>
+				<version>${project.parent.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.faces</groupId>
+				<artifactId>jsf-api</artifactId>
+				<version>2.1.7</version>
+				<scope>compile</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<profiles>
 		<!-- Environment related profiles -->
 		<profile>
 			<id>development</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>env</name>
 					<value>dev</value>
 				</property>
 			</activation>
-			<properties>
-				<jboss.home>${project.build.directory}/jboss</jboss.home>
-
-				<manaty.unpackEarModules>true</manaty.unpackEarModules>
-
-				<!-- These DB setting are present here only so update SQL scripts could 
-					be run on DB. Real values should be present in each user's profile -->
-				<db.connection.url>jdbc:oracle:thin:@192.168.0.1:1521:XE
-				</db.connection.url>
-				<db.username>MEVEO</db.username>
-				<db.password>meveo</db.password>
-				<dbDWH.connection.url>jdbc:oracle:thin:@192.168.0.1:1521:XE
-				</dbDWH.connection.url>
-				<dbDWH.username>meveoDWH</dbDWH.username>
-				<dbDWH.password>meveoDWH</dbDWH.password>
-
-			</properties>
-
-			<build>
-				<!-- <pluginManagement> -->
-				<!-- <plugins> -->
-				<!-- <plugin> -->
-				<!-- <groupId>org.codehaus.cargo</groupId> -->
-				<!-- <artifactId>cargo-maven2-plugin</artifactId> -->
-				<!-- <version>1.1.2</version> -->
-				<!-- <configuration> -->
-				<!-- <container> -->
-				<!-- <containerId>jboss42x</containerId> -->
-				<!-- <type>installed</type> -->
-				<!-- <home>${jboss.home}</home> -->
-				<!-- </container> -->
-				<!-- <configuration> -->
-				<!-- <type>existing</type> -->
-				<!-- <home>${jboss.home}/server/default</home> -->
-				<!-- <properties> -->
-				<!-- <cargo.jboss.configuration>default</cargo.jboss.configuration> -->
-				<!-- <cargo.hostname>${jboss.hostname}</cargo.hostname> -->
-				<!-- <cargo.servlet.port>${jboss.port}</cargo.servlet.port> -->
-				<!-- </properties> -->
-				<!-- <configfiles> -->
-				<!-- <configfile> -->
-				<!-- <file>${basedir}/ear/src/main/resources/meveo-admin.properties</file> -->
-				<!-- <todir>conf</todir> -->
-				<!-- </configfile> -->
-				<!-- <configfile> -->
-				<!-- <file>${basedir}/ear/src/main/resources/meveo-admin-ds.xml</file> -->
-				<!-- <todir>deploy</todir> -->
-				<!-- </configfile> -->
-				<!-- </configfiles> -->
-
-				<!-- <deployables> -->
-				<!-- <deployable> -->
-				<!-- <groupId>${project.groupId}</groupId> -->
-				<!-- <artifactId>meveo-admin-ear</artifactId> -->
-				<!-- <type>ear</type> -->
-				<!-- </deployable> -->
-				<!-- </deployables> -->
-				<!-- </configuration> -->
-				<!-- </configuration> -->
-				<!-- </plugin> -->
-				<!-- </plugins> -->
-				<!-- </pluginManagement> -->
-
-			</build>
 		</profile>
 
 		<profile>
@@ -278,9 +102,6 @@
 					<value>integr</value>
 				</property>
 			</activation>
-			<properties>
-				<manaty.unpackEarModules>false</manaty.unpackEarModules>
-			</properties>
 		</profile>
 
 		<profile>
@@ -311,7 +132,7 @@
 
 			</properties>
 		</profile>
-			<profile>
+		<profile>
 			<id>integration-postgres</id>
 			<activation>
 				<property>
@@ -345,14 +166,9 @@
 					<value>prod</value>
 				</property>
 			</activation>
-			<properties>
-				<manaty.unpackEarModules>false</manaty.unpackEarModules>
-			</properties>
 		</profile>
 
-
 		<!-- User related profiles -->
-		
 		<profile>
 			<id>malami</id>
 			<properties>
@@ -392,47 +208,9 @@
 				</dbDWH.connection.url>
 				<dbDWH.username>meveoDWH</dbDWH.username>
 				<dbDWH.password>meveoDWH</dbDWH.password>
-
-			</properties>
-
-		</profile>
-		<profile>
-			<id>andrius-local</id>
-			<properties>
-				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
-
-				<jboss.hostname>localhost</jboss.hostname>
-				<jboss.home>c:/java/jboss-4.2.3.GA</jboss.home>
-
-				<db.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</db.connection.url>
-				<db.username>MEVEO</db.username>
-				<db.password>meveo</db.password>
-
-				<dbDWH.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</dbDWH.connection.url>
-				<dbDWH.username>meveoDWH</dbDWH.username>
-				<dbDWH.password>meveoDWH</dbDWH.password>
-
-			</properties>
-
-		</profile>
-		<profile>
-			<id>gediminas</id>
-			<properties>
-				<manaty.filterFile>meveo-admin-filter-gediminas.properties</manaty.filterFile>
-				<jboss.hostname>localhost</jboss.hostname>
-				<jboss.home>/opt/manaty/meveo-EDF/jboss-4.2.2.GA</jboss.home>
-				<db.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</db.connection.url>
-				<db.username>MEVEOEDF</db.username>
-				<db.password>meveoedf</db.password>
-				<dbDWH.connection.url>jdbc:oracle:thin:@localhost:1521:XE
-				</dbDWH.connection.url>
-				<dbDWH.username>meveoedfDWH</dbDWH.username>
-				<dbDWH.password>meveoedfDWH</dbDWH.password>
 			</properties>
 		</profile>
+
 		<profile>
 			<id>anasseh</id>
 			<properties>
@@ -493,6 +271,7 @@
 
 			</properties>
 		</profile>
+
 		<profile>
 			<id>edward</id>
 			<activation>
@@ -506,7 +285,7 @@
 				<manaty.filterFile>meveo-admin-filter-${env}.properties</manaty.filterFile>
 
 				<jboss.hostname>localhost</jboss.hostname>
-				<jboss.home>C:/java/jboss-4.2.3.GA</jboss.home>
+				<jboss.home>C:/java/jboss-as-7.1.1/</jboss.home>
 
 				<db.connection.url>jdbc:postgresql://localhost:5432/meveo</db.connection.url>
 				<db.username>meveo</db.username>
@@ -533,13 +312,12 @@
 				<db.username>meveo</db.username>
 				<db.password>meveo</db.password>
 				<db.driver.class>com.mysql.jdbc.Driver</db.driver.class>
-				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect> 
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
 				<dbDWH.connection.url>jdbc:mysql://localhost:3306/meveodwh</dbDWH.connection.url>
 				<dbDWH.username>meveodwh</dbDWH.username>
 				<dbDWH.password>meveodwh</dbDWH.password>
 				<dbDWH.driver.class>com.mysql.jdbc.Driver</dbDWH.driver.class>
 				<hibernateDWH.dialect>org.hibernate.dialect.MySQLDialect</hibernateDWH.dialect>
-
 			</properties>
 		</profile>
 	</profiles>

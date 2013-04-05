@@ -24,7 +24,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
@@ -32,7 +31,7 @@ import org.meveo.model.communication.contact.Contact;
 
 @Entity
 @Table(name="COM_MESSAGE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MESSAGE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MESSAGE_SEQ")
 public class Message extends BaseEntity {
 
 	private static final long serialVersionUID = 2760596592135889373L;

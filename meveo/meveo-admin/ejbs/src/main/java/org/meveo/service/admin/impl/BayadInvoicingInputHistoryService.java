@@ -15,12 +15,10 @@
 */
 package org.meveo.service.admin.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.BayadInvoicingInputHistory;
-import org.meveo.service.admin.local.BayadInvoicingInputHistoryServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -29,10 +27,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Ignas
  * @created Apr 11, 2011
  */
-@Stateless
-@Name("bayadInvoicingInputHistoryService")
-@AutoCreate
-public class BayadInvoicingInputHistoryService extends PersistenceService<BayadInvoicingInputHistory> implements
-        BayadInvoicingInputHistoryServiceLocal {
+@Stateless @LocalBean
+public class BayadInvoicingInputHistoryService extends PersistenceService<BayadInvoicingInputHistory> {
 
 }

@@ -29,13 +29,12 @@ import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.service.base.local.BusinessServiceLocal;
 
 /**
  * @author R.AITYAAZZA
  * 
  */
-public interface ISubscriptionService extends BusinessServiceLocal<Subscription> {
+public interface ISubscriptionService {
 
     public void createSubscription(String userAccountCode, Subscription subscription, User creator)
             throws ElementAlreadyExistsException, UnknownAccountException;

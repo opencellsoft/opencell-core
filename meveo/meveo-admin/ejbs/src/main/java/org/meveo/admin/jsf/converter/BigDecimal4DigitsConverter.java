@@ -17,17 +17,14 @@ package org.meveo.admin.jsf.converter;
 
 import java.text.DecimalFormat;
 
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
+import javax.faces.convert.FacesConverter;
 
 /**
  * 
  * @author anasseh
  * @created 18.01.2011
  */
-@Name("bigDecimal4DigitsConverter")
-@org.jboss.seam.annotations.faces.Converter
-@BypassInterceptors
+@FacesConverter("bigDecimal4DigitsConverter")
 public class BigDecimal4DigitsConverter extends BigDecimalConverter {
 
     private DecimalFormat format = new DecimalFormat("#,##0.0000");

@@ -25,7 +25,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +33,7 @@ import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "AR_ACTION_DUNNING")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACTION_DUNNING_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACTION_DUNNING_SEQ")
 public class ActionDunning extends AuditableEntity {
     /**
 	 * 

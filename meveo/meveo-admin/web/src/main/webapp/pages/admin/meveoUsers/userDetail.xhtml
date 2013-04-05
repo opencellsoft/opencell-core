@@ -1,47 +1,54 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml"
-    xmlns:c="http://java.sun.com/jstl/core">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-		<custom:formPanel edit="#{edit}" label="#{messages['user.userPanel']}" backingBean="#{userBean}" entity="#{user}" >
-			<custom:formField label="#{messages['user.userName']}" field="userName" required="true" validateUnique="true" useConverter="false"/>
-			<s:link value="#{messages['menutop.changePassword']}" action="#{userBean.change()}"  reRender="passwordPanel" rendered="#{!(user.id==null) and edit}" style="text-align:right;"/> 
-			<a:outputPanel id="passwordPanel">  
-                  <h:panelGrid id="panel" rendered="#{(userBean.show or user.id==null) and edit}">  
-                   <s:decorate template="/layout/edit.xhtml">
-					<ui:define name="label">
-						<h:outputText value="#{messages['user.password']}" />
-					</ui:define>
-					<h:inputSecret autocomplete="off" id="password" value="#{userBean.password}" required="true">
-							<f:validator validatorId="passwordValidator" />
-					</h:inputSecret>
-				</s:decorate>
-				<s:decorate template="/layout/edit.xhtml">
-					<ui:define name="label">
-						<h:outputText value="#{messages['user.repeatedPassword']}" />
-					</ui:define>
-					<h:inputSecret value="#{userBean.repeatedPassword}" required="true" autocomplete="off"/>
-				</s:decorate>
-                  </h:panelGrid>
-              </a:outputPanel>
-    		<custom:formField label="#{messages['user.roles']}" field="roles" listType="pickUpList" listService="#{userRoleService}" childField="name" required="true" />
-		     <c:if test="#{s:hasRole('superAdministrateur')}">
-			    <custom:formField label="#{messages['user.providers']}" field="providers" listType="pickUpList" listService="#{providerService}" listMethod="providers" childField="code" required="true"/>
-			</c:if>    
-		</custom:formPanel>
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<hf:formPanel edit="#{edit}" label="#{messages['user.userPanel']}"
+			backingBean="#{userBean}" entity="#{user}">
+			<hf:formField label="#{messages['user.userName']}" field="userName"
+				required="true" validateUnique="true" useConverter="false" />
+			<p:commandLink value="#{messages['menutop.changePassword']}"
+				action="#{userBean.change()}" reRender="passwordPanel"
+				rendered="#{!(user.id==null) and edit}" style="text-align:right;" />
+			<p:outputPanel id="passwordPanel">
+				<p:panelGrid id="panel" columns="2"
+					rendered="#{(userBean.show or user.id==null) and userBean.edit}">
+					<p:outputLabel for="password" value="#{messages['user.password']}"></p:outputLabel>
+					<p:password autocomplete="off" id="password"
+						value="#{userBean.password}" required="true">
+						<f:validator validatorId="passwordValidator" />
+					</p:password>
+					<p:outputLabel for="repeatedPassword"
+						value="#{messages['user.repeatedPassword']}">
+					</p:outputLabel>
+					<p:password id="repeatedPassword"
+						value="#{userBean.repeatedPassword}" required="true"
+						autocomplete="off"></p:password>
+				</p:panelGrid>
+			</p:outputPanel>
+			<hf:formField label="#{messages['user.roles']}" field="roles"
+				listType="pickUpList" listService="#{userRoleService}"
+				childField="name" required="true" />
+			<!-- <c:if test="#{identity.hasPermission('superAdministrateur')}"> -->
+				<hf:formField label="#{messages['user.providers']}"
+					field="providers" listType="pickUpList"
+					listService="#{providerService}" listMethod="providers"
+					childField="name" required="true" />
+			<!-- </c:if> -->
+		</hf:formPanel>
+	</ui:define>
+
 </ui:composition>

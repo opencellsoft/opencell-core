@@ -16,8 +16,6 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
@@ -45,7 +42,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @Entity
 @Table(name = "BILLING_INVOICE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
 public class Invoice extends AuditableEntity {
 
     private static final Logger logger = Logger.getLogger(Invoice.class);

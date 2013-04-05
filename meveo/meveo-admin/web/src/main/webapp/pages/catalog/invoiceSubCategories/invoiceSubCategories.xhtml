@@ -1,60 +1,62 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    xmlns:c="http://java.sun.com/jstl/core"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    
-    	<!-- Entity select popup. -->
-		<c:set var="filtersMap" value="#{invoiceSubCategoryBean.filters}" />
-		<c:set var="field" value="invoiceCategory" />
-		<custom:entityPopup id="searchInvoiceCategoryPopup"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<!-- Entity select popup. -->
+		<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['customer.popup.header']}"
-			backingBean="#{invoiceCategoryBean}" dataModel="#{invoiceCategories}"
+			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
 			searchField1="code"
-			column1Label="#{messages['invoiceCategory.code']}" column1="code" >
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-					reRender="formId" 
-					action="#{filtersMap.put(field, entity)}"
-					oncomplete="Richfaces.hideModalPanel('searchInvoiceCategoryPopup')">
-			</a:commandLink>
-				
-		</custom:entityPopup>
-    	
-    	<custom:listPanel label="#{messages['invoiceSubCategory.title']}" backingBean="#{invoiceSubCategoryBean}">
-    	
-    		<custom:searchPanel label="#{messages['invoiceSubCategory.search']}" newButtonView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml">
-    			<custom:searchEntityField label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory" childField="code" popup="true" popupId="searchInvoiceCategoryPopup" clearButton="true"/>
-    			<custom:searchField label="#{messages['invoiceSubCategory.code']}" field="code" />
-    			<custom:searchField label="#{messages['invoiceSubCategory.description']}" field="description" />
-    			<custom:searchField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" size="50" />
-    		<!-- 	<custom:searchField label="#{messages['invoiceSubCategory.discount']}" field="discount" /> -->
-    		</custom:searchPanel>	
-    		
-    		<custom:dataList dataModel="#{invoiceSubCategories}">
-    			<custom:column label="#{messages['invoiceSubCategory.invoiceCategory']}" field="invoiceCategory" childField="code"/>
-    			<custom:column label="#{messages['invoiceSubCategory.code']}" field="code" />
-    			<custom:column label="#{messages['invoiceSubCategory.description']}" field="description" />
-    			<custom:column label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" /> 
-    			<custom:actionsColumn editView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('catalog','catalogManagement')}"/>
-		    </custom:dataList>
-		   
-		</custom:listPanel>
-		
-    </ui:define>
-    
+			column1Label="#{messages['invoiceCategory.code']}" column1="code"
+			updateField=":searchPanel:searchForm:invoiceCategoryField:invoiceCategory_child">
+		</hftl:entityPopup>
+
+		<hf:searchPanel label="#{messages['invoiceSubCategory.search']}"
+			backingBean="#{invoiceSubCategoryBean}">
+			<hf:searchField id="invoiceCategoryField"
+				label="#{messages['invoiceSubCategory.invoiceCategory']}"
+				field="invoiceCategory" childField="code" popup="true"
+				popupId="searchInvoiceCategoryPopup" clearButton="true" />
+			<hf:searchField label="#{messages['invoiceSubCategory.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['invoiceSubCategory.description']}"
+				field="description" />
+			<hf:searchField
+				label="#{messages['invoiceSubCategory.accountingCode']}"
+				field="accountingCode" size="50" />
+			<!-- 	<hf:searchField label="#{messages['invoiceSubCategory.discount']}" field="discount" /> -->
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['invoiceSubCategory.title']}"
+			backingBean="#{invoiceSubCategoryBean}">
+			<hftl:column
+				label="#{messages['invoiceSubCategory.invoiceCategory']}"
+				field="invoiceCategory" childField="code" />
+			<hftl:column label="#{messages['invoiceSubCategory.code']}"
+				field="code" />
+			<hftl:column label="#{messages['invoiceSubCategory.description']}"
+				field="description" />
+			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
+				field="accountingCode" />
+			<hftl:column label="#{messages['invoiceSubCategory.tax']}"
+				field="tax" childField="code" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

@@ -23,10 +23,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.ProviderlessEntity;
 
 /**
@@ -37,7 +35,7 @@ import org.meveo.model.ProviderlessEntity;
  */
 @Entity
 @Table(name = "BI_JOB")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_SEQ")
 public class Job extends ProviderlessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +59,7 @@ public class Job extends ProviderlessEntity {
     private Integer jobRepositoryId;
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<JobExecutionHisto> jobHistory;
 
     public String getName() {

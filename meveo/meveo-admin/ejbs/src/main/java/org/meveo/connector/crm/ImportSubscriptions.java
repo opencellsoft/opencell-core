@@ -22,19 +22,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import javax.ejb.Asynchronous;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.connector.InputFiles;
-
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.log.Log;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.connector.InputFiles;
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -53,53 +50,54 @@ import org.meveo.model.jaxb.subscription.Errors;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
-import org.meveo.service.admin.local.SubscriptionImportHistoServiceLocal;
-import org.meveo.service.admin.local.UserServiceLocal;
-import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
-import org.meveo.service.billing.local.UserAccountServiceLocal;
-import org.meveo.service.catalog.local.OfferTemplateServiceLocal;
-import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
-import org.meveo.service.crm.local.SubscriptionTerminationReasonServiceLocal;
+import org.meveo.service.admin.impl.SubscriptionImportHistoService;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
  * @created 22.12.2010
  * 
  */
-@Name("importSubscriptions")
+@Named
 public class ImportSubscriptions extends InputFiles {
 
-	@In
-	UserServiceLocal userService;
+	@Inject
+	UserService userService;
 
-	@In
-	SubscriptionServiceLocal subscriptionService;
+	@Inject
+	SubscriptionService subscriptionService;
 
-	@In
-	OfferTemplateServiceLocal offerTemplateService;
+	@Inject
+	OfferTemplateService offerTemplateService;
 
-	@In
-	UserAccountServiceLocal userAccountService;
+	@Inject
+	UserAccountService userAccountService;
 
-	@In
-	SubscriptionTerminationReasonServiceLocal subscriptionTerminationReasonService;
+	@Inject
+	SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
-	@In
-	ServiceTemplateServiceLocal serviceTemplateService;
+	@Inject
+	ServiceTemplateService serviceTemplateService;
 
-	@In
-	ServiceInstanceServiceLocal serviceInstanceService;
+	@Inject
+	ServiceInstanceService serviceInstanceService;
 
-	@In
-	SubscriptionImportHistoServiceLocal subscriptionImportHistoService;
+	@Inject
+	SubscriptionImportHistoService subscriptionImportHistoService;
 
-	@In
-	private ProviderServiceLocal providerService;
+	@Inject
+	private ProviderService providerService;
 
-	@Logger
-	protected Log log;
+	@Inject
+	protected Logger log;
 
 	Subscriptions subscriptionsError;
 	Subscriptions subscriptionsWarning;

@@ -1,46 +1,65 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['vertinaTickets.chargeApplications']}" >
-	    	<custom:dataList dataModel="#{vertinaInputHistoryBean.getAllChargeTickets(historyId, status)}">
-	    		<custom:column label="#{messages['chargeApplication.description']}" field="description" />
-	    		<custom:column label="#{messages['chargeApplication.status']}" field="status" />
-	    		<custom:column label="#{messages['chargeApplication.rejectionReason']}" field="rejectionReason" />
-	    		<custom:column label="#{messages['chargeApplication.applicationDate']}" field="applicationDate" isDate="true" />
-	    		<custom:column label="#{messages['chargeApplication.amount2']}" field="amount2" />
-	    		<custom:column label="#{messages['chargeApplication.amountWithoutTax']}" field="amountWithoutTax" />
-		    </custom:dataList>
-		</custom:listPanel>
-		<custom:listPanel label="#{messages['vertinaTickets.transactions']}" >
-	    	<custom:dataList dataModel="#{vertinaInputHistoryBean.getAllTransactionTickets(historyId, status)}" resultsId="results2">
-	    		<custom:column label="#{messages['ratedTransaction.usageCode']}" field="usageCode" />
-	    		<custom:column label="#{messages['ratedTransaction.description']}" field="description" />
-	    		<custom:column label="#{messages['ratedTransaction.status']}" field="status" />
-	    		<custom:column label="#{messages['ratedTransaction.rejectionReason']}" field="rejectionReason" />
-	    		<custom:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" />
-	    		<custom:column label="#{messages['ratedTransaction.usageQuantity']}" field="usageQuantity" />
-	    		<custom:column label="#{messages['ratedTransaction.unitPrice1']}" field="unitPrice1" />
-	    		<custom:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amount1WithoutTax" />
-	    		<custom:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amount1WithTax" />
-		    </custom:dataList>
-		</custom:listPanel>
-	    <s:button value="#{messages['action.back']}" action="#{vertinaInputHistoryBean.back}" />
-		
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:dataList
+			label="#{messages['vertinaTickets.chargeApplications']}"
+			backingBean="#{vertinaInputHistoryBean}">
+			<hftl:column label="#{messages['chargeApplication.description']}"
+				field="description" />
+			<hftl:column label="#{messages['chargeApplication.status']}"
+				field="status" />
+			<hftl:column label="#{messages['chargeApplication.rejectionReason']}"
+				field="rejectionReason" />
+			<hftl:column label="#{messages['chargeApplication.applicationDate']}"
+				field="applicationDate" isDate="true" />
+			<hftl:column label="#{messages['chargeApplication.amount2']}"
+				field="amount2" />
+			<hftl:column
+				label="#{messages['chargeApplication.amountWithoutTax']}"
+				field="amountWithoutTax" />
+		</hftl:dataList>
+
+		<hftl:dataList label="#{messages['vertinaTickets.transactions']}"
+			backingBean="#{vertinaInputHistoryBean}">
+			<hftl:column label="#{messages['ratedTransaction.usageCode']}"
+				field="usageCode" />
+			<hftl:column label="#{messages['ratedTransaction.description']}"
+				field="description" />
+			<hftl:column label="#{messages['ratedTransaction.status']}"
+				field="status" />
+			<hftl:column label="#{messages['ratedTransaction.rejectionReason']}"
+				field="rejectionReason" />
+			<hftl:column label="#{messages['ratedTransaction.usageDate']}"
+				field="usageDate" />
+			<hftl:column label="#{messages['ratedTransaction.usageQuantity']}"
+				field="usageQuantity" />
+			<hftl:column label="#{messages['ratedTransaction.unitPrice1']}"
+				field="unitPrice1" />
+			<hftl:column
+				label="#{messages['ratedTransaction.amount1WithoutTax']}"
+				field="amount1WithoutTax" />
+			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}"
+				field="amount1WithTax" />
+		</hftl:dataList>
+
+		<p:commandButton value="#{messages['action.back']}"
+			action="#{vertinaInputHistoryBean.back}" />
+
+	</ui:define>
+
 </ui:composition>

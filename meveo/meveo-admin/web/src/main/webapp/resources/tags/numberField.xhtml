@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+	    xmlns:p="http://primefaces.org/ui"
+		xmlns:c="http://java.sun.com/jsp/jstl/core"
+		xmlns:cc="http://java.sun.com/jsf/composite">
+
+	<cc:interface componentType="searchField">
+		<cc:attribute name="converterId" required="true" />
+	</cc:interface>
+	
+	<cc:implementation>
+		<ui:fragment rendered="#{not cc.parent.attrs.rangeSearch}">
+			<h:panelGrid columns="2">
+		    	<p:outputLabel for="#{cc.parent.attrs.field}_number" value="#{cc.parent.attrs.label}" />
+		        <p:inputText id="#{cc.parent.attrs.field}_number" value="#{cc.parent.filters[cc.parent.attrs.field]}" size="5" disabled="#{cc.parent.attrs.disabled}" >
+		        	<f:converter converterId="#{cc.attrs.converterId}"/>
+		        </p:inputText>
+		    </h:panelGrid>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.parent.attrs.rangeSearch}">
+			<h:panelGrid columns="2">
+				<p:outputLabel for="fromRangeField_#{cc.parent.attrs.field}" value="#{cc.parent.attrs.label}" />  
+			    <h:panelGrid columns="4">
+		   			<h:outputText value="#{messages['commons.from']}" style="padding-right:5px"/>
+			        <p:inputText id="fromRangeField_#{cc.parent.attrs.field}" value="#{cc.parent.filters[cc.fromRangeSearchFilterNameFromParent]}" size="5" disabled="#{cc.parent.attrs.disabled}">
+			        	<f:converter converterId="#{cc.attrs.converterId}"/>
+			        </p:inputText>
+			        
+		   			<h:outputText value="#{messages['commons.to']}" style="padding:5px" />
+			        <p:inputText id="toRangeField_#{cc.parent.attrs.field}" value="#{cc.parent.attrs.filters[cc.toRangeSearchFilterNameFromParent]}" size="5" disabled="#{cc.parent.attrs.disabled}" >
+			        	<f:converter converterId="#{cc.attrs.converterId}"/>
+			        </p:inputText>
+			    </h:panelGrid>
+			</h:panelGrid>
+		</ui:fragment>
+	</cc:implementation>
+	
+</html>

@@ -1,39 +1,36 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.parse.xls;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.richfaces.event.FileUploadEvent;
+import org.richfaces.model.UploadedFile;
+import org.slf4j.Logger;
 
 /**
  * Action for importing Customer Accounts.
@@ -41,148 +38,157 @@ import org.richfaces.model.UploadItem;
  * @author Gediminas Ubartas
  * @created 2010.11.09
  */
-@Name("customerAccountImportAction")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class CustomerAccountImportAction implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Logger
-    protected Log log;
+	@Inject
+	protected Logger log;
 
-    @In
-    private CustomerAccountServiceLocal customerAccountService;
+	@Inject
+	private CustomerAccountService customerAccountService;
 
-    private XLSFile xls;
+	private XLSFile xls;
 
-    private List<String[]> importCustomerAccountData;
+	private List<String[]> importCustomerAccountData;
 
-    private String filename;
+	private String filename;
 
-    private Integer customerAccountsTotal;
+	private Integer customerAccountsTotal;
 
-    private Integer imported;
+	private Integer imported;
 
-    private Integer failed;
+	private Integer failed;
+	
 
-    @Create
-    @Begin(join = true)
-    public void init() {
-    }
+    @Inject
+    private Messages messages;
 
-    /**
-     * Importing uploaded files to database.
-     * 
-     * @return Return view.
-     * 
-     * @throws BusinessException
-     */
-    public String doImport() throws BusinessException {
-        if (xls == null) {
-            FacesMessages.instance().addFromResourceBundle(Severity.ERROR, "customerAccount.import.noFileUploaded");
-            return null;
-        }
-        List<CustomerAccount> failedImports = customerAccountService.importCustomerAccounts(convertData());
+	/*
+	 * TODO: @Create
+	 * 
+	 * @Begin(join = true)
+	 */
+	public void init() {
+	}
 
-        failed = failedImports != null ? failedImports.size() : 0;
-        imported = customerAccountsTotal - failed;
+	/**
+	 * Importing uploaded files to database.
+	 * 
+	 * @return Return view.
+	 * 
+	 * @throws BusinessException
+	 */
+	public String doImport() throws BusinessException {
+		if (xls == null) {
+		    messages.error(new BundleKey("messages", "customerAccount.import.noFileUploaded"));
+			return null;
+		}
+		List<CustomerAccount> failedImports = customerAccountService
+				.importCustomerAccounts(convertData());
 
-        // TODO show failed imports somewhere (probably write to other file)
-        FacesMessages.instance().addFromResourceBundle(Severity.INFO, "customerAccount.import.success",
-                new Object[] { customerAccountsTotal, imported, failed });
-        return "customerAccounts";
-    }
+		failed = failedImports != null ? failedImports.size() : 0;
+		imported = customerAccountsTotal - failed;
 
-    /**
-     * Converts parsed data to required entity
-     * 
-     * @returns List of Customer Accounts
-     */
-    // TODO Fix mapping to Customer Account
-    public List<CustomerAccount> convertData() {
-        List<CustomerAccount> list = new ArrayList<CustomerAccount>();
-        for (String[] customerAccountData : importCustomerAccountData) {
-            CustomerAccount customerAccount = new CustomerAccount();
-            customerAccount.setName(new org.meveo.model.shared.Name());
-            customerAccount.getName().setFirstName(customerAccountData[0]);
-        }
-        return list;
-    }
+		// TODO show failed imports somewhere (probably write to other file)
+		messages.info(new BundleKey("messages", "customerAccount.import.success"),customerAccountsTotal, imported, failed);
+		return "customerAccounts";
+	}
 
-    /**
-     * Upload listener.
-     * 
-     * @param event
-     *            Upload event.
-     * 
-     * @throws Exception
-     */
-    // TODO why synchronized??
-    public synchronized void uploadListener(UploadEvent event) throws Exception {
+	/**
+	 * Converts parsed data to required entity
+	 * 
+	 * @returns List of Customer Accounts
+	 */
+	// TODO Fix mapping to Customer Account
+	public List<CustomerAccount> convertData() {
+		List<CustomerAccount> list = new ArrayList<CustomerAccount>();
+		for (String[] customerAccountData : importCustomerAccountData) {
+			CustomerAccount customerAccount = new CustomerAccount();
+			customerAccount.setName(new org.meveo.model.shared.Name());
+			customerAccount.getName().setFirstName(customerAccountData[0]);
+		}
+		return list;
+	}
 
-        UploadItem item = event.getUploadItem();
+	/**
+	 * Upload listener.
+	 * 
+	 * @param event
+	 *            Upload event.
+	 * 
+	 * @throws Exception
+	 */
+	// TODO why synchronized??
+	public synchronized void uploadListener(FileUploadEvent  event) throws Exception {
 
-        log.debug("#{currentUser.username} > Start processing uploaded XLS file (name='{0}') ..", item);
+		UploadedFile item = event.getUploadedFile();
 
-        // file name validation
-        if (!validateFileNameAndExtention(item)) {
-            return;
-        }
+		log.debug("#{currentUser.username} > Start processing uploaded XLS file (name='{0}') ..",
+				item);
 
-        filename = item.getFileName();
-        log.debug("#{currentUser.username} > Start parsing uploaded file ..");
+		// file name validation
+		if (!validateFileNameAndExtention(item)) {
+			return;
+		}
 
-        try {
-            xls = new XLSFile(item.getFile());
-            xls.parse();
-            importCustomerAccountData = xls.getContexts();
-            customerAccountsTotal = xls.getContexts().size();
-            imported = 0;
-            failed = 0;
-        } catch (Exception e) {
-            log.error("#{currentUser.username} > Error while parsing uploaded file", e);
-            throw e;
-        }
+		filename = item.getName();
+		log.debug("#{currentUser.username} > Start parsing uploaded file ..");
 
-        log.debug("#{currentUser.username} > Uploaded file parsed successfully");
+		try {
+// TODO			xls = new XLSFile(item.getData());
+			xls.parse();
+			importCustomerAccountData = xls.getContexts();
+			customerAccountsTotal = xls.getContexts().size();
+			imported = 0;
+			failed = 0;
+		} catch (Exception e) {
+			log.error("#{currentUser.username} > Error while parsing uploaded file", e);
+			throw e;
+		}
 
-        log.debug("#{currentUser.username} > End processing uploaded XML file (name='{0}')", item.getFileName());
-    }
+		log.debug("#{currentUser.username} > Uploaded file parsed successfully");
 
-    /**
-     * Validate file name and extension.
-     * 
-     * @param item
-     *            Upload file
-     * @return Null if valid and error code otherwise.
-     */
-    private boolean validateFileNameAndExtention(UploadItem item) {
-        log.debug("#{currentUser.username} > Start uploaded file name and extention validation ..");
-        boolean valid = true;
+		log.debug("#{currentUser.username} > End processing uploaded XML file (name='{0}')",
+				item.getName());
+	}
 
-        if (item != null && item.getFileName() != null) {
-            int dot = item.getFileName().lastIndexOf(".");
-            String fileExt = item.getFileName().substring(dot + 1);
-            if (!fileExt.toUpperCase().equals("XLS") && !fileExt.toUpperCase().equals("TXT")) {
-                log.debug("#{currentUser.username} > File name validation failed!");
-                FacesMessages.instance().addToControlFromResourceBundle("fileUpload", "import.badFileExtension");
-                valid = false;
-            }
-        } else {
-            log.debug("#{currentUser.username} > File name validation failed!");
-            FacesMessages.instance().addToControlFromResourceBundle("fileUpload", "import.fileNotFound");
-            valid = false;
-        }
+	/**
+	 * Validate file name and extension.
+	 * 
+	 * @param item
+	 *            Upload file
+	 * @return Null if valid and error code otherwise.
+	 */
+	private boolean validateFileNameAndExtention(UploadedFile item) {
+		log.debug("#{currentUser.username} > Start uploaded file name and extention validation ..");
+		boolean valid = true;
 
-        return valid;
-    }
+		if (item != null && item.getName() != null) {
+			int dot = item.getName().lastIndexOf(".");
+			String fileExt = item.getName().substring(dot + 1);
+			if (!fileExt.toUpperCase().equals("XLS") && !fileExt.toUpperCase().equals("TXT")) {
+				log.debug("#{currentUser.username} > File name validation failed!");
+				messages.error(new BundleKey("messages", "import.badFileExtension"));
+				valid = false;
+			}
+		} else {
+			log.debug("#{currentUser.username} > File name validation failed!");
+			messages.error(new BundleKey("messages", "import.fileNotFound"));
+			valid = false;
+		}
 
-    public String getFilename() {
-        return filename;
-    }
+		return valid;
+	}
 
-    public Integer getCustomerAccountsTotal() {
-        return customerAccountsTotal;
-    }
+	public String getFilename() {
+		return filename;
+	}
+
+	public Integer getCustomerAccountsTotal() {
+		return customerAccountsTotal;
+	}
 
 }

@@ -20,7 +20,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,7 +32,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "AR_BANK_OPERATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_BANK_OPERATION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_BANK_OPERATION_SEQ")
 public class BankOperation extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

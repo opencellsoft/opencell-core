@@ -16,7 +16,6 @@
 package org.meveo.model.crm;
 
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
@@ -27,7 +26,7 @@ import org.meveo.model.BusinessEntity;
  */
 @Entity
 @Table(name = "CRM_CUSTOMER_CATEGORY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOMER_CATEGORY_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOMER_CATEGORY_SEQ")
 public class CustomerCategory extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

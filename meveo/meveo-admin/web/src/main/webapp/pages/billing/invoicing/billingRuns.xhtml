@@ -1,47 +1,57 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:e="http://jboss.com/products/seam/excel"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['billingRuns.title']}" backingBean="#{billingRunBean}">
-    	
-    		<custom:searchPanel label="#{messages['billingRun.search']}" new="false">
-				<custom:searchField label="#{messages['billingRun.status']}" field="status" />
-				<custom:searchField label="#{messages['billingRun.processDate']}" field="processDate" />
-    		</custom:searchPanel>
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
-	    	<custom:dataList backingBean="#{billingRunBean}" dataModel="#{billingRuns}" checkMany="false">
-	    		<custom:column label="Id" field="id" />
-				<custom:column label="#{messages['billingRun.status']}" field="status" childField="label" isMessage="true" />
-				<custom:column label="#{messages['billingRun.processDate']}" field="processDate" />
-				<custom:column label="#{messages['billingRun.processType']}" field="processType" />	
-				<custom:column label="#{messages['billingRun.billingCycle']}" field="billingCycle" childField="code" isMessage="true" />	
-				<rich:column styleClass="actions-column">
-		             <f:facet name="header">
-		                    <h:outputText value="#{messages['commons.actions']}" />
-		             </f:facet>
-		          <h:commandButton action="#{billingRunBean.preInvoicingRepport(entity.id)}" value="#{messages['button.preInvoicingRepport']}" rendered="#{entity.status.toString() == 'WAITING'}"/>
-		          <h:commandButton action="#{billingRunBean.postInvoicingRepport(entity.id)}" value="#{messages['button.postInvoicingRepport']}" rendered="#{entity.status.toString() == 'TERMINATED'}"/>
-		        
-		        </rich:column>
-		    </custom:dataList>
-		    
-		</custom:listPanel>
-		
-    </ui:define>
-    
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel backingBean="#{billingRunBean}"
+			label="#{messages['billingRun.search']}" new="false">
+			<hf:searchField label="#{messages['billingRun.status']}"
+				field="status" />
+			<hf:searchField label="#{messages['billingRun.processDate']}"
+				field="processDate" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['billingRuns.title']}"
+			backingBean="#{billingRunBean}" checkMany="false">
+			<hftl:column label="Id" field="id" />
+			<hftl:column label="#{messages['billingRun.status']}" field="status"
+				childField="label" isMessage="true" />
+			<hftl:column label="#{messages['billingRun.processDate']}"
+				field="processDate" />
+			<hftl:column label="#{messages['billingRun.processType']}"
+				field="processType" />
+			<hftl:column label="#{messages['billingRun.billingCycle']}"
+				field="billingCycle" childField="code" isMessage="true" />
+			<rich:column styleClass="actions-column">
+				<f:facet name="header">
+					<h:outputText value="#{messages['commons.actions']}" />
+				</f:facet>
+				<h:commandButton
+					action="#{billingRunBean.preInvoicingRepport(entity.id)}"
+					value="#{messages['button.preInvoicingRepport']}"
+					rendered="#{entity.status.toString() == 'WAITING'}" />
+				<h:commandButton
+					action="#{billingRunBean.postInvoicingRepport(entity.id)}"
+					value="#{messages['button.postInvoicingRepport']}"
+					rendered="#{entity.status.toString() == 'TERMINATED'}" />
+			</rich:column>
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

@@ -1,209 +1,211 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action;
 
-import java.security.Principal;
-import java.util.List;
-import java.util.Locale;
+import javax.enterprise.inject.Model;
+import javax.inject.Inject;
 
-import javax.faces.context.FacesContext;
-
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Observer;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.LocaleSelector;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.seam.security.BaseAuthenticator;
 import org.jboss.seam.security.Credentials;
-import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.exception.NoRoleException;
 import org.meveo.admin.exception.PasswordExpiredException;
-import org.meveo.model.admin.Role;
+import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.admin.local.UserServiceLocal;
+import org.meveo.model.security.Role;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.UserService;
+import org.picketlink.idm.impl.api.PasswordCredential;
+import org.slf4j.Logger;
 
-@Name("authenticator")
-public class Authenticator {
+@Model
+public class Authenticator extends BaseAuthenticator {
 
-    private static final long serialVersionUID = 7629475040801773331L;
+	@Inject
+	private UserService userService;
 
-    @Logger
-	private Log log;
-
-	@In
-	private UserServiceLocal userService;
-
-	@In
-	private Identity identity;
-
-	@In
+	@Inject
 	private Credentials credentials;
 
-	@Out(required = false, scope = ScopeType.SESSION)
-	private User currentUser;
+	@Inject
+	protected Logger log;
 
-	@SuppressWarnings("unused")
-	@Out(required = false, scope = ScopeType.SESSION)
-	private Provider currentProvider;
-
-	@SuppressWarnings("unused")
-	@Out(required = false, scope = ScopeType.SESSION)
+	//
+	// @Produces
+	// @Named("homeMessage")
 	private String homeMessage;
 
-	@In
-	private FacesMessages facesMessages;
-	
-	@In
-	private LocaleSelector localeSelector;
-	
-	
+	@Inject
+	private Messages messages;
+
+	// @Inject
+	// TODO: private LocaleSelector localeSelector;
 
 	/* Authentication errors */
-	private boolean noLoginError, inactiveUserError, noRoleError,
-			passwordExpired;
+	private boolean noLoginError;
+	private boolean inactiveUserError;
+	private boolean noRoleError;
+	private boolean passwordExpired;
 
-	public boolean internalAuthenticate(Principal principal, List<String> roles) {
-		/* Authentication check */
-		currentUser = userService.findByUsername("meveo.admin");
-		try {
-			userService.login(currentUser);
-		} catch (LoginException e) {
-			log.info("Login failed for the user #" + currentUser.getId(), e);
-			if (e instanceof InactiveUserException)
-				inactiveUserError = true;
-			else if (e instanceof NoRoleException)
-				noRoleError = true;
-			else if (e instanceof PasswordExpiredException)
-				passwordExpired = true;
-			return false;
-		}
-
-		homeMessage = "application.home.message";
-
-		identity.acceptExternallyAuthenticatedPrincipal(principal);
-
-		// Roles
-		for (Role role : currentUser.getRoles()) {
-			identity.addRole(role.getName());
-			log.info("Role added #0", role.getName());
-		}
-
-		return true;
-	}
-
+	// public User internalAuthenticate(Principal principal, List<String> roles)
+	// {
+	//
+	// User user = null;
+	//
+	// try {
+	// user = userService.loginChecks("meveo.admin", null);
+	//
+	// } catch (LoginException e) {
+	// log.info("Login failed for the user #" + user.getId(), e);
+	// if (e instanceof InactiveUserException) {
+	// inactiveUserError = true;
+	//
+	// } else if (e instanceof NoRoleException) {
+	// noRoleError = true;
+	//
+	// } else if (e instanceof PasswordExpiredException) {
+	// passwordExpired = true;
+	//
+	// } else if (e instanceof UnknownUserException) {
+	// noLoginError = true;
+	// }
+	// }
+	//
+	// homeMessage = "application.home.message";
+	//
+	// if (user == null) {
+	// setStatus(AuthenticationStatus.FAILURE);
+	// } else {
+	//
+	// homeMessage = "application.home.message";
+	//
+	// setStatus(AuthenticationStatus.SUCCESS);
+	// setUser(new MeveoUser(user));
+	//
+	// // TODO needed to overcome lazy loading issue. Remove once solved
+	// for (Role role : user.getRoles()) {
+	// for (org.meveo.model.security.Permission permission :
+	// role.getPermissions()) {
+	// permission.getName();
+	// }
+	// }
+	// }
+	// return user;
+	// }
 
 	public String localLogout() {
-		Identity.instance().logout();
 		return "loggedOut";
 	}
 
-    public boolean authenticate() {
+	public void authenticate() {
 
-        log.info("authenticating {0} - {1}", credentials.getUsername(), credentials.getPassword());
+		noLoginError = false;
+		inactiveUserError = false;
+		noRoleError = false;
+		passwordExpired = false;
 
-        try {
-            noLoginError = false;
-            inactiveUserError = false;
-            noRoleError = false;
-            passwordExpired = false;
+		User user = null;
+		try {
 
-            /* Authentication check */
-            currentUser = userService.findByUsernameAndPassword(credentials.getUsername(), credentials.getPassword());
+			/* Authentication check */
+			user = userService.loginChecks(credentials.getUsername(),
+					((PasswordCredential) credentials.getCredential()).getValue());
 
-            log.info("End of select");
+		} catch (LoginException e) {
+			log.info(
+					"Login failed for the user {} for reason {} {}", credentials.getUsername(),
+					e.getClass().getName(), e.getMessage());
+			if (e instanceof InactiveUserException) {
+				inactiveUserError = true;
+				log.error("login failed with username=" + credentials.getUsername()
+						+ " and password="
+						+ ((PasswordCredential) credentials.getCredential()).getValue()
+						+ " : cause user is not active");
+				messages.info(new BundleKey("messages", "user.error.inactive"));
 
-            if (currentUser == null) {
-                log.info("login failed with username=#{credentials.username} and password=#{credentials.password}");
-                noLoginError = true;
-                return false;
-            }
+			} else if (e instanceof NoRoleException) {
+				noRoleError = true;
+				log.error("The password of user " + credentials.getUsername() + " has expired.");
+				messages.info(new BundleKey("messages", "user.error.noRole"));
 
-            userService.login(currentUser);
+			} else if (e instanceof PasswordExpiredException) {
+				passwordExpired = true;
+				log.error("The password of user " + credentials.getUsername() + " has expired.");
+				messages.info(new BundleKey("messages", "user.password.expired"));
 
-            homeMessage = "application.home.message";
-
-            // Roles
-            for (Role role : currentUser.getRoles()) {
-                identity.addRole(role.getName());
-                log.info("Role added #0", role.getName());
-            }
-
-            log.info("End of authenticating");
-            return true;
-            
-        } catch (LoginException e) {
-            log.info("Login failed for the user {0} for reason {1} {2}" + currentUser.getId(), e.getClass().getName(), e.getMessage());
-            if (e instanceof InactiveUserException) {
-                inactiveUserError = true;
-            } else if (e instanceof NoRoleException) {
-                noRoleError = true;
-            } else if (e instanceof PasswordExpiredException) {
-                passwordExpired = true;
-            }
-            return false;
-            
-        } catch (Exception other) {
-            log.error("Authenticator : error thrown when trying to login", other);
-            throw new RuntimeException(other);
-        }
-
-
-	}
-
-	@Observer("org.jboss.seam.security.loginFailed")
-	public void loginFailed() {
-		if (noLoginError) {
-			facesMessages.addFromResourceBundle(Severity.ERROR,
-					"user.error.login");
-			return;
+			} else if (e instanceof UnknownUserException) {
+				noLoginError = true;
+				log.info("login failed with username={0} and password={1}",
+						credentials.getUsername(),
+						((PasswordCredential) credentials.getCredential()).getValue());
+				messages.info(new BundleKey("messages", "user.error.login"));
+			}
 		}
-		if (inactiveUserError) {
-			facesMessages.addFromResourceBundle(Severity.ERROR,
-					"user.error.inactive");
-			return;
-		}
-		if (noRoleError) {
-			facesMessages.addFromResourceBundle(Severity.ERROR,
-					"user.error.noRole");
-			return;
-		}
-		if (passwordExpired) {
-			facesMessages.addFromResourceBundle(Severity.ERROR,
-					"user.password.expired");
-			return;
+
+		if (user == null) {
+			setStatus(AuthenticationStatus.FAILURE);
+		} else {
+
+			homeMessage = "application.home.message";
+
+			setStatus(AuthenticationStatus.SUCCESS);
+			setUser(new MeveoUser(user));
+			
+			log.info("End of authenticating");
 		}
 	}
 
-	@Observer("org.jboss.seam.security.loginSuccessful")
-	public void loginSuccessful() {
-	    // If user has only one provider, set it automatically, instead of asking user to pick it
-        if (currentUser.isOnlyOneProvider()) {
-            currentProvider=currentUser.getProviders().get(0);
-        }
+	public void setLocale(String language) {
+		// TODO: localeSelector.selectLanguage(language);
+
 	}
-	
-	public void setLocale(String language){
-		localeSelector.selectLanguage(language);
-		
+
+	public boolean isNoLoginError() {
+		return noLoginError;
+	}
+
+	public void setNoLoginError(boolean noLoginError) {
+		this.noLoginError = noLoginError;
+	}
+
+	public boolean isInactiveUserError() {
+		return inactiveUserError;
+	}
+
+	public void setInactiveUserError(boolean inactiveUserError) {
+		this.inactiveUserError = inactiveUserError;
+	}
+
+	public boolean isNoRoleError() {
+		return noRoleError;
+	}
+
+	public void setNoRoleError(boolean noRoleError) {
+		this.noRoleError = noRoleError;
+	}
+
+	public boolean isPasswordExpired() {
+		return passwordExpired;
+	}
+
+	public void setPasswordExpired(boolean passwordExpired) {
+		this.passwordExpired = passwordExpired;
 	}
 }

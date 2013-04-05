@@ -17,7 +17,6 @@ package org.meveo.model.resource;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
@@ -31,7 +30,7 @@ import org.meveo.model.BaseEntity;
  */
 @Entity
 @Table(name = "RM_OFFER_INSTANCE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "OFFER_INSTANCE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "OFFER_INSTANCE_SEQ")
 public class OfferInstance extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

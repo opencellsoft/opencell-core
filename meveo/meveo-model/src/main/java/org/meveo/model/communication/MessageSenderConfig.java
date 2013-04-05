@@ -23,7 +23,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
@@ -32,7 +31,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name="COM_SENDER_CONFIG")
 @DiscriminatorColumn(name = "MEDIA")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_SNDR_CONF_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_SNDR_CONF_SEQ")
 public abstract class MessageSenderConfig extends BusinessEntity {
 	
 

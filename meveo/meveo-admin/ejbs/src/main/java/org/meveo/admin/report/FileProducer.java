@@ -22,6 +22,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -31,18 +34,16 @@ import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.log.Log;
 import org.meveo.admin.exception.NoTemplateException;
+import org.slf4j.Logger;
 
 /**
  *This file producer class is used to generate PDF file
  */
-@Name("fileProducer")
+@Named
 public class FileProducer {
-    @Logger
-    protected Log log;
+	@Inject
+    protected Logger log;
 
     public Map<String, Object> parameters = new HashMap<String, Object>();
 

@@ -22,7 +22,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -33,7 +32,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "BILLING_BILLING_RUN_LIST")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_LIST_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_LIST_SEQ")
 public class BillingRunList extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

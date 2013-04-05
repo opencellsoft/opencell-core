@@ -20,12 +20,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -55,49 +54,40 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
-import org.meveo.service.billing.local.ChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.OneShotChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.RatedTransactionServiceLocal;
-import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
-import org.meveo.service.billing.local.ServiceInstanceServiceLocal;
-import org.meveo.service.billing.local.SubscriptionServiceLocal;
-import org.meveo.service.catalog.local.ServiceTemplateServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * Service instance service implementation.
  * 
  * @author R.AITYAAZZA
  */
-@Stateless
-@Name("serviceInstanceService")
-@AutoCreate
-public class ServiceInstanceService extends BusinessService<ServiceInstance> implements ServiceInstanceServiceLocal {
+@Stateless @LocalBean
+public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
-    @In
-    private SubscriptionServiceLocal subscriptionService;
+    @EJB
+    private SubscriptionService subscriptionService;
 
-    @In
-    private ServiceTemplateServiceLocal serviceTemplateService;
+    @EJB
+    private ServiceTemplateService serviceTemplateService;
 
-    @In
-    private RecurringChargeInstanceServiceLocal recurringChargeInstanceService;
+    @EJB
+    private RecurringChargeInstanceService recurringChargeInstanceService;
 
-    @In
-    private ChargeInstanceServiceLocal<ChargeInstance> chargeInstanceService;
+    @EJB
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
-    @In
-    private OneShotChargeInstanceServiceLocal oneShotChargeInstanceService;
+    @EJB
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
 
-    @In
-    private ChargeApplicationServiceLocal chargeApplicationService;
+    @EJB
+    private ChargeApplicationService chargeApplicationService;
     
-    @In
-    private CustomerAccountServiceLocal customerAccountService;
+    @EJB
+    private CustomerAccountService customerAccountService;
     
-    @In
-    private RatedTransactionServiceLocal ratedTransactionService;
+	@EJB
+    private RatedTransactionService ratedTransactionService;
 
     public ServiceInstance findByCodeAndSubscription(String code, String subscriptionCode) {
         ServiceInstance chargeInstance = null;

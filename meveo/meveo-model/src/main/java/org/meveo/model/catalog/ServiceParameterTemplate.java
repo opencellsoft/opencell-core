@@ -17,7 +17,6 @@ package org.meveo.model.catalog;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
@@ -29,7 +28,7 @@ import org.meveo.model.BusinessEntity;
  */
 @Entity
 @Table(name = "RM_SERVICE_PARAM_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RM_SERVICE_PARAM_TEMPLATE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RM_SERVICE_PARAM_TEMPLATE_SEQ")
 public class ServiceParameterTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;

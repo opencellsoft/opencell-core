@@ -1,43 +1,62 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['customer.title']}" backingBean="#{customerBean}">
-    	
-    		<custom:searchPanel label="#{messages['customer.search']}" newButtonView="/pages/crm/customers/customerDetail.xhtml">
-    			<custom:searchField label="#{messages['businessEntity.code']}" field="code" />
-    			<custom:searchField label="#{messages['businessEntity.description']}" field="description" />
-    			<custom:searchEntityField label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" service="#{customerCategoryService}"/>
-    			<custom:searchEntityField label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" service="#{customerBrandService}"/>
-    		</custom:searchPanel>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
-	    	<custom:dataList dataModel="#{customers}">
-	    		<custom:column label="#{messages['businessEntity.code']}" field="code" />
-				<custom:column label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" isMessage="true" />
-				<custom:column label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" isMessage="true" />
-	    		<custom:column label="#{messages['businessEntity.description']}" field="description" />			
-			    <custom:column label="#{messages['tradingCurrency.tradingCurrencyPanel']}" field="tradingCurrency" childField="currencyCode" />
-				<custom:column label="#{messages['tradingCountry.title']}" field="tradingCountry" childField="countryCode"/> 
-				<custom:column label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" childField="languageCode"/>  	
-				<custom:actionsColumn editView="/pages/crm/customers/customerDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}"/>
-		    </custom:dataList>
-		    
-		</custom:listPanel>
-		
-    </ui:define>
-    
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{customerBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['customer.search']}"
+			backingBean="#{customerBean}">
+			<hf:searchField label="#{messages['businessEntity.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['businessEntity.description']}"
+				field="description" />
+			<hf:searchField id="customerCategoryField"
+				label="#{messages['customer.customerCategory']}"
+				field="customerCategory" childField="description"
+				listBean="#{customerCategoryBean}" />
+			<hf:searchField id="customerBrandField"
+				label="#{messages['customer.customerBrand']}" field="customerBrand"
+				childField="description" listBean="#{customerBrandBean}" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['customer.search']}"
+			backingBean="#{customerBean}">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['customer.customerCategory']}"
+				field="customerCategory" childField="description" isMessage="true" />
+			<hftl:column label="#{messages['customer.customerBrand']}"
+				field="customerBrand" childField="description" isMessage="true" />
+			<hftl:column label="#{messages['businessEntity.description']}"
+				field="description" />
+			<hftl:column
+				label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
+				field="tradingCurrency" childField="currencyCode" />
+			<hftl:column label="#{messages['tradingCountry.title']}"
+				field="tradingCountry" childField="countryCode" />
+			<hftl:column label="#{messages['tradingLanguage.tradingLanguage']}"
+				field="tradingLanguage" childField="languageCode" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('account','accountManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

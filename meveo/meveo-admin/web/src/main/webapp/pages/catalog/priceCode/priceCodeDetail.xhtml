@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<custom:entityPopup id="chargeTemplateInPopup"
+		<hftl:entityPopup id="chargeTemplateInPopup"
 			header="#{messages['priceCode.chargeTemplateIn.popup.header']}"
 			backingBean="#{oneShotChargeTemplateBean}" dataModel="#{oneShotChargeTemplatesForUsageType}"
 			searchField1Label="#{messages['chargeTemplate.code']}" searchField1="code"
@@ -28,9 +28,9 @@
 				action="#{priceCode.setChargeTemplateIn(entity)}"
 				oncomplete="Richfaces.hideModalPanel('chargeTemplateInPopup')">
 			</a:commandLink>
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
-		<custom:entityPopup id="chargeTemplateOutPopup"
+		<hftl:entityPopup id="chargeTemplateOutPopup"
 			header="#{messages['priceCode.chargeTemplateOut.popup.header']}"
 			backingBean="#{oneShotChargeTemplateBean}" dataModel="#{oneShotChargeTemplatesForUsageType}"
 			searchField1Label="#{messages['chargeTemplate.code']}" searchField1="code"
@@ -42,7 +42,7 @@
 				action="#{priceCode.setChargeTemplateOut(entity)}"
 				oncomplete="Richfaces.hideModalPanel('chargeTemplateOutPopup')">
 			</a:commandLink>
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
 
 		<custom:formPanel edit="#{edit}" label="#{messages['priceCode.priceCodePanel']}" backingBean="#{priceCodeBean}" entity="#{priceCode}" >

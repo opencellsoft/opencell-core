@@ -1,47 +1,43 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.payments;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.web.RequestParameter;
-import org.jboss.seam.faces.Redirect;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.util.RandomStringUtils;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.lang.RandomStringUtils;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.local.CustomerServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean}
@@ -52,8 +48,8 @@ import org.meveo.service.payments.local.CustomerAccountServiceLocal;
  * @author Ignas
  * @created 2009.10.13
  */
-@Name("customerAccountBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -62,17 +58,14 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * Injected @{link CustomerAccount} service. Extends
 	 * {@link PersistenceService}.
 	 */
-	@In(create = true)
-	private CustomerAccountServiceLocal customerAccountService;
+	@Inject
+	private CustomerAccountService customerAccountService;
 
 	/**
 	 * Injected @{link Custome} service. Extends {@link PersistenceService}.
 	 */
-	@In
-	private CustomerServiceLocal customerService;
-
-	@In
-	private User currentUser;
+	@Inject
+	private CustomerService customerService;
 
 	private String selectedTab = "compte";
 
@@ -81,11 +74,12 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * Account from customer account window, so default customer account will be
 	 * set on newly created customer Account.
 	 */
-	@RequestParameter
-	private Long customerId;
+	@Inject
+	@RequestParam
+	private Instance<Long> customerId;
 
-	@RequestParameter
-	private String tab;
+	@RequestParam
+	private Instance<String> tab;
 
 	private CustomerAccount customerAccountTransfer = new CustomerAccount();
 
@@ -106,47 +100,24 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Factory("customerAccount")
-	@Begin(nested = true)
+	@Produces
+	@Named("customerAccount")
 	public CustomerAccount init() {
 		initEntity();
 		if (entity.getId() == null) {
-		    entity.setDateDunningLevel(new Date());
-		    entity.setPassword(RandomStringUtils.randomAlphabetic(8));
+			entity.setDateDunningLevel(new Date());
+			entity.setPassword(RandomStringUtils.randomAlphabetic(8));
 		}
 		if (entity.getId() == null && customerId != null) {
-			Customer customer = customerService.findById(customerId);
+			Customer customer = customerService.findById(getCustomerId());
 			populateAccounts(customer);
 		}
 		if (tab != null) {
-			selectedTab = tab;
+			selectedTab = getTab();
 		}
 		return entity;
 	}
 
-	/**
-	 * Data model of entities for data table in GUI.
-	 * 
-	 * @return filtered entities.
-	 */
-	@Out(value = "customerAccounts", required = false)
-	protected PaginationDataModel<CustomerAccount> getDataModel() {
-		return entities;
-	}
-
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-	@Override
-	@Factory("customerAccounts")
-	@Begin(join = true)
-	public void list() {
-		super.list();
-	}
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous
@@ -156,34 +127,24 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	@End(beforeRedirect = true, root=false)
 	public String saveOrUpdate() {
 		try {
 
-			if (entity.getDefaultLevel() != null
-					&& entity.getDefaultLevel()) {
+			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 				if (customerAccountService.isDuplicationExist(entity)) {
-				    entity.setDefaultLevel(false);
+					entity.setDefaultLevel(false);
 					throw new DuplicateDefaultAccountException();
 				}
 
 			}
 			saveOrUpdate(entity);
-			Redirect.instance().setParameter("edit", "false");
-			Redirect.instance().setParameter("objectId",
-			    entity.getId());
-			Redirect.instance()
-					.setViewId(
-							"/pages/payments/customerAccounts/customerAccountDetail.xhtml");
-			Redirect.instance().execute();
-
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&objectId="
+					+ entity.getId() + "&faces-redirect=true";
 		} catch (DuplicateDefaultAccountException e1) {
-			statusMessages.addFromResourceBundle(Severity.ERROR,
-					"error.account.duplicateDefautlLevel");
+			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.addFromResourceBundle(Severity.ERROR,
-					"javax.el.ELException");
+			messages.error(new BundleKey("messages", "javax.el.ELException"));
 
 		}
 		return null;
@@ -198,19 +159,18 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 */
 	public String transferAccount() {
 		try {
-			customerAccountService.transferAccount(entity,
-					getCustomerAccountTransfer(), getAmountToTransfer(),
-					currentUser);
-			statusMessages.addFromResourceBundle("customerAccount.transfertOK");
+			customerAccountService.transferAccount(entity, getCustomerAccountTransfer(),
+					getAmountToTransfer(), getCurrentUser());
+			messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
 			setCustomerAccountTransfer(null);
 			setAmountToTransfer(BigDecimal.ZERO);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.addFromResourceBundle("customerAccount.transfertKO");
+			messages.error(new BundleKey("messages", "customerAccount.transfertKO"));
 		}
 
-		return "/pages/payments/customerAccounts/customerAccountDetail.seam?objectId="
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ entity.getId() + "&edit=false&tab=ops";
 	}
 
@@ -232,8 +192,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 		if (entity.getId() == null) {
 			return new BigDecimal(0);
 		} else
-			return customerAccountService.customerAccountBalanceDue(
-			    entity, new Date());
+			return customerAccountService.customerAccountBalanceDue(entity, new Date());
 	}
 
 	/**
@@ -242,14 +201,12 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * @return exigible balance without litigation
 	 * @throws BusinessException
 	 */
-	public BigDecimal getBalanceExigibleWithoutLitigation()
-			throws BusinessException {
+	public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
 		if (entity.getId() == null) {
 			return new BigDecimal(0);
 		} else
-			return customerAccountService
-					.customerAccountBalanceExigibleWithoutLitigation(
-					    entity, new Date());
+			return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity,
+					new Date());
 	}
 
 	/**
@@ -270,17 +227,14 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	public String closeCustomerAccount() {
 		log.info("closeAccount customerAccountId:" + entity.getId());
 		try {
-			customerAccountService.closeCustomerAccount(entity,
-					currentUser);
-			statusMessages
-					.addFromResourceBundle("customerAccount.closeSuccessful");
-
+			customerAccountService.closeCustomerAccount(entity, getCurrentUser());
+			messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
 		} catch (BusinessException e) {
 			e.printStackTrace();
-			statusMessages.add(e.getMessage());
+			messages.error(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			statusMessages.add(e.getMessage());
+			messages.error(e.getMessage());
 		}
 		return null;
 	}
@@ -289,8 +243,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * @param customerAccountTransfer
 	 *            the customerAccountTransfer to set
 	 */
-	public void setCustomerAccountTransfer(
-			CustomerAccount customerAccountTransfer) {
+	public void setCustomerAccountTransfer(CustomerAccount customerAccountTransfer) {
 		this.customerAccountTransfer = customerAccountTransfer;
 	}
 
@@ -341,27 +294,34 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	}
 
 	public void populateAccounts(Customer customer) {
-	    entity.setCustomer(customer);
+		entity.setCustomer(customer);
 		if (customerAccountService.isDuplicationExist(entity)) {
-		    entity.setDefaultLevel(false);
+			entity.setDefaultLevel(false);
 		} else {
-		    entity.setDefaultLevel(true);
+			entity.setDefaultLevel(true);
 		}
 		if (customer != null && customer.getProvider() != null
 				&& customer.getProvider().isLevelDuplication()) {
 
-		    entity.setCode(customer.getCode());
-		    entity.setDescription(customer.getDescription());
-		    entity.setAddress(customer.getAddress());
-		    entity.setExternalRef1(customer.getExternalRef1());
-		    entity.setExternalRef2(customer.getExternalRef2());
-		    entity.setProviderContact(customer.getProviderContact());
-		    entity.setName(customer.getName());
-		    entity.setProvider(customer.getProvider());
-		    entity.setPrimaryContact(customer.getPrimaryContact());
-		    entity.setContactInformation(customer
-					.getContactInformation());
+			entity.setCode(customer.getCode());
+			entity.setDescription(customer.getDescription());
+			entity.setAddress(customer.getAddress());
+			entity.setExternalRef1(customer.getExternalRef1());
+			entity.setExternalRef2(customer.getExternalRef2());
+			entity.setProviderContact(customer.getProviderContact());
+			entity.setName(customer.getName());
+			entity.setProvider(customer.getProvider());
+			entity.setPrimaryContact(customer.getPrimaryContact());
+			entity.setContactInformation(customer.getContactInformation());
 		}
+	}
+
+	private Long getCustomerId() {
+		return customerId.get();
+	}
+
+	private String getTab() {
+		return tab.get();
 	}
 
 }

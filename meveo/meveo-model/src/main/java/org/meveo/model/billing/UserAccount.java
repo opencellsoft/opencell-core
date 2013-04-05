@@ -29,12 +29,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.AccountEntity;
 
 /**
@@ -44,7 +42,7 @@ import org.meveo.model.AccountEntity;
  */
 @Entity
 @Table(name = "BILLING_USER_ACCOUNT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USER_ACCOUNT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USER_ACCOUNT_SEQ")
 public class UserAccount extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
@@ -72,14 +70,14 @@ public class UserAccount extends AccountEntity {
     private BillingAccount billingAccount;
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
     private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
     @OneToOne( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     @JoinColumn(name = "WALLET_ID")
     private Wallet wallet;
 

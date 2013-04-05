@@ -1,39 +1,38 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.billing;
 
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-import org.jboss.seam.annotations.web.RequestParameter;
-import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.admin.utils.ListItemsSelector;
@@ -47,12 +46,12 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.local.BillingRunServiceLocal;
-import org.meveo.service.billing.local.InvoiceServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
+import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.crm.impl.ProviderService;
 
-@Name("billingRunBean")
-@Scope(ScopeType.PAGE)
+@Named
+@ViewScoped
 public class BillingRunBean extends BaseBean<BillingRun> {
 
     private static final long serialVersionUID = 1L;
@@ -62,71 +61,70 @@ public class BillingRunBean extends BaseBean<BillingRun> {
      * 
      * @{link Invoice} service. Extends {@link PersistenceService}.
      */
-    @In
-    private BillingRunServiceLocal billingRunService;
+    @Inject
+    private BillingRunService billingRunService;
 
-    @In
-    private InvoiceServiceLocal invoiceService;
+    @Inject
+    private InvoiceService invoiceService;
 
-    @In
-    private ProviderServiceLocal providerService;
+    @Inject
+    private ProviderService providerService;
 
-    @RequestParameter
-    private Boolean preReport = false;
+    @Inject
+    @RequestParam
+    private Instance<Boolean> preReport;
 
-    @RequestParameter
-    private Boolean postReport = false;
+    @Inject
+    @RequestParam
+    private Instance<Boolean> postReport;
 
-    @Out(required = false)
     private ListItemsSelector<Invoice> itemSelector;
+
+    @Inject
+    private Messages messages;
 
     private DataModel invoicesModel;
 
-    @In
-    private Provider currentProvider;
-
     /**
-     * Constructor. Invokes super constructor and provides class type of this
-     * bean for {@link BaseBean}.
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public BillingRunBean() {
         super(BillingRun.class);
     }
 
     /**
-     * Factory method for entity to edit. If objectId param set load that entity
-     * from database, otherwise create new.
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
      * 
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Begin(nested = true)
-    @Factory("billingRun")
+    @Produces
+    @Named("billingRun")
     public BillingRun init() {
         try {
             initEntity();
             if (entity.getId() == null) {
                 entity.setProcessType(BillingProcessTypesEnum.MANUAL);
             }
-            if (entity != null && entity.getId() != null && preReport != null && preReport) {
-                PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService
-                        .generatePreInvoicingReports(entity);
+            if (entity != null && entity.getId() != null && preReport.get() != null && preReport.get()) {
+                PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(entity);
                 entity.setPreInvoicingReports(preInvoicingReportsDTO);
-            } else if (entity != null && entity.getId() != null && postReport != null && postReport) {
-                PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService
-                        .generatePostInvoicingReports(entity);
+            } else if (entity != null && entity.getId() != null && postReport.get() != null && postReport.get()) {
+                PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(entity);
                 entity.setPostInvoicingReports(postInvoicingReportsDTO);
             }
             invoicesModel = new ListDataModel(entity.getInvoices());
 
         } catch (BusinessException e) {
-            log.error(e);
+            log.error("Failed to initialize an object", e);
         }
 
         return entity;
     }
 
-    @Factory("billingRunInvoices")
+    @Produces
+    @Named("billingRunInvoices")
+    @ConversationScoped
     public List<Invoice> getBillingRunInvoices() {
         if (entity == null) {
             return null;
@@ -134,40 +132,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         return entity.getInvoices();
     }
 
-    /**
-     * Data model of entities for data table in GUI.
-     * 
-     * @return filtered entities.
-     */
-    @Out(value = "billingRuns", required = false)
-    protected PaginationDataModel<BillingRun> getDataModel() {
-        return entities;
-    }
-
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes
-     * BaseBean.list() method that handles all data model loading. Overriding is
-     * needed only to put factory name on it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Factory("billingRuns")
-    public void list() {
-        entities = null;
-        super.list();
-    }
-
-    /**
-     * Conversation is ended and user is redirected from edit to his previous
-     * window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
-        return saveOrUpdate(entity);
-    }
-
+  
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
@@ -183,8 +148,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
             boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
             log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
-            if (billingRunService.isActiveBillingRunsExist(currentProvider) && !isAllowed) {
-                statusMessages.addFromResourceBundle(Severity.ERROR, "error.invoicing.alreadyLunched");
+            if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
+                messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
                 return null;
             }
 
@@ -193,11 +158,11 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             billingRunService.create(entity);
             entity.setProvider(entity.getBillingCycle().getProvider());
 
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -207,11 +172,11 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             // statusMessages.add("facturation confirmee avec succes");
             entity.setStatus(BillingRunStatusEnum.ON_GOING);
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -220,10 +185,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             entity.setStatus(BillingRunStatusEnum.VALIDATED);
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -232,10 +197,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             entity.setStatus(BillingRunStatusEnum.CANCELED);
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -246,10 +211,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             billingRunService.cleanBillingRun(entity);
 
             billingRunService.update(entity);
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -258,10 +223,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             billingRunService.retateBillingRunTransactions(entity);
             cancelConfirmedInvoicing();
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -270,10 +235,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         try {
             billingRunService.retateBillingRunTransactions(entity);
             cancelInvoicing();
-            return "/pages/billing/invoicing/billingRuns.seam?edit=false";
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -281,22 +246,22 @@ public class BillingRunBean extends BaseBean<BillingRun> {
     public String preInvoicingRepport(long id) {
         try {
 
-            return "/pages/billing/invoicing/preInvoicingReports.seam?edit=false&preReport=true&objectId=" + id;
+            return "/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false&preReport=true&objectId=" + id;
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
 
     public String postInvoicingRepport(long id) {
         try {
-            return "/pages/billing/invoicing/postInvoicingReports.seam?edit=false&postReport=true&objectId=" + id;
+            return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + id;
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusMessages.add(e.getMessage());
+            messages.error(e.getMessage());
         }
         return null;
     }
@@ -307,23 +272,23 @@ public class BillingRunBean extends BaseBean<BillingRun> {
             for (Invoice invoice : itemSelector.getList()) {
                 billingRunService.deleteInvoice(invoice);
             }
-
-            statusMessages.addFromResourceBundle(Severity.INFO, "info.invoicing.billingAccountExcluded");
+            messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
 
         } catch (Exception e) {
             log.error("unexpected exception when excluding BillingAccounts!", e);
-            statusMessages.addFromResourceBundle(Severity.ERROR, e.getMessage());
+            messages.error(e.getMessage());
+            messages.error(e.getMessage());
         }
 
-        return "/pages/billing/invoicing/postInvoicingReports.seam?edit=false&postReport=true&objectId="
-                + entity.getId();
+        return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + entity.getId();
     }
 
     /**
-     * Item selector getter. Item selector keeps a state of multiselect
-     * checkboxes.
+     * Item selector getter. Item selector keeps a state of multiselect checkboxes.
      */
-    @BypassInterceptors
+    @Produces
+    @Named("itemSelector")
+    @ConversationScoped
     public ListItemsSelector<Invoice> getItemSelector() {
         if (itemSelector == null) {
             itemSelector = new ListItemsSelector<Invoice>(false);

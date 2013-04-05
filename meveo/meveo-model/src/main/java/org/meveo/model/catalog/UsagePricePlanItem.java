@@ -26,7 +26,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,7 +35,7 @@ import org.meveo.model.payments.CustomerAccount;
 
 @Entity
 @Table(name = "CAT_USAGE_PRICE_PLAN_ITEM")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_PRICE_PLAN_ITEM_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_PRICE_PLAN_ITEM_SEQ")
 public class UsagePricePlanItem extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

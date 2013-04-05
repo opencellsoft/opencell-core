@@ -21,7 +21,7 @@ import org.meveo.model.admin.User;
  * Exception thrown when {@link User} entity does not exist
  * 
  */
-public class UnknownUserException extends BusinessException {
+public class UnknownUserException extends LoginException {
 
 	/** */
 	private static final long serialVersionUID = 1L;

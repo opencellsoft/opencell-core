@@ -16,60 +16,54 @@
 package org.meveo.admin.filter;
 
 import java.io.IOException;
-import java.util.Map;
 
+import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
-import org.jboss.seam.annotations.intercept.BypassInterceptors;
-import org.jboss.seam.annotations.web.Filter;
-import org.jboss.seam.contexts.Lifecycle;
-import org.jboss.seam.web.AbstractFilter;
 import org.meveo.model.admin.User;
-import org.meveo.service.admin.local.UserServiceLocal;
 
 @Startup
-@Scope(ScopeType.APPLICATION)
-@Name("org.meveo.admin.filter.UserActionsLoggingFilter")
+@ApplicationScoped
+/*TODO: javaee6 @Name("org.meveo.admin.filter.UserActionsLoggingFilter")
 @BypassInterceptors
-@Filter(around = "org.jboss.seam.web.ajax4jsfFilter")
-public class UserActionsLoggingFilter extends AbstractFilter {
+@Filter(around = "org.jboss.seam.web.ajax4jsfFilter")*/
+public class UserActionsLoggingFilter /*extends AbstractFilter*/ {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
-        HttpServletRequest httpReq = (HttpServletRequest) request;
-        User user = null;
-        if (httpReq.getSession().getAttribute("currentUser") != null) {
-            user = (User) httpReq.getSession().getAttribute("currentUser");
-        }
-        String objectId = "";
-        String edit = "";
-
-        Map<?, ?> parametersMap = httpReq.getParameterMap();
-        String uri = httpReq.getRequestURI();
-        if (parametersMap.containsKey("objectId")) {
-            objectId = ((String[]) parametersMap.get("objectId"))[0];
-        }
-        if (parametersMap.containsKey("edit")) {
-            edit = ((String[]) parametersMap.get("edit"))[0];
-        }
-        output(user, objectId, edit, uri);
+        
+        // TODO
+//        HttpServletRequest httpReq = (HttpServletRequest) request;
+//        User user = null;
+//        if (httpReq.getSession().getAttribute("currentUser") != null) {
+//            user = (User) httpReq.getSession().getAttribute("currentUser");
+//        }
+//        String objectId = "";
+//        String edit = "";
+//
+//        Map<?, ?> parametersMap = httpReq.getParameterMap();
+//        String uri = httpReq.getRequestURI();
+//        if (parametersMap.containsKey("objectId")) {
+//            objectId = ((String[]) parametersMap.get("objectId"))[0];
+//        }
+//        if (parametersMap.containsKey("edit")) {
+//            edit = ((String[]) parametersMap.get("edit"))[0];
+//        }
+//        output(user, objectId, edit, uri);
         chain.doFilter(request, response);
 
     }
 
     public void output(User user, String objectId, String edit, String uri) {
         String action = "";
-        if (uri.endsWith("seam") && (user != null)) {
-            Lifecycle.beginCall();
+        if (uri.endsWith("jsf") && (user != null)) {
+            
+            // TODO
+        	/*Lifecycle.beginCall();
             UserServiceLocal userService = (UserServiceLocal) Component.getInstance("userService", true);
 
             if ((!objectId.equals("")) && (!edit.equals(""))) {
@@ -81,7 +75,7 @@ public class UserActionsLoggingFilter extends AbstractFilter {
                 action = "View all list";
             }
             userService.saveActivity(user, objectId, action, uri);
-            Lifecycle.endCall();
+            Lifecycle.endCall();*/
         }
 
     }

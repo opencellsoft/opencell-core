@@ -19,7 +19,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -32,7 +31,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "AR_OCC_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_OCC_TEMPLATE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_OCC_TEMPLATE_SEQ")
 public class OCCTemplate extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

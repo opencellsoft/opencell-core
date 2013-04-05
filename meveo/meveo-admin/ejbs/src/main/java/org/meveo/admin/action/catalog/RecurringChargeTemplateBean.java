@@ -1,42 +1,38 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.catalog;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.LanguageEnum;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.CatMessagesServiceLocal;
-import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
+import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link RecurringChargeTemplate} (extends
@@ -48,136 +44,116 @@ import org.meveo.service.catalog.local.RecurringChargeTemplateServiceLocal;
  * @created Nov 18, 2010
  * 
  */
-@Name("recurringChargeTemplateBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplate> {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
+	/**
+	 * Injected @{link RecurringChargeTemplate} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private RecurringChargeTemplateService recurringChargeTemplateService;
 
-    /**
-     * Injected @{link RecurringChargeTemplate} service. Extends
-     * {@link PersistenceService}.
-     */
-    @In
-    private RecurringChargeTemplateServiceLocal recurringChargeTemplateService;
-    
-    @In
-    private CatMessagesServiceLocal catMessagesService;
-     
-     private String descriptionFr;
+	@Inject
+	private CatMessagesService catMessagesService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this
-     * bean for {@link BaseBean}.
-     */
-    public RecurringChargeTemplateBean() {
-        super(RecurringChargeTemplate.class);
-    }
+	private String descriptionFr;
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity
-     * from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Begin(nested = true)
-    @Factory("recurringChargeTemplate")
-    public RecurringChargeTemplate init() {
-    	RecurringChargeTemplate recuChargeTemplate= initEntity();
-    	 if(recuChargeTemplate.getId()!=null){
-         	for(CatMessages msg:catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName()+"_"+recuChargeTemplate.getId())){
-             	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-             }
-         }return recuChargeTemplate;
-    }
-     
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public RecurringChargeTemplateBean() {
+		super(RecurringChargeTemplate.class);
+	}
 
-    /**
-     * Data model of entities for data table in GUI.
-     * 
-     * @return filtered entities.
-     */
-    @Out(value = "recurringChargeTemplates", required = false)
-    protected PaginationDataModel<RecurringChargeTemplate> getDataModel() {
-        return entities;
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("recurringChargeTemplate")
+	public RecurringChargeTemplate init() {
+		RecurringChargeTemplate recuChargeTemplate = initEntity();
+		if (recuChargeTemplate.getId() != null) {
+			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
+					.getSimpleName() + "_" + recuChargeTemplate.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			}
+		}
+		return recuChargeTemplate;
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes
-     * BaseBean.list() method that handles all data model loading. Overriding is
-     * needed only to put factory name on it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Factory("recurringChargeTemplates")
     @Override
-    @Begin(join = true)
-    public void list() {
+    public DataTable search() {
         getFilters();
         if (!filters.containsKey("disabled")) {
             filters.put("disabled", false);
         }
-        super.list();
+        return super.search();
     }
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous
-     * window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
-    	String back=null;
-    	if(entity.getId()!=null){
-    		for(String msgKey:languageMessagesMap.keySet()){
-    		String description=languageMessagesMap.get(msgKey);
-    		CatMessages catMsg=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey);
-    		if(catMsg!=null){
-				catMsg.setDescription(description);
-        	    catMessagesService.update(catMsg);
-    		}else{
-    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
-            	catMessagesService.create(catMessages);	
-    		}
-    		} 
-    	    back=saveOrUpdate(entity);
-    	    
-    	}else{
-    		back=saveOrUpdate(entity);
-    		for(String msgKey:languageMessagesMap.keySet()){
-    			String description=languageMessagesMap.get(msgKey);
-    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
-            	catMessagesService.create(catMessages);	
-    		}
-    	}
-	   	return back;
-    }
-    
-    
-  
+	/**
+	 * Conversation is ended and user is redirected from edit to his previous
+	 * window.
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 */
+	public String saveOrUpdate() {
+		String back = null;
+		if (entity.getId() != null) {
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(
+						ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
+				if (catMsg != null) {
+					catMsg.setDescription(description);
+					catMessagesService.update(catMsg);
+				} else {
+					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
+							+ "_" + entity.getId(), msgKey, description);
+					catMessagesService.create(catMessages);
+				}
+			}
+			back = saveOrUpdate(entity);
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<RecurringChargeTemplate> getPersistenceService() {
-        return recurringChargeTemplateService;
-    }
+		} else {
+			back = saveOrUpdate(entity);
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
+						+ "_" + entity.getId(), msgKey, description);
+				catMessagesService.create(catMessages);
+			}
+		}
+		return back;
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-     */
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("calendar");
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<RecurringChargeTemplate> getPersistenceService() {
+		return recurringChargeTemplateService;
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-     */
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("calendar");
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+	 */
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("calendar");
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+	 */
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("calendar");
+	}
 
 	public String getDescriptionFr() {
 		return descriptionFr;
@@ -186,6 +162,4 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	public void setDescriptionFr(String descriptionFr) {
 		this.descriptionFr = descriptionFr;
 	}
-    
-    
 }

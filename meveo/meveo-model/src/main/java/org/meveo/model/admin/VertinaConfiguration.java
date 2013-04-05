@@ -17,7 +17,6 @@ package org.meveo.model.admin;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
@@ -31,7 +30,7 @@ import org.meveo.model.BaseEntity;
  */
 @Entity
 @Table(name = "ADM_VERTINA_CONFIGURATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_VERTINA_CONFIGURATION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_VERTINA_CONFIGURATION_SEQ")
 public class VertinaConfiguration extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

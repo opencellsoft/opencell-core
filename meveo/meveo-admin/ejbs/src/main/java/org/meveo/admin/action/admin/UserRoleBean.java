@@ -1,37 +1,36 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.admin.Role;
-import org.meveo.service.admin.local.UserRoleServiceLocal;
+import org.meveo.model.security.Permission;
+import org.meveo.model.security.Role;
+import org.meveo.service.admin.impl.PermissionService;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link Role} (extends {@link BaseBean} that
@@ -42,100 +41,90 @@ import org.meveo.service.base.local.IPersistenceService;
  * @author Gediminas Ubartas
  * @created 2010.05.31
  */
-@Name("userRoleBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class UserRoleBean extends BaseBean<Role> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /** Injected @{link Role} service. Extends {@link PersistenceService}. */
-    @In
-    private UserRoleServiceLocal userRoleService;
+	/** Injected @{link Role} service. Extends {@link PersistenceService}. */
+	@Inject
+	private RoleService userRoleService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this
-     * bean for {@link BaseBean}.
-     */
-    public UserRoleBean() {
-        super(Role.class);
-    }
+	@Inject
+	private PermissionService permissionService;
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity
-     * from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Begin(nested = true)
-    @Factory("userRole")
-    public Role init() {
-        return initEntity();
-    }
+	private DualListModel<Permission> perks;
 
-    /**
-     * Data model of entities for data table in GUI.
-     * 
-     * @return filtered entities.
-     */
-    @Out(value = "userRoles", required = false)
-    protected PaginationDataModel<Role> getDataModel() {
-        return entities;
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public UserRoleBean() {
+		super(Role.class);
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes
-     * BaseBean.list() method that handles all data model loading. Overriding is
-     * needed only to put factory name on it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Begin(join = true)
-    @Factory("userRoles")
-    public void list() {
-        super.list();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Override
+	public Role initEntity() {
+		return super.initEntity();
+	}
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous
-     * window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
-        return saveOrUpdate(entity);
-    }
+	/**
+	 * Standard method for custom component with listType="pickList".
+	 */
+	public DualListModel<Permission> getDualListModel() {
+		if (perks == null) {
+			List<Permission> perksSource = permissionService.list();
+			List<Permission> perksTarget = new ArrayList<Permission>();
+			if (getEntity().getPermissions() != null) {
+				perksTarget.addAll(getEntity().getPermissions());
+			}
+			perksSource.removeAll(perksTarget);
+			perks = new DualListModel<Permission>(perksSource, perksTarget);
+		}
+		return perks;
+	}
 
-    /**
-     * Override default list view name. (By default view name is class name
-     * starting lower case + ending 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "userRoles";
-    }
+	public void setDualListModel(DualListModel<Permission> perks) {
+		getEntity().setPermissions(perks.getTarget());
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<Role> getPersistenceService() {
-        return userRoleService;
-    }
+	@Override
+	public String getNewViewName() {
+		return "userRoleDetail";
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-     */
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("users");
-    }
+	@Override
+	protected String getListViewName() {
+		return "userRoles";
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-     */
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("users");
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<Role> getPersistenceService() {
+		return userRoleService;
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+	 */
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("users");
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+	 */
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("users");
+	}
 }

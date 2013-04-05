@@ -19,11 +19,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Index;
 import org.meveo.model.AuditableEntity;
 
 /**
@@ -33,7 +31,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "RM_LINE", uniqueConstraints = @UniqueConstraint(columnNames = { "IMSI" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RM_LINE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RM_LINE_SEQ")
 public class Line extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
@@ -41,7 +39,7 @@ public class Line extends AuditableEntity {
     // International format, without prefixes (+ or 00) nor spaces. Max lenght =
     // 17
     @Column(name = "MSISDN", length = 17)
-    @Index(name = "RM_LINE_IDX1")
+    //TODO : Create sql to create index in db. @Index(name = "RM_LINE_IDX1")
     private String msisdn;
 
     @Column(name = "IMSI", length = 15)

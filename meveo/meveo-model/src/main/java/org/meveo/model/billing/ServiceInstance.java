@@ -30,12 +30,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ServiceTemplate;
 
@@ -46,7 +44,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 @Entity
 @Table(name = "BILLING_SERVICE_INSTANCE")
 @AttributeOverrides( { @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SERVICE_INSTANCE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SERVICE_INSTANCE_SEQ")
 public class ServiceInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -80,15 +78,15 @@ public class ServiceInstance extends BusinessEntity {
     private Date endAgrementDate;
 
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
 
     @OneToMany(mappedBy = "subscriptionServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OneShotChargeInstance> subscriptionChargeInstances = new ArrayList<OneShotChargeInstance>();
 
     @OneToMany(mappedBy = "terminationServiceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<OneShotChargeInstance>();
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -23,7 +23,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,7 +31,7 @@ import org.meveo.model.BusinessEntity;
 
 @Entity
 @Table(name="COM_CAMPAIGN")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CAMPAIGN_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CAMPAIGN_SEQ")
 public class Campaign extends BusinessEntity {
 
 	private static final long serialVersionUID = -5865150907978275819L;

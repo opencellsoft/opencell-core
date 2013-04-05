@@ -23,7 +23,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
@@ -37,7 +36,7 @@ import org.meveo.model.bi.Report;
  */
 @Entity
 @Table(name = "CRM_EMAIL")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_EMAIL_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_EMAIL_SEQ")
 public class Email extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

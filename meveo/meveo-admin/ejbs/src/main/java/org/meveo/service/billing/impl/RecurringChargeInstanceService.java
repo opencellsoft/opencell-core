@@ -19,11 +19,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -31,23 +30,18 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.service.billing.local.ChargeApplicationServiceLocal;
-import org.meveo.service.billing.local.RecurringChargeInstanceServiceLocal;
 
 /**
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
-@Name("recurringChargeInstanceService")
-@AutoCreate
-public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> implements
-        RecurringChargeInstanceServiceLocal {
+@Stateless @LocalBean
+public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> {
 
-    @In
-    private ChargeApplicationServiceLocal chargeApplicationService;
+    @EJB
+    private ChargeApplicationService chargeApplicationService;
 
-    // @In
+	// @EJB
     // private RecurringChargeTemplateServiceLocal
     // recurringChargeTemplateService;
 

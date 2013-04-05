@@ -15,19 +15,18 @@
 */
 package org.meveo.service.admin.impl;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Named;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.Name;
 import org.meveo.model.billing.Language;
-import org.meveo.service.admin.local.LanguageServiceLocal;
 import org.meveo.service.base.PersistenceService;
 
 /** 
  * @author MBAREK 
  */
 @Stateless
-@Name("languageService")
-@AutoCreate
-public class LanguageService extends PersistenceService<Language> implements LanguageServiceLocal {
+@LocalBean
+@Named
+public class LanguageService extends PersistenceService<Language> {
 }

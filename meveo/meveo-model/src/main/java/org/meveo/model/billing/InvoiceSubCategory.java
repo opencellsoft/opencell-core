@@ -25,10 +25,9 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.ProviderBusinessEntity;
+import org.meveo.model.BusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -36,8 +35,8 @@ import org.meveo.model.ProviderBusinessEntity;
  */
 @Entity
 @Table(name = "BILLING_INVOICE_SUB_CAT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
-public class InvoiceSubCategory extends ProviderBusinessEntity {
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
+public class InvoiceSubCategory extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 

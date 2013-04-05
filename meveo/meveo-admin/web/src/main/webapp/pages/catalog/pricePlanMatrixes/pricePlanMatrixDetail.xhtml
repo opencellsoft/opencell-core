@@ -1,14 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
-	template="/layout/template.xhtml">
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -16,81 +15,87 @@
 
 	<ui:define name="body">
 
-		<custom:entityPopup id="searchChargePopup"
-				header="#{messages['charge.popup.header']}"
-				backingBean="#{chargeTemplateBean}" dataModel="#{chargeTemplates}"
-				searchField1Label="#{messages['charge.code']}" searchField1="code"
-				searchField2Label="#{messages['charge.description']}"
-				searchField2="description"
-				column1Label="#{messages['charge.code']}" column1="code"
-				column2Label="#{messages['charge.description']}"
-				column2="description" filtersMap="#{chargeTemplateBean.filters}">
-				<!-- select link -->
-				<a:commandLink value="#{messages['commons.select']}"
-					reRender="formPricePlan" action="#{pricePlanMatrix.setEventCode(entity.code)}"
-					oncomplete="Richfaces.hideModalPanel('searchChargePopup')">
-				</a:commandLink>
-			</custom:entityPopup>
-			<custom:entityPopup id="pricPlanMatCurrencyPopup"
-            header="#{messages['pricePlanMatrixCurrencyPopup.header']}"
-            backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
-           searchField1Label="#{messages['businessEntity.code']}"
-		   searchField1="currencyCode"
-			column1Label="#{messages['businessEntity.code']}" column1="currencyCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription"  filtersMap="#{tradingCurrencyBean.filters}" >
-            <a:commandLink value="#{messages['commons.select']}" 
-			reRender="formPricePlan"
-					action="#{pricePlanMatrix.setTradingCurrency(entity)}"
-					oncomplete="Richfaces.hideModalPanel('pricPlanMatCurrencyPopup')">
+		<hftl:entityPopup id="searchChargePopup"
+			header="#{messages['charge.popup.header']}"
+			backingBean="#{chargeTemplateBean}" dataModel="#{chargeTemplates}"
+			searchField1Label="#{messages['charge.code']}" searchField1="code"
+			searchField2Label="#{messages['charge.description']}"
+			searchField2="description" column1Label="#{messages['charge.code']}"
+			column1="code" column2Label="#{messages['charge.description']}"
+			column2="description" filtersMap="#{chargeTemplateBean.filters}">
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="formPricePlan"
+				action="#{pricePlanMatrix.setEventCode(entity.code)}"
+				oncomplete="Richfaces.hideModalPanel('searchChargePopup')">
 			</a:commandLink>
-        </custom:entityPopup> 
-        
-		 <custom:entityPopup id="pricPlanMatTaxPopup"
-            header="#{messages['tax.panel']}" backingBean="#{taxBean}"
-            dataModel="#{taxes}" searchField1Label="#{messages['tax.code']}"
-            searchField1="code"
-            searchField2Label="#{messages['tax.description']}"
-            searchField2="description" column1Label="#{messages['tax.code']}"
-            column1="code" column2Label="#{messages['tax.description']}"
-            column2="description" filtersMap="#{taxBean.filters}">
-            <!-- select link -->
-            <a:commandLink value="#{messages['commons.select']}"
-                reRender="formPricePlan"
-                action="#{pricePlanMatrix.setTax(entity)}"
-                oncomplete="Richfaces.hideModalPanel('searchTaxPopup')">
-            </a:commandLink>
-        </custom:entityPopup>
-			
-		<custom:formPanel edit="#{edit}" label="#{messages['pricePlanMatrix.panel']}" backingBean="#{pricePlanMatrixBean}" entity="#{pricePlanMatrix}" formId="formPricePlan" >
-    			<custom:panelGroup columns="2">	
-	    			<custom:formField label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode" required="true" popup="true"
-										popupId="searchChargePopup"/>
-	    			<custom:formField label="#{messages['pricePlanMatrix.criteria1Value']}" field="criteria1Value" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.criteria2Value']}" field="criteria2Value" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.criteria3Value']}" field="criteria3Value" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.startRatingDate']}" field="startRatingDate" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converterParam="10digits" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.endRatingDate']}" field="endRatingDate" />
-	    			<custom:formField label="#{messages['pricePlanMatrix.amountWithoutTax2']}" field="amountWithoutTax2" converterParam="10digits"/>
-					<custom:panelGroup columns="1">	
-									<custom:formEntityField id="pricPlanMatCurrencySelectId"
-										label="#{messages['tradingCountry.currencyCode']}"  field="tradingCurrency" childField="currencyCode" 
-										 popup="true"  
-										popupId="pricPlanMatCurrencyPopup" required="true"/>
-							    </custom:panelGroup>
-								<custom:formEntityField id="ISCTSelectId"
-                                            label="#{messages['invoiceSubCategoryCountry.taxe']}"
-                                            field="tax" childField="code" popup="true"
-                                            popupId="pricPlanMatTaxPopup" required="true"/>
-											 
-    			</custom:panelGroup>
-    			<custom:formField label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}" field="minSubscriptionAgeInMonth" />
-    			<custom:formField label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}" field="maxSubscriptionAgeInMonth" />
-     	
-		</custom:formPanel>
+		</hftl:entityPopup>
+		<hftl:entityPopup id="pricPlanMatCurrencyPopup"
+			header="#{messages['pricePlanMatrixCurrencyPopup.header']}"
+			backingBean="#{tradingCurrencyBean}" dataModel="#{tradingCurrencies}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="currencyCode"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="currencyCode"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="prDescription" filtersMap="#{tradingCurrencyBean.filters}">
+			<a:commandLink value="#{messages['commons.select']}"
+				reRender="formPricePlan"
+				action="#{pricePlanMatrix.setTradingCurrency(entity)}"
+				oncomplete="Richfaces.hideModalPanel('pricPlanMatCurrencyPopup')">
+			</a:commandLink>
+		</hftl:entityPopup>
+
+		<hf:formPanel edit="#{edit}"
+			label="#{messages['pricePlanMatrix.panel']}"
+			backingBean="#{pricePlanMatrixBean}" entity="#{pricePlanMatrix}"
+			formId="formPricePlan">
+			<p:panelGrid columns="2">
+				<hf:formField label="#{messages['pricePlanMatrix.eventCode']}"
+					field="eventCode" required="true" popup="true"
+					popupId="searchChargePopup" />
+				<hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
+					field="criteria1Value" />
+				<hf:formField
+					label="#{messages['pricePlanMatrix.startSubscriptionDate']}"
+					field="startSubscriptionDate" />
+				<hf:formField label="#{messages['pricePlanMatrix.criteria2Value']}"
+					field="criteria2Value" />
+				<hf:formField
+					label="#{messages['pricePlanMatrix.endSubscriptionDate']}"
+					field="endSubscriptionDate" />
+				<hf:formField label="#{messages['pricePlanMatrix.criteria3Value']}"
+					field="criteria3Value" />
+				<hf:formField label="#{messages['pricePlanMatrix.startRatingDate']}"
+					field="startRatingDate" />
+				<hf:formField
+					label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+					field="amountWithoutTax" converterParam="10digits" />
+				<hf:formField label="#{messages['pricePlanMatrix.endRatingDate']}"
+					field="endRatingDate" />
+				<hf:formField
+					label="#{messages['pricePlanMatrix.amountWithoutTax2']}"
+					field="amountWithoutTax2" converterParam="10digits" />
+				<p:panelGrid columns="1">
+					<hf:formField id="pricPlanMatCurrencySelectId"
+						label="#{messages['tradingCountry.currencyCode']}"
+						field="tradingCurrency" childField="currencyCode" popup="true"
+						popupId="pricPlanMatCurrencyPopup" required="true" />
+				</p:panelGrid>
+				<hf:formField id="ISCTSelectId"
+					label="#{messages['invoiceSubCategoryCountry.taxe']}" field="tax"
+					childField="code" popup="true" popupId="pricPlanMatTaxPopup"
+					required="true" />
+
+			</p:panelGrid>
+			<hf:formField
+				label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
+				field="minSubscriptionAgeInMonth" />
+			<hf:formField
+				label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
+				field="maxSubscriptionAgeInMonth" />
+
+		</hf:formPanel>
 
 	</ui:define>
 

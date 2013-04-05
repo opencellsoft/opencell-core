@@ -18,14 +18,11 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Transactional;
-import org.jboss.seam.log.Log;
+import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.payments.CustomerAccount;
@@ -34,9 +31,6 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
-import org.meveo.service.payments.local.OCCTemplateServiceLocal;
-import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
 
 /**
  * OtherCreditAndCharge service implementation.
@@ -44,19 +38,14 @@ import org.meveo.service.payments.local.OtherCreditAndChargeServiceLocal;
  * @author Ignas
  * @created 2009.09.04
  */
-@Stateless
-@Name("otherCreditAndChargeService")
-@AutoCreate
-public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> implements OtherCreditAndChargeServiceLocal {
+@Stateless @LocalBean
+public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> {
 
-	@In(create = true)
-	private CustomerAccountServiceLocal customerAccountService;
+//	@EJB
+//	private CustomerAccountService customerAccountService;
 
-	@In
-	private OCCTemplateServiceLocal occTemplateService;
-
-	@Logger
-	protected Log log;
+	@EJB
+	private OCCTemplateService occTemplateService;
 
 	@Transactional
 	public void addOCC(String codeOCCTemplate, String descToAppend, CustomerAccount customerAccount, BigDecimal amount, Date dueDate, User user)
@@ -116,16 +105,16 @@ public class OtherCreditAndChargeService extends PersistenceService<OtherCreditA
 				dueDate);
 	}
 
-	public void addOCC(String codeOCCTemplate, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate, User user)
-			throws BusinessException, Exception {
-		addOCC(codeOCCTemplate, null, customerAccountId, customerAccountCode, amount, dueDate, user);
-	}
-
-	public void addOCC(String codeOCCTemplate, String descToAppend, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate,
-			User user) throws BusinessException, Exception {
-		log.info("addOCC  codeOCCTemplate:{0}  customerAccountId:{1} customerAccountCode:{2} amount:{3} dueDate:{4}", codeOCCTemplate, customerAccountId,
-				customerAccountCode, amount, dueDate);
-		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
-		addOCC(codeOCCTemplate, descToAppend, customerAccount, amount, dueDate, user);
-	}
+//	public void addOCCk(String codeOCCTemplate, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate, User user)
+//			throws BusinessException, Exception {
+//		addOCC(codeOCCTemplate, null, customerAccountId, customerAccountCode, amount, dueDate, user);
+//	}
+//
+//	public void addOCC(String codeOCCTemplate, String descToAppend, Long customerAccountId, String customerAccountCode, BigDecimal amount, Date dueDate,
+//			User user) throws BusinessException, Exception {
+//		log.info("addOCC  codeOCCTemplate:{0}  customerAccountId:{1} customerAccountCode:{2} amount:{3} dueDate:{4}", codeOCCTemplate, customerAccountId,
+//				customerAccountCode, amount, dueDate);
+//		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
+//		addOCC(codeOCCTemplate, descToAppend, customerAccount, amount, dueDate, user);
+//	}
 }

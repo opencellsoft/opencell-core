@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.admin;
 
 import java.io.BufferedOutputStream;
@@ -33,36 +33,33 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.datamodel.DataModel;
-import org.jboss.seam.log.Log;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Document;
 import org.meveo.model.crm.Provider;
+import org.slf4j.Logger;
 
-@Name("crmConnectorRejectedFileBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class CRMConnectorRejectedFileBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Logger
-    private Log log;
+    @Inject
+    private Logger log;
 
-    @DataModel
+    /* TODO @DataModel */
     private List<Document> crmConnectorRejectedFiles;
 
-    @In
-    private Provider currentProvider;
+    @Inject
+    @CurrentProvider
+    protected Provider currentProvider;
 
     private String filename;
     private Date fromDate;
@@ -79,23 +76,22 @@ public class CRMConnectorRejectedFileBean implements Serializable {
     }
 
     /**
-     * Constructor. Invokes super constructor and provides class type of this
-     * bean for {@link BaseBean}.
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public CRMConnectorRejectedFileBean() {
     }
 
     /**
-     * Factory method, that is invoked if data model is empty. Invokes
-     * BaseBean.list() method that handles all data model loading. Overriding is
-     * needed only to put factory name on it.
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
      * 
      * @see org.meveo.admin.action.BaseBean#list()
      */
-    @SuppressWarnings("unchecked")
-    @Begin(join = true)
-    @Factory("crmConnectorRejectedFiles")
-    public void list() {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    // TODO @Begin(join = true)
+    @Produces
+    @Named("crmConnectorRejectedFiles")
+    public List<Document>  list() {
         crmConnectorRejectedFiles = new ArrayList<Document>();
         loadFiles(errorPath);
         loadFiles(allertPath);
@@ -108,7 +104,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
             }
 
         });
-
+        return crmConnectorRejectedFiles;
     }
 
     public void loadFiles(String documentsPath) {
@@ -260,6 +256,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
             if (name == null) {
                 result = false;
             }
+
             if (currentProvider != null && !name.contains("_" + currentProvider.getCode() + "_")) {
                 result = false;
             }
@@ -278,7 +275,5 @@ public class CRMConnectorRejectedFileBean implements Serializable {
             }
             return result;
         }
-
     }
-
 }

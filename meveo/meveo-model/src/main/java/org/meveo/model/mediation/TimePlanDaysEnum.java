@@ -18,8 +18,6 @@ package org.meveo.model.mediation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meveo.model.catalog.CalendarTypeEnum;
-
 /*
  * @author seb
  */

@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.service.base;
 
 import java.lang.reflect.ParameterizedType;
@@ -23,16 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.hibernate.Session;
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.log.Log;
+import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.ProviderNotAllowedException;
-import org.meveo.commons.utils.PaginationConfiguration;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
@@ -43,28 +40,31 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.util.MeveoDWHJpa;
+import org.meveo.util.MeveoJpa;
 
 /**
- * Generic implementation that provides the default implementation for
- * persistence methods declared in the {@link IPersistenceService} interface.
+ * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
  * 
  * 
  * @author Ignas
  * @created 2009.09.04
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
-
     protected final Class<E> entityClass;
 
-    @In("entityManager")
+    @Inject
+    @MeveoJpa
     protected EntityManager em;
 
     // TODO move to places where it is needed
-    @In("meveoDWHentityManager")
+    @Inject
+    @MeveoDWHJpa
     protected EntityManager dwhEntityManager;
 
-    @Logger
-    protected Log log;
+    @Inject
+    @CurrentProvider
+    private Provider currentProvider;
 
     /**
      * Constructor.
@@ -93,6 +93,30 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
+     */
+    public void create(E e) {
+        create(e, getCurrentUser());
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
+     */
+    public void update(E e) {
+        update(e, getCurrentUser());
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
+     */
+    public void remove(Long id) {
+        E e = findById(id);
+        if (e != null) {
+            remove(e);
+        }
+    }
+
+    /**
      * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long)
      */
     public E findById(Long id) {
@@ -100,16 +124,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
-     *      java.util.List)
+     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long, java.util.List)
      */
     public E findById(Long id, List<String> fetchFields) {
         return findById(id, fetchFields, false);
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
-     *      boolean)
+     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long, boolean)
      */
     public E findById(Long id, boolean refresh) {
         log.debug("start of find {0} by id (id={1}) ..", getEntityClass().getSimpleName(), id);
@@ -124,8 +146,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
-     *      java.util.List, boolean)
+     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long, java.util.List, boolean)
      */
     @SuppressWarnings("unchecked")
     public E findById(Long id, List<String> fetchFields, boolean refresh) {
@@ -152,36 +173,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
-     */
-    
-    public void create(E e) {
-        create(e, getCurrentUser());
-    }
-
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
-     */
-    
-    public void update(E e) {
-        update(e, getCurrentUser());
-    }
-
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
-     */
-    
-    public void remove(Long id) {
-        E e = findById(id);
-        if (e != null) {
-            remove(e);
-        }
-    }
-
-    /**
      * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
      */
-    
     public void disable(Long id) {
         E e = findById(id);
         if (e instanceof EnableEntity) {
@@ -193,7 +186,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#remove(org.manaty.model.BaseEntity)
      */
-    
     public void remove(E e) {
         checkProvider(e);
         log.debug("start of remove {0} entity (id={1}) ..", getEntityClass().getSimpleName(), e.getId());
@@ -205,22 +197,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
      */
-    
     public void remove(Set<Long> ids) {
-        Provider currentProvider = (Provider) Component.getInstance("currentProvider");
-        Query query = em.createQuery("delete from " + getEntityClass().getName()
-                + " where id in (:ids) and provider.id = :providerId");
+        Query query = em.createQuery("delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
         query.setParameter("ids", ids);
-        query.setParameter("providerId", currentProvider != null ? currentProvider.getId() : null);
+        query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
         query.executeUpdate();
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity,
-     *      org.manaty.model.user.User)
+     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity, org.manaty.model.user.User)
      */
-    
     public void update(E e, User updater) {
+
         log.debug("start of update {0} entity (id={1}) ..", e.getClass().getSimpleName(), e.getId());
         if (e instanceof AuditableEntity) {
             if (updater != null) {
@@ -229,22 +217,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 ((AuditableEntity) e).updateAudit(getCurrentUser());
             }
         }
-        checkProvider(e);
         em.merge(e);
+        checkProvider(e);
         log.debug("end of update {0} entity (id={1}).", e.getClass().getSimpleName(), e.getId());
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity,
-     *      org.manaty.model.user.User)
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity, org.manaty.model.user.User)
      */
-    
     public void create(E e, User creator) {
-        Provider currentProvider = (Provider) Component.getInstance("currentProvider");
-        create(e, creator, currentProvider);
+        create(e, creator, getCurrentProvider());
     }
 
-    
     public void create(E e, User creator, Provider provider) {
         log.debug("start of create {0} entity ..", e.getClass().getSimpleName());
         if (e instanceof AuditableEntity) {
@@ -265,17 +249,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#list()
      */
     @SuppressWarnings("unchecked")
-    
-    public List<? extends E> list() {
+    public List<E> list() {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (BaseEntity.class.isAssignableFrom(entityClass)) {
-            Provider currentProvider = (Provider) Component.getInstance("currentProvider");
-            queryBuilder.startOrClause();
-            queryBuilder.addCriterionEntity("a.provider", currentProvider);
-            // queryBuilder.addSql("a.provider is null");
-            queryBuilder.endOrClause();
-        }
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, getCurrentProvider());
         Query query = queryBuilder.getQuery(em);
         return query.getResultList();
     }
@@ -283,82 +259,70 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
      */
-    
-    @SuppressWarnings( { "unchecked" })
-    public List<? extends E> list(PaginationConfiguration config) {
+
+    @SuppressWarnings({ "unchecked" })
+    public List<E> list(PaginationConfiguration config) {
         QueryBuilder queryBuilder = getQuery(config);
         Query query = queryBuilder.getQuery(em);
         return query.getResultList();
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#count(PaginationConfiguration
-     *      config)
+     * @see org.meveo.service.base.local.IPersistenceService#count(PaginationConfiguration config)
      */
-    
-    public long count(PaginationConfiguration config) {
 
+    public long count(PaginationConfiguration config) {
+        List<String> fetchFields = config.getFetchFields();
+        config.setFetchFields(null);
         QueryBuilder queryBuilder = getQuery(config);
+        config.setFetchFields(fetchFields);
         return queryBuilder.count(em);
     }
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#count()
      */
-    
+
     public long count() {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-        if (BaseEntity.class.isAssignableFrom(entityClass)) {
-            Provider currentProvider = (Provider) Component.getInstance("currentProvider");
-            queryBuilder.startOrClause();
-            queryBuilder.addCriterionEntity("a.provider", currentProvider);
-            // queryBuilder.addSql("a.provider is null");
-            queryBuilder.endOrClause();
-        }
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
         return queryBuilder.count(em);
     }
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#detach
      */
-    
+
     public void detach(Object entity) {
-        org.hibernate.Session session = (Session) em.getDelegate();
-        session.evict(entity);
+        // TODO: Hibernate. org.hibernate.Session session = (Session)
+        // em.getDelegate();
+        // session.evict(entity);
     }
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.BaseEntity)
      */
-    
+
     public void refresh(BaseEntity entity) {
         // entity manager throws exception if trying to refresh not managed
         // entity (ejb spec requires this).
-        org.hibernate.Session session = (Session) em.getDelegate();
-        session.refresh(entity);
+        /*
+         * TODO: Hibernate. org.hibernate.Session session = (Session) em.getDelegate(); session.refresh(entity);
+         */
     }
 
     /**
-     * Creates query to filter entities according data provided in pagination
-     * configuration.
+     * Creates query to filter entities according data provided in pagination configuration.
      * 
-     * @param config
-     *            PaginationConfiguration data holding object
+     * @param config PaginationConfiguration data holding object
      * @return query to filter entities according pagination configuration data.
      */
-    @SuppressWarnings("unchecked")
     private QueryBuilder getQuery(PaginationConfiguration config) {
 
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
-        if (BaseEntity.class.isAssignableFrom(entityClass)) {
-            Provider currentProvider = (Provider) Component.getInstance("currentProvider");
-            queryBuilder.startOrClause();
-            queryBuilder.addCriterionEntity("a.provider", currentProvider);
-            // queryBuilder.addSql("a.provider is null");
-            queryBuilder.endOrClause();
-        }
+
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), getCurrentProvider());
+
         Map<String, Object> filters = config.getFilters();
         if (filters != null) {
             if (!filters.isEmpty()) {
@@ -389,8 +353,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         } else if (key.contains("list-")) {
                             // if searching elements from list
                             String parsedKey = key.substring(5);
-                            queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")",
-                                    parsedKey, filter);
+                            queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")", parsedKey, filter);
                         }
                         // if not ranged search
                         else {
@@ -407,8 +370,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             } else if (filter instanceof Enum) {
                                 if (filter instanceof IdentifiableEnum) {
                                     String enumIdKey = new StringBuilder(key).append("Id").toString();
-                                    queryBuilder.addCriterion("a." + enumIdKey, " = ", ((IdentifiableEnum) filter)
-                                            .getId(), true);
+                                    queryBuilder.addCriterion("a." + enumIdKey, " = ", ((IdentifiableEnum) filter).getId(), true);
                                 } else {
                                     queryBuilder.addCriterionEnum("a." + key, (Enum) filter);
                                 }
@@ -423,27 +385,31 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         queryBuilder.addPaginationConfiguration(config, "a");
+
         return queryBuilder;
     }
 
     /**
-     * Check entity provider. If current provider is not same as entity provider
-     * exception is thrown since different provider should not be allowed to
-     * modify (update or delete) entity.
+     * Check entity provider. If current provider is not same as entity provider exception is thrown since different provider should not be allowed to modify (update or delete)
+     * entity.
      */
     private void checkProvider(E e) {
-        Provider currentProvider = (Provider) Component.getInstance("currentProvider");
-        if (currentProvider != null) {
+
+        if (getCurrentProvider() != null) {
             if (e instanceof BaseEntity) {
                 Provider provider = ((BaseEntity) e).getProvider();
-                boolean notSameProvider = !(provider != null && provider.getId().equals(currentProvider.getId()));
-                log.debug("checkProvider  currentProvider id={0} code={1}, entityprovider id={2} code={3}", currentProvider.getId(),currentProvider.getCode(),
-                        provider != null ? provider.getId() : null, provider != null ? provider.getCode() : null);
+                boolean notSameProvider = !(provider != null && provider.getId().equals(getCurrentProvider().getId()));
+                log.debug("checkProvider  getCurrentProvider() id={0} code={1}, entityprovider id={2} code={3}", getCurrentProvider().getId(), getCurrentProvider().getCode(),
+                    provider != null ? provider.getId() : null, provider != null ? provider.getCode() : null);
                 if (notSameProvider) {
                     throw new ProviderNotAllowedException();
                 }
             }
         }
 
+    }
+
+    protected Provider getCurrentProvider() {
+        return currentProvider;
     }
 }

@@ -29,7 +29,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -41,14 +40,15 @@ import org.meveo.model.IEntity;
  */
 @Entity
 @Table(name = "BILLING_OPERATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Operation implements IEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.TABLE)
+//    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "ID")
     private Long id;
 

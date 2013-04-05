@@ -29,12 +29,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
@@ -50,7 +48,7 @@ import org.meveo.model.shared.ContactInformation;
  */
 @Entity
 @Table(name = "AR_CUSTOMER_ACCOUNT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_CUSTOMER_ACCOUNT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_CUSTOMER_ACCOUNT_SEQ")
 public class CustomerAccount extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = "customerAccount.type";
@@ -75,19 +73,19 @@ public class CustomerAccount extends AccountEntity {
     private CreditCategoryEnum creditCategory;
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<AccountOperation> accountOperations = new ArrayList<AccountOperation>();
     
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ActionDunning> actionDunnings = new ArrayList<ActionDunning>();
     
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<DDRequestItem> dDRequestItems = new ArrayList<DDRequestItem>();
 
     @Column(name = "DATE_STATUS")

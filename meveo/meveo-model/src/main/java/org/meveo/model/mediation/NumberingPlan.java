@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +33,7 @@ import org.meveo.model.EnableEntity;
  */
 @Entity
 @Table(name = "MEDINA_NUMBER_PLAN")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_NUMBER_PLAN_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_NUMBER_PLAN_SEQ")
 public class NumberingPlan extends EnableEntity {
     
     private static final long serialVersionUID = 1L;

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>meveo-admin</artifactId>
@@ -7,79 +8,60 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin-web</artifactId>
-	<name>Meveo admin web application - web module</name>
+	<name>MEVEO Admin Web Application - Web Module</name>
 	<packaging>war</packaging>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<build>
 		<resources>
 			<resource>
-				<directory>src/main/resources/classes</directory>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources/WEB-INF</directory>
-				<targetPath>${project.build.directory}/${project.build.finalName}/WEB-INF</targetPath>
+				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
 
-
 		<!-- <plugins> -->
 		<!-- <plugin> -->
-		<!-- <groupId>org.codehaus.cargo</groupId> -->
-		<!-- <artifactId>cargo-maven2-plugin</artifactId> -->
-		<!-- <version>1.1.2</version> -->
+		<!-- <artifactId>maven-war-plugin</artifactId> -->
+		<!-- <version>2.3</version> -->
 		<!-- <configuration> -->
-		<!-- <skip>true</skip> -->
+		<!-- <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes> -->
+		<!-- <archive> -->
+		<!-- <manifest> -->
+		<!-- <addClasspath>true</addClasspath> -->
+		<!-- <classpathPrefix>lib/</classpathPrefix> -->
+		<!-- </manifest> -->
+		<!-- </archive> -->
 		<!-- </configuration> -->
 		<!-- </plugin> -->
 		<!-- </plugins> -->
 	</build>
 
-
 	<dependencies>
-		<dependency>
-			<groupId>com.sun.facelets</groupId>
-			<artifactId>jsf-facelets</artifactId>
-			<version>1.1.11</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam-ui</artifactId>
-			<version>${manaty.seam.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.seam</groupId>
-					<artifactId>jboss-seam</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam</artifactId>
-			<version>${manaty.seam.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>${manaty.hibernateValidator.version}</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.6.0</version>
+			<version>1.7.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.primefaces</groupId>
-			<artifactId>primefaces</artifactId>
-			<version>1.1</version>
+			<groupId>com.ocpsoft</groupId>
+			<artifactId>prettyfaces-jsf2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.manaty</groupId>
+			<artifactId>meveo-admin-ejbs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.manaty</groupId>
+			<artifactId>meveo-admin-config</artifactId>
+			<classifier>${env}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.omnifaces</groupId>
+			<artifactId>omnifaces</artifactId>
+			<version>1.3</version>
+		</dependency>	
 	</dependencies>
 
 	<profiles>
@@ -92,38 +74,6 @@
 					<value>dev</value>
 				</property>
 			</activation>
-			<build>
-				<plugins>
-					<!-- Copies WAR files to Jboss server after the build (tied to install 
-						phase) -->
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<!-- Copy WAR files to Jboss server -->
-							<execution>
-								<id>deploy_to_Jboss_war</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${jboss.home}/server/default/deploy/${manaty.serverArchiveName}.ear/meveo-admin.war</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.directory}/${project.build.finalName}</directory>
-											<filtering>false</filtering>
-											<includes>
-												<include>**/*.*</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 
 		<profile>

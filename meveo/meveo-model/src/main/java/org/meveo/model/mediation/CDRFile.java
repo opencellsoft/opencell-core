@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +27,7 @@ import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "MEDINA_CDR_FILE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_CDR_FILE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_CDR_FILE_SEQ")
 public class CDRFile extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

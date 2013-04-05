@@ -19,14 +19,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 
 @Entity
 @Table(name="COM_MSG_VAR_VALUE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MSG_VAR_VAL_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MSG_VAR_VAL_SEQ")
 public class MessageVariableValue extends BusinessEntity{
 
 	private static final long serialVersionUID = 3887656885680541231L;

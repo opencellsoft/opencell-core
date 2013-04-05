@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +33,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "BILLING_ACCESS_POINT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCESS_POINT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCESS_POINT_SEQ")
 public class AccessPoint extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

@@ -27,13 +27,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cascade;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -45,7 +43,7 @@ import org.meveo.model.catalog.OfferTemplate;
  */
 @Entity
 @Table(name = "BILLING_SUBSCRIPTION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIPTION_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIPTION_SEQ")
 public class Subscription extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -71,7 +69,7 @@ public class Subscription extends BusinessEntity {
     private Date terminationDate;
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
-     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)

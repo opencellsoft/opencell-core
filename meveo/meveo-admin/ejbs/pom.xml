@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>meveo-admin</artifactId>
@@ -7,7 +8,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin-ejbs</artifactId>
-	<name>Meveo admin web application - ejbs module</name>
+	<name>Meveo Admin Web Application - EJBs Module</name>
 	<packaging>jar</packaging>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
@@ -18,24 +19,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.9</version>
 				<configuration>
-					<additionalClasspathElements>
-						<additionalClasspathElement>${project.build.directory}/test-classes/bootstrap</additionalClasspathElement>
-					</additionalClasspathElements>
-					<classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.jboss.seam:jboss-seam-ui</classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.hibernate:hibernate-annotations</classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.hibernate:hibernate-commons-annotations</classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.hibernate:hibernate-core</classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.hibernate:hibernate-entitymanager</classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.hibernate:hibernate-validator</classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.jboss.microcontainer:jboss-deployers-core-spi</classpathDependencyExcludes>
-						<classpathDependencyExcludes>org.jboss.microcontainer:jboss-deployers-client-spi</classpathDependencyExcludes>
-					</classpathDependencyExcludes>
-
-					<argLine>-Dsun.lang.ClassLoader.allowArraySyntax=true</argLine>
-					<suiteXmlFiles>
-						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
-					</suiteXmlFiles>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 
@@ -44,28 +28,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
 				<executions>
-					<!-- Copy properties file from EAR module for testing -->
-					<execution>
-						<id>copy-ear-properties-file</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.basedir}/../ear/src/main/resources</directory>
-									<filtering>true</filtering>
-									<includes>
-										<include>meveo-admin.properties</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<!-- Copy message, authentication and other configuration files from 
-						configuration module for testing -->
+					<!-- Copy message, authentication and other configuration files from configuration module for testing -->
 					<execution>
 						<id>copy-config-properties-file</id>
 						<phase>process-test-resources</phase>
@@ -83,6 +46,7 @@
 										<include>messages*.properties</include>
 										<include>external-authentication-config.xml</include>
 										<include>saml-entities.xml</include>
+										<include>meveo-admin.properties</include>
 									</includes>
 								</resource>
 								<resource>
@@ -97,134 +61,67 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
-			<!-- Need for testing to overwrite persistence.xml file for testing and 
-				then restore it back for packaging -->
-			<!-- <plugin> -->
-			<!-- <artifactId>maven-antrun-plugin</artifactId> -->
-			<!-- <version>1.3</version> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <id>copy-test-persistence</id> -->
-			<!-- <phase>process-test-resources</phase> -->
-			<!-- <configuration> -->
-			<!-- <tasks> -->
-			<!-- backup the "proper" persistence.xml -->
-			<!-- <copy -->
-			<!-- file="${project.build.outputDirectory}/META-INF/persistence.xml" -->
-			<!-- tofile="${project.build.outputDirectory}/META-INF/persistence.xml.proper" -->
-			<!-- overwrite="true" /> -->
-			<!-- replace the "proper" persistence.xml with the "test" version -->
-			<!-- <copy -->
-			<!-- file="${project.build.testOutputDirectory}/META-INF/persistence.xml" -->
-			<!-- tofile="${project.build.outputDirectory}/META-INF/persistence.xml" -->
-			<!-- overwrite="true" /> -->
-			<!-- </tasks> -->
-			<!-- </configuration> -->
-			<!-- <goals> -->
-			<!-- <goal>run</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- <execution> -->
-			<!-- <id>restore-persistence</id> -->
-			<!-- <phase>prepare-package</phase> -->
-			<!-- <configuration> -->
-			<!-- <tasks> -->
-			<!-- restore the "proper" persistence.xml -->
-			<!-- <move -->
-			<!-- file="${project.build.outputDirectory}/META-INF/persistence.xml.proper" -->
-			<!-- tofile="${project.build.outputDirectory}/META-INF/persistence.xml" 
-				  /> -->
-			<!-- </tasks> -->
-			<!-- </configuration> -->
-			<!-- <goals> -->
-			<!-- <goal>run</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
 		</plugins>
-
 	</build>
 
 	<dependencies>
-
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>manaty-commons</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.manaty</groupId>
 			<artifactId>meveo-model</artifactId>
-			<version>${project.parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>ejb3-persistence</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>
-			<groupId>org.richfaces.framework</groupId>
-			<artifactId>richfaces-api</artifactId>
-			<version>${manaty.richfaces.version}</version>
-			<scope>compile</scope>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>org.richfaces.framework</groupId>
-			<artifactId>richfaces-impl</artifactId>
+			<groupId>org.richfaces.ui</groupId>
+			<artifactId>richfaces-components-ui</artifactId>
 			<version>${manaty.richfaces.version}</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.richfaces.ui</groupId>
-			<artifactId>richfaces-ui</artifactId>
+			<artifactId>richfaces-components-api</artifactId>
 			<version>${manaty.richfaces.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.richfaces.core</groupId>
+			<artifactId>richfaces-core-impl</artifactId>
+			<version>${manaty.richfaces.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>3.4.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.seam.security</groupId>
+			<artifactId>seam-security</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam-ui</artifactId>
-			<version>${manaty.seam.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.seam</groupId>
-					<artifactId>jboss-seam-jul</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam-mail</artifactId>
-			<version>${manaty.seam.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam-pdf</artifactId>
-			<version>${manaty.seam.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam-remoting</artifactId>
-			<version>${manaty.seam.version}</version>
-			<scope>compile</scope>
+			<groupId>org.jboss.seam.faces</groupId>
+			<artifactId>seam-faces</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
 			<version>2.0.3</version>
 			<scope>compile</scope>
-		</dependency>		
-		<dependency>
-			<groupId>org.jboss.el</groupId>
-			<artifactId>jboss-el</artifactId>
-			<version>1.0_02.CR5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.el</groupId>
+			<artifactId>jboss-el-api_2.2_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
 			<artifactId>jxl</artifactId>
@@ -339,107 +236,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.facelets</groupId>
-			<artifactId>jsf-facelets</artifactId>
-			<version>1.1.15.B1</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.picketlink</groupId>
-			<artifactId>picketlink-seam</artifactId>
-			<version>1.0.4.final</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>apache-log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>apache-logging</groupId>
-					<artifactId>commons-logging-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>sun-jaxws</groupId>
-					<artifactId>jaxws-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>sun-jaxb</groupId>
-					<artifactId>jaxb-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>
-						openid4java-server-JdbcServerAssociationStore
-					</artifactId>
-					<groupId>org.openid4java</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>openid4java-consumer</artifactId>
-					<groupId>org.openid4java</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>icu4j</artifactId>
-					<groupId>com.ibm.icu</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jbosssx</artifactId>
-					<groupId>org.jboss.security</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jbossxacml</artifactId>
-					<groupId>org.jboss.security</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jug</artifactId>
-					<groupId>jug</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>nekohtml</artifactId>
-					<groupId>net.sourceforge.nekohtml</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>openid4java-server</artifactId>
-					<groupId>org.openid4java</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>
-						openid4java-consumer-SampleConsumer
-					</artifactId>
-					<groupId>org.openid4java</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>
-						openid4java-server-SampleServer
-					</artifactId>
-					<groupId>org.openid4java</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xmlsec</artifactId>
-					<groupId>org.apache</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-jcl</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-seam</artifactId>
-			<version>${manaty.seam.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>el-api</artifactId>
-					<groupId>javax.el</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xstream</artifactId>
-					<groupId>xstream</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.3</version>
@@ -452,26 +248,25 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.6.0</version>
+			<version>1.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.0</version>
+			<version>1.7.2</version>
 		</dependency>
-
 
 		<!-- For testing -->
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.7</version>
+			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
-			<version>2.4.7</version>
+			<version>2.4.9</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -484,48 +279,8 @@
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.embedded</groupId>
-			<artifactId>hibernate-all</artifactId>
-			<version>beta3.SP9</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.embedded</groupId>
-			<artifactId>thirdparty-all</artifactId>
-			<version>beta3.SP9</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.embedded</groupId>
-			<artifactId>jboss-embedded-all</artifactId>
-			<version>beta3.SP9</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.seam.embedded</groupId>
-			<artifactId>jboss-embedded-api</artifactId>
-			<version>beta3.SP9</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr-runtime</artifactId>
-			<version>3.1.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
-
 
 	<profiles>
 		<profile>
@@ -537,38 +292,6 @@
 					<value>dev</value>
 				</property>
 			</activation>
-			<build>
-				<plugins>
-					<!-- Copies JAR files to Jboss server after the build (tied to install 
-						phase) -->
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<!-- Copy JAR files to Jboss server -->
-							<execution>
-								<id>deploy_to_Jboss_jar</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${jboss.home}/server/default/deploy/${manaty.serverArchiveName}.ear/meveo-admin.jar</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.outputDirectory}</directory>
-											<filtering>false</filtering>
-											<includes>
-												<include>**/*.*</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 
 		<profile>

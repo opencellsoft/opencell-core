@@ -20,13 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import javax.ejb.Asynchronous;
 import javax.xml.bind.JAXBException;
 
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.log.Log;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -35,9 +34,7 @@ import org.meveo.commons.utils.ImportFileFiltre;
  */
 
 public abstract class InputFiles {
-
-	@Logger
-	protected Log log;
+	protected Logger log;
 
 	public void handleFiles(String dirIN, String prefix, String ext, String dirOK, String dirKO) throws InterruptedException {
 		File dir = new File(dirIN);

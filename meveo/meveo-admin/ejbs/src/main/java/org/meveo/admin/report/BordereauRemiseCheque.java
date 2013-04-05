@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.report;
 
 import java.io.File;
@@ -33,6 +33,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
@@ -44,162 +46,170 @@ import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.core.ResourceBundle;
-import org.jboss.seam.international.StatusMessages;
-import org.jboss.seam.international.StatusMessage.Severity;
-import org.jboss.seam.log.Log;
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.payments.local.AccountOperationServiceLocal;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.slf4j.Logger;
 
-@Name("bordereauRemiseChequeBean")
+@Named
 public class BordereauRemiseCheque {
 
-    private static String REPORTS_URL = ResourceBundle.instance().getString("reportsURL");
-    //private static String OCC_CODE = ResourceBundle.instance().getString("occ.templatePaymentCheckCode");
-    private static String REPORT_NAME = "REMISE-CHEQUE";
-    @Logger
-    protected Log log;
+	private static String REPORT_NAME = "REMISE-CHEQUE";
+	
+	@Inject
+	protected Logger log;
 
-    /** Status messages. */
-    @In
-    protected StatusMessages statusMessages;
-    @In
-    private AccountOperationServiceLocal accountOperationService;
 
-    public JasperReport jasperReport;
-
-    public JasperPrint jasperPrint;
-
-    public JasperDesign jasperDesign;
-
-    public Map<String, Object> parameters = new HashMap<String, Object>();
-
-    private Date date = new Date();
-
-    public void generateReport() {
-        String fileName = "reports/bordereauRemiseCheque.jasper";
-        InputStream reportTemplate = this.getClass().getClassLoader().getResourceAsStream(fileName);
-        parameters.put("date", new Date());
-        String providerCode = currentProvider.getCode();
-        
-        String[] occCodes = ResourceBundle.instance().getString("report.occ.templatePaymentCheckCodes").split(",");
-        try {
-            jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
-            File dataSourceFile = generateDataFile(occCodes);
-            if (dataSourceFile != null) {
-                FacesContext context = FacesContext.getCurrentInstance();
-                HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-                response.setContentType("application/pdf"); // fill in
-                response.setHeader("Content-disposition", "attachment; filename=" + generateFileName(providerCode));
-
-                JRCsvDataSource dataSource = createDataSource(dataSourceFile);
-                jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-                JasperExportManager.exportReportToPdfFile(jasperPrint, generateFileName(providerCode));
-                statusMessages.addFromResourceBundle(Severity.INFO, "report.reportCreted");
-                OutputStream os;
-                try {
-                    os = response.getOutputStream();
-                    JasperExportManager.exportReportToPdfStream(jasperPrint, os);
-                    os.flush();
-                    os.close();
-                    context.responseComplete();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-            } else {
-                statusMessages.addFromResourceBundle(Severity.INFO, "bordereauRemiseCheque.noData");
-            }
-        } catch (JRException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public JRCsvDataSource createDataSource(File dataSourceFile) throws FileNotFoundException {
-        JRCsvDataSource ds = new JRCsvDataSource(dataSourceFile);
-        // DecimalFormat df = new DecimalFormat("0.00");
-        NumberFormat nf = NumberFormat.getInstance(Locale.US);
-        ds.setNumberFormat(nf);
-        ds.setFieldDelimiter(';');
-        ds.setRecordDelimiter("\n");
-        ds.setUseFirstRowAsHeader(true);
-        String[] columnNames = new String[] { "customerAccountId", "title", "name", "firstname", "amount" };
-        ds.setColumnNames(columnNames);
-        return ds;
-    }
-
-    @In(required = false, scope = ScopeType.SESSION)
+    @Inject
+    private Messages messages;
+    
+    @Inject
+    private ParamBean paramBean;
+	
+	@Inject
+	private AccountOperationService accountOperationService;
+	
+	@Inject
+    @CurrentProvider
     private Provider currentProvider;
 
-    public File generateDataFile(String[] occCodes) {
-    	
-        List<AccountOperation> records = new ArrayList<AccountOperation>();
-        for(String occCode:occCodes){
-        records.addAll(accountOperationService.getAccountOperations(this.date, occCode,
-                currentProvider));
-        }
-        Iterator<AccountOperation> itr = records.iterator();
-        try {
-            File temp = File.createTempFile("bordereauRemiseChequeDS", ".csv");
-            FileWriter writer = new FileWriter(temp);
-            writer.append("customerAccountId;title;name;firstname;amount");
-            writer.append('\n');
-            if (records.size() == 0) {
-                return null;
-            }
+	public JasperReport jasperReport;
 
-            while (itr.hasNext()) {
-                AccountOperation ooc = itr.next();
-                CustomerAccount ca = ooc.getCustomerAccount();
-                writer.append(ca.getCode() + ";");
-                writer.append(ca.getName().getTitle().getCode() + ";");
-                writer.append(ca.getName() + ";");
-                writer.append(ca.getName().getFirstName() + ";");
-                writer.append(ooc.getAmount().toString());
-                writer.append('\n');
-            }
-            writer.flush();
-            writer.close();
-            return temp;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
-    }
+	public JasperPrint jasperPrint;
 
-    public String generateFileName(String providerCode) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        StringBuilder sb = new StringBuilder(providerCode + "_");
-        sb.append(REPORT_NAME);
-        sb.append("_");
-        sb.append(df.format(this.date));
-        sb.append(".pdf");
-        return REPORTS_URL + sb.toString();
-    }
+	public JasperDesign jasperDesign;
 
-    public Date getDate() {
-        return date;
-    }
+	public Map<String, Object> parameters = new HashMap<String, Object>();
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	private Date date = new Date();
 
-    public List<BordereauRemiseChequeRecord> convertList(List<Object> rows) {
-        List<BordereauRemiseChequeRecord> bordereauRemiseChequeRecords = new ArrayList<BordereauRemiseChequeRecord>();
-        return bordereauRemiseChequeRecords;
-    }
+	public void generateReport() {
+		String fileName = "reports/bordereauRemiseCheque.jasper";
+		InputStream reportTemplate = this.getClass().getClassLoader().getResourceAsStream(fileName);
+		parameters.put("date", new Date());
+		String providerCode = currentProvider.getCode();
+
+		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes").split(",");
+		try {
+			jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
+			File dataSourceFile = generateDataFile(occCodes);
+			if (dataSourceFile != null) {
+				FacesContext context = FacesContext.getCurrentInstance();
+				HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
+						.getResponse();
+				response.setContentType("application/pdf"); // fill in
+				response.setHeader("Content-disposition", "attachment; filename="
+						+ generateFileName(providerCode));
+
+				JRCsvDataSource dataSource = createDataSource(dataSourceFile);
+				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+				JasperExportManager.exportReportToPdfFile(jasperPrint,
+						generateFileName(providerCode));
+				messages.info(new BundleKey("messages", "report.reportCreted"));
+				OutputStream os;
+				try {
+					os = response.getOutputStream();
+					JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+					os.flush();
+					os.close();
+					context.responseComplete();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} else {
+			    messages.info(new BundleKey("messages", "bordereauRemiseCheque.noData"));
+			}
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public JRCsvDataSource createDataSource(File dataSourceFile) throws FileNotFoundException {
+		JRCsvDataSource ds = new JRCsvDataSource(dataSourceFile);
+		// DecimalFormat df = new DecimalFormat("0.00");
+		NumberFormat nf = NumberFormat.getInstance(Locale.US);
+		ds.setNumberFormat(nf);
+		ds.setFieldDelimiter(';');
+		ds.setRecordDelimiter("\n");
+		ds.setUseFirstRowAsHeader(true);
+		String[] columnNames = new String[] { "customerAccountId", "title", "name", "firstname",
+				"amount" };
+		ds.setColumnNames(columnNames);
+		return ds;
+	}
+
+	public File generateDataFile(String[] occCodes) {
+
+		List<AccountOperation> records = new ArrayList<AccountOperation>();
+		for (String occCode : occCodes) {
+			records.addAll(accountOperationService.getAccountOperations(this.date, occCode,
+					currentProvider));
+		}
+		Iterator<AccountOperation> itr = records.iterator();
+		try {
+			File temp = File.createTempFile("bordereauRemiseChequeDS", ".csv");
+			FileWriter writer = new FileWriter(temp);
+			writer.append("customerAccountId;title;name;firstname;amount");
+			writer.append('\n');
+			if (records.size() == 0) {
+			    writer.close();
+				return null;
+			}
+
+			while (itr.hasNext()) {
+				AccountOperation ooc = itr.next();
+				CustomerAccount ca = ooc.getCustomerAccount();
+				writer.append(ca.getCode() + ";");
+				writer.append(ca.getName().getTitle().getCode() + ";");
+				writer.append(ca.getName() + ";");
+				writer.append(ca.getName().getFirstName() + ";");
+				writer.append(ooc.getAmount().toString());
+				writer.append('\n');
+			}
+			writer.flush();
+			writer.close();
+			return temp;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String generateFileName(String providerCode) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		StringBuilder sb = new StringBuilder(providerCode + "_");
+		sb.append(REPORT_NAME);
+		sb.append("_");
+		sb.append(df.format(this.date));
+		sb.append(".pdf");
+		
+		String reportsUrl = paramBean.getProperty("reportsURL");
+		return reportsUrl + sb.toString();
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public List<BordereauRemiseChequeRecord> convertList(List<Object> rows) {
+		List<BordereauRemiseChequeRecord> bordereauRemiseChequeRecords = new ArrayList<BordereauRemiseChequeRecord>();
+		return bordereauRemiseChequeRecords;
+	}
 
 }

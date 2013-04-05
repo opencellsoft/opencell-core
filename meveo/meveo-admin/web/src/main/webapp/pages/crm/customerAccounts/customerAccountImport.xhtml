@@ -1,47 +1,49 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
-	template="/layout/template.xhtml">
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
-	<rich:panel>
+		<rich:panel>
 			<f:facet name="header">#{messages['customerAccount.import']}</f:facet>
-	 		<h:panelGrid columns="2">
+			<h:panelGrid columns="2">
 				<h:form id="customerAccountImportForm">
 					<a:queue />
-					<a:outputPanel id="importcustomerAccounts">
-						<s:decorate template="/layout/edit.xhtml">
-							<ui:define name="label">
+					<p:outputPanel id="importcustomerAccounts">
+						<f:facet name="header">
 								#{messages['customerAccount.importFiles']}
-							</ui:define>
-							<rich:fileUpload id="fileUpload"
-								addControlLabel="#{messages['customerAccount.addImportFile']}"
-								maxFilesQuantity="5" immediateUpload="true" autoclear="true"
-								fileUploadListener="#{customerAccountImportAction.uploadListener}"
-								transferErrorLabel="#{messages['customerAccount.addImportFileError']}"
-								ajaxSingle="true" allowFlash="true" acceptedTypes="xls"
-								listHeight="50">
-							    <a:support event="onuploadcomplete" reRender="importcustomerAccounts,buttons" />
-							</rich:fileUpload>
-							<h:panelGrid columns="1" id="parseId" rendered="#{not empty customerAccountImportAction.filename}">
-								<h:outputText value="#{messages['commons.filename']} : #{customerAccountImportAction.filename}" />
-								<h:outputText value="#{messages['customerAccount.totalDetected']} : #{customerAccountImportAction.customerAccountsTotal}" />
-							</h:panelGrid>
-						</s:decorate>
-					</a:outputPanel>
+							</f:facet>
+						<rich:fileUpload id="fileUpload"
+							addControlLabel="#{messages['customerAccount.addImportFile']}"
+							maxFilesQuantity="5" immediateUpload="true" autoclear="true"
+							fileUploadListener="#{customerAccountImportAction.uploadListener}"
+							transferErrorLabel="#{messages['customerAccount.addImportFileError']}"
+							ajaxSingle="true" allowFlash="true" acceptedTypes="xls"
+							listHeight="50">
+							<a:support event="onuploadcomplete"
+								reRender="importcustomerAccounts,buttons" />
+						</rich:fileUpload>
+						<h:panelGrid columns="1" id="parseId"
+							rendered="#{not empty customerAccountImportAction.filename}">
+							<h:outputText
+								value="#{messages['commons.filename']} : #{customerAccountImportAction.filename}" />
+							<h:outputText
+								value="#{messages['customerAccount.totalDetected']} : #{customerAccountImportAction.customerAccountsTotal}" />
+						</h:panelGrid>
+					</p:outputPanel>
 					<h:panelGroup style="actionButtons" id="buttons">
-						<h:commandButton value="#{messages['commons.import']}" action="#{customerAccountImportAction.doImport}" />
+						<h:commandButton value="#{messages['commons.import']}"
+							action="#{customerAccountImportAction.doImport}" />
 					</h:panelGroup>
 
 				</h:form>

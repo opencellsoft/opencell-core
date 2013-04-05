@@ -17,7 +17,7 @@ package org.meveo.admin.exception;
 
 import java.math.BigDecimal;
 
-import org.jboss.seam.annotations.ApplicationException;
+import javax.ejb.ApplicationException;
 
 @ApplicationException(rollback = true)
 public class UnbalanceAmountException extends Exception {

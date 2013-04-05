@@ -1,37 +1,33 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.catalog;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.LanguageEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.CatMessagesServiceLocal;
-import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
+import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
 /**
  * Standard backing bean for {@link InvoiceCategory} (extends {@link BaseBean}
@@ -42,133 +38,107 @@ import org.meveo.service.catalog.local.InvoiceCategoryServiceLocal;
  * @author Ignas
  * @created Dec 15, 2010
  */
-@Name("invoiceCategoryBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 
-    private static final long serialVersionUID = 1L;
-    
-   @In
-   private CatMessagesServiceLocal catMessagesService;
-    
-    
-   
-    /**
-     * Injected @{link InvoiceCategory} service. Extends
-     * {@link PersistenceService}.
-     */
-    @In
-    private InvoiceCategoryServiceLocal invoiceCategoryService;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this
-     * bean for {@link BaseBean}.
-     */
-    public InvoiceCategoryBean() {
-        super(InvoiceCategory.class);
-    }
+	@Inject
+	private CatMessagesService catMessagesService;
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity
-     * from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Factory("invoiceCategory")
-    @Begin(nested = true)
-    public InvoiceCategory init() { 
-        InvoiceCategory invoicecat= initEntity();
-        languageMessagesMap.clear();
-        if(invoicecat.getId()!=null){
-        	for(CatMessages msg:catMessagesService.getCatMessagesList(InvoiceCategory.class.getSimpleName()+"_"+invoicecat.getId())){
-            	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-            }
-        }
-        
-        return invoicecat;
-    }
+	/**
+	 * Injected @{link InvoiceCategory} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private InvoiceCategoryService invoiceCategoryService;
 
-    /**
-     * Data model of entities for data table in GUI.
-     * 
-     * @return filtered entities.
-     */
-    @Out(value = "invoiceCategories", required = false)
-    protected PaginationDataModel<InvoiceCategory> getDataModel() {
-        return entities;
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public InvoiceCategoryBean() {
+		super(InvoiceCategory.class);
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes
-     * BaseBean.list() method that handles all data model loading. Overriding is
-     * needed only to put factory name on it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Begin(join = true)
-    @Factory("invoiceCategories")
-    public void list() {
-        super.list();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("invoiceCategory")
+	public InvoiceCategory init() {
+		InvoiceCategory invoicecat = initEntity();
+		languageMessagesMap.clear();
+		if (invoicecat.getId() != null) {
+			for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class
+					.getSimpleName() + "_" + invoicecat.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			}
+		}
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous
-     * window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    @End(beforeRedirect = true, root=false)
+		return invoicecat;
+	}
+
+
+	/**
+	 * Conversation is ended and user is redirected from edit to his previous
+	 * window.
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 */
 	public String saveOrUpdate() {
-    	String back=null;
-    		if(entity.getId()!=null ){
-    			for(String msgKey:languageMessagesMap.keySet()){
-					String description=languageMessagesMap.get(msgKey);
-    				CatMessages catMsg=catMessagesService.getCatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey); 
-    				if(catMsg!=null){
-    					catMsg.setDescription(description);
-                	    catMessagesService.update(catMsg);
-    				}else{
-    					CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
-                    	catMessagesService.create(catMessages);	
-    				}	
-    			} 
-        	    back=saveOrUpdate(entity);
-        	 
-        	}else{
-        		back=saveOrUpdate(entity);
-        		for(String msgKey:languageMessagesMap.keySet()){
-        			String description=languageMessagesMap.get(msgKey);
-        			CatMessages catMessages=new CatMessages(entity.getClass().getSimpleName()+"_"+entity.getId(),msgKey,description);  
-                	catMessagesService.create(catMessages);	
-        		}
-        		
-        	}
- 
-        return back;
-    }
+		String back = null;
+		if (entity.getId() != null) {
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(entity.getClass()
+						.getSimpleName() + "_" + entity.getId(), msgKey);
+				if (catMsg != null) {
+					catMsg.setDescription(description);
+					catMessagesService.update(catMsg);
+				} else {
+					CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName()
+							+ "_" + entity.getId(), msgKey, description);
+					catMessagesService.create(catMessages);
+				}
+			}
+			back = saveOrUpdate(entity);
 
-    /**
-     * Override default list view name. (By default its class name starting
-     * lower case + 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "invoiceCategories";
-    }
+		} else {
+			back = saveOrUpdate(entity);
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_"
+						+ entity.getId(), msgKey, description);
+				catMessagesService.create(catMessages);
+			}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<InvoiceCategory> getPersistenceService() {
-        return invoiceCategoryService;
-    }
-  
-    
+		}
 
-	
-    
+		return back;
+	}
+
+	/**
+	 * Override default list view name. (By default its class name starting
+	 * lower case + 's').
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 */
+	protected String getDefaultViewName() {
+		return "invoiceCategories";
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<InvoiceCategory> getPersistenceService() {
+		return invoiceCategoryService;
+	}
 
 }

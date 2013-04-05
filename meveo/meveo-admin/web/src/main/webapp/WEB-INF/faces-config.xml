@@ -1,0 +1,978 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is not required if you don't need any extra configuration. -->
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://java.sun.com/xml/ns/javaee
+        http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+
+	<application>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>fr</supported-locale>
+		</locale-config>
+		<resource-bundle>
+			<base-name>messages</base-name>
+			<var>messages</var>
+		</resource-bundle>
+		<message-bundle>messages</message-bundle>
+	</application>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-action>#{identity.login}</from-action>
+			<if>#{identity.loggedIn}</if>
+			<to-view-id>/home.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-action>#{identity.logout}</from-action>
+			<if>#{not(identity.loggedIn)}</if>
+			<to-view-id>/loginInternal.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+
+		<navigation-case>
+			<from-outcome>home</from-outcome>
+			<to-view-id>/home.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<!-- Admin -->
+
+		<navigation-case>
+			<from-outcome>systemCurrency</from-outcome>
+			<to-view-id>/pages/admin/currencies/systemCurrency.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>currencies</from-outcome>
+			<to-view-id>/pages/admin/currencies/currencies.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>currencyDetail</from-outcome>
+			<to-view-id>/pages/admin/currencies/currencyDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>users</from-outcome>
+			<to-view-id>/pages/admin/meveoUsers/users.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>userDetail</from-outcome>
+			<to-view-id>/pages/admin/meveoUsers/userDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>userRoles</from-outcome>
+			<to-view-id>/pages/admin/userRoles/userRoles.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>userRoleDetail</from-outcome>
+			<to-view-id>/pages/admin/userRoles/userRoleDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>medinaInputs</from-outcome>
+			<to-view-id>/pages/admin/medina/medinaInputs/medinaInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>medinaInputDetail</from-outcome>
+			<to-view-id>/pages/admin/medina/medinaInputs/medinaInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>vertinaInputs</from-outcome>
+			<to-view-id>/pages/admin/vertina/vertinaInputs/vertinaInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaInputDetail</from-outcome>
+			<to-view-id>/pages/admin/vertina/vertinaInputs/vertinaInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>oudayaInputs</from-outcome>
+			<to-view-id>/pages/admin/oudaya/oudayaInputs/oudayaInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>oudayaInputDetail</from-outcome>
+			<to-view-id>/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>griegDunningInputs</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegDunningInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegDunningInputDetail</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegDunningInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>griegValidatedInputs</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegValidatedInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegValidatedInputDetail</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegValidatedInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>griegConverterInputs</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegConverterInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegConverterInputDetail</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegConverterInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>bayadInvoicingInputs</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadInvoicingInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bayadInvoicingInputDetail</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadInvoicingInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>bayadDunningInputs</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadDunningInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bayadDunningInputDetail</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadDunningInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+
+
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>bankOperations</from-outcome> -->
+		<!-- <to-view-id>/pages/admin/history/bankOperations.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+
+		<navigation-case>
+			<from-outcome>oudayaConfigurationDetail</from-outcome>
+			<to-view-id>/pages/admin/oudaya/configuration/oudayaConfigurationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>oudayaConfigurations</from-outcome>
+			<to-view-id>/pages/admin/oudaya/configuration/oudayaConfigurations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>medinaConfigurationDetail</from-outcome>
+			<to-view-id>/pages/admin/medina/configuration/medinaConfigurationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>medinaConfigurations</from-outcome>
+			<to-view-id>/pages/admin/medina/configuration/medinaConfigurations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>vertinaConfigurationDetail</from-outcome>
+			<to-view-id>/pages/admin/vertina/configuration/vertinaConfigurationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaConfigurations</from-outcome>
+			<to-view-id>/pages/admin/vertina/configuration/vertinaConfigurations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>medinaManagement</from-outcome>
+			<to-view-id>/pages/admin/medina/management/medinaManagement.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaManagement</from-outcome>
+			<to-view-id>/pages/admin/vertina/management/vertinaManagement.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>taxes</from-outcome>
+			<to-view-id>/pages/admin/taxes/taxes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>taxDetail</from-outcome>
+			<to-view-id>/pages/admin/taxes/taxDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>titles</from-outcome>
+			<to-view-id>/pages/admin/title/titles.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>titleDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/admin/titles/titleDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>documentDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/admin/documents/documentDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+
+		<navigation-case>
+			<from-outcome>documents</from-outcome>
+			<to-view-id>/pages/admin/documents/documents.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/accountImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/customerImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>subscriptionImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/subscriptionImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/accountImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dunningHisto</from-outcome>
+			<to-view-id>/pages/admin/history/dunningHistories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>crmRejectedFiles</from-outcome>
+			<to-view-id>/pages/admin/history/crmConnectorRejectedFiles.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>providers</from-outcome>
+			<to-view-id>/pages/crm/providers/providers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>providerDetail</from-outcome>
+			<to-view-id>/pages/crm/providers/providerDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>providerContacts</from-outcome>
+			<to-view-id>/pages/crm/providerContacts/providerContacts.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>providerContactDetail</from-outcome>
+			<to-view-id>/pages/crm/providerContacts/providerContactDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emailTemplates</from-outcome>
+			<to-view-id>/pages/admin/communication/emailTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emailTemplateDetail</from-outcome>
+			<to-view-id>/pages/admin/communication/emailTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<!-- Billing -->
+
+		<navigation-case>
+			<from-outcome>invoices</from-outcome>
+			<to-view-id>/pages/billing/invoices/invoices.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoiceDetail</from-outcome>
+			<to-view-id>/pages/billing/invoices/invoiceDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>wallets</from-outcome>
+			<to-view-id>/pages/billing/wallets/wallets.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>walletDetail</from-outcome>
+			<to-view-id>/pages/billing/wallets/walletDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>invoiceTasks</from-outcome>
+			<to-view-id>/pages/billing/invoiceTasks/invoiceTasks.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoiceTaskDetail</from-outcome>
+			<to-view-id>/pages/billing/invoiceTasks/invoiceTaskDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>billingCycles</from-outcome>
+			<to-view-id>/pages/billing/billingCycles/billingCycles.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>billingCycleDetail</from-outcome>
+			<to-view-id>/pages/billing/billingCycles/billingCycleDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+
+		<!-- Catalog -->
+
+		<navigation-case>
+			<from-outcome>offerTemplates</from-outcome>
+			<to-view-id>/pages/catalog/offerTemplates/offerTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>offerTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/offerTemplates/offerTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>usagePricePlanItems</from-outcome>
+			<to-view-id>/pages/catalog/usagePricePlanItem/usagePricePlanItems.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>usagePricePlanItemDetail</from-outcome>
+			<to-view-id>/pages/catalog/usagePricePlanItem/usagePricePlanItemDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>usageDiscountPlanItems</from-outcome>
+			<to-view-id>/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItems.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>usageDiscountPlanItemDetail</from-outcome>
+			<to-view-id>/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>priceCodes</from-outcome>
+			<to-view-id>/pages/catalog/priceCode/priceCodes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>priceCodeDetail</from-outcome>
+			<to-view-id>/pages/catalog/priceCode/priceCodeDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>serviceTemplates</from-outcome>
+			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>serviceParameterTemplates</from-outcome>
+			<to-view-id>/pages/catalog/serviceParameterTemplates/serviceParameterTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceParameterTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/serviceParameterTemplates/serviceParameterTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>oneShotChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>oneShotChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>recurringChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/recurringChargeTemplates/recurringChargeTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>recurringChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>calendars</from-outcome>
+			<to-view-id>/pages/catalog/calendars/calendars.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>calendarDetail</from-outcome>
+			<to-view-id>/pages/catalog/calendars/calendarDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>pricePlanMatrixes</from-outcome>
+			<to-view-id>/pages/catalog/pricePlanMatrixes/pricePlanMatrixes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>pricePlanMatrixDetail</from-outcome>
+			<to-view-id>/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>discountPlanMatrixes</from-outcome>
+			<to-view-id>/pages/catalog/discountPlanMatrixes/discountPlanMatrixes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>discountPlanMatrixDetail</from-outcome>
+			<to-view-id>/pages/catalog/discountPlanMatrixes/discountPlanMatrixDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>invoiceCategories</from-outcome>
+			<to-view-id>/pages/catalog/invoiceCategories/invoiceCategories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoiceCategoryDetail</from-outcome>
+			<to-view-id>/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>invoiceSubCategories</from-outcome>
+			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoiceSubCategoryDetail</from-outcome>
+			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<!-- CRM -->
+
+		<navigation-case>
+			<from-outcome>customers</from-outcome>
+			<to-view-id>/pages/crm/customers/customers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerDetail</from-outcome>
+			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>customerSearch</from-outcome>
+			<to-view-id>/pages/crm/customers/customerSearch.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerAccounts</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccounts.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>customerAccountDetail</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>transferAccount</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/transferAccount.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dunningPlans</from-outcome>
+			<to-view-id>/pages/payments/dunning/dunningPlans.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>dunningPlanDetail</from-outcome>
+			<to-view-id>/pages/payments/dunning/dunningPlanDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dunningPlanTransitions</from-outcome>
+			<to-view-id>/pages/payments/dunning/dunningPlanTransitions.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dunningPlanTransitionDetail</from-outcome>
+			<to-view-id>/pages/payments/dunning/dunningPlanTransitionDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>actionPlanItems</from-outcome>
+			<to-view-id>/pages/payments/dunning/actionPlanItems.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actionPlanItemDetail</from-outcome>
+			<to-view-id>/pages/payments/dunning/actionPlanItemDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>matchingCodes</from-outcome>
+			<to-view-id>/pages/payments/matchingCode/matchingCodes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>matchingCodeDetail</from-outcome>
+			<to-view-id>/pages/payments/matchingCode/matchingCodeDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>ddrequestLots</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLot/ddrequestLots.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>ddrequestLotOps</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>ddrequestLotDetail</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>launchDDRequestLotProcess</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLot/launchDDRequestProcess.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>accountOperations</from-outcome>
+			<to-view-id>/pages/payments/accountOperations/accountOperations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>accountOperationDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/payments/accountOperation/accountOperationDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+
+
+		<navigation-case>
+			<from-outcome>billingAccounts</from-outcome>
+			<to-view-id>/pages/billing/billingAccounts/billingAccounts.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>billingAccountDetail</from-outcome>
+			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>subscriptions</from-outcome>
+			<to-view-id>/pages/billing/subscriptions/subscriptions.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>subscriptionDetail</from-outcome>
+			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>userAccounts</from-outcome>
+			<to-view-id>/pages/billing/userAccounts/userAccounts.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>userAccountDetail</from-outcome>
+			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>customerCategories</from-outcome>
+			<to-view-id>/pages/crm/customerCategories/customerCategories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerCategoryDetail</from-outcome>
+			<to-view-id>/pages/crm/customerCategories/customerCategoryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>customerBrands</from-outcome>
+			<to-view-id>/pages/crm/customerBrands/customerBrands.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerBrandDetail</from-outcome>
+			<to-view-id>/pages/crm/customerBrands/customerBrandDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>serviceInstances</from-outcome>
+			<to-view-id>/pages/resource/serviceInstances/serviceInstances.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceInstanceDetail</from-outcome>
+			<to-view-id>/pages/resource/serviceInstances/serviceInstanceDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>serviceParameterInstances</from-outcome>
+			<to-view-id>/pages/resource/serviceParameterInstances/serviceParameterInstances.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceParameterInstancesDetail</from-outcome>
+			<to-view-id>/pages/resource/serviceParameterInstances/serviceParameterInstanceDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>usageTypes</from-outcome>
+			<to-view-id>/pages/rating/usageTypes/usageTypes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>usageTypeDetail</from-outcome>
+			<to-view-id>/pages/rating/usageTypes/usageTypeDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>matrixes</from-outcome>
+			<to-view-id>/pages/rating/matrixes/matrixes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>matrixDetail</from-outcome>
+			<to-view-id>/pages/rating/matrixes/matrixDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>matrixEntries</from-outcome>
+			<to-view-id>/pages/rating/matrixEntries/matrixEntries.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>matrixEntryDetail</from-outcome>
+			<to-view-id>/pages/rating/matrixEntries/matrixEntryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+
+
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>pricePlanInstances</from-outcome> -->
+		<!-- <to-view-id>/pages/rating/pricePlanInstances/pricePlanInstances.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+		<!-- <navigation-case> -->
+		<!-- <from-outcome>pricePlanInstanceDetail</from-outcome> -->
+		<!-- <to-view-id>/pages/rating/pricePlanInstances/pricePlanInstanceDetail.xhtml</to-view-id> -->
+		<!-- <redirect /> -->
+		<!-- </navigation-case> -->
+
+		<navigation-case>
+			<from-outcome>syncheseClients</from-outcome>
+			<to-view-id>/pages/crm/syntheseClients/billingAccounts.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<!-- Reporting -->
+
+
+		<navigation-case>
+			<from-outcome>jobs</from-outcome>
+			<to-view-id>/pages/reporting/jobs/jobs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>jobDetail</from-outcome>
+			<to-view-id>/pages/reporting/jobs/jobDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>jobHistory</from-outcome>
+			<to-view-id>/pages/reporting/jobHistory/jobHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>reports</from-outcome>
+			<to-view-id>/pages/reporting/reports/reports.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportDetail</from-outcome>
+			<to-view-id>/pages/reporting/reports/reportDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bordereauRemiseCheque</from-outcome>
+			<to-view-id>/pages/reporting/reports/bordereauRemiseCheque.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+
+		<!-- Resource -->
+
+		<navigation-case>
+			<from-outcome>offerInstances</from-outcome>
+			<to-view-id>/pages/resource/offerInstances/offerInstances.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>offerInstanceDetail</from-outcome>
+			<to-view-id>/pages/resource/offerInstances/offerInstanceDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>recurringInvoicing</from-outcome>
+			<to-view-id>/pages/billing/invoicing/recurringInvoicing.xhtml?edit=true</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>exceptionelInvoicing</from-outcome>
+			<to-view-id>/pages/billing/invoicing/exceptionelInvoicing.xhtml?edit=true</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>preInvoicingReports</from-outcome>
+			<to-view-id>/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>postInvoicingReports</from-outcome>
+			<to-view-id>/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>billingRuns</from-outcome>
+			<to-view-id>/pages/billing/invoicing/billingRuns.xhtml?edit=false</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>accesss</from-outcome>
+			<to-view-id>/pages/medina/access/access.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>zonningPlans</from-outcome>
+			<to-view-id>/pages/medina/zoningPlan/zoningPlan.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>timePlans</from-outcome>
+			<to-view-id>/pages/medina/timePlan/timePlan.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>numberingPlans</from-outcome>
+			<to-view-id>/pages/medina/numberingPlan/numberingPlan.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>eDRRatingPlans</from-outcome>
+			<to-view-id>/pages/medina/edrRatingPlan/edrRatingPlan.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>paymentTerms</from-outcome>
+			<to-view-id>/pages/billing/paymentTerms/paymentTerms.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>paymentTerms</from-outcome>
+			<to-view-id>/pages/billing/paymentTerms/paymentTerms.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+	</navigation-rule>
+
+	<!-- Exception handling -->
+	<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->
+	<!-- <redirect view-id="/login.xhtml"> -->
+	<!-- <message>#{messages['org.jboss.seam.security.NotLoggedInException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="org.jboss.seam.security.AuthorizationException"> -->
+	<!-- <end-conversation/> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['org.jboss.seam.security.AuthorizationException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="org.meveo.admin.exception.ProviderNotAllowedException"> -->
+	<!-- <end-conversation/> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['org.meveo.admin.exception.ProviderNotAllowedException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="org.meveo.admin.exception.PasswordExpiredException"> -->
+	<!-- <end-conversation/> -->
+	<!-- <redirect view-id="/login.xhtml"> -->
+	<!-- <message>#{messages['user.password.expired']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+
+	<!-- <exception class="org.jboss.seam.framework.EntityNotFoundException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message severity="warn">#{messages['org.jboss.seam.framework.EntityNotFoundException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="javax.persistence.EntityNotFoundException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message severity="warn">#{messages['javax.persistence.EntityNotFoundException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="javax.persistence.EntityExistsException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message severity="warn">#{messages['javax.persistence.EntityExistsException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="javax.persistence.OptimisticLockException"> -->
+	<!-- <end-conversation/> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message severity="warn">#{messages['javax.persistence.OptimisticLockException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="javax.faces.application.ViewExpiredException"> -->
+	<!-- <redirect view-id="/login.xhtml"> -->
+	<!-- <message severity="warn">#{messages['javax.faces.application.ViewExpiredException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" 
+		log-level="trace"> -->
+	<!-- <http-error error-code="503"/> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="javax.el.ELException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['javax.el.ELException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="javax.el.PropertyNotFoundException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['javax.el.PropertyNotFoundException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="java.sql.BatchUpdateException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['java.sql.BatchUpdateException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+	<!-- <exception class="org.hibernate.exception.ConstraintViolationException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['java.sql.ConstraintViolationException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+	<!-- <exception class="org.meveo.admin.exception.NoTemplateException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['exception.NoTemplateException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+	<!-- <exception class="org.meveo.admin.exception.UsernameAlreadyExistsException"> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message>#{messages['exception.UsernameAlreadyExistsException']}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+	<!-- <exception> -->
+	<!-- <redirect view-id="/error.xhtml"> -->
+	<!-- <message severity="WARN">#{messages['error.unexpected']} #{handledException.message}</message> -->
+	<!-- </redirect> -->
+	<!-- </exception> -->
+
+</faces-config>

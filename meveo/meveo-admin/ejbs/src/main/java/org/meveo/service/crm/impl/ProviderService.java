@@ -16,18 +16,17 @@
 package org.meveo.service.crm.impl;
 
 import java.util.List;
+import java.util.Set;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
-import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.admin.local.UserServiceLocal;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.local.ProviderServiceLocal;
 
 /**
  * Provider service implementation.
@@ -35,12 +34,10 @@ import org.meveo.service.crm.local.ProviderServiceLocal;
  * @author Gediminas Ubartas
  * @created 2011.03.01
  */
-@Stateless
-@Name("providerService")
-@AutoCreate
-public class ProviderService extends PersistenceService<Provider> implements ProviderServiceLocal {
-    @In
-    private UserServiceLocal userService;
+@Stateless @LocalBean
+public class ProviderService extends PersistenceService<Provider> {
+	@EJB
+    private UserService userService;
 
     public Provider findByCode(String code) {
         try {
@@ -50,7 +47,7 @@ public class ProviderService extends PersistenceService<Provider> implements Pro
         }
     }
 
-    public List<Provider> findUsersProviders(String userName) {
+    public Set<Provider> findUsersProviders(String userName) {
         User user = userService.findByUsername(userName);
         if (user != null) {
             return user.getProviders();

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>meveo-admin</artifactId>
@@ -8,7 +9,7 @@
 	</parent>
 	<artifactId>meveo-admin-config</artifactId>
 	<packaging>jar</packaging>
-	<name>Meveo admin web application - configuration files</name>
+	<name>Meveo Admin Web Application - Configuration Files</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 
@@ -38,8 +39,11 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy file="src/main/resources/import-MySQL.sql" tofile="${project.build.outputDirectory}/import.sql" overwrite="true" failonerror="false" />
-								<copy file="src/main/resources/importDWH.sql" tofile="${project.build.outputDirectory}/importDWH.sql" overwrite="true" failonerror="false" />
+								<copy file="src/main/resources/import-${env}.sql" tofile="${project.build.outputDirectory}/import.sql"
+									overwrite="true" failonerror="false" />
+								<copy file="src/main/resources/importDWH-${env}.sql"
+									tofile="${project.build.outputDirectory}/importDWH.sql"
+									overwrite="true" failonerror="false" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -92,7 +96,6 @@
 		</pluginManagement>
 	</build>
 
-
 	<profiles>
 		<profile>
 			<id>development</id>
@@ -103,38 +106,6 @@
 					<value>dev</value>
 				</property>
 			</activation>
-			<build>
-				<plugins>
-					<!-- Copies Configuration JAR files to Jboss server after the build 
-						(tied to install phase) -->
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.5</version>
-						<executions>
-							<!-- Copy JAR files to Jboss server -->
-							<execution>
-								<id>deploy_to_Jboss_config_jar</id>
-								<phase>install</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${jboss.home}/server/default/deploy/${manaty.serverArchiveName}.ear/meveo-admin-config.jar</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.build.outputDirectory}</directory>
-											<filtering>false</filtering>
-											<includes>
-												<include>**/*.*</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 
 		<profile>

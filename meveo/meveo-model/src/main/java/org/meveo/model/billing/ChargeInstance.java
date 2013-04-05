@@ -33,7 +33,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,7 +46,7 @@ import org.meveo.model.catalog.ChargeTemplate;
  */
 @Entity
 @Table(name = "BILLING_CHARGE_INSTANCE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CHARGE_INSTANCE_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CHARGE_INSTANCE_SEQ")
 @AttributeOverrides( { @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ChargeInstance extends BusinessEntity {

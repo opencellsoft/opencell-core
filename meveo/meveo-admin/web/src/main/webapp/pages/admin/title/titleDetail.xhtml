@@ -6,10 +6,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
-	xmlns:p="http://primefaces.prime.com.tr/ui"	
-	template="/layout/template.xhtml">
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -17,16 +16,21 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit="#{edit}" label="#{messages['title.panel']}" backingBean="#{titleBean}" entity="#{title}" >
-   			<custom:formField label="#{messages['title.code']}" field="code" required="true" validateUnique="true"/>
-   			<custom:formField label="#{messages['title.isCompany']}" field="isCompany" />   			   			
-   			<s:decorate template="/layout/edit.xhtml">
+		<hf:formPanel edit="#{edit}" label="#{messages['title.panel']}"
+			backingBean="#{titleBean}">
+			<hf:formField label="#{messages['title.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hf:formField label="#{messages['title.isCompany']}"
+				field="isCompany" />
+			<s:decorate template="/layout/edit.xhtml">
 				<ui:define name="label">
-					<h:outputText value="#{messages['title.description']}" rendered="#{!edit}"/>
+					<h:outputText value="#{messages['title.description']}"
+						rendered="#{!edit}" />
 				</ui:define>
-				<h:outputText rendered="#{!edit}"  value="#{messages[title.descriptionKey]}" style="font-weight:bold;"/>												
+				<h:outputText rendered="#{!edit}"
+					value="#{messages[title.descriptionKey]}" style="font-weight:bold;" />
 			</s:decorate>
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

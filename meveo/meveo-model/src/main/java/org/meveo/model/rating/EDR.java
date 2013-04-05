@@ -22,7 +22,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
@@ -37,7 +36,7 @@ import org.meveo.model.mediation.Access;
 
 @Entity
 @Table(name = "RATING_EDR")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_EDR_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_EDR_SEQ")
 public class EDR  extends BaseEntity {
 	
 	/**

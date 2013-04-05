@@ -1,40 +1,36 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.admin.action.catalog;
 
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Begin;
-import org.jboss.seam.annotations.End;
-import org.jboss.seam.annotations.Factory;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Out;
-import org.jboss.seam.annotations.Scope;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.LanguageEnum;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.local.CatMessagesServiceLocal;
-import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
+import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
  * Standard backing bean for {@link OneShotChargeTemplate} (extends
@@ -46,149 +42,135 @@ import org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal;
  * @created Nov 18, 2010
  * 
  */
-@Name("oneShotChargeTemplateBean")
-@Scope(ScopeType.CONVERSATION)
+@Named
+@ConversationScoped
 public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link OneShotChargeTemplate} service. Extends
-     * {@link PersistenceService}.
-     */
-    @In
-    private OneShotChargeTemplateServiceLocal oneShotChargeTemplateService;
-    
-    @In
-    private CatMessagesServiceLocal catMessagesService;
-     
-     private String descriptionFr;
+	/**
+	 * Injected @{link OneShotChargeTemplate} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this
-     * bean for {@link BaseBean}.
-     */
-    public OneShotChargeTemplateBean() {
-        super(OneShotChargeTemplate.class);
-    }
+	@Inject
+	private CatMessagesService catMessagesService;
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity
-     * from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Begin(nested = true)
-    @Factory("oneShotChargeTemplate")
-    public OneShotChargeTemplate init() {
-        OneShotChargeTemplate oneShotChargeTemplate= initEntity();
-        if(oneShotChargeTemplate.getId()!=null){
-        	for(CatMessages msg:catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName()+"_"+oneShotChargeTemplate.getId())){
-            	languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-            }
-        }
-        return oneShotChargeTemplate; 
-    }
- 
+	private String descriptionFr;
 
-    /**
-     * Data model of entities for data table in GUI.
-     * 
-     * @return filtered entities.
-     */
-    @Out(value = "oneShotChargeTemplates", required = false)
-    protected PaginationDataModel<OneShotChargeTemplate> getDataModel() {
-        return entities;
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public OneShotChargeTemplateBean() {
+		super(OneShotChargeTemplate.class);
+	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes
-     * BaseBean.list() method that handles all data model loading. Overriding is
-     * needed only to put factory name on it.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Factory("oneShotChargeTemplates")
-    @Override
-    @Begin(join = true)
-    public void list() {
-        getFilters();
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("oneShotChargeTemplate")
+	public OneShotChargeTemplate init() {
+		OneShotChargeTemplate oneShotChargeTemplate = initEntity();
+		if (oneShotChargeTemplate.getId() != null) {
+			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
+					.getSimpleName() + "_" + oneShotChargeTemplate.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			}
+		}
+		return oneShotChargeTemplate;
+	}
+
+	
+	@Override
+	public DataTable search() {
+	    getFilters();
         if (!filters.containsKey("disabled")) {
             filters.put("disabled", false);
         }
-        super.list();
-    }
+        return super.search();
+	}
 
-    
-    /**
-     * Data model of entities for data table in GUI. Filters charges of Usage type.
-     * 
-     * @return filtered entities.
-     */
-    @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
-    protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
-        return entities;
-    }
+//	/**
+//	 * Data model of entities for data table in GUI. Filters charges of Usage
+//	 * type.
+//	 * 
+//	 * @return filtered entities.
+//	 */
+//	// @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
+//	protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
+//		return entities;
+//	}
 
-    /**
-     * Factory method, that is invoked if data model is empty. Invokes
-     * BaseBean.list() method that handles all data model loading. Overriding is
-     * needed only to put factory name on it. Filters charges of Usage type.
-     * 
-     * @see org.meveo.admin.action.BaseBean#list()
-     */
-    @Factory("oneShotChargeTemplatesForUsageType")
-    public void listForUsageType() {
-        getFilters();
-        if (!filters.containsKey("disabled")) {
-            filters.put("disabled", false);
-        }
-        filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
-        super.list();
-    }
-    
-    /**
-     * Conversation is ended and user is redirected from edit to his previous
-     * window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
-    	String back=null;
-    	if(entity.getId()!=null){
-    		for(String msgKey:languageMessagesMap.keySet()){
-    		String description=languageMessagesMap.get(msgKey);
-    		CatMessages catMsg=catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey);
-    		if(catMsg!=null){
-				catMsg.setDescription(description);
-        	    catMessagesService.update(catMsg);
-    		}else{
-    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
-            	catMessagesService.create(catMessages);	
-    		}
-    		} 
-    	    back=saveOrUpdate(entity);
-    	    
-    	}else{
-    		back=saveOrUpdate(entity);
-    		for(String msgKey:languageMessagesMap.keySet()){
-    			String description=languageMessagesMap.get(msgKey);
-    			CatMessages catMessages=new CatMessages(ChargeTemplate.class.getSimpleName()+"_"+entity.getId(),msgKey,description);  
-            	catMessagesService.create(catMessages);	
-    		}
-    	}
-	   	return back;
-    }
-    
-    
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
-        return oneShotChargeTemplateService;
-    }
+	/**
+	 * Factory method, that is invoked if data model is empty. Invokes
+	 * BaseBean.list() method that handles all data model loading. Overriding is
+	 * needed only to put factory name on it. Filters charges of Usage type.
+	 * 
+	 * @return
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#list()
+	 */
+//	@Produces
+//	@Named("oneShotChargeTemplatesForUsageType")
+//	public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
+//		getFilters();
+//		if (!filters.containsKey("disabled")) {
+//			filters.put("disabled", false);
+//		}
+//		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
+//		return super.list();
+//	}
+
+	/**
+	 * Conversation is ended and user is redirected from edit to his previous
+	 * window.
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 */
+	public String saveOrUpdate() {
+		String back = null;
+		if (entity.getId() != null) {
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(
+						ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
+				if (catMsg != null) {
+					catMsg.setDescription(description);
+					catMessagesService.update(catMsg);
+				} else {
+					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
+							+ "_" + entity.getId(), msgKey, description);
+					catMessagesService.create(catMessages);
+				}
+			}
+			back = saveOrUpdate(entity);
+
+		} else {
+			back = saveOrUpdate(entity);
+			for (String msgKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(msgKey);
+				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
+						+ "_" + entity.getId(), msgKey, description);
+				catMessagesService.create(catMessages);
+			}
+		}
+		return back;
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
+		return oneShotChargeTemplateService;
+	}
 
 	public String getDescriptionFr() {
 		return descriptionFr;
@@ -197,7 +179,4 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	public void setDescriptionFr(String descriptionFr) {
 		this.descriptionFr = descriptionFr;
 	}
-    
-    
-
 }

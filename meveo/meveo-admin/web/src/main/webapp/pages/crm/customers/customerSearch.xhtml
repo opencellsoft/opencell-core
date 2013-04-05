@@ -1,60 +1,52 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['customerSearch.title']}">
-    	
-    		<custom:searchPanel label="#{messages['customerSearch.search']}" backingBean="#{customerSearchBean}" entity="#{customerSearchBean.instance}" new="false">
-   			    <custom:searchField label="#{messages['businessEntity.code']}" field="code" />
-   			    <custom:searchField label="#{messages['businessEntity.description']}" field="description" />
-   			    <custom:searchField label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
-   			    <custom:searchField label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
-   			    
-   			    <s:decorate template="/layout/edit.xhtml">
-					<ui:define name="label">
-						<h:outputText value="#{messages['customerSearch.type']}" style="padding-right:5px" />
-					</ui:define>
-					<h:selectOneMenu value="#{customerSearchBean.customerPage}" onchange="submit()"
-				        valueChangeListener="#{customerSearchBean.changeCustomerPage}">
-				        <f:selectItem itemLabel="" />
-					    <f:selectItem itemLabel="#{messages['customer.type']}" itemValue="/pages/crm/customers/customers.seam" />
-					    <f:selectItem itemLabel="#{messages['customerAccount.type']}" itemValue="/pages/payments/customerAccounts/customerAccounts.seam" />
-					    <f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="/pages/billing/billingAccounts/billingAccounts.seam" />
-					    <f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="/pages/billing/userAccounts/userAccounts.seam" />
-				    </h:selectOneMenu>
-					
-				</s:decorate>
 
-    		</custom:searchPanel>
+	<ui:define name="body">
 
-	    	<custom:dataList backingBean="#{customerSearchBean}" dataModel="#{customerSearchResults}" checkMany="false">
-   				<custom:column label="#{messages['businessEntity.code']}" field="code" />
-	    	    <custom:column label="#{messages['businessEntity.description']}" field="description" />
-	    	    <custom:column label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
-   			    <custom:column label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
-	    	    <custom:column label="#{messages['customerSearch.type']}" field="accountType" isMessage="true" />
-	    	    
-	    	    <c:set var="type" value="#{entity.accountType}" />
-	            <custom:actionsColumn noDelete="true" editView="#{customerSearchBean.getView(type)}" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}"/>
-	    	</custom:dataList>
-		    
-		</custom:listPanel>
-		
-    </ui:define>
-    
+		<hf:searchPanel label="#{messages['customerSearch.search']}" backingBean="#{customerSearchBean}" renderNewButton="false">
+			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:searchField label="#{messages['businessEntity.description']}" field="description" />
+			<hf:searchField label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
+			<hf:searchField label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
+
+			<sc:inputContainer label="#{messages['customerSearch.type']}" style="padding-right:5px" >
+				
+				<h:selectOneMenu value="#{customerSearchBean.customerPage}" onchange="submit()" valueChangeListener="#{customerSearchBean.changeCustomerPage}">
+					<f:selectItem itemLabel="" />
+					<f:selectItem itemLabel="#{messages['customer.type']}" itemValue="/pages/crm/customers/customers.xhtml" />
+					<f:selectItem itemLabel="#{messages['customerAccount.type']}" itemValue="/pages/payments/customerAccounts/customerAccounts.xhtml" />
+					<f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="/pages/billing/billingAccounts/billingAccounts.xhtml" />
+					<f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="/pages/billing/userAccounts/userAccounts.xhtml" />
+				</h:selectOneMenu>
+
+			</sc:inputContainer>
+
+		</hf:searchPanel>
+
+		<hftl:dataList backingBean="#{customerSearchBean}" label="#{messages['customerSearch.title']}" checkMany="false">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
+			<hftl:column label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
+			<hftl:column label="#{messages['customerSearch.type']}" field="accountType" isMessage="true" />
+
+			<c:set var="type" value="#{entity.accountType}" />
+			<hftl:actionsColumn renderDeleteLink="false" editView="#{customerSearchBean.getView(type)}"
+				permission="#{identity.hasPermission('account','accountManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

@@ -16,23 +16,8 @@
 		<developerConnection>scm:svn:https://core.manaty.net/svn/trunk/manaty-commons</developerConnection>
 		<url>https://core.manaty.net/svn/trunk/manaty-commons</url>
 	</scm>
+
 	<repositories>
-		<repository>
-			<id>jboss.repo</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-		</repository>
-		<repository>
-			<id>jboss.repo.deprecated</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
-		</repository>
-		<repository>
-			<id>pentaho.repo</id>
-			<url>http://repository.pentaho.org/artifactory/repo/</url>
-		</repository>
-		<repository>
-			<id>primefaces.repo</id>
-			<url>http://repository.primefaces.org</url>
-		</repository>
 		<repository>
 			<id>manaty.repo.releases</id>
 			<url>http://libsmeveocore.manaty.net/releases</url>
@@ -42,6 +27,7 @@
 			<url>http://libsmeveocore.manaty.net/snapshots</url>
 		</repository>
 	</repositories>
+
 	<distributionManagement>
 		<downloadUrl>http://libsmeveocore.manaty.net/sites/${project.artifactId}</downloadUrl>
 		<repository>
@@ -60,33 +46,24 @@
 			<url>scp://libsmeveocore.manaty.net/var/www/sites/libsmeveocore/sites</url>
 		</site>
 	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>5.12.1</version>
+			<version>6.8</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<!-- <dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<version>1.0.1.Final</version>
-		</dependency> -->
 
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<version>1.2.17</version>
 		</dependency>
 	</dependencies>
 
@@ -95,7 +72,7 @@
 			<plugin>
 				<artifactId>org.apache.maven.plugins</artifactId>
 				<groupId>maven-compiler-plugin</groupId>
-				<version>2.3.2</version>
+				<version>3.0</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -106,10 +83,9 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>1.0-beta-7</version>
+				<version>2.4</version>
 			</extension>
 		</extensions>
-
 	</build>
 
 	<profiles>
@@ -130,7 +106,7 @@
 					</plugin>
 					<plugin>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>2.1.2</version>
+						<version>2.2.1</version>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
@@ -142,12 +118,11 @@
 					</plugin>
 				</plugins>
 			</build>
-
 			<reporting>
 				<plugins>
 					<plugin>
 						<artifactId>maven-project-info-reports-plugin</artifactId>
-						<version>2.4</version>
+						<version>2.6</version>
 						<reportSets>
 							<reportSet>
 								<reports>
@@ -160,11 +135,8 @@
 							</reportSet>
 						</reportSets>
 					</plugin>
-
 				</plugins>
 			</reporting>
-
 		</profile>
-
 	</profiles>
 </project>

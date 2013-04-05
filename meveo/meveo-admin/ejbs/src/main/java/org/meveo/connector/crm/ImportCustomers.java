@@ -19,20 +19,17 @@ import java.io.File;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
+import javax.ejb.Asynchronous;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.connector.InputFiles;
-
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Logger;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.log.Log;
-import org.jboss.seam.util.RandomStringUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.connector.InputFiles;
 import org.meveo.model.admin.CustomerImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
@@ -52,49 +49,49 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Title;
-import org.meveo.service.admin.local.CustomerImportHistoServiceLocal;
-import org.meveo.service.admin.local.UserServiceLocal;
-import org.meveo.service.catalog.local.TitleServiceLocal;
-import org.meveo.service.crm.local.CustomerBrandServiceLocal;
-import org.meveo.service.crm.local.CustomerCategoryServiceLocal;
-import org.meveo.service.crm.local.CustomerServiceLocal;
-import org.meveo.service.crm.local.ProviderServiceLocal;
-import org.meveo.service.payments.local.CustomerAccountServiceLocal;
+import org.meveo.service.admin.impl.CustomerImportHistoService;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.CustomerBrandService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
  * @created 22.12.2010
  * 
  */
-@Name("importCustomers")
+@Named
 public class ImportCustomers extends InputFiles {
 
-	@In(create = true)
-	private CustomerAccountServiceLocal customerAccountService;
+	@Inject
+	private CustomerAccountService customerAccountService;
 
-	@In
-	private CustomerServiceLocal customerService;
+	@Inject
+	private CustomerService customerService;
 
-	@In
-	UserServiceLocal userService;
+	@Inject
+	UserService userService;
 
-	@In
-	CustomerBrandServiceLocal customerBrandService;
+	@Inject
+	CustomerBrandService customerBrandService;
 
-	@In
-	CustomerCategoryServiceLocal customerCategoryService;
+	@Inject
+	CustomerCategoryService customerCategoryService;
 
-	@In
-	private TitleServiceLocal titleService;
+	@Inject
+	private TitleService titleService;
 
-	@In
-	private CustomerImportHistoServiceLocal customerImportHistoService;
+	@Inject
+	private CustomerImportHistoService customerImportHistoService;
 
-	@In
-	private ProviderServiceLocal providerService;
+	@Inject
+	private ProviderService providerService;
 
-	@Logger
-	protected Log log;
+	protected Logger log;
 
 	Customers customersWarning;
 	Customers customersError;

@@ -1,57 +1,62 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    xmlns:c="http://java.sun.com/jstl/core"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    	
-    <ui:define name="body">
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
 		<c:set var="field" value="language" />
-    	<custom:entityPopup id="searchLanguagePopup"
+		<hftl:entityPopup id="searchLanguagePopup"
 			header="#{messages['tradingLanguage.popup.header']}"
 			backingBean="#{languageBean}" dataModel="#{languages}"
-			
-			searchField1Label="#{messages['language.languageCode']}" 
-			searchField1="languageCode" 
-			
-			column1Label="#{messages['language.languageCode']}" column1="languageCode"
+			searchField1Label="#{messages['language.languageCode']}"
+			searchField1="languageCode"
+			column1Label="#{messages['language.languageCode']}"
+			column1="languageCode"
 			column2Label="#{messages['tradingLanguage.prDescription']}"
 			column2="descriptionEn" filtersMap="#{languageBean.filters}">
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
-					reRender="formId" 
-					action="#{tradingLanguageBean.filters.put(field, entity)}"
-					oncomplete="Richfaces.hideModalPanel('searchLanguagePopup')">
+				reRender="formId"
+				action="#{tradingLanguageBean.filters.put(field, entity)}"
+				oncomplete="Richfaces.hideModalPanel('searchLanguagePopup')">
 			</a:commandLink>
-		</custom:entityPopup>
-    	<custom:listPanel label="#{messages['comLanguage.title']}" backingBean="#{tradingLanguageBean}">
-    	
-    		<custom:searchPanel label="#{messages['tradingLanguage.search']}" newButtonView="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml">
-    		
-    			<custom:searchEntityField label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode" popup="true" popupId="searchLanguagePopup" clearButton="true"/>
-    			
-    		</custom:searchPanel>	
-    		
-    		<custom:dataList dataModel="#{tradingLanguages}">
-    			<custom:column label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode" width="10%" />
-    			<custom:column label="#{messages['tradingLanguage.prDescription']}" field="prDescription" />
-				<custom:column label="#{messages['tradingLanguage.created']}" field="auditable" childField="created" width="15%" time="true" /> 
-				<custom:column label="#{messages['tradingLanguage.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="false" width="10%"/>
-    			<custom:actionsColumn editView="/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml" noDelete="true" noClose="false" permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}"/>
-		    </custom:dataList>
-		   
-		</custom:listPanel>
-		
-    </ui:define>
-    
+		</hftl:entityPopup>
+
+		<hf:searchPanel backingBean="#{tradingLanguageBean}"
+			label="#{messages['tradingLanguage.search']}">
+			<hf:searchField label="#{messages['tradingLanguage.languageCode']}"
+				field="language" childField="languageCode" popup="true"
+				popupId="searchLanguagePopup" clearButton="true" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['comLanguage.title']}"
+			backingBean="#{tradingLanguageBean}">
+			<hftl:column label="#{messages['tradingLanguage.languageCode']}"
+				field="language" childField="languageCode" width="10%" />
+			<hftl:column label="#{messages['tradingLanguage.prDescription']}"
+				field="prDescription" />
+			<hftl:column label="#{messages['tradingLanguage.created']}"
+				field="auditable" childField="created" width="15%" time="true" />
+			<hftl:column label="#{messages['tradingLanguage.disabled']}"
+				field="disabled" isMessage="true" showOnlyOnConsult="false"
+				width="10%" />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

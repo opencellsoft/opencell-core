@@ -16,7 +16,6 @@
 package org.meveo.model.payments;
 
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -27,7 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "AR_MANUAL_PAYMENT")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_MANUAL_PAYMENT_SEQ")
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_MANUAL_PAYMENT_SEQ")
 public class ManualPayment extends Payment {
 
     private static final long serialVersionUID = 1L;

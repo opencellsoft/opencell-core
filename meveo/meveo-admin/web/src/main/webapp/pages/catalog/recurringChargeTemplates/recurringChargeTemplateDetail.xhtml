@@ -1,13 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -21,7 +21,7 @@
 			}
 		</script>
 
-		<custom:entityPopup id="searchInvoiceSubCategoryPopup"
+		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}" dataModel="#{invoiceSubCategories}"
 			searchField1Label="#{messages['invoiceSubCategory.code']}" searchField1="code"
@@ -35,7 +35,7 @@
 				reRender="formId" action="#{recurringChargeTemplate.setInvoiceSubCategory(entity)}"
 				oncomplete="Richfaces.hideModalPanel('searchInvoiceSubCategoryPopup')">
 			</a:commandLink>
-		</custom:entityPopup>
+		</hftl:entityPopup>
 
 		<custom:formPanel edit="#{edit}" label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}" backingBean="#{recurringChargeTemplateBean}" entity="#{recurringChargeTemplate}">
     			<custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />

@@ -15,19 +15,16 @@
 */
 package org.meveo.model.communication;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "COM_PROVIDER_POLICY")
-@AttributeOverride(name = "provider", column = @Column(name = "PROVIDER_ID", nullable = false, unique = true))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_PROV_POL_SEQ")
+//@AttributeOverride(name = "provider", column = @Column(name = "PROVIDER_ID", nullable = false, unique = true))
+//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_PROV_POL_SEQ")
 public class ProviderPolicy extends BaseEntity {
 
     private static final long serialVersionUID = -1L;
