@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This file is not required if you don't need any extra configuration. -->
-<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
@@ -56,6 +55,40 @@
 			<to-view-id>/pages/admin/currencies/currencyDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>tradingCurrencyDetail</from-outcome>
+			<to-view-id>/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tradingCurrencies</from-outcome>
+			<to-view-id>/pages/admin/tradingCurrencies/tradingCurrencies.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>tradingCountryDetail</from-outcome>
+			<to-view-id>/pages/admin/tradingCountries/tradingCountryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tradingCountries</from-outcome>
+			<to-view-id>/pages/admin/tradingCountries/tradingCountries.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>tradingLanguages</from-outcome>
+			<to-view-id>/pages/admin/tradingLanguages/tradingLanguages.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tradingLanguagesDetail</from-outcome>
+			<to-view-id>/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
 
 		<navigation-case>
 			<from-outcome>users</from-outcome>
@@ -224,7 +257,7 @@
 			<to-view-id>/pages/admin/taxes/taxes.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>taxDetail</from-outcome>
 			<to-view-id>/pages/admin/taxes/taxDetail.xhtml</to-view-id>
@@ -856,13 +889,13 @@
 			<to-view-id>/pages/medina/edrRatingPlan/edrRatingPlan.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>paymentTerms</from-outcome>
 			<to-view-id>/pages/billing/paymentTerms/paymentTerms.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>paymentTerms</from-outcome>
 			<to-view-id>/pages/billing/paymentTerms/paymentTerms.xhtml</to-view-id>
@@ -931,8 +964,7 @@
 	<!-- </redirect> -->
 	<!-- </exception> -->
 
-	<!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" 
-		log-level="trace"> -->
+	<!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace"> -->
 	<!-- <http-error error-code="503"/> -->
 	<!-- </exception> -->
 
