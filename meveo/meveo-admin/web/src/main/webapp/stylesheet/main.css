@@ -349,3 +349,26 @@ body {
     color : white;
 
 }
+.ui-menuitem .ui-state-hover
+{
+  background: #00a9ad; /* Old browsers */
+  background: -moz-linear-gradient(top, #00a9ad 0%, #00636a 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00a9ad), color-stop(100%,#00636a)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #00a9ad 0%,#00636a 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a9ad', endColorstr='#00636a',GradientType=0 ); /* IE6-9 */
+}
+.ui-menu-child  .ui-menuitem-text
+{
+  color : #bcbcbf;
+}
+.ui-menu-child .ui-state-hover .ui-menuitem-text
+{
+  color : white;
+}
+.ui-menu-child
+{
+  background : #ffffff !important;
+}
