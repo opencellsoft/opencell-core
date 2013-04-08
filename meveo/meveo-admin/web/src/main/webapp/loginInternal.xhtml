@@ -1,51 +1,54 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
-    template="layout/loginTemplate.xhtml">
-    
-    <ui:define name="navigation">
-   	</ui:define>
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:custom="http://manaty.net/custom"
+	xmlns:p="http://primefaces.org/ui"
+	template="layout/loginTemplate.xhtml">
+
+	<ui:define name="navigation">
+	</ui:define>
 
 	<ui:define name="body">
-	
-	    <h:form id="loginForm">
-	
-	        <rich:panel styleClass="loginPanel" id="loginPanel">
-	            <f:facet name="header">#{messages['login.loginPanel']}</f:facet>
-	
-			   <h:messages id="messages" globalOnly="true" styleClass="message"
-			       errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-			       rendered="#{showGlobalMessages != 'false' and !identity.loggedIn}"/>
-	
-	            <div class="dialog">
-	                <h:panelGrid columns="2" rowClasses="prop" columnClasses="name,value">
-	                    <h:outputLabel for="username">#{messages['login.username']}</h:outputLabel>
-	                    <h:inputText id="username"
-	                              value="#{credentials.username}" style="width:170px;"/>
-	                    <h:outputLabel for="password">#{messages['login.password']}</h:outputLabel>
-	                    <h:inputSecret id="password"
-	                                value="#{credentials.password}" style="width:170px;"/>
-	                    <!-- <h:outputLabel for="rememberMe">#{messages['login.rememberMe']}</h:outputLabel>
-	                    <h:selectBooleanCheckbox id="rememberMe"
+
+		<h:form id="loginForm">
+
+			<p:panel styleClass="loginPanel" id="loginPanel">
+
+				<f:facet name="header">#{messages['login.loginPanel']}</f:facet>
+
+				<h:messages id="messages" globalOnly="true" styleClass="message"
+					errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+					rendered="#{showGlobalMessages != 'false' and !identity.loggedIn}" />
+
+				<div class="dialog">
+					<h:panelGrid columns="2" rowClasses="prop"
+						columnClasses="name,value">
+						<p:outputLabel for="username">#{messages['login.username']}</p:outputLabel>
+						<p:inputText id="username" value="#{credentials.username}"
+							style="widtp:170px;" />
+						<p:outputLabel for="password">#{messages['login.password']}</p:outputLabel>
+						<p:password id="password" value="#{credentials.password}"
+							style="widtp:170px;" />
+						<!-- <p:outputLabel for="rememberMe">#{messages['login.rememberMe']}</p:outputLabel>
+	                    <p:selectBooleanCheckbox id="rememberMe"
 	                                          value="#{rememberMe.enabled}"/> -->
-	                </h:panelGrid>
-	            </div>
+					</h:panelGrid>
+				</div>
 				<div class="actionButtons">
-	            	<h:commandButton id="submit" value="#{messages['action.login']}" action="#{identity.login}"/>
-	        	</div>
-	        </rich:panel>
-	
-	       
-	
-	    </h:form>
-	
-	 </ui:define>
-	 
+					<p:commandButton id="submit" value="#{messages['action.login']}"
+						action="#{identity.login}" ajax="false" />
+				</div>
+
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+
 </ui:composition>
