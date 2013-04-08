@@ -15,6 +15,10 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -23,9 +27,13 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.DayInYear;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.DayInYearService;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link Calendar} (extends {@link BaseBean} that
@@ -45,6 +53,13 @@ public class CalendarBean extends BaseBean<Calendar> {
 	/** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
 	@Inject
 	private CalendarService calendarService;
+	
+	@Inject
+	private DayInYearService dayInYearService;
+	
+
+
+	private DualListModel<DayInYear> perks;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -76,6 +91,27 @@ public class CalendarBean extends BaseBean<Calendar> {
 	@Override
 	protected IPersistenceService<Calendar> getPersistenceService() {
 		return calendarService;
+	}
+	
+	/**
+	 * Standard method for custom component with listType="pickList".
+	 */
+	public DualListModel<DayInYear> getDualListModel() {
+		if (perks == null) {
+			List<DayInYear> perksSource = dayInYearService.list();
+			List<DayInYear> perksTarget = new ArrayList<DayInYear>();
+			if (getEntity().getDays() != null) {
+				perksTarget.addAll(getEntity().getDays());
+			}
+			perksSource.removeAll(perksTarget);
+			perks = new DualListModel<DayInYear>(perksSource, perksTarget);
+		}
+		return perks;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setDualListModel(DualListModel<DayInYear> perks) {
+		getEntity().setDays((List<DayInYear>) perks.getTarget());
 	}
 
 }
