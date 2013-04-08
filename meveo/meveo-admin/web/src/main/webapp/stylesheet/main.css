@@ -220,3 +220,74 @@ body {
    display: inline-block;
    background-position: center;
 }
+.rf-tb
+{
+   height: 37px;
+   background-image: url(../img/menu-inactive-pat.png);
+   font-family: helvetica;
+   //overflow: hidden;
+   background-color: transparent;
+   border : none;
+}
+.rf-ddm
+{
+	height: 37px; 
+	padding-top: 10px; 
+	
+}
+.rf-ddm-unsel
+{
+   padding-top: 13px;
+   height: 30px;
+   margin-top : -5px;
+}
+.rf-ddm-sel
+{
+   padding-top: 7px;
+   margin-top : -5px;
+   //background : red;
+   background-image: url(../img/menu-active-pat.png) ;
+   border : none;
+   height: 28px; 
+}
+
+.rf-ddm-lbl-dec
+{
+  color : white !important;
+  font-size : 12px;
+  font-family: helvetica;
+  font-weight: normal;	
+  margin-right : 10px;
+  margin-left : 10px;
+}
+.rf-ddm-itm-sel 
+{
+  background : #e9f6f4;
+  height: 25px;
+  border: none;
+}
+.rf-ddm-itm-sel a,
+.rf-ddm-itm-unsel a
+{
+	color : #91969d;
+	text-decoration: none;
+
+}
+.rf-ddm-itm
+{
+  height: 20px;
+  padding-top : 10px;
+  border-bottom : 1px dashed #efeff0;
+}
+
+.rf-ddm-lst
+{
+   background : #fff;
+}
+.rf-ddm-itm-lbl
+{
+  color : #006c72;
+  display: inline-block;
+ /* -webkit-border-left-image : url(../img/arrow-drop.png) 27 27 27 27 no-repeat no-repeat;
+  border-left: 1px solid red;*/
+}
