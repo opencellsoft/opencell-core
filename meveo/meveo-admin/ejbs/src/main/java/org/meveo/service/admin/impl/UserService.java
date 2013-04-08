@@ -260,7 +260,7 @@ public class UserService extends PersistenceService<User> {
     }
 
     public void saveActivity(User user, String objectId, String action, String uri) {
-        // String sequenceValue = "USER_LOG_SEQ.nextval";
+        // String sequenceValue = "ADM_USER_LOG_SEQ.nextval";
         String sequenceValueTest = paramBean.getProperty("sequence.test");
         if (!sequenceValueTest.equals("true")) {
 

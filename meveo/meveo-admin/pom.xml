@@ -16,7 +16,7 @@
 		<module>config</module>
 		<module>ejbs</module>
 		<module>web</module>
-		<module>ear</module>
+<!-- 		<module>ear</module> -->
 	</modules>
 
 	<properties>
