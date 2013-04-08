@@ -70,7 +70,7 @@
 			<rich:panel>
 				<rich:tabPanel switchType="client">
 					<rich:tab label="#{messages['invoiceSubCategory.tab1']}">
-						<custom:formPanel edit="#{edit}"
+						<hf:formPanel edit="#{edit}"
 							label="#{messages['invoiceSubCategory.panel']}"
 							backingBean="#{invoiceSubCategoryBean}"
 							entity="#{invoiceSubCategory}">
@@ -80,12 +80,12 @@
 								field="invoiceCategory" childField="code" required="true"
 								popup="true" popupId="searchInvoiceCategoryPopup" />
 
-							<custom:formField label="#{messages['invoiceSubCategory.code']}"
+							<hf:formField label="#{messages['invoiceSubCategory.code']}"
 								field="code" required="true" validateUnique="true"
 								useConverter="false"
 								disabled="#{invoiceSubCategoryBean.entity.id!=null}" />
 							<custom:languageFields />
-							<custom:fieldset
+							<hftl:fieldset
 								name="#{messages['invoiceSubCategory.accountingCode']}"
 								columns="3">
 								<s:decorate template="/layout/edit.xhtml">
@@ -172,8 +172,8 @@
 										style="font-weight:bold;" />
 									<ui:insert />
 								</s:decorate>
-							</custom:fieldset>
-						</custom:formPanel>
+							</hftl:fieldset>
+						</hf:formPanel>
 
 					</rich:tab>
 
@@ -267,13 +267,13 @@
 							<br />
 							<div id="subCategoryCountrydiv" style="display: none">
 								<s:div id="subCategoryCountrySdiv">
-									<custom:formPanel edit="#{edit}"
+									<hf:formPanel edit="#{edit}"
 										label="#{messages['invoiceSubCategoryCountry.panel']}"
 										backingBean="#{invoiceSubCategoryBean}"
 										entity="#{invoiceSubcategoryCountry}"
 										formId="invSubCatCountForm1" showFormButtons="false"
 										ajaxSubmit="true">
-										<custom:formField
+										<hf:formField
 											label="#{messages['invoiceSubCategoryCountry.id']}"
 											field="id" disabled="true" />
 
@@ -301,7 +301,7 @@
 											<s:button value="#{messages['action.cancel']}"
 												onclick="document.getElementById('subCategoryCountrydiv').style.display='none';" />
 										</h:panelGrid>
-									</custom:formPanel>
+									</hf:formPanel>
 								</s:div>
 							</div>
 						</rich:panel>

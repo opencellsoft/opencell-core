@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -35,15 +35,15 @@
 			</a:commandLink>
 		</custom:entityPopup>
 		
-		<custom:formPanel edit ="true" label="#{messages['billingRun.panel']}" backingBean="#{billingRunBean}" entity="#{billingRun}" showFormButtons="false">
+		<hf:formPanel edit ="true" label="#{messages['billingRun.panel']}" backingBean="#{billingRunBean}" entity="#{billingRun}" showFormButtons="false">
     			<custom:formEntityField id="billingCycleId" label="#{messages['billingRun.billingCycle']}" field="billingCycle"  childField="code" 
     					required="true" popup="true" popupId="billingCyclePopup"/>	
-				<custom:formField label="#{messages['billingRun.type']}" field="processType" required="true" noSelectionLabel="false" disabled="true"/>
-				<custom:formField label="#{messages['billingRun.startDate']}" field="startDate" />
-				<custom:formField label="#{messages['billingRun.endDate']}" field="endDate" required="false"/>
+				<hf:formField label="#{messages['billingRun.type']}" field="processType" required="true" noSelectionLabel="false" disabled="true"/>
+				<hf:formField label="#{messages['billingRun.startDate']}" field="startDate" />
+				<hf:formField label="#{messages['billingRun.endDate']}" field="endDate" required="false"/>
 				<h:commandButton action="#{billingRunBean.lunchRecurringInvoicing}" value="#{messages['button.launchInvoicing']}" />
 				
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

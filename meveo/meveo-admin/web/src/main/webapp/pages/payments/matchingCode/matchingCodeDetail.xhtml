@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -15,16 +15,16 @@
 	</ui:define>
 	<ui:define name="body">	
 	<rich:panel>				
-				<custom:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}" entity="#{matchingCode}">
-					<custom:panelGroup columns="2">
-						<custom:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate"  />	  
-						<custom:formField label="#{messages['matchingCode.matchingType']}" field="matchingType"  childField="label" isMessage="true" />
-						<custom:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit"  />
-						<custom:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit"  />																		                  																
-					</custom:panelGroup>												
+				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}" entity="#{matchingCode}">
+					<hftl:panelGroup columns="2">
+						<hf:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate"  />	  
+						<hf:formField label="#{messages['matchingCode.matchingType']}" field="matchingType"  childField="label" isMessage="true" />
+						<hf:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit"  />
+						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit"  />																		                  																
+					</hftl:panelGroup>												
 					<a:commandButton value="#{messages['action.back']}"	 action="#{matchingCodeBean.backToCA()}"/>						
 					<a:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
-				</custom:formPanel>
+				</hf:formPanel>
 				<custom:listPanel label="#{messages['customerAccount.operations']}">
 					<custom:dataList backingBean="#{matchingCodeBean}"
 						dataModel="#{matchingCode.getMatchingAmounts()}"

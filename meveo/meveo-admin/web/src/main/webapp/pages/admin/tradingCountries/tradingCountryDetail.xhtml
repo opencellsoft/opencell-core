@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -37,7 +37,7 @@
 		</custom:entityPopup>
 		</c:if>
 
-		<custom:formPanel formId="countriesFormId" edit="#{edit}"
+		<hf:formPanel formId="countriesFormId" edit="#{edit}"
 			label="#{messages['tradingCountry.tradingCountryPanel']}"
 			backingBean="#{tradingCountryBean}" entity="#{tradingCountry}">
 
@@ -46,17 +46,17 @@
 				childField="countryCode" popup="true" popupId="countryPopupId"
 				required="true" />
 
-			<custom:formField label="#{messages['tradingCountry.prDescription']}"
+			<hf:formField label="#{messages['tradingCountry.prDescription']}"
 				field="prDescription" size="100" />
-			<custom:formField label="#{messages['tradingCountry.disabled']}"
+			<hf:formField label="#{messages['tradingCountry.disabled']}"
 				field="disabled" isMessage="true" showOnlyOnConsult="true" />
-			<!-- <custom:formField
+			<!-- <hf:formField
 				label="#{messages['tradingCountry.created']}"
 				field="created" showOnlyOnConsult="true"/> 
-				<custom:formField
+				<hf:formField
 				label="#{messages['tradingCountry.updated']}"
 				field="updated" showOnlyOnConsult="true"/>-->
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

@@ -49,27 +49,27 @@
 				</a:commandLink>
 		</hftl:entityPopup>
 			
-		<custom:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usageDiscountPlanItemBean}" entity="#{usageDiscountPlanItem}" >
-			<custom:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true" />
+		<hf:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usageDiscountPlanItemBean}" entity="#{usageDiscountPlanItem}" >
+			<hf:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true" />
 			<custom:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
 				field="serviceTemplate" childField="code"   popup="true" popupId="serviceTemplatePopup" />
     		<custom:formEntityField id="customerAccountSelectId" label="#{messages['usagePricePlanItem.customerAccount']}"
 				field="customerAccount" childField="code" popup="true" popupId="customerAccountPopup" />
 				
-			    <custom:formField label="#{messages['numberingPlan.priority']}" field="priority"  />
-    			<custom:formField label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
-				<custom:formField label="#{messages['usagePricePlanItem.numberParam1Max']}" field="numberParam1Max" />
-	    		<custom:formField label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" />
-	    	    <custom:formField label="#{messages['usagePricePlanItem.stringParam2']}" field="stringParam2" />
-	    	    <custom:formField label="#{messages['usagePricePlanItem.stringParam3']}" field="stringParam3" />
-	    	    <custom:formField label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" isMessage="true" />
-	    	    <custom:formField label="#{messages['usageDiscountPlanItem.percentage']}" field="percentage" />
-	    	    <custom:formField label="#{messages['access.startDate']}" field="startDate"  />
-	    	    <custom:formField label="#{messages['access.endDate']}" field="endDate"  />
+			    <hf:formField label="#{messages['numberingPlan.priority']}" field="priority"  />
+    			<hf:formField label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
+				<hf:formField label="#{messages['usagePricePlanItem.numberParam1Max']}" field="numberParam1Max" />
+	    		<hf:formField label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" />
+	    	    <hf:formField label="#{messages['usagePricePlanItem.stringParam2']}" field="stringParam2" />
+	    	    <hf:formField label="#{messages['usagePricePlanItem.stringParam3']}" field="stringParam3" />
+	    	    <hf:formField label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" isMessage="true" />
+	    	    <hf:formField label="#{messages['usageDiscountPlanItem.percentage']}" field="percentage" />
+	    	    <hf:formField label="#{messages['access.startDate']}" field="startDate"  />
+	    	    <hf:formField label="#{messages['access.endDate']}" field="endDate"  />
 				 
     		
     		
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

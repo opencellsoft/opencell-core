@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -16,12 +16,12 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="#{edit}" label="#{messages['usageType.usageTypePanel']}" backingBean="#{usageTypeBean}" entity="#{usageType}" >
-			<custom:formField label="#{messages['usageType.code']}" field="code" required="false" />
-			<custom:formField label="#{messages['usageType.name']}" field="name" required="false" />
-			<custom:formField label="#{messages['usageType.metricName']}" field="metricName" required="false" />
-			<custom:formField label="#{messages['usageType.metricCode']}" field="metricCode" required="false" />
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['usageType.usageTypePanel']}" backingBean="#{usageTypeBean}" entity="#{usageType}" >
+			<hf:formField label="#{messages['usageType.code']}" field="code" required="false" />
+			<hf:formField label="#{messages['usageType.name']}" field="name" required="false" />
+			<hf:formField label="#{messages['usageType.metricName']}" field="metricName" required="false" />
+			<hf:formField label="#{messages['usageType.metricCode']}" field="metricCode" required="false" />
+		</hf:formPanel>
        
     </ui:define>
     

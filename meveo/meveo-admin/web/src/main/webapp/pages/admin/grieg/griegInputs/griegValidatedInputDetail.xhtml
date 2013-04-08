@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -16,14 +16,14 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="false" label="#{messages['griegValidatedInputHistory.panel']}" backingBean="#{griegValidatedInputHistoryBean}" entity="#{griegValidatedInvoiceInputHistory}" >
-			<custom:formField label="#{messages['inputHistory.name']}" field="name" size="60" />
-			<custom:formField label="#{messages['inputHistory.analysisStartDate']}" field="analysisStartDate" />
-			<custom:formField label="#{messages['inputHistory.analysisEndDate']}" field="analysisEndDate" />
-			<custom:formField label="#{messages['inputHistory.parsedTickets']}" field="parsedTickets" />
-			<custom:formField label="#{messages['inputHistory.succeededTickets']}" field="succeededTickets" />
-			<custom:formField label="#{messages['inputHistory.rejectedTickets']}" field="rejectedTickets" />
-		</custom:formPanel>
+		<hf:formPanel edit="false" label="#{messages['griegValidatedInputHistory.panel']}" backingBean="#{griegValidatedInputHistoryBean}" entity="#{griegValidatedInvoiceInputHistory}" >
+			<hf:formField label="#{messages['inputHistory.name']}" field="name" size="60" />
+			<hf:formField label="#{messages['inputHistory.analysisStartDate']}" field="analysisStartDate" />
+			<hf:formField label="#{messages['inputHistory.analysisEndDate']}" field="analysisEndDate" />
+			<hf:formField label="#{messages['inputHistory.parsedTickets']}" field="parsedTickets" />
+			<hf:formField label="#{messages['inputHistory.succeededTickets']}" field="succeededTickets" />
+			<hf:formField label="#{messages['inputHistory.rejectedTickets']}" field="rejectedTickets" />
+		</hf:formPanel>
        
     </ui:define>
     

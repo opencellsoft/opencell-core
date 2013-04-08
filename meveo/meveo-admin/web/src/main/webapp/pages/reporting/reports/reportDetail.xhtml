@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -16,24 +16,24 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="#{edit}" label="#{messages['report.reportPanel']}" backingBean="#{reportBean}" entity="#{report}" >
-			<custom:formField label="#{messages['report.name']}" field="name" useConverter="false"/>
-			<custom:panelGroup columns="2">	
-				<custom:formField label="#{messages['report.startDate']}" field="startDate" isDate="true"/>
-				<custom:formField label="#{messages['report.endDate']}" field="endDate" isDate="true"/>
-			</custom:panelGroup>
-			<custom:formField label="#{messages['report.nextExecution']}" field="schedule" isDate="true"/>
-			<custom:formField label="#{messages['report.frequency']}" field="frequency" />
-			<custom:panelGroup columns="2">	
-				<custom:formField label="#{messages['report.executionHour']}" field="executionHour" />
-				<custom:formField label="#{messages['report.executionMinutes']}" field="executionMinutes" />
-				<custom:formField label="#{messages['report.executionIntervalMinutes']}" field="executionIntervalMinutes" />
-				<custom:formField label="#{messages['report.executionIntervalSeconds']}" field="executionIntervalSeconds" />
-				<custom:formField label="#{messages['report.executionDayOfWeek']}" field="executionDayOfWeek" />
-				<custom:formField label="#{messages['report.executionDayOfMonth']}" field="executionDayOfMonth" />
-				</custom:panelGroup>
-			<custom:formField  label="#{messages['report.emails']}" field="emails" isList="true" childField="address" listService="#{emailService}" listType="pickUpList" />	
-			<custom:formField label="#{messages['report.outputFormat']}" field="outputFormat" required="true"/>
+		<hf:formPanel edit="#{edit}" label="#{messages['report.reportPanel']}" backingBean="#{reportBean}" entity="#{report}" >
+			<hf:formField label="#{messages['report.name']}" field="name" useConverter="false"/>
+			<hftl:panelGroup columns="2">	
+				<hf:formField label="#{messages['report.startDate']}" field="startDate" isDate="true"/>
+				<hf:formField label="#{messages['report.endDate']}" field="endDate" isDate="true"/>
+			</hftl:panelGroup>
+			<hf:formField label="#{messages['report.nextExecution']}" field="schedule" isDate="true"/>
+			<hf:formField label="#{messages['report.frequency']}" field="frequency" />
+			<hftl:panelGroup columns="2">	
+				<hf:formField label="#{messages['report.executionHour']}" field="executionHour" />
+				<hf:formField label="#{messages['report.executionMinutes']}" field="executionMinutes" />
+				<hf:formField label="#{messages['report.executionIntervalMinutes']}" field="executionIntervalMinutes" />
+				<hf:formField label="#{messages['report.executionIntervalSeconds']}" field="executionIntervalSeconds" />
+				<hf:formField label="#{messages['report.executionDayOfWeek']}" field="executionDayOfWeek" />
+				<hf:formField label="#{messages['report.executionDayOfMonth']}" field="executionDayOfMonth" />
+				</hftl:panelGroup>
+			<hf:formField  label="#{messages['report.emails']}" field="emails" isList="true" childField="address" listService="#{emailService}" listType="pickUpList" />	
+			<hf:formField label="#{messages['report.outputFormat']}" field="outputFormat" required="true"/>
 		
 			<h:commandButton rendered="#{edit}" value="#{messages['commons.addNew']}" action="addNew"/>
 		
@@ -41,7 +41,7 @@
 				<f:attribute  name="backView" value="#{backView}" />
 			</h:commandButton>
 		
-		</custom:formPanel>
+		</hf:formPanel>
       
        
        

@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -22,7 +22,7 @@
 		<h:form id="selectionTypeTitle" styleClass="mainForm">				
 					 	#{messages['accountOperation.selectTypeOCC']} 
 					 	<h:selectOneMenu id="codeType" value="#{otherCreditAndChargeBean.occTemplate}">
-					        <s:convertEntity />
+					        <s:objectConverter />
 					        <s:selectItems value="#{occTemplateBean.listOCCTemplate()}" var="occ" label="#{occ.description}" />
 				        </h:selectOneMenu>
 						 <h:commandButton value="#{messages['accountOperation.buttonSelectionType']}" action="#{otherCreditAndChargeBean.loadFromTemplate()}" />				  

@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,18 +16,18 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit ="#{edit}" label="#{messages['billingCycle.panel']}" backingBean="#{billingCycleBean}" entity="#{billingCycle}">
-    			<custom:formField label="#{messages['billingCycle.code']}" field="code" validateUnique="true" required="true"/>
-    			<custom:formField label="#{messages['billingCycle.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
-    			<custom:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" size="20" maxlength="20" required="true"/>
-				<custom:formField label="#{messages['billingCycle.invoiceDateDelay']}" field="invoiceDateDelay" required="true"/>
-				<custom:formField label="#{messages['billingCycle.dueDateDelay']}" field="dueDateDelay" required="true" />
-				<custom:panelGroup columns="2">	
+		<hf:formPanel edit ="#{edit}" label="#{messages['billingCycle.panel']}" backingBean="#{billingCycleBean}" entity="#{billingCycle}">
+    			<hf:formField label="#{messages['billingCycle.code']}" field="code" validateUnique="true" required="true"/>
+    			<hf:formField label="#{messages['billingCycle.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
+    			<hf:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" size="20" maxlength="20" required="true"/>
+				<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}" field="invoiceDateDelay" required="true"/>
+				<hf:formField label="#{messages['billingCycle.dueDateDelay']}" field="dueDateDelay" required="true" />
+				<hftl:panelGroup columns="2">	
 					<custom:formEntityField label="#{messages['billingCycle.calendar']}" field="calendar" childField="name" required="true" popup="false"
 										service="#{calendarService}" listElements="#{calendarService.listBillingCalendars()}" />
 					<custom:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
-				</custom:panelGroup>
-		</custom:formPanel>
+				</hftl:panelGroup>
+		</hf:formPanel>
 
 	</ui:define>
 

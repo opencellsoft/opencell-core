@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -15,15 +15,15 @@
 	</ui:define>
 	<ui:define name="body">	
 	<rich:panel>				
-				<custom:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningLOT.panel']}" backingBean="#{dunningLOTBean}" entity="#{dunningLOT}">
+				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningLOT.panel']}" backingBean="#{dunningLOTBean}" entity="#{dunningLOT}">
 				
-					<custom:panelGroup columns="2">							 
-						<custom:formField label="#{messages['dunningLOT.fileName']}" field="fileName"  />
-						<custom:formField label="#{messages['dunningLOT.actionType']}" field="actionType"  />
+					<hftl:panelGroup columns="2">							 
+						<hf:formField label="#{messages['dunningLOT.fileName']}" field="fileName"  />
+						<hf:formField label="#{messages['dunningLOT.actionType']}" field="actionType"  />
 																							                  															
-					</custom:panelGroup>												
+					</hftl:panelGroup>												
 					<a:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
-				</custom:formPanel>
+				</hf:formPanel>
 				<custom:listPanel label="#{messages['dunningLOT.actionsDunning']}">
 					<custom:dataList backingBean="#{dunningLOTBean}"
 						dataModel="#{dunningLOT.getActions()}"

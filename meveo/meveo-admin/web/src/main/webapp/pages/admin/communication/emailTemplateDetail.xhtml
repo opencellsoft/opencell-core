@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -16,8 +16,8 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="#{edit}" label="#{messages['emailTemplate.Panel']}" backingBean="#{emailTemplateBean}" entity="#{emailTemplate}">
-			<custom:formField label="#{messages['emailTemplate.subject']}" field="subject" required="true"/>
+		<hf:formPanel edit="#{edit}" label="#{messages['emailTemplate.Panel']}" backingBean="#{emailTemplateBean}" entity="#{emailTemplate}">
+			<hf:formField label="#{messages['emailTemplate.subject']}" field="subject" required="true"/>
 									<s:decorate template="/layout/edit.xhtml" >
 			    						 <ui:define name="label">
 				    						<h:outputText value="#{messages['emailTemplate.htmlContent']}" />
@@ -32,7 +32,7 @@
 				    	 				<rich:editor rendered="#{edit}" value="#{emailTemplate.textContent}"  theme="advanced" />   	
 										<rich:editor rendered="#{!edit}" value="#{emailTemplate.textContent}"  theme="advanced" readonly="true"/>   	
 				        			</s:decorate>
-		</custom:formPanel>
+		</hf:formPanel>
        
     </ui:define>
     

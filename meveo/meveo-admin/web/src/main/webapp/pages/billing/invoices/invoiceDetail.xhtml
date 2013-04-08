@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -17,20 +17,20 @@
 	<ui:define name="body">
 		
 
-		<custom:formPanel edit="#{edit}" label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" entity="#{invoice}" showFormButtons="false">
+		<hf:formPanel edit="#{edit}" label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" entity="#{invoice}" showFormButtons="false">
 				<custom:formEntityField label="#{messages['invoice.billingAccount']}" field="billingAccount" childField="code" popup="false" popupId="searchBillingAccountPopup" clearButton="true" />
-    			<custom:formField label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" validateUnique="true"/>
-    			<custom:formField label="#{messages['invoice.productDate']}" field="productDate" />
-    			<custom:formField label="#{messages['invoice.invoiceDate']}" field="invoiceDate" />
-    			<custom:formField label="#{messages['invoice.dueDate']}" field="dueDate" />
-    			<custom:formField label="#{messages['invoice.amount']}" field="amount" />
-    			<custom:formField label="#{messages['invoice.discount']}" field="discount" />
-    			<custom:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
-    			<custom:formField label="#{messages['invoice.amountTax']}" field="amountTax" />
-    			<custom:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
-    			<custom:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />
-    			<custom:formField label="#{messages['invoice.iban']}" field="iban" />
-    			<custom:formField label="#{messages['invoice.alias']}" field="alias" />
+    			<hf:formField label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" validateUnique="true"/>
+    			<hf:formField label="#{messages['invoice.productDate']}" field="productDate" />
+    			<hf:formField label="#{messages['invoice.invoiceDate']}" field="invoiceDate" />
+    			<hf:formField label="#{messages['invoice.dueDate']}" field="dueDate" />
+    			<hf:formField label="#{messages['invoice.amount']}" field="amount" />
+    			<hf:formField label="#{messages['invoice.discount']}" field="discount" />
+    			<hf:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
+    			<hf:formField label="#{messages['invoice.amountTax']}" field="amountTax" />
+    			<hf:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
+    			<hf:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />
+    			<hf:formField label="#{messages['invoice.iban']}" field="iban" />
+    			<hf:formField label="#{messages['invoice.alias']}" field="alias" />
 		<s:decorate template="/layout/edit.xhtml" rendered="#{billingAccountBean.pdfExists(invoice.id)}"> 
 				<ui:define name="label">
 					<h:outputText value="#{messages['invoice.file']}" />
@@ -46,7 +46,7 @@
 				</h:panelGrid>
 			
 		
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

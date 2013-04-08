@@ -16,11 +16,11 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit="#{edit}" label="#{messages['serviceParameterTemplate.serviceParameterPanel']}" backingBean="#{serviceParameterTemplateBean}" entity="#{serviceParameterTemplate}" >
-				<custom:formField label="#{messages['serviceParameterTemplate.code']}" field="code" required="true" validateUnique="true" />
-    		    <custom:formField label="#{messages['serviceParameterTemplate.name']}" field="name" useConverter="false"/>
-    			<custom:formField label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" listType="pickUpList" listService="#{serviceTemplateService}" childField="name" />
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['serviceParameterTemplate.serviceParameterPanel']}" backingBean="#{serviceParameterTemplateBean}" entity="#{serviceParameterTemplate}" >
+				<hf:formField label="#{messages['serviceParameterTemplate.code']}" field="code" required="true" validateUnique="true" />
+    		    <hf:formField label="#{messages['serviceParameterTemplate.name']}" field="name" useConverter="false"/>
+    			<hf:formField label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" listType="pickUpList" listService="#{serviceTemplateService}" childField="name" />
+		</hf:formPanel>
 
 	</ui:define>
 

@@ -16,13 +16,13 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit="#{edit}" label="#{messages['discountPlanMatrix.panel']}" backingBean="#{discountPlanMatrixBean}" entity="#{discountPlanMatrix}" >
-    			<custom:formField label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" required="true" validateUnique="true" />
-    			<custom:formField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
-    			<custom:formField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
-    			<custom:formField label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />
-    			<custom:formField label="#{messages['discountPlanMatrix.percent']}" field="percent" />
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['discountPlanMatrix.panel']}" backingBean="#{discountPlanMatrixBean}" entity="#{discountPlanMatrix}" >
+    			<hf:formField label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" required="true" validateUnique="true" />
+    			<hf:formField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
+    			<hf:formField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
+    			<hf:formField label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />
+    			<hf:formField label="#{messages['discountPlanMatrix.percent']}" field="percent" />
+		</hf:formPanel>
 
 	</ui:define>
 

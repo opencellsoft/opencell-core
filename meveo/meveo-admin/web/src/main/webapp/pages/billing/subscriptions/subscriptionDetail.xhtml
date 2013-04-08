@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -127,25 +127,25 @@
 		
 		<rich:modalPanel id="serviceTerminationPopup" keepVisualState="true" style="overflow:auto;">
 	       <a:outputPanel id="terminationPanel" >
-			    <custom:formPanel edit="true" label="#{messages['serviceTerminationPopup.title']}"
+			    <hf:formPanel edit="true" label="#{messages['serviceTerminationPopup.title']}"
 						 		backingBean="#{subscriptionBean}" entity="#{subscriptionBean.selectedServiceInstance}" styleClass="formPanel" formId="subscTermFrm" showFormButtons="false">
-					<custom:panelGroup columns="2">
-						<custom:formField label="#{messages['serviceInstance.code']}" field="code" size="50" edit="false"/>
-					</custom:panelGroup>
-					<custom:panelGroup columns="2">
-						<custom:formField label="#{messages['serviceInstance.terminationDate']}" field="terminationDate" required="true"/>	
-					</custom:panelGroup>
-					<custom:panelGroup columns="2">
+					<hftl:panelGroup columns="2">
+						<hf:formField label="#{messages['serviceInstance.code']}" field="code" size="50" edit="false"/>
+					</hftl:panelGroup>
+					<hftl:panelGroup columns="2">
+						<hf:formField label="#{messages['serviceInstance.terminationDate']}" field="terminationDate" required="true"/>	
+					</hftl:panelGroup>
+					<hftl:panelGroup columns="2">
 						<custom:formEntityField label="Motif " field="subscriptionTerminationReason"  childField="description" 
 							required="true" popup="false"  service="#{subscriptionTerminationReasonService}" 
 							listElements="#{subscriptionTerminationReasonService.listReasons()}"/>
 							
-				    </custom:panelGroup>
+				    </hftl:panelGroup>
 				    <rich:panel>
 			    			<h:commandButton action="#{subscriptionBean.terminateService()}" value="#{messages['button.terminateButton']}"  onclick="Richfaces.hideModalPanel('serviceTerminationPopup');"/>&nbsp;&nbsp;
 							<a:commandButton action="#{subscriptionBean.getQuantity()}" immediate="true" onclick="Richfaces.hideModalPanel('serviceTerminationPopup');" value="#{messages['management.close']}" />
 					</rich:panel>				
-			    </custom:formPanel>
+			    </hf:formPanel>
 	       </a:outputPanel>
 		</rich:modalPanel>
 
@@ -161,21 +161,21 @@
 				</f:facet>
 <rich:tabPanel switchType="client">
 <rich:tab label="#{messages['subscription.tab.services']}" rendered="#{!edit}" >
-		<custom:formPanel formId="headerInfo1" edit="#{edit}" 
+		<hf:formPanel formId="headerInfo1" edit="#{edit}" 
 				backingBean="#{subscriptionBean}" entity="#{subscription}" showFormButtons="false" styleClass="formPanel">
-		<custom:panelGroup columns="3">
-		   	<custom:formField label="#{messages['businessEntity.code']}" field="code" required="true"/>
-			<custom:formField label="#{messages['serviceInstance.status']}" field="status"/>
-    		<custom:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
-		</custom:panelGroup>
+		<hftl:panelGroup columns="3">
+		   	<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true"/>
+			<hf:formField label="#{messages['serviceInstance.status']}" field="status"/>
+    		<hf:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
+		</hftl:panelGroup>
 		
-		<custom:panelGroup columns="3">
+		<hftl:panelGroup columns="3">
 			<custom:formEntityField id="offerSelectId1" label="#{messages['subscription.offer']}"
 								field="offer" childField="code" popup="false"/>
-			<custom:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
-			<custom:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
-		</custom:panelGroup>
-	    </custom:formPanel>
+			<hf:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
+			<hf:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+		</hftl:panelGroup>
+	    </hf:formPanel>
 
 	
 		<br/>
@@ -233,44 +233,44 @@
 </rich:tab>
 <rich:tab label="#{messages['billingAccount.tab.information']}">
 
-				<custom:formPanel edit="#{edit}" label="#{messages['subscription.panel']}" backingBean="#{subscriptionBean}" entity="#{subscription}" >
+				<hf:formPanel edit="#{edit}" label="#{messages['subscription.panel']}" backingBean="#{subscriptionBean}" entity="#{subscription}" >
 		    			<!--Creation window fields-->
 						<custom:formEntityField id="userSelectId" label="#{messages['subscription.userAccount']}"
 								field="userAccount" childField="code" required="true" popup="true" popupId="userAccountPopup" />
 						<custom:formEntityField id="offerSelectId" label="#{messages['subscription.offer']}"
 								field="offer" childField="code" popup="true" popupId="offerPopup" required="true" modifyOnCreate="true"/>
-						<custom:panelGroup columns="1">
-							<custom:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" size="35" maxlength="35"/>
-							<custom:formField label="#{messages['businessEntity.description']}" field="description" size="80" maxlength="100"/>
-						</custom:panelGroup>
-						<custom:panelGroup columns="2">
-						<custom:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-						<custom:formField label="#{messages[subscription.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}" field="terminationDate"  show="#{!edit}"/>
-						</custom:panelGroup>
-						<custom:panelGroup columns="1">
-						<custom:formField label="#{messages['subscription.endAgrementDate']}" field="endAgrementDate"/>
-						</custom:panelGroup>
-						<custom:panelGroup columns="1">	
-				<custom:formField label="#{messages['accountEntity.defaultLevel']}" field="defaultLevel" isMessage="true"/>
-		</custom:panelGroup>
-		    	</custom:formPanel>
+						<hftl:panelGroup columns="1">
+							<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" size="35" maxlength="35"/>
+							<hf:formField label="#{messages['businessEntity.description']}" field="description" size="80" maxlength="100"/>
+						</hftl:panelGroup>
+						<hftl:panelGroup columns="2">
+						<hf:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+						<hf:formField label="#{messages[subscription.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}" field="terminationDate"  show="#{!edit}"/>
+						</hftl:panelGroup>
+						<hftl:panelGroup columns="1">
+						<hf:formField label="#{messages['subscription.endAgrementDate']}" field="endAgrementDate"/>
+						</hftl:panelGroup>
+						<hftl:panelGroup columns="1">	
+				<hf:formField label="#{messages['accountEntity.defaultLevel']}" field="defaultLevel" isMessage="true"/>
+		</hftl:panelGroup>
+		    	</hf:formPanel>
 </rich:tab>
 <rich:tab label="#{messages['subscription.tab.oneShotChg']}" rendered="#{!edit}" >
 
-<custom:formPanel formId="form3" edit="#{edit}" 
+<hf:formPanel formId="form3" edit="#{edit}" 
 				backingBean="#{subscriptionBean}" entity="#{subscription}" showFormButtons="false" >
-		<custom:panelGroup columns="3">
-			<custom:formField label="#{messages['businessEntity.code']}" field="code" />
-			<custom:formField label="#{messages['serviceInstance.status']}" field="status"/>
-    		<custom:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
-		</custom:panelGroup>
-		<custom:panelGroup columns="3">
+		<hftl:panelGroup columns="3">
+			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:formField label="#{messages['serviceInstance.status']}" field="status"/>
+    		<hf:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
+		</hftl:panelGroup>
+		<hftl:panelGroup columns="3">
 			<custom:formEntityField id="offerSelectId" label="#{messages['subscription.offer']}"
 								field="offer" childField="code" popup="false"/>
-			<custom:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
-			<custom:formField label="#{messages[subscription.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}" field="terminationDate" />
-		</custom:panelGroup>
-</custom:formPanel>
+			<hf:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
+			<hf:formField label="#{messages[subscription.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}" field="terminationDate" />
+		</hftl:panelGroup>
+</hf:formPanel>
 <br/>
 <br/>
 	<a:outputPanel id="oneShotDataPanel"> 
@@ -302,12 +302,12 @@
 	<br/>
 	<br/>
 <div id="oneShotChgDiv" style="display:none"><s:div id="oneShotChgSdiv">
-	<custom:formPanel edit="true" label="#{messages['subscription.tab.oneShotChg']}" backingBean="#{subscriptionBean}" 
+	<hf:formPanel edit="true" label="#{messages['subscription.tab.oneShotChg']}" backingBean="#{subscriptionBean}" 
 			entity="#{oneShotChargeInstance}" formId="oneShotChgForm1" showFormButtons="false" ajaxSubmit="true">
 			<custom:formEntityField id="chargeTemplateSelectId" label="#{messages['businessEntity.code']}"
 								field="chargeTemplate" childField="code" popup="true" popupId="oneShotChargeTmpPopup"/>
-				<custom:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true"/>
-				<custom:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" />
+				<hf:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true"/>
+				<hf:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" />
 				<s:decorate template="/layout/edit.xhtml">
 					<ui:define name="label">
 					<h:outputText value="#{messages['oneShotChargeInstance.amountWithoutTax']}" />
@@ -328,9 +328,9 @@
 				</h:inputText>						
 					<h:outputText rendered="#{!edit}" value="#{entity.amount2}" style="font-weight:bold;"  converter="bigDecimalConverter" />
 				</s:decorate>
-	    		<custom:formField label="#{messages['oneShotChargeInstance.criteria1']}" field="criteria1" />
-	    		<custom:formField label="#{messages['oneShotChargeInstance.criteria2']}" field="criteria2" />
-	    		<custom:formField label="#{messages['oneShotChargeInstance.criteria3']}" field="criteria3" />
+	    		<hf:formField label="#{messages['oneShotChargeInstance.criteria1']}" field="criteria1" />
+	    		<hf:formField label="#{messages['oneShotChargeInstance.criteria2']}" field="criteria2" />
+	    		<hf:formField label="#{messages['oneShotChargeInstance.criteria3']}" field="criteria3" />
 				
 				<s:decorate template="/layout/edit.xhtml">
 					<ui:define name="label">
@@ -502,27 +502,27 @@
 					
 					<s:button value="#{messages['action.cancel']}" onclick="document.getElementById('oneShotChgDiv').style.display='none';"/>
 				</h:panelGrid>
-			</custom:formPanel>
+			</hf:formPanel>
 </s:div></div>
 	</rich:panel>
 </rich:tab>
 <!-- recurring charge instance -->
 <rich:tab label="#{messages['subscription.tab.recurringShotChg']}" rendered="#{!edit}" >
 
-<custom:formPanel formId="form4" edit="#{edit}" 
+<hf:formPanel formId="form4" edit="#{edit}" 
 				backingBean="#{subscriptionBean}" entity="#{subscription}" showFormButtons="false" >
-		<custom:panelGroup columns="3">
-			<custom:formField label="#{messages['businessEntity.code']}" field="code" />
-			<custom:formField label="#{messages['serviceInstance.status']}" field="status"/>
-    		<custom:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
-		</custom:panelGroup>
-		<custom:panelGroup columns="3">
+		<hftl:panelGroup columns="3">
+			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:formField label="#{messages['serviceInstance.status']}" field="status"/>
+    		<hf:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
+		</hftl:panelGroup>
+		<hftl:panelGroup columns="3">
 			<custom:formEntityField id="offerSelectId" label="#{messages['subscription.offer']}"
 								field="offer" childField="code" popup="false"/>
-			<custom:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
-			<custom:formField label="#{messages[subscription.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}" field="terminationDate" />
-		</custom:panelGroup>
-</custom:formPanel>
+			<hf:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate"/>
+			<hf:formField label="#{messages[subscription.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}" field="terminationDate" />
+		</hftl:panelGroup>
+</hf:formPanel>
 <br/>
 <br/>
 <a:outputPanel id="recurringChargeDataPanel"> 
@@ -549,12 +549,12 @@
 </a:outputPanel>
 	<rich:panel>
 <div id="recurringChgDiv" style="display:none"><s:div id="recurringChgSdiv">
-	<custom:formPanel edit="true" label="#{messages['subscription.tab.recurringShotChg']}" backingBean="#{subscriptionBean}" 
+	<hf:formPanel edit="true" label="#{messages['subscription.tab.recurringShotChg']}" backingBean="#{subscriptionBean}" 
 			entity="#{recurringChargeInstance}" formId="recurringChgForm1" showFormButtons="false" ajaxSubmit="true" >
 			<custom:formEntityField id="RCchargeTemplateSelectId" label="#{messages['businessEntity.code']}"
 								field="chargeTemplate" childField="code" popup="true" popupId="recurringChargeTmpPopup"/>
-				<custom:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true"/>
-				<custom:formField label="#{messages['recurringChargeInstance.subscriptionDate']}" field="subscriptionDate" />
+				<hf:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true"/>
+				<hf:formField label="#{messages['recurringChargeInstance.subscriptionDate']}" field="subscriptionDate" />
 	    		<s:decorate template="/layout/edit.xhtml">
 					<ui:define name="label">
 					<h:outputText value="#{messages['recurringChargeInstance.amountWithoutTax']}" />
@@ -573,9 +573,9 @@
 				</h:inputText>						
 					<h:outputText rendered="#{!edit}" value="#{entity.amount2}" style="font-weight:bold;"  converter="bigDecimalConverter" />
 				</s:decorate>
-	    		<custom:formField label="#{messages['recurringChargeInstance.criteria1']}" field="criteria1" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"/>
-	    		<custom:formField label="#{messages['recurringChargeInstance.criteria2']}" field="criteria2" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"/>
-	    		<custom:formField label="#{messages['recurringChargeInstance.criteria3']}" field="criteria3" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"/>
+	    		<hf:formField label="#{messages['recurringChargeInstance.criteria1']}" field="criteria1" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"/>
+	    		<hf:formField label="#{messages['recurringChargeInstance.criteria2']}" field="criteria2" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"/>
+	    		<hf:formField label="#{messages['recurringChargeInstance.criteria3']}" field="criteria3" disabled="#{recurringChargeInstance.id!=null and !recurringChargeInstance.chargeTemplate.amountEditable}"/>
 				<s:decorate template="/layout/edit.xhtml">
 					<ui:define name="label">
 					<h:outputText value="#{messages['serviceInstance.quantity']}"/>
@@ -751,7 +751,7 @@
 				</h:panelGrid>
 				
 				
-			</custom:formPanel>
+			</hf:formPanel>
 </s:div></div>
 	</rich:panel>
 </rich:tab>
