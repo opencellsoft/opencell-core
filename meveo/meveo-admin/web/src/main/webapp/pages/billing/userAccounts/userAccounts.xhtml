@@ -9,51 +9,41 @@
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:p="http://primefaces.org/ui" 
 	template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{userAccountBean.preRenderView}" />
+	</f:metadata>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
+
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['userAccount.search']}"
-			backingBean="#{userAccountBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}"
-				field="code" />
-			<hf:searchField label="#{messages['billingAccount.status']}"
-				field="status" />
-			<hf:searchField
-				label="#{messages['billingAccount.subscriptionDate']}"
-				field="subscriptionDate" />
-			<hf:searchField label="#{messages['billingAccount.terminationDate']}"
-				field="terminationDate" />
-			<s:decorate template="/layout/edit.xhtml">
-				<ui:define name="label">
-					<h:outputText value="#{messages['name.lastName']}" />
-				</ui:define>
-				<h:inputText id="lastName"
-					value="#{userAccountBean.filters['name.lastName']}" />
-			</s:decorate>
+		<hf:searchPanel label="#{messages['userAccount.search']}" backingBean="#{userAccountBean}">
+			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:searchField label="#{messages['billingAccount.status']}" field="status" />
+			<hf:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+			<hf:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+			<h:panelGrid columns="2">
+				<p:outputLabel for="lastName_text" value="#{messages['name.lastName']}" />
+				<p:inputText id="lastName_text" value="#{userAccountBean.filters['name.lastName']}" size="20"/>
+			</h:panelGrid>
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['userAccount.title']}"
-			backingBean="#{userAccountBean}">
+		<hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['businessEntity.description']}"
-				field="description" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['userAccount.name']}" field="name" />
-			<hftl:column label="#{messages['billingAccount.status']}"
-				field="status" childField="label" isMessage="true" />
-			<hftl:column label="#{messages['billingAccount.subscriptionDate']}"
-				field="subscriptionDate" />
-			<hftl:column label="#{messages['billingAccount.terminationDate']}"
-				field="terminationDate" />
-			<hftl:column label="#{messages['address.address1']}" field="address"
-				childField="address1" />
+			<hftl:column label="#{messages['billingAccount.status']}" field="status" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+			<hftl:column label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+			<hftl:column label="#{messages['address.address1']}" field="address" childField="address1" />
 
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('billing','billingManagement')}" />
+			<hftl:actionsColumn permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>
