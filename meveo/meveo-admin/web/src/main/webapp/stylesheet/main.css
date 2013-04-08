@@ -343,11 +343,14 @@ body {
    //overflow: hidden;
    background-color: transparent;
    border : none;
+   width:100%;
+   margin-left: -6%;
+   padding-left: 6%;
 }
 .ui-menu .ui-menuitem-text
 {
     color : white;
-    font-size : 12px;
+    font-size : 13px;
 
 }
 .ui-menuitem .ui-state-hover
