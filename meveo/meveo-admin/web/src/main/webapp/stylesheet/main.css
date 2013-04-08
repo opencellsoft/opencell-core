@@ -2,7 +2,7 @@ body {
 	width: 90%;
 	margin: auto;
 	position: relative;
-	background-image: url(../img/bg-pat.png);
+	background-image: url(..//img/bg-pat.png);
 }
 
 /* HEADER */
@@ -18,7 +18,7 @@ body {
 }
 
 #headerleft {
-	/* background-image: url(../img/BandeauM2M.jpg); */
+	/* background-image: url(..//img/BandeauM2M.jpg); */
 	background-position: left bottom;
 	background-repeat: no-repeat;
 	border: 0px;
@@ -93,8 +93,8 @@ body {
 	color: #666;
 }
 
-.imgHome {
-	background-image: url(../img/imgAccueil.jpg);
+...//imgHome {
+	background-image: url(..//img/..//imgAccueil.jpg);
 	width: 100px;
 	height: 100px;
 	border: 1px solid silver;
@@ -125,7 +125,7 @@ body {
 /* JOBELLE ADDITIONAL CSS FILES */
 #admin-bar
 {
-    background-image: url(../img/admin-top-bar-pat.png);
+    background-image: url(..//img/admin-top-bar-pat.png);
     height: 51px;
     //position: fixed;
     width: 111.5%;
@@ -202,7 +202,7 @@ body {
 }
 #admin-bar ul li .top-bar-home
 {
-   background-image: url(../img/home-top-bar.png) ;
+   background-image: url(..//img/home-top-bar.png) ;
    background-size: 20px 20px;
    background-repeat: no-repeat;
    display: inline-block;
@@ -213,7 +213,7 @@ body {
 {
    width: 25px;
    height: 25px;
-   background-image: url(../img/user-top-bar.png) ;
+   background-image: url(..//img/user-top-bar.png) ;
    border : 1px solid grey;
    background-size: 20px 20px;
    background-repeat: no-repeat;
@@ -223,7 +223,7 @@ body {
 .rf-tb
 {
    height: 37px;
-   background-image: url(../img/menu-inactive-pat.png);
+   background-image: url(..//img/menu-inactive-pat.png);
    font-family: helvetica;
    //overflow: hidden;
    background-color: transparent;
@@ -246,7 +246,7 @@ body {
    padding-top: 7px;
    margin-top : -5px;
    //background : red;
-   background-image: url(../img/menu-active-pat.png) ;
+   background-image: url(..//img/menu-active-pat.png) ;
    border : none;
    height: 28px; 
 }
@@ -296,7 +296,7 @@ body {
 {
   color : #91969d;
     display: inline-block;
- /* -webkit-border-left-image : url(../img/arrow-drop.png) 27 27 27 27 no-repeat no-repeat;
+ /* -webkit-border-left-image : url(..//img/arrow-drop.png) 27 27 27 27 no-repeat no-repeat;
   border-left: 1px solid red;*/
 }
 .rf-ddm-lst-bg
@@ -332,4 +332,44 @@ body {
   margin-top : 20px;
   font-family : helvetica;
   color : #55585b;
+}
+
+/* primefaces */
+.ui-menubar
+{
+  
+     background-image: url(..//img/menu-inactive-pat.png);
+   font-family: helvetica;
+   //overflow: hidden;
+   background-color: transparent;
+   border : none;
+}
+.ui-menu .ui-menuitem-text
+{
+    color : white;
+    font-size : 12px;
+
+}
+.ui-menuitem .ui-state-hover
+{
+  background: #00a9ad; /* Old browsers */
+  background: -moz-linear-gradient(top, #00a9ad 0%, #00636a 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00a9ad), color-stop(100%,#00636a)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #00a9ad 0%,#00636a 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a9ad', endColorstr='#00636a',GradientType=0 ); /* IE6-9 */
+}
+.ui-menu-child  .ui-menuitem-text
+{
+  color : #73777c;
+}
+.ui-menu-child .ui-state-hover .ui-menuitem-text
+{
+  color : white;
+}
+.ui-menu-child
+{
+  background : #ffffff !important;
 }
