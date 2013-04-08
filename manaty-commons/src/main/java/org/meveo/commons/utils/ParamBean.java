@@ -69,7 +69,7 @@ public class ParamBean {
 						.getFileFromClasspathResource(name).getAbsolutePath();
 			} else {
 				_propertyFile = System.getProperty("jboss.server.config.dir")
-						+ "\\" + name;
+						+ File.pathSeparator + name;
 			}
 		}
 		setValid(initialize());
