@@ -260,6 +260,13 @@ body {
   margin-right : 10px;
   margin-left : 10px;
 }
+.rf-ddm-lbl-dec table tr td
+{
+   color : white !important;
+  font-size : 12px;
+  font-family: helvetica;
+  font-weight: normal;
+}
 .rf-ddm-itm-sel 
 {
   background : #e9f6f4;
@@ -269,7 +276,7 @@ body {
 .rf-ddm-itm-sel a,
 .rf-ddm-itm-unsel a
 {
-	color : #91969d;
+   color : #91969d;
 	text-decoration: none;
 
 }
@@ -286,8 +293,12 @@ body {
 }
 .rf-ddm-itm-lbl
 {
-  color : #006c72;
-  display: inline-block;
+  color : #91969d;
+    display: inline-block;
  /* -webkit-border-left-image : url(../img/arrow-drop.png) 27 27 27 27 no-repeat no-repeat;
   border-left: 1px solid red;*/
+}
+.rf-ddm-lst-bg
+{
+   background-image : none;
 }
