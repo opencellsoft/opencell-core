@@ -285,6 +285,7 @@ body {
   height: 20px;
   padding-top : 10px;
   border-bottom : 1px dashed #efeff0;
+  
 }
 
 .rf-ddm-lst
@@ -301,4 +302,34 @@ body {
 .rf-ddm-lst-bg
 {
    background-image : none;
+}
+#headerright
+{
+   margin-right : 80px;
+}
+.j_idt21_itm
+{
+  color : white !important;
+}
+.rf-tb-itm
+{
+   //color : white;
+  font-family : helvetica;
+  font-weight : normal;
+  margin-left : 10px;
+  
+   
+}
+.body
+{
+  background : white;
+  padding : 10px;
+  border : 1px solid #d3d3d3;
+  
+}
+.footer
+{
+  margin-top : 20px;
+  font-family : helvetica;
+  color : #55585b;
 }
