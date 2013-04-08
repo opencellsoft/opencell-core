@@ -2,6 +2,7 @@ body {
 	width: 90%;
 	margin: auto;
 	position: relative;
+	background-image: url(../img/bg-pat.png);
 }
 
 /* HEADER */
@@ -9,7 +10,11 @@ body {
 	border: 0px;
 	padding: 0px;
 	height: 85px;
-	background-color: white;
+	//background-color: white;
+	background: #e9f6f4;
+	width: 112%;
+	margin-left : -5.5%;
+	margin-top : -2px;
 }
 
 #headerleft {
@@ -36,6 +41,7 @@ body {
 	padding: 10px;
 	width: 130px;
 	float: left;
+	margin-left: 4%;
 }
 
 .headerinfo {
@@ -115,3 +121,102 @@ body {
 
 #languagePanel ul { list-style-type: none; }
 #languagePanel ul li { float: right; margin-left: 5px; }
+
+/* JOBELLE ADDITIONAL CSS FILES */
+#admin-bar
+{
+    background-image: url(../img/admin-top-bar-pat.png);
+    height: 51px;
+    //position: fixed;
+    width: 111.5%;
+    margin-left: -6%;
+    margin-top : -15px;
+   
+  
+}
+#admin-bar ul
+{
+    padding-top: 15px;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+#admin-bar ul li:first-child
+{
+   border-left : none;
+}
+#admin-bar ul li:last-child
+{
+   border-right : none;
+}
+#admin-bar ul li:nth-child(3)
+{
+   border-right : none;
+}
+#admin-bar ul li:nth-child(4)
+{
+   border-left : none;
+   margin-right : 50px;
+}
+#admin-bar ul li
+{
+	display: inline-block;
+	height: 20px;
+	padding-right: 15px;
+	padding-left: 15px;
+	border-left: 1px solid black;
+	border-right: 1px solid #717272;
+	float: left;
+	
+	
+}
+#admin-bar ul li.right-part
+{
+	float : right;
+}
+#admin-bar ul li,
+#admin-bar ul li a
+{
+   font-family: helvetica;
+   font-size: 13px;
+   color : #d3dadc;
+   padding-top: 5px;
+   text-decoration: none;
+   text-shadow: -1px -1px 0px black;
+   filter: dropshadow(color=#000, offx=-1, offy=-1);
+}
+#admin-bar ul li a:hover
+{
+  color: #3fa5a8;
+}
+#admin-bar ul li .top-bar-home,
+#admin-bar ul li .top-bar-user
+{
+  // background: red;
+   width : 30px;
+   height: 30px;
+   display: inline-block;
+   float : left;
+   margin-right : 10px;
+   margin-top: -8px;
+}
+#admin-bar ul li .top-bar-home
+{
+   background-image: url(../img/home-top-bar.png) ;
+   background-size: 20px 20px;
+   background-repeat: no-repeat;
+   display: inline-block;
+   background-position: center;
+   
+}
+#admin-bar ul li .top-bar-user
+{
+   width: 25px;
+   height: 25px;
+   background-image: url(../img/user-top-bar.png) ;
+   border : 1px solid grey;
+   background-size: 20px 20px;
+   background-repeat: no-repeat;
+   display: inline-block;
+   background-position: center;
+}
