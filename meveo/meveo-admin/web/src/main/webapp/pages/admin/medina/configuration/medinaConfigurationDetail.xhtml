@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -16,11 +16,11 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="#{edit}" label="#{messages['medinaConfiguration.medinaConfigurationPanel']}" backingBean="#{medinaConfigurationBean}" entity="#{medinaConfiguration}">
-    			<custom:formField label="#{messages['medinaConfiguration.field']}" field="field" />
-				<custom:formField label="#{messages['medinaConfiguration.value']}" field="value" />
-				<custom:formField label="#{messages['medinaConfiguration.description']}" field="description" size="50" maxlength="50"/>
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['medinaConfiguration.medinaConfigurationPanel']}" backingBean="#{medinaConfigurationBean}" entity="#{medinaConfiguration}">
+    			<hf:formField label="#{messages['medinaConfiguration.field']}" field="field" />
+				<hf:formField label="#{messages['medinaConfiguration.value']}" field="value" />
+				<hf:formField label="#{messages['medinaConfiguration.description']}" field="description" size="50" maxlength="50"/>
+		</hf:formPanel>
       
        
        

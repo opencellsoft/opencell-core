@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,13 +16,13 @@
 
 	<ui:define name="body">
 	
-		<custom:formPanel edit="#{edit}" label="#{messages['dunningPlanTransition.panel']}" backingBean="#{dunningPlanTransitionBean}" entity="#{dunningPlanTransition}" backButtonView="/pages/payments/dunning/dunningPlanTransitions.xhtml">
-			<custom:formField label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" required="true" isMessage="true"/>
-			<custom:formField label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" required="true" isMessage="true"/>
-			<custom:formField label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" required="true"/>
-			<custom:formField label="#{messages['dunningPlanTransition.thresholdAmount']}" field="thresholdAmount" required="true" />
-			<custom:formField label="#{messages['dunningPlanTransition.waitDuration']}" field="waitDuration" required="true"/>
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['dunningPlanTransition.panel']}" backingBean="#{dunningPlanTransitionBean}" entity="#{dunningPlanTransition}" backButtonView="/pages/payments/dunning/dunningPlanTransitions.xhtml">
+			<hf:formField label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" required="true" isMessage="true"/>
+			<hf:formField label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" required="true" isMessage="true"/>
+			<hf:formField label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" required="true"/>
+			<hf:formField label="#{messages['dunningPlanTransition.thresholdAmount']}" field="thresholdAmount" required="true" />
+			<hf:formField label="#{messages['dunningPlanTransition.waitDuration']}" field="waitDuration" required="true"/>
+		</hf:formPanel>
 	</ui:define>
 
 </ui:composition>

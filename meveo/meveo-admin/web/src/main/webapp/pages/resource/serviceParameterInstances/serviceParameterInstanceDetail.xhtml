@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,12 +16,12 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit="#{edit}" label="#{messages['serviceParameterInstance.serviceParameterPanel']}" backingBean="#{serviceParameterInstanceBean}" entity="#{serviceParameterInstace}" >
-			<custom:formField label="#{messages['serviceParameterInstance.code']}" field="code" />
-    		<custom:formField label="#{messages['serviceParameterInstance.name']}" field="name" />
-    		<custom:formField label="#{messages['serviceParameterInstance.value']}" field="value" />
-    		<custom:formField label="#{messages['serviceParameterInstance.cumulativePeriods']}" field="cumulativePeriods" />
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['serviceParameterInstance.serviceParameterPanel']}" backingBean="#{serviceParameterInstanceBean}" entity="#{serviceParameterInstace}" >
+			<hf:formField label="#{messages['serviceParameterInstance.code']}" field="code" />
+    		<hf:formField label="#{messages['serviceParameterInstance.name']}" field="name" />
+    		<hf:formField label="#{messages['serviceParameterInstance.value']}" field="value" />
+    		<hf:formField label="#{messages['serviceParameterInstance.cumulativePeriods']}" field="cumulativePeriods" />
+		</hf:formPanel>
 
 	</ui:define>
 

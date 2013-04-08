@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -15,15 +15,15 @@
 	</ui:define>
 	<ui:define name="body">	
 	<rich:panel>				
-				<custom:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}" entity="#{dunningHistory}">
-					<custom:panelGroup columns="2">
-						<custom:formField label="#{messages['jobHistory.executionDate']}" field="executionDate"  />	  
-						<custom:formField label="#{messages['dunningHistory.loadedCustomerAccounts']}" field="linesRead"  />
-						<custom:formField label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted"  />
-						<custom:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																
-					</custom:panelGroup>												
+				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}" entity="#{dunningHistory}">
+					<hftl:panelGroup columns="2">
+						<hf:formField label="#{messages['jobHistory.executionDate']}" field="executionDate"  />	  
+						<hf:formField label="#{messages['dunningHistory.loadedCustomerAccounts']}" field="linesRead"  />
+						<hf:formField label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted"  />
+						<hf:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																
+					</hftl:panelGroup>												
 					<a:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
-				</custom:formPanel>
+				</hf:formPanel>
 				<custom:listPanel label="#{messages['dunningHistory.dunningLot']}">
 					<custom:dataList backingBean="#{dunningHistoryBean}"
 						dataModel="#{dunningHistory.getDunningLots()}"

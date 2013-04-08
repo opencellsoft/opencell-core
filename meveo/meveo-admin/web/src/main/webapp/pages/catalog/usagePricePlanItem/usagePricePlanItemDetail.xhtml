@@ -64,67 +64,67 @@
 				</a:commandLink>
 		</hftl:entityPopup>
 			
-		<custom:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usagePricePlanItemBean}" entity="#{usagePricePlanItem}" >
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true"  />
+		<hf:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usagePricePlanItemBean}" entity="#{usagePricePlanItem}" >
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true"  />
 			<custom:formEntityField id="priceCodeSelectId" label="#{messages['usagePricePlanItem.priceCode']}"
 			field="priceCode" childField="code"  popup="true" popupId="priceCodePopup" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
 			<custom:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
 			field="serviceTemplate" childField="code"  popup="true" popupId="serviceTemplatePopup" />
     		<custom:formEntityField id="customerAccountSelectId" label="#{messages['usagePricePlanItem.customerAccount']}"
 			field="customerAccount" childField="code" popup="true" popupId="customerAccountPopup" /> 
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['access.startDate']}" field="startDate"/>
-			<custom:formField label="#{messages['access.endDate']}" field="endDate"/>
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['zoningPlan.priority']}" field="priority" />
-			<custom:formField label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.numberParam2Min']}" field="numberParam2Min" />
-			<custom:formField label="#{messages['usagePricePlanItem.numberParam3Min']}" field="numberParam3Min" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.numberParam1Max']}" field="numberParam1Max" />
-			<custom:formField label="#{messages['usagePricePlanItem.numberParam2Max']}" field="numberParam2Max" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.numberParam3Max']}" field="numberParam3Max" />
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam2']}" field="stringParam2" />
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam3']}" field="stringParam3" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam4']}" field="stringParam4" />
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam5']}" field="stringParam5" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam6']}" field="stringParam6" />
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam7']}" field="stringParam7" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam8']}" field="stringParam8" />
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam9']}" field="stringParam9" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam10']}" field="stringParam10" />
-			<custom:formField label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" />
-			</custom:panelGroup>
-			<custom:panelGroup columns="2">
-			<custom:formField label="#{messages['usagePricePlanItem.booleanParam2']}" field="booleanParam2" />
-			<custom:formField label="#{messages['usagePricePlanItem.stringParam10']}" field="stringParam10" />
-			</custom:panelGroup>
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['access.startDate']}" field="startDate"/>
+			<hf:formField label="#{messages['access.endDate']}" field="endDate"/>
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['zoningPlan.priority']}" field="priority" />
+			<hf:formField label="#{messages['usagePricePlanItem.numberParam1Min']}" field="numberParam1Min" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.numberParam2Min']}" field="numberParam2Min" />
+			<hf:formField label="#{messages['usagePricePlanItem.numberParam3Min']}" field="numberParam3Min" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.numberParam1Max']}" field="numberParam1Max" />
+			<hf:formField label="#{messages['usagePricePlanItem.numberParam2Max']}" field="numberParam2Max" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.numberParam3Max']}" field="numberParam3Max" />
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam1']}" field="stringParam1" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam2']}" field="stringParam2" />
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam3']}" field="stringParam3" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam4']}" field="stringParam4" />
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam5']}" field="stringParam5" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam6']}" field="stringParam6" />
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam7']}" field="stringParam7" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam8']}" field="stringParam8" />
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam9']}" field="stringParam9" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam10']}" field="stringParam10" />
+			<hf:formField label="#{messages['usagePricePlanItem.booleanParam1']}" field="booleanParam1" />
+			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">
+			<hf:formField label="#{messages['usagePricePlanItem.booleanParam2']}" field="booleanParam2" />
+			<hf:formField label="#{messages['usagePricePlanItem.stringParam10']}" field="stringParam10" />
+			</hftl:panelGroup>
 			
 			
 			
 				
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

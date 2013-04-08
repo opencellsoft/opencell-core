@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -36,17 +36,17 @@
 		</custom:entityPopup>
 		</c:if>
 		
-		<custom:formPanel formId="languagesFormId" edit="#{edit}" label="#{messages['tradingLanguage.tradingLanguagePanel']}" backingBean="#{tradingLanguageBean}" entity="#{tradingLanguage}" > 
+		<hf:formPanel formId="languagesFormId" edit="#{edit}" label="#{messages['tradingLanguage.tradingLanguagePanel']}" backingBean="#{tradingLanguageBean}" entity="#{tradingLanguage}" > 
 	 
 	    <custom:formEntityField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" 
 		 field="language"  childField="languageCode"  popup="true" popupId="languagePopup" showOnlyOnConsult="true" clearButton="true" required="true"/>
-		 <custom:formField label="#{messages['tradingLanguage.prDescription']}" field="prDescription" maxlength="100"/> 
+		 <hf:formField label="#{messages['tradingLanguage.prDescription']}" field="prDescription" maxlength="100"/> 
 		 <custom:formEntityField label="#{messages['tradingLanguage.created']}" field="auditable" childField="created" time="true" showOnlyOnConsult="false"/> 
 		 <custom:formEntityField label="#{messages['tradingLanguage.updated']}" field="auditable" childField="updated" time="true" showOnlyOnConsult="false"/> 
-		 <custom:formField label="#{messages['tradingLanguage.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="false" />
+		 <hf:formField label="#{messages['tradingLanguage.disabled']}" field="disabled" isMessage="true" showOnlyOnConsult="false" />
 		 
 		 
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

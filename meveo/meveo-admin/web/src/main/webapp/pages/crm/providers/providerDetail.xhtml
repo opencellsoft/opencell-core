@@ -17,12 +17,12 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="#{edit}" label="#{messages['provider.title']}" backingBean="#{providerBean}" entity="#{provider}" >
-		<custom:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<custom:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
-			<custom:formField label="#{messages['provider.serializedPaymentMethods']}" field="serializedPaymentMethods" />
-	    	<custom:formField label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" />
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['provider.title']}" backingBean="#{providerBean}" entity="#{provider}" >
+		<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
+			<hf:formField label="#{messages['provider.serializedPaymentMethods']}" field="serializedPaymentMethods" />
+	    	<hf:formField label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" />
+		</hf:formPanel>
     </ui:define>
     
 </ui:composition>

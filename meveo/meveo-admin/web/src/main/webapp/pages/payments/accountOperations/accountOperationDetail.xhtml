@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,15 +16,15 @@
 
 	<ui:define name="body">
 	
-		<custom:formPanel edit="#{edit}" label="#{messages['accountOperation.form']}" backingBean="#{otherCreditAndChargeBean}" entity="#{otherCreditAndCharge}">				   		
+		<hf:formPanel edit="#{edit}" label="#{messages['accountOperation.form']}" backingBean="#{otherCreditAndChargeBean}" entity="#{otherCreditAndCharge}">				   		
        		<custom:formEntityField label="#{messages['accountOperation.customerAccount']}" field="customerAccount" childField="name" edit="false" />
-	       	<custom:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" childField="label" edit="false" isMessage="true" />	       	  
-	      	<custom:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />
-	      	<custom:formField label="#{messages['accountOperation.accountCode']}" field="accountCode" edit="false" />			       
-	      	<custom:formField label="#{messages['accountOperation.occDescription']}" required="true" field="occDescription" useConverter="false" size="50" maxlength="50"/>         						      
-  			<custom:formField label="#{messages['accountOperation.dueDate']}" required="true" field="dueDate" />     			
-   			<custom:formField label="#{messages['accountOperation.amount']}" required="true" field="amount" />     			    			    			      									    			
-		</custom:formPanel>
+	       	<hf:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" childField="label" edit="false" isMessage="true" />	       	  
+	      	<hf:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />
+	      	<hf:formField label="#{messages['accountOperation.accountCode']}" field="accountCode" edit="false" />			       
+	      	<hf:formField label="#{messages['accountOperation.occDescription']}" required="true" field="occDescription" useConverter="false" size="50" maxlength="50"/>         						      
+  			<hf:formField label="#{messages['accountOperation.dueDate']}" required="true" field="dueDate" />     			
+   			<hf:formField label="#{messages['accountOperation.amount']}" required="true" field="amount" />     			    			    			      									    			
+		</hf:formPanel>
 
 	</ui:define>
 	

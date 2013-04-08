@@ -17,33 +17,33 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="#{edit}" label="#{messages['providerContact.title']}" backingBean="#{providerContactBean}" entity="#{providerContact}" >
-			<custom:fieldset name="#{messages['billingAccount.tab.account']}" columns="2">
-				<custom:formField label="#{messages['businessEntity.code']}" field="code" useConverter="false" size="50" maxlength="50" required="true"/>
-				<custom:formField label="#{messages['name.firstName']}" field="firstName" />
-				<custom:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
-		    	<custom:formField label="#{messages['name.lastName']}" field="lastName" />
-	    	</custom:fieldset>
-	    	<custom:fieldset name="#{messages['commons.contacts']}" columns="1">
-	    		<custom:formField label="#{messages['contactInformation.email']}" field="email" size="50" maxlength="100" useConverter="false" required="true"/>
-				<custom:formField label="#{messages['contactInformation.genericMail']}" field="genericMail" size="50" maxlength="100" useConverter="false"  required="true"/>
+		<hf:formPanel edit="#{edit}" label="#{messages['providerContact.title']}" backingBean="#{providerContactBean}" entity="#{providerContact}" >
+			<hftl:fieldset name="#{messages['billingAccount.tab.account']}" columns="2">
+				<hf:formField label="#{messages['businessEntity.code']}" field="code" useConverter="false" size="50" maxlength="50" required="true"/>
+				<hf:formField label="#{messages['name.firstName']}" field="firstName" />
+				<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
+		    	<hf:formField label="#{messages['name.lastName']}" field="lastName" />
+	    	</hftl:fieldset>
+	    	<hftl:fieldset name="#{messages['commons.contacts']}" columns="1">
+	    		<hf:formField label="#{messages['contactInformation.email']}" field="email" size="50" maxlength="100" useConverter="false" required="true"/>
+				<hf:formField label="#{messages['contactInformation.genericMail']}" field="genericMail" size="50" maxlength="100" useConverter="false"  required="true"/>
 				
-				<custom:panelGroup columns="2">
-					<custom:formField label="#{messages['contactInformation.phone']}" field="phone" size="50" maxlength="15" />
-					<custom:formField label="#{messages['contactInformation.mobile']}" field="mobile" size="50" maxlength="15"/>
-				</custom:panelGroup>
-			</custom:fieldset>
+				<hftl:panelGroup columns="2">
+					<hf:formField label="#{messages['contactInformation.phone']}" field="phone" size="50" maxlength="15" />
+					<hf:formField label="#{messages['contactInformation.mobile']}" field="mobile" size="50" maxlength="15"/>
+				</hftl:panelGroup>
+			</hftl:fieldset>
 			
-			<custom:fieldset name="#{messages['commons.address']}" columns="1">
-				<custom:panelGroup columns="1">
+			<hftl:fieldset name="#{messages['commons.address']}" columns="1">
+				<hftl:panelGroup columns="1">
 					<custom:formEntityField label="#{messages['address.address1']}" field="address" childField="address1" popup="false"  size="80" maxlength="80"/>	
 					<custom:formEntityField label="#{messages['address.address2']}" field="address" childField="address2" popup="false" size="80" maxlength="80" />
 					<custom:formEntityField label="#{messages['address.address3']}" field="address" childField="address3" popup="false" size="80" maxlength="80"/>
-				</custom:panelGroup>
-				<custom:panelGroup columns="2">	
+				</hftl:panelGroup>
+				<hftl:panelGroup columns="2">	
 					<custom:formEntityField label="#{messages['address.zipCode']}" size="5" required="true" field="address" childField="zipCode" length="3" popup="false" maxlength="5"/>
 					<custom:formEntityField label="#{messages['address.city']}" required="true" field="address" childField="city" popup="false" maxlength="50"/>
-				</custom:panelGroup>
+				</hftl:panelGroup>
 				<a:outputPanel id="countryPanel">
 					<s:decorate template="/layout/edit.xhtml">
 						<ui:define name="label">
@@ -55,8 +55,8 @@
 						<h:outputText rendered="#{!edit}" value="#{providerContact.address.country}" />							         
 					</s:decorate>
 				</a:outputPanel>	
-			</custom:fieldset>
-		</custom:formPanel>
+			</hftl:fieldset>
+		</hf:formPanel>
     </ui:define>
     
 </ui:composition>

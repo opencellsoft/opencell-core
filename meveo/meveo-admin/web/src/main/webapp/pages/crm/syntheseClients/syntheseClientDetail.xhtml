@@ -26,8 +26,8 @@
 			<h:panelGroup>
 				<rich:tabPanel switchType="client">
 					<rich:tab label="#{messages['syntheseClient.tab.compte']}">
-						<custom:fieldset name="#{messages['Mon compte']}" columns="1">
-							<custom:panelGroup columns="1">
+						<hftl:fieldset name="#{messages['Mon compte']}" columns="1">
+							<hftl:panelGroup columns="1">
 								<h:panelGrid columns="2">
 									<strong> <h:outputLabel
 										value="#{messages['Votre référence client :']}" /></strong>
@@ -84,11 +84,11 @@
 									value="#{messages['Votre solde :']}" /></strong>
 								<s:div>Le solde est de : <h:outputText value="#{customerAccountBalance}" style="font-weight:bold;padding-left:5px;"  converter="bigDecimalConverter" /> €
 								</s:div>
-							</custom:panelGroup>
-						</custom:fieldset>
+							</hftl:panelGroup>
+						</hftl:fieldset>
 					</rich:tab>
 					<rich:tab label="#{messages['Mes Factures']}">
-						<custom:fieldset name="#{messages['Mes Factures']}" columns="1">
+						<hftl:fieldset name="#{messages['Mes Factures']}" columns="1">
 							<hftl:dataList backingBean="#{syntheseClientBean}"
 								dataModel="#{synInvoices}" edit="false">
 								<hftl:column label="#{messages['Votre facture du']}"
@@ -144,7 +144,7 @@
 									<h:commandLink action="#{syntheseClientBean.downloadPdf(entity.invoiceNumber)}" value="#{entity.invoiceNumber}" />
 								</rich:column>
 							</hftl:dataList>
-						</custom:fieldset>
+						</hftl:fieldset>
 					</rich:tab>
 				</rich:tabPanel>
 

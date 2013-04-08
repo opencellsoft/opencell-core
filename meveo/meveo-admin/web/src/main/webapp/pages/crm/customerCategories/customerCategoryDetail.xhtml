@@ -16,10 +16,10 @@
 
 	<ui:define name="body">
 	
-		<custom:formPanel edit="#{edit}" label="#{messages['customerCategory.panel']}" backingBean="#{customerCategoryBean}" entity="#{customerCategory}" backButtonView="/pages/crm/customerCategories/customerCategories.xhtml">
-			<custom:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<custom:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['customerCategory.panel']}" backingBean="#{customerCategoryBean}" entity="#{customerCategory}" backButtonView="/pages/crm/customerCategories/customerCategories.xhtml">
+			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
+			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
+		</hf:formPanel>
 	</ui:define>
 
 </ui:composition>

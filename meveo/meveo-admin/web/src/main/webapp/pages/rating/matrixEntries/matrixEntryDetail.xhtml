@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -16,11 +16,11 @@
     
     <ui:define name="body">
     
-		<custom:formPanel edit="#{edit}" label="#{messages['matrixEntry.matrixEntryPanel']}" backingBean="#{matrixEntryBean}" entity="#{matrixEntry}" >
-				<custom:formField label="#{messages['matrixEntry.coordinates']}" field="coordinates" />
-				<custom:formField label="#{messages['matrixEntry.value']}" field="value" />
+		<hf:formPanel edit="#{edit}" label="#{messages['matrixEntry.matrixEntryPanel']}" backingBean="#{matrixEntryBean}" entity="#{matrixEntry}" >
+				<hf:formField label="#{messages['matrixEntry.coordinates']}" field="coordinates" />
+				<hf:formField label="#{messages['matrixEntry.value']}" field="value" />
 				<custom:formEntityField label="#{messages['matrixEntry.matrixDefinition']}" field="matrixDefinition" childField="name" required="true" popup="false" service="#{matrixService}"/>
-		</custom:formPanel>
+		</hf:formPanel>
 		
     </ui:define>
     

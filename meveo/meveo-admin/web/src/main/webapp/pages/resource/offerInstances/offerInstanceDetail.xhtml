@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,13 +16,13 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit="#{edit}" label="#{messages['offer.offerPanel']}" backingBean="#{offerInstanceBean}" entity="#{offerInstance}" pdf="true">
+		<hf:formPanel edit="#{edit}" label="#{messages['offer.offerPanel']}" backingBean="#{offerInstanceBean}" entity="#{offerInstance}" pdf="true">
 		
-			<custom:formField label="#{messages['offer.code']}" field="code" />
-   			<custom:formField label="#{messages['offer.termDuration']}" field="termDuration" />
-			<custom:formField label="#{messages['offer.pricePlans']}" field="pricePlanInstances" showFields="pricePlan.name,name;pricePlan.code,code"/>
+			<hf:formField label="#{messages['offer.code']}" field="code" />
+   			<hf:formField label="#{messages['offer.termDuration']}" field="termDuration" />
+			<hf:formField label="#{messages['offer.pricePlans']}" field="pricePlanInstances" showFields="pricePlan.name,name;pricePlan.code,code"/>
 		
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

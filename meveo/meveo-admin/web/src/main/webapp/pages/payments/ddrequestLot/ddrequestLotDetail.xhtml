@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,17 +16,17 @@
 
 	<ui:define name="body">
 	
-		<custom:formPanel edit="#{false}"  showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddrequestLOTBean}" entity="#{ddrequestLOT}" >
-			<custom:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
-			<custom:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
-			<custom:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
-			<custom:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
-			<custom:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>			
+		<hf:formPanel edit="#{false}"  showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddrequestLOTBean}" entity="#{ddrequestLOT}" >
+			<hf:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
+			<hf:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
+			<hf:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
+			<hf:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
+			<hf:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>			
 		<h:panelGrid columns="3">
 			<h:commandButton rendered="#{!edit}" action="#{ddrequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
      		<h:commandButton value="#{messages['action.back']}" action="#{ddrequestLOTBean.backAndEndConversation}" immediate="true" />
    		</h:panelGrid>	
-		</custom:formPanel>					
+		</hf:formPanel>					
 		<custom:listPanel label="#{messages['ddrequestLot.invoices']}">
 			<custom:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddrequestLOTBean.getInvoices()}" edit="#{false}" checkMany="#{false}">
 						<custom:column showSortLinks="false"

@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -17,9 +17,9 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit="#{edit}" label="#{messages['invoiceTasks.panel']}" backingBean="#{invoiceTaskBean}" entity="#{invoiceTask}">
-			<custom:formField label="#{messages['invoiceTask.executionTime']}" field="executionTime" required="true" />
-			<custom:formField label="#{messages['invoiceTask.processName']}" field="processName" required="true"  />
+		<hf:formPanel edit="#{edit}" label="#{messages['invoiceTasks.panel']}" backingBean="#{invoiceTaskBean}" entity="#{invoiceTask}">
+			<hf:formField label="#{messages['invoiceTask.executionTime']}" field="executionTime" required="true" />
+			<hf:formField label="#{messages['invoiceTask.processName']}" field="processName" required="true"  />
 				
 			<!-- Show form field with all possible values for account filter. -->
 			<s:decorate template="/layout/edit.xhtml">
@@ -35,9 +35,9 @@
 		        <h:outputText rendered="#{!edit}" value="#{invoiceTask.accountFilter}" />
 	       	</s:decorate>
 	       	
-			<custom:formField label="#{messages['invoiceTask.walletFilter']}" field="walletFilter" />
-			<custom:formField label="#{messages['invoiceTask.taskStatus']}" field="taskStatus" required="true" />
-		</custom:formPanel>
+			<hf:formField label="#{messages['invoiceTask.walletFilter']}" field="walletFilter" />
+			<hf:formField label="#{messages['invoiceTask.taskStatus']}" field="taskStatus" required="true" />
+		</hf:formPanel>
 
 	</ui:define>
 

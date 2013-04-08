@@ -7,32 +7,32 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">	
-				<custom:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation_I.form']}" backingBean="#{recordedInvoiceBean}" entity="#{recordedInvoice}">
-					<custom:panelGroup columns="3">
-						<custom:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />									
-						<custom:formField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" childField="label" isMessage="true"  />
-					</custom:panelGroup>
-					<custom:panelGroup columns="3">
-						<custom:formField label="#{messages['accountOperation.invoiceNumber']}" field="reference"  />
-						<custom:formField label="#{messages['accountOperation.invoiceDate']}" field="invoiceDate"  />	                    
-						<custom:formField label="#{messages['accountOperation.dueDate']}" field="dueDate"  />																	
-					</custom:panelGroup>					
-					<custom:panelGroup columns="1">
-						<custom:formField label="#{messages['accountOperation.occDescription']}" field="occDescription"   size="50" maxlength="50"/>													
-					</custom:panelGroup>	
-					<custom:panelGroup columns="3">
-						<custom:formField label="#{messages['accountOperation.amountTTC']}" field="amount"   />
-						<custom:formField label="#{messages['accountOperation.amountHT']}" field="amountWithoutTax"   />
-						<custom:formField label="#{messages['accountOperation.amountTax']}" field="taxAmount"   />													
-					</custom:panelGroup>	
-					<custom:panelGroup columns="3">
+				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation_I.form']}" backingBean="#{recordedInvoiceBean}" entity="#{recordedInvoice}">
+					<hftl:panelGroup columns="3">
+						<hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />									
+						<hf:formField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" childField="label" isMessage="true"  />
+					</hftl:panelGroup>
+					<hftl:panelGroup columns="3">
+						<hf:formField label="#{messages['accountOperation.invoiceNumber']}" field="reference"  />
+						<hf:formField label="#{messages['accountOperation.invoiceDate']}" field="invoiceDate"  />	                    
+						<hf:formField label="#{messages['accountOperation.dueDate']}" field="dueDate"  />																	
+					</hftl:panelGroup>					
+					<hftl:panelGroup columns="1">
+						<hf:formField label="#{messages['accountOperation.occDescription']}" field="occDescription"   size="50" maxlength="50"/>													
+					</hftl:panelGroup>	
+					<hftl:panelGroup columns="3">
+						<hf:formField label="#{messages['accountOperation.amountTTC']}" field="amount"   />
+						<hf:formField label="#{messages['accountOperation.amountHT']}" field="amountWithoutTax"   />
+						<hf:formField label="#{messages['accountOperation.amountTax']}" field="taxAmount"   />													
+					</hftl:panelGroup>	
+					<hftl:panelGroup columns="3">
 					<h:commandButton action="#{recordedInvoiceBean.addLitigation()}"
 										value="#{messages['accountOperation_I.buttonAddLitigation']}"
 										rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" />&nbsp;
@@ -44,7 +44,7 @@
 						<f:attribute name="edit" value="false" />
 						<f:attribute name="tab" value="ops" />
 					</h:commandButton>
-					</custom:panelGroup>
-				</custom:formPanel>				
+					</hftl:panelGroup>
+				</hf:formPanel>				
 	</ui:define>
 </ui:composition>

@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -38,7 +38,7 @@
 			
 		</c:if>
 
-		<custom:formPanel formId="currenciesFormId" edit="#{edit}" 
+		<hf:formPanel formId="currenciesFormId" edit="#{edit}" 
 			label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
 			backingBean="#{tradingCurrencyBean}" entity="#{tradingCurrency}">
 
@@ -47,22 +47,22 @@
 				childField="currencyCode" popup="true" popupId="currencyPopup"
 				required="true" />
 				
-			<custom:formField
+			<hf:formField
 				label="#{messages['tradingCurrency.prDescription']}"
 				field="prDescription" size="100" />
-			<custom:formField
+			<hf:formField
 				label="#{messages['tradingCurrency.prCurrencyToThis']}"
 				field="prCurrencyToThis" />
-			<custom:formField
+			<hf:formField
 				label="#{messages['tradingCurrency.disabled']}"
 				field="disabled" isMessage="true" showOnlyOnConsult="true"/>
-			<!-- <custom:formField
+			<!-- <hf:formField
 				label="#{messages['tradingCurrency.created']}"
 				field="created" showOnlyOnConsult="true"/> 
-				<custom:formField
+				<hf:formField
 				label="#{messages['tradingCurrency.updated']}"
 				field="updated" showOnlyOnConsult="true"/>-->
-		</custom:formPanel>
+		</hf:formPanel>
 
 	</ui:define>
 

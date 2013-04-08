@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,10 +16,10 @@
 
 	<ui:define name="body">
 
-		<custom:formPanel edit="#{edit}" label="#{messages['paymentTerm.panel']}" backingBean="#{paymentTermBean}" entity="#{paymentTerm}">
-    			<custom:formField label="#{messages['paymentTerm.name']}" field="name" required="true"/>		
-    			<custom:formField label="#{messages['paymentTerm.lines']}" field="paymentTermLines" showFields="paymentTermLine.percentage,percentage;paymentTermLine.dueNbDays,dueNbDays"/>				
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['paymentTerm.panel']}" backingBean="#{paymentTermBean}" entity="#{paymentTerm}">
+    			<hf:formField label="#{messages['paymentTerm.name']}" field="name" required="true"/>		
+    			<hf:formField label="#{messages['paymentTerm.lines']}" field="paymentTermLines" showFields="paymentTermLine.percentage,percentage;paymentTermLine.dueNbDays,dueNbDays"/>				
+		</hf:formPanel>
 
 	</ui:define>
 

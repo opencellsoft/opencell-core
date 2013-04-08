@@ -7,7 +7,7 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:a="http://richfaces.org/a4j"
-    xmlns:custom="http://manaty.net/custom"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
     <ui:define name="navigation">
@@ -16,9 +16,9 @@
     
     <ui:define name="body">
     	
-		<custom:formPanel edit="#{edit}" label="#{messages['email.emailPanel']}" backingBean="#{emailBean}" entity="#{email}" >
-			<custom:formField label="#{messages['email.address']}" field="address" />
-		</custom:formPanel>
+		<hf:formPanel edit="#{edit}" label="#{messages['email.emailPanel']}" backingBean="#{emailBean}" entity="#{email}" >
+			<hf:formField label="#{messages['email.address']}" field="address" />
+		</hf:formPanel>
        
     </ui:define>
     

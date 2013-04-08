@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -63,45 +63,45 @@
 						<rich:tab name="compte"
 							label="#{messages['customerAccount.tab.account']}"
 							action="#{customerAccountBean.setSelectedTab('compte')}">
-							<custom:formPanel edit="#{edit}" formId="formCustomerAccount"
+							<hf:formPanel edit="#{edit}" formId="formCustomerAccount"
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" entity="#{customerAccount}"
 								showFormButtons="false">
 								<rich:tabPanel switchType="client">
 									<rich:tab label="#{messages['customerAccount.tab.account']}">
-										<custom:panelGroup columns="1">
+										<hftl:panelGroup columns="1">
 											<custom:formEntityField id="customerSelectId"
 												label="#{messages['customerAccount.customer']}"
 												field="customer" childField="code" required="true"
 												popup="true" popupId="searchCustomerPopup" />
-										</custom:panelGroup>
-										<custom:panelGroup columns="2">
-											<custom:formField label="#{messages['businessEntity.code']}"
+										</hftl:panelGroup>
+										<hftl:panelGroup columns="2">
+											<hf:formField label="#{messages['businessEntity.code']}"
 												field="code" maxlength="35" size="35" validateUnique="true" />
 											<custom:formEntityField
 												label="#{messages['accountEntity.primaryContact']}"
 												field="primaryContact" childField="code" popup="false"
 												service="#{providerContactService}" />
-										</custom:panelGroup>
-										<custom:panelGroup columns="1">
-											<custom:formField
+										</hftl:panelGroup>
+										<hftl:panelGroup columns="1">
+											<hf:formField
 												label="#{messages['businessEntity.description']}"
 												field="description" useConverter="false" size="80"
 												maxlength="100" />
-										</custom:panelGroup>
-										<custom:panelGroup columns="2">
-											<custom:formField
+										</hftl:panelGroup>
+										<hftl:panelGroup columns="2">
+											<hf:formField
 												label="#{messages['customerAccount.externalRef1']}"
 												field="externalRef1" maxlength="50" useConverter="false" />
-											<custom:formField
+											<hf:formField
 												label="#{messages['customerAccount.externalRef2']}"
 												field="externalRef2" maxlength="50" useConverter="false" />
 											<custom:formEntityField id="currencySelectId"
 												label="#{messages['currency.codeCurrency']}"
 												field="tradingCurrency" childField="currencyCode"
 												popup="true" popupId="customerAccCurrencyPopup" />
-										</custom:panelGroup>
-										<custom:panelGroup columns="2">
+										</hftl:panelGroup>
+										<hftl:panelGroup columns="2">
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">
 													<h:outputText rendered="#{!edit}"
@@ -130,8 +130,8 @@
 													value="#{customerAccountBean.getBalanceExigibleWithoutLitigation()}"
 													style="font-weight:bold;" converter="bigDecimalConverter" />
 											</s:decorate>
-										</custom:panelGroup>
-										<custom:panelGroup columns="1">
+										</hftl:panelGroup>
+										<hftl:panelGroup columns="1">
 											<s:decorate template="/layout/edit.xhtml">
 												<ui:define name="label">
 													<h:outputText value="#{messages['name.title']}" />
@@ -141,7 +141,7 @@
 													<s:selectItems value="#{titleService.list()}" var="t"
 														label="#{messages[stringUtil.merge('Title.',t.code)]}"
 														noSelectionLabel="#{messages['commons.select']}" />
-													<s:convertEntity />
+													<s:objectConverter />
 													<a:support event="onchange" ajaxSingle="true"
 														bypassUpdates="false" limitToList="true"
 														reRender="userNamePanel, formId:countryPanel" />
@@ -150,7 +150,7 @@
 													value="#{messages[stringUtil.merge('Title.',customerAccount.name.title.code)]}"
 													style="font-weight:bold;" />
 											</s:decorate>
-										</custom:panelGroup>
+										</hftl:panelGroup>
 
 										<a:outputPanel id="userNamePanel">
 											<h:panelGroup>
@@ -177,41 +177,41 @@
 											</h:panelGroup>
 										</a:outputPanel>
 
-										<custom:panelGroup columns="2">
-											<custom:formField
+										<hftl:panelGroup columns="2">
+											<hf:formField
 												label="#{messages['customerAccount.paymentMethod']}"
 												required="true" field="paymentMethod" childField="label"
 												isMessage="true" />
-											<custom:formField
+											<hf:formField
 												label="#{messages['customerAccount.creditCategory']}"
 												required="true" field="creditCategory" childField="label"
 												isMessage="true" />
-										</custom:panelGroup>
+										</hftl:panelGroup>
 
 
 
 
-										<custom:panelGroup columns="1">
-											<custom:formField
+										<hftl:panelGroup columns="1">
+											<hf:formField
 												label="#{messages['customerAccount.status']}" field="status"
 												childField="label" isMessage="true" edit="false" />
-										</custom:panelGroup>
-										<custom:panelGroup columns="1">
-											<custom:formField
+										</hftl:panelGroup>
+										<hftl:panelGroup columns="1">
+											<hf:formField
 												label="#{messages['accountEntity.defaultLevel']}"
 												field="defaultLevel" isMessage="true" />
-										</custom:panelGroup>
+										</hftl:panelGroup>
 									</rich:tab>
 									<rich:tab
 										label="#{messages['customerAccount.tab.information']}">
-										<custom:fieldset name="#{messages['commons.contacts']}"
+										<hftl:fieldset name="#{messages['commons.contacts']}"
 											columns="1">
 											<custom:formEntityField
 												label="#{messages['contactInformation.email']}"
 												field="contactInformation" childField="email" popup="false"
 												required="false" size="50" maxlength="100"
 												useConverter="false" />
-											<custom:panelGroup columns="2">
+											<hftl:panelGroup columns="2">
 												<custom:formEntityField
 													label="#{messages['contactInformation.phone']}"
 													field="contactInformation" childField="phone" popup="false"
@@ -220,11 +220,11 @@
 													label="#{messages['contactInformation.mobile']}"
 													field="contactInformation" childField="mobile"
 													popup="false" maxlength="15" />
-											</custom:panelGroup>
-										</custom:fieldset>
-										<custom:fieldset name="#{messages['commons.address']}"
+											</hftl:panelGroup>
+										</hftl:fieldset>
+										<hftl:fieldset name="#{messages['commons.address']}"
 											columns="1">
-											<custom:panelGroup columns="1">
+											<hftl:panelGroup columns="1">
 												<custom:formEntityField
 													label="#{messages['address.address1']}" field="address"
 													childField="address1" popup="false" size="80"
@@ -237,8 +237,8 @@
 													label="#{messages['address.address3']}" field="address"
 													childField="address3" popup="false" size="80"
 													maxlength="80" />
-											</custom:panelGroup>
-											<custom:panelGroup columns="2">
+											</hftl:panelGroup>
+											<hftl:panelGroup columns="2">
 												<custom:formEntityField
 													label="#{messages['address.zipCode']}" size="5"
 													required="true" field="address" childField="zipCode"
@@ -246,7 +246,7 @@
 												<custom:formEntityField label="#{messages['address.city']}"
 													required="true" field="address" childField="city"
 													popup="false" maxlength="50" />
-											</custom:panelGroup>
+											</hftl:panelGroup>
 
 											<a:outputPanel id="countryPanel">
 
@@ -264,7 +264,7 @@
 														value="#{customerAccount.address.country}" />
 												</s:decorate>
 											</a:outputPanel>
-										</custom:fieldset>
+										</hftl:fieldset>
 									</rich:tab>
 								</rich:tabPanel>
 
@@ -283,7 +283,7 @@
 										<f:attribute name="backView" value="#{backView}" />
 									</h:commandButton>
 								</custom:formButtons>
-							</custom:formPanel>
+							</hf:formPanel>
 						</rich:tab>
 						<rich:tab name="ops"
 							label="#{messages['customerAccount.operations']}"
@@ -295,7 +295,7 @@
 								backingBean="#{accountOperationBean}">
 								<custom:searchPanel new="false"
 									label="#{messages['accountOperation.search']}" columns="1">
-									<custom:panelGroup columns="2">
+									<hftl:panelGroup columns="2">
 										<custom:searchField
 											label="#{messages['accountOperation.transactionCategory']}"
 											field="transactionCategory" />
@@ -308,7 +308,7 @@
 										<custom:searchField
 											label="#{messages['accountOperation.accountCode']}"
 											field="accountCode" />
-									</custom:panelGroup>
+									</hftl:panelGroup>
 									<custom:searchField
 										label="#{messages['accountOperation.transactionDate']}"
 										field="transactionDate" />

@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:custom="http://manaty.net/custom"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -19,16 +19,16 @@
 	 
 	 
 	 
-		<custom:formPanel edit="#{edit}" label="#{messages['zoningPlan.zoningPlanPanel']}" backingBean="#{zoningPlanBean}" entity="#{zoningPlan}" >
-			<custom:formField label="#{messages['access.startDate']}" field="startDate" />
-			<custom:formField label="#{messages['access.endDate']}" field="endDate"  />
-			<custom:formField label="#{messages['zoningPlan.priority']}" field="priority" />
-			<custom:formField label="#{messages['zoningPlan.originPrefix']}" field="originPrefix" />			
-			<custom:formField label="#{messages['zoningPlan.zoneCode']}" field="zoneCode" />
-		    <custom:formField label="#{messages['zoningPlan.subZoneCode']}" field="subZoneCode"/>			
+		<hf:formPanel edit="#{edit}" label="#{messages['zoningPlan.zoningPlanPanel']}" backingBean="#{zoningPlanBean}" entity="#{zoningPlan}" >
+			<hf:formField label="#{messages['access.startDate']}" field="startDate" />
+			<hf:formField label="#{messages['access.endDate']}" field="endDate"  />
+			<hf:formField label="#{messages['zoningPlan.priority']}" field="priority" />
+			<hf:formField label="#{messages['zoningPlan.originPrefix']}" field="originPrefix" />			
+			<hf:formField label="#{messages['zoningPlan.zoneCode']}" field="zoneCode" />
+		    <hf:formField label="#{messages['zoningPlan.subZoneCode']}" field="subZoneCode"/>			
 
-			<custom:formField label="#{messages['access.discriminatorCode']}" field="discriminatorCode" />
-		 	</custom:formPanel>
+			<hf:formField label="#{messages['access.discriminatorCode']}" field="discriminatorCode" />
+		 	</hf:formPanel>
 
 	</ui:define>
 

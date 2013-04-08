@@ -37,25 +37,25 @@
 			</a:commandLink>
 		</hftl:entityPopup>
 
-		<custom:formPanel edit="#{edit}" label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}" backingBean="#{recurringChargeTemplateBean}" entity="#{recurringChargeTemplate}">
-    			<custom:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
+		<hf:formPanel edit="#{edit}" label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}" backingBean="#{recurringChargeTemplateBean}" entity="#{recurringChargeTemplate}">
+    			<hf:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
     			<custom:languageFields/>
-    			<custom:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-    			<custom:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
-    			<custom:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
-    			<custom:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
-    			<custom:formField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
-    			<custom:formField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" />
+    			<hf:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+    			<hf:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
+    			<hf:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
+    			<hf:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
+    			<hf:formField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
+    			<hf:formField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" />
     			<custom:formEntityField id="invoiceSubCategoryId"
 										label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"
 										childField="code" required="true" popup="true"
 										popupId="searchInvoiceSubCategoryPopup" />
-				<custom:panelGroup columns="2">	
+				<hftl:panelGroup columns="2">	
 	    			<custom:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
 											show="#{entity.recurrenceType == 'CALENDAR'}" service="#{calendarService}" listElements="#{calendarService.listChargeApplicationCalendars()}" />
 					<custom:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
-				</custom:panelGroup>
-		</custom:formPanel>
+				</hftl:panelGroup>
+		</hf:formPanel>
 
 	</ui:define>
 
