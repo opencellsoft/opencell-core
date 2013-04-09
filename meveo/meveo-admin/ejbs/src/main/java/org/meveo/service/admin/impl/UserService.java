@@ -38,6 +38,7 @@ import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Title;
@@ -206,12 +207,10 @@ public class UserService extends PersistenceService<User> {
         // Check if the user password has expired
         String passwordExpiracy = paramBean.getProperty("password.Expiracy", "90");
 
-
-		if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user #" + user.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user #" + user.getId()
-					+ " has expired.");
-		}
+        if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
+            log.info("The password of user #" + user.getId() + " has expired.");
+            throw new PasswordExpiredException("The password of user #" + user.getId() + " has expired.");
+        }
 
         // Check the roles
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
@@ -228,10 +227,14 @@ public class UserService extends PersistenceService<User> {
 
         for (Provider provider : user.getProviders()) {
             provider.getCode();
-            if (provider.getLanguage()!=null){
+            if (provider.getLanguage() != null) {
                 provider.getLanguage().getLanguageCode();
+                for (TradingLanguage language : provider.getTradingLanguages()) {
+                    language.getLanguageCode();
+                }
             }
         }
+
         // End lazy loading issue
 
         return user;

@@ -16,6 +16,7 @@
 package org.meveo.admin.action.admin;
 
 import java.sql.BatchUpdateException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -114,6 +115,26 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 
 	public void test() throws BatchUpdateException {
 		throw new BatchUpdateException();
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "tradingCurrencies";
+	}
+
+	@Override
+	public String getNewViewName() {
+		return "tradingCurrencyDetail";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("currency");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("currency");
 	}
 
 }

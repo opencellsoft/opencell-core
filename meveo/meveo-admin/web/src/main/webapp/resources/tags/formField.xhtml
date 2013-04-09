@@ -31,8 +31,6 @@
 
 <cc:implementation>
 
-#{cc.attrs.show}
-
 	<c:if test="#{cc.attrs.show}">
 		<!--  If the value binding is a string, display an inputText field. -->
 		<ui:fragment rendered="#{cc.isText(cc.attrs.field)}">

@@ -15,6 +15,9 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -74,7 +77,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public TradingLanguage init() {
+	public TradingLanguage initEntity() {
 		return super.initEntity();
 	}
 
@@ -119,5 +122,30 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	@Override
 	protected IPersistenceService<TradingLanguage> getPersistenceService() {
 		return tradingLanguageService;
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "tradingLanguages";
+	}
+
+	@Override
+	public String getNewViewName() {
+		return "tradingLanguagesDetail";
+	}
+
+	@Override
+	public String getEditViewName() {
+		return "tradingLanguagesDetail";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("language");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("language");
 	}
 }

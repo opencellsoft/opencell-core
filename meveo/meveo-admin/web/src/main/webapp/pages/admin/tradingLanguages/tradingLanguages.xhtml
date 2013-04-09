@@ -11,6 +11,13 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{tradingLanguageBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -19,26 +26,22 @@
 		<c:set var="field" value="language" />
 		<hftl:entityPopup id="searchLanguagePopup"
 			header="#{messages['tradingLanguage.popup.header']}"
-			backingBean="#{languageBean}" dataModel="#{languages}"
+			updateField=":searchPanel:searchForm:language:language_child"
+			selection="#{tradingLanguageBean.filters['language']}"
+			backingBean="#{languageBean}"
 			searchField1Label="#{messages['language.languageCode']}"
 			searchField1="languageCode"
 			column1Label="#{messages['language.languageCode']}"
 			column1="languageCode"
 			column2Label="#{messages['tradingLanguage.prDescription']}"
-			column2="descriptionEn" filtersMap="#{languageBean.filters}">
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-				reRender="formId"
-				action="#{tradingLanguageBean.filters.put(field, entity)}"
-				oncomplete="Richfaces.hideModalPanel('searchLanguagePopup')">
-			</a:commandLink>
+			column2="descriptionEn">
 		</hftl:entityPopup>
 
-		<hf:searchPanel backingBean="#{tradingLanguageBean}"
+		<hf:searchPanel id="searchPanel" backingBean="#{tradingLanguageBean}"
 			label="#{messages['tradingLanguage.search']}">
-			<hf:searchField label="#{messages['tradingLanguage.languageCode']}"
-				field="language" childField="languageCode" popup="true"
-				popupId="searchLanguagePopup" clearButton="true" />
+			<hf:searchField id="language"
+				label="#{messages['tradingLanguage.languageCode']}" field="language"
+				childField="languageCode" popup="true" clearButton="true" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['comLanguage.title']}"

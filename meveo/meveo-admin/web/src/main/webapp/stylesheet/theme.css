@@ -2,11 +2,6 @@ html {
 	overflow-y: scroll;
 }
 
-body {
-	font-size: 12px;
-	margin: 0px;
-}
-
 a img {
 	border: none;
 }
@@ -47,10 +42,6 @@ select {
 	text-align: center;
 	font-size: 11px;
 	margin-bottom: 10px;
-}
-
-.rich-table {
-	width: 100%;
 }
 
 .message {
@@ -122,20 +113,6 @@ img.errors {
 	padding-left: 2px;
 }
 
-.rich-stglpanel-body {
-	overflow: auto;
-}
-
-/* the specificity here is necessary to override the defaults */ /*
-.rich-panel .rich-panel-header,
-.rich-stglpanel .rich-stglpanel-header {
-	padding: 2px 3px;
-}*/
-.rich-panel input[type=submit],.rich-panel input[type=button],.rich-tabpanel input[type=submit],.rich-tabpanel input[type=button]
-	{
-	margin-bottom: 0;
-}
-
 .tableControl input[type=submit],.tableControl input[type=button],.tableControl select
 	{
 	margin: 5px 0 5px 5px;
@@ -155,28 +132,6 @@ img.errors {
 .actionButtons select {
 	margin: 5px 5px 5px 0;
 	vertical-align: bottom;
-}
-
-.rich-toolbar-item a {
-	text-decoration: none;
-}
-
-.rich-toolbar-item a:hover,.rich-ddmenu-label-select {
-	text-decoration: none;
-}
-
-.rich-toolbar-item .rich-menu-item a:hover {
-	text-decoration: none;
-}
-
-.rich-datalist {
-	list-style: square;
-	margin: 6px 0 1px 0;
-	padding-left: 18px;
-}
-
-.rich-list-item {
-	padding-bottom: 4px;
 }
 
 div.info {
@@ -212,10 +167,6 @@ table.radio td {
 
 table.radio input[type=radio] {
 	vertical-align: bottom;
-}
-
-.rich-calendar-input {
-	width: 150px;
 }
 
 .chech-column {

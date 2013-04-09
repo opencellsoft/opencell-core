@@ -1,30 +1,43 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:c="http://java.sun.com/jstl/core"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
-		<hf:searchPanel label="#{messages['providerContact.search']}" backingBean="#{providerContactBean}">
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{providerContactBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['providerContact.search']}"
+			backingBean="#{providerContactBean}">
 			<hf:searchField label="#{messages['name.lastName']}" field="lastName" />
-			<hf:searchField label="#{messages['contactInformation.email']}" field="email" />
+			<hf:searchField label="#{messages['contactInformation.email']}"
+				field="email" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['providerContact.title']}" backingBean="#{providerContactBean}">
+		<hftl:dataList label="#{messages['providerContact.title']}"
+			backingBean="#{providerContactBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['businessEntity.description']}"
+				field="description" />
 			<hftl:column label="#{messages['name.lastName']}" field="lastName" />
-			<hftl:column label="#{messages['contactInformation.email']}" field="email" />
+			<hftl:column label="#{messages['contactInformation.email']}"
+				field="email" />
 			<hftl:actionsColumn />
 		</hftl:dataList>
 
 	</ui:define>
-    
+
 </ui:composition>

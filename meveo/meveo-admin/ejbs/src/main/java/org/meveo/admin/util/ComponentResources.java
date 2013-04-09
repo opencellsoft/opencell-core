@@ -31,7 +31,8 @@ public class ComponentResources implements Serializable {
 	}
 
 	@Produces
-	Logger createLogger(InjectionPoint injectionPoint) {
+	public Logger createLogger(InjectionPoint injectionPoint) {
+	    System.out.println("AKK injecting a logger for class "+ injectionPoint.getMember().getDeclaringClass().getName());
 		return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
 	}
 }

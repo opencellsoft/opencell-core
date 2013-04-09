@@ -22,9 +22,9 @@
 
 				<f:facet name="header">#{messages['login.loginPanel']}</f:facet>
 
-				<h:messages id="messages" globalOnly="true" styleClass="message"
+				<h:messages id="messages" globalOnly="false" styleClass="message"
 					errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-					rendered="#{showGlobalMessages != 'false' and !identity.loggedIn}" />
+					rendered="#{!identity.loggedIn}" />
 
 				<div class="dialog">
 					<h:panelGrid columns="2" rowClasses="prop"
