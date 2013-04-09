@@ -19,7 +19,7 @@
 		<c:if test="#{tradingLanguageBean.edit}">
 			<hftl:entityPopup id="languagePopup"
 				header="#{messages['tradingLanguage.popup.header']}"
-				updateField="languageSelectedId"
+				updateField=":formPanel:languagesFormId:languageSelectedId:languageSelectedId"
 				selection="#{tradingLanguageBean.entity.language}"
 				backingBean="#{languageBean}"
 				searchField1Label="#{messages['language.languageCode']}"
@@ -31,7 +31,7 @@
 			</hftl:entityPopup>
 		</c:if>
 
-		<hf:formPanel id="formPanel" formId="languagesFormId" edit="#{edit}"
+		<hf:formPanel id="formPanel" formId="languagesFormId"
 			label="#{messages['tradingLanguage.tradingLanguagePanel']}"
 			backingBean="#{tradingLanguageBean}">
 
