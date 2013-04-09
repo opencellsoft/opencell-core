@@ -20,23 +20,15 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
 
-/**
- * @author Ignas Lelys
- * @created Dec 3, 2010
- * 
- */
 @Entity
 @Table(name = "BILLING_WALLET")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
@@ -44,38 +36,27 @@ public class Wallet extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "NAME")
-    private String name = "PRINCIPAL";
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "WALLET_TYPE")
-    private WalletTypeEnum walletType = WalletTypeEnum.BILLABLE;
-
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BILLING_WALLET_TEMPLATE_ID")
+    private WalletTemplate walletTemplate;
+    
+    @ManyToOne
     @JoinColumn(name = "USER_ACCOUNT_ID")
     private UserAccount userAccount;
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
+    
+    public WalletTemplate getWalletTemplate() {
+		return walletTemplate;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setWalletTemplate(WalletTemplate walletTemplate) {
+		this.walletTemplate = walletTemplate;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public WalletTypeEnum getWalletType() {
-        return walletType;
-    }
-
-    public void setWalletType(WalletTypeEnum walletType) {
-        this.walletType = walletType;
-    }
-
-    public String toString() {
-        return name;
+	public String toString() {
+        return walletTemplate.getCode();
     }
 
     public UserAccount getUserAccount() {

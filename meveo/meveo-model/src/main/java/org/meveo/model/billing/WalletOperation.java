@@ -34,15 +34,11 @@ import javax.persistence.Version;
 
 import org.meveo.model.IEntity;
 
-/**
- * @author Ignas Lelys
- * @created 2009.10.19
- */
 @Entity
-@Table(name = "BILLING_OPERATION")
+@Table(name = "BILLING_WALLET_OPERATION")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Operation implements IEntity {
+public class WalletOperation implements IEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -64,22 +60,10 @@ public class Operation implements IEntity {
     private Wallet wallet;
 
     /**
-     * The code of the corresponding AccountOpertationType.
-     */
-    @Column(name = "CODE")
-    private String code;
-
-    /**
-     * Accounting code of the AccountOpertationType.
-     */
-    @Column(name = "ACCOUNTING_CODE")
-    private String accountingCode;
-
-    /**
      * CREDIT or DEBIT
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "TYPE")
+    @Column(name = "CREDIT_DEBIT_FLAG")
     private OperationTypeEnum type;
 
     /**
@@ -125,22 +109,6 @@ public class Operation implements IEntity {
         this.wallet = wallet;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getAccountingCode() {
-        return accountingCode;
-    }
-
-    public void setAccountingCode(String accountingCode) {
-        this.accountingCode = accountingCode;
-    }
-
     public OperationTypeEnum getType() {
         return type;
     }
@@ -173,9 +141,6 @@ public class Operation implements IEntity {
         this.resultingBalance = resultingBalance;
     }
 
-    public String toString() {
-        return code;
-    }
 
     public boolean isTransient() {
         return id == null;

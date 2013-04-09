@@ -16,6 +16,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
+import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
@@ -69,9 +71,20 @@ public class UserAccountService extends AccountService<UserAccount> {
 		Wallet wallet = new Wallet();
 		wallet.setUserAccount(userAccount);
 		walletService.create(wallet, creator, billingAccount.getProvider());
-
-		// TODO : remove this association and get wallet by name when needed
 		userAccount.setWallet(wallet);
+
+		List<WalletTemplate> prepaidWalletTemplates = billingAccount.getProvider().getPrepaidWalletTemplates();
+		if(prepaidWalletTemplates!=null && prepaidWalletTemplates.size()>0){
+			List<Wallet> prepaidWallets = new ArrayList<Wallet>(prepaidWalletTemplates.size());
+			for(WalletTemplate prepaidWalletTemplate:prepaidWalletTemplates){
+				Wallet prepaidWallet = new Wallet();
+				wallet.setUserAccount(userAccount);
+				wallet.setWalletTemplate(prepaidWalletTemplate);
+				walletService.create(wallet, creator, billingAccount.getProvider());
+				prepaidWallets.add(prepaidWallet);
+			}
+			userAccount.setPrepaidWallets(prepaidWallets);
+		}
 	}
 
 	public void updateUserAccount(UserAccount userAccount, User updater) throws BusinessException {

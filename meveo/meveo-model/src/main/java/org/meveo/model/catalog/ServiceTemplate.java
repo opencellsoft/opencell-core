@@ -53,6 +53,10 @@ public class ServiceTemplate extends ProviderBusinessEntity {
 	@JoinTable(name = "CAT_SERV_ONECHARGE_T_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
 	private List<OneShotChargeTemplate> terminationCharges = new ArrayList<OneShotChargeTemplate>();
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_SERV_USAGE_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
+	private List<UsageChargeTemplate> usageCharges;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DURATION_TERM_CALENDAR")
 	private Calendar durationTermCalendar;

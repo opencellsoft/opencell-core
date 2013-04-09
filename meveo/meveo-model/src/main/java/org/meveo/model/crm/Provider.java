@@ -40,6 +40,7 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
@@ -94,6 +95,9 @@ public class Provider extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ACCOUNT_ID")
 	private UserAccount userAccount;
+
+	@OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+	private List<WalletTemplate> prepaidWalletTemplates;
 
 	@OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
 	private List<TradingCountry> tradingCountries;
@@ -420,6 +424,14 @@ public class Provider extends BusinessEntity {
 			tradingCountries = new ArrayList<TradingCountry>();
 		}
 		tradingCountries.add(tradingCountry);
+	}
+	
+	public void setPrepaidWalletTemplates(List<WalletTemplate> prepaidWalletTemplates){
+		this.prepaidWalletTemplates=prepaidWalletTemplates;
+	}
+
+	public List<WalletTemplate> getPrepaidWalletTemplates() {
+		return prepaidWalletTemplates;
 	}
 
 }

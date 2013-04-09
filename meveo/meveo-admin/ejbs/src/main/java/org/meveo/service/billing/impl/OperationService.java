@@ -18,7 +18,7 @@ package org.meveo.service.billing.impl;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-import org.meveo.model.billing.Operation;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -28,6 +28,6 @@ import org.meveo.service.base.PersistenceService;
  * @created 2009.10.19
  */
 @Stateless @LocalBean
-public class OperationService extends PersistenceService<Operation> {
+public class OperationService extends PersistenceService<WalletOperation> {
 
 }

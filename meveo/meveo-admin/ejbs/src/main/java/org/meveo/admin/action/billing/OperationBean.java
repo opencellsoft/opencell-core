@@ -21,13 +21,13 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.billing.Operation;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OperationService;
 
 /**
- * Standard backing bean for {@link Operation} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * Standard backing bean for {@link WalletOperation} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
@@ -37,7 +37,7 @@ import org.meveo.service.billing.impl.OperationService;
 @Named
 // TODO: @Scope(ScopeType.CONVERSATION)
 // TODO: @Restrict("#{s:hasRole('meveo.crm')}")
-public class OperationBean extends BaseBean<Operation> {
+public class OperationBean extends BaseBean<WalletOperation> {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +49,7 @@ public class OperationBean extends BaseBean<Operation> {
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public OperationBean() {
-        super(Operation.class);
+        super(WalletOperation.class);
     }
 
     /**
@@ -60,7 +60,7 @@ public class OperationBean extends BaseBean<Operation> {
      */
     @Produces
     @Named("operation")
-    public Operation init() {
+    public WalletOperation init() {
         return initEntity();
     }
 
@@ -68,7 +68,7 @@ public class OperationBean extends BaseBean<Operation> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<Operation> getPersistenceService() {
+    protected IPersistenceService<WalletOperation> getPersistenceService() {
         return operationService;
     }
 }

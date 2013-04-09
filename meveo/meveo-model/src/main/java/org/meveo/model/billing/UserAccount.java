@@ -35,11 +35,6 @@ import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
 
-/**
- * @author Ignas Lelys
- * @created Dec 3, 2010
- * 
- */
 @Entity
 @Table(name = "BILLING_USER_ACCOUNT")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USER_ACCOUNT_SEQ")
@@ -81,6 +76,10 @@ public class UserAccount extends AccountEntity {
     @JoinColumn(name = "WALLET_ID")
     private Wallet wallet;
 
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+     List<Wallet> prepaidWallets;
+    
     public BillingAccount getBillingAccount() {
         return billingAccount;
     }
@@ -138,7 +137,15 @@ public class UserAccount extends AccountEntity {
         this.wallet = wallet;
     }
 
-    @Override
+    public List<Wallet> getPrepaidWallets() {
+		return prepaidWallets;
+	}
+
+	public void setPrepaidWallets(List<Wallet> prepaidWallets) {
+		this.prepaidWallets = prepaidWallets;
+	}
+
+	@Override
     public String getAccountType() {
         return ACCOUNT_TYPE;
     }
@@ -150,5 +157,6 @@ public class UserAccount extends AccountEntity {
     public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
         this.invoiceAgregates = invoiceAgregates;
     }
+
 
 }
