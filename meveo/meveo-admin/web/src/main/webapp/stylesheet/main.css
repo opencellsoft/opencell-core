@@ -1,10 +1,17 @@
 body {
-	width: 90%;
+	width: 100%;
 	margin: auto;
 	position: relative;
 	background-image: url(..//img/bg-pat.png);
 }
-
+.body
+{
+  width : 90% !important;
+  margin-left : auto !important;
+  margin-right : auto !important;
+ // position : relative;
+ // background : red !important;
+}
 /* HEADER */
 #header {
 	border: 0px;
@@ -41,7 +48,7 @@ body {
 	padding: 10px;
 	width: 130px;
 	float: left;
-	margin-left: 4%;
+	margin-left: 10%;
 }
 
 .headerinfo {
@@ -125,18 +132,18 @@ body {
 /* JOBELLE ADDITIONAL CSS FILES */
 #admin-bar
 {
-    background-image: url(..//img/admin-top-bar-pat.png);
+    background-image: url(../img/admin-top-bar-pat.png);
     height: 51px;
     //position: fixed;
-    width: 111%;
-    margin-left: -5.5%;
+    width: 100%;
+
     margin-top : -15px;
    
   
 }
 #admin-bar ul
 {
-    padding-top: 15px;
+  padding-top: 15px;
 	width: 95%;
 	margin-left: auto;
 	margin-right: auto;
@@ -220,89 +227,7 @@ body {
    display: inline-block;
    background-position: center;
 }
-.rf-tb
-{
-   height: 37px;
-   background-image: url(..//img/menu-inactive-pat.png);
-   font-family: helvetica;
-   //overflow: hidden;
-   background-color: transparent;
-   border : none;
-}
-.rf-ddm
-{
-	height: 37px; 
-	padding-top: 10px; 
-	
-}
-.rf-ddm-unsel
-{
-   padding-top: 13px;
-   height: 30px;
-   margin-top : -5px;
-}
-.rf-ddm-sel
-{
-   padding-top: 7px;
-   margin-top : -5px;
-   //background : red;
-   background-image: url(..//img/menu-active-pat.png) ;
-   border : none;
-   height: 28px; 
-}
 
-.rf-ddm-lbl-dec
-{
-  color : white !important;
-  font-size : 12px;
-  font-family: helvetica;
-  font-weight: normal;	
-  margin-right : 10px;
-  margin-left : 10px;
-}
-.rf-ddm-lbl-dec table tr td
-{
-   color : white !important;
-  font-size : 12px;
-  font-family: helvetica;
-  font-weight: normal;
-}
-.rf-ddm-itm-sel 
-{
-  background : #e9f6f4;
-  height: 25px;
-  border: none;
-}
-.rf-ddm-itm-sel a,
-.rf-ddm-itm-unsel a
-{
-   color : #91969d;
-	text-decoration: none;
-
-}
-.rf-ddm-itm
-{
-  height: 20px;
-  padding-top : 10px;
-  border-bottom : 1px dashed #efeff0;
-  
-}
-
-.rf-ddm-lst
-{
-   background : #fff;
-}
-.rf-ddm-itm-lbl
-{
-  color : #91969d;
-    display: inline-block;
- /* -webkit-border-left-image : url(..//img/arrow-drop.png) 27 27 27 27 no-repeat no-repeat;
-  border-left: 1px solid red;*/
-}
-.rf-ddm-lst-bg
-{
-   background-image : none;
-}
 #headerright
 {
    margin-right : 80px;
@@ -311,14 +236,7 @@ body {
 {
   color : white !important;
 }
-.rf-tb-itm
-{
-   //color : white;
-  font-family : helvetica;
-  font-weight : normal;
-  margin-left : 10px;
-  
-   
+
 }
 .body
 {
@@ -339,7 +257,7 @@ body {
 .ui-menubar
 {
   
-     background-image: url(..//img/menu-inactive-pat.png);
+   background-image: url(..//img/menu-inactive-pat.png);
    font-family: helvetica;
    //overflow: hidden;
    background-color: transparent;
@@ -347,6 +265,12 @@ body {
    width:104.5%;
    margin-left: -5.5%;
    padding-left: 6%;
+}
+.ui-menubar .ui-menu-list
+{
+  width : 90%;
+  margin-left : auto;
+  margin-right : auto;
 }
 .ui-menu .ui-menuitem-text
 {
@@ -381,3 +305,4 @@ body {
 {
   background: -moz-linear-gradient(center top , rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0)) repeat scroll 0% 0% rgb(44, 130, 125);
 }
+
