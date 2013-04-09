@@ -470,6 +470,11 @@ body {
 }
 .ui-inputfield
 {
-  //background : red !important;
+  /*background : red !important;*/
 }
-
+.ui-outputlabel
+{
+  display : inline-block;
+  width : 120px;
+  text-align : right;
+}
