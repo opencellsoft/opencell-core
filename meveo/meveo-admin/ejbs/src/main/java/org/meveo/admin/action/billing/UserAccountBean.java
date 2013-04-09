@@ -87,10 +87,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Produces
-    @Named("userAccount")
-    public UserAccount init() {
-        initEntity();
+    @Override
+    public UserAccount initEntity() {
+        super.initEntity();
         if (entity.getId() == null && billingAccountId != null) {
             BillingAccount billingAccount = billingAccountService.findById(billingAccountId.get());
             entity.setBillingAccount(billingAccount);

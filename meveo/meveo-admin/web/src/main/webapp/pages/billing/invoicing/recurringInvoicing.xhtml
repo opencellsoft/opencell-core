@@ -36,7 +36,7 @@
 		</custom:entityPopup>
 		
 		<hf:formPanel edit ="true" label="#{messages['billingRun.panel']}" backingBean="#{billingRunBean}" entity="#{billingRun}" showFormButtons="false">
-    			<custom:formEntityField id="billingCycleId" label="#{messages['billingRun.billingCycle']}" field="billingCycle"  childField="code" 
+    			<hf:formEntityField id="billingCycleId" label="#{messages['billingRun.billingCycle']}" field="billingCycle"  childField="code" 
     					required="true" popup="true" popupId="billingCyclePopup"/>	
 				<hf:formField label="#{messages['billingRun.type']}" field="processType" required="true" noSelectionLabel="false" disabled="true"/>
 				<hf:formField label="#{messages['billingRun.startDate']}" field="startDate" />

@@ -19,7 +19,7 @@
 		<hf:formPanel edit="#{edit}" label="#{messages['matrixEntry.matrixEntryPanel']}" backingBean="#{matrixEntryBean}" entity="#{matrixEntry}" >
 				<hf:formField label="#{messages['matrixEntry.coordinates']}" field="coordinates" />
 				<hf:formField label="#{messages['matrixEntry.value']}" field="value" />
-				<custom:formEntityField label="#{messages['matrixEntry.matrixDefinition']}" field="matrixDefinition" childField="name" required="true" popup="false" service="#{matrixService}"/>
+				<hf:formEntityField label="#{messages['matrixEntry.matrixDefinition']}" field="matrixDefinition" childField="name" required="true" popup="false" service="#{matrixService}"/>
 		</hf:formPanel>
 		
     </ui:define>

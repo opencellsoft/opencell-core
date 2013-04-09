@@ -64,7 +64,9 @@ public class CurrentProviderBean implements Serializable {
             } else {
                 currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().iterator().next();
             }
+            currentProvider.getLanguage().getLanguageCode(); // Lazy loading issue
         }
+        
         return currentProvider;
     }
 }

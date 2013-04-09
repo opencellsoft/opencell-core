@@ -38,11 +38,11 @@
     			<hf:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
     			<hf:formField label="#{messages['oneShotChargeTemplate.type']}" field="oneShotChargeTemplateType" required="true" />
     			<hftl:panelGroup columns="2">	
-	    			<custom:formEntityField id="invoiceSubCategoryId"
+	    			<hf:formEntityField id="invoiceSubCategoryId"
 											label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"
 											childField="code" required="true" popup="true"
 											popupId="searchInvoiceSubCategoryPopup" />
-					<custom:formEntityField id="invoiceSubCategoryId"
+					<hf:formEntityField id="invoiceSubCategoryId"
 											label="#{messages['invoiceSubCategory.description']}" field="invoiceSubCategory"
 											childField="description" show="#{!edit}" />	
 				</hftl:panelGroup>

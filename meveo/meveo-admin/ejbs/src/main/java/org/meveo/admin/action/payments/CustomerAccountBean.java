@@ -100,10 +100,8 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("customerAccount")
-	public CustomerAccount init() {
-		initEntity();
+	public CustomerAccount initEntity() {
+		super.initEntity();
 		if (entity.getId() == null) {
 			entity.setDateDunningLevel(new Date());
 			entity.setPassword(RandomStringUtils.randomAlphabetic(8));

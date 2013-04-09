@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib" xmlns:f="http://java.sun.com/jsf/core" xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite">
+
+<cc:interface>
+	<cc:attribute name="treeValue" required="true" />
+	<cc:attribute name="entity" required="true" />
+</cc:interface>
+
+<cc:implementation>
+
+	<ui:fragment>
+		<!-- Default size -->
+		<c:if test="${empty panelWidth}">
+			<c:set var="panelWidth" value="26%" />
+		</c:if>
+
+		<rich:panel style="float:left; width:26%; ">
+			<f:facet name="header">
+				<h:outputText value="#{messages['customer.tree']}" />
+			</f:facet>
+			<h:form>
+
+				<rich:tree value="#{cc.attrs.treeValue}" var="acc" adviseNodeOpened="#{customerTreeBean.adviseNodeOpened()}" ajaxSubmitSelection="true" iconExpanded="true">
+					<rich:nodeSelectListener type="org.meveo.admin.action.crm.CustomerTreeBean" />
+					<rich:treeNode>
+						<f:facet name="icon">
+							<h:graphicImage value="#{customerTreeBean.getIcon(acc.type)}" />
+						</f:facet>
+						<f:facet name="iconCollapsed">
+							<h:outputText value="B" />
+						</f:facet>
+						<f:facet name="iconExpanded">
+						</f:facet>
+						<f:facet name="iconLeaf">
+							<h:graphicImage value="#{customerTreeBean.getIcon(acc.type)}" />
+						</f:facet>
+						<h:outputText id="tree_value" value="#{acc}"
+							rendered="#{!((customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type))}">
+							<rich:toolTip rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
+						</h:outputText>
+						<h:outputText id="tree_value_selected" value="#{acc}"
+							rendered="#{(customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type)}" styleClass="selectedTreeNode">
+							<rich:toolTip rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
+						</h:outputText>
+					</rich:treeNode>
+				</rich:tree>
+			</h:form>
+		</rich:panel>
+	</ui:fragment>
+</cc:implementation>
+
+</html>

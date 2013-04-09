@@ -46,14 +46,14 @@
     			<hf:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
     			<hf:formField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
     			<hf:formField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" />
-    			<custom:formEntityField id="invoiceSubCategoryId"
+    			<hf:formEntityField id="invoiceSubCategoryId"
 										label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"
 										childField="code" required="true" popup="true"
 										popupId="searchInvoiceSubCategoryPopup" />
 				<hftl:panelGroup columns="2">	
-	    			<custom:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
+	    			<hf:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
 											show="#{entity.recurrenceType == 'CALENDAR'}" service="#{calendarService}" listElements="#{calendarService.listChargeApplicationCalendars()}" />
-					<custom:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
+					<hf:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
 				</hftl:panelGroup>
 		</hf:formPanel>
 

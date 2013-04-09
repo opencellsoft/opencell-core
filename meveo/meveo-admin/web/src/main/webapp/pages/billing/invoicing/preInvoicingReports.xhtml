@@ -21,22 +21,22 @@
 			label="Rapport de pre-facturation" backingBean="#{billingRunBean}"
 			entity="#{billingRun}" showFormButtons="false">
 			<hftl:panelGroup columns="2">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['billingAccount.billingCycle']}"
 					field="preInvoicingReports" childField="billingCycleCode"
 					popup="false" />
 
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="Nbre de comptes " field="preInvoicingReports"
 					childField="billingAccountNumber" popup="false" />
 			</hftl:panelGroup>
 
 			<hftl:panelGroup columns="2">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="Nbre de comptes a facturer" field="preInvoicingReports"
 					childField="billableBillingAccountNumber" popup="false" />
 
-				<custom:formEntityField id="billingCycleSelectId" label="Montant HT"
+				<hf:formEntityField id="billingCycleSelectId" label="Montant HT"
 					field="preInvoicingReports" childField="amoutWitountTax"
 					popup="false" />
 			</hftl:panelGroup>
@@ -44,24 +44,24 @@
 
 			<b>Nombre de comptes par moyen de paiement :</b>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.check']}"
 					field="preInvoicingReports" childField="checkBANumber"
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.directDebit']}"
 					field="preInvoicingReports" childField="directDebitBANumber"
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.tip']}"
 					field="preInvoicingReports" childField="tipBANumber" popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="preInvoicingReports" childField="wiretransferBANumber"
 					popup="false" />
@@ -69,25 +69,25 @@
 			<b>Nombre de comptes a facturer par moyen de paiement :</b>
 
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.check']}"
 					field="preInvoicingReports" childField="checkBillableBANumber"
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.directDebit']}"
 					field="preInvoicingReports"
 					childField="directDebitBillableBANumber" popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.tip']}"
 					field="preInvoicingReports" childField="tipBillableBANumber"
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="preInvoicingReports"
 					childField="wiretransferBillableBANumber" popup="false" />
@@ -95,25 +95,25 @@
 
 			<b>Montant HT total valorise par moyen de paiement :</b>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.check']}"
 					field="preInvoicingReports" childField="checkBillableBAAmountHT"
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.directDebit']}"
 					field="preInvoicingReports"
 					childField="directDebitBillableBAAmountHT" popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.tip']}"
 					field="preInvoicingReports" childField="tipBillableBAAmountHT"
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<custom:formEntityField id="billingCycleSelectId"
+				<hf:formEntityField id="billingCycleSelectId"
 					label="#{messages['paymentMethod.wiretransfer']}"
 					field="preInvoicingReports"
 					childField="wiretransferBillableBAAmountHT" popup="false" />

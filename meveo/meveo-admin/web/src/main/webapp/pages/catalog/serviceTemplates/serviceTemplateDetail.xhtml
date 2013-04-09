@@ -21,7 +21,7 @@
 					<hf:formField label="#{messages['serviceTemplate.code']}" field="code" required="true" validateUnique="true" />
 		    		<hf:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
 					<hf:formField label="#{messages['serviceTemplate.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
-					<custom:formEntityField label="#{messages['serviceTemplate.calendar']}" field="durationTermCalendar" childField="name" required="false" popup="false"
+					<hf:formEntityField label="#{messages['serviceTemplate.calendar']}" field="durationTermCalendar" childField="name" required="false" popup="false"
 										service="#{calendarService}" listElements="#{calendarService.listDurationTermCalendars()}" />
 		    	</hftl:panelGroup>
 				<hf:formField label="#{messages['serviceTemplate.recurringCharges']}" field="recurringCharges" listType="pickUpList" listService="#{recurringChargeTemplateService}" childField="code"/>

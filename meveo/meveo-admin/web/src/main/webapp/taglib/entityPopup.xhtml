@@ -16,7 +16,7 @@
 		<c:set var="id" value="popupId" />
 	</c:if>
 
-	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg" dynamic="true">
+	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{popupId}" dynamic="true">
 		<h:form id="#{id}popupForm">
 			<h:panelGrid id="#{id}searchFormPanel" columns="2">
 				<c:if test="#{not empty searchField1}">
@@ -38,10 +38,10 @@
 				<p:commandButton id="buttonClear" action="#{backingBean.clean}"
 					value="#{messages['commons.clean']}" update="#{id}popupForm" />
 			</h:panelGrid>
-			<p:dataTable id="datatable" var="e"
+			<p:dataTable id="datatable" var="e" paginator="true"
 				value="#{backingBean.lazyDataModel}" rows="10"
 				selection="#{selection}" selectionMode="single" lazy="true">
-				<p:ajax event="rowSelect" oncomplete="dlg.hide()"
+				<p:ajax event="rowSelect" oncomplete="dlg_#{popupId}.hide()"
 					update="#{updateField}" />
 
 				<c:if test="#{not empty column1}">

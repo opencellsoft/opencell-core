@@ -222,7 +222,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         try {
             field = c.getDeclaredField(fieldName);
         } catch (NoSuchFieldException e) {
-            if (field == null && getEntityClass().getSuperclass() != null) {
+            if (field == null && c.getSuperclass() != null) {
                 return getBeanField(c.getSuperclass(), fieldName);
             }
         }
