@@ -28,7 +28,7 @@
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
 				reRender="formCustomer"
-				action="#{customer.setTradingCountry(entity)}"
+				action="#{customerBean.entity.setTradingCountry(entity)}"
 				oncomplete="Richfaces.hideModalPanel('tradingCountryPopup')">
 			</a:commandLink>
 		</hftl:entityPopup>
@@ -45,7 +45,7 @@
 			<!-- select link -->
 			<a:commandLink value="#{messages['commons.select']}"
 				reRender="formCustomer"
-				action="#{customer.setTradingLanguage(entity)}"
+				action="#{customerBean.entity.setTradingLanguage(entity)}"
 				oncomplete="Richfaces.hideModalPanel('tradingLanguagePopup')">
 			</a:commandLink>
 		</hftl:entityPopup>
@@ -62,7 +62,7 @@
 			column2="prDescription" filtersMap="#{tradingCurrencyBean.filters}">
 			<a:commandLink value="#{messages['commons.select']}"
 				reRender="formCustomer"
-				action="#{customer.setTradingCurrency(entity)}"
+				action="#{customerBean.entity.setTradingCurrency(entity)}"
 				oncomplete="Richfaces.hideModalPanel('customerCurrencyPopup')">
 			</a:commandLink>
 		</hftl:entityPopup>
@@ -71,11 +71,11 @@
 			<h:panelGroup>
 				<div class="panels">
 					<!-- <custom:hierarchyPanel
-						treeValue="#{customerTreeBean.buildAccountsHierarchy(customer)}"
-						entity="#{customer}" /> -->
-					<hf:formPanel edit="#{edit}" formId="formCustomer"
+						treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}"
+						entity="#{customerBean.entity}" /> -->
+					<hf:formPanel formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
-						backingBean="#{customerBean}" entity="#{customer}"
+						backingBean="#{customerBean}"
 						style="formPanel">
 						<p:tabView id="tabView">
 							<p:tab title="Compte">
@@ -139,14 +139,14 @@
 											required="true" maxlength="50" />
 										<p:outputPanel id="countryPanel">
 											<h:outputText value="#{messages['address.country']}" />
-											<h:selectOneMenu required="true" rendered="#{edit}"
-												value="#{customer.address.country}">
+											<h:selectOneMenu required="true" rendered="#{customerBean.edit}"
+												value="#{customerBean.entity.address.country}">
 												<s:selectItems
 													value="#{messages['address.countrys'].split(',')}"
 													var="country" label="#{country}" />
 											</h:selectOneMenu>
-											<h:outputText rendered="#{!edit}"
-												value="#{customer.address.country}" />
+											<h:outputText rendered="#{!customerBean.edit}"
+												value="#{customerBean.entity.address.country}" />
 										</p:outputPanel>
 									</p:panelGrid>
 								</p:fieldset>
@@ -154,7 +154,7 @@
 						</p:tabView>
 
 					</hf:formPanel>
-					<h:form id="operationsForm" rendered="#{!edit}">
+					<h:form id="operationsForm" rendered="#{!customerBean.edit}">
 						<!-- <custom:listPanel
 							label="#{messages['customerAccount.operations']}"> -->
 						<h:commandButton action="addCustomerAccount"

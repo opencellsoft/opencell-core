@@ -17,7 +17,7 @@
 
 	<ui:define name="body">
 		<c:if test="#{tradingCountryBean.edit}">
-			<hftl:entityPopup id="countryPopupId"
+			<hftl:entityPopup 
 				header="#{messages['customer.popup.header']}"
 				updateField=":formPanel:formId:countrySelectedId:countrySelectedId"
 				selection="#{tradingCountryBean.entity.country}"
