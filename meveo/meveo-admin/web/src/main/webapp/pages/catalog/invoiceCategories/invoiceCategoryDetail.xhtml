@@ -1,15 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui"
-	template="/layout/template.xhtml">
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -17,13 +15,23 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['invoiceCategory.panel']}" backingBean="#{invoiceCategoryBean}" entity="#{invoiceCategory}" >
-   			<hf:formField label="#{messages['invoiceCategory.code']}" field="code" required="true" validateUnique="true" />
-   			
-   			<custom:languageFields/>
-   			<!-- <hf:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
-   			<hf:formField label="#{messages['invoiceCategory.subcategories']}" field="invoiceSubCategories" edit="true" showFields="invoiceSubCategory.code,code;invoiceSubCategory.accountingCode,accountingCode" deleteButton="false"/>
-			
+		<hf:formPanel edit="#{edit}"
+			label="#{messages['invoiceCategory.panel']}"
+			backingBean="#{invoiceCategoryBean}">
+
+			<hf:formField label="#{messages['invoiceCategory.code']}"
+				field="code" required="true" validateUnique="true" />
+
+			<hf:formField label="#{messages['invoiceCategory.description']}"
+				field="description" />
+
+			<!-- <custom:languageFields /> -->
+			<!-- <hf:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+			<hf:formField label="#{messages['invoiceCategory.subcategories']}"
+				field="invoiceSubCategories" edit="true"
+				showFields="invoiceSubCategory.code,code;invoiceSubCategory.accountingCode,accountingCode"
+				deleteButton="false" />
+
 		</hf:formPanel>
 
 	</ui:define>
