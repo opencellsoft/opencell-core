@@ -19,8 +19,8 @@ body {
 	height: 85px;
 	//background-color: white;
 	background: #e9f6f4;
-	width: 111%;
-	margin-left : -5.5%;
+	width: 100%;
+	//margin-left : -5.5%;
 	margin-top : -2px;
 }
 
@@ -259,12 +259,9 @@ body {
   
    background-image: url(..//img/menu-inactive-pat.png);
    font-family: helvetica;
-   //overflow: hidden;
+  
    background-color: transparent;
-   border : none;
-   width:104.5%;
-   margin-left: -5.5%;
-   padding-left: 6%;
+   border : none;  
 }
 .ui-menubar .ui-menu-list
 {
@@ -305,4 +302,5 @@ body {
 {
   background: -moz-linear-gradient(center top , rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0)) repeat scroll 0% 0% rgb(44, 130, 125);
 }
+
 
