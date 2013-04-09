@@ -11,6 +11,11 @@ body {
   margin-right : auto !important;
 
 }
+
+a:hover {
+    color: rgb(63, 165, 168);
+}
+
 /* HEADER */
 #header {
 	border: 0px;
@@ -307,7 +312,7 @@ body {
 .ui-menu .ui-menuitem-text
 {
     color : white;
-    font-size : 11px;
+    font-size : 12px;
 
 }
 .ui-menuitem .ui-state-hover
