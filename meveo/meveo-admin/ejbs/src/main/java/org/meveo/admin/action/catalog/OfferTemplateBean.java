@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,10 +26,14 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -49,10 +54,31 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
      */
     @Inject
     private OfferTemplateService offerTemplateService;
+    
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
+    
+    private DualListModel<ServiceTemplate> perks;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
+    
+	public DualListModel<ServiceTemplate> getDualListModel() {
+		if (perks == null) {
+			List<ServiceTemplate> perksSource = serviceTemplateService.list();
+			List<ServiceTemplate> perksTarget = new ArrayList<ServiceTemplate>();
+			if (getEntity().getCode() != null) {
+				perksTarget.addAll(getEntity().getServiceTemplates());
+			}
+			perksSource.removeAll(perksTarget);
+			perks = new DualListModel<ServiceTemplate>(perksSource, perksTarget);
+		}
+		return perks;
+	}
+    
+    
+    
     public OfferTemplateBean() {
         super(OfferTemplate.class);
     }
@@ -92,5 +118,10 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("serviceTemplates");
     }
+    
+    @SuppressWarnings("unchecked")
+	public void setDualListModel(DualListModel<ServiceTemplate> perks) {
+		getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
+	}
 
 }
