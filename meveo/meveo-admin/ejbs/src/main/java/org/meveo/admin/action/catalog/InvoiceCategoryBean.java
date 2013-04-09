@@ -15,13 +15,15 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.service.base.PersistenceService;
@@ -84,7 +86,6 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 		return invoicecat;
 	}
 
-
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous
 	 * window.
@@ -139,6 +140,26 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 	@Override
 	protected IPersistenceService<InvoiceCategory> getPersistenceService() {
 		return invoiceCategoryService;
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "invoiceCategories";
+	}
+
+	@Override
+	public String getNewViewName() {
+		return "invoiceCategoryDetail";
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("invoiceSubCategories");
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("invoiceSubCategories");
 	}
 
 }

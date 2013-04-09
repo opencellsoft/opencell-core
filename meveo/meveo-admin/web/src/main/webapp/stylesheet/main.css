@@ -9,8 +9,7 @@ body {
   width : 90% !important;
   margin-left : auto !important;
   margin-right : auto !important;
- // position : relative;
- // background : red !important;
+
 }
 /* HEADER */
 #header {
@@ -25,7 +24,6 @@ body {
 }
 
 #headerleft {
-	/* background-image: url(..//img/BandeauM2M.jpg); */
 	background-position: left bottom;
 	background-repeat: no-repeat;
 	border: 0px;
@@ -65,13 +63,33 @@ body {
 
 /* BODY */
 .body {
-	margin-left: 0px;
-	padding-left: 0px;
-	margin-right: 0px;
-	padding-right: 0px;
-	padding-top: 30px;
-	padding-bottom: 30px;
-	height: 80%;
+  margin-top : 20px;
+  
+	padding : 30px 10px;
+	min-height: 80%;
+  /* border radius */
+  -webkit-border-radius: 8px;
+	border-radius: 8px;
+  border : 1px solid  white;
+  
+  /*shadow */
+  -webkit-box-shadow: 0px 1px 5px 2px rgba(0, 0, 0, .1);
+  box-shadow: 0px 1px 5px 2px rgba(0, 0, 0, .1);
+  
+  background: #f7f7f7; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f7f7f7 0%, #ffffff 17%, #ffffff 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(17%,#ffffff), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f7f7f7 0%,#ffffff 17%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f7f7f7 0%,#ffffff 17%,#ffffff 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f7f7f7 0%,#ffffff 17%,#ffffff 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f7f7f7 0%,#ffffff 17%,#ffffff 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+
+   /*font */
+  font-family : helvetica;
+  font-size : 11px;
+
+  
 }
 
 .body H1 {
@@ -89,6 +107,10 @@ body {
 
 .body label {
 	color: #666;
+  font-weight : bold;
+  margin-right : 10px;
+  text-shadow: 2px 2px 0px #ffffff;
+  filter: dropshadow(color=#ffffff, offx=1, offy=1);
 }
 
 .columnForm {
@@ -256,17 +278,30 @@ body {
 /* primefaces */
 .ui-menubar
 {
+    background: #00a9ad; /* Old browsers */
+  background: -moz-linear-gradient(top, #00a9ad 0%, #00636a 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00a9ad), color-stop(100%,#00636a)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #00a9ad 0%,#00636a 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a9ad', endColorstr='#00636a',GradientType=0 ); /* IE6-9 */
   
-   background-image: url(..//img/menu-inactive-pat.png);
+ 
    font-family: helvetica;
-  
+   margin-top : -5px;
    background-color: transparent;
    border : none;  
+  -webkit-border-radius : 0px;
+  -moz-border-radius : 0px;
+  border-radius : 0px;
 }
 .ui-menubar .ui-menu-list
 {
   width : 90%;
-  margin-left : auto;
+  float : left;
+  
+  margin-left : 5%;
   margin-right : auto;
 }
 .ui-menu .ui-menuitem-text
@@ -277,18 +312,33 @@ body {
 }
 .ui-menuitem .ui-state-hover
 {
-  background: #00a9ad; /* Old browsers */
-  background: -moz-linear-gradient(top, #00a9ad 0%, #00636a 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00a9ad), color-stop(100%,#00636a)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #00a9ad 0%,#00636a 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a9ad', endColorstr='#00636a',GradientType=0 ); /* IE6-9 */
+    /*background-image: url(..//img/menu-inactive-pat.png);*/
+  background: #494949; /* Old browsers */
+	background: -moz-linear-gradient(top,  #494949 0%, #5b5b5b 49%, #494949 51%, #000000 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#494949), color-stop(49%,#5b5b5b), color-stop(51%,#494949), color-stop(100%,#000000)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#494949', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+}
+.ui-menu-list .ui-menuitem
+{
+  margin-right : 5px;
+  color : red !important;
 }
 .ui-menu-child  .ui-menuitem-text
 {
   color : #73777c;
+  
+  
+}
+.ui-menu-child .ui-menuitem
+{
+  border-top : 1px solid white !Important;
+  margin-top : -1px;
+  border-bottom : 1px solid #efeff0 !important;
+ 
 }
 .ui-menu-child .ui-state-hover .ui-menuitem-text
 {
@@ -296,11 +346,85 @@ body {
 }
 .ui-menu-child
 {
-  background : #ffffff !important;
+  background-color : #efeff0 !important;
+ 
+}
+.ui-button
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #858585;
+	padding: 0px 0px;
+	background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
+	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	border: 1px solid #c2c2c2;
+	-moz-box-shadow:0px 1px 3px rgba(000,000,000,0), inset 0px 0px 2px rgba(255,255,255,0);
+	-webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0);
+	box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0);
+	text-shadow:1px 1px 0px rgba(255,255,255,0.8),0px 0px 0px rgba(255,255,255,0);
+
+}
+.ui-button:hover
+{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #ffffff;
+  padding: 0px 0px;
+   background: #00a9ad; /* Old browsers */
+  background: -moz-linear-gradient(top, #00a9ad 0%, #00636a 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00a9ad), color-stop(100%,#00636a)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #00a9ad 0%,#00636a 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a9ad', endColorstr='#00636a',GradientType=0 ); /* IE6-9 */
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #a6e0dd;
+  -moz-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0);
+  -webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0);
+  box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0);
+  text-shadow:-1px -1px 0px rgba(000,000,000,1),0px 0px 0px rgba(255,255,255,0);
+}
+.body form
+{
+ // margin-bottom : 10px;
+  //margin-top : 20px;
+  padding-bottom : 10px;
+  border-bottom : 1px solid #e7e5e5;
+  border-top : 1px solid white;
+}
+.body form:first-child
+{
+  border-top : none;
+}
+.ui-panel
+{
+  
+  padding : 0px;
+  margin : 0px;
+  border : none;
+  margin-top : 10px;
 }
 .ui-widget-header
 {
-  background: -moz-linear-gradient(center top , rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0)) repeat scroll 0% 0% rgb(44, 130, 125);
+  background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
+  background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
+}
+.ui-datatable table
+{
+  border-radius : 8px !important;
+  -webkit-border-radius : 8px !important;
+  -moz-border-radius : 8px !important;
+  margin-bottom : 10px;
+}
+.ui-state-hover
+{
+  border-color : #19c6ca !important;
 }
 
 
