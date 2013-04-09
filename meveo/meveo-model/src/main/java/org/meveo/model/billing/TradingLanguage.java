@@ -66,7 +66,7 @@ public class TradingLanguage extends AuditableEntity {
 	}
 
 	public String getLanguageCode() {
-		return language.getLanguageCode();
+		return (language != null) ? language.getLanguageCode() : null;
 	}
 
 	public void setLanguageCode(String languageCode) {

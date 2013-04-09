@@ -6,8 +6,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
@@ -16,40 +16,35 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<c:if test="${edit}">
-			
-			<custom:entityPopup id="countryPopupId"
-			header="#{messages['tradingLanguage.popup.header']}"
-			backingBean="#{countryBean}" dataModel="#{countries}"
-			
-			searchField1Label="#{messages['country.countryCode']}" 
-			searchField1="countryCode" 
-			
-			column1Label="#{messages['country.countryCode']}" column1="countryCode"
-			column2Label="#{messages['tradingLanguage.prDescription']}"
-			column2="descriptionEn" 
-			filtersMap="#{countryBean.filters}">
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-				reRender="countriesFormId" action="#{tradingCountryBean.populateCountries(entity)}"
-				oncomplete="Richfaces.hideModalPanel('countryPopupId')">
-			</a:commandLink>
-		</custom:entityPopup>
+		<c:if test="#{tradingCountryBean.edit}">
+			<hftl:entityPopup id="countryPopupId"
+				header="#{messages['customer.popup.header']}"
+				updateField=":formPanel:formId:countrySelectedId:countrySelectedId"
+				selection="#{tradingCountryBean.entity.country}"
+				backingBean="#{countryBean}"
+				searchField1Label="#{messages['country.countryCode']}"
+				searchField1="countryCode"
+				column1Label="#{messages['country.countryCode']}"
+				column1="countryCode"
+				column2Label="#{messages['tradingLanguage.prDescription']}"
+				column2="descriptionEn">
+			</hftl:entityPopup>
 		</c:if>
 
-		<hf:formPanel formId="countriesFormId" edit="#{edit}"
+		<hf:formPanel id="formPanel" edit="#{tradingCountryBean.edit}"
 			label="#{messages['tradingCountry.tradingCountryPanel']}"
-			backingBean="#{tradingCountryBean}" entity="#{tradingCountry}">
+			backingBean="#{tradingCountryBean}">
 
-			<custom:formEntityField id="countrySelectedId"
+			<hf:formEntityField id="countrySelectedId"
 				label="#{messages['tradingCountry.countryCode']}" field="country"
-				childField="countryCode" popup="true" popupId="countryPopupId"
-				required="true" />
+				childField="countryCode" popup="true" required="true" />
 
 			<hf:formField label="#{messages['tradingCountry.prDescription']}"
 				field="prDescription" size="100" />
+
 			<hf:formField label="#{messages['tradingCountry.disabled']}"
 				field="disabled" isMessage="true" showOnlyOnConsult="true" />
+
 			<!-- <hf:formField
 				label="#{messages['tradingCountry.created']}"
 				field="created" showOnlyOnConsult="true"/> 

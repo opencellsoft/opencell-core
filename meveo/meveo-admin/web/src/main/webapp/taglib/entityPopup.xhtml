@@ -38,7 +38,7 @@
 				<p:commandButton id="buttonClear" action="#{backingBean.clean}"
 					value="#{messages['commons.clean']}" update="#{id}popupForm" />
 			</h:panelGrid>
-			<p:dataTable id="datatable" var="e"
+			<p:dataTable id="datatable" var="e" paginator="true"
 				value="#{backingBean.lazyDataModel}" rows="10"
 				selection="#{selection}" selectionMode="single" lazy="true">
 				<p:ajax event="rowSelect" oncomplete="dlg.hide()"

@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -87,6 +88,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
+	@Override
 	public List<TradingCountry> listAll() {
 		getFilters();
 		if (filters.containsKey("countryCode")) {
@@ -104,5 +106,25 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	@Override
 	protected IPersistenceService<TradingCountry> getPersistenceService() {
 		return tradingCountryService;
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("country");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("country");
+	}
+	
+	@Override
+	protected String getListViewName() {
+		return "tradingCountries";
+	}
+
+	@Override
+	public String getNewViewName() {
+		return "tradingCountryDetail";
 	}
 }

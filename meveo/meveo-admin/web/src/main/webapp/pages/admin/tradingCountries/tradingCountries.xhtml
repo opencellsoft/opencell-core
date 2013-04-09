@@ -6,76 +6,75 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{tradingCountryBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
-	<!-- Entity select popup. --> 
-		<c:set var="field" value="country" />
-		<custom:entityPopup id="searchcountryPopup"
+	<c:set var="field" value="country" />
+		<hftl:entityPopup id="searchcountryPopup"
 			header="#{messages['customer.popup.header']}"
-			backingBean="#{countryBean}" dataModel="#{countries}"
-			searchField1Label="#{messages['invoiceCategory.code']}"
+			updateField=":searchPanel:searchForm:country:country_child"
+			selection="#{tradingCountryBean.filters['country']}"
+			backingBean="#{countryBean}"
+			searchField1Label="#{messages['country.countryCode']}"
 			searchField1="countryCode"
-			column1Label="#{messages['invoiceCategory.code']}" column1="countryCode" 
-				column2Label="#{messages['tradingLanguage.prDescription']}"
-			column2="descriptionEn" filtersMap="#{countryBean.filters}">
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-					reRender="formId" 
-					action="#{tradingCountryBean.filters.put(field, entity)}"
-					oncomplete="Richfaces.hideModalPanel('searchcountryPopup')">
-			</a:commandLink>
-				
-		</custom:entityPopup>
-		
-		
-		<custom:listPanel label="#{messages['tradingCountry.title']}"
+			column1Label="#{messages['country.countryCode']}"
+			column1="countryCode"
+			column2Label="#{messages['tradingLanguage.prDescription']}"
+			column2="descriptionEn">
+		</hftl:entityPopup>
+
+		<hf:searchPanel id="searchPanel"
+			label="#{messages['tradingCountry.search']}"
 			backingBean="#{tradingCountryBean}">
 
-			<custom:searchPanel label="#{messages['tradingCountry.search']}"
-				newButtonView="/pages/admin/tradingCountries/tradingCountryDetail.xhtml">
-					
-					<custom:searchEntityField label="#{messages['tradingCountry.trCountryCode']}" field="country" childField="countryCode" popup="true" popupId="searchcountryPopup" clearButton="true"/>
-    			
+			<hf:searchField id="country"
+				label="#{messages['tradingCountry.trCountryCode']}" field="country"
+				childField="countryCode" popup="true" clearButton="true" />
 
-			</custom:searchPanel>
+		</hf:searchPanel>
 
-			<custom:dataList dataModel="#{tradingCountries}" >
-				<custom:column label="#{messages['tradingCountry.trCountryCode']}"
-					field="country" childField="countryCode" width="10%"/>
-				<custom:column label="#{messages['tradingCountry.prDescription']}"  width="30%"
-					field="prDescription" />
-				<custom:column label="#{messages['tradingCountry.disabled']}"
-					field="disabled" isMessage="true"/>
-				<h:column >
-					<f:facet name="header">
+		<hftl:dataList label="#{messages['tradingCountry.title']}"
+			backingBean="#{tradingCountryBean}">
+			<hftl:column label="#{messages['tradingCountry.trCountryCode']}"
+				field="country" childField="countryCode" width="10%" />
+			<hftl:column label="#{messages['tradingCountry.prDescription']}"
+				width="30%" field="prDescription" />
+			<hftl:column label="#{messages['tradingCountry.disabled']}"
+				field="disabled" isMessage="true" />
+			<h:column>
+				<f:facet name="header">
 					<div style="float: left;">
-						#{messages['tradingCountry.languageCode']}
-					</div>
-					</f:facet>
-						<h:outputText value="#{entity.country.language.languageCode}" align="left"/>
-				</h:column>
-				<h:column >
-					<f:facet name="header">
+						#{messages['tradingCountry.languageCode']}</div>
+				</f:facet>
+				<h:outputText value="#{entity.country.language.languageCode}"
+					align="left" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
 					<div style="float: left;">
-						#{messages['tradingCountry.curencyCode']}
-					</div>
-					</f:facet>
-						<h:outputText value="#{entity.country.currency.currencyCode}" align="left"/>
-				</h:column>
-				<custom:actionsColumn noDelete="true" noClose="false"
-					editView="/pages/admin/tradingCountries/tradingCountryDetail.xhtml"
-					permission="#{persistentPermissionResolver.hasPermission('administration','administrationManagement')}" />
-			</custom:dataList>
+						#{messages['tradingCountry.curencyCode']}</div>
+				</f:facet>
+				<h:outputText value="#{entity.country.currency.currencyCode}"
+					align="left" />
+			</h:column>
 
-		</custom:listPanel>
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
 
 	</ui:define>
 
