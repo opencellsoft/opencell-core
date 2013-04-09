@@ -15,13 +15,14 @@
  */
 package org.meveo.admin.action.crm;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -65,12 +66,9 @@ public class ProviderContactBean extends BaseBean<ProviderContact> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("providerContact")
-	public ProviderContact init() {
-		return initEntity();
+	public ProviderContact initEntity() {
+		return super.initEntity();
 	}
-
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -80,4 +78,13 @@ public class ProviderContactBean extends BaseBean<ProviderContact> {
 		return providerContactService;
 	}
 
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("address");
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("address");
+	}
 }
