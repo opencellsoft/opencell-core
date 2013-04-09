@@ -97,13 +97,9 @@
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="sellers" value="#{messages['menu.sellers']}" /> -->
 
-			<!--
-			<rich:menuItem id="titles" rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<h:link outcome="titles">
-					<h:outputText value="#{messages['menu.titles']}" />
-				</h:link>
-			</rich:menuItem>
-			-->
+			<p:menuItem id="titles" 
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				outcome="titles" value="#{messages['menu.titles']}" />
 
 			<!--
 			<rich:menuGroup id="history" label="#{messages['menu.history']}"

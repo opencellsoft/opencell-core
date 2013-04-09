@@ -65,7 +65,7 @@ body {
 .body {
   margin-top : 20px;
   
-	padding : 30px 10px;
+	padding : 30px 15px;
 	min-height: 80%;
   /* border radius */
   -webkit-border-radius: 8px;
@@ -353,7 +353,7 @@ body {
 {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
-	color: #858585;
+	//color: #858585;
 	padding: 0px 0px;
 	background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
 	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
@@ -455,8 +455,11 @@ body {
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active,
 .ui-picklist-list .ui-state-hover,
-.ui-tabs-nav .ui-state-hover
+.ui-tabs-nav .ui-state-hover,
+.ui-selectonemenu .ui-state-hover,
+.ui-selectonemenu .ui-state-focus
 {
+  
    border-color : #19c6ca !important;
   // background : red;
   background: -moz-linear-gradient(top,  rgba(4,211,211,0.22) 0%, rgba(8,179,171,0.22) 39%, rgba(8,178,170,0.22) 40%, rgba(0,155,155,0.44) 100%); /* FF3.6+ */
@@ -470,11 +473,35 @@ body {
 }
 .ui-inputfield
 {
+  padding-left : 5px !important;
+ 
   /*background : red !important;*/
 }
 .ui-outputlabel
 {
   display : inline-block;
-  width : 120px;
+  width : 95px;
   text-align : right;
 }
+.ui-panel-content
+{
+  padding : 0px !Important;
+}
+textarea[disabled],
+input[type="text"][disabled], 
+input[type="password"][disabled],
+select[disabled]
+{
+  color : #000;
+}
+.ui-datatable table .ui-chkbox
+{
+  margin-right : -5px;
+}
+.ui-messages-info, .ui-message-info
+{
+  background : #c5f9f7;
+  border-color : #00fff6;
+}
+
+
