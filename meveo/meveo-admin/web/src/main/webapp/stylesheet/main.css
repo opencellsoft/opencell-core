@@ -351,6 +351,7 @@ body {
 }
 .ui-button
 {
+  margin-top : 10px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	//color: #858585;
@@ -503,5 +504,23 @@ select[disabled]
   background : #c5f9f7;
   border-color : #00fff6;
 }
+.body .mainForm
+{
+ 
+  padding : 10px 10px;
+  border-bottom : 1px solid #c7c7c7;
+  -webkit-border-radius: 0px 0px 5px 5px;
+   border-radius: 0px 0px 5px 5px;
+  -webkit-box-shadow:  0px 2px 3px 1px rgba(0, 0, 0, .1);
+  box-shadow:  0px 2px 3px 1px rgba(0, 0, 0, .1);
+  margin-bottom : 20px;
+  outline: 1px solid #ffffff;
+  outline-offset: -3px;
 
+}
+.body .mainForm .ui-outputlabel
+{
+  text-align : left;
+  width : auto;
+}
 
