@@ -22,24 +22,25 @@
 </cc:interface>
 
 <cc:implementation>
-
-	<h:form id="#{cc.attrs.formId}">
+	<h:panelGrid>
 		<f:facet name="header">
-			<h:outputText value="#{label}" />
+			<h:outputText value="#{cc.attrs.label}" />
 		</f:facet>
 
-		<p:messages id="messages" />
-		<h:panelGrid columns="#{cc.attrs.columns}"
-			columnClasses="#{cc.attrs.columnClasses}">
-			<cc:insertChildren />
-		</h:panelGrid>
-		
-		<hf:formButtons rendered="#{cc.attrs.showFormButtons}"
-			backingBean="#{cc.attrs.backingBean}" edit="#{cc.attrs.edit}"
-			columns="#{cc.attrs.formButtonsColumns}"
-			ajaxSubmit="#{cc.attrs.ajaxSubmit}" />
-	</h:form>
+		<h:form id="#{cc.attrs.formId}">
+			<p:messages id="messages" />
+			<h:panelGrid columns="#{cc.attrs.columns}"
+				columnClasses="#{cc.attrs.columnClasses}">
+				<cc:insertChildren />
+			</h:panelGrid>
 
+			<hf:formButtons rendered="#{cc.attrs.showFormButtons}"
+				backingBean="#{cc.attrs.backingBean}" edit="#{cc.attrs.edit}"
+				columns="#{cc.attrs.formButtonsColumns}"
+				ajaxSubmit="#{cc.attrs.ajaxSubmit}" />
+		</h:form>
+
+	</h:panelGrid>
 </cc:implementation>
 
 </html>
