@@ -10,7 +10,7 @@ body {
   width : 90% !important;
   margin-left : auto !important;
   margin-right : auto !important;
-
+  margin-top : 50px !important;
 }
 
 a:hover {
@@ -50,12 +50,13 @@ a:hover {
 
 #logo {
 	border: 0px;
-	padding: 10px;
+	padding: 20px 0px 0px 0px;
 	width: 130px;
 	float: left;
 	margin-left: 10%;
-  margin-top : 30px;
-}
+  margin-top : 10px;
+  margin-bottom : -5px;
+ }
 
 .headerinfo {
 	position: absolute;
@@ -160,7 +161,7 @@ a:hover {
 /* JOBELLE ADDITIONAL CSS FILES */
 #admin-bar
 {
-  height: 164px;
+  height: 125px;
   
   width: 100%;
   margin-top : -15px;
@@ -317,7 +318,9 @@ a:hover {
 }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list
 {
-  padding : 3px 0px 0px 3px;
+  padding : 3px 1px 1px 3px;
+  //background : red !important;
+  margin-left : 3px;
 }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem
 {
@@ -369,9 +372,11 @@ a:hover {
 {
   color : white;
 }
-.ui-menubar .ui-menuitem a:active
+.ui-state-active a:link,
+.ui-state-active a:visited
 {
-   background : #f1f7f6;
+   background : red !important;
+   color : red !important;
 }
 .ui-menubar .ui-menuitem .ui-state-hover
 {
@@ -581,6 +586,7 @@ select[disabled]
   background : #c5f9f7;
   border-color : #00fff6;
 }
+
 
 
 
