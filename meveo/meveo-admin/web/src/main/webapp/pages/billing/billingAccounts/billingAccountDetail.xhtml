@@ -128,13 +128,13 @@
 
 													<h:selectOneMenu id="title_select" value="#{billingAccount.name.title}" rendered="#{billingAccountBean.edit}">
 														<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" />
-														<f:selectItems value="#{titleService.list()}" var="t" itemLabel="#{messages[stringUtil.merge('Title.',t.code)]}" />
+														<f:selectItems value="#{titleBean.listAll()}" var="t" itemLabel="#{messages['Title.'.concat(t.code)]}" />
 														<s:objectConverter />
 														<a:ajax event="valueChange" immediate="false" ajaxSingle="true" bypassUpdates="false" limitRender="true"
 															reRender="formId:userNamePanel, formId:countryPanel, paymentMethodField, electronicBillingField, bankCoordinatesPanel, invoicePrefixPanel, invoicePrefixBoxPanel" />
 													</h:selectOneMenu>
 													<h:outputText rendered="#{!billingAccountBean.edit and billingAccount.name.title != null}"
-														value="#{messages[stringUtil.merge('Title.',billingAccount.name.title.code)]}" style="font-weight:bold;" />
+														value="#{messages['Title.'.concat(billingAccount.name.title.code)]}" style="font-weight:bold;" />
 												</h:panelGrid>
 
 											</hftl:panelGroup>
