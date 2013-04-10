@@ -16,7 +16,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<custom:entityPopup id="providerPopup" showWhenRendered="true"
+		<!-- <custom:entityPopup id="providerPopup" showWhenRendered="true"
 			rendered="#{identity.loggedIn and currentProvider==null}"
 			header="#{messages['provider.popup.header']}"
 			backingBean="#{providerBean}" dataModel="#{userProviders}"
@@ -26,13 +26,13 @@
 			searchField2="description"
 			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
-			column2="description" filtersMap="#{providerBean.filters}">
+			column2="description" filtersMap="#{providerBean.filters}"> -->
 			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
+			<!-- <a:commandLink value="#{messages['commons.select']}"
 				action="#{currentProviderBean.setCurrentProvider(entity)}"
 				oncomplete="Richfaces.hideModalPanel('providerPopup')">
 			</a:commandLink>
-		</custom:entityPopup>
+		</custom:entityPopup> -->
 
 		<rich:panel>
 			<h:panelGrid columns="2" style="width:100%;text-align:center;">
