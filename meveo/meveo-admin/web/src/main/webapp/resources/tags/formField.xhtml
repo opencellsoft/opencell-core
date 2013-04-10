@@ -32,9 +32,10 @@
 	<cc:attribute name="showOnlyOnConsult" default="false" />
 	<cc:attribute name="dualListModel" />
 	<cc:attribute name="isHtml" default="false" />
+	<cc:attribute name="datePattern" default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat'):paramBean.getProperty('meveo.dateFormat')}"/>
 
 	<cc:attribute name="show"
-		default="#{(not (cc.attrs.showOnlyOnNew and cc.backingBeanFromParentOrCurrent.edit and cc.entityFromBackingBeanOrAttribute[id]==null)) and (not (cc.attrs.showOnlyOnConsult and cc.backingBeanFromParentOrCurrent.edit== false and cc.entityFromBackingBeanOrAttribute['id']==null))}" />
+		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.backingBeanFromParentOrCurrent.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.backingBeanFromParentOrCurrent.edit== false))}" />
 </cc:interface>
 
 <cc:implementation>
@@ -219,7 +220,7 @@
 				rendered="#{not cc.backingBeanFromParentOrCurrent.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;">
-				<f:convertDateTime type="date" pattern="#{datePattern}" />
+				<f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
 			</h:outputText>
 			<cc:insertChildren />
 		</h:panelGrid>
