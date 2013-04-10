@@ -1,68 +1,47 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:e="http://jboss.com/products/seam/excel"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-	
-	<ui:define name="body">
-	
-	
-	   <custom:listPanel label="#{messages['billingRun.exceptionelInvoicing']}" backingBean="#{billingAccountBean}" edit="false">
-    	
-    		<custom:searchPanel label="#{messages['billingAccount.search']}" newButtonView="/pages/billing/billingAccounts/billingAccountDetail.xhtml" new="false">
-		    		<custom:searchField label="#{messages['businessEntity.code']}" field="code" />
-					<custom:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-					<custom:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
-					<custom:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
-			</custom:searchPanel>
 
-	    	<custom:dataList backingBean="#{billingAccountBean}" dataModel="#{billingAccounts}" >
-				<rich:column sortable="true" width="10px" label="Selected">
-                        <f:facet name="header">
-                                <s:div style="text-align:left">
-                                <h:selectBooleanCheckbox id="checkUncheckAll" valueChangeListener="#{backingBean.checkUncheckAll}" 
-                                        value="#{backingBean.itemSelector.modeAllSelected}">
-                                        <a:support event="onclick" render="datatable" ajaxSingle="true" limitRender="true" bypassUpdates="true" />
-                                </h:selectBooleanCheckbox>
-                                </s:div>
-                        </f:facet>
-                        <h:selectBooleanCheckbox valueChangeListener="#{backingBean.selectChanged}"
-                                value="#{backingBean.itemSelector.isSelected(entity)}">
-                                <a:support event="onclick" ajaxSingle="true" limitRender="true" bypassUpdates="true" render="datatable" />
-                        </h:selectBooleanCheckbox>
-                </rich:column>
-				<custom:column label="#{messages['businessEntity.code']}" field="code" />
-				<custom:column label="#{messages['billingAccount.status']}" field="status" childField="label" isMessage="true" />
-				<custom:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-				<custom:column label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
-				<rich:column width="100">
-					<f:facet name="header">
-						<h:outputText value="#{messages['name.title']}" />
-					</f:facet>
-					<e:cell>
-						<h:outputText rendered="#{entity.name.title != null}" value="#{messages[stringUtil.merge('Title.',entity.name.title.code)]}" />
-					</e:cell>
-				</rich:column>
-				<custom:column label="#{messages['billingAccount.name']}" field="name"/>
-				<custom:column label="#{messages['address.address1']}" field="address" childField="address1" />
-				<custom:actionsColumn editView="/pages/billing/billingAccounts/billingAccountDetail.xhtml" noDelete="true" noEdit="true" />  
-				<ui:define name="operations">
-					<s:button action="#{billingAccountBean.launchExceptionalInvoicing}" value="#{messages['button.launchInvoicing']}"/>
-				</ui:define>  	
-		    </custom:dataList>
-		</custom:listPanel>
-	
+	<ui:define name="body">
+
+		<ui:define name="metadata">
+			<f:metadata>
+				<f:event type="preRenderView"
+					listener="#{billingAccountBean.preRenderView}" />
+			</f:metadata>
+		</ui:define>
+
+		<hf:searchPanel label="#{messages['billingAccount.search']}"
+			backingBean="#{billingAccountBean}">
+			<hf:searchField label="#{messages['businessEntity.code']}"
+				field="code" />
+			<hf:searchField
+				label="#{messages['billingAccount.subscriptionDate']}"
+				field="subscriptionDate" />
+			<hf:searchField
+				label="#{messages['billingAccount.electronicBilling']}"
+				field="electronicBilling" />
+			<hf:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
+				field="nextInvoiceDate" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['billingRun.exceptionelInvoicing']}"
+			backingBean="#{billingAccountBean}">
+			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
+		</hftl:dataList>
 	</ui:define>
 
 </ui:composition>

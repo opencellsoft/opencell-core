@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,6 +35,7 @@ import org.meveo.service.base.PersistenceService;
  * 
  */
 @Stateless @LocalBean
+@Named
 public class CalendarService extends PersistenceService<Calendar> {
 
 	/**

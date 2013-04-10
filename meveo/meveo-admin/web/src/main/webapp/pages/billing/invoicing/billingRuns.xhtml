@@ -12,6 +12,13 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{billingRunBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -19,7 +26,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel backingBean="#{billingRunBean}"
-			label="#{messages['billingRun.search']}" new="false">
+			label="#{messages['billingRun.search']}" renderNewButton="false">
 			<hf:searchField label="#{messages['billingRun.status']}"
 				field="status" />
 			<hf:searchField label="#{messages['billingRun.processDate']}"

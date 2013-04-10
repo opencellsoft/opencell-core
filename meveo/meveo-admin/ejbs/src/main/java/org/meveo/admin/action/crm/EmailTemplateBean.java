@@ -16,12 +16,10 @@
 package org.meveo.admin.action.crm;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -64,12 +62,9 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("emailTemplate")
-	public EmailTemplate init() {
-		return initEntity();
+	public EmailTemplate initEntity() {
+		return super.initEntity();
 	}
-
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -79,4 +74,13 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 		return emailTemplateService;
 	}
 
+	@Override
+	protected String getListViewName() {
+		return "emailTemplates";
+	}
+
+	@Override
+	public String getNewViewName() {
+		return "emailTemplateDetail";
+	}
 }
