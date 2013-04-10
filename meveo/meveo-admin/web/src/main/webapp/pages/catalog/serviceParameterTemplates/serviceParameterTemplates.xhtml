@@ -1,12 +1,12 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{serviceParameterTemplateBean.preRenderView}" />
+	</f:metadata>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -14,8 +14,7 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['serviceParameterTemplate.search']}" backingBean="#{serviceParameterTemplateBean}"
-			newButtonView="/pages/catalog/serviceParameters/serviceParameterInstancesDetail.xhtml">
+		<hf:searchPanel label="#{messages['serviceParameterTemplate.search']}" backingBean="#{serviceParameterTemplateBean}">
 			<hf:searchField label="#{messages['serviceParameterTemplate.code']}" field="code" />
 			<hf:searchField label="#{messages['serviceParameterTemplate.name']}" field="name" />
 		</hf:searchPanel>
