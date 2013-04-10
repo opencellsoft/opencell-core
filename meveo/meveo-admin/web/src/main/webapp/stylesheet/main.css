@@ -313,11 +313,13 @@ a:hover {
    width : 150%;
    margin-right : 10px !important;
    box-shadow : none;
-  border-top : none;
-  border-color : #b3cecb;
+   border-top : none;
+   border-color : #b3cecb;
+   margin-left : -1px;
 }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list
 {
+  border-top : 1px solid  #b3cecb;
   padding : 3px 1px 1px 3px;
   //background : red !important;
   margin-left : 3px;
@@ -586,4 +588,5 @@ select[disabled]
   background : #c5f9f7;
   border-color : #00fff6;
 }
+
 
