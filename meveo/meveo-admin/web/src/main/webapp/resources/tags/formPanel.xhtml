@@ -13,7 +13,7 @@
 <cc:interface>
 	<cc:attribute name="label" required="true" />
 	<cc:attribute name="backingBean" required="true" />
-	<cc:attribute name="edit" default="true" />
+	<cc:attribute name="edit" default="#{cc.attrs.backingBean.edit}" />
 	<cc:attribute name="formId" default="formId" />
 	<cc:attribute name="columns" default="2" />
 	<cc:attribute name="showFormButtons" default="true" />

@@ -115,7 +115,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 
             }
             saveOrUpdate(entity);
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&objectId=" + entity.getId() + " &faces-redirect=true";
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&objectId=" + entity.getId() + "&faces-redirect=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {

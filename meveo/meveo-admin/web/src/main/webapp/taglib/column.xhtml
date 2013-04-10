@@ -36,11 +36,11 @@
 	</c:if>
 	
 	<c:if test="${time}">
-		<c:set var="datePattern" value="#{messages['happyfaces-demo.dateTimeFormat']}" />
+		<c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateTimeFormat')}" />
 	</c:if>
 	
 	<c:if test="${!time}">
-		<c:set var="datePattern" value="#{messages['happyfaces-demo.dateFormat']}" />
+		<c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat')}" />
 	</c:if>
 
 	<c:if test="${empty isList}">

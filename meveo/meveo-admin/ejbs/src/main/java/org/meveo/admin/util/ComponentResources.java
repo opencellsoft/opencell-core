@@ -8,6 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
 import org.meveo.commons.utils.ParamBean;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class ComponentResources implements Serializable {
 
 	@Produces
 	@ApplicationScoped
+	@Named
 	public ParamBean getParamBean() {
 		return ParamBean.getInstance("meveo-admin.properties");
 	}

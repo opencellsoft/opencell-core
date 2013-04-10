@@ -120,6 +120,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
+    @Override
     public BillingAccount initEntity() {
         super.initEntity();
         returnToAgency = !(entity.getInvoicePrefix() == null);
