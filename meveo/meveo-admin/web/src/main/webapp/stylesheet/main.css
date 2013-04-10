@@ -606,7 +606,7 @@ select[disabled]
    border-radius: 0px 0px 8px 8px;
 }
 
-div.body  > table > thead
+div.body > table > thead
 {
 	font-size : 14px;
 	float : left;
@@ -614,4 +614,3 @@ div.body  > table > thead
 	color : #4f4f4f;
 	border-bottom : 1px solid #d5d5d5;
 }
-
