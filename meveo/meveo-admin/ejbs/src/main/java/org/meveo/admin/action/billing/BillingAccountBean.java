@@ -123,7 +123,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
     public BillingAccount initEntity() {
         super.initEntity();
         returnToAgency = !(entity.getInvoicePrefix() == null);
-        if (entity.getId() == null && customerAccountId != null) {
+        if (entity.getId() == null && customerAccountId.get() != null) {
             CustomerAccount customerAccount = customerAccountService.findById(customerAccountId.get());
             entity.setCustomerAccount(customerAccountService.findById(customerAccountId.get()));
             populateAccounts(customerAccount);

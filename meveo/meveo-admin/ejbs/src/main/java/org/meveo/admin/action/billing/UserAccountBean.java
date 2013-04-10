@@ -90,7 +90,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     @Override
     public UserAccount initEntity() {
         super.initEntity();
-        if (entity.getId() == null && billingAccountId != null) {
+        if (entity.getId() == null && billingAccountId.get() != null) {
             BillingAccount billingAccount = billingAccountService.findById(billingAccountId.get());
             entity.setBillingAccount(billingAccount);
             populateAccounts(billingAccount);

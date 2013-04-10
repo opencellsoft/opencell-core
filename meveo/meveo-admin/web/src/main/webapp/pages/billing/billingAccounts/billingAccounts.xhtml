@@ -12,6 +12,10 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{tradingLanguageBean.preRenderView}" />
+	</f:metadata>
+	
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
