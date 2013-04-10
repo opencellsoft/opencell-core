@@ -73,7 +73,7 @@
 											<!--Creation window fields-->
 											<hftl:panelGroup columns="2">
 												<hf:formField label="#{messages['businessEntity.code']}" field="code" showOnlyOnNew="true" validateUnique="true" size="35" maxlength="35" />
-												<hf:formEntityField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" childField="code" popup="false" listBean"#{providerContactService}" />
+												<hf:formEntityField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" childField="code" popup="false" listBean="#{providerContactService}" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="1">
 												<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="70" maxlength="100" />
@@ -86,7 +86,7 @@
 													<h:panelGrid columns="2">
 														<p:outputLabel for="returnToAgency_select" value="#{messages['billingAccount.returnToAgency']}" />
 														<c:set var="fieldValue" value="#{billingAccountBean.returnToAgency}" />
-														<h:selectBooleanCheckbox id="returnToAgency_select" rendered="#{billingAccountBean.edit}" id="returnToAgency" value="#{fieldValue}">
+														<h:selectBooleanCheckbox id="returnToAgency_select" rendered="#{billingAccountBean.edit}"  value="#{fieldValue}">
 															<a:support event="onclick" reRender="invoicePrefixPanel" ajaxSingle="true" limitToList="true"
 																action="#{billingAccountBean.setInvoicePrefix()}" />
 														</h:selectBooleanCheckbox>
@@ -219,7 +219,7 @@
 													<h:panelGrid columns="2">
 														<p:outputLabel for="email_select" value="#{messages['billingAccount.email']}" />
 
-														<h:inputText id="email_select" rendered="#{billingAccountBean.edit}" id="email" value="#{entity.email}"
+														<h:inputText id="email_select" rendered="#{billingAccountBean.edit}" value="#{entity.email}"
 															required="#{entity.electronicBilling}" size="20" maxlength="100" converter="nullableStringConverter" />
 														<h:outputText rendered="#{!billingAccountBean.edit}" id="emailText" value="#{entity.email}" required="#{entity.electronicBilling}" />
 													</h:panelGrid>

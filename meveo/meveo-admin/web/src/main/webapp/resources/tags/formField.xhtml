@@ -25,6 +25,8 @@
 	<cc:attribute name="isMessage" required="false" />
 	<cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
+	<cc:attribute name="dualListModel"/>
+	
 
 	<cc:attribute name="show"
 		default="#{(not (cc.attrs.showOnlyOnNew and cc.backingBeanFromParentOrCurrent.edit and cc.entityFromBackingBeanOrAttribute[id]==null)) and (not (cc.attrs.showOnlyOnConsult and cc.backingBeanFromParentOrCurrent.edit== false and cc.entityFromBackingBeanOrAttribute['id']==null))}" />
@@ -209,14 +211,22 @@
 			</ui:fragment>
 
 			<ui:fragment rendered="#{cc.attrs.listType=='pickUpList'}">
-				<h:panelGrid columns="2">
-					<p:outputLabel for="#{cc.attrs.id}_picklist" value="#{cc.attrs.label}" />
-					<p:pickList id="#{cc.attrs.id}_picklist" value="#{cc.backingBeanFromParentOrCurrent.dualListModel}" var="elem"
-						itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" disabled="#{not cc.backingBeanFromParentOrCurrent.edit}">
-						<s:objectConverter />
-					</p:pickList>
-				</h:panelGrid>
-			</ui:fragment>
+			<h:panelGrid columns="2">
+				<p:outputLabel for="#{cc.attrs.id}_picklist"
+					value="#{cc.attrs.label}" />
+					<c:set var="elements" value="#{cc.backingBeanFromParentOrCurrent.dualListModel}" />
+					<c:if test="#{!empty cc.attrs.dualListModel}">
+						<c:set var="elements" value="#{cc.attrs.dualListModel}" />
+					</c:if>
+				<p:pickList id="#{cc.attrs.id}_picklist"
+					value="#{elements}"
+					var="elem" itemLabel="#{elem[cc.attrs.childField]}"
+					itemValue="#{elem}"
+					disabled="#{not cc.backingBeanFromParentOrCurrent.edit}">
+					<s:objectConverter />
+				</p:pickList>
+			</h:panelGrid>
+		</ui:fragment>
 		</ui:fragment>
 	</ui:fragment>
 </cc:implementation>

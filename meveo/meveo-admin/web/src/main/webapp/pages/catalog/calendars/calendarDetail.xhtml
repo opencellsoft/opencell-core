@@ -17,11 +17,11 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['calendar.panel']}" backingBean="#{calendarBean}" entity="#{calendar}" >
+		<hf:formPanel edit="#{edit}" label="#{messages['calendar.panel']}" backingBean="#{calendarBean}">
    			<hf:formField label="#{messages['calendar.name']}" field="name" required="true" validateUnique="true" useConverter="false"/>
    			<hf:formField label="#{messages['calendar.description']}" field="description"  useConverter="false" size="100"/>
    			<hf:formField label="#{messages['calendar.type']}" field="type" childField="label" isMessage="true" required="true" />
-			<hf:formField label="#{messages['calendar.days']}" field="days" listType="pickUpList" listService="#{dayInYearService}" childField="day" childField2="month" />
+			<hf:formField label="#{messages['calendar.days']}" field="days" listType="pickUpList" childField="day" childField2="month"/>
 		</hf:formPanel>
 
 	</ui:define>

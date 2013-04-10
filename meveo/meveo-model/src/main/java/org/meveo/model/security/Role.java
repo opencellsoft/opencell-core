@@ -1,5 +1,6 @@
 package org.meveo.model.security;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class Role extends BaseEntity {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "ADM_ROLE_PERMISSION", joinColumns = @JoinColumn(name = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "PERMISSION_ID"))
-    private List<Permission> permissions;
+    private List<Permission> permissions=new ArrayList<Permission>();
 
     public Role() {
     }

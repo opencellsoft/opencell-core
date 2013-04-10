@@ -17,7 +17,7 @@
 
 	<ui:define name="body">
 		<hf:formPanel edit="#{edit}" label="#{messages['user.userPanel']}"
-			backingBean="#{userBean}" entity="#{user}">
+			backingBean="#{userBean}">
 			<hf:formField label="#{messages['user.userName']}" field="userName"
 				required="true" validateUnique="true" useConverter="false" />
 			<p:commandLink value="#{messages['menutop.changePassword']}"
@@ -28,25 +28,23 @@
 					rendered="#{(userBean.show or user.id==null) and userBean.edit}">
 					<p:outputLabel for="password" value="#{messages['user.password']}"></p:outputLabel>
 					<p:password autocomplete="off" id="password"
-						value="#{userBean.password}" required="true">
-						<f:validator validatorId="passwordValidator" />
+						value="#{userBean.password}">
 					</p:password>
 					<p:outputLabel for="repeatedPassword"
 						value="#{messages['user.repeatedPassword']}">
 					</p:outputLabel>
 					<p:password id="repeatedPassword"
-						value="#{userBean.repeatedPassword}" required="true"
+						value="#{userBean.repeatedPassword}"
 						autocomplete="off"></p:password>
 				</p:panelGrid>
 			</p:outputPanel>
 			<hf:formField label="#{messages['user.roles']}" field="roles"
-				listType="pickUpList" listService="#{userRoleService}"
-				childField="name" required="true" />
+				listType="pickUpList" 
+				childField="name" required="true" dualListModel="#{userBean.dualListModel}"/>
 			<!-- <c:if test="#{identity.hasPermission('superAdministrateur')}"> -->
 				<hf:formField label="#{messages['user.providers']}"
-					field="providers" listType="pickUpList"
-					listService="#{providerService}" listMethod="providers"
-					childField="name" required="true" />
+					field="providers" listType="pickUpList" 
+					childField="code" required="true" dualListModel="#{userBean.providersDualListModel}"/>
 			<!-- </c:if> -->
 		</hf:formPanel>
 	</ui:define>
