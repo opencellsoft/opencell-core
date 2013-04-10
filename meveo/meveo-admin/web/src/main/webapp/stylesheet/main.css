@@ -2,7 +2,7 @@ body {
 	width: 100%;
 	margin: auto;
 	position: relative;
-	background-image: url(..//img/bg-pat.png);
+	background-image: url(http://www.jobellevallega.com/numan/bg-pat.png);
 }
 .body
 {
@@ -93,6 +93,8 @@ a:hover {
    /*font */
   font-family : helvetica;
   font-size : 11px;
+
+  
 }
 
 .body H1 {
@@ -157,11 +159,13 @@ a:hover {
 /* JOBELLE ADDITIONAL CSS FILES */
 #admin-bar
 {
-    background-image: url(../img/admin-top-bar-pat.png);
+    //background-image: url(../img/admin-top-bar-pat.png);
+    //background-image : url(http://www.jobellevallega.com/numan/menu-active-pat.png); 
+    background-image : url(http://www.jobellevallega.com/numan/admin-top-bar-pat.png);
     height: 51px;
     //position: fixed;
     width: 100%;
-
+   
     margin-top : -15px;
    
   
@@ -281,49 +285,96 @@ a:hover {
 /* primefaces */
 .ui-menubar
 {
-    background: #00a9ad; /* Old browsers */
-  background: -moz-linear-gradient(top, #00a9ad 0%, #00636a 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00a9ad), color-stop(100%,#00636a)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #00a9ad 0%,#00636a 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a9ad', endColorstr='#00636a',GradientType=0 ); /* IE6-9 */
-  
- 
-   font-family: helvetica;
-   margin-top : -5px;
-   background-color: transparent;
-   border : none;  
-  -webkit-border-radius : 0px;
-  -moz-border-radius : 0px;
-  border-radius : 0px;
+  	width : 93%;
+  	margin-left : auto;
+  	margin-right: auto;
+  	height : 40px;
+  	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #e6e6e6;
+	padding: 1px;
+	background: -moz-linear-gradient(top,#899099 0%,#3c444d);
+	background: -webkit-gradient(linear, left top, left bottom, from(#899099),to(#3c444d));
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	border-radius: 20px;
+	border: 1px solid #646970;
+	-moz-box-shadow:0px 2px 1px rgba(000,000,000,0.4),inset 0px -1px 6px rgba(255,255,255,0.3);
+	-webkit-box-shadow:0px 2px 1px rgba(000,000,000,0.4),inset 0px -1px 6px rgba(255,255,255,0.3);
+	box-shadow:0px 2px 1px rgba(000,000,000,0.4),inset 0px -1px 6px rgba(255,255,255,0.3);
+	text-shadow:1px 1px 0px rgba(000,000,000,0.6),0px 0px 0px rgba(255,255,255,0);
+	border : 1px solid #a3b0c0;
+
 }
 .ui-menubar .ui-menu-list
 {
-  width : 90%;
+  width : 100%;
+  padding-top : 5px;
+  margin-left : 10px;
   float : left;
-  
-  margin-left : 5%;
   margin-right : auto;
+}
+.ui-menubar .ui-menu-list .ui-menu-child
+{
+  -webkit-border-radius: 0px 15px 0px 15px;
+   border-radius: 0px 15px 0px 15px;
+   width : 180%;
+  margin-right : 10px !important;
+  
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem
+{
+  padding : 0px !important;
+  margin : 0px !important;
+  width : 95%;
+  border-left : none !important;
+  border-right : none !important;
+  
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-state-hover
+{
+  background : #007b7f;
+  box-shadow : none;
+  -webkit-border-radius: 0px 8px 0px 8px;
+  border-radius: 0px 8px 0px 8px;
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-menuitem-link
+{
+  text-shadow : none;
 }
 .ui-menu .ui-menuitem-text
 {
     color : white;
     font-size : 12px;
-
+    padding : 2px;
 }
-.ui-menuitem .ui-state-hover
+.ui-menubar .ui-menuitem-link
 {
-    /*background-image: url(..//img/menu-inactive-pat.png);*/
-  background: #494949; /* Old browsers */
-	background: -moz-linear-gradient(top,  #494949 0%, #5b5b5b 49%, #494949 51%, #000000 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#494949), color-stop(49%,#5b5b5b), color-stop(51%,#494949), color-stop(100%,#000000)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#494949', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+   padding : 5px 10px;
+}
+.ui-menubar .ui-menuitem:first-child
+{
+  border-left : none !important;
+}
+.ui-menubar .ui-menuitem
+{
+ 
+  border-right : 1px solid #484d54 !important;
+  border-left : 1px solid #757c86 !important;
+  -webkit-border-radius: 0px 8px 0px 8px;
+   border-radius: 0px 8px 0px 8px;
+  margin : 0px 0px !important ;
+  
+}
+.ui-menubar .ui-menuitem .ui-state-hover
+{
+   
+   background-image: url(http://www.jobellevallega.com/numan/menu-active-pat.png) ;
+  -webkit-border-radius: 0px 8px 0px 8px;
+   border-radius: 0px 8px 0px 8px;
+   border : none;
+   -webkit-box-shadow: inset 0px 2px 5px 2px rgba(0, 0, 0, .2);
+   box-shadow: inset 0px 2px 5px 2px rgba(0, 0, 0, .2);
 }
 .ui-menu-list .ui-menuitem
 {
@@ -347,17 +398,25 @@ a:hover {
 {
   color : white;
 }
-.ui-menu-child
+.ui-menubar .ui-menu-child
 {
   background-color : #efeff0 !important;
  
 }
+.ui-icon-triangle-1-s
+{
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+  background-position : -64px -16px;
+}
+.ui-menuitem .ui-state-hover .ui-icon-triangle-1-e
+{
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+}
 .ui-button
 {
-  margin-top : 10px;
+  	margin-top : 10px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
-	//color: #858585;
 	padding: 0px 0px;
 	background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
 	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
@@ -407,7 +466,6 @@ a:hover {
 }
 .ui-panel
 {
-  
   padding : 0px;
   margin : 0px;
   border : none;
@@ -465,7 +523,6 @@ a:hover {
 {
   
    border-color : #19c6ca !important;
-  // background : red;
   background: -moz-linear-gradient(top,  rgba(4,211,211,0.22) 0%, rgba(8,179,171,0.22) 39%, rgba(8,178,170,0.22) 40%, rgba(0,155,155,0.44) 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(4,211,211,0.22)), color-stop(39%,rgba(8,179,171,0.22)), color-stop(40%,rgba(8,178,170,0.22)), color-stop(100%,rgba(0,155,155,0.44))); /* Chrome,Safari4+ */
   background: -webkit-linear-gradient(top,  rgba(4,211,211,0.22) 0%,rgba(8,179,171,0.22) 39%,rgba(8,178,170,0.22) 40%,rgba(0,155,155,0.44) 100%); /* Chrome10+,Safari5.1+ */
@@ -507,4 +564,5 @@ select[disabled]
   background : #c5f9f7;
   border-color : #00fff6;
 }
+
 
