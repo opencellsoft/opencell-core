@@ -20,15 +20,15 @@
 	<cc:attribute name="listBean" />
 	<cc:attribute name="maxlength" default="40" />
 	<cc:attribute name="textArea" default="false" />
+	<cc:attribute name="time" default="false" />
 	<cc:attribute name="cols" default="20" />
 	<cc:attribute name="rows" default="5" />
 	<cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
 	<cc:attribute name="listElements"/>
-	
 
 	<cc:attribute name="show"
-		default="#{(not (cc.attrs.showOnlyOnNew and cc.backingBeanFromParentOrCurrent.edit and cc.entityFromBackingBeanOrAttribute[id]==null)) and (not (cc.attrs.showOnlyOnConsult and cc.backingBeanFromParentOrCurrent.edit== false and cc.entityFromBackingBeanOrAttribute['id']==null))}" />
+		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.backingBeanFromParentOrCurrent.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.backingBeanFromParentOrCurrent.edit== false))}" />
 </cc:interface>
 
 <cc:implementation>
@@ -74,7 +74,7 @@
 			
 			<!-- if service is not set, then just render fields for embedded entity -->
 			<ui:fragment rendered="#{empty cc.attrs.listBean and empty cc.attrs.listElements}">
-				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}" disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}" entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}" cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"  maxlength="#{cc.attrs.maxlength}" validateRib="#{cc.attrs.validateRib}"/>
+				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}" disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}" entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}" cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"  maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}" validateRib="#{cc.attrs.validateRib}"/>
 			</ui:fragment>
 		</ui:fragment>
 
