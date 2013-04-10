@@ -8,6 +8,13 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{invoiceSubCategoryBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -17,14 +24,16 @@
 		<!-- Entity select popup. -->
 		<hftl:entityPopup id="searchInvoiceCategoryPopup"
 			header="#{messages['customer.popup.header']}"
+			updateField=":searchPanel:searchForm:invoiceCategoryField:invoiceCategory_child"
+			selection="#{invoiceSubCategoryBean.filters['invoiceCategory']}"
 			backingBean="#{invoiceCategoryBean}"
 			searchField1Label="#{messages['invoiceCategory.code']}"
 			searchField1="code"
-			column1Label="#{messages['invoiceCategory.code']}" column1="code"
-			updateField=":searchPanel:searchForm:invoiceCategoryField:invoiceCategory_child">
+			column1Label="#{messages['invoiceCategory.code']}" column1="code">
 		</hftl:entityPopup>
 
-		<hf:searchPanel label="#{messages['invoiceSubCategory.search']}"
+		<hf:searchPanel id="searchPanel"
+			label="#{messages['invoiceSubCategory.search']}"
 			backingBean="#{invoiceSubCategoryBean}">
 			<hf:searchField id="invoiceCategoryField"
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
