@@ -37,18 +37,23 @@
 			});
 		</script>
 		<div id="admin-bar">
-			
+			<div id="logo">
+				<h:graphicImage value="/img/logo_ASG.png" style="border:0" />
+			</div>
+
 			<ul>
 				<li><div class="top-bar-home"></div>
 					<h:link outcome="/home.xhtml" value="#{messages['menutop.home']}"
 					styleClass="headerLink" />
 				</li>
 				<li>
+					<div class="top-bar-pass"></div>
 					<h:link outcome="/changePassword.xhtml"
 					value="#{messages['menutop.changePassword']}"
 					rendered="#{identity.loggedIn}" styleClass="headerLink" />
 				</li>
 				<li>
+					<div class="top-bar-logout"></div>
 					<h:commandLink action="#{identity.logout}"
 					value="#{messages['menutop.logout']}"
 					rendered="#{identity.loggedIn}" styleClass="headerLink"
@@ -84,6 +89,11 @@
 			NAVIGATION
 	   </ui:insert>
 	<div class="body">
+		<a:outputPanel layout="block" ajaxRendered="true">
+			<h:messages id="messages" globalOnly="true" styleClass="message"
+				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
+				rendered="#{showGlobalMessages != 'false'}" />
+		</a:outputPanel>
 		<ui:insert name="body" />
 	</div>
 
