@@ -11,20 +11,20 @@
 
 	<ui:define name="body">
 
-	 <hftl:entityPopup id="tradingCountryPopup" header="#{messages['tradingCountry.header']}" backingBean="#{tradingCountryBean}"
+	 <hftl:entityPopup id="tradingCountryPopup" header="#{messages['tradingCountry.popup.header']}" backingBean="#{tradingCountryBean}"
 			searchField1Label="#{messages['businessEntity.code']}" searchField1="countryCode" column1Label="#{messages['businessEntity.code']}"
 			column1="countryCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
 			selection="#{customerBean.entity.tradingCountry}">
 		</hftl:entityPopup>
 		
 		
-		<hftl:entityPopup id="tradingLanguagePopup" header="#{messages['tradingLanguage.header']}" backingBean="#{tradingLanguageBean}"
+		<hftl:entityPopup id="tradingLanguagePopup" header="#{messages['tradingLanguage.popup.header']}" backingBean="#{tradingLanguageBean}"
 			searchField1Label="#{messages['businessEntity.code']}" searchField1="languageCode" column1Label="#{messages['businessEntity.code']}"
 			column1="languageCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
 			selection="#{customerBean.entity.tradingLanguage}">
 		</hftl:entityPopup>
 		
-		<hftl:entityPopup id="customerCurrencyPopup" header="#{messages['tradingLanguage.header']}" backingBean="#{tradingCurrencyBean}"
+		<hftl:entityPopup id="customerCurrencyPopup" header="#{messages['tradingCurrency.popup.header']}" backingBean="#{tradingCurrencyBean}"
 			searchField1Label="#{messages['businessEntity.code']}" searchField1="currencyCode" column1Label="#{messages['businessEntity.code']}"
 			column1="currencyCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
 			selection="#{customerBean.entity.tradingCurrency}">
