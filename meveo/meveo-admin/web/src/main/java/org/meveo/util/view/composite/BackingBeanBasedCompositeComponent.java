@@ -24,8 +24,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     private BaseBean<? extends IEntity> backingBean;
 
-    private IEntity entity;
-    
+    private Object entity;
+
     private Class entityClass;
 
     ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
@@ -54,14 +54,13 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
     /**
      * Helper method to get entity from backing bean.
      */
-    public IEntity getEntityFromBackingBeanOrAttribute() {
+    public Object getEntityFromBackingBeanOrAttribute() {
         if (entity == null) {
+            entity = (Object) getAttributes().get("entity");
+
             UIComponent parent = getCompositeComponentParent(this);
-            if (parent != null) {
-                entity = (IEntity) parent.getAttributes().get("entity");
-            }
-            if (entity == null) {
-                entity = (IEntity) getAttributes().get("entity");
+            if (entity == null && parent != null) {
+                entity = (Object) parent.getAttributes().get("entity");
             }
             if (entity == null) {
                 try {
@@ -73,8 +72,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         }
         return entity;
     }
-    
-    
+
     /**
      * Helper method to get entity instance to query field definitions.
      */
@@ -97,16 +95,16 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         }
     }
 
-    public boolean isText(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isText(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             return field.getType() == String.class;
         }
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isBoolean(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isBoolean(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == Boolean.class || (type.isPrimitive() && type.getName().equals("boolean"));
@@ -114,24 +112,24 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isDate(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isDate(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             return field.getType() == Date.class;
         }
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isEnum(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isEnum(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             return field.getType().isEnum();
         }
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isInteger(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isInteger(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == Integer.class || (type.isPrimitive() && type.getName().equals("int"));
@@ -139,8 +137,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isLong(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isLong(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == Long.class || (type.isPrimitive() && type.getName().equals("long"));
@@ -148,8 +146,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isByte(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isByte(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == Byte.class || (type.isPrimitive() && type.getName().equals("byte"));
@@ -157,8 +155,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isShort(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isShort(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == Short.class || (type.isPrimitive() && type.getName().equals("short"));
@@ -166,8 +164,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isDouble(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isDouble(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == Double.class || (type.isPrimitive() && type.getName().equals("double"));
@@ -175,8 +173,8 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isFloat(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isFloat(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == Float.class || (type.isPrimitive() && type.getName().equals("float"));
@@ -184,24 +182,24 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isBigDecimal(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isBigDecimal(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             return field.getType() == BigDecimal.class;
         }
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isEntity(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isEntity(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             return IEntity.class.isAssignableFrom(field.getType());
         }
         throw new IllegalStateException("No field with name '" + fieldName + "' was found");
     }
 
-    public boolean isList(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
+    public boolean isList(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(entity != null ? entity.getClass() : getEntityClass(), fieldName);
         if (field != null) {
             Class<?> type = field.getType();
             return type == List.class || type == Set.class;

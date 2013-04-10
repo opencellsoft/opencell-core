@@ -186,7 +186,7 @@
 			<rich:column id="checker1" width="10" styleClass="chech-column" >
 			 <h:selectOneRadio id="myRadio" value="#{subscriptionBean.selectedServiceInstanceId}" onchange="unCheckedAll(this.id,'srvInstansFrm');">
 			    <f:selectItem itemValue="#{entity.id}"/> 
-				<a:support ajaxSingle="true" event="onclick" reRender="terminationPanel,serviceInstOperations" action="#{subscriptionBean.setSelectedServiceInstanceId(entity.id)}"/>	
+				<a:support ajaxSingle="true" event="onclick" render="terminationPanel,serviceInstOperations" action="#{subscriptionBean.setSelectedServiceInstanceId(entity.id)}"/>	
 			 </h:selectOneRadio>
 			 </rich:column>
     			<custom:column label="#{messages['serviceInstance.code']}" field="code" />
@@ -225,7 +225,7 @@
 			    		 	<h:panelGrid columns="3" style="border:2px;">
 								#{messages['serviceInstance.quantity']}:
 								<h:inputText value="#{subscriptionBean.quantity}" size="5" maxlength="3"/>
-								<a:commandButton id="cbutton" action="#{subscriptionBean.instanciateManyServices}" reRender="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" value="#{messages['button.instanciateButton']}"/> 
+								<a:commandButton id="cbutton" action="#{subscriptionBean.instanciateManyServices}" render="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" value="#{messages['button.instanciateButton']}"/> 
 								</h:panelGrid>
 			    		 </div>
 					</ui:define>
@@ -288,7 +288,7 @@
                     	<h:outputText value="#{messages['commons.actions']}" />
              		</f:facet>
              		
-             		 <a:commandLink id="editOneShotChgInsLink" reRender="oneShotChgSdiv" onclick="document.getElementById('oneShotChgDiv').style.display='';" action="#{subscriptionBean.editOneShotChargeIns(entity)}">
+             		 <a:commandLink id="editOneShotChgInsLink" render="oneShotChgSdiv" onclick="document.getElementById('oneShotChgDiv').style.display='';" action="#{subscriptionBean.editOneShotChargeIns(entity)}">
                 		<h:graphicImage value="/img/edit.gif" style="border:0"/>
              		</a:commandLink>
              		<rich:toolTip for="editOneShotChgInsLink" value="#{messages['commons.edit']}"/>
@@ -297,7 +297,7 @@
 	</a:outputPanel>
 	<rich:panel>
 	<h:form>
-		<a:commandButton value="#{messages['subscription.oneShotChgButton']}" action="#{subscriptionBean.newOneShotChargeInstance}" onclick="document.getElementById('oneShotChgDiv').style.display='';" reRender="oneShotChgSdiv"/>&nbsp;&nbsp;
+		<a:commandButton value="#{messages['subscription.oneShotChgButton']}" action="#{subscriptionBean.newOneShotChargeInstance}" onclick="document.getElementById('oneShotChgDiv').style.display='';" render="oneShotChgSdiv"/>&nbsp;&nbsp;
 	</h:form>
 	<br/>
 	<br/>
@@ -489,7 +489,7 @@
    
 				<h:panelGrid columns="2">
 					<h:commandButton action="#{subscriptionBean.saveOneShotChargeIns}" value="#{messages['action.save']}" rendered="#{currentProvider.amountValidation}">
-						<a:support event="onclick" reRender="OS_oneShot_results_form" 
+						<a:support event="onclick" render="OS_oneShot_results_form" 
 
                     onsubmit="return validation();" 
 
@@ -497,7 +497,7 @@
 
 					</h:commandButton>
 					
-					<a:commandButton action="#{subscriptionBean.saveOneShotChargeIns}" value="#{messages['action.save']}" reRender="OS_oneShot_results_form" onclick="document.getElementById('oneShotChgDiv').style.display='none';" rendered="#{!currentProvider.amountValidation}"/>
+					<a:commandButton action="#{subscriptionBean.saveOneShotChargeIns}" value="#{messages['action.save']}" render="OS_oneShot_results_form" onclick="document.getElementById('oneShotChgDiv').style.display='none';" rendered="#{!currentProvider.amountValidation}"/>
 					
 					
 					<s:button value="#{messages['action.cancel']}" onclick="document.getElementById('oneShotChgDiv').style.display='none';"/>
@@ -540,7 +540,7 @@
              		<f:facet name="header">
                     	<h:outputText value="#{messages['commons.actions']}" />
              		</f:facet>
-             		 <a:commandLink id="editRecurringChgInsLink" reRender="recurringChgSdiv" onclick="document.getElementById('recurringChgDiv').style.display='';" action="#{subscriptionBean.editRecurringChargeIns(entity)}">
+             		 <a:commandLink id="editRecurringChgInsLink" render="recurringChgSdiv" onclick="document.getElementById('recurringChgDiv').style.display='';" action="#{subscriptionBean.editRecurringChargeIns(entity)}">
                 		<h:graphicImage value="/img/edit.gif" style="border:0"/>
              		</a:commandLink>
              		<rich:toolTip for="editRecurringChgInsLink" value="#{messages['commons.edit']}"/>
@@ -736,7 +736,7 @@
   </script>    
 				<h:panelGrid columns="2">
 					<h:commandButton action="#{subscriptionBean.saveRecurringChargeIns}" value="#{messages['action.save']}" rendered="#{currentProvider.amountValidation}">
-						<a:support event="onclick" reRender="OS_recurring_results_form" 
+						<a:support event="onclick" render="OS_recurring_results_form" 
 
                     onsubmit="return validationRC();" 
 
@@ -744,7 +744,7 @@
 
 					</h:commandButton>
 					
-					<a:commandButton action="#subscriptionBean.saveRecurringChargeIns}" value="#{messages['action.save']}" reRender="OS_recurring_results_form" onclick="document.getElementById('recurringChgDiv').style.display='none';" rendered="#{!currentProvider.amountValidation}"/>
+					<a:commandButton action="#subscriptionBean.saveRecurringChargeIns}" value="#{messages['action.save']}" render="OS_recurring_results_form" onclick="document.getElementById('recurringChgDiv').style.display='none';" rendered="#{!currentProvider.amountValidation}"/>
 					
 					
 					<s:button value="#{messages['action.cancel']}" onclick="document.getElementById('recurringChgDiv').style.display='none';"/>

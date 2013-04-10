@@ -26,7 +26,7 @@
 			column2Label="#{messages['usageType.name']}" column2="name"
 			column3Label="#{messages['usageType.metricName']}" column3="metricName">
 			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}" reRender="formId" 
+			<a:commandLink value="#{messages['commons.select']}" render="formId" 
 				action="#{matrix.setUsageType(entity)}"
 				oncomplete="Richfaces.hideModalPanel('usageTypePopup')">
 			</a:commandLink>

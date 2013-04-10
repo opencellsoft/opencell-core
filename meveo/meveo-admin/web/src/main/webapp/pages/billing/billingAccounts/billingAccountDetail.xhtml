@@ -16,7 +16,7 @@
 				searchField2Label="#{messages['customerAccount.name']}" searchField2="name" column1Label="#{messages['customerAccount.code']}" column1="code"
 				column2Label="#{messages['customerAccount.name']}" column2="name" filtersMap="#{customerAccountBean.filters}">
 				<!-- select link -->
-				<a:commandLink value="#{messages['commons.select']}" reRender="formId" immediate="true" action="#{billingAccountBean.populateAccounts(entity)}"
+				<a:commandLink value="#{messages['commons.select']}" render="formId" immediate="true" action="#{billingAccountBean.populateAccounts(entity)}"
 					oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
 				</a:commandLink>
 			</hftl:entityPopup>
@@ -26,7 +26,7 @@
 				searchField2Label="#{messages['businessEntity.description']}" searchField2="name" column1Label="#{messages['businessEntity.code']}" column1="code"
 				column2Label="#{messages['businessEntity.description']}" column2="description" filtersMap="#{billingCycleBean.filters}">
 				<!-- select link -->
-				<a:commandLink value="#{messages['commons.select']}" reRender="formId" action="#{billingAccount.setBillingCycle(entity)}"
+				<a:commandLink value="#{messages['commons.select']}" render="formId" action="#{billingAccount.setBillingCycle(entity)}"
 					oncomplete="dlg_billingCyclePopup.hide">
 				</a:commandLink>
 			</hftl:entityPopup>
@@ -36,7 +36,7 @@
 				column1Label="#{messages['businessEntity.code']}" column1="countryCode" column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingCountryBean.filters}">
 				<!-- select link -->
-				<a:commandLink value="#{messages['commons.select']}" reRender="formId" action="#{billingAccount.setTradingCountry(entity)}"
+				<a:commandLink value="#{messages['commons.select']}" render="formId" action="#{billingAccount.setTradingCountry(entity)}"
 					oncomplete="dlg_tradingCountryPopup.hide()">
 				</a:commandLink>
 			</hftl:entityPopup>
@@ -46,7 +46,7 @@
 				column1Label="#{messages['businessEntity.code']}" column1="languageCode" column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription" filtersMap="#{tradingLanguageBean.filters}">
 				<!-- select link -->
-				<a:commandLink value="#{messages['commons.select']}" reRender="formId" action="#{billingAccount.setTradingLanguage(entity)}"
+				<a:commandLink value="#{messages['commons.select']}" render="formId" action="#{billingAccount.setTradingLanguage(entity)}"
 					oncomplete="dlg_tradingLanguagePopup.hide()">
 				</a:commandLink>
 			</hftl:entityPopup>
@@ -86,8 +86,8 @@
 													<h:panelGrid columns="2">
 														<p:outputLabel for="returnToAgency_select" value="#{messages['billingAccount.returnToAgency']}" />
 														<c:set var="fieldValue" value="#{billingAccountBean.returnToAgency}" />
-														<h:selectBooleanCheckbox id="returnToAgency_select" rendered="#{billingAccountBean.edit}"  value="#{fieldValue}">
-															<a:support event="onclick" reRender="invoicePrefixPanel" ajaxSingle="true" limitToList="true"
+														<h:selectBooleanCheckbox id="returnToAgency_select" rendered="#{billingAccountBean.edit}" value="#{fieldValue}">
+															<a:support event="onclick" render="invoicePrefixPanel" ajaxSingle="true" limitRender="true"
 																action="#{billingAccountBean.setInvoicePrefix()}" />
 														</h:selectBooleanCheckbox>
 
@@ -116,7 +116,7 @@
 													<p:outputLabel for="externalRef2" value="#{messages['billingAccount.externalRef2']}" />
 													<h:inputText for="externalRef2" value="#{billingAccount.externalRef2}" rendered="#{billingAccountBean.edit}"
 														valueChangeListener="#{billingAccountBean.processValueChange}">
-														<a:support event="onchange" reRender="invoicePrefixPanel" />
+														<a:support event="onchange" render="invoicePrefixPanel" />
 													</h:inputText>
 													<h:outputText value="#{billingAccount.externalRef2}" rendered="#{!billingAccountBean.edit}" style="font-weight:bold;" />
 												</h:panelGrid>
@@ -136,7 +136,7 @@
 														<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" />
 														<f:selectItems value="#{titleService.list()}" var="t" itemLabel="#{messages[stringUtil.merge('Title.',t.code)]}" />
 														<s:objectConverter />
-														<a:support event="onchange" immediate="false" ajaxSingle="true" bypassUpdates="false" limitToList="true"
+														<a:support event="onchange" immediate="false" ajaxSingle="true" bypassUpdates="false" limitRender="true"
 															reRender="formId:userNamePanel, formId:countryPanel, paymentMethodField, electronicBillingField, bankCoordinatesPanel, invoicePrefixPanel, invoicePrefixBoxPanel" />
 													</h:selectOneMenu>
 													<h:outputText rendered="#{!billingAccountBean.edit and billingAccount.name.title != null}"
@@ -219,7 +219,7 @@
 													<h:panelGrid columns="2">
 														<p:outputLabel for="email_select" value="#{messages['billingAccount.email']}" />
 
-														<h:inputText id="email_select" rendered="#{billingAccountBean.edit}" value="#{entity.email}"
+														<h:inputText id="email_select" rendered="#{billingAccountBean.edit}"  value="#{entity.email}"
 															required="#{entity.electronicBilling}" size="20" maxlength="100" converter="nullableStringConverter" />
 														<h:outputText rendered="#{!billingAccountBean.edit}" id="emailText" value="#{entity.email}" required="#{entity.electronicBilling}" />
 													</h:panelGrid>

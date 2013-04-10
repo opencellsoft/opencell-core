@@ -77,7 +77,7 @@
 													<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" />
 													<f:selectItems value="#{titleService.list()}" var="t" itemLabel="#{messages[stringUtil.merge('Title.',t.code)]}" />
 													<s:objectConverter />
-													<a:support event="onchange" ajaxSingle="true" bypassUpdates="false" limitToList="true" reRender="userNamePanel, formId:countryPanel" />
+													<a:support event="onchange" ajaxSingle="true" bypassUpdates="false" limitRender="true" render="userNamePanel, formId:countryPanel" />
 												</h:selectOneMenu>
 												<h:outputText id="title_select" rendered="#{!userAccountBean.edit and userAccountBean.entity.name.title != null}"
 													value="#{messages[stringUtil.merge('Title.',userAccountBean.entity.name.title.code)]}" style="font-weight:bold;" />
