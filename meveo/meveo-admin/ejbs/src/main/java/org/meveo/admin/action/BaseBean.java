@@ -36,6 +36,7 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingLanguage;

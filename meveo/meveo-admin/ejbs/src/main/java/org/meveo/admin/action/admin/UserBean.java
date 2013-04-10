@@ -18,8 +18,8 @@ package org.meveo.admin.action.admin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -29,11 +29,13 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -57,11 +59,16 @@ public class UserBean extends BaseBean<User> {
 
 	@Inject
 	private RoleService roleService;
+	
+	@Inject
+	private ProviderService providerService;
 
 	@Inject
 	private Messages messages;
 
 	private DualListModel<Role> perks;
+	
+	private DualListModel<Provider> providerPerks;
 
 	/**
 	 * Password set by user which is later encoded and set to user before saving
@@ -160,9 +167,25 @@ public class UserBean extends BaseBean<User> {
 		return perks;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setDualListModel(DualListModel<Role> perks) {
-		getEntity().setRoles((Set<Role>) perks.getTarget());
+		getEntity().setRoles(new HashSet<Role>((List<Role>) perks.getTarget()));
+	}
+	
+	public DualListModel<Provider> getProvidersDualListModel() {
+		if (providerPerks == null) {
+			List<Provider> perksSource = providerService.list();
+			List<Provider> perksTarget = new ArrayList<Provider>();
+			if (getEntity().getProviders() != null) {
+				perksTarget.addAll(getEntity().getProviders());
+			}
+			perksSource.removeAll(perksTarget);
+			providerPerks = new DualListModel<Provider>(perksSource, perksTarget);
+		}
+		return providerPerks;
+	}
+
+	public void setProvidersDualListModel(DualListModel<Provider> providerPerks) {
+		getEntity().setProviders(new HashSet<Provider>((List<Provider>) providerPerks.getTarget()));
 	}
 
 	public String getPassword() {
