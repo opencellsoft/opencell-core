@@ -21,7 +21,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.meveo.model.ProviderBusinessEntity;
+import org.meveo.model.BusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -30,7 +30,7 @@ import org.meveo.model.ProviderBusinessEntity;
 @Entity
 @Table(name = "BILLING_TAX")
 // @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
-public class Tax extends ProviderBusinessEntity {
+public class Tax extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "ACCOUNTING_CODE", length = 255)

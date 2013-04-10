@@ -29,7 +29,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.meveo.model.ProviderBusinessEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
@@ -42,7 +42,7 @@ import org.meveo.model.billing.OperationTypeEnum;
 @Table(name = "CAT_CHARGE_TEMPLATE")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CHARGE_TEMPLATE_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class ChargeTemplate extends ProviderBusinessEntity {
+public class ChargeTemplate extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 

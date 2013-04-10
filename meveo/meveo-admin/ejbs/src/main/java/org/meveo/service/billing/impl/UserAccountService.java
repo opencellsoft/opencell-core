@@ -168,7 +168,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 			if (ratedTransaction.getInvoiceAgregateF() == null
 					&& ratedTransaction.getInvoiceAgregateR() == null
 					&& ratedTransaction.getInvoiceAgregateT() == null) {
-				amount = amount.add(ratedTransaction.getAmount());
+				amount = amount.add(ratedTransaction.getAmountWithTax());
 				amountWithoutTax = amountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
 				amountTax = amountTax.add(ratedTransaction.getAmountTax());
 			}

@@ -89,9 +89,9 @@ public class PricePlanMatrix extends AuditableEntity {
 	private BigDecimal amountWithoutTax;
 
 	/** Should be called extraAmount because thats what this field is. */
-	@Column(name = "AMOUNT_WITHOUT_TAX2", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
-	private BigDecimal amountWithoutTax2;
+	private BigDecimal amountWithTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_CURRENCY_ID")
@@ -200,12 +200,12 @@ public class PricePlanMatrix extends AuditableEntity {
 		this.amountWithoutTax = amountWithoutTax;
 	}
 
-	public BigDecimal getAmountWithoutTax2() {
-		return amountWithoutTax2;
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
 	}
 
-	public void setAmountWithoutTax2(BigDecimal amountWithoutTax2) {
-		this.amountWithoutTax2 = amountWithoutTax2;
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
 	}
 
 	public TradingCurrency getTradingCurrency() {

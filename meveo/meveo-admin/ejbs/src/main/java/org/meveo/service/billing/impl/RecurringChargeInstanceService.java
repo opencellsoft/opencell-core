@@ -39,7 +39,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> {
 
     @EJB
-    private ChargeApplicationService chargeApplicationService;
+    private WalletOperationService chargeApplicationService;
 
 	// @EJB
     // private RecurringChargeTemplateServiceLocal
@@ -79,7 +79,7 @@ public class RecurringChargeInstanceService extends ChargeInstanceService<Recurr
 
         create(recurringChargeInstance, creator,chargetemplate.getProvider());
 
-        chargeApplicationService.recurringChargeApplication(subscription, recurringChargeInstance, quantity, effetDate,
+        chargeApplicationService.recurringWalletOperation(subscription, recurringChargeInstance, quantity, effetDate,
                 creator);
         return recurringChargeInstance.getId();
     }

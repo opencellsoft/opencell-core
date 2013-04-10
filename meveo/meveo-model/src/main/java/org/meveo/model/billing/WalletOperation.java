@@ -17,7 +17,10 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,10 +30,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.rating.EDR;
 
@@ -38,7 +42,7 @@ import org.meveo.model.rating.EDR;
 @Table(name = "BILLING_WALLET_OPERATION")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class WalletOperation extends BaseEntity {
+public class WalletOperation extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -64,10 +68,6 @@ public class WalletOperation extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CURRENCY_ID")
     private Currency currency;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TAX_ID")
-    private Tax tax;
     
     @Column(name = "TAX_PERCENT", precision = 23, scale = 12)
     private BigDecimal taxPercent;
@@ -117,15 +117,14 @@ public class WalletOperation extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "END_DATE")
     private Date endDate;
-    
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CREATED")
-    private Date creationDate;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "UPDATED")
-    private Date lastUpdateDate;
+    @Column(name = "SUBSCRIPTION_DATE")
+    private Date subscriptionDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS")
+    private WalletOperationStatusEnum status;
 
 	public Wallet getWallet() {
 		return wallet;
@@ -165,14 +164,6 @@ public class WalletOperation extends BaseEntity {
 
 	public void setCurrency(Currency currency) {
 		this.currency = currency;
-	}
-
-	public Tax getTax() {
-		return tax;
-	}
-
-	public void setTax(Tax tax) {
-		this.tax = tax;
 	}
 
 	public BigDecimal getTaxPercent() {
@@ -295,20 +286,20 @@ public class WalletOperation extends BaseEntity {
 		this.endDate = endDate;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	public WalletOperationStatusEnum getStatus() {
+		return status;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setStatus(WalletOperationStatusEnum status) {
+		this.status = status;
 	}
 
-	public Date getLastUpdateDate() {
-		return lastUpdateDate;
+	public Date getSubscriptionDate() {
+		return subscriptionDate;
 	}
 
-	public void setLastUpdateDate(Date lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
+	public void setSubscriptionDate(Date subscriptionDate) {
+		this.subscriptionDate = subscriptionDate;
 	}
     
 }

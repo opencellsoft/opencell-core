@@ -27,7 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.meveo.model.ProviderBusinessEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.ServiceInstance;
 
 /**
@@ -38,7 +38,7 @@ import org.meveo.model.billing.ServiceInstance;
 @Table(name = "CAT_SERVICE_TEMPLATE")
 // @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
 // "CAT_SERVICE_TEMPLATE_SEQ")
-public class ServiceTemplate extends ProviderBusinessEntity {
+public class ServiceTemplate extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToMany(fetch = FetchType.LAZY)

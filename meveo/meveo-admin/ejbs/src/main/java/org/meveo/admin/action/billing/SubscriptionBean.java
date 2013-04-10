@@ -33,7 +33,6 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -41,6 +40,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -360,35 +360,35 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				.findOneShotChargeInstancesBySubscriptionId(entity.getId());
 	}
 
-	public List<ChargeApplication> getOneShotChargeApplications() {
-		log.info("run oneShotChargeApplications");
+	public List<WalletOperation> getOneShotWalletOperations() {
+		log.info("run oneShotWalletOperations");
 		if (this.oneShotChargeInstance == null || this.oneShotChargeInstance.getId() == null) {
 			return null;
 		}
-		List<ChargeApplication> results = new ArrayList<ChargeApplication>(
-				oneShotChargeInstance.getChargeApplications());
+		List<WalletOperation> results = new ArrayList<WalletOperation>(
+				oneShotChargeInstance.getWalletOperations());
 
-		Collections.sort(results, new Comparator<ChargeApplication>() {
-			public int compare(ChargeApplication c0, ChargeApplication c1) {
+		Collections.sort(results, new Comparator<WalletOperation>() {
+			public int compare(WalletOperation c0, WalletOperation c1) {
 
-				return c1.getApplicationDate().compareTo(c0.getApplicationDate());
+				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
 		log.info("retrieve #0 chargeApplications", results != null ? results.size() : 0);
 		return results;
 	}
 
-	public List<ChargeApplication> getRecurringChargeApplications() {
+	public List<WalletOperation> getRecurringChargeApplications() {
 		log.info("run recurringChargeApplications");
 		if (this.recurringChargeInstance == null || this.recurringChargeInstance.getId() == null) {
 			return null;
 		}
-		List<ChargeApplication> results = new ArrayList<ChargeApplication>(
-				recurringChargeInstance.getChargeApplications());
-		Collections.sort(results, new Comparator<ChargeApplication>() {
-			public int compare(ChargeApplication c0, ChargeApplication c1) {
+		List<WalletOperation> results = new ArrayList<WalletOperation>(
+				recurringChargeInstance.getWalletOperations());
+		Collections.sort(results, new Comparator<WalletOperation>() {
+			public int compare(WalletOperation c0, WalletOperation c1) {
 
-				return c1.getApplicationDate().compareTo(c0.getApplicationDate());
+				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
 		log.info("retrieve #0 chargeApplications", results != null ? results.size() : 0);
@@ -507,7 +507,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			messages.error(e.getMessage());
 		}
 	}
-
+/*
 	public void cancelService() {
 		try {
 			ServiceInstance serviceInstance = serviceInstanceService
@@ -525,7 +525,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			messages.error(e.getMessage());
 		}
 	}
-
+*/
 	public void suspendService() {
 		try {
 			ServiceInstance serviceInstance = serviceInstanceService
