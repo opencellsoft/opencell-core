@@ -500,12 +500,15 @@ a:hover {
   background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
 }
-.ui-datatable table
+.ui-datatable 
 {
   border-radius : 8px !important;
   -webkit-border-radius : 8px !important;
   -moz-border-radius : 8px !important;
   margin-bottom : 10px;
+  border : 1px solid #c2c2c2;
+  display : inline-block;
+  width : 100%;
 }
 .ui-state-hover
 {
@@ -589,4 +592,25 @@ select[disabled]
   border-color : #00fff6;
 }
 
+#datatable_paginator_top
+{
 
+  border : none;
+  -webkit-border-radius: 8px 8px 0px 0px;
+   border-radius: 8px 8px 0px 0px;
+}
+#datatable_paginator_bottom
+{
+  border : none;
+  -webkit-border-radius: 0px 0px 8px 8px;
+   border-radius: 0px 0px 8px 8px;
+}
+.body > table thead
+{
+  font-size : 14px;
+  float : left;
+  //color : #0d5c59;
+  color : #4f4f4f;
+  border-bottom : 1px solid #d5d5d5;
+  
+}
