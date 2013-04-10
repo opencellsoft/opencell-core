@@ -24,6 +24,8 @@
 	<cc:attribute name="rows" default="5" />
 	<cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
+	<cc:attribute name="listElements"/>
+	
 
 	<cc:attribute name="show"
 		default="#{(not (cc.attrs.showOnlyOnNew and cc.backingBeanFromParentOrCurrent.edit and cc.entityFromBackingBeanOrAttribute[id]==null)) and (not (cc.attrs.showOnlyOnConsult and cc.backingBeanFromParentOrCurrent.edit== false and cc.entityFromBackingBeanOrAttribute['id']==null))}" />
@@ -49,13 +51,20 @@
 		<ui:fragment rendered="#{not cc.attrs.popup}">
 
 			<!-- if service is set, then load list of all entities from db and show as drop down list -->
-			<ui:fragment rendered="#{!empty cc.attrs.listBean}">
+			<ui:fragment rendered="#{!empty cc.attrs.listBean or !empty cc.attrs.listElements}">
 				<h:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_level" value="#{cc.attrs.label}" />
 					<p:selectOneMenu rendered="#{cc.backingBeanFromParentOrCurrent.edit}" id="#{cc.attrs.id}_level"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}">
+						
+						<c:if test="#{empty cc.attrs.listElements}">
+							<c:set var="elements" value="#{cc.attrs.listBean.listAll()}" />
+						</c:if>
+						<c:if test="#{!empty cc.attrs.listElements}">
+							<c:set var="elements" value="#{cc.attrs.listElements}" />
+						</c:if>
 						<f:selectItem itemLabel="" itemValue="" />
-						<f:selectItems value="#{cc.attrs.listBean.listAll()}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
+						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
 						<s:objectConverter />
 					</p:selectOneMenu>
 					<h:outputText rendered="#{not cc.backingBeanFromParentOrCurrent.edit}"
@@ -64,7 +73,7 @@
 			</ui:fragment>
 			
 			<!-- if service is not set, then just render fields for embedded entity -->
-			<ui:fragment rendered="#{empty cc.attrs.listBean}">
+			<ui:fragment rendered="#{empty cc.attrs.listBean and empty cc.attrs.listElements}">
 				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}" disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}" entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}" cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"  maxlength="#{cc.attrs.maxlength}" validateRib="#{cc.attrs.validateRib}"/>
 			</ui:fragment>
 		</ui:fragment>

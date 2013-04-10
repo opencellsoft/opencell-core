@@ -24,8 +24,7 @@
 				<hf:formField label="#{messages['billingCycle.dueDateDelay']}" field="dueDateDelay" required="true" />
 				<hftl:panelGroup columns="2">	
 					<hf:formEntityField label="#{messages['billingCycle.calendar']}" field="calendar" childField="name" required="true" popup="false"
-										service="#{calendarService}" listElements="#{calendarService.listBillingCalendars()}" />
-					<hf:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
+										listElements="#{calendarService.listBillingCalendars()}" />
 				</hftl:panelGroup>
 		</hf:formPanel>
 
