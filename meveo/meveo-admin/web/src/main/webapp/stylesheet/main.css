@@ -2,7 +2,8 @@ body {
 	width: 100%;
 	margin: auto;
 	position: relative;
-	background-image: url(http://www.jobellevallega.com/numan/bg-pat.png);
+	//background-image: url(http://www.jobellevallega.com/numan/bg-pat.png);
+  background : #f1f7f6;
 }
 .body
 {
@@ -26,6 +27,7 @@ a:hover {
 	width: 100%;
 	//margin-left : -5.5%;
 	margin-top : -2px;
+  display : none;
 }
 
 #headerleft {
@@ -52,6 +54,7 @@ a:hover {
 	width: 130px;
 	float: left;
 	margin-left: 10%;
+  margin-top : 30px;
 }
 
 .headerinfo {
@@ -92,9 +95,7 @@ a:hover {
 
    /*font */
   font-family : helvetica;
-  font-size : 11px;
-
-  
+  font-size : 11px;  
 }
 
 .body H1 {
@@ -159,23 +160,20 @@ a:hover {
 /* JOBELLE ADDITIONAL CSS FILES */
 #admin-bar
 {
-    //background-image: url(../img/admin-top-bar-pat.png);
-    //background-image : url(http://www.jobellevallega.com/numan/menu-active-pat.png); 
-    background-image : url(http://www.jobellevallega.com/numan/admin-top-bar-pat.png);
-    height: 51px;
-    //position: fixed;
-    width: 100%;
-   
-    margin-top : -15px;
-   
+  height: 164px;
   
+  width: 100%;
+  margin-top : -15px;
+  background-image : url(http://www.jobellevallega.com/numan/header-bg.png);
+  background-size : 2000px 164px;
 }
 #admin-bar ul
 {
   padding-top: 15px;
-	width: 95%;
 	margin-left: auto;
-	margin-right: auto;
+	margin-right: 5%;
+  float : right;
+  
 }
 #admin-bar ul li:first-child
 {
@@ -200,22 +198,24 @@ a:hover {
 	height: 20px;
 	padding-right: 15px;
 	padding-left: 15px;
-	border-left: 1px solid black;
-	border-right: 1px solid #717272;
+	border-left: 1px solid #0ac0af;
+	border-right: 1px solid #03554d;
 	float: left;
 	
 	
 }
 #admin-bar ul li.right-part
 {
-	float : right;
+	float : left;
+  margin-left : 0px;
+  margin-right : 0px;
 }
 #admin-bar ul li,
 #admin-bar ul li a
 {
    font-family: helvetica;
    font-size: 12px;
-   color : #d3dadc;
+   color : #fff;
    padding-top: 5px;
    text-decoration: none;
    text-shadow: -1px -1px 0px black;
@@ -223,7 +223,7 @@ a:hover {
 }
 #admin-bar ul li a:hover
 {
-  color: #3fa5a8;
+  color: #00ffeb;
 }
 #admin-bar ul li .top-bar-home,
 #admin-bar ul li .top-bar-user
@@ -250,7 +250,7 @@ a:hover {
    width: 25px;
    height: 25px;
    background-image: url(..//img/user-top-bar.png) ;
-   border : 1px solid grey;
+   border : 1px solid #03554d;
    background-size: 20px 20px;
    background-repeat: no-repeat;
    display: inline-block;
@@ -290,21 +290,12 @@ a:hover {
   	margin-right: auto;
   	height : 40px;
   	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	color: #e6e6e6;
-	padding: 1px;
-	background: -moz-linear-gradient(top,#899099 0%,#3c444d);
-	background: -webkit-gradient(linear, left top, left bottom, from(#899099),to(#3c444d));
-	-moz-border-radius: 20px;
-	-webkit-border-radius: 20px;
-	border-radius: 20px;
-	border: 1px solid #646970;
-	-moz-box-shadow:0px 2px 1px rgba(000,000,000,0.4),inset 0px -1px 6px rgba(255,255,255,0.3);
-	-webkit-box-shadow:0px 2px 1px rgba(000,000,000,0.4),inset 0px -1px 6px rgba(255,255,255,0.3);
-	box-shadow:0px 2px 1px rgba(000,000,000,0.4),inset 0px -1px 6px rgba(255,255,255,0.3);
-	text-shadow:1px 1px 0px rgba(000,000,000,0.6),0px 0px 0px rgba(255,255,255,0);
-	border : 1px solid #a3b0c0;
-
+	  font-size: 11px;
+    margin-top : -38px;
+	  color: #e6e6e6;
+	  padding: 1px;
+	  background : none;
+    border : none;
 }
 .ui-menubar .ui-menu-list
 {
@@ -318,9 +309,15 @@ a:hover {
 {
   -webkit-border-radius: 0px 15px 0px 15px;
    border-radius: 0px 15px 0px 15px;
-   //width : 100%;
+   width : 150%;
    margin-right : 10px !important;
-  
+   box-shadow : none;
+  border-top : none;
+  border-color : #b3cecb;
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list
+{
+  padding : 3px 0px 0px 3px;
 }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem
 {
@@ -344,11 +341,11 @@ a:hover {
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-menuitem-link
 {
   text-shadow : none;
-  padding : 1px 5px;
+  padding : 1px 5px 0px 5px;
 }
 .ui-menu .ui-menuitem-text
 {
-    color : white;
+    //color : white;
     font-size : 12px;
     padding : 2px;
 }
@@ -363,22 +360,29 @@ a:hover {
 .ui-menubar .ui-menuitem
 {
  
-  border-right : 1px solid #484d54 !important;
-  border-left : 1px solid #757c86 !important;
-  -webkit-border-radius: 0px 8px 0px 8px;
-   border-radius: 0px 8px 0px 8px;
+  -webkit-border-radius: 10px 10px 0px 0px;
+   border-radius: 10px 10px 0px 0px;
   margin : 0px 0px !important ;
   
+}
+.ui-menubar .ui-menuitem a
+{
+  color : white;
+}
+.ui-menubar .ui-menuitem a:active
+{
+   background : #f1f7f6;
 }
 .ui-menubar .ui-menuitem .ui-state-hover
 {
    
-   background-image: url(http://www.jobellevallega.com/numan/menu-active-pat.png) ;
-  -webkit-border-radius: 0px 8px 0px 8px;
-   border-radius: 0px 8px 0px 8px;
+   //background-image: url(http://www.jobellevallega.com/numan/menu-active-pat.png) ;
+  -webkit-border-radius: 10px 10px 0px 0px;
+   border-radius: 10px 10px 0px 0px;
    border-color : transparent !important;
-   -webkit-box-shadow: inset 0px 2px 5px 2px rgba(0, 0, 0, .2);
-   box-shadow: inset 0px 2px 5px 2px rgba(0, 0, 0, .2);
+   box-shadow : none;
+  background : #f1f7f6;
+   color : #066259 !important;
 }
 .ui-menu-list .ui-menuitem
 {
@@ -391,12 +395,16 @@ a:hover {
   
   
 }
-.ui-menu-child .ui-menuitem
+.ui-menu-child li
 {
   border-top : 1px solid white !Important;
   margin-top : -1px;
   border-bottom : 1px solid #efeff0 !important;
  
+}
+.ui-menu-child li:first-child
+{
+   border-top : none !important;
 }
 .ui-menu-child .ui-state-hover .ui-menuitem-text
 {
@@ -406,6 +414,10 @@ a:hover {
 {
   background-color : #efeff0 !important;
  
+}
+.ui-menuitem .ui-state-hover .ui-icon-triangle-1-s
+{
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240.png) !Important;
 }
 .ui-icon-triangle-1-s
 {
@@ -569,6 +581,8 @@ select[disabled]
   background : #c5f9f7;
   border-color : #00fff6;
 }
+
+
 
 
 

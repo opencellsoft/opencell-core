@@ -32,8 +32,7 @@
 			<!-- Simple fields like numbers, strings, dates etc only needs field name provided. -->
 			<hftl:column label="#{messages['user.userName']}" field="userName" />
 			<hftl:column label="#{messages['user.roles']}" field="roles"
-				childField="name" isList="true"
-				entityView="/pages/admin/userRoles/userRoleDetail.xhtml" />
+				childField="name" isList="true" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />
