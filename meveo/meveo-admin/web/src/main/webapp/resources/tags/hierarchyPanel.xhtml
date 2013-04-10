@@ -24,7 +24,7 @@
 			</f:facet>
 			<h:form>
 
-				<rich:tree value="#{cc.attrs.treeValue}" var="acc" selectionChangeListener="#{customerTreeBean.adviseNodeOpened()}" iconExpanded="true" selectionType="client" >
+				<rich:tree value="#{cc.attrs.treeValue}" var="acc" selectionChangeListener="#{customerTreeBean.processSelection()}" iconExpanded="true" selectionType="client" >
 				
 					<rich:treeNode>
 						<f:facet name="icon">
@@ -38,14 +38,14 @@
 						<f:facet name="iconLeaf">
 							<h:graphicImage value="#{customerTreeBean.getIcon(acc.type)}" />
 						</f:facet>
-						<h:outputText id="tree_value" value="#{acc}"
+						<h:link id="tree_value" value="#{acc}" outcome="http://kuku"
 							rendered="#{!((customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type))}">
 							<rich:tooltip rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
-						</h:outputText>
-						<h:outputText id="tree_value_selected" value="#{acc}"
+						</h:link>
+						<h:link id="tree_value_selected" value="#{acc}" outcome="http://mumu"
 							rendered="#{(customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type)}" styleClass="selectedTreeNode">
 							<rich:tooltip  rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
-						</h:outputText>
+						</h:link>
 					</rich:treeNode>
 				</rich:tree>
 			</h:form>

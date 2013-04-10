@@ -96,8 +96,8 @@ public abstract class BaseEntity implements Serializable, IEntity {
         throw new IllegalStateException("Equals method was not overriden!");
     }
 
-//    @Override
-//    public String toString() {
-//        return "id " + (id == null ? "" : id.toString());
-//    }
+    @Override
+    public String toString() {
+        return "id " + (id == null ? "" : id.toString());
+    }
 }

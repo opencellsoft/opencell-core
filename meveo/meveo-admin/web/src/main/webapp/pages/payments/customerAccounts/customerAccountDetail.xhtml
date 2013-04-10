@@ -81,14 +81,14 @@
 										<hftl:panelGroup columns="2">
 											<h:panelGrid columns="2">
 												<p:outputLabel for="title_text" value="#{messages['name.title']}" />
-												<h:selectOneMenu id="title_text" value="#{customerAccountBean.entity.name.title}" required="true" rendered="#{customerAccountBean.edit}">
+												<h:selectOneMenu id="title_text" value="#{customerAccountBean.entity.name.title}" required="false" rendered="#{customerAccountBean.edit}">
 													<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" />
-													<f:selectItems value="#{titleService.list()}" var="t" itemLabel="#{messages[stringUtil.merge('Title.',t.code)]}" />
+													<f:selectItems value="#{titleBean.listAll()}"  var="t" itemValue="#{t}" itemLabel="#{messages['Title.'.concat(t.code)]}" />
 													<s:objectConverter />
 													<a:ajax event="valueChange" bypassUpdates="false" limitRender="true" render="userNamePanel, formId:countryPanel" />
 												</h:selectOneMenu>
 												<h:outputText rendered="#{!customerAccountBean.edit}"
-													value="#{messages[stringUtil.merge('Title.',customerAccountBean.entity.name.title.code)]}" style="font-weight:bold;" />
+													value="#{messages['Title.'.concat(customerAccountBean.entity.name.title.code)]}" style="font-weight:bold;" />
 											</h:panelGrid>
 
 											<a:outputPanel id="userNamePanel">

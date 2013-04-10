@@ -17,6 +17,7 @@ package org.meveo.admin.action.crm;
 
 import java.util.List;
 
+import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,7 +33,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 import org.richfaces.event.TreeSelectionChangeEvent;
-import org.richfaces.event.TreeToggleEvent;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 
@@ -55,6 +55,9 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
      */
     @Inject
     private AccountEntitySearchService accountEntitySearchService;
+
+    @Inject
+    public Conversation conversation;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -142,15 +145,15 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
         TreeNodeImpl root = null;
 
         if (entity instanceof Customer) {
-            // TreeNodeImpl tree = new TreeNodeImpl();
+            TreeNodeImpl tree = new TreeNodeImpl();
             Customer customer = (Customer) entity;
             root = new TreeNodeData(customer.getId(), customer.getCode(), null, null, false, Customer.ACCOUNT_TYPE);
-            // tree.addChild(0, root);
+            tree.addChild(0, root);
             List<CustomerAccount> customerAccounts = customer.getCustomerAccounts();
             for (int i = 0; i < customerAccounts.size(); i++) {
                 root.addChild(i, build(customerAccounts.get(i)));
             }
-            return root; // tree
+            return tree;
         } else if (entity instanceof CustomerAccount) {
             CustomerAccount customerAccount = (CustomerAccount) entity;
             String firstName = (customerAccount.getName() != null && customerAccount.getName().getFirstName() != null) ? customerAccount.getName().getFirstName() : "";
@@ -211,12 +214,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
         return null;
     }
 
-    /**
-     * Richfaces needs el expression for tree 'adviseNodeOpened' parameter (expands tree when loading). Maybe its somehow possible to not call backing bean.
-     */
-    public boolean adviseNodeOpened() {
-        return true;
-    }
 
     /**
      * Because in customer search any type of customer can appear, this method is used in UI to get link to concrete customer edit page.
@@ -227,15 +224,15 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
      */
     public String getView(String type) {
         if (type.equals(Customer.ACCOUNT_TYPE)) {
-            return "/pages/crm/customers/customerDetail.xhtml";
+            return "/pages/crm/customers/customerDetail.xhtml?cid=" + conversation.getId();
         } else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
-            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?conversationPropagation=end";
+            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?cid=" + conversation.getId(); // was to end conversation
         }
         if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
-            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml";
+            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?cid=" + conversation.getId();
         }
         if (type.equals(UserAccount.ACCOUNT_TYPE)) {
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml";
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml?cid=" + conversation.getId();
         } else {
             throw new IllegalStateException("Wrong customer type provided in EL in .xhtml");
         }
