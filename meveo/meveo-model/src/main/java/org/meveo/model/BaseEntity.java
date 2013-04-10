@@ -17,7 +17,6 @@ package org.meveo.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,7 +28,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 import org.meveo.model.crm.Provider;
-import org.testng.collections.Objects.ToStringHelper;
 
 /**
  * Base class for all entity classes.
@@ -98,8 +96,8 @@ public abstract class BaseEntity implements Serializable, IEntity {
         throw new IllegalStateException("Equals method was not overriden!");
     }
 
-    @Override
-    public String toString() {
-        return "id " + (id == null ? "" : id.toString());
-    }
+//    @Override
+//    public String toString() {
+//        return "id " + (id == null ? "" : id.toString());
+//    }
 }

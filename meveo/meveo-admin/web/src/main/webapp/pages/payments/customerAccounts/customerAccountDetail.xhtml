@@ -3,44 +3,45 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml">
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
-		<c:if test="${customerAccountBean.edit and 'compte'.equals(customerAccountBean.selectedTab)}">
-			<hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}" dataModel="#{customers}"
-				searchField1Label="#{messages['customer.code']}" searchField1="code" searchField2Label="#{messages['customer.description']}"
-				searchField2="description" column1Label="#{messages['customer.code']}" column1="code" column2Label="#{messages['customer.description']}"
-				column2="description" filtersMap="#{customerBean.filters}">
-				<!-- select link -->
-				<a:commandLink value="#{messages['commons.select']}" render="formCustomerAccount" action="#{customerAccountBean.populateAccounts(entity)}"
-					oncomplete="dlg_searchCustomerPopup.hide()">
-				</a:commandLink>
-			</hftl:entityPopup>
+		<!-- 		<c:if test="${customerAccountBean.edit and 'compte'.equals(customerAccountBean.selectedTab)}"> -->
 
-			<hftl:entityPopup id="customerAccCurrencyPopup" header="#{messages['customerAccountCurrencyPopup.header']}" backingBean="#{tradingCurrencyBean}"
-				dataModel="#{tradingCurrencies}" searchField1Label="#{messages['businessEntity.code']}" searchField1="currencyCode"
-				column1Label="#{messages['businessEntity.code']}" column1="currencyCode" column2Label="#{messages['businessEntity.description']}"
-				column2="prDescription" filtersMap="#{tradingCurrencyBean.filters}">
-				<a:commandLink value="#{messages['commons.select']}" reRender="formCustomerAccount"
-					action="#{customerAccountBean.entity.setTradingCurrency(entity)}" oncomplete="dlg_customerAccCurrencyPopup.hide()">
-				</a:commandLink>
-			</hftl:entityPopup>
+		<hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}"
+			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
+			selection="#{customerAccountBean.entity.customer}" updateField=":formCustomerAccountPanel:formCustomerAccount:customerSelectId:customerSelectId">
+		</hftl:entityPopup>
+		<!-- select link -->
+		<!-- 				<a:commandLink value="#{messages['commons.select']}" render="formCustomerAccount" action="#{customerAccountBean.populateAccounts(entity)}" -->
+		<!-- 					oncomplete="dlg_searchCustomerPopup.hide()"> -->
+		<!-- 				</a:commandLink> -->
 
-		</c:if>
+
+		<hftl:entityPopup id="customerAccCurrencyPopup" header="#{messages['customerAccountCurrencyPopup.header']}" backingBean="#{tradingCurrencyBean}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="currencyCode" column1Label="#{messages['businessEntity.code']}"
+			column1="currencyCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
+			selection="#{customerAccountBean.entity.tradingCurrency}"
+			updateField=":formCustomerAccountPanel:formCustomerAccount:currencySelectId:currencySelectId">
+		</hftl:entityPopup>
+
+		<!-- 		</c:if> -->
 		<h:panelGrid columns="1" width="100%">
 			<h:panelGroup>
 				<div class="panels">
 					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(customerAccountBean.entity)}" entity="#{customerAccountBean.entity}" />
-					<rich:tabPanel switchType="ajax" selectedTab="#{customerAccountBean.selectedTab}" styleClass="formPanel">
-						<rich:tab name="compte" label="#{messages['customerAccount.tab.account']}" action="#{customerAccountBean.setSelectedTab('compte')}">
-							<hf:formPanel formId="formCustomerAccount" label="#{messages['customerAccount.form']}" backingBean="#{customerAccountBean}"
-								showFormButtons="false">
+					<rich:tabPanel switchType="client" selectedTab="#{customerAccountBean.selectedTab}" styleClass="formPanel">
+						<rich:tab name="compte" header="#{messages['customerAccount.tab.account']}" action="#{customerAccountBean.setSelectedTab('compte')}">
+
+							<hf:formPanel id="formCustomerAccountPanel" formId="formCustomerAccount" label="#{messages['customerAccount.form']}"
+								backingBean="#{customerAccountBean}" showFormButtons="false">
+
 								<rich:tabPanel switchType="client">
-									<rich:tab label="#{messages['customerAccount.tab.account']}">
+									<rich:tab header="#{messages['customerAccount.tab.account']}">
 										<hftl:panelGroup columns="1">
 											<hf:formEntityField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" childField="code"
 												required="true" popup="true" popupId="searchCustomerPopup" />
@@ -77,22 +78,20 @@
 													value="#{customerAccountBean.getBalanceExigibleWithoutLitigation()}" style="font-weight:bold;" converter="bigDecimalConverter" />
 											</h:panelGrid>
 										</hftl:panelGroup>
-										<hftl:panelGroup columns="1">
+										<hftl:panelGroup columns="2">
 											<h:panelGrid columns="2">
 												<p:outputLabel for="title_text" value="#{messages['name.title']}" />
-												<h:selectOneMenu if="title_text" value="#{customerAccountBean.entity.name.title}" required="true" rendered="#{customerAccountBean.edit}">
+												<h:selectOneMenu id="title_text" value="#{customerAccountBean.entity.name.title}" required="true" rendered="#{customerAccountBean.edit}">
 													<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" />
 													<f:selectItems value="#{titleService.list()}" var="t" itemLabel="#{messages[stringUtil.merge('Title.',t.code)]}" />
 													<s:objectConverter />
-													<a:support event="onchange" ajaxSingle="true" bypassUpdates="false" limitToList="true" reRender="userNamePanel, formId:countryPanel" />
+													<a:ajax event="valueChange" bypassUpdates="false" limitRender="true" render="userNamePanel, formId:countryPanel" />
 												</h:selectOneMenu>
-												<h:outputText if="title_text" rendered="#{!customerAccountBean.edit}"
+												<h:outputText rendered="#{!customerAccountBean.edit}"
 													value="#{messages[stringUtil.merge('Title.',customerAccountBean.entity.name.title.code)]}" style="font-weight:bold;" />
 											</h:panelGrid>
-										</hftl:panelGroup>
 
-										<a:outputPanel id="userNamePanel">
-											<h:panelGroup>
+											<a:outputPanel id="userNamePanel">
 												<h:panelGrid columns="2" width="100%" columnClasses="twoColGrid">
 													<hf:formEntityField label="#{messages['name.lastName']}" field="name" childField="lastName" popup="false" maxlength="50" required="true" />
 													<h:panelGrid columns="2" rendered="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}">
@@ -100,14 +99,14 @@
 
 														<h:inputText id="firstName_text" value="#{customerAccountBean.entity.name.firstName}"
 															rendered="#{(customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany) and customerAccountBean.edit}" />
-														<h:outputText id="firstName_text" value="#{customerAccountBean.entity.name.firstName}"
+														<h:outputText value="#{customerAccountBean.entity.name.firstName}"
 															rendered="#{(customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany) and !customerAccountBean.edit}"
 															style="font-weight:bold;" />
 													</h:panelGrid>
 													<hf:emtyFormField show="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}" />
 												</h:panelGrid>
-											</h:panelGroup>
-										</a:outputPanel>
+											</a:outputPanel>
+										</hftl:panelGroup>
 
 										<hftl:panelGroup columns="2">
 											<hf:formField label="#{messages['customerAccount.paymentMethod']}" required="true" field="paymentMethod" childField="label"
@@ -126,7 +125,9 @@
 											<hf:formField label="#{messages['accountEntity.defaultLevel']}" field="defaultLevel" isMessage="true" />
 										</hftl:panelGroup>
 									</rich:tab>
-									<rich:tab label="#{messages['customerAccount.tab.information']}">
+
+									<rich:tab header="#{messages['customerAccount.tab.information']}">
+
 										<hftl:fieldset name="#{messages['commons.contacts']}" columns="1">
 											<hf:formEntityField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false"
 												required="false" size="50" maxlength="100" useConverter="false" />
@@ -157,31 +158,31 @@
 														value="#{customerAccountBean.entity.address.country}">
 														<f:selectItems value="#{messages['address.countrys'].split(',')}" var="country" itemLabel="#{country}" />
 													</h:selectOneMenu>
-													<h:outputText id="country_select" rendered="#{!customerAccountBean.edit}" value="#{customerAccountBean.entity.address.country}" />
+													<h:outputText rendered="#{!customerAccountBean.edit}" value="#{customerAccountBean.entity.address.country}" />
 												</h:panelGrid>
 											</a:outputPanel>
 										</hftl:fieldset>
 									</rich:tab>
 								</rich:tabPanel>
 
-								<hf:formButtons columns="4" saveId="save_2">
+								<hf:formButtons columns="4" saveId="save_2" backingBean="#{customerAccountBean}" edit="#{customerAccountBean.edit}">
 									<h:commandButton rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
 										action="#{customerAccountBean.closeCustomerAccount}" value="#{messages['customerAccount.buttonCloseAccount']}"
 										onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
-										<f:attribute name="backView" value="#{backView}" />
+										<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
 									</h:commandButton>
 									<h:commandButton rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}" action="addNewBillingAccount"
 										value="#{messages['customerAccount.buttonAddBillingAccount']}">
-										<f:attribute name="backView" value="#{backView}" />
+										<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
 									</h:commandButton>
 								</hf:formButtons>
 							</hf:formPanel>
 						</rich:tab>
-						<rich:tab name="ops" label="#{messages['customerAccount.operations']}" action="#{customerAccountBean.setSelectedTab('ops')}"
-							onclick="#{accountOperationBean.filters.put('customerAccount',customerAccountBean.entity)}">
-							<a:actionparam name="sortField" value="transactionDate" />
-							<a:actionparam name="sortOrder" value="desc" />
-							<hf:searchPanel new="false" label="#{messages['accountOperation.search']}" columns="1" backingBean="#{accountOperationBean}">
+						<rich:tab name="ops" header="#{messages['customerAccount.operations']}" action="#{customerAccountBean.setSelectedTab('ops')}">
+<!-- 							onclick="#{accountOperationBean.filters.put('customerAccount',customerAccountBean.entity)}"> -->
+<!-- 							<a:param name="sortField" value="transactionDate" /> -->
+<!-- 							<a:param name="sortOrder" value="desc" /> -->
+							<hf:searchPanel renderNewButton="false" label="#{messages['accountOperation.search']}" columns="1" backingBean="#{accountOperationBean}">
 								<hftl:panelGroup columns="2">
 									<hf:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />
 									<hf:searchField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" />
@@ -195,21 +196,21 @@
 							<h:form id="addOperationForm">
 								<h:commandButton value="#{messages['customerAccount.addOperation']}" action="addNewOperation"
 									rendered="#{customerAccountBean.isActiveAccount()}" /> &nbsp;
-								
-								<h:commandButton value="#{messages['customerAccount.addPaymentCheck']}"
+
+														<h:commandButton value="#{messages['customerAccount.addPaymentCheck']}"
 									action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
 									rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;															
-										
-								<a:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="transferAccount"
+
+														<a:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="transferAccount"
 									rendered="#{customerAccountBean.isActiveAccount()}" />
 							</h:form>
 							<hftl:dataList backingBean="#{accountOperationBean}" label="#{messages['accountOperation.title']}" disabled="true" checkMany="true">
 								<ui:define name="buttons">
 									<a:commandButton action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
 										value="#{messages['customerAccount.buttonLettrage']}" rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;
-									<a:commandButton action="#{accountOperationBean.consultMatching()}" value="#{messages['customerAccount.buttonConsultMatching']}"
+															<a:commandButton action="#{accountOperationBean.consultMatching()}" value="#{messages['customerAccount.buttonConsultMatching']}"
 										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;																				
-								</ui:define>
+														</ui:define>
 								<hftl:column label="#{messages['accountOperation.type']}" field="type" />
 								<hftl:column label="#{messages['accountOperation.occCode']}" field="occCode" />
 								<hftl:column label="#{messages['accountOperation.occDescription']}" field="occDescription" />
@@ -226,11 +227,5 @@
 				</div>
 			</h:panelGroup>
 		</h:panelGrid>
-
-
-
-
-
 	</ui:define>
-
 </ui:composition>

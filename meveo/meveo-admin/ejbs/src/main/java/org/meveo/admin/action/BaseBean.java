@@ -171,6 +171,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @return Entity from database.
 	 */
 	public T initEntity() {
+	    System.out.println("AKK instantiating "+this.getClass());
 		if (getObjectId() != null) {
 			if (getFormFieldsToFetch() == null) {
 				entity = (T) getPersistenceService().findById(getObjectId());

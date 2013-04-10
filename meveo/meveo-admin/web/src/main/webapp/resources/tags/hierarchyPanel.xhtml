@@ -24,8 +24,8 @@
 			</f:facet>
 			<h:form>
 
-				<rich:tree value="#{cc.attrs.treeValue}" var="acc" adviseNodeOpened="#{customerTreeBean.adviseNodeOpened()}" ajaxSubmitSelection="true" iconExpanded="true">
-					<rich:nodeSelectListener type="org.meveo.admin.action.crm.CustomerTreeBean" />
+				<rich:tree value="#{cc.attrs.treeValue}" var="acc" selectionChangeListener="#{customerTreeBean.adviseNodeOpened()}" iconExpanded="true" selectionType="client" >
+				
 					<rich:treeNode>
 						<f:facet name="icon">
 							<h:graphicImage value="#{customerTreeBean.getIcon(acc.type)}" />
@@ -40,11 +40,11 @@
 						</f:facet>
 						<h:outputText id="tree_value" value="#{acc}"
 							rendered="#{!((customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type))}">
-							<rich:toolTip rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
+							<rich:tooltip rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
 						</h:outputText>
 						<h:outputText id="tree_value_selected" value="#{acc}"
 							rendered="#{(customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type)}" styleClass="selectedTreeNode">
-							<rich:toolTip rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
+							<rich:tooltip  rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
 						</h:outputText>
 					</rich:treeNode>
 				</rich:tree>
