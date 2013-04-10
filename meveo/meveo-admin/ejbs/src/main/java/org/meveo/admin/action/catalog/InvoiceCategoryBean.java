@@ -71,10 +71,8 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("invoiceCategory")
-	public InvoiceCategory init() {
-		InvoiceCategory invoicecat = initEntity();
+	public InvoiceCategory initEntity() {
+		InvoiceCategory invoicecat = super.initEntity();
 		languageMessagesMap.clear();
 		if (invoicecat.getId() != null) {
 			for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class
