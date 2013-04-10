@@ -608,10 +608,10 @@ select[disabled]
 
 div.body  > table > thead
 {
-  font-size : 14px;
-  float : left;
-  //color : #0d5c59;
-  color : #4f4f4f;
-  border-bottom : 1px solid #d5d5d5;
+	font-size : 14px;
+	float : left;
+	//color : #0d5c59;
+	color : #4f4f4f;
+	border-bottom : 1px solid #d5d5d5;
 }
 
