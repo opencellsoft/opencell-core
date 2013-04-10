@@ -54,6 +54,7 @@ a:hover {
 	width: 130px;
 	float: left;
 	margin-left: 10%;
+  margin-top : 30px;
 }
 
 .headerinfo {
@@ -169,9 +170,8 @@ a:hover {
 #admin-bar ul
 {
   padding-top: 15px;
-	width: 55%;
-	//margin-left: auto;
-	margin-right: auto;
+	margin-left: auto;
+	margin-right: 5%;
   float : right;
   
 }
@@ -207,6 +207,8 @@ a:hover {
 #admin-bar ul li.right-part
 {
 	float : left;
+  margin-left : 0px;
+  margin-right : 0px;
 }
 #admin-bar ul li,
 #admin-bar ul li a
@@ -307,10 +309,15 @@ a:hover {
 {
   -webkit-border-radius: 0px 15px 0px 15px;
    border-radius: 0px 15px 0px 15px;
-   //width : 100%;
+   width : 150%;
    margin-right : 10px !important;
    box-shadow : none;
   border-top : none;
+  border-color : #b3cecb;
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list
+{
+  padding : 3px 0px 0px 3px;
 }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem
 {
@@ -334,7 +341,7 @@ a:hover {
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-menuitem-link
 {
   text-shadow : none;
-  padding : 1px 5px;
+  padding : 1px 5px 0px 5px;
 }
 .ui-menu .ui-menuitem-text
 {
@@ -388,12 +395,16 @@ a:hover {
   
   
 }
-.ui-menu-child .ui-menuitem
+.ui-menu-child li
 {
   border-top : 1px solid white !Important;
   margin-top : -1px;
   border-bottom : 1px solid #efeff0 !important;
  
+}
+.ui-menu-child li:first-child
+{
+   border-top : none !important;
 }
 .ui-menu-child .ui-state-hover .ui-menuitem-text
 {
@@ -570,6 +581,7 @@ select[disabled]
   background : #c5f9f7;
   border-color : #00fff6;
 }
+
 
 
 
