@@ -17,7 +17,6 @@ package org.meveo.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,7 +28,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 import org.meveo.model.crm.Provider;
-import org.testng.collections.Objects.ToStringHelper;
 
 /**
  * Base class for all entity classes.
