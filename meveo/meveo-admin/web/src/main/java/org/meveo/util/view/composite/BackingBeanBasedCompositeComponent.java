@@ -100,7 +100,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         if (field != null) {
             return field.getType() == String.class;
         }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        throw new IllegalStateException("No field with name '" + fieldName + "' was found. Entity " + entity + " entityClass " + getEntityClass());
     }
 
     public boolean isBoolean(String fieldName, Object entity) throws SecurityException, NoSuchFieldException {

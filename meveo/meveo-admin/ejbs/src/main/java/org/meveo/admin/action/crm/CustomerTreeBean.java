@@ -123,6 +123,7 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
                 accountEntitySearchService.refresh(s.getUserAccount());
             }
         }
+        System.out.println("AKK customer acount is "+ customer);
         if (customer != null && customer.getCode() != null) {
             accountEntitySearchService.refresh(customer);
             return build(customer);

@@ -90,7 +90,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     @Override
     public UserAccount initEntity() {
         super.initEntity();
-        if (entity.getId() == null && billingAccountId != null) {
+        if (entity.getId() == null && billingAccountId.get() != null) {
             BillingAccount billingAccount = billingAccountService.findById(billingAccountId.get());
             entity.setBillingAccount(billingAccount);
             populateAccounts(billingAccount);
@@ -115,7 +115,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 
             }
             saveOrUpdate(entity);
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&objectId=" + entity.getId() + " &faces-redirect=true";
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&objectId=" + entity.getId() + "&faces-redirect=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {

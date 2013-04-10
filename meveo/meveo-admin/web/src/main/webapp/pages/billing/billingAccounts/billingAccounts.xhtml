@@ -1,16 +1,13 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:e="http://jboss.com/products/seam/excel"
-	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:e="http://jboss.com/products/seam/excel" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{tradingLanguageBean.preRenderView}" />
+	</f:metadata>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -18,52 +15,35 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['billingAccount.search']}"
-			backingBean="#{billingAccountBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}"
-				field="code" />
-			<hf:searchField label="#{messages['billingAccount.status']}"
-				field="status" />
-			<hf:searchField
-				label="#{messages['billingAccount.subscriptionDate']}"
-				field="subscriptionDate" />
-			<hf:searchField label="#{messages['billingAccount.nextInvoiceDate']}"
-				field="nextInvoiceDate" />
-			<hf:searchField label="#{messages['billingAccount.terminationDate']}"
-				field="terminationDate" />
-			<hf:searchField
-				label="#{messages['billingAccount.electronicBilling']}"
-				field="electronicBilling" />
-			<hf:searchField label="#{messages['billingAccount.countryCode']}"
-				field="tradingCountry" childField="prDescription" />
-			<hf:searchField label="#{messages['billingAccount.languageCode']}"
-				field="tradingLanguage" childField="prDescription" />
+		<hf:searchPanel label="#{messages['billingAccount.search']}" backingBean="#{billingAccountBean}">
+			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:searchField label="#{messages['billingAccount.status']}" field="status" />
+			<hf:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+			<hf:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
+			<hf:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+			<hf:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
+			<hf:searchField label="#{messages['billingAccount.countryCode']}" field="tradingCountry" childField="prDescription" />
+			<hf:searchField label="#{messages['billingAccount.languageCode']}" field="tradingLanguage" childField="prDescription" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['billingAccount.title']}"
-			backingBean="#{billingAccountBean}">
+		<hftl:dataList label="#{messages['billingAccount.title']}" backingBean="#{billingAccountBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['billingAccount.status']}"
-				field="status" childField="label" isMessage="true" />
-			<hftl:column label="#{messages['billingAccount.subscriptionDate']}"
-				field="subscriptionDate" isDate="true" />
-			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}"
-				field="nextInvoiceDate" isDate="true" />
-			<rich:column width="100">
+			<hftl:column label="#{messages['billingAccount.status']}" field="status" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" />
+			<!-- 			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" -->
+			<!-- 				field="nextInvoiceDate" isDate="true" /> -->
+			<p:column width="100">
 				<f:facet name="header">
 					<h:outputText value="#{messages['name.title']}" />
 				</f:facet>
 				<e:cell>
-					<h:outputText rendered="#{entity.name.title != null}"
-						value="#{messages[stringUtil.merge('Title.',entity.name.title.code)]}" />
+					<h:outputText rendered="#{entity.name.title != null}" value="#{messages['Title.'.concat(entity.name.title.code)]}" />
 				</e:cell>
-			</rich:column>
+			</p:column>
 			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
-			<hftl:column label="#{messages['address.address1']}" field="address"
-				childField="address1" />
+			<hftl:column label="#{messages['address.address1']}" field="address" childField="address1" />
 
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('billing','billingManagement')}" />
+			<hftl:actionsColumn permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

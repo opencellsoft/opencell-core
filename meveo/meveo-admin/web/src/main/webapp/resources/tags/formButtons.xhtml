@@ -24,6 +24,7 @@
 			rendered="#{!cc.attrs.edit}">
 			<f:param name="edit" value="true" />
 			<f:param name="objectId" value="#{cc.attrs.backingBean.objectId}" />
+			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
 		<p:commandButton rendered="#{cc.attrs.edit}"
 			value="#{messages['action.save']}"
@@ -38,7 +39,7 @@
 			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
 
 		<p:button id="buttonNew" value="#{messages['action.back']}"
-			outcome="#{cc.attrs.backingBean.getListViewName()}">
+			outcome="#{cc.attrs.backingBean.back()}">
 		</p:button>
 
 	</h:panelGrid>

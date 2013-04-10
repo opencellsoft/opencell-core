@@ -165,7 +165,7 @@
 									</rich:tab>
 								</rich:tabPanel>
 
-								<hf:formButtons columns="4" saveId="save_2" backingBean="#{customerAccountBean}" edit="#{customerAccountBean.edit}">
+								<hf:formButtons columns="4" saveId="save_2" backingBean="#{customerAccountBean}" edit="#{customerAccountBean.edit}" ajaxSubmit="true">
 									<h:commandButton rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
 										action="#{customerAccountBean.closeCustomerAccount}" value="#{messages['customerAccount.buttonCloseAccount']}"
 										onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
