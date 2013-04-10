@@ -90,7 +90,7 @@ public class ChargeInstance extends BusinessEntity {
     protected String criteria3;
 
     @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ChargeApplication> chargeApplications = new HashSet<ChargeApplication>();
+    private Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TRADING_LANGUAGE_ID")
@@ -179,13 +179,13 @@ public class ChargeInstance extends BusinessEntity {
         this.chargeDate = chargeDate;
     }
 
-    public Set<ChargeApplication> getChargeApplications() {
-        return chargeApplications;
-    }
+	public Set<WalletOperation> getWalletOperations() {
+		return walletOperations;
+	}
 
-    public void setChargeApplications(Set<ChargeApplication> chargeApplications) {
-        this.chargeApplications = chargeApplications;
-    }
+	public void setWalletOperations(Set<WalletOperation> walletOperations) {
+		this.walletOperations = walletOperations;
+	}
 
 	public TradingLanguage getTradingLanguage() {
 		return tradingLanguage;

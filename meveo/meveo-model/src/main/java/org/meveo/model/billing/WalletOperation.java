@@ -16,41 +16,31 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
-
-import org.meveo.model.IEntity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.Currency;
+import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class WalletOperation implements IEntity {
+public class WalletOperation extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-//    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.TABLE)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "ID")
-    private Long id;
-
-    @Version
-    @Column(name = "VERSION")
-    private Integer version;
 
     /**
      * The wallet on which the account operation is applied.
@@ -58,91 +48,267 @@ public class WalletOperation implements IEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WALLET_ID")
     private Wallet wallet;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "OPERATION_DATE")
+    private Date operationDate;
 
-    /**
-     * CREDIT or DEBIT
-     */
     @Enumerated(EnumType.STRING)
     @Column(name = "CREDIT_DEBIT_FLAG")
     private OperationTypeEnum type;
 
-    /**
-     * Positive amount to credit or debit on the account (i.e. wallet for
-     * prepaid case) when the accountOperationType is executed.
-     */
-    @Column(name = "AMOUNT", precision = 23, scale = 12)
-    private BigDecimal amount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CHARGE_INSTANCE_ID")
+    private ChargeInstance chargeInstance;
 
-    /**
-     * Wallet total balance before the operation execution.
-     */
-    @Column(name = "PREVIOUS_BALANCE", precision = 23, scale = 12)
-    private BigDecimal previousBalance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CURRENCY_ID")
+    private Currency currency;
 
-    /**
-     * Wallet total balance after the operation execution.
-     */
-    @Column(name = "RESULTING_BALANCE", precision = 23, scale = 12)
-    private BigDecimal resultingBalance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TAX_ID")
+    private Tax tax;
+    
+    @Column(name = "TAX_PERCENT", precision = 23, scale = 12)
+    private BigDecimal taxPercent;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "UNIT_AMOUNT_WITHOUT_TAX")
+    private BigDecimal unitAmountWithoutTax;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "UNIT_AMOUNT_WITH_TAX")
+    private BigDecimal unitAmountWithTax;
 
-    public Integer getVersion() {
-        return version;
-    }
+    @Column(name = "UNIT_AMOUNT_TAX")
+    private BigDecimal unitAmountTax;
+    
+    @Column(name = "QUANTITY")
+    private BigDecimal quantity;
+    
+    @Column(name = "AMOUNT_WITHOUT_TAX")
+    private BigDecimal amountWithoutTax;
+    
+    @Column(name = "AMOUNT_WITH_TAX")
+    private BigDecimal amountWithTax;
+    
+    @Column(name = "AMOUNT_TAX")
+    private BigDecimal amountTax;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COUNTER_ID")
+    private Counter counter;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EDR_ID")
+    private EDR usageEdr;
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+    @Column(name = "PARAMETER_1", length = 50)
+    private String parameter1;
 
-    public Wallet getWallet() {
-        return wallet;
-    }
+    @Column(name = "PARAMETER_2", length = 50)
+    private String parameter2;
 
-    public void setWallet(Wallet wallet) {
-        this.wallet = wallet;
-    }
+    @Column(name = "PARAMETER_3", length = 50)
+    private String parameter3;
 
-    public OperationTypeEnum getType() {
-        return type;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "START_DATE")
+    private Date startDate;
 
-    public void setType(OperationTypeEnum type) {
-        this.type = type;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "END_DATE")
+    private Date endDate;
+    
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED")
+    private Date creationDate;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "UPDATED")
+    private Date lastUpdateDate;
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+	public Wallet getWallet() {
+		return wallet;
+	}
 
-    public BigDecimal getPreviousBalance() {
-        return previousBalance;
-    }
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
+	}
 
-    public void setPreviousBalance(BigDecimal previousBalance) {
-        this.previousBalance = previousBalance;
-    }
+	public Date getOperationDate() {
+		return operationDate;
+	}
 
-    public BigDecimal getResultingBalance() {
-        return resultingBalance;
-    }
+	public void setOperationDate(Date operationDate) {
+		this.operationDate = operationDate;
+	}
 
-    public void setResultingBalance(BigDecimal resultingBalance) {
-        this.resultingBalance = resultingBalance;
-    }
+	public OperationTypeEnum getType() {
+		return type;
+	}
 
+	public void setType(OperationTypeEnum type) {
+		this.type = type;
+	}
 
-    public boolean isTransient() {
-        return id == null;
-    }
+	public ChargeInstance getChargeInstance() {
+		return chargeInstance;
+	}
+
+	public void setChargeInstance(ChargeInstance chargeInstance) {
+		this.chargeInstance = chargeInstance;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+
+	public Tax getTax() {
+		return tax;
+	}
+
+	public void setTax(Tax tax) {
+		this.tax = tax;
+	}
+
+	public BigDecimal getTaxPercent() {
+		return taxPercent;
+	}
+
+	public void setTaxPercent(BigDecimal taxPercent) {
+		this.taxPercent = taxPercent;
+	}
+
+	public BigDecimal getUnitAmountWithoutTax() {
+		return unitAmountWithoutTax;
+	}
+
+	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
+		this.unitAmountWithoutTax = unitAmountWithoutTax;
+	}
+
+	public BigDecimal getUnitAmountWithTax() {
+		return unitAmountWithTax;
+	}
+
+	public void setUnitAmountWithTax(BigDecimal unitAmountWithTax) {
+		this.unitAmountWithTax = unitAmountWithTax;
+	}
+
+	public BigDecimal getUnitAmountTax() {
+		return unitAmountTax;
+	}
+
+	public void setUnitAmountTax(BigDecimal unitAmountTax) {
+		this.unitAmountTax = unitAmountTax;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getAmountWithoutTax() {
+		return amountWithoutTax;
+	}
+
+	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+		this.amountWithoutTax = amountWithoutTax;
+	}
+
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
+	}
+
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
+	}
+
+	public BigDecimal getAmountTax() {
+		return amountTax;
+	}
+
+	public void setAmountTax(BigDecimal amountTax) {
+		this.amountTax = amountTax;
+	}
+
+	public Counter getCounter() {
+		return counter;
+	}
+
+	public void setCounter(Counter counter) {
+		this.counter = counter;
+	}
+
+	public EDR getUsageEdr() {
+		return usageEdr;
+	}
+
+	public void setUsageEdr(EDR usageEdr) {
+		this.usageEdr = usageEdr;
+	}
+
+	public String getParameter1() {
+		return parameter1;
+	}
+
+	public void setParameter1(String parameter1) {
+		this.parameter1 = parameter1;
+	}
+
+	public String getParameter2() {
+		return parameter2;
+	}
+
+	public void setParameter2(String parameter2) {
+		this.parameter2 = parameter2;
+	}
+
+	public String getParameter3() {
+		return parameter3;
+	}
+
+	public void setParameter3(String parameter3) {
+		this.parameter3 = parameter3;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+    
 }

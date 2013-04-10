@@ -51,7 +51,7 @@
 		<class>org.meveo.model.bi.JobExecutionHisto</class>
 		<class>org.meveo.model.billing.Invoice</class>
 		<class>org.meveo.model.billing.InvoiceTemplate</class>
-		<class>org.meveo.model.billing.Operation</class>
+		<class>org.meveo.model.billing.WalletOperation</class>
 		<class>org.meveo.model.billing.WalletTemplate</class>
 		<class>org.meveo.model.billing.Wallet</class>
 		<class>org.meveo.model.billing.InvoiceSubCategory</class>

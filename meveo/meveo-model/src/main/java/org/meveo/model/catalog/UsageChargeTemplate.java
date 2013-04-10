@@ -15,6 +15,8 @@
  */
 package org.meveo.model.catalog;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,7 +36,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	private static final long serialVersionUID = 1L;
 	
 	@Column(name = "UNITY_MULTIPLICATOR")
-	private int unityMultiplicator = 1;
+	private BigDecimal unityMultiplicator = BigDecimal.ONE;
 	
 	@Column(name = "UNITY_DESCRIPTION", length = 20)
 	private String unityDescription;
@@ -62,11 +64,10 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	private String filterExpression;
 	
 	
-	
-	public int getUnityMultiplicator() {
+	public BigDecimal getUnityMultiplicator() {
 		return unityMultiplicator;
 	}
-	public void setUnityMultiplicator(int unityMultiplicator) {
+	public void setUnityMultiplicator(BigDecimal unityMultiplicator) {
 		this.unityMultiplicator = unityMultiplicator;
 	}
 	public String getUnityDescription() {

@@ -31,10 +31,14 @@ public class UsageChargeInstance extends ChargeInstance{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICE_INST_ID")
+    @JoinColumn(name = "SERVICE_INSTANCE_ID")
 	private ServiceInstance serviceInstance;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COUNTER_ID")
+	private Counter counter;
 
 	public ServiceInstance getServiceInstance() {
 		return serviceInstance;
@@ -42,6 +46,14 @@ public class UsageChargeInstance extends ChargeInstance{
 
 	public void setServiceInstance(ServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
+	}
+
+	public Counter getCounter() {
+		return counter;
+	}
+
+	public void setCounter(Counter counter) {
+		this.counter = counter;
 	}
 	
 	

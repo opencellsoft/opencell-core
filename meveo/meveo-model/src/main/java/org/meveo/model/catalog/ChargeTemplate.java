@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import org.meveo.model.ProviderBusinessEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OperationTypeEnum;
 
 /**
  * @author R.AITYAAZZA
@@ -45,6 +46,9 @@ public class ChargeTemplate extends ProviderBusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @Column(name = "CREDIT_DEBIT_FLAG")
+    private OperationTypeEnum type;
+    
     @Column(name = "AMOUNT_EDITABLE")
     private Boolean amountEditable;
 
@@ -56,7 +60,15 @@ public class ChargeTemplate extends ProviderBusinessEntity {
     @OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY)
     private List<ChargeInstance> chargeInstances = new ArrayList<ChargeInstance>();
 
-    public Boolean getAmountEditable() {
+    public OperationTypeEnum getType() {
+		return type;
+	}
+
+	public void setType(OperationTypeEnum type) {
+		this.type = type;
+	}
+
+	public Boolean getAmountEditable() {
         return amountEditable;
     }
 
