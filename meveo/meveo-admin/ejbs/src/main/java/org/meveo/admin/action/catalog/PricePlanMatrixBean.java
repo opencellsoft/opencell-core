@@ -16,12 +16,10 @@
 package org.meveo.admin.action.catalog;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -60,9 +58,9 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Named("pricePlanMatrix")
-    public PricePlanMatrix init() {
-        return initEntity();
+   
+    public PricePlanMatrix initEntity() {
+        return super.initEntity();
     }
 
     /**
@@ -80,6 +78,11 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
     @Override
     protected IPersistenceService<PricePlanMatrix> getPersistenceService() {
         return pricePlanMatrixService;
+    }
+    
+    @Override
+    protected String getListViewName() {
+    	 return "pricePlanMatrixes";
     }
 
 }
