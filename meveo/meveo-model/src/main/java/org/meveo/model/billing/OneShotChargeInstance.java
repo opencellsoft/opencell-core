@@ -58,7 +58,7 @@ public class OneShotChargeInstance extends ChargeInstance {
         this.description = description;
         setChargeDate(chargeDate);
         setAmountWithoutTax(amountWithoutTax);
-        setAmount2(amount2);
+        setAmountWithTax(amount2);
         this.subscription = subscription;
         this.chargeTemplate = oneShotChargeTemplate;
         this.status = InstanceStatusEnum.ACTIVE;
