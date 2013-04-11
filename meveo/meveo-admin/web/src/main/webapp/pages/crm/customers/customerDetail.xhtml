@@ -36,7 +36,7 @@
 					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}" entity="#{customerBean.entity}" />
 					<hf:formPanel formId="formCustomer" label="#{messages['customer.customerPanel']}" backingBean="#{customerBean}" style="formPanel">
 						<p:tabView id="tabView">
-							<p:tab title="Compte">
+							<p:tab title="#{messages['customer.tab.account']}">
 								<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" />
 								<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" />
 								<hf:formField label="#{messages['customer.externalRef1']}" field="externalRef1" validateUnique="false" />
@@ -55,7 +55,7 @@
 									childField="languageCode" popup="true" popupId="tradingLanguagePopup" />
 							</p:tab>
 
-							<p:tab title="Informations">
+							<p:tab title="#{messages['customer.tab.information']}">
 								<p:fieldset legend="#{messages['commons.contacts']}">
 									<p:panelGrid columns="1">
 										<hf:formEntityField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false"
