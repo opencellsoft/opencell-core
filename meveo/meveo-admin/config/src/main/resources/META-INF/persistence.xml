@@ -53,13 +53,14 @@
 		<class>org.meveo.model.billing.InvoiceTemplate</class>
 		<class>org.meveo.model.billing.WalletOperation</class>
 		<class>org.meveo.model.billing.WalletTemplate</class>
-		<class>org.meveo.model.billing.Wallet</class>
+		<class>org.meveo.model.billing.WalletInstance</class>
 		<class>org.meveo.model.billing.InvoiceSubCategory</class>
 		<class>org.meveo.model.billing.ServiceParameterInstance</class>
 		<class>org.meveo.model.billing.AccessPoint</class>
 		<class>org.meveo.model.billing.BillingAccount</class>
 		<class>org.meveo.model.billing.BillingCycle</class>
-		<class>org.meveo.model.billing.Counter</class>
+		<class>org.meveo.model.billing.CounterPeriod</class>
+		<class>org.meveo.model.billing.CounterInstance</class>
 		<class>org.meveo.model.billing.ChargeInstance</class>
 		<class>org.meveo.model.billing.OneShotChargeInstance</class>
 		<class>org.meveo.model.billing.RecurringChargeInstance</class>
@@ -99,6 +100,7 @@
 		<class>org.meveo.model.catalog.PricePlanMatrix</class>
 		<class>org.meveo.model.catalog.RecurringChargeTemplate</class>
 		<class>org.meveo.model.catalog.ServiceTemplate</class>
+		<class>org.meveo.model.catalog.ServiceUsageChargeTemplate</class>
 		<class>org.meveo.model.catalog.UsageChargeTemplate</class>
 		<class>org.meveo.model.catalog.CounterTemplate</class>
 		<class>org.meveo.model.communication.Campaign</class>
