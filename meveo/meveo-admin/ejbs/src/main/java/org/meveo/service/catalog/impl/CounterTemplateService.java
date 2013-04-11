@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.meveo.service.billing.impl;
+package org.meveo.service.catalog.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-import org.meveo.model.billing.Operation;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.service.base.BusinessService;
 
 /**
- * Operation service implementation.
+ * Counter Template service implementation.
  * 
- * @author Ignas
- * @created 2009.10.19
  */
-@Stateless @LocalBean
-public class OperationService extends PersistenceService<Operation> {
+@Stateless
+@LocalBean
+public class CounterTemplateService<P extends CounterTemplate> extends BusinessService<P> {
 
 }

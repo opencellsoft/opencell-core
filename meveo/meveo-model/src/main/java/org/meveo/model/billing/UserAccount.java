@@ -17,7 +17,9 @@ package org.meveo.model.billing;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +29,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -35,11 +38,6 @@ import javax.persistence.TemporalType;
 
 import org.meveo.model.AccountEntity;
 
-/**
- * @author Ignas Lelys
- * @created Dec 3, 2010
- * 
- */
 @Entity
 @Table(name = "BILLING_USER_ACCOUNT")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USER_ACCOUNT_SEQ")
@@ -79,8 +77,19 @@ public class UserAccount extends AccountEntity {
     @OneToOne( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     @JoinColumn(name = "WALLET_ID")
-    private Wallet wallet;
+    private WalletInstance wallet;
 
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name="code")
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    Map<String,WalletInstance> prepaidWallets=new HashMap<String, WalletInstance>();;
+
+
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name="code")
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    Map<String,CounterInstance> counters=new HashMap<String, CounterInstance>();//key is the counter template code
+    
     public BillingAccount getBillingAccount() {
         return billingAccount;
     }
@@ -130,15 +139,31 @@ public class UserAccount extends AccountEntity {
         this.subscriptions = subscriptions;
     }
 
-    public Wallet getWallet() {
+    public WalletInstance getWallet() {
         return wallet;
     }
 
-    public void setWallet(Wallet wallet) {
+    public void setWallet(WalletInstance wallet) {
         this.wallet = wallet;
     }
+	
+	public Map<String, WalletInstance> getPrepaidWallets() {
+		return prepaidWallets;
+	}
 
-    @Override
+	public void setPrepaidWallets(Map<String, WalletInstance> prepaidWallets) {
+		this.prepaidWallets = prepaidWallets;
+	}
+
+	public Map<String, CounterInstance> getCounters() {
+		return counters;
+	}
+
+	public void setCounters(Map<String, CounterInstance> counters) {
+		this.counters = counters;
+	}
+
+	@Override
     public String getAccountType() {
         return ACCOUNT_TYPE;
     }
@@ -150,5 +175,6 @@ public class UserAccount extends AccountEntity {
     public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
         this.invoiceAgregates = invoiceAgregates;
     }
+
 
 }

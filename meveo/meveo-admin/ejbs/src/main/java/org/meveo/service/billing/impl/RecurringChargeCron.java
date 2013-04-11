@@ -15,6 +15,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,14 +26,13 @@ import javax.inject.Named;
 
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.commons.utils.DateUtils;
-import org.meveo.model.billing.ApplicationChgStatusEnum;
 import org.meveo.model.billing.ApplicationTypeEnum;
-import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -48,7 +48,10 @@ public class RecurringChargeCron {
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
 	@Inject
-	private ChargeApplicationService chargeApplicationService;
+	private WalletOperationService chargeApplicationService;
+	
+	@Inject
+	private ChargeApplicationRatingService chargeApplicationRatingService;
 
 	@Inject
 	protected Logger log;
@@ -116,24 +119,29 @@ public class RecurringChargeCron {
 											.getTradingCountry().getId());
 					Tax tax = invoiceSubcategoryCountry.getTax();
 
+					Long currencyId = activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
+					if (currencyId == null) {
+						throw new IncorrectChargeTemplateException(
+								"no currency exists for customerAccount id="
+										+ activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+					}
 					String param2 = "du " + sdf.format(previousapplicationDate) + " au "
 							+ sdf.format(DateUtils.addDaysToDate(applicationDate, -1));
 
-					ChargeApplication chargeApplication = new ChargeApplication(
+					WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(
 							activeRecurringChargeInstance.getCode(),
-							activeRecurringChargeInstance.getDescription(),
 							activeRecurringChargeInstance.getServiceInstance().getSubscription(),
-							activeRecurringChargeInstance, activeRecurringChargeInstance.getCode(),
-							ApplicationChgStatusEnum.WAITING, ApplicationTypeEnum.RECURRENT,
+							activeRecurringChargeInstance,
+							ApplicationTypeEnum.RECURRENT,
 							previousapplicationDate,
 							activeRecurringChargeInstance.getAmountWithoutTax(),
-							activeRecurringChargeInstance.getAmount2(),
-							activeRecurringChargeInstance.getServiceInstance().getQuantity(),
-							tax.getCode(), tax.getPercent(), null, applicationDate, invoiceSubCat,
-							"1", param2, null, null, activeRecurringChargeInstance.getCriteria1(),
+							activeRecurringChargeInstance.getAmountWithTax(),
+							new BigDecimal(activeRecurringChargeInstance.getServiceInstance().getQuantity()),
+							currencyId,tax.getId(), tax.getPercent(), null, applicationDate, invoiceSubCat,
+							activeRecurringChargeInstance.getCriteria1(),
 							activeRecurringChargeInstance.getCriteria2(),
 							activeRecurringChargeInstance.getCriteria3(), previousapplicationDate,
-							DateUtils.addDaysToDate(applicationDate, -1));
+							DateUtils.addDaysToDate(applicationDate, -1),null);
 					log.info("set application date to "
 							+ activeRecurringChargeInstance.getServiceInstance()
 									.getSubscriptionDate());

@@ -19,7 +19,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.base.ProviderBusinessService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * Service Template service implementation.
@@ -27,6 +27,6 @@ import org.meveo.service.base.ProviderBusinessService;
  */
 @Stateless
 @LocalBean
-public class ServiceTemplateService extends ProviderBusinessService<ServiceTemplate> {
+public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 
 }

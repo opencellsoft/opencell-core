@@ -20,8 +20,24 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ChargeTemplate;
 
 /**
@@ -61,8 +77,8 @@ public class ChargeInstance extends BusinessEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
     protected BigDecimal amountWithoutTax;
 
-    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
-    protected BigDecimal amount2;
+    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+    protected BigDecimal amountWithTax;
 
     @Column(name = "CRITERIA_1")
     protected String criteria1;
@@ -74,7 +90,7 @@ public class ChargeInstance extends BusinessEntity {
     protected String criteria3;
 
     @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ChargeApplication> chargeApplications = new HashSet<ChargeApplication>();
+    private Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TRADING_LANGUAGE_ID")
@@ -87,10 +103,6 @@ public class ChargeInstance extends BusinessEntity {
     
     @Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SELLER_ID")
-    private Seller seller;
 
     public String getCriteria1() {
         return criteria1;
@@ -167,13 +179,13 @@ public class ChargeInstance extends BusinessEntity {
         this.chargeDate = chargeDate;
     }
 
-    public Set<ChargeApplication> getChargeApplications() {
-        return chargeApplications;
-    }
+	public Set<WalletOperation> getWalletOperations() {
+		return walletOperations;
+	}
 
-    public void setChargeApplications(Set<ChargeApplication> chargeApplications) {
-        this.chargeApplications = chargeApplications;
-    }
+	public void setWalletOperations(Set<WalletOperation> walletOperations) {
+		this.walletOperations = walletOperations;
+	}
 
 	public TradingLanguage getTradingLanguage() {
 		return tradingLanguage;
@@ -199,23 +211,12 @@ public class ChargeInstance extends BusinessEntity {
 		this.tradingCurrency = tradingCurrency;
 	}
 
-	public BigDecimal getAmount2() {
-		return amount2;
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
 	}
 
-	public void setAmount2(BigDecimal amount2) {
-		this.amount2 = amount2;
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
 	}
-
-	public Seller getSeller() {
-		return seller;
-	}
-
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
-	
-	
-     
 
 }

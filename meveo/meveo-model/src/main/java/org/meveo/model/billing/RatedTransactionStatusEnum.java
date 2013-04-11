@@ -18,7 +18,6 @@ package org.meveo.model.billing;
 public enum RatedTransactionStatusEnum {
     OPEN,
     BILLED,
-    TO_RERATE,
     REJECTED,
     CANCELED;
 
