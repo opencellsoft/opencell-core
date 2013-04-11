@@ -36,7 +36,6 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingLanguage;
@@ -91,8 +90,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Request parameter.
      */
     @Inject
-    @RequestParam
-    private Instance<Boolean> edit;
+    @RequestParam()
+    private Instance<String> edit;
+
+    private Boolean editSaved;
 
     /**
      * Request parameter. Used for loading in object by its id.
@@ -193,6 +194,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 throw new IllegalStateException("could not instantiate a class, constructor not accessible");
             }
         }
+
         return entity;
     }
 
@@ -225,6 +227,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // TODO: @End(beforeRedirect = true, root = false)
     public String saveOrUpdate() {
         return saveOrUpdate(entity);
+    }
+
+    public String saveOrUpdate(boolean killConversation) {
+        String outcome = saveOrUpdate(entity);
+        if (killConversation) {
+            endConversation();
+        }
+        return outcome;
     }
 
     /**
@@ -578,7 +588,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public boolean isEdit() {
-        return edit.get();
+        if (edit.get() != null && !edit.get().equals(editSaved != null ? editSaved.toString() : null)) {
+            editSaved = Boolean.valueOf(edit.get());
+        }
+        return editSaved;
     }
 
     protected void clearObjectId() {

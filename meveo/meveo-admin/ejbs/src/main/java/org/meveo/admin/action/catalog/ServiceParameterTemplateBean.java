@@ -59,19 +59,6 @@ public class ServiceParameterTemplateBean extends BaseBean<ServiceParameterTempl
     }
 
     /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("serviceParameterTemplate")
-    public ServiceParameterTemplate init() {
-        return initEntity();
-    }
-
-
-    /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override

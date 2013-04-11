@@ -1,13 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:a="http://richfaces.org/a4j">
 
 <ui:composition>
 
@@ -15,34 +11,30 @@
 	<c:if test="${empty id}">
 		<c:set var="id" value="popup" />
 	</c:if>
+	<c:if test="${empty editParam}">
+		<c:set var="editParam" value="#{param['edit']}" />
+	</c:if>
 
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true">
 		<h:form id="#{id}popupForm">
 			<h:panelGrid id="#{id}searchFormPanel" columns="2">
 				<c:if test="#{not empty searchField1}">
-					<hf:searchField label="#{searchField1Label}"
-						backingBean="#{backingBean}" field="#{searchField1}" />
+					<hf:searchField label="#{searchField1Label}" backingBean="#{backingBean}" field="#{searchField1}" />
 				</c:if>
 				<c:if test="#{not empty searchField2}">
-					<hf:searchField label="#{searchField2Label}"
-						backingBean="#{backingBean}" field="#{searchField2}" />
+					<hf:searchField label="#{searchField2Label}" backingBean="#{backingBean}" field="#{searchField2}" />
 				</c:if>
 				<c:if test="#{not empty searchField3}">
-					<hf:searchField label="#{searchField3Label}"
-						backingBean="#{backingBean}" field="#{searchField3}" />
+					<hf:searchField label="#{searchField3Label}" backingBean="#{backingBean}" field="#{searchField3}" />
 				</c:if>
 			</h:panelGrid>
 			<h:panelGrid columns="2">
-				<p:commandButton id="buttonSearch"
-					value="#{messages['commons.search']}" update="#{id}popupForm" />
-				<p:commandButton id="buttonClear" action="#{backingBean.clean}"
-					value="#{messages['commons.clean']}" update="#{id}popupForm" />
+				<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="#{id}popupForm" />
+				<p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm" />
 			</h:panelGrid>
-			<p:dataTable id="datatable" var="e" paginator="true"
-				value="#{backingBean.lazyDataModel}" rows="10"
-				selection="#{selection}" selectionMode="single" lazy="true">
-				<p:ajax event="rowSelect" oncomplete="dlg_#{id}.hide()"
-					update="#{updateField}" />
+			<p:dataTable id="datatable" var="e" paginator="true" value="#{backingBean.lazyDataModel}" rows="10" selection="#{selection}" selectionMode="single"
+				lazy="true">
+				<p:ajax event="rowSelect" oncomplete="dlg_#{id}.hide()" update="#{updateField}"/>
 
 				<c:if test="#{not empty column1}">
 					<p:column>

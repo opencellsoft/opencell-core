@@ -386,7 +386,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
         queryBuilder.addPaginationConfiguration(config, "a");
         
-        System.out.println("AKK query is "+queryBuilder.toString());
+//        System.out.println("AKK query is "+queryBuilder.toString());
 
         return queryBuilder;
     }

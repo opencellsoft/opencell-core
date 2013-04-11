@@ -10,13 +10,11 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<c:if test="#{tradingCountryBean.edit}">
-			<hftl:entityPopup header="#{messages['customer.popup.header']}" updateField=":formPanel:formId:countrySelectedId:countrySelectedId"
-				selection="#{tradingCountryBean.entity.country}" backingBean="#{countryBean}" searchField1Label="#{messages['country.countryCode']}"
-				searchField1="countryCode" column1Label="#{messages['country.countryCode']}" column1="countryCode"
-				column2Label="#{messages['tradingLanguage.prDescription']}" column2="descriptionEn">
-			</hftl:entityPopup>
-		</c:if>
+		<hftl:entityPopup header="#{messages['customer.popup.header']}" updateField=":formPanel:formId:countrySelectedId:countrySelectedId"
+			selection="#{tradingCountryBean.entity.country}" backingBean="#{countryBean}" searchField1Label="#{messages['country.countryCode']}"
+			searchField1="countryCode" column1Label="#{messages['country.countryCode']}" column1="countryCode"
+			column2Label="#{messages['tradingLanguage.prDescription']}" column2="descriptionEn">
+		</hftl:entityPopup>
 
 		<hf:formPanel id="formPanel" edit="#{tradingCountryBean.edit}" label="#{messages['tradingCountry.tradingCountryPanel']}"
 			backingBean="#{tradingCountryBean}">
