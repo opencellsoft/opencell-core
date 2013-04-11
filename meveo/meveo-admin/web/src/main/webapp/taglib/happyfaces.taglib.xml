@@ -34,8 +34,8 @@
 	</tag>	
 	
 	<tag>
-		<tag-name>fieldSet</tag-name>
-		<source>fieldSet.xhtml</source>
+		<tag-name>fieldset</tag-name>
+		<source>fieldset.xhtml</source>
 	</tag>		
 
 </facelet-taglib>

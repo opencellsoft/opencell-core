@@ -1,67 +1,52 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:c="http://java.sun.com/jstl/core"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	<!-- Entity select popup. -->
-		<c:set var="filtersMap" value="#{customerAccountBean.filters}" />
-		<c:set var="field" value="customer" />
-		<custom:entityPopup id="searchCustomerPopup"
-			header="#{messages['customer.popup.header']}"
-			backingBean="#{customerBean}" dataModel="#{customers}"
-			searchField1Label="#{messages['customer.code']}"
-			searchField1="code"
-			column1Label="#{messages['customer.code']}" column1="code" >
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-					reRender="formId" 
-					action="#{filtersMap.put(field, entity)}"
-					oncomplete="Richfaces.hideModalPanel('searchCustomerPopup')">
-			</a:commandLink>
-				
-		</custom:entityPopup>
-		
-    	
-    	<custom:listPanel label="#{messages['customerAccount.title']}" backingBean="#{customerAccountBean}">
-    	
-    		<custom:searchPanel label="#{messages['customerAccount.search']}" newButtonView="/pages/payments/customerAccounts/customerAccountDetail.xhtml">    			    			
-    			<custom:searchEntityField label="#{messages['customerAccount.customer']}" field="customer" childField="code" popup="true" popupId="searchCustomerPopup" clearButton="true"/>
-    			<custom:searchField label="#{messages['businessEntity.code']}" field="code" />	
-    			<custom:searchField label="#{messages['businessEntity.description']}" field="description" />					
-    			<custom:searchField label="#{messages['customerAccount.name']}" field="name" />
-    			<custom:searchField label="#{messages['customerAccount.status']}" field="status" />
-    			<custom:searchField label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" />
-    			<custom:searchField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" />
-    			<custom:searchField label="#{messages['customerAccount.customer']}" field="customer" />
-    		   
-			</custom:searchPanel>
-    		
-    		<custom:dataList backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}">    			
-				<custom:column label="#{messages['businessEntity.code']}" field="code" />
-				<custom:column label="#{messages['businessEntity.description']}" field="description" />
-    			<custom:column label="#{messages['customerAccount.name']}" field="name" titleWithMessage="true"/>
-    			<custom:column label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />	   
-    			<custom:column label="#{messages['customerAccount.status']}" field="status" childField="label" isMessage="true" />	   
-    			<custom:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory" childField="label" isMessage="true" />	       			      				    	
-    			<custom:column label="#{messages['customerAccount.customer']}" field="customer" childField="code"/>   
-               <custom:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency" childField="currencyCode"/> 				
-		   	   	<custom:actionsColumn editView="/pages/payments/customerAccounts/customerAccountDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}"/>
-		    </custom:dataList>
-    	</custom:listPanel>	
-		
-    </ui:define>
-    
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{customerAccountBean.preRenderView}" />
+	</f:metadata>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+		<!-- Entity select popup. -->
+		<hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}"
+			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
+			selection="#{customerAccountBean.filters['customer']}"
+			updateField=":searchPanel:searchForm:customer:customer_child">
+		</hftl:entityPopup>
+
+
+		<hf:searchPanel id="searchPanel" label="#{messages['customerAccount.search']}" backingBean="#{customerAccountBean}">
+			<hf:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" childField="code" popup="true" popupId="searchCustomerPopup"
+				clearButton="true" />
+			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:searchField label="#{messages['businessEntity.description']}" field="description" />
+			<hf:searchField label="#{messages['customerAccount.name']}" field="name" />
+			<hf:searchField label="#{messages['customerAccount.status']}" field="status" />
+			<hf:searchField label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" />
+			<hf:searchField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" />
+			<hf:searchField label="#{messages['customerAccount.customer']}" field="customer" />
+
+		</hf:searchPanel>
+
+		<hftl:dataList backingBean="#{customerAccountBean}">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['customerAccount.name']}" field="name" titleWithMessage="true" />
+			<hftl:column label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['customerAccount.status']}" field="status" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['customerAccount.customer']}" field="customer" childField="code" />
+			<hftl:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency" childField="currencyCode" />
+			<hftl:actionsColumn permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

@@ -1,31 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<f:view xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:p="http://primefaces.org/ui" contentType="text/html">
+<f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:a="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib" xmlns:p="http://primefaces.org/ui" contentType="text/html">
 	<html>
 
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>MeveoAdmin</title>
 	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
-	<link rel="stylesheet" type="text/css"
-		href="#{request.contextPath}/stylesheet/theme.css" />
-	<link rel="stylesheet" type="text/css"
-		href="#{request.contextPath}/stylesheet/main.css" />
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/theme.xcss" />
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/theme.css" />
+	<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheet/main.css" />
 	<ui:insert name="head" />
 	<p:resources />
 </h:head>
 
 <h:body>
-	<div id="header">
+	<div id="admin-bar">
 		<div id="logo">
-			<h:graphicImage value="/img/logo_ASG.png" style="border:0" />
+			<h:graphicImage value="/img/logo_MEVEO.png" style="border:0" />
 		</div>
 		<div id="headerleft"></div>
 		<div id="headerright">
@@ -33,10 +27,7 @@
 			<div style="width: 30px" />
 		</div>
 	</div>
-
-	<!-- <p:toolbar>
-		<p:toolbarGroup>Login</p:toolbarGroup>
-	</p:toolbar> -->
+	<!--end of admin bar -->
 
 	<div class="body">
 		<ui:insert name="body" />

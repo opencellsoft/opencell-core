@@ -17,18 +17,14 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DayInYear;
-import org.meveo.model.security.Role;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -36,10 +32,8 @@ import org.meveo.service.catalog.impl.DayInYearService;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link Calendar} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link Calendar} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created 2009.10.13
@@ -48,70 +42,51 @@ import org.primefaces.model.DualListModel;
 @ConversationScoped
 public class CalendarBean extends BaseBean<Calendar> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
-	@Inject
-	private CalendarService calendarService;
-	
-	@Inject
-	private DayInYearService dayInYearService;
-	
+    /** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
+    @Inject
+    private CalendarService calendarService;
 
+    @Inject
+    private DayInYearService dayInYearService;
 
-	private DualListModel<DayInYear> perks;
+    private DualListModel<DayInYear> perks;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public CalendarBean() {
-		super(Calendar.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public CalendarBean() {
+        super(Calendar.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("calendar")
-	public Calendar init() {
-		return initEntity();
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Calendar> getPersistenceService() {
+        return calendarService;
+    }
 
+    /**
+     * Standard method for custom component with listType="pickList".
+     */
+    public DualListModel<DayInYear> getDualListModel() {
+        if (perks == null) {
+            List<DayInYear> perksSource = dayInYearService.list();
+            List<DayInYear> perksTarget = new ArrayList<DayInYear>();
+            if (getEntity().getDays() != null) {
+                perksTarget.addAll(getEntity().getDays());
+            }
+            perksSource.removeAll(perksTarget);
+            perks = new DualListModel<DayInYear>(perksSource, perksTarget);
+        }
+        return perks;
+    }
 
-
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Calendar> getPersistenceService() {
-		return calendarService;
-	}
-	
-	/**
-	 * Standard method for custom component with listType="pickList".
-	 */
-	public DualListModel<DayInYear> getDualListModel() {
-		if (perks == null) {
-			List<DayInYear> perksSource = dayInYearService.list();
-			List<DayInYear> perksTarget = new ArrayList<DayInYear>();
-			if (getEntity().getDays() != null) {
-				perksTarget.addAll(getEntity().getDays());
-			}
-			perksSource.removeAll(perksTarget);
-			perks = new DualListModel<DayInYear>(perksSource, perksTarget);
-		}
-		return perks;
-	}
-
-	@SuppressWarnings("unchecked")
-	public void setDualListModel(DualListModel<DayInYear> perks) {
-		getEntity().setDays((List<DayInYear>) perks.getTarget());
-	}
+    @SuppressWarnings("unchecked")
+    public void setDualListModel(DualListModel<DayInYear> perks) {
+        getEntity().setDays((List<DayInYear>) perks.getTarget());
+    }
 
 }

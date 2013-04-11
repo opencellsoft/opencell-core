@@ -34,10 +34,8 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.admin.utils.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
@@ -45,7 +43,6 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -117,26 +114,23 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		super(BillingAccount.class);
 	}
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("billingAccount")
-	public BillingAccount init() {
-		initEntity();
-		returnToAgency = !(entity.getInvoicePrefix() == null);
-		if (entity.getId() == null && customerAccountId != null) {
-			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId
-					.get());
-			entity.setCustomerAccount(customerAccountService.findById(customerAccountId.get()));
-			populateAccounts(customerAccount);
-		}
-		return entity;
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Override
+    public BillingAccount initEntity() {
+        super.initEntity();
+        returnToAgency = !(entity.getInvoicePrefix() == null);
+        if (entity.getId() == null && customerAccountId.get() != null) {
+            CustomerAccount customerAccount = customerAccountService.findById(customerAccountId.get());
+            entity.setCustomerAccount(customerAccountService.findById(customerAccountId.get()));
+            populateAccounts(customerAccount);
+        }
+        return entity;
+    }
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous
@@ -155,13 +149,15 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 			saveOrUpdate(entity);
 			CustomerAccount customerAccount = entity.getCustomerAccount();
-			if (customerAccount != null && !customerAccount.getBillingAccounts().contains(entity)) {
+			if (customerAccount != null
+					&& !customerAccount.getBillingAccounts().contains(entity)) {
 				customerAccount.getBillingAccounts().add(entity);
 			}
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&objectId="
 					+ entity.getId() + "&faces-redirect=true";
 		} catch (DuplicateDefaultAccountException e1) {
-			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
+			messages.error(new BundleKey("messages",
+					"error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
@@ -199,9 +195,10 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String terminateAccount() {
 		log.info("terminateAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),
-					getCurrentUser());
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+			billingAccountService.billingAccountTermination(entity.getCode(),
+					new Date(), getCurrentUser());
+			messages.info(new BundleKey("messages",
+					"resiliation.resiliateSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
@@ -217,9 +214,10 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountCancellation(entity.getCode(), new Date(),
-					getCurrentUser());
-			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
+			billingAccountService.billingAccountCancellation(entity.getCode(),
+					new Date(), getCurrentUser());
+			messages.info(new BundleKey("messages",
+					"cancellation.cancelSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
@@ -235,7 +233,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String closeAccount() {
 		log.info("closeAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.closeBillingAccount(entity.getCode(), getCurrentUser());
+			billingAccountService.closeBillingAccount(entity.getCode(),
+					getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
@@ -266,10 +265,11 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		} else {
 			invoiceFilename = "unvalidated-invoice.pdf";
 		}
-		HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
-				.getResponse();
+		HttpServletResponse response = (HttpServletResponse) context
+				.getExternalContext().getResponse();
 		response.setContentType("application/pdf"); // fill in
-		response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
+		response.setHeader("Content-disposition", "attachment; filename="
+				+ invoiceFilename);
 
 		try {
 			OutputStream os = response.getOutputStream();
@@ -280,8 +280,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 				int n = reader.getNumberOfPages();
 				PdfStamper stamp = new PdfStamper(reader, os);
 				PdfContentByte over = null;
-				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI,
-						BaseFont.EMBEDDED);
+				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA,
+						BaseFont.WINANSI, BaseFont.EMBEDDED);
 				PdfGState gs = new PdfGState();
 				gs.setFillOpacity(0.5f);
 				int i = 1;
@@ -289,12 +289,14 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 					over = stamp.getOverContent(i);
 					over.setGState(gs);
 					over.beginText();
-					System.out.println("top=" + document.top() + ",bottom=" + document.bottom());
+					System.out.println("top=" + document.top() + ",bottom="
+							+ document.bottom());
 					over.setTextMatrix(document.top(), document.bottom());
 					over.setFontAndSize(bf, 150);
 					over.setColorFill(Color.GRAY);
-					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize()
-							.getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
+					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document
+							.getPageSize().getWidth() / 2, document
+							.getPageSize().getHeight() / 2, 45);
 					over.endText();
 					i++;
 				}
@@ -326,11 +328,15 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		log.info("launchExceptionelInvoicing...");
 		try {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
+			String allowManyInvoicing = param.getProperty(
+					"billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
 			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
-			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
-				messages.info(new BundleKey("messages", "error.invoicing.alreadyLunched"));
+			if (billingRunService
+					.isActiveBillingRunsExist(getCurrentProvider())
+					&& !isAllowed) {
+				messages.info(new BundleKey("messages",
+						"error.invoicing.alreadyLunched"));
 				return null;
 			}
 
@@ -340,7 +346,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 
 			for (BillingAccount billingAccount : itemSelector.getList()) {
-				log.debug("lunchExceptionelInvoicing id=#0", billingAccount.getId());
+				log.debug("lunchExceptionelInvoicing id=#0",
+						billingAccount.getId());
 				billingAccount.setBillingRun(billingRun);
 				billingAccountService.update(billingAccount);
 			}
@@ -351,17 +358,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			messages.error(e.getMessage());
 		}
 		return null;
-	}
-
-	/**
-	 * This is workaround for #594. For some reason when leaving
-	 * billingAccountDetail.xhtml, the invoices datalist somehow asks for
-	 * #{billingAccount} when we are not in billingAccountDetails conversation,
-	 * that invokes factory method init() which starts new new conversation,
-	 * which later cause a bug.
-	 */
-	public BillingAccount getBillingAccount() {
-		return entity != null ? entity : new BillingAccount();
 	}
 
 	/**
@@ -387,11 +383,11 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	 * Listener of select changed event.
 	 */
 	public void selectChanged(ValueChangeEvent event) {
-        BillingAccount entity = getLazyDataModel().getRowData();
-        if (entity != null) {
-            itemSelector.check(entity);
-        }
-    }
+		BillingAccount entity = getLazyDataModel().getRowData();
+		if (entity != null) {
+			itemSelector.check(entity);
+		}
+	}
 
 	/**
 	 * Resets item selector.

@@ -9,10 +9,10 @@
 	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
-	<modules>
-		<module>meveo-model</module>
-		<module>meveo-admin</module>
-	</modules>
+<!-- 	<modules> -->
+<!-- 		<module>meveo-model</module> -->
+<!-- 		<module>meveo-admin</module> -->
+<!-- 	</modules> -->
 
 
 	<properties>

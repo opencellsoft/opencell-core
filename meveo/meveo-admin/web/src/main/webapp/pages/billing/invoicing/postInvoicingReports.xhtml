@@ -170,16 +170,16 @@
 						<h:selectBooleanCheckbox id="checkUncheckAll"
 							valueChangeListener="#{backingBean.checkUncheckAll}"
 							value="#{backingBean.getItemSelector().modeAllSelected}">
-							<a:support event="onclick" reRender="datatable" ajaxSingle="true"
-								limitToList="true" bypassUpdates="true" />
+							<a:support event="onclick" render="datatable" ajaxSingle="true"
+								limitRender="true" bypassUpdates="true" />
 						</h:selectBooleanCheckbox>
 					</s:div>
 				</f:facet>
 				<h:selectBooleanCheckbox
 					valueChangeListener="#{backingBean.selectChanged}"
 					value="#{billingRunBean.getItemSelector().isSelected(entity)}">
-					<a:support event="onclick" ajaxSingle="true" limitToList="true"
-						bypassUpdates="true" reRender="datatable" />
+					<a:support event="onclick" ajaxSingle="true" limitRender="true"
+						bypassUpdates="true" render="datatable" />
 				</h:selectBooleanCheckbox>
 			</rich:column>
 

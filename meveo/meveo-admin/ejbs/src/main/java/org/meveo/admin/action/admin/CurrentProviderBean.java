@@ -57,14 +57,17 @@ public class CurrentProviderBean implements Serializable {
     @Named("currentProvider")
     @CurrentProvider
     public Provider getCurrentProvider() {
-
+System.out.println("AKK current provider is "+currentProvider);
         if (currentProvider == null && identity.isLoggedIn()) {
             if (((MeveoUser) identity.getUser()).getUser().isOnlyOneProvider()) {
                 currentProvider = ((MeveoUser) identity.getUser()).getUser().getProvider();
             } else {
                 currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().iterator().next();
             }
+            currentProvider.getLanguage().getLanguageCode(); // Lazy loading issue
+            System.out.println("AKK current provider now is "+currentProvider);
         }
+        
         return currentProvider;
     }
 }

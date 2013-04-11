@@ -22,10 +22,11 @@
 		<cc:attribute name="childField"  required="false" />
 		<cc:attribute name="listBean" required="false" />
 		<cc:attribute name="popup" default="false" />
+		<cc:attribute name="popupId" default="popup" />
 	</cc:interface>
 	
 	<cc:implementation>
-		<ui:fragment rendered="#{cc.isText(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isText(cc.attrs.field,cc.attrs.entity)}">
 			<h:panelGrid columns="2">
 				<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" />
 				<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" />
@@ -33,7 +34,7 @@
 		</ui:fragment>
 		
 		<!--  If the value binding is a boolean, display a drop down with yes/no choices. -->
-		<ui:fragment rendered="#{cc.isBoolean(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.entity)}">
 			<h:panelGrid columns="2">
 				<p:outputLabel for="#{cc.attrs.field}_boolean" value="#{cc.attrs.label}" />
 				<p:selectOneMenu id="#{cc.attrs.field}_boolean" value="#{cc.filters[cc.attrs.field]}" converter="javax.faces.Boolean" disabled="#{cc.attrs.disabled}">
@@ -45,7 +46,7 @@
 		</ui:fragment>
 		
 		<!--  If the value binding is a date, display a p:calendar field. -->
-		<ui:fragment rendered="#{cc.isDate(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isDate(cc.attrs.field,cc.attrs.entity)}">
 			<ui:fragment rendered="#{not cc.attrs.rangeSearch}">
 				<h:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.field}_date" value="#{cc.attrs.label}" />
@@ -67,7 +68,7 @@
 		</ui:fragment>
 		
 		<!--  If the value binding is an enum, display a drop down. -->
-		<ui:fragment rendered="#{cc.isEnum(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isEnum(cc.attrs.field,cc.attrs.entity)}">
 			<h:panelGrid columns="2">
 				<p:outputLabel for="#{cc.attrs.field}_enum" value="#{cc.attrs.label}" />
 				<p:selectOneMenu id="#{cc.attrs.field}_enum" value="#{cc.filters[cc.attrs.field]}" disabled="#{cc.attrs.disabled}">
@@ -79,36 +80,36 @@
 		</ui:fragment>
 		
 		<!--  If the value binding is a number display number field. -->
-		<ui:fragment rendered="#{cc.isInteger(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isInteger(cc.attrs.field,cc.attrs.entity)}">
 			<hf:numberField converterId="javax.faces.Integer" />
 		</ui:fragment>
-		<ui:fragment rendered="#{cc.isLong(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isLong(cc.attrs.field,cc.attrs.entity)}">
 			<hf:numberField converterId="javax.faces.Long" />
 		</ui:fragment>
-		<ui:fragment rendered="#{cc.isByte(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isByte(cc.attrs.field,cc.attrs.entity)}">
 			<hf:numberField converterId="javax.faces.Byte" />
 		</ui:fragment>
-		<ui:fragment rendered="#{cc.isShort(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isShort(cc.attrs.field,cc.attrs.entity)}">
 			<hf:numberField converterId="javax.faces.Short" />
 		</ui:fragment>
-		<ui:fragment rendered="#{cc.isDouble(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isDouble(cc.attrs.field,cc.attrs.entity)}">
 			<hf:numberField converterId="javax.faces.Double" />
 		</ui:fragment>
-		<ui:fragment rendered="#{cc.isFloat(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isFloat(cc.attrs.field,cc.attrs.entity)}">
 			<hf:numberField converterId="javax.faces.Float" />
 		</ui:fragment>
-		<ui:fragment rendered="#{cc.isBigDecimal(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isBigDecimal(cc.attrs.field,cc.attrs.entity)}">
 			<hf:numberField converterId="javax.faces.BigDecimal" />
 		</ui:fragment>
 		
-		<ui:fragment rendered="#{cc.isEntity(cc.attrs.field)}">
+		<ui:fragment rendered="#{cc.isEntity(cc.attrs.field,cc.attrs.entity)}">
 			<!-- Search with entity popup -->
 		    <ui:fragment rendered="#{cc.attrs.popup}">
 				<h:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.field}_child" value="#{cc.attrs.label}" />
 					<h:panelGrid id="#{cc.attrs.field}" columns="3">
 						<p:inputText id="#{cc.attrs.field}_child" value="#{cc.filters[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}" disabled="true" />
-						<p:commandButton id="selectLink" onclick="dlg.show()" icon="ui-icon-search"/>
+						<p:commandButton id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()" icon="ui-icon-search"/>
 						<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 					</h:panelGrid>
 				</h:panelGrid>

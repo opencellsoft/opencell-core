@@ -26,7 +26,7 @@
 			column2Label="#{messages['usageType.name']}" column2="name"
 			column3Label="#{messages['usageType.metricName']}" column3="metricName">
 			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}" reRender="formId" 
+			<a:commandLink value="#{messages['commons.select']}" render="formId" 
 				action="#{matrix.setUsageType(entity)}"
 				oncomplete="Richfaces.hideModalPanel('usageTypePopup')">
 			</a:commandLink>
@@ -37,7 +37,7 @@
 			<hf:formField label="#{messages['matrixDefinition.activated']}" field="activated" />
 			<hf:formField label="#{messages['matrixDefinition.name']}" field="name" required="true" size="60"/>
 			<hf:formField label="#{messages['matrixDefinition.dimension']}" field="dimension" required="true" />
-			<custom:formEntityField label="#{messages['matrixDefinition.usageType']}" field="usageType" childField="code" popup="false" service="#{usageTypeService}" />
+			<hf:formEntityField label="#{messages['matrixDefinition.usageType']}" field="usageType" childField="code" popup="false" service="#{usageTypeService}" />
 			<hf:formField label="#{messages['matrixDefinition.startDate']}" field="startDate" />
 			<hf:formField label="#{messages['matrixDefinition.endDate']}" field="endDate" />
     		<hf:formField label="#{messages['matrixDefinition.entry']}" field="matrixEntries" showFields="matrixEntry.coordinates,coordinates;matrixEntry.value,value" deleteButton="false" />

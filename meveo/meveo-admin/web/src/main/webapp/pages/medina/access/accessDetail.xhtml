@@ -56,9 +56,9 @@
 			<hf:formField label="#{messages['access.startDate']}" field="startDate"  />
 			<hf:formField label="#{messages['access.endDate']}" field="endDate" />
 			<hf:formField label="#{messages['access.discriminatorCode']}" field="discriminatorCode"  />
-			<custom:formEntityField id="subscriptionSelectedId" label="#{messages['access.subscription']}"
+			<hf:formEntityField id="subscriptionSelectedId" label="#{messages['access.subscription']}"
 								field="subscription" childField="code"   popup="true" popupId="subscriptionPopup" showOnlyOnConsult="true" clearButton="true"/>
-			<custom:formEntityField id="userSelectId" label="#{messages['access.userAccount']}"
+			<hf:formEntityField id="userSelectId" label="#{messages['access.userAccount']}"
 								field="userAccount" childField="code"   popup="true" popupId="userAccountPopup" clearButton="true" />			
 			<hf:formField label="#{messages['access.serviceInstance']}" field="serviceCode"  /> 	
 		</hf:formPanel>

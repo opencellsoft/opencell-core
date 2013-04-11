@@ -33,16 +33,16 @@
 
 			    <hf:formPanel edit="#{edit}" label="#{messages['oneShotChargeTemplate.chargeTemplatePanel']}" backingBean="#{oneShotChargeTemplateBean}" entity="#{oneShotChargeTemplate}" >
 			    <hf:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
-			   <custom:languageFields/>
-			   <hf:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+			   <hf:languageFields/>
+			   <hf:formField  label="#{messages['enableEntity.active']}" field="disabled" isMessage="true"/>
     			<hf:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
     			<hf:formField label="#{messages['oneShotChargeTemplate.type']}" field="oneShotChargeTemplateType" required="true" />
     			<hftl:panelGroup columns="2">	
-	    			<custom:formEntityField id="invoiceSubCategoryId"
+	    			<hf:formEntityField id="invoiceSubCategorySelectedId"
 											label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"
 											childField="code" required="true" popup="true"
 											popupId="searchInvoiceSubCategoryPopup" />
-					<custom:formEntityField id="invoiceSubCategoryId"
+					<hf:formEntityField id="invoiceSubCategoryId"
 											label="#{messages['invoiceSubCategory.description']}" field="invoiceSubCategory"
 											childField="description" show="#{!edit}" />	
 				</hftl:panelGroup>

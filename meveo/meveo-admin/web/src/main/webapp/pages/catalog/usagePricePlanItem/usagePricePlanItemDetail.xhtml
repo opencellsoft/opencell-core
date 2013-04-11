@@ -67,13 +67,13 @@
 		<hf:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usagePricePlanItemBean}" entity="#{usagePricePlanItem}" >
 			<hftl:panelGroup columns="2">
 			<hf:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true"  />
-			<custom:formEntityField id="priceCodeSelectId" label="#{messages['usagePricePlanItem.priceCode']}"
+			<hf:formEntityField id="priceCodeSelectId" label="#{messages['usagePricePlanItem.priceCode']}"
 			field="priceCode" childField="code"  popup="true" popupId="priceCodePopup" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="2">
-			<custom:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
+			<hf:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
 			field="serviceTemplate" childField="code"  popup="true" popupId="serviceTemplatePopup" />
-    		<custom:formEntityField id="customerAccountSelectId" label="#{messages['usagePricePlanItem.customerAccount']}"
+    		<hf:formEntityField id="customerAccountSelectId" label="#{messages['usagePricePlanItem.customerAccount']}"
 			field="customerAccount" childField="code" popup="true" popupId="customerAccountPopup" /> 
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="2">

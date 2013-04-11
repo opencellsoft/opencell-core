@@ -38,6 +38,7 @@ import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Title;
@@ -72,9 +73,7 @@ public class UserService extends PersistenceService<User> {
         user.setUserName(user.getUserName().toUpperCase());
         user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
         user.setLastPasswordModification(new Date());
-        Set<Provider> providers = new HashSet<Provider>();
-        providers.add(getCurrentProvider());
-        user.setProviders(providers);
+        user.setProvider(getCurrentProvider());
         super.create(user);
     }
 
@@ -137,7 +136,7 @@ public class UserService extends PersistenceService<User> {
     public User findByUsernameAndPassword(String username, String password) {
         try {
             password = Sha1Encrypt.encodePassword(password);
-            return (User) em.createQuery("from User as u left join fetch u.providers where u.userName=:userName and u.password=:password")
+            return (User) em.createQuery("from User as u left join fetch u.providers p left join fetch p.language where u.userName=:userName and u.password=:password")
                 .setParameter("userName", username.toUpperCase()).setParameter("password", password).getSingleResult();
         } catch (NoResultException ex) {
             return null;
@@ -206,12 +205,10 @@ public class UserService extends PersistenceService<User> {
         // Check if the user password has expired
         String passwordExpiracy = paramBean.getProperty("password.Expiracy", "90");
 
-
-		if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user #" + user.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user #" + user.getId()
-					+ " has expired.");
-		}
+        if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
+            log.info("The password of user #" + user.getId() + " has expired.");
+            throw new PasswordExpiredException("The password of user #" + user.getId() + " has expired.");
+        }
 
         // Check the roles
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
@@ -228,7 +225,14 @@ public class UserService extends PersistenceService<User> {
 
         for (Provider provider : user.getProviders()) {
             provider.getCode();
+            if (provider.getLanguage() != null) {
+                provider.getLanguage().getLanguageCode();
+                for (TradingLanguage language : provider.getTradingLanguages()) {
+                    language.getLanguageCode();
+                }
+            }
         }
+
         // End lazy loading issue
 
         return user;

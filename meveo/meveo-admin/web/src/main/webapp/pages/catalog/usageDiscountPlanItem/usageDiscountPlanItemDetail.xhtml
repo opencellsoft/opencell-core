@@ -51,9 +51,9 @@
 			
 		<hf:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usageDiscountPlanItemBean}" entity="#{usageDiscountPlanItem}" >
 			<hf:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true" />
-			<custom:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
+			<hf:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
 				field="serviceTemplate" childField="code"   popup="true" popupId="serviceTemplatePopup" />
-    		<custom:formEntityField id="customerAccountSelectId" label="#{messages['usagePricePlanItem.customerAccount']}"
+    		<hf:formEntityField id="customerAccountSelectId" label="#{messages['usagePricePlanItem.customerAccount']}"
 				field="customerAccount" childField="code" popup="true" popupId="customerAccountPopup" />
 				
 			    <hf:formField label="#{messages['numberingPlan.priority']}" field="priority"  />

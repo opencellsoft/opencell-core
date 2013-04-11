@@ -27,7 +27,7 @@
 				searchField1="currencyCode"
 				column1Label="#{messages['currency.currencyCode']}"
 				column1="currencyCode"
-				column2Label="#{messages['currency.DescriptionEn']}"
+				column2Label="#{messages['tradingCurrency.prDescription']}"
 				column2="descriptionEn">
 			</hftl:entityPopup>
 		</c:if>
@@ -47,13 +47,13 @@
 			<hf:formField label="#{messages['tradingCurrency.prCurrencyToThis']}"
 				field="prCurrencyToThis" />
 			<hf:formField label="#{messages['tradingCurrency.disabled']}"
-				field="disabled" isMessage="true" showOnlyOnConsult="true" />
-			<!-- <hf:formField
-				label="#{messages['tradingCurrency.created']}"
-				field="created" showOnlyOnConsult="true"/> 
-				<hf:formField
-				label="#{messages['tradingCurrency.updated']}"
-				field="updated" showOnlyOnConsult="true"/>-->
+				field="disabled" isMessage="true" />
+			<hf:formEntityField label="#{messages['tradingCurrency.created']}"
+				field="auditable" childField="created" time="true"
+				showOnlyOnConsult="true" />
+			<hf:formEntityField label="#{messages['tradingCurrency.updated']}"
+				field="auditable" childField="updated" time="true"
+				showOnlyOnConsult="true" />
 		</hf:formPanel>
 
 	</ui:define>

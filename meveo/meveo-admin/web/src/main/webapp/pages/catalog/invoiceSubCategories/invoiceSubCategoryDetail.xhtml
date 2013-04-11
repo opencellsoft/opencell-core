@@ -75,7 +75,7 @@
 							backingBean="#{invoiceSubCategoryBean}"
 							entity="#{invoiceSubCategory}">
 
-							<custom:formEntityField id="categorySelectId"
+							<hf:formEntityField id="categorySelectId"
 								label="#{messages['invoiceSubCategory.invoiceCategory']}"
 								field="invoiceCategory" childField="code" required="true"
 								popup="true" popupId="searchInvoiceCategoryPopup" />
@@ -279,13 +279,13 @@
 
 
 
-										<custom:formEntityField id="ISCTSelectId"
+										<hf:formEntityField id="ISCTSelectId"
 											label="#{messages['address.country']}" field="tradingCountry"
 											childField="countryCode" popup="true"
 											popupId="invSubCatCountryPopup" required="true" />
 
 
-										<custom:formEntityField id="ISCTSelectId"
+										<hf:formEntityField id="ISCTSelectId"
 											label="#{messages['invoiceSubCategoryCountry.taxe']}"
 											field="tax" childField="code" popup="true"
 											popupId="invSubCatCountTaxPopup" required="true" />

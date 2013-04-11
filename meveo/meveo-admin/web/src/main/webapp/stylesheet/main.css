@@ -2,15 +2,21 @@ body {
 	width: 100%;
 	margin: auto;
 	position: relative;
-	background-image: url(..//img/bg-pat.png);
+	//background-image: url(http://www.jobellevallega.com/numan/bg-pat.png);
+  background : #f1f7f6;
 }
 .body
 {
   width : 90% !important;
   margin-left : auto !important;
   margin-right : auto !important;
-
+  margin-top : 50px !important;
 }
+
+a:hover {
+    color: rgb(63, 165, 168);
+}
+
 /* HEADER */
 #header {
 	border: 0px;
@@ -21,6 +27,7 @@ body {
 	width: 100%;
 	//margin-left : -5.5%;
 	margin-top : -2px;
+  display : none;
 }
 
 #headerleft {
@@ -43,11 +50,13 @@ body {
 
 #logo {
 	border: 0px;
-	padding: 10px;
+	padding: 20px 0px 0px 0px;
 	width: 130px;
 	float: left;
 	margin-left: 10%;
-}
+  margin-top : 10px;
+  margin-bottom : -5px;
+ }
 
 .headerinfo {
 	position: absolute;
@@ -65,7 +74,7 @@ body {
 .body {
   margin-top : 20px;
   
-	padding : 30px 10px;
+	padding : 10px 15px;
 	min-height: 80%;
   /* border radius */
   -webkit-border-radius: 8px;
@@ -75,7 +84,7 @@ body {
   /*shadow */
   -webkit-box-shadow: 0px 1px 5px 2px rgba(0, 0, 0, .1);
   box-shadow: 0px 1px 5px 2px rgba(0, 0, 0, .1);
-  
+   
   background: #f7f7f7; /* Old browsers */
 	background: -moz-linear-gradient(top,  #f7f7f7 0%, #ffffff 17%, #ffffff 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(17%,#ffffff), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
@@ -87,9 +96,7 @@ body {
 
    /*font */
   font-family : helvetica;
-  font-size : 11px;
-
-  
+  font-size : 11px;  
 }
 
 .body H1 {
@@ -154,21 +161,20 @@ body {
 /* JOBELLE ADDITIONAL CSS FILES */
 #admin-bar
 {
-    background-image: url(../img/admin-top-bar-pat.png);
-    height: 51px;
-    //position: fixed;
-    width: 100%;
-
-    margin-top : -15px;
-   
+  height: 125px;
   
+  width: 100%;
+  margin-top : -15px;
+  background-image : url(http://www.jobellevallega.com/numan/header-bg.png);
+  background-size : 2000px 164px;
 }
 #admin-bar ul
 {
   padding-top: 15px;
-	width: 95%;
 	margin-left: auto;
-	margin-right: auto;
+	margin-right: 5%;
+  float : right;
+  
 }
 #admin-bar ul li:first-child
 {
@@ -193,22 +199,24 @@ body {
 	height: 20px;
 	padding-right: 15px;
 	padding-left: 15px;
-	border-left: 1px solid black;
-	border-right: 1px solid #717272;
+	border-left: 1px solid #0ac0af;
+	border-right: 1px solid #03554d;
 	float: left;
 	
 	
 }
 #admin-bar ul li.right-part
 {
-	float : right;
+	float : left;
+  margin-left : 0px;
+  margin-right : 0px;
 }
 #admin-bar ul li,
 #admin-bar ul li a
 {
    font-family: helvetica;
    font-size: 12px;
-   color : #d3dadc;
+   color : #fff;
    padding-top: 5px;
    text-decoration: none;
    text-shadow: -1px -1px 0px black;
@@ -216,7 +224,7 @@ body {
 }
 #admin-bar ul li a:hover
 {
-  color: #3fa5a8;
+  color: #00ffeb;
 }
 #admin-bar ul li .top-bar-home,
 #admin-bar ul li .top-bar-user
@@ -243,7 +251,7 @@ body {
    width: 25px;
    height: 25px;
    background-image: url(..//img/user-top-bar.png) ;
-   border : 1px solid grey;
+   border : 1px solid #03554d;
    background-size: 20px 20px;
    background-repeat: no-repeat;
    display: inline-block;
@@ -278,49 +286,110 @@ body {
 /* primefaces */
 .ui-menubar
 {
-    background: #00a9ad; /* Old browsers */
-  background: -moz-linear-gradient(top, #00a9ad 0%, #00636a 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00a9ad), color-stop(100%,#00636a)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #00a9ad 0%,#00636a 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #00a9ad 0%,#00636a 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00a9ad', endColorstr='#00636a',GradientType=0 ); /* IE6-9 */
-  
- 
-   font-family: helvetica;
-   margin-top : -5px;
-   background-color: transparent;
-   border : none;  
-  -webkit-border-radius : 0px;
-  -moz-border-radius : 0px;
-  border-radius : 0px;
+  	width : 93%;
+  	margin-left : auto;
+  	margin-right: auto;
+  	height : 40px;
+  	font-family: Arial, Helvetica, sans-serif;
+	  font-size: 11px;
+    margin-top : -38px;
+	  color: #e6e6e6;
+	  padding: 1px;
+	  background : none;
+    border : none;
 }
 .ui-menubar .ui-menu-list
 {
-  width : 90%;
+  width : 100%;
+  padding-top : 5px;
+  margin-left : 10px;
   float : left;
-  
-  margin-left : 5%;
   margin-right : auto;
+}
+.ui-menubar .ui-menu-list .ui-menu-child
+{
+  -webkit-border-radius: 0px 15px 0px 15px;
+   border-radius: 0px 15px 0px 15px;
+   width : 150%;
+   margin-right : 10px !important;
+   box-shadow : none;
+   border-top : none;
+   border-color : #b3cecb;
+   margin-left : -1px;
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list
+{
+  border-top : 1px solid  #b3cecb;
+  padding : 3px 1px 1px 3px;
+  //background : red !important;
+  margin-left : 3px;
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem
+{
+  padding : 0px !important;
+  margin : 0px !important;
+  width : 100%;
+  border-left : none !important;
+  border-right : none !important;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-state-hover
+{
+  background : #007b7f;
+  box-shadow : none;
+  -webkit-border-radius: 0px 8px 0px 8px;
+  border-radius: 0px 8px 0px 8px;
+
+}
+.ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem .ui-menuitem-link
+{
+  text-shadow : none;
+  padding : 1px 5px 0px 5px;
 }
 .ui-menu .ui-menuitem-text
 {
-    color : white;
-    font-size : 11px;
-
+    //color : white;
+    font-size : 12px;
+    padding : 2px;
 }
-.ui-menuitem .ui-state-hover
+.ui-menubar .ui-menuitem-link
 {
-    /*background-image: url(..//img/menu-inactive-pat.png);*/
-  background: #494949; /* Old browsers */
-	background: -moz-linear-gradient(top,  #494949 0%, #5b5b5b 49%, #494949 51%, #000000 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#494949), color-stop(49%,#5b5b5b), color-stop(51%,#494949), color-stop(100%,#000000)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #494949 0%,#5b5b5b 49%,#494949 51%,#000000 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#494949', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+   padding : 5px 10px;
+}
+.ui-menubar .ui-menuitem:first-child
+{
+  border-left : none !important;
+}
+.ui-menubar .ui-menuitem
+{
+ 
+  -webkit-border-radius: 10px 10px 0px 0px;
+   border-radius: 10px 10px 0px 0px;
+  margin : 0px 0px !important ;
+  
+}
+.ui-menubar .ui-menuitem a
+{
+  color : white;
+}
+.ui-state-active a:link,
+.ui-state-active a:visited
+{
+   background : red !important;
+   color : red !important;
+}
+.ui-menubar .ui-menuitem .ui-state-hover
+{
+   
+   //background-image: url(http://www.jobellevallega.com/numan/menu-active-pat.png) ;
+  -webkit-border-radius: 10px 10px 0px 0px;
+   border-radius: 10px 10px 0px 0px;
+   border-color : transparent !important;
+   box-shadow : none;
+  background : #f1f7f6;
+   color : #066259 !important;
 }
 .ui-menu-list .ui-menuitem
 {
@@ -333,27 +402,45 @@ body {
   
   
 }
-.ui-menu-child .ui-menuitem
+.ui-menu-child li
 {
   border-top : 1px solid white !Important;
   margin-top : -1px;
   border-bottom : 1px solid #efeff0 !important;
  
 }
+.ui-menu-child li:first-child
+{
+   border-top : none !important;
+}
 .ui-menu-child .ui-state-hover .ui-menuitem-text
 {
   color : white;
 }
-.ui-menu-child
+.ui-menubar .ui-menu-child
 {
   background-color : #efeff0 !important;
  
 }
+.ui-menuitem .ui-state-hover .ui-icon-triangle-1-s
+{
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240.png) !Important;
+}
+.ui-icon-triangle-1-s
+{
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+  background-position : -64px -16px;
+}
+.ui-menuitem .ui-state-hover .ui-icon-triangle-1-e
+{
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+}
 .ui-button
 {
+  margin-top : 5px;
+  margin-bottom : 5px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
-	color: #858585;
 	padding: 0px 0px;
 	background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
 	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
@@ -403,7 +490,6 @@ body {
 }
 .ui-panel
 {
-  
   padding : 0px;
   margin : 0px;
   border : none;
@@ -414,12 +500,15 @@ body {
   background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
 }
-.ui-datatable table
+.ui-datatable 
 {
   border-radius : 8px !important;
   -webkit-border-radius : 8px !important;
   -moz-border-radius : 8px !important;
   margin-bottom : 10px;
+  border : 1px solid #c2c2c2;
+  display : inline-block;
+  width : 100%;
 }
 .ui-state-hover
 {
@@ -455,10 +544,12 @@ body {
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active,
 .ui-picklist-list .ui-state-hover,
-.ui-tabs-nav .ui-state-hover
+.ui-tabs-nav .ui-state-hover,
+.ui-selectonemenu .ui-state-hover,
+.ui-selectonemenu .ui-state-focus
 {
+  
    border-color : #19c6ca !important;
-  // background : red;
   background: -moz-linear-gradient(top,  rgba(4,211,211,0.22) 0%, rgba(8,179,171,0.22) 39%, rgba(8,178,170,0.22) 40%, rgba(0,155,155,0.44) 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(4,211,211,0.22)), color-stop(39%,rgba(8,179,171,0.22)), color-stop(40%,rgba(8,178,170,0.22)), color-stop(100%,rgba(0,155,155,0.44))); /* Chrome,Safari4+ */
   background: -webkit-linear-gradient(top,  rgba(4,211,211,0.22) 0%,rgba(8,179,171,0.22) 39%,rgba(8,178,170,0.22) 40%,rgba(0,155,155,0.44) 100%); /* Chrome10+,Safari5.1+ */
@@ -470,11 +561,55 @@ body {
 }
 .ui-inputfield
 {
+  padding-left : 5px !important;
+ 
   /*background : red !important;*/
 }
 .ui-outputlabel
 {
   display : inline-block;
-  width : 120px;
+  width : 95px;
   text-align : right;
+}
+.ui-panel-content
+{
+  padding : 0px !Important;
+}
+textarea[disabled],
+input[type="text"][disabled], 
+input[type="password"][disabled],
+select[disabled]
+{
+  color : #000;
+}
+.ui-datatable table .ui-chkbox
+{
+  margin-right : -5px;
+}
+.ui-messages-info, .ui-message-info
+{
+  background : #c5f9f7;
+  border-color : #00fff6;
+}
+
+#datatable_paginator_top
+{
+  border : none;
+  -webkit-border-radius: 8px 8px 0px 0px;
+   border-radius: 8px 8px 0px 0px;
+}
+#datatable_paginator_bottom
+{
+  border : none;
+  -webkit-border-radius: 0px 0px 8px 8px;
+   border-radius: 0px 0px 8px 8px;
+}
+
+div.body > table > thead
+{
+	font-size : 14px;
+	float : left;
+	//color : #0d5c59;
+	color : #4f4f4f;
+	border-bottom : 1px solid #d5d5d5;
 }
