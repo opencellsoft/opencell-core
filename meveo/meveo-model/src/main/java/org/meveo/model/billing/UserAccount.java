@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -81,13 +82,13 @@ public class UserAccount extends AccountEntity {
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
     @MapKey(name="code")
     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    HashMap<String,WalletInstance> prepaidWallets=new HashMap<String, WalletInstance>();;
+    Map<String,WalletInstance> prepaidWallets=new HashMap<String, WalletInstance>();;
 
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
     @MapKey(name="code")
     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    HashMap<String,CounterInstance> counters=new HashMap<String, CounterInstance>();//key is the counter template code
+    Map<String,CounterInstance> counters=new HashMap<String, CounterInstance>();//key is the counter template code
     
     public BillingAccount getBillingAccount() {
         return billingAccount;
@@ -146,19 +147,19 @@ public class UserAccount extends AccountEntity {
         this.wallet = wallet;
     }
 	
-	public HashMap<String, WalletInstance> getPrepaidWallets() {
+	public Map<String, WalletInstance> getPrepaidWallets() {
 		return prepaidWallets;
 	}
 
-	public void setPrepaidWallets(HashMap<String, WalletInstance> prepaidWallets) {
+	public void setPrepaidWallets(Map<String, WalletInstance> prepaidWallets) {
 		this.prepaidWallets = prepaidWallets;
 	}
 
-	public HashMap<String, CounterInstance> getCounters() {
+	public Map<String, CounterInstance> getCounters() {
 		return counters;
 	}
 
-	public void setCounters(HashMap<String, CounterInstance> counters) {
+	public void setCounters(Map<String, CounterInstance> counters) {
 		this.counters = counters;
 	}
 

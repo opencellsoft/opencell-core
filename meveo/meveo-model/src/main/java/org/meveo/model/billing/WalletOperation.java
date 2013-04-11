@@ -36,7 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.rating.EDR;
+//import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
@@ -97,9 +97,9 @@ public class WalletOperation extends BusinessEntity {
     @JoinColumn(name = "COUNTER_ID")
     private CounterInstance counter;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "EDR_ID")
-    private EDR usageEdr;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "EDR_ID")
+    //private EDR usageEdr;
 
     @Column(name = "PARAMETER_1", length = 50)
     private String parameter1;
@@ -238,13 +238,13 @@ public class WalletOperation extends BusinessEntity {
 		this.counter = counter;
 	}
 
-	public EDR getUsageEdr() {
+	/*public EDR getUsageEdr() {
 		return usageEdr;
 	}
 
 	public void setUsageEdr(EDR usageEdr) {
 		this.usageEdr = usageEdr;
-	}
+	}*/
 
 	public String getParameter1() {
 		return parameter1;

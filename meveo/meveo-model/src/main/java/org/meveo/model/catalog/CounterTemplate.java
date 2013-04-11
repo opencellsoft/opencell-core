@@ -35,7 +35,7 @@ public class CounterTemplate extends BusinessEntity {
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal level;
 	
-	@Column(name = "COUNTER_TYPE",length=20)
+	@Column(name = "UNITY_DESCRIPTION",length=20)
 	@Size(min=0,max=20)
     private String unityDescription;
 
