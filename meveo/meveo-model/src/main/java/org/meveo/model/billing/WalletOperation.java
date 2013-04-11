@@ -51,7 +51,7 @@ public class WalletOperation extends BusinessEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WALLET_ID")
-    private Wallet wallet;
+    private WalletInstance wallet;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "OPERATION_DATE")
@@ -95,7 +95,7 @@ public class WalletOperation extends BusinessEntity {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTER_ID")
-    private Counter counter;
+    private CounterInstance counter;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EDR_ID")
@@ -126,11 +126,11 @@ public class WalletOperation extends BusinessEntity {
     @Column(name = "STATUS")
     private WalletOperationStatusEnum status;
 
-	public Wallet getWallet() {
+	public WalletInstance getWallet() {
 		return wallet;
 	}
 
-	public void setWallet(Wallet wallet) {
+	public void setWallet(WalletInstance wallet) {
 		this.wallet = wallet;
 	}
 
@@ -230,11 +230,11 @@ public class WalletOperation extends BusinessEntity {
 		this.amountTax = amountTax;
 	}
 
-	public Counter getCounter() {
+	public CounterInstance getCounter() {
 		return counter;
 	}
 
-	public void setCounter(Counter counter) {
+	public void setCounter(CounterInstance counter) {
 		this.counter = counter;
 	}
 

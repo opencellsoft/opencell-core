@@ -37,7 +37,7 @@ public class ServiceUsageChargeTemplate extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CHARGE_TEMPLATE_ID")
-	private ChargeTemplate chargeTemplate;
+	private UsageChargeTemplate chargeTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTER_TEMPLATE_ID")
@@ -67,11 +67,11 @@ public class ServiceUsageChargeTemplate extends BaseEntity {
 		this.serviceTemplate = serviceTemplate;
 	}
 
-	public ChargeTemplate getChargeTemplate() {
+	public UsageChargeTemplate getChargeTemplate() {
 		return chargeTemplate;
 	}
 
-	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
+	public void setChargeTemplate(UsageChargeTemplate chargeTemplate) {
 		this.chargeTemplate = chargeTemplate;
 	}
 

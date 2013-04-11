@@ -42,7 +42,7 @@ public class RatedTransaction extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WALLET_ID")
-    private Wallet wallet;
+    private WalletInstance wallet;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WALLET_OPERATION_ID")
@@ -140,11 +140,11 @@ public class RatedTransaction extends BaseEntity {
    @JoinColumn(name = "TRADING_LANGUAGE_ID")
    private TradingLanguage tradingLanguage;
 
-	public Wallet getWallet() {
+	public WalletInstance getWallet() {
 		return wallet;
 	}
 
-	public void setWallet(Wallet wallet) {
+	public void setWallet(WalletInstance wallet) {
 		this.wallet = wallet;
 	}
 

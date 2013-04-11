@@ -24,13 +24,13 @@ import javax.inject.Named;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.billing.Wallet;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletService;
 
 /**
- * Standard backing bean for {@link Wallet} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
+ * Standard backing bean for {@link WalletInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
@@ -38,7 +38,7 @@ import org.meveo.service.billing.impl.WalletService;
  */
 @Named
 @ConversationScoped
-public class WalletBean extends BaseBean<Wallet> {
+public class WalletBean extends BaseBean<WalletInstance> {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,7 +57,7 @@ public class WalletBean extends BaseBean<Wallet> {
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public WalletBean() {
-        super(Wallet.class);
+        super(WalletInstance.class);
     }
 
     /**
@@ -69,7 +69,7 @@ public class WalletBean extends BaseBean<Wallet> {
 
     @Produces
     @Named("wallet")
-    public Wallet init() {
+    public WalletInstance init() {
         initEntity();
         if (customerAccountId != null) {
             // wallet.setCustomerAccount(customerAccountService.findById(customerAccountId));
@@ -82,7 +82,7 @@ public class WalletBean extends BaseBean<Wallet> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<Wallet> getPersistenceService() {
+    protected IPersistenceService<WalletInstance> getPersistenceService() {
         return walletService;
     }
 

@@ -18,6 +18,7 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -37,7 +38,7 @@ import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.Wallet;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.AccountService;
 
 /**
@@ -68,20 +69,20 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		userAccount.setBillingAccount(billingAccount);
 		create(userAccount, creator, billingAccount.getProvider());
-		Wallet wallet = new Wallet();
+		WalletInstance wallet = new WalletInstance();
 		wallet.setUserAccount(userAccount);
 		walletService.create(wallet, creator, billingAccount.getProvider());
 		userAccount.setWallet(wallet);
 
 		List<WalletTemplate> prepaidWalletTemplates = billingAccount.getProvider().getPrepaidWalletTemplates();
 		if(prepaidWalletTemplates!=null && prepaidWalletTemplates.size()>0){
-			List<Wallet> prepaidWallets = new ArrayList<Wallet>(prepaidWalletTemplates.size());
+			HashMap<String,WalletInstance> prepaidWallets = new HashMap<String,WalletInstance>(prepaidWalletTemplates.size());
 			for(WalletTemplate prepaidWalletTemplate:prepaidWalletTemplates){
-				Wallet prepaidWallet = new Wallet();
+				WalletInstance prepaidWallet = new WalletInstance();
 				wallet.setUserAccount(userAccount);
 				wallet.setWalletTemplate(prepaidWalletTemplate);
 				walletService.create(wallet, creator, billingAccount.getProvider());
-				prepaidWallets.add(prepaidWallet);
+				prepaidWallets.put(prepaidWalletTemplate.getCode(),prepaidWallet);
 			}
 			userAccount.setPrepaidWallets(prepaidWallets);
 		}
@@ -160,7 +161,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		if (userAccount == null) {
 			throw new IncorrectUserAccountException("user account does not exist. code=" + code);
 		}
-		Wallet wallet = userAccount.getWallet();
+		WalletInstance wallet = userAccount.getWallet();
 		if (wallet == null) {
 			return null;
 		}
@@ -184,7 +185,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		if (userAccount == null) {
 			throw new UnknownAccountException(code);
 		}
-		Wallet wallet = userAccount.getWallet();
+		WalletInstance wallet = userAccount.getWallet();
 		return wallet.getRatedTransactions();
 	}
 

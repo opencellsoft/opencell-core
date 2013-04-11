@@ -27,9 +27,7 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USAGE_CHARGE_INST_SEQ")
 public class UsageChargeInstance extends ChargeInstance{
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +36,7 @@ public class UsageChargeInstance extends ChargeInstance{
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTER_ID")
-	private Counter counter;
+	private CounterInstance counter;
 
 	public ServiceInstance getServiceInstance() {
 		return serviceInstance;
@@ -48,14 +46,12 @@ public class UsageChargeInstance extends ChargeInstance{
 		this.serviceInstance = serviceInstance;
 	}
 
-	public Counter getCounter() {
+	public CounterInstance getCounter() {
 		return counter;
 	}
 
-	public void setCounter(Counter counter) {
+	public void setCounter(CounterInstance counter) {
 		this.counter = counter;
 	}
-	
-	
 	
 }

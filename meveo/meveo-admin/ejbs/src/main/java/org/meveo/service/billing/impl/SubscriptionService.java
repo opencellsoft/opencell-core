@@ -199,7 +199,7 @@ public class SubscriptionService extends BusinessService<Subscription>
 				.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
 			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
-				serviceInstanceService.serviceSusupension(serviceInstance,
+				serviceInstanceService.serviceSuspension(serviceInstance,
 						suspensionDate, updater);
 			}
 		}

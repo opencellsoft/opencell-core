@@ -196,7 +196,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
     public String suspendService() {
         log.info("closeAccount serviceInstanceId:" + entity.getId());
         try {
-            serviceInstanceService.serviceSusupension(entity, new Date(), getCurrentUser());
+            serviceInstanceService.serviceSuspension(entity, new Date(), getCurrentUser());
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
             return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {

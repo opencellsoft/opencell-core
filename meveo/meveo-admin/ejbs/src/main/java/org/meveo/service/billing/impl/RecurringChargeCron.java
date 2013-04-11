@@ -135,7 +135,7 @@ public class RecurringChargeCron {
 							ApplicationTypeEnum.RECURRENT,
 							previousapplicationDate,
 							activeRecurringChargeInstance.getAmountWithoutTax(),
-							activeRecurringChargeInstance.getAmount2(),
+							activeRecurringChargeInstance.getAmountWithTax(),
 							new BigDecimal(activeRecurringChargeInstance.getServiceInstance().getQuantity()),
 							currencyId,tax.getId(), tax.getPercent(), null, applicationDate, invoiceSubCat,
 							activeRecurringChargeInstance.getCriteria1(),

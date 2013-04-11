@@ -17,6 +17,7 @@ package org.meveo.model.billing;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -27,6 +28,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -74,11 +76,18 @@ public class UserAccount extends AccountEntity {
     @OneToOne( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     @JoinColumn(name = "WALLET_ID")
-    private Wallet wallet;
+    private WalletInstance wallet;
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name="code")
     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-     List<Wallet> prepaidWallets;
+    HashMap<String,WalletInstance> prepaidWallets=new HashMap<String, WalletInstance>();;
+
+
+    @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
+    @MapKey(name="code")
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    HashMap<String,CounterInstance> counters=new HashMap<String, CounterInstance>();//key is the counter template code
     
     public BillingAccount getBillingAccount() {
         return billingAccount;
@@ -129,20 +138,28 @@ public class UserAccount extends AccountEntity {
         this.subscriptions = subscriptions;
     }
 
-    public Wallet getWallet() {
+    public WalletInstance getWallet() {
         return wallet;
     }
 
-    public void setWallet(Wallet wallet) {
+    public void setWallet(WalletInstance wallet) {
         this.wallet = wallet;
     }
-
-    public List<Wallet> getPrepaidWallets() {
+	
+	public HashMap<String, WalletInstance> getPrepaidWallets() {
 		return prepaidWallets;
 	}
 
-	public void setPrepaidWallets(List<Wallet> prepaidWallets) {
+	public void setPrepaidWallets(HashMap<String, WalletInstance> prepaidWallets) {
 		this.prepaidWallets = prepaidWallets;
+	}
+
+	public HashMap<String, CounterInstance> getCounters() {
+		return counters;
+	}
+
+	public void setCounters(HashMap<String, CounterInstance> counters) {
+		this.counters = counters;
 	}
 
 	@Override

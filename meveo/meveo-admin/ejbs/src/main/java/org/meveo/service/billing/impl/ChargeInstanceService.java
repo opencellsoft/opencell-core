@@ -107,8 +107,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		chargeInstance.setChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setServiceInstance(serviceInst);
-		recurringChargeInstanceService.create(chargeInstance, creator,
-				recurringChargeTemplate.getProvider());
+		recurringChargeInstanceService.create(chargeInstance, creator,recurringChargeTemplate.getProvider());
 
 	}
 
@@ -151,9 +150,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		for (RecurringChargeInstance recurringChargeInstance : serviceInst
 				.getRecurringChargeInstances()) {
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-			recurringChargeInstance.setSubscriptionDate(subscriptionDate);
+			//recurringChargeInstance.setSubscriptionDate(subscriptionDate);
 			recurringChargeInstance.setTerminationDate(null);
-			// TODO: Why change the charge date ??
 			recurringChargeInstance.setChargeDate(subscriptionDate);
 			recurringChargeInstanceService.update(recurringChargeInstance);
 		}

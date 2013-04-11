@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
-import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -253,7 +252,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
 						oneShotChargeInstance.getChargeDate() == null ? new Date()
 								: oneShotChargeInstance.getChargeDate(), oneShotChargeInstance
-								.getAmountWithoutTax(), oneShotChargeInstance.getAmount2(),
+								.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(),
 						oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(),
 						oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(),
 						getCurrentUser());
@@ -299,7 +298,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 							(RecurringChargeTemplate) recurringChargeInstance.getChargeTemplate(),
 							recurringChargeInstance.getChargeDate(),
 							recurringChargeInstance.getAmountWithoutTax(),
-							recurringChargeInstance.getAmount2(), 1,
+							recurringChargeInstance.getAmountWithTax(), 1,
 							recurringChargeInstance.getCriteria1(),
 							recurringChargeInstance.getCriteria2(),
 							recurringChargeInstance.getCriteria3(), getCurrentUser());
@@ -531,7 +530,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			ServiceInstance serviceInstance = serviceInstanceService
 					.findById(selectedServiceInstanceId);
 			serviceInstanceService
-					.serviceSusupension(serviceInstance, new Date(), getCurrentUser());
+					.serviceSuspension(serviceInstance, new Date(), getCurrentUser());
 
 			messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 		} catch (BusinessException e1) {

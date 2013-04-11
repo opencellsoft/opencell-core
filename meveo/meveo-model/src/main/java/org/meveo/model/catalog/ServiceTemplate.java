@@ -55,7 +55,7 @@ public class ServiceTemplate extends BusinessEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_USAGE_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
-	private List<UsageChargeTemplate> usageCharges;
+	private List<ServiceUsageChargeTemplate> serviceUsageCharges;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DURATION_TERM_CALENDAR")
@@ -94,6 +94,15 @@ public class ServiceTemplate extends BusinessEntity {
 
 	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+
+	public List<ServiceUsageChargeTemplate> getServiceUsageCharges() {
+		return serviceUsageCharges;
+	}
+
+	public void setServiceUsageCharges(
+			List<ServiceUsageChargeTemplate> serviceUsageCharges) {
+		this.serviceUsageCharges = serviceUsageCharges;
 	}
 
 	public Calendar getDurationTermCalendar() {

@@ -77,8 +77,8 @@ public class ChargeInstance extends BusinessEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
     protected BigDecimal amountWithoutTax;
 
-    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
-    protected BigDecimal amount2;
+    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+    protected BigDecimal amountWithTax;
 
     @Column(name = "CRITERIA_1")
     protected String criteria1;
@@ -211,15 +211,12 @@ public class ChargeInstance extends BusinessEntity {
 		this.tradingCurrency = tradingCurrency;
 	}
 
-	public BigDecimal getAmount2() {
-		return amount2;
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
 	}
 
-	public void setAmount2(BigDecimal amount2) {
-		this.amount2 = amount2;
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
 	}
-	
-	
-     
 
 }

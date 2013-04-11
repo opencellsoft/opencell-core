@@ -27,12 +27,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 
 @Entity
 @Table(name = "BILLING_WALLET")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
-public class Wallet extends AuditableEntity {
+public class WalletInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,6 +45,9 @@ public class Wallet extends AuditableEntity {
     private UserAccount userAccount;
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<WalletOperation> operations;
+    
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
     
     public WalletTemplate getWalletTemplate() {
@@ -53,6 +56,13 @@ public class Wallet extends AuditableEntity {
 
 	public void setWalletTemplate(WalletTemplate walletTemplate) {
 		this.walletTemplate = walletTemplate;
+		if(walletTemplate!=null){
+			this.code=walletTemplate.getCode();
+			this.description=walletTemplate.getDescription();
+		} else  {
+			this.code=null;
+			this.description=null;
+		}
 	}
 
 	public String toString() {
@@ -75,7 +85,15 @@ public class Wallet extends AuditableEntity {
         this.ratedTransactions = ratedTransactions;
     }
 
-    public Set<InvoiceSubCategory> getInvoiceSubCategories() {
+    public List<WalletOperation> getOperations() {
+		return operations;
+	}
+
+	public void setOperations(List<WalletOperation> operations) {
+		this.operations = operations;
+	}
+
+	public Set<InvoiceSubCategory> getInvoiceSubCategories() {
         Set<InvoiceSubCategory> invoiceSubCategories = new HashSet<InvoiceSubCategory>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             invoiceSubCategories.add(ratedTransaction.getInvoiceSubCategory());
