@@ -20,7 +20,9 @@
 				/> -->
 		</properties>
 		<!-- <jar-file>meveo-admin-ejbs-${project.version}.jar</jar-file> -->
-		<class>org.meveo.model.admin.Currency</class>
+
+		<class>org.meveo.model.admin.Currency</class>		
+		<class>org.meveo.model.admin.User</class>		
 		<class>org.meveo.model.admin.InputHistory</class>
 		<class>org.meveo.model.admin.MedinaInputHistory</class>
 		<class>org.meveo.model.admin.VertinaInputHistory</class>
@@ -42,7 +44,6 @@
 		<class>org.meveo.model.admin.SubscriptionImportHisto</class>
 		<class>org.meveo.model.admin.InvoiceImportHisto</class>
 		<class>org.meveo.model.admin.TIPImportHisto</class>
-		<class>org.meveo.model.admin.Seller</class>
 		<class>org.meveo.model.bi.Job</class>
 		<class>org.meveo.model.bi.Job</class>
 		<class>org.meveo.model.bi.JobHistory</class>
@@ -50,16 +51,20 @@
 		<class>org.meveo.model.bi.JobExecutionHisto</class>
 		<class>org.meveo.model.billing.Invoice</class>
 		<class>org.meveo.model.billing.InvoiceTemplate</class>
-		<class>org.meveo.model.billing.Operation</class>
-		<class>org.meveo.model.billing.Wallet</class>
+		<class>org.meveo.model.billing.WalletOperation</class>
+		<class>org.meveo.model.billing.WalletTemplate</class>
+		<class>org.meveo.model.billing.WalletInstance</class>
 		<class>org.meveo.model.billing.InvoiceSubCategory</class>
 		<class>org.meveo.model.billing.ServiceParameterInstance</class>
 		<class>org.meveo.model.billing.AccessPoint</class>
 		<class>org.meveo.model.billing.BillingAccount</class>
 		<class>org.meveo.model.billing.BillingCycle</class>
+		<class>org.meveo.model.billing.CounterPeriod</class>
+		<class>org.meveo.model.billing.CounterInstance</class>
 		<class>org.meveo.model.billing.ChargeInstance</class>
 		<class>org.meveo.model.billing.OneShotChargeInstance</class>
 		<class>org.meveo.model.billing.RecurringChargeInstance</class>
+		<class>org.meveo.model.billing.UsageChargeInstance</class>
 		<class>org.meveo.model.billing.ServiceInstance</class>
 		<class>org.meveo.model.billing.Subscription</class>
 		<class>org.meveo.model.billing.UserAccount</class>
@@ -73,9 +78,6 @@
 		<class>org.meveo.model.billing.SubCategoryInvoiceAgregate</class>
 		<class>org.meveo.model.billing.TaxInvoiceAgregate</class>
 		<class>org.meveo.model.billing.RatedTransaction</class>
-		<class>org.meveo.model.billing.ChargeApplication</class>
-
-
 		<class>org.meveo.model.billing.Language</class>
 		<class>org.meveo.model.billing.Country</class>
 		<class>org.meveo.model.billing.TradingCountry</class>
@@ -97,6 +99,9 @@
 		<class>org.meveo.model.catalog.PricePlanMatrix</class>
 		<class>org.meveo.model.catalog.RecurringChargeTemplate</class>
 		<class>org.meveo.model.catalog.ServiceTemplate</class>
+		<class>org.meveo.model.catalog.ServiceUsageChargeTemplate</class>
+		<class>org.meveo.model.catalog.UsageChargeTemplate</class>
+		<class>org.meveo.model.catalog.CounterTemplate</class>
 		<class>org.meveo.model.communication.Campaign</class>
 		<class>org.meveo.model.communication.Message</class>
 		<class>org.meveo.model.communication.MessageTemplateVariable</class>
@@ -166,9 +171,9 @@
 			<!-- <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" 
 				/> -->
 		</properties>
-
+<!--
 		<class>org.meveo.model.datawarehouse.DWHAccountOperation</class>
 		<class>org.meveo.model.datawarehouse.JournalEntry</class>
-
+-->
 	</persistence-unit>
 </persistence>
