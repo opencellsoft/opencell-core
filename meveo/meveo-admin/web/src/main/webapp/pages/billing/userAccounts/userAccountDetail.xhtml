@@ -12,28 +12,29 @@
 	<ui:define name="body">
 
 		<hftl:entityPopup id="billingAccountPopup" header="#{messages['billingAccount.popup.header']}" backingBean="#{billingAccountBean}"
-			dataModel="#{billingAccounts}" searchField1Label="#{messages['billingAccount.code']}" searchField1="code"
-			column1Label="#{messages['billingAccount.code']}" column1="code" filtersMap="#{billingAccountBean.filters}">
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}" render="formId" immediate="true" action="#{userAccountBean.populateAccounts(entity)}"
-				oncomplete="dlg_billingAccountPopup.hide()">
-			</a:commandLink>
+			searchField1Label="#{messages['billingAccount.code']}" searchField1="code"
+			column1Label="#{messages['billingAccount.code']}" column1="code"
+			selection="#{userAccountBean.entity.billingAccount}" updateField=":userAccountFormPanel:formId:billingAccountSelectId:billingAccountSelectId">
+			
+<!-- 			<a:commandLink value="#{messages['commons.select']}" render="formId" immediate="true" action="#{userAccountBean.populateAccounts(entity)}" -->
+<!-- 				oncomplete="dlg_billingAccountPopup.hide()"> -->
+<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="ratedTransactionsNoInvoicedPopup" header="#{messages['ratedTransactionsNoInvoiced.popup.header']}" showSearchButton="false"
-			backingBean="#{userAccountBean}" dataModel="#{getRatedTransactionsNoInvoiced}" column1Label="#{messages['ratedTransaction.usageDate']}"
+			backingBean="#{ratedTransactionBean}" dataModel="#{getRatedTransactionsNoInvoiced}" column1Label="#{messages['ratedTransaction.usageDate']}"
 			column1="usageDate" column2Label="#{messages['ratedTransaction.usageCode']}" column2="usageCode"
 			column3Label="#{messages['ratedTransaction.description']}" column3="prDescription" column4Label="#{messages['ratedTransaction.usageQuantity']}"
 			column4="usageQuantity" column5Label="#{messages['ratedTransaction.amount1WithoutTax']}" column5="amount"
-			column6Label="#{messages['ratedTransaction.amount1WithTax']}" column6="amount2" filtersMap="#{ratedTransactionBean.filters}">
+			column6Label="#{messages['ratedTransaction.amount1WithTax']}" column6="amount2" >
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="ratedTransactionsInvoicedPopup" header="#{messages['ratedTransactionsInvoiced.popup.header']}" showSearchButton="false"
-			backingBean="#{userAccountBean}" dataModel="#{getRatedTransactionsInvoiced}" column1Label="#{messages['ratedTransaction.usageDate']}"
+			backingBean="#{ratedTransactionBean}" dataModel="#{getRatedTransactionsInvoiced}" column1Label="#{messages['ratedTransaction.usageDate']}"
 			column1="usageDate" column2Label="#{messages['ratedTransaction.usageCode']}" column2="usageCode"
 			column3Label="#{messages['ratedTransaction.description']}" column3="prDescription" column4Label="#{messages['ratedTransaction.usageQuantity']}"
 			column4="usageQuantity" column5Label="#{messages['ratedTransaction.amount1WithoutTax']}" column5="amount"
-			column6Label="#{messages['ratedTransaction.amount1WithTax']}" column6="amount2" filtersMap="#{ratedTransactionBean.filters}">
+			column6Label="#{messages['ratedTransaction.amount1WithTax']}" column6="amount2">
 		</hftl:entityPopup>
 
 
@@ -42,7 +43,7 @@
 				<div class="panels">
 					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(userAccountBean.entity)}" entity="#{userAccountBean.entity}" />
 					<rich:panel styleClass="formPanel" style="border: none;">
-						<hf:formPanel label="#{messages['userAccount.userAccountPanel']}" backingBean="#{userAccountBean}">
+						<hf:formPanel id="userAccountFormPanel" label="#{messages['userAccount.userAccountPanel']}" backingBean="#{userAccountBean}" killConversationOnSave="false">
 							<rich:tabPanel switchType="client">
 								<rich:tab header="Compte">
 									<hftl:panelGroup columns="1">
@@ -139,8 +140,8 @@
 									onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
 									disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />&nbsp;&nbsp;
    	 	<a:commandButton value="#{messages['ratedTransactionNoInvoiced.button']}"
-									onclick="Richfaces.showModalPanel('ratedTransactionsNoInvoicedPopup');" />&nbsp;&nbsp;
-		<a:commandButton value="#{messages['ratedTransactionInvoiced.button']}" onclick="Richfaces.showModalPanel('ratedTransactionsInvoicedPopup');" />
+									onclick="dlg_ratedTransactionsNoInvoicedPopup.show());" />&nbsp;&nbsp;
+		<a:commandButton value="#{messages['ratedTransactionInvoiced.button']}" onclick="dlg_ratedTransactionsInvoicedPopup.show();" />
 <!-- 							</custom:listPanel> -->
 						</h:form>
 					</rich:panel>
