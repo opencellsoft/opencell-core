@@ -455,6 +455,10 @@ input[type="submit"],
 	text-shadow:1px 1px 0px rgba(255,255,255,0.8),0px 0px 0px rgba(255,255,255,0);
 
 }
+.ui-button:hover .ui-button-icon-left
+{
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+}
 input[type="submit"]:hover,
 .ui-button:hover
 {
@@ -731,4 +735,23 @@ input[name^="j_idt"][type="text"]
   box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 0, .2);
   padding : 4px;
  
+}
+.ui-spinner-button
+{
+  margin : 0px;
+}
+.ui-spinner .ui-spinner-button  .ui-icon-triangle-1-s
+{
+   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240.png) !Important;
+
+}
+.ui-spinner .ui-spinner-button:hover  .ui-icon-triangle-1-s,
+.ui-spinner .ui-spinner-button:hover  .ui-icon-triangle-1-n
+{
+   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+
+}
+table[id="j_idt114:formPricePlan:j_idt191"]
+{
+  border : none;
 }
