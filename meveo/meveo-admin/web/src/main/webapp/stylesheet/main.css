@@ -580,6 +580,10 @@ input[type="submit"]:hover,
  
   /*background : red !important;*/
 }
+.ui-inputfield[disabled="disabled"]
+{
+  margin-left : -10px;
+}
 .ui-outputlabel
 {
   display : inline-block;
@@ -751,7 +755,9 @@ input[name^="j_idt"][type="text"]
    background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
 
 }
-table[id="j_idt114:formPricePlan:j_idt191"]
+table[id="j_idt114:formPricePlan:j_idt191"],
+.ui-panelgrid
 {
   border : none;
 }
+
