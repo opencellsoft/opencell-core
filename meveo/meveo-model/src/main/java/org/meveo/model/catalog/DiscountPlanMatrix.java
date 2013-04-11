@@ -18,10 +18,22 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.admin.Seller;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
-import com.sun.istack.internal.NotNull;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller; 
 
 /**
  * @author Ignas Lelys
@@ -40,8 +52,7 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	private Integer businessIntermediaryId;
 
 	@Column(name = "EVENT_CODE", length = 20, nullable = false)
-	@Size(max = 20, min = 1)
-	@NotNull
+	@Size(max = 20, min = 1) 
 	private String eventCode;
 
 	@Temporal(TemporalType.TIMESTAMP)

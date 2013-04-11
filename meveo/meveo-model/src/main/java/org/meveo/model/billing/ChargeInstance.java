@@ -38,6 +38,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ChargeTemplate;
 
 /**
@@ -96,13 +97,25 @@ public class ChargeInstance extends BusinessEntity {
     @JoinColumn(name = "TRADING_LANGUAGE_ID")
     private TradingLanguage tradingLanguage;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TRADING_CURRENCY_ID")
     private TradingCurrency tradingCurrency ;
     
     
     @Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SELLER_ID")
+    private Seller seller;
 
     public String getCriteria1() {
         return criteria1;

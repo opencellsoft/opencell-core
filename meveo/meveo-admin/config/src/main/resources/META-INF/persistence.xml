@@ -35,6 +35,7 @@
 		<class>org.meveo.model.admin.CommunicatorInputHistory</class>
 		<class>org.meveo.model.admin.VertinaConfiguration</class>
 		<class>org.meveo.model.admin.MedinaConfiguration</class>
+		<class>org.meveo.model.admin.Seller</class>
 		<class>org.meveo.model.security.Role</class>
 		<class>org.meveo.model.security.Permission</class>
 		<class>org.meveo.model.admin.User</class>

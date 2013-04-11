@@ -24,9 +24,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.Language;
+import org.meveo.model.billing.BillingAccount; 
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -43,17 +44,18 @@ public class Seller extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
-     @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "COUNTRY_ID")
-	  private Country country; 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency ;
     
-     @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "CURRENCY_ID")
-	  private Currency currency;
-     
-     @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "LANGUAGE_ID")
-	  private Language language;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry; 
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "TRADING_LANGUAGE_ID")
+   private TradingLanguage tradingLanguage;
      
       @Embedded
  	   private Address address = new Address();
@@ -82,46 +84,44 @@ public class Seller extends BusinessEntity {
 		super(); 
 	}
 
-	public Seller(Country country, Currency currency, Language language,
-			Address address, Customer customer,
-			CustomerAccount customerAccount, BillingAccount billingAccount,
-			UserAccount userAccount, Seller seller) {
-		super();
-		this.country = country;
-		this.currency = currency;
-		this.language = language;
-		this.address = address;
-		this.customer = customer;
-		this.customerAccount = customerAccount;
-		this.billingAccount = billingAccount;
-		this.userAccount = userAccount;
-		this.seller = seller;
+ 
+
+	
+
+	public TradingCurrency getTradingCurrency() {
+		return tradingCurrency;
 	}
 
-	public Country getCountry() {
-		return country;
+
+
+
+
+	public void setTradingCurrency(TradingCurrency tradingCurrency) {
+		this.tradingCurrency = tradingCurrency;
 	}
 
-	public void setCountry(Country country) {
-		this.country = country;
+ 
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
-	public Currency getCurrency() {
-		return currency;
+ 
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
 
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
+ 
+	public TradingLanguage getTradingLanguage() {
+		return tradingLanguage;
 	}
 
-	public Language getLanguage() {
-		return language;
+ 
+	public void setTradingLanguage(TradingLanguage tradingLanguage) {
+		this.tradingLanguage = tradingLanguage;
 	}
 
-	public void setLanguage(Language language) {
-		this.language = language;
-	}
 
+ 
 	public Address getAddress() {
 		return address;
 	}
