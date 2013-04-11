@@ -23,7 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.ProviderBusinessEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
@@ -39,7 +39,7 @@ import org.meveo.model.shared.Address;
 @Entity
 @Table(name = "CRM_SELLER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_SELLER_SEQ")
-public class Seller extends ProviderBusinessEntity {
+public class Seller extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
