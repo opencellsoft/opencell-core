@@ -582,7 +582,7 @@ input[type="submit"]:hover,
 }
 .ui-inputfield[disabled="disabled"]
 {
-  margin-left : -10px;
+  margin-left : -13px;
 }
 .ui-outputlabel
 {
@@ -624,13 +624,32 @@ select[disabled]
    border-radius: 0px 0px 8px 8px;
 }
 
-div.body > table > thead
+div.body > table > thead,
+.panels > table  > thead
 {
 	font-size : 14px;
 	float : left;
-	//color : #0d5c59;
 	color : #4f4f4f;
 	border-bottom : 1px solid #d5d5d5;
+}
+.panels > table
+{
+  float : left;
+  clear : both;
+  margin-bottom : 20px;
+}
+#tab
+{
+  float : left;
+  width : 95%;
+}
+.panels > table  > thead tr th
+{
+    //margin-bottom : 100px !important;
+    float : left;
+    //background : red;
+    display : block;
+    paddin
 }
 .ui-picklist-list
 {
@@ -756,7 +775,7 @@ input[name^="j_idt"][type="text"]
 
 }
 table[id="j_idt114:formPricePlan:j_idt191"],
-.ui-panelgrid
 {
   border : none;
 }
+
