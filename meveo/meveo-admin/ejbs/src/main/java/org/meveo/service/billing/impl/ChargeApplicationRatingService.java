@@ -46,7 +46,7 @@ public class ChargeApplicationRatingService {
 	private static final String WILCARD = "*";
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
-	
+	//used to rate a oneshot or recurring charge
 	public WalletOperation rateChargeApplication(String code, Subscription subscription,
             ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
@@ -63,27 +63,48 @@ public class ChargeApplicationRatingService {
 		result.setParameter2(criteria2);
 		result.setParameter3(criteria3);
 		
-		String providerCode = chargeInstance.getProvider().getCode();
-		if(allPricePlan==null){
-			loadPricePlan();
-		}
-		if(!allPricePlan.containsKey(providerCode)){
-			throw new RuntimeException("no price plan for provider "+providerCode);
-		}
-		if(!allPricePlan.get(providerCode).containsKey(code)){
-			throw new RuntimeException("no price plan for provider "+providerCode+" and charge code "+code);
-		}
-		PricePlanMatrix ratePrice=null;
-		BigDecimal unitPriceWithoutTax = amountWithoutTax;
+        Provider provider = chargeInstance.getProvider();
+        result.setProvider(provider);
+        result.setChargeInstance(chargeInstance);
+        
+        result.setWallet(subscription.getUserAccount().getWallet());
+        result.setCode(code);
+        result.setOperationDate(applicationDate);
+        result.setQuantity(quantity);
+        result.setTaxPercent(taxPercent);
+        result.setStartDate(startdate);
+        result.setEndDate(endDate);
+        result.setStatus(WalletOperationStatusEnum.OPEN);
+		
+        BigDecimal unitPriceWithoutTax = amountWithoutTax;
         BigDecimal unitPriceWithTax = null;
-
-        boolean overriddenPrice = (unitPriceWithoutTax != null);
-        if (overriddenPrice) {
+        if (unitPriceWithoutTax != null) {
         	unitPriceWithTax = amountWithTax;
-        } else {
-        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(code),result,taxId,currencyId);
+        } 
+        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax,provider);
+        return result;
+		
+	}
+	
+	//used to rate or rerate a bareWalletOperation 
+	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Provider provider){
+
+		PricePlanMatrix ratePrice=null;
+		String providerCode=provider.getCode();
+
+        if (unitPriceWithoutTax == null) {
+        	if(allPricePlan==null){
+    			loadPricePlan();
+    		}
+        	if(!allPricePlan.containsKey(providerCode)){
+    			throw new RuntimeException("no price plan for provider "+providerCode);
+    		}
+    		if(!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())){
+    			throw new RuntimeException("no price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
+    		}
+        	//ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,taxId,currencyId);
             if (ratePrice == null ||  ratePrice.getAmountWithoutTax()==null) {
-            	throw new RuntimeException("invalid price plan for provider "+providerCode+" and charge code "+code);
+            	throw new RuntimeException("invalid price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
             } else {
                 log.info("found ratePrice:" + ratePrice.getId() + " priceHT=" + ratePrice.getAmountWithoutTax()
                         + " priceTTC=" + ratePrice.getAmountWithTax());
@@ -92,45 +113,32 @@ public class ChargeApplicationRatingService {
             }
         }
        
-        BigDecimal priceWithoutTax = quantity.multiply(unitPriceWithoutTax);
+        BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
         BigDecimal priceWithTax = null;
         BigDecimal amountTax = BigDecimal.ZERO;
-        if (taxPercent != null) {
-            amountTax = priceWithoutTax.multiply(taxPercent.divide(HUNDRED));
+        if (bareWalletOperation.getTaxPercent() != null) {
+            amountTax = priceWithoutTax.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
         }
         if(unitPriceWithTax==null){
         	priceWithTax = priceWithoutTax.add(amountTax);
         } else {
-        	priceWithTax = quantity.multiply(unitPriceWithoutTax);
+        	priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
         }
-
-        Provider provider = chargeInstance.getProvider();
-
+        
         if (provider.getRounding() != null && provider.getRounding() > 0) {
         	priceWithoutTax = NumberUtils.round(priceWithoutTax, provider.getRounding());
         	priceWithTax = NumberUtils.round(priceWithTax, provider.getRounding());
         }
-        
-        result.setProvider(provider);
-        result.setChargeInstance(chargeInstance);
-        
-        // FIXME: Too many requests to get the wallet and works only for postpaid
-        result.setWallet(subscription.getUserAccount().getWallet());
-        result.setCode(code);
-        result.setOperationDate(applicationDate);
-        result.setQuantity(quantity);
-        result.setUnitAmountWithoutTax(unitPriceWithoutTax);
-        result.setUnitAmountWithTax(unitPriceWithTax);
-        result.setTaxPercent(taxPercent);
-        result.setAmountWithoutTax(priceWithoutTax);
-        result.setAmountWithTax(priceWithTax);
-        result.setAmountTax(amountTax);
-        result.setStartDate(startdate);
-        result.setEndDate(endDate);
-        result.setStatus(WalletOperationStatusEnum.OPEN);
-		return result;
+
+        bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+        bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+        bareWalletOperation.setTaxPercent(bareWalletOperation.getTaxPercent());
+        bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
+        bareWalletOperation.setAmountWithTax(priceWithTax);
+        bareWalletOperation.setAmountTax(amountTax);
 		
 	}
+	
 	
 	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long taxId, Long currencyId) {
 		// FIXME: the price plan properties could be null !
@@ -200,7 +208,7 @@ public class ChargeApplicationRatingService {
 		return null;
 	}
 
-	
+	//FIXME : call this method when priceplan is edited (or more precisely add a button to reload the priceplan)
     @SuppressWarnings("unchecked")
 	protected void loadPricePlan() {
     	HashMap<String,HashMap<String,List<PricePlanMatrix>>> result = new HashMap<String,HashMap<String, List<PricePlanMatrix>>>();
