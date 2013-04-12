@@ -298,9 +298,10 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
     public boolean pdfExists(long invoiceId) {
         Invoice invoice = invoiceService.findById(invoiceId);
-        if (invoice.getPdf() == null)
-            return false;
-        return true;
+        if (invoice!=null && invoice.getPdf() != null) {
+            return true;
+        }
+        return false;
     }
 
     public String launchExceptionalInvoicing() {

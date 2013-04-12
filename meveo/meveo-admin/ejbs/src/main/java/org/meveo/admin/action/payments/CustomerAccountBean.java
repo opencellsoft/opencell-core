@@ -68,9 +68,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
      * Account.
      */
-    @Inject
-    @RequestParam
-    private Instance<Long> customerId;
+    private Long customerId;
 
     @RequestParam
     private Instance<Integer> tab;
@@ -125,7 +123,8 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 
             }
             saveOrUpdate(entity);
-            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId=" + entity.getId() + "&cid=" + conversation.getId() + "&faces-redirect=true";
+            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId=" + entity.getId() + "&cid=" + conversation.getId()
+                    + "&faces-redirect=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {
@@ -295,7 +294,11 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
     }
 
     private Long getCustomerId() {
-        return customerId.get();
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     private Integer getTab() {

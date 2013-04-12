@@ -1,17 +1,17 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-			<!-- 			<f:viewParam name="customerId" value="#{customerAccountBean.customerId}" /> -->
+			<f:viewParam name="customerId" value="#{customerAccountBean.customerId}" />
 		</f:metadata>
 	</ui:define>
-
+	
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -38,6 +38,7 @@
 		<h:panelGrid columns="1" width="100%">
 			<h:panelGroup>
 				<div class="panels">
+				kk #{customerAccountBean.customerId}kk
 					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(customerAccountBean.entity)}" entity="#{customerAccountBean.entity}" />
 					<p:tabView id="tab" activeIndex="#{customerAccountBean.selectedTab}">
 						<p:tab id="compte" title="#{messages['customerAccount.tab.account']}">
@@ -57,11 +58,11 @@
 													listBean="#{providerContactService}" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="1">
-												<hf:formField label="#{messages['businessEntity.description']}" field="description"  size="80" maxlength="100" />
+												<hf:formField label="#{messages['businessEntity.description']}" field="description" size="80" maxlength="100" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="2">
-												<hf:formField label="#{messages['customerAccount.externalRef1']}" field="externalRef1" maxlength="50"  />
-												<hf:formField label="#{messages['customerAccount.externalRef2']}" field="externalRef2" maxlength="50"  />
+												<hf:formField label="#{messages['customerAccount.externalRef1']}" field="externalRef1" maxlength="50" />
+												<hf:formField label="#{messages['customerAccount.externalRef2']}" field="externalRef2" maxlength="50" />
 												<hf:formEntityField id="currencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency" childField="currencyCode"
 													popup="true" popupId="customerAccCurrencyPopup" />
 											</hftl:panelGroup>
@@ -135,7 +136,7 @@
 
 											<hftl:fieldset name="#{messages['commons.contacts']}" columns="1">
 												<hf:formEntityField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false"
-													required="false" size="50" maxlength="100"  />
+													required="false" size="50" maxlength="100" />
 												<hftl:panelGroup columns="2">
 													<hf:formEntityField label="#{messages['contactInformation.phone']}" field="contactInformation" childField="phone" popup="false"
 														maxlength="15" />

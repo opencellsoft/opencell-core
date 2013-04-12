@@ -525,7 +525,7 @@
 		<navigation-case>
 			<from-outcome>addCustomerAccount</from-outcome>
 			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&amp;backView=customerDetail</to-view-id>
-			<redirect include-view-params="true" />
+			<redirect include-view-params="true"/>
 		</navigation-case>
 
 		<navigation-case>

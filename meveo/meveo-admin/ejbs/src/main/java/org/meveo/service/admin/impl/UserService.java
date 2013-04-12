@@ -136,7 +136,7 @@ public class UserService extends PersistenceService<User> {
     public User findByUsernameAndPassword(String username, String password) {
         try {
             password = Sha1Encrypt.encodePassword(password);
-            return (User) em.createQuery("from User as u left join fetch u.providers p left join fetch p.language where u.userName=:userName and u.password=:password")
+            return (User) em.createQuery("from User as u where u.userName=:userName and u.password=:password")
                 .setParameter("userName", username.toUpperCase()).setParameter("password", password).getSingleResult();
         } catch (NoResultException ex) {
             return null;

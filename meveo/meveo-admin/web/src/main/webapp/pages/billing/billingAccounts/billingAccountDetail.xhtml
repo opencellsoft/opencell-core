@@ -58,13 +58,13 @@
 
 					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(billingAccountBean.entity)}" entity="#{billingAccountBean.entity}" />
 
-					<rich:tabPanel styleClass="formPanel" switchType="client">
-						<rich:tab header="#{messages['billingAccount.tab.account']}">
+					<p:tabView styleClass="formPanel" >
+						<p:tab title="#{messages['billingAccount.tab.account']}">
 							<hf:formPanel id="formBillingAccountPanel" label="#{messages['billingAccount.billingAccountPanel']}" backingBean="#{billingAccountBean}"
 								styleClass="formPanel" killConversationOnSave="false" useCustomIdParam="true">
 
-								<rich:tabPanel switchType="client">
-									<rich:tab header="#{messages['billingAccount.tab.account']}">
+								<p:tabView switchType="client">
+									<p:tab title="#{messages['billingAccount.tab.account']}">
 										<hftl:fieldset name="#{messages['billingAccount.billingAccountPanel']}" columns="1">
 											<hftl:panelGroup columns="1">
 												<hf:formEntityField id="customerSelectId" label="#{messages['billingAccount.customerAccount']}" field="customerAccount" childField="code"
@@ -178,9 +178,9 @@
 												<hf:formField label="#{messages['accountEntity.defaultLevel']}" field="defaultLevel" isMessage="true" />
 											</hftl:panelGroup>
 										</hftl:fieldset>
-									</rich:tab>
+									</p:tab>
 
-									<rich:tab header="#{messages['billingAccount.tab.information']}">
+									<p:tab title="#{messages['billingAccount.tab.information']}">
 										<hftl:fieldset name="#{messages['commons.contacts']}" columns="1">
 											<hftl:panelGroup columns="1">
 												<hf:formEntityField label="#{messages['address.address1']}" field="address" childField="address1" popup="false" size="80" maxlength="80" />
@@ -250,8 +250,8 @@
 												</h:panelGroup>
 											</a:outputPanel>
 										</hftl:fieldset>
-									</rich:tab>
-								</rich:tabPanel>
+									</p:tab>
+								</p:tabView>
 							</hf:formPanel>
 
 							<h:form id="operationsForm" rendered="#{!billingAccountBean.edit}">
@@ -270,9 +270,9 @@
 								<!-- 								</custom:listPanel> -->
 							</h:form>
 
-						</rich:tab>
+						</p:tab>
 
-						<rich:tab header="#{messages['billingAccount.tab.invoices']}" rendered="#{!billingAccountBean.edit}">
+						<p:tab title="#{messages['billingAccount.tab.invoices']}" rendered="#{!billingAccountBean.edit}">
 							<hf:formPanel formId="form3" backingBean="#{billingAccountBean}" showFormButtons="false">
 								<hftl:panelGroup columns="3">
 									<hf:formField label="#{messages['businessEntity.code']}" field="code" />
@@ -312,8 +312,8 @@
 								</p:column>
 								<hftl:actionsColumn editView="/pages/billing/invoices/invoiceDetail.xhtml" />
 							</hftl:dataList>
-						</rich:tab>
-					</rich:tabPanel>
+						</p:tab>
+					</p:tabView>
 				</div>
 			</h:panelGroup>
 		</h:panelGrid>
