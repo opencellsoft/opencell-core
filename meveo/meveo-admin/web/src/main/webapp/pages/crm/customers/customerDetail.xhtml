@@ -78,13 +78,13 @@
 									<hf:formEntityField label="#{messages['address.zipCode']}" field="address" childField="zipCode" popup="false" required="true" maxlength="5"
 										size="5" />
 									<hf:formEntityField label="#{messages['address.city']}" field="address" childField="city" popup="false" required="true" maxlength="50" />
-									<p:outputPanel id="countryPanel">
+									<p:panelGrid columns="3" id="countryPanel">
 										<h:outputText value="#{messages['address.country']}" />
-										<h:selectOneMenu required="true" rendered="#{customerBean.edit}" value="#{customerBean.entity.address.country}">
+										<p:selectOneMenu required="true" rendered="#{customerBean.edit}" value="#{customerBean.entity.address.country}">
 											<f:selectItems value="#{messages['address.countrys'].split(',')}" var="country" itemLabel="#{country}" />
-										</h:selectOneMenu>
+										</p:selectOneMenu>
 										<h:outputText rendered="#{!customerBean.edit}" value="#{customerBean.entity.address.country}" />
-									</p:outputPanel>
+									</p:panelGrid>
 								</p:panelGrid>
 							</p:fieldset>
 						</p:tab>
