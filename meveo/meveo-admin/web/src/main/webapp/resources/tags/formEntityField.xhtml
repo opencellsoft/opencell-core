@@ -33,9 +33,9 @@
 
 <cc:implementation>
 	<ui:fragment rendered="#{cc.attrs.show}">
-		<h:panelGrid columns="2" rendered="#{cc.attrs.popup}">
+		<p:panelGrid columns="2" rendered="#{cc.attrs.popup}">
 			<p:outputLabel for="#{cc.attrs.id}" value="#{cc.attrs.label}" />
-			<h:panelGrid columns="3">
+			<p:panelGrid columns="3">
 				<p:inputText id="#{cc.attrs.id}" rendered="#{cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}"
 					disabled="true" />
@@ -44,14 +44,14 @@
 				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 				<h:outputText rendered="#{!cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" style="font-weight:bold;" />
-			</h:panelGrid>
-		</h:panelGrid>
+			</p:panelGrid>
+		</p:panelGrid>
 
 		<ui:fragment rendered="#{not cc.attrs.popup}">
 
 			<!-- if service is set, then load list of all entities from db and show as drop down list -->
 			<ui:fragment rendered="#{!empty cc.attrs.listBean or !empty cc.attrs.listElements}">
-				<h:panelGrid columns="2">
+				<p:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_level" value="#{cc.attrs.label}" />
 					<p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_level"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}">
@@ -68,7 +68,7 @@
 					</p:selectOneMenu>
 					<h:outputText rendered="#{not cc.attrs.edit}"
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" style="font-weight:bold;" />
-				</h:panelGrid>
+				</p:panelGrid>
 			</ui:fragment>
 
 			<!-- if service is not set, then just render fields for embedded entity -->

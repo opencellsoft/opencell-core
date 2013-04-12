@@ -21,17 +21,17 @@
 </cc:interface>
 
 <cc:implementation>
-	<p:panelGrid columns="#{cc.attrs.columns}">
-		<f:facet name="header">
-			<h:outputText value="#{cc.attrs.label}" />
-		</f:facet>
+	<h:form id="searchForm" styleClass="mainForm">
+		<p:panelGrid columns="1">
+			<f:facet name="header">
+				<h:outputText value="#{cc.attrs.label}" />
+			</f:facet>
 
-		<h:form id="searchForm" styleClass="mainForm">
 			<p:messages />
-			<h:panelGrid columns="#{cc.attrs.columns}">
+			<p:panelGrid columns="#{cc.attrs.columns}">
 				<cc:insertChildren />
-			</h:panelGrid>
-			<h:panelGrid columns="3">
+			</p:panelGrid>
+			<p:panelGrid columns="3" style="float: right;">
 				<p:commandButton id="buttonSearch"
 					value="#{messages['commons.search']}" ajax="false"
 					action="#{cc.attrs.backingBean.search}" />
@@ -43,9 +43,9 @@
 					<f:param name="cid" value="#{conversation.id}" />
 					<f:param name="edit" value="true" />
 				</p:button>
-			</h:panelGrid>
-		</h:form>
-	</p:panelGrid>
+			</p:panelGrid>
+		</p:panelGrid>
+	</h:form>
 </cc:implementation>
 
 </html>

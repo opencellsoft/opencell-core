@@ -17,7 +17,7 @@
 
 <cc:implementation>
 
-	<h:panelGrid columns="#{cc.attrs.columns}">
+	<p:panelGrid columns="#{cc.attrs.columns}" style="float: right;">
 		<p:button value="#{messages['commons.edit']}" rendered="#{!cc.attrs.edit}">
 			<f:param name="edit" value="true" />
 			<f:param name="#{cc.attrs.objectIdParamName}" value="#{cc.attrs.backingBean.objectId}" />
@@ -40,7 +40,7 @@
 		<p:button id="buttonNew" value="#{messages['action.back']}" outcome="#{cc.attrs.backingBean.back()}">
 		</p:button>
 
-	</h:panelGrid>
+	</p:panelGrid>
 
 </cc:implementation>
 

@@ -22,15 +22,15 @@
 
 <cc:implementation>
 	<ui:fragment rendered="#{cc.isText(cc.attrs.field,cc.attrs.entity)}">
-		<h:panelGrid columns="2">
+		<p:panelGrid columns="2">
 			<p:outputLabel for="#{cc.attrs.field}_text" value="#{cc.attrs.label}" />
 			<p:inputText id="#{cc.attrs.field}_text" value="#{cc.filters[cc.attrs.field]}" size="#{cc.attrs.size}" disabled="#{cc.attrs.disabled}" />
-		</h:panelGrid>
+		</p:panelGrid>
 	</ui:fragment>
 
 	<!--  If the value binding is a boolean, display a drop down with yes/no choices. -->
 	<ui:fragment rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.entity)}">
-		<h:panelGrid columns="2">
+		<p:panelGrid columns="2">
 			<p:outputLabel for="#{cc.attrs.field}_boolean" value="#{cc.attrs.label}" />
 			<p:selectOneMenu id="#{cc.attrs.field}_boolean" value="#{cc.filters[cc.attrs.field]}" converter="javax.faces.Boolean"
 				disabled="#{cc.attrs.disabled}">
@@ -38,21 +38,21 @@
 				<f:selectItem itemValue="#{true}" itemLabel="#{messages['commons.yes']}" />
 				<f:selectItem itemValue="#{false}" itemLabel="#{messages['commons.no']}" />
 			</p:selectOneMenu>
-		</h:panelGrid>
+		</p:panelGrid>
 	</ui:fragment>
 
 	<!--  If the value binding is a date, display a p:calendar field. -->
 	<ui:fragment rendered="#{cc.isDate(cc.attrs.field,cc.attrs.entity)}">
 		<ui:fragment rendered="#{not cc.attrs.rangeSearch}">
-			<h:panelGrid columns="2">
+			<p:panelGrid columns="2">
 				<p:outputLabel for="#{cc.attrs.field}_date" value="#{cc.attrs.label}" />
 				<p:calendar id="#{cc.attrs.field}_date" value="#{cc.filters[cc.attrs.field]}" pattern="#{cc.datePattern}" disabled="#{cc.attrs.disabled}" />
-			</h:panelGrid>
+			</p:panelGrid>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.rangeSearch}">
-			<h:panelGrid columns="2">
+			<p:panelGrid columns="2">
 				<p:outputLabel for="fromRange_#{cc.attrs.field}_date" value="#{cc.attrs.label}" />
-				<h:panelGrid columns="4">
+				<p:panelGrid columns="4">
 					<h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" />
 					<p:calendar id="fromRange_#{cc.attrs.field}_date" value="#{cc.filters[cc.fromRangeSearchFilterName]}" pattern="#{cc.datePattern}"
 						disabled="#{cc.attrs.disabled}" />
@@ -60,14 +60,14 @@
 					<h:outputText value="#{messages['commons.dateTill']}" style="padding:5px" />
 					<p:calendar id="toRange_#{cc.attrs.field}_date" value="#{cc.filters[cc.toRangeSearchFilterName]}" pattern="#{cc.datePattern}"
 						disabled="#{cc.attrs.disabled}" />
-				</h:panelGrid>
-			</h:panelGrid>
+				</p:panelGrid>
+			</p:panelGrid>
 		</ui:fragment>
 	</ui:fragment>
 
 	<!--  If the value binding is an enum, display a drop down. -->
 	<ui:fragment rendered="#{cc.isEnum(cc.attrs.field,cc.attrs.entity)}">
-		<h:panelGrid columns="2">
+		<p:panelGrid columns="2">
 			<p:outputLabel for="#{cc.attrs.field}_enum" value="#{cc.attrs.label}" />
 			<p:selectOneMenu id="#{cc.attrs.field}_enum" value="#{cc.filters[cc.attrs.field]}" disabled="#{cc.attrs.disabled}">
 				<f:selectItem itemLabel="" />
@@ -75,7 +75,7 @@
 					itemLabel="#{messages[enumElement.label]}" />
 				<f:converter converterId="enumConverter" />
 			</p:selectOneMenu>
-		</h:panelGrid>
+		</p:panelGrid>
 	</ui:fragment>
 
 	<!--  If the value binding is a number display number field. -->
@@ -104,27 +104,27 @@
 	<ui:fragment rendered="#{cc.isEntity(cc.attrs.field,cc.attrs.entity)}">
 		<!-- Search with entity popup -->
 		<ui:fragment rendered="#{cc.attrs.popup}">
-			<h:panelGrid columns="2">
+			<p:panelGrid columns="2">
 				<p:outputLabel for="#{cc.attrs.field}_child" value="#{cc.attrs.label}" />
-				<h:panelGrid id="#{cc.attrs.field}" columns="3">
+				<p:panelGrid id="#{cc.attrs.field}" columns="3">
 					<p:inputText id="#{cc.attrs.field}_child" value="#{cc.filters[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}"
 						size="#{cc.attrs.size}" disabled="true" />
 					<p:commandButton id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()" icon="ui-icon-search" />
 					<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
-				</h:panelGrid>
-			</h:panelGrid>
+				</p:panelGrid>
+			</p:panelGrid>
 		</ui:fragment>
 
 		<!-- Search with entity list in select box -->
 		<ui:fragment rendered="#{not cc.attrs.popup and not empty cc.attrs.listBean}">
-			<h:panelGrid columns="2">
+			<p:panelGrid columns="2">
 				<p:outputLabel for="_#{cc.attrs.id}_level" value="#{cc.attrs.label}" />
 				<p:selectOneMenu id="_#{cc.attrs.id}_level" value="#{cc.filters[cc.attrs.field]}">
 					<f:selectItem itemLabel="" itemValue="" />
 					<f:selectItems value="#{cc.attrs.listBean.listAll()}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
 					<s:objectConverter />
 				</p:selectOneMenu>
-			</h:panelGrid>
+			</p:panelGrid>
 		</ui:fragment>
 	</ui:fragment>
 
