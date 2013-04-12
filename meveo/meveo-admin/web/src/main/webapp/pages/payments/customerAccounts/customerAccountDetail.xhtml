@@ -166,7 +166,7 @@
 														<p:outputLabel for="firstName_text"
 															value="#{messages['name.firstName']}" />
 
-														<h:inputText id="firstName_text"
+														<p:inputText id="firstName_text"
 															value="#{customerAccountBean.entity.name.firstName}"
 															rendered="#{(customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany) and customerAccountBean.edit}" />
 														<h:outputText

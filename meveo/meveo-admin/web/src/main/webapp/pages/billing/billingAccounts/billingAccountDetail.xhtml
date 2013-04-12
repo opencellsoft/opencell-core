@@ -178,12 +178,12 @@
 												<h:panelGrid columns="2">
 													<p:outputLabel for="externalRef2"
 														value="#{messages['billingAccount.externalRef2']}" />
-													<h:inputText id="externalRef2"
+													<p:inputText id="externalRef2"
 														value="#{billingAccountBean.entity.externalRef2}"
 														rendered="#{billingAccountBean.edit}"
 														valueChangeListener="#{billingAccountBean.processValueChange}">
-														<a:ajax event="valueChange" render="invoicePrefixPanel" />
-													</h:inputText>
+														<p:ajax event="valueChange" render="invoicePrefixPanel" />														
+													</p:inputText>
 													<h:outputText
 														value="#{billingAccountBean.entity.externalRef2}"
 														rendered="#{!billingAccountBean.edit}"
@@ -236,7 +236,7 @@
 														rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}">
 														<p:outputLabel for="firstName_select"
 															value="#{messages['name.firstName']}" />
-														<h:inputText id="firstName_select"
+														<p:inputText id="firstName_select"
 															value="#{billingAccountBean.entity.name.firstName}"
 															rendered="#{(billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany) and billingAccountBean.edit}" />
 														<h:outputText
@@ -339,7 +339,7 @@
 															<p:outputLabel for="email_select"
 																value="#{messages['billingAccount.email']}" />
 
-															<h:inputText id="email_select"
+															<p:inputText id="email_select"
 																rendered="#{billingAccountBean.edit}"
 																value="#{billingAccountBean.entity.email}"
 																required="#{billingAccountBean.entity.electronicBilling}"
