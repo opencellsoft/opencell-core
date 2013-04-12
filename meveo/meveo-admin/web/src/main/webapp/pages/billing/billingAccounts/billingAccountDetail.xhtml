@@ -1,10 +1,16 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+	
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -24,8 +30,8 @@
 
 			<hftl:entityPopup id="billingCyclePopup" header="#{messages['billingCycle.popup.header']}" backingBean="#{billingCycleBean}"
 				searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}"
-				searchField2="description" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}"
-				column2="description" selection="#{billingAccountBean.entity.billingCycle}"
+				searchField2="description" column1Label="#{messages['businessEntity.code']}" column1="code"
+				column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{billingAccountBean.entity.billingCycle}"
 				updateField=":formBillingAccountPanel:formId:cycleSelectId:cycleSelectId">
 
 			</hftl:entityPopup>
@@ -55,7 +61,7 @@
 					<rich:tabPanel styleClass="formPanel" switchType="client">
 						<rich:tab header="#{messages['billingAccount.tab.account']}">
 							<hf:formPanel id="formBillingAccountPanel" label="#{messages['billingAccount.billingAccountPanel']}" backingBean="#{billingAccountBean}"
-								styleClass="formPanel" killConversationOnSave="false">
+								styleClass="formPanel" killConversationOnSave="false" useCustomIdParam="true">
 
 								<rich:tabPanel switchType="client">
 									<rich:tab header="#{messages['billingAccount.tab.account']}">
@@ -188,7 +194,8 @@
 												<a:outputPanel id="countryPanel">
 													<h:panelGrid columns="2">
 														<p:outputLabel for="country_select" value="#{messages['address.country']}" />
-														<h:selectOneMenu id="country_select" required="true" rendered="#{billingAccountBean.edit}" value="#{billingAccountBean.entity.address.country}">
+														<h:selectOneMenu id="country_select" required="true" rendered="#{billingAccountBean.edit}"
+															value="#{billingAccountBean.entity.address.country}">
 															<f:selectItems value="#{messages['address.countrys'].split(',')}" var="country" itemLabel="#{country}" />
 														</h:selectOneMenu>
 														<h:outputText rendered="#{!billingAccountBean.edit}" value="#{billingAccountBean.entity.address.country}" />
@@ -282,8 +289,8 @@
 							<br />
 							<br />
 
-							<hftl:dataList dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}" resultsId="i_results"
-								checkMany="false" backingBean="#{invoiceBean}">
+							<hftl:dataList dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}" resultsId="i_results" checkMany="false"
+								backingBean="#{invoiceBean}">
 								<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" />
 								<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" />
 								<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" />

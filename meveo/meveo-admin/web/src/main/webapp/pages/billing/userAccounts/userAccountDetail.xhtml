@@ -1,7 +1,7 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	 xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
@@ -9,6 +9,12 @@
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -75,7 +81,7 @@
 					<h:panelGrid>
 						<hf:formPanel id="userAccountFormPanel"
 							label="#{messages['userAccount.userAccountPanel']}"
-							backingBean="#{userAccountBean}" killConversationOnSave="false">
+							backingBean="#{userAccountBean}" killConversationOnSave="false"  useCustomIdParam="true">
 							<p:tabView id="userAccountTab">
 								<p:tab title="#{messages['billingAccount.tab.account']}">
 									<hftl:panelGroup columns="1">

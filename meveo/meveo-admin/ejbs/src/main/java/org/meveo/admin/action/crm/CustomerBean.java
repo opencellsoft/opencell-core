@@ -97,9 +97,10 @@ public class CustomerBean extends BaseBean<Customer> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
+	@Override
 	public String saveOrUpdate() {
 		saveOrUpdate(entity);
-		return "/pages/crm/customers/customerDetail.xhtml?edit=false&objectId=" + entity.getId()
+		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId()
 				+ "&faces-redirect=true";
 	}
 

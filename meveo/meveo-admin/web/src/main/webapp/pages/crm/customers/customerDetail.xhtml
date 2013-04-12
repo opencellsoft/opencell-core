@@ -5,36 +5,44 @@
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
 
-	 <hftl:entityPopup id="tradingCountryPopup" header="#{messages['tradingCountry.popup.header']}" backingBean="#{tradingCountryBean}"
+		<hftl:entityPopup id="tradingCountryPopup" header="#{messages['tradingCountry.popup.header']}" backingBean="#{tradingCountryBean}"
 			searchField1Label="#{messages['businessEntity.code']}" searchField1="countryCode" column1Label="#{messages['businessEntity.code']}"
 			column1="countryCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-			selection="#{customerBean.entity.tradingCountry}">
+			selection="#{customerBean.entity.tradingCountry}" updateField=":formCustomerPanel:formCustomer:tabView:trCountrySelectId:trCountrySelectId">
 		</hftl:entityPopup>
-		
-		
+
+
 		<hftl:entityPopup id="tradingLanguagePopup" header="#{messages['tradingLanguage.popup.header']}" backingBean="#{tradingLanguageBean}"
 			searchField1Label="#{messages['businessEntity.code']}" searchField1="languageCode" column1Label="#{messages['businessEntity.code']}"
 			column1="languageCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-			selection="#{customerBean.entity.tradingLanguage}">
+			selection="#{customerBean.entity.tradingLanguage}" updateField=":formCustomerPanel:formCustomer:tabView:trLanguageSelectId:trLanguageSelectId">
 		</hftl:entityPopup>
-		
+
 		<hftl:entityPopup id="customerCurrencyPopup" header="#{messages['tradingCurrency.popup.header']}" backingBean="#{tradingCurrencyBean}"
 			searchField1Label="#{messages['businessEntity.code']}" searchField1="currencyCode" column1Label="#{messages['businessEntity.code']}"
 			column1="currencyCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-			selection="#{customerBean.entity.tradingCurrency}">
+			selection="#{customerBean.entity.tradingCurrency}"
+			updateField=":formCustomerPanel:formCustomer:tabView:customerCurrencySelectId:customerCurrencySelectId">
 		</hftl:entityPopup>
 
 		<h:panelGrid columns="1" width="100%">
 			<h:panelGroup>
 				<div class="panels">
 					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}" entity="#{customerBean.entity}" />
-					<hf:formPanel formId="formCustomer" label="#{messages['customer.customerPanel']}" backingBean="#{customerBean}" style="formPanel">
+					<hf:formPanel id="formCustomerPanel" formId="formCustomer" label="#{messages['customer.customerPanel']}" backingBean="#{customerBean}"
+						style="formPanel" useCustomIdParam="true" killConversationOnSave="false">
 						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}">
 								<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" />
@@ -45,10 +53,10 @@
 									service="#{customerCategoryService}" required="true" />
 								<hf:formEntityField label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" popup="false"
 									service="#{customerBrandService}" required="true" />
-								 
-									<hf:formEntityField id="customerCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
-										childField="currencyCode" popup="true" popupId="customerCurrencyPopup" />
-								 
+
+								<hf:formEntityField id="customerCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
+									childField="currencyCode" popup="true" popupId="customerCurrencyPopup" />
+
 								<hf:formEntityField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry"
 									childField="countryCode" popup="true" popupId="tradingCountryPopup" />
 								<hf:formEntityField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage"
