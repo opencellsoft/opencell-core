@@ -18,7 +18,7 @@
 </cc:interface>
 
 <cc:implementation>
-	<h:panelGrid>
+	<p:panelGrid columns="#{cc.attrs.columns}">
 		<f:facet name="header">
 			<h:outputText value="#{cc.attrs.label}" />
 		</f:facet>
@@ -33,7 +33,7 @@
 				columns="#{cc.attrs.formButtonsColumns}" ajaxSubmit="#{cc.attrs.ajaxSubmit}" killConversationOnSave="#{cc.attrs.killConversationOnSave}" />
 		</h:form>
 
-	</h:panelGrid>
+	</p:panelGrid>
 </cc:implementation>
 
 </html>

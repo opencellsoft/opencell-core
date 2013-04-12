@@ -21,7 +21,7 @@
 </cc:interface>
 
 <cc:implementation>
-	<h:panelGrid>
+	<p:panelGrid columns="#{cc.attrs.columns}">
 		<f:facet name="header">
 			<h:outputText value="#{cc.attrs.label}" />
 		</f:facet>
@@ -45,7 +45,7 @@
 				</p:button>
 			</h:panelGrid>
 		</h:form>
-	</h:panelGrid>
+	</p:panelGrid>
 </cc:implementation>
 
 </html>
