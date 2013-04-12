@@ -686,6 +686,11 @@
 		</navigation-case>
 
 		<navigation-case>
+			<from-outcome>customerCategorys</from-outcome>
+			<to-view-id>/pages/crm/customerCategories/customerCategories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>customerCategories</from-outcome>
 			<to-view-id>/pages/crm/customerCategories/customerCategories.xhtml</to-view-id>
 			<redirect />
