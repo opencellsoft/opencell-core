@@ -490,7 +490,7 @@ input[type="submit"]:hover,
   
   padding-bottom : 10px;
   border-bottom : 1px solid #e7e5e5;
-  border-top : 1px solid white;
+ 
 }
 .body form:first-child
 {
@@ -507,6 +507,8 @@ input[type="submit"]:hover,
 {
   background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
+  font-size : 14px;
+  height : 35px;
 }
 .ui-datatable 
 {
@@ -582,7 +584,7 @@ input[type="submit"]:hover,
 }
 .ui-inputfield[disabled="disabled"]
 {
-  margin-left : -13px;
+  margin-left : -2px;
 }
 .ui-outputlabel
 {
@@ -691,7 +693,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f6f7', end
    border-radius: 8px !important;
    border : 1px solid #d6d6d6 ;
    display : inline-block;
-   overflow : hidden;
+  // overflow : hidden;
   margin-top : 10px;
 }
 .ui-panelgrid tr,
@@ -775,7 +777,41 @@ input[name^="j_idt"][type="text"]
 
 }
 table[id="j_idt114:formPricePlan:j_idt191"],
+.ui-panelgrid
 {
   border : none;
 }
-
+.ui-panelgrid
+{
+  width : 100%;
+  padding : 0px;
+  margin : 0px;
+}
+.ui-widget-header
+{
+  width : 100%;
+}
+td[role="gridcell"]
+{
+  margin : 0px;
+  padding : 2px;
+  
+}
+.ui-fieldset-legend
+{
+  border : none !important;
+  background : none !important;
+  font-size : 14px;
+}
+.ui-tabs-top
+{
+ float : left;
+}
+.ui-tabs
+{
+  width : 100%;
+}
+.ui-tabs-nav
+{
+  width : 99%;
+}
