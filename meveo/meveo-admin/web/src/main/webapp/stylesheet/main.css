@@ -815,3 +815,21 @@ td[role="gridcell"]
 {
   width : 99%;
 }
+.ui-widget-header 
+{
+  background : none;
+  text-align : left;
+  font-size : 14px;
+  
+}
+.ui-widget-header td[role="columnheader"]
+{
+  border-bottom : 1px solid #e8eded;
+}
+.ui-datatable .ui-widget-header
+{
+  font-size : 12px;
+  height : 27px;
+  background : -moz-linear-gradient(center top , #FFFFFF 0%, #EBEBEB 50%, #DBDBDB) repeat scroll 0 0 transparent;
+  
+}
