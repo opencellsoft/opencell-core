@@ -99,8 +99,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Request parameter. Used for loading in object by its id.
      */
     @Inject
-    @RequestParam
-    private Instance<Long> objectId;
+    @RequestParam("objectId")
+    private Instance<Long> objectIdFromParam;
+
+    private Long objectIdFromSet;
 
     /** Search filters. */
     protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
@@ -331,6 +333,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         sb.getChars(0, 1, dst, 0);
         sb.replace(0, 1, new String(dst).toLowerCase());
         sb.append("s");
+        return sb.toString();
+    }
+
+    public String getIdParameterName() {
+        String className = clazz.getSimpleName();
+        StringBuilder sb = new StringBuilder(className);
+        sb.append("Id");
+        char[] dst = new char[1];
+        sb.getChars(0, 1, dst, 0);
+        sb.replace(0, 1, new String(dst).toLowerCase());
         return sb.toString();
     }
 
@@ -584,7 +596,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected Long getObjectId() {
-        return objectId.get();
+        if (objectIdFromParam != null && objectIdFromParam.get() != null) {
+            objectIdFromSet = objectIdFromParam.get();
+        }
+
+        return objectIdFromSet;
+    }
+
+    public void setObjectId(Long objectId) {
+        objectIdFromSet = objectId;
     }
 
     public boolean isEdit() {
@@ -595,7 +615,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected void clearObjectId() {
-        objectId = null;
+        objectIdFromParam = null;
+        objectIdFromSet = null;
     }
 
     protected User getCurrentUser() {

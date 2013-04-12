@@ -62,18 +62,16 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
     @Inject
     private CustomerService customerService;
 
-    private String selectedTab = "compte";
+    private int selectedTab = 0;
 
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
      * Account.
      */
-    @Inject
-    @RequestParam
-    private Instance<Long> customerId;
+    private Long customerId;
 
     @RequestParam
-    private Instance<String> tab;
+    private Instance<Integer> tab;
 
     private CustomerAccount customerAccountTransfer = new CustomerAccount();
 
@@ -102,7 +100,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
             Customer customer = customerService.findById(getCustomerId());
             populateAccounts(customer);
         }
-        if (tab != null) {
+        if (getTab() != null) {
             selectedTab = getTab();
         }
         return entity;
@@ -125,7 +123,8 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 
             }
             saveOrUpdate(entity);
-            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&objectId=" + entity.getId() + "&cid=" + conversation.getId() + "&faces-redirect=true";
+            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId=" + entity.getId() + "&cid=" + conversation.getId()
+                    + "&faces-redirect=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {
@@ -252,14 +251,14 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
     /**
      * @param selectedTab the selectedTab to set
      */
-    public void setSelectedTab(String selectedTab) {
+    public void setSelectedTab(int selectedTab) {
         this.selectedTab = selectedTab;
     }
 
     /**
      * @return the selectedTab
      */
-    public String getSelectedTab() {
+    public int getSelectedTab() {
         return selectedTab;
     }
 
@@ -295,11 +294,17 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
     }
 
     private Long getCustomerId() {
-        return customerId.get();
+        return customerId;
     }
 
-    private String getTab() {
-        return tab.get();
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
+    private Integer getTab() {
+        if (tab != null) {
+            return tab.get();
+        }
+        return null;
+    }
 }

@@ -1,49 +1,67 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:c="http://java.sun.com/jstl/core"
-    xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
+	template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['customerSearch.search']}" backingBean="#{customerSearchBean}" renderNewButton="false">
-			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}" field="description" />
-			<hf:searchField label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
-			<hf:searchField label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
-
-			<sc:inputContainer label="#{messages['customerSearch.type']}" style="padding-right:5px" >
-				
-				<h:selectOneMenu value="#{customerSearchBean.customerPage}" onchange="submit()" valueChangeListener="#{customerSearchBean.changeCustomerPage}">
+		<hf:searchPanel label="#{messages['customerSearch.search']}"
+			backingBean="#{customerSearchBean}" renderNewButton="false"
+			columns="2">
+			<hf:searchField label="#{messages['businessEntity.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['businessEntity.description']}"
+				field="description" />
+			<hf:searchField label="#{messages['accountEntity.externalRef1']}"
+				field="externalRef1" />
+			<hf:searchField label="#{messages['accountEntity.externalRef2']}"
+				field="externalRef2" />
+			<p:panelGrid columns="2">
+				<p:outputLabel for="accountType"
+					value="#{messages['customerSearch.type']}"></p:outputLabel>
+				<p:selectOneMenu id="accountType"
+					value="#{customerSearchBean.customerPage}"
+					valueChangeListener="#{customerSearchBean.changeCustomerPage}">
+					<p:ajax event="change" update="@form" />
 					<f:selectItem itemLabel="" />
-					<f:selectItem itemLabel="#{messages['customer.type']}" itemValue="/pages/crm/customers/customers.xhtml" />
-					<f:selectItem itemLabel="#{messages['customerAccount.type']}" itemValue="/pages/payments/customerAccounts/customerAccounts.xhtml" />
-					<f:selectItem itemLabel="#{messages['billingAccount.type']}" itemValue="/pages/billing/billingAccounts/billingAccounts.xhtml" />
-					<f:selectItem itemLabel="#{messages['userAccount.type']}" itemValue="/pages/billing/userAccounts/userAccounts.xhtml" />
-				</h:selectOneMenu>
-
-			</sc:inputContainer>
-
+					<f:selectItem itemLabel="#{messages['customer.type']}"
+						itemValue="/pages/crm/customers/customers.xhtml" />
+					<f:selectItem itemLabel="#{messages['customerAccount.type']}"
+						itemValue="/pages/payments/customerAccounts/customerAccounts.xhtml" />
+					<f:selectItem itemLabel="#{messages['billingAccount.type']}"
+						itemValue="/pages/billing/billingAccounts/billingAccounts.xhtml" />
+					<f:selectItem itemLabel="#{messages['userAccount.type']}"
+						itemValue="/pages/billing/userAccounts/userAccounts.xhtml" />
+				</p:selectOneMenu>
+			</p:panelGrid>
 		</hf:searchPanel>
 
-		<hftl:dataList backingBean="#{customerSearchBean}" label="#{messages['customerSearch.title']}" checkMany="false">
+		<hftl:dataList backingBean="#{customerSearchBean}"
+			label="#{messages['customerSearch.title']}" checkMany="false">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['accountEntity.externalRef1']}" field="externalRef1" />
-			<hftl:column label="#{messages['accountEntity.externalRef2']}" field="externalRef2" />
-			<hftl:column label="#{messages['customerSearch.type']}" field="accountType" isMessage="true" />
+			<hftl:column label="#{messages['businessEntity.description']}"
+				field="description" />
+			<hftl:column label="#{messages['accountEntity.externalRef1']}"
+				field="externalRef1" />
+			<hftl:column label="#{messages['accountEntity.externalRef2']}"
+				field="externalRef2" />
+			<hftl:column label="#{messages['customerSearch.type']}"
+				field="accountType" isMessage="true" />
 
 			<c:set var="type" value="#{entity.accountType}" />
-			<hftl:actionsColumn renderDeleteLink="false" editView="#{customerSearchBean.getView(type)}"
+			<hftl:actionsColumn renderDeleteLink="false"
+				editView="#{customerSearchBean.getView(type)}"
 				permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 

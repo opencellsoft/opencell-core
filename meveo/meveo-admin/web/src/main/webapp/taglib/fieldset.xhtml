@@ -1,8 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jstl/core">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
 
 <ui:composition>
 	<!-- Default page Width -->
@@ -10,16 +14,16 @@
 		<c:set var="columns" value="1" />
 	</c:if>
 	<f:view>
-		<h:panelGrid columns="1" width="100%">
+		<p:panelGrid columns="1" width="100%">
 			<h:panelGroup>
-				<fieldset>
-					<legend> #{name} </legend>
-					<h:panelGrid columns="#{columns}" width="100%" styleClass="panelGrid">
+				<p:fieldset legend="#{name}">
+					<p:panelGrid columns="#{columns}" width="100%"
+						styleClass="panelGrid">
 						<ui:insert />
-					</h:panelGrid>
-				</fieldset>
+					</p:panelGrid>
+				</p:fieldset>
 			</h:panelGroup>
-		</h:panelGrid>
+		</p:panelGrid>
 	</f:view>
 </ui:composition>
 

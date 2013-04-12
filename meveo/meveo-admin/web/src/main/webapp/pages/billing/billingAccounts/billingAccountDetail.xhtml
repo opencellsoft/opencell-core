@@ -1,9 +1,22 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="billingAccountId"
+				value="#{billingAccountBean.objectId}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -11,36 +24,63 @@
 
 	<ui:define name="body">
 		<c:if test="${billingAccountBean.edit}">
-			<hftl:entityPopup id="customerAccountPopup" header="#{messages['customerAccount.popup.header']}" backingBean="#{customerAccountBean}"
-				searchField1Label="#{messages['customerAccount.code']}" searchField1="code" searchField2Label="#{messages['customerAccount.name']}"
-				searchField2="name" column1Label="#{messages['customerAccount.code']}" column1="code" column2Label="#{messages['customerAccount.name']}"
-				column2="name" selection="#{billingAccountBean.entity.customerAccount}"
-				updateField=":formBillingAccountPanel:formId:customerSelectId:customerSelectId">
+			<hftl:entityPopup id="customerAccountPopup"
+				header="#{messages['customerAccount.popup.header']}"
+				backingBean="#{customerAccountBean}"
+				searchField1Label="#{messages['customerAccount.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['customerAccount.name']}"
+				searchField2="name"
+				column1Label="#{messages['customerAccount.code']}" column1="code"
+				column2Label="#{messages['customerAccount.name']}" column2="name"
+				selection="#{billingAccountBean.entity.customerAccount}"
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:customerSelectId:customerSelectId">
 				<!-- select link -->
 				<!-- 				<a:commandLink value="#{messages['commons.select']}" render="formId" immediate="true" action="#{billingAccountBean.populateAccounts(entity)}" -->
 				<!-- 					oncomplete="Richfaces.hideModalPanel('customerAccountPopup')"> -->
 				<!-- 				</a:commandLink> -->
 			</hftl:entityPopup>
 
-			<hftl:entityPopup id="billingCyclePopup" header="#{messages['billingCycle.popup.header']}" backingBean="#{billingCycleBean}"
-				searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}"
-				searchField2="description" column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}"
-				column2="description" selection="#{billingAccountBean.entity.billingCycle}"
-				updateField=":formBillingAccountPanel:formId:cycleSelectId:cycleSelectId">
+			<hftl:entityPopup id="billingCyclePopup"
+				header="#{messages['billingCycle.popup.header']}"
+				backingBean="#{billingCycleBean}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}"
+				searchField2="description"
+				column1Label="#{messages['businessEntity.code']}" column1="code"
+				column2Label="#{messages['businessEntity.description']}"
+				column2="description"
+				selection="#{billingAccountBean.entity.billingCycle}"
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:cycleSelectId:cycleSelectId">
 
 			</hftl:entityPopup>
 
-			<hftl:entityPopup id="tradingCountryPopup" header="#{messages['tradingCountry.popup.header']}" backingBean="#{tradingCountryBean}"
-				searchField1Label="#{messages['businessEntity.code']}" searchField1="countryCode" column1Label="#{messages['businessEntity.code']}"
-				column1="countryCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-				selection="#{billingAccountBean.entity.tradingCountry}" updateField=":formBillingAccountPanel:formId:trCountrySelectId:trCountrySelectId">
+			<hftl:entityPopup id="tradingCountryPopup"
+				header="#{messages['tradingCountry.popup.header']}"
+				backingBean="#{tradingCountryBean}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="countryCode"
+				column1Label="#{messages['businessEntity.code']}"
+				column1="countryCode"
+				column2Label="#{messages['businessEntity.description']}"
+				column2="prDescription"
+				selection="#{billingAccountBean.entity.tradingCountry}"
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trCountrySelectId:trCountrySelectId">
 
 			</hftl:entityPopup>
 
-			<hftl:entityPopup id="tradingLanguagePopup" header="#{messages['tradingLanguage.popup.header']}" backingBean="#{tradingLanguageBean}"
-				searchField1Label="#{messages['businessEntity.code']}" searchField1="languageCode" column1Label="#{messages['businessEntity.code']}"
-				column1="languageCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-				selection="#{billingAccountBean.entity.tradingLanguage}" updateField=":formBillingAccountPanel:formId:trLanguageSelectId:trLanguageSelectId">
+			<hftl:entityPopup id="tradingLanguagePopup"
+				header="#{messages['tradingLanguage.popup.header']}"
+				backingBean="#{tradingLanguageBean}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="languageCode"
+				column1Label="#{messages['businessEntity.code']}"
+				column1="languageCode"
+				column2Label="#{messages['businessEntity.description']}"
+				column2="prDescription"
+				selection="#{billingAccountBean.entity.tradingLanguage}"
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trLanguageSelectId:trLanguageSelectId">
 
 			</hftl:entityPopup>
 
@@ -50,263 +90,406 @@
 			<h:panelGroup>
 				<div class="panels">
 
-					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(billingAccountBean.entity)}" entity="#{billingAccountBean.entity}" />
+					<hf:hierarchyPanel
+						treeValue="#{customerTreeBean.buildAccountsHierarchy(billingAccountBean.entity)}"
+						entity="#{billingAccountBean.entity}" />
 
-					<rich:tabPanel styleClass="formPanel" switchType="client">
-						<rich:tab header="#{messages['billingAccount.tab.account']}">
-							<hf:formPanel id="formBillingAccountPanel" label="#{messages['billingAccount.billingAccountPanel']}" backingBean="#{billingAccountBean}"
-								styleClass="formPanel" killConversationOnSave="false">
+					<p:tabView id="parentTab" styleClass="formPanel">
+						<p:tab title="#{messages['billingAccount.tab.account']}">
+							<hf:formPanel id="formBillingAccountPanel"
+								label="#{messages['billingAccount.billingAccountPanel']}"
+								backingBean="#{billingAccountBean}" styleClass="formPanel"
+								killConversationOnSave="false" useCustomIdParam="true">
 
-								<rich:tabPanel switchType="client">
-									<rich:tab header="#{messages['billingAccount.tab.account']}">
-										<hftl:fieldset name="#{messages['billingAccount.billingAccountPanel']}" columns="1">
+								<p:tabView id="childTab" switchType="client">
+									<p:tab title="#{messages['billingAccount.tab.account']}">
+										<hftl:fieldset
+											name="#{messages['billingAccount.billingAccountPanel']}"
+											columns="1">
 											<hftl:panelGroup columns="1">
-												<hf:formEntityField id="customerSelectId" label="#{messages['billingAccount.customerAccount']}" field="customerAccount" childField="code"
-													required="true" popup="true" popupId="customerAccountPopup" />
+												<hf:formEntityField id="customerSelectId"
+													label="#{messages['billingAccount.customerAccount']}"
+													field="customerAccount" childField="code" required="true"
+													popup="true" popupId="customerAccountPopup" />
 											</hftl:panelGroup>
 											<!--Creation window fields-->
 											<hftl:panelGroup columns="2">
-												<hf:formField label="#{messages['businessEntity.code']}" field="code" showOnlyOnNew="true" validateUnique="true" size="35" maxlength="35" />
-												<hf:formEntityField label="#{messages['accountEntity.primaryContact']}" field="primaryContact" childField="code" popup="false"
+												<hf:formField label="#{messages['businessEntity.code']}"
+													field="code" showOnlyOnNew="true" validateUnique="true"
+													size="35" maxlength="35" />
+												<hf:formEntityField
+													label="#{messages['accountEntity.primaryContact']}"
+													field="primaryContact" childField="code" popup="false"
 													listBean="#{providerContactService}" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="1">
-												<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="70" maxlength="100" />
+												<hf:formField
+													label="#{messages['businessEntity.description']}"
+													field="description" useConverter="false" size="70"
+													maxlength="100" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="2">
-												<hf:formEntityField id="cycleSelectId" label="#{messages['billingAccount.billingCycle']}" field="billingCycle" childField="code"
-													required="true" popup="true" popupId="billingCyclePopup" />
+												<hf:formEntityField id="cycleSelectId"
+													label="#{messages['billingAccount.billingCycle']}"
+													field="billingCycle" childField="code" required="true"
+													popup="true" popupId="billingCyclePopup" />
 												<hf:emtyFormField />
-												<a:outputPanel id="invoicePrefixBoxPanel">
-													<h:panelGrid columns="2">
-														<p:outputLabel for="returnToAgency_select" value="#{messages['billingAccount.returnToAgency']}" />
-														<c:set var="fieldValueRA" value="#{billingAccountBean.returnToAgency}" />
-														<h:selectBooleanCheckbox id="returnToAgency_select" rendered="#{billingAccountBean.edit}" value="#{fieldValueRA}">
-															<a:ajax event="click" render="invoicePrefixPanel" limitRender="true" action="#{billingAccountBean.setInvoicePrefix()}" />
-														</h:selectBooleanCheckbox>
+												<h:panelGrid columns="2" id="invoicePrefixBoxPanel">
+													<p:outputLabel for="returnToAgency_select"
+														value="#{messages['billingAccount.returnToAgency']}" />
+													<c:set var="fieldValueRA"
+														value="#{billingAccountBean.returnToAgency}" />
+													<h:selectBooleanCheckbox id="returnToAgency_select"
+														rendered="#{billingAccountBean.edit}"
+														value="#{fieldValueRA}">
+														<a:ajax event="click" render="invoicePrefixPanel"
+															limitRender="true"
+															action="#{billingAccountBean.setInvoicePrefix()}" />
+													</h:selectBooleanCheckbox>
 
-														<c:if test="${!billingAccountBean.edit}">
-															<h:outputText rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'true' and !billingAccountBean.edit}"
-																value="#{messages['commons.yes']}" style="font-weight:bold;" />
-															<h:outputText rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'false' and !billingAccountBean.edit}"
-																value="#{messages['commons.no']}" style="font-weight:bold;" />
-															<h:outputText
-																rendered="#{fieldValueRA != null and fieldValueRA.toString() != 'true' and fieldValueRA.toString() != 'false' and !billingAccountBean.edit}"
-																value="#{messages[entity[field]]}" style="font-weight:bold;" />
-														</c:if>
-													</h:panelGrid>
-												</a:outputPanel>
-												<a:outputPanel id="invoicePrefixPanel">
-													<h:panelGrid columns="2" rendered="#{billingAccountBean.returnToAgency}">
-														<p:outputLabel for="invoicePrefix" value="#{messages['billingAccount.invoicePrefix']}" />
-														<h:outputText id="invoicePrefix" value="#{entity.invoicePrefix}" style="font-weight:bold;" />
-													</h:panelGrid>
-												</a:outputPanel>
-
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
-												<hf:formField label="#{messages['billingAccount.externalRef1']}" field="externalRef1" maxlength="50" useConverter="false" />
-												<h:panelGrid columns="2">
-													<p:outputLabel for="externalRef2" value="#{messages['billingAccount.externalRef2']}" />
-													<h:inputText id="externalRef2" value="#{billingAccountBean.entity.externalRef2}" rendered="#{billingAccountBean.edit}"
-														valueChangeListener="#{billingAccountBean.processValueChange}">
-														<a:ajax event="valueChange" render="invoicePrefixPanel" />
-													</h:inputText>
-													<h:outputText value="#{billingAccountBean.entity.externalRef2}" rendered="#{!billingAccountBean.edit}" style="font-weight:bold;" />
+													<c:if test="${!billingAccountBean.edit}">
+														<h:outputText
+															rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'true' and !billingAccountBean.edit}"
+															value="#{messages['commons.yes']}"
+															style="font-weight:bold;" />
+														<h:outputText
+															rendered="#{fieldValueRA != null and fieldValueRA.toString() == 'false' and !billingAccountBean.edit}"
+															value="#{messages['commons.no']}"
+															style="font-weight:bold;" />
+														<h:outputText
+															rendered="#{fieldValueRA != null and fieldValueRA.toString() != 'true' and fieldValueRA.toString() != 'false' and !billingAccountBean.edit}"
+															value="#{messages[entity[field]]}"
+															style="font-weight:bold;" />
+													</c:if>
+												</h:panelGrid>
+												<h:panelGrid columns="2" id="invoicePrefixPanel"
+													rendered="#{billingAccountBean.returnToAgency}">
+													<p:outputLabel for="invoicePrefix"
+														value="#{messages['billingAccount.invoicePrefix']}" />
+													<h:outputText id="invoicePrefix"
+														value="#{entity.invoicePrefix}" style="font-weight:bold;" />
 												</h:panelGrid>
 
-												<hf:formEntityField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry"
-													childField="countryCode" popup="true" popupId="tradingCountryPopup" />
-												<hf:formEntityField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage"
-													childField="languageCode" popup="true" popupId="tradingLanguagePopup" />
+											</hftl:panelGroup>
+											<hftl:panelGroup columns="2">
+												<hf:formField
+													label="#{messages['billingAccount.externalRef1']}"
+													field="externalRef1" maxlength="50" useConverter="false" />
+												<h:panelGrid columns="2">
+													<p:outputLabel for="externalRef2"
+														value="#{messages['billingAccount.externalRef2']}" />
+													<p:inputText id="externalRef2"
+														value="#{billingAccountBean.entity.externalRef2}"
+														rendered="#{billingAccountBean.edit}"
+														valueChangeListener="#{billingAccountBean.processValueChange}">
+														<p:ajax event="valueChange" render="invoicePrefixPanel" />														
+													</p:inputText>
+													<h:outputText
+														value="#{billingAccountBean.entity.externalRef2}"
+														rendered="#{!billingAccountBean.edit}"
+														style="font-weight:bold;" />
+												</h:panelGrid>
+
+												<hf:formEntityField id="trCountrySelectId"
+													label="#{messages['tradingCountry.tradingCountry']}"
+													field="tradingCountry" childField="countryCode"
+													popup="true" popupId="tradingCountryPopup" />
+												<hf:formEntityField id="trLanguageSelectId"
+													label="#{messages['tradingLanguage.tradingLanguage']}"
+													field="tradingLanguage" childField="languageCode"
+													popup="true" popupId="tradingLanguagePopup" />
 
 											</hftl:panelGroup>
 											<!--Edit window fields-->
 											<hftl:panelGroup columns="1">
 												<h:panelGrid columns="2">
-													<p:outputLabel for="title_select" value="#{messages['name.title']}" />
+													<p:outputLabel for="title_select"
+														value="#{messages['name.title']}" />
 
-													<h:selectOneMenu id="title_select" value="#{billingAccountBean.entity.name.title}" rendered="#{billingAccountBean.edit}">
-														<f:selectItem itemLabel="#{messages['commons.select']}" itemValue="" />
-														<f:selectItems value="#{titleBean.listAll()}" var="t" itemLabel="#{messages['Title.'.concat(t.code)]}" />
+													<p:selectOneMenu id="title_select"
+														value="#{billingAccountBean.entity.name.title}"
+														rendered="#{billingAccountBean.edit}">
+														<f:selectItem itemLabel="#{messages['commons.select']}"
+															itemValue="" />
+														<f:selectItems value="#{titleBean.listAll()}" var="t"
+															itemLabel="#{messages['Title.'.concat(t.code)]}" />
 														<s:objectConverter />
-														<a:ajax event="valueChange" immediate="false" ajaxSingle="true" bypassUpdates="false" limitRender="true"
-															reRender="formId:userNamePanel, formId:countryPanel, paymentMethodField, electronicBillingField, bankCoordinatesPanel, invoicePrefixPanel, invoicePrefixBoxPanel" />
-													</h:selectOneMenu>
-													<h:outputText rendered="#{!billingAccountBean.edit and billingAccountBean.entity.name.title != null}"
-														value="#{messages['Title.'.concat(billingAccountBean.entity.name.title.code)]}" style="font-weight:bold;" />
+														<p:ajax event="valueChange" immediate="false"
+															update=":parentTab:formBillingAccountPanel:formId:childTab:invoicePrefixPanel :parentTab:formBillingAccountPanel:formId:childTab:invoicePrefixBoxPanel :parentTab:formBillingAccountPanel:formId:childTab:bankCoordinatePanel :parentTab:formBillingAccountPanel:formId:childTab:userNamePanel :parentTab:formBillingAccountPanel:formId:childTab:countryPanel" />
+													</p:selectOneMenu>
+													<h:outputText
+														rendered="#{!billingAccountBean.edit and billingAccountBean.entity.name.title != null}"
+														value="#{messages['Title.'.concat(billingAccountBean.entity.name.title.code)]}"
+														style="font-weight:bold;" />
 												</h:panelGrid>
 
 											</hftl:panelGroup>
-											<a:outputPanel id="userNamePanel">
-												<h:panelGroup>
-													<h:panelGrid columns="2" width="100%" columnClasses="twoColGrid">
-														<hf:formEntityField label="#{messages['name.lastName']}" field="name" childField="lastName" popup="false" maxlength="50" />
 
-														<h:panelGrid columns="2" rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}">
-															<p:outputLabel for="firstName_select" value="#{messages['name.firstName']}" />
-															<h:inputText id="firstName_select" value="#{billingAccountBean.entity.name.firstName}"
-																rendered="#{(billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany) and billingAccountBean.edit}" />
-															<h:outputText value="#{billingAccountBean.entity.name.firstName}"
-																rendered="#{(billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany) and !billingAccountBean.edit}"
-																style="font-weight:bold;" />
+											<h:panelGroup id="userNamePanel">
+												<h:panelGrid columns="2" width="100%"
+													columnClasses="twoColGrid">
+													<hf:formEntityField label="#{messages['name.lastName']}"
+														field="name" childField="lastName" popup="false"
+														maxlength="50" />
+
+													<h:panelGrid columns="2"
+														rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}">
+														<p:outputLabel for="firstName_select"
+															value="#{messages['name.firstName']}" />
+														<p:inputText id="firstName_select"
+															value="#{billingAccountBean.entity.name.firstName}"
+															rendered="#{(billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany) and billingAccountBean.edit}" />
+														<h:outputText
+															value="#{billingAccountBean.entity.name.firstName}"
+															rendered="#{(billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany) and !billingAccountBean.edit}"
+															style="font-weight:bold;" />
+													</h:panelGrid>
+													<hf:emtyFormField
+														show="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}" />
+												</h:panelGrid>
+											</h:panelGroup>
+
+											<hftl:panelGroup columns="2">
+												<hf:formField label="#{messages['billingAccount.status']}"
+													field="status" show="#{!billingAccountBean.edit}" />
+												<hf:formField
+													label="#{messages['billingAccount.statusDate']}"
+													field="statusDate" show="#{!billingAccountBean.edit}" />
+											</hftl:panelGroup>
+											<hftl:panelGroup columns="2">
+												<hf:formField
+													label="#{messages['billingAccount.nextInvoiceDate']}"
+													field="nextInvoiceDate" />
+												<hf:formField
+													label="#{messages['billingAccount.terminationDate']}"
+													field="terminationDate" show="#{!billingAccountBean.edit}" />
+												<hf:formField
+													label="#{messages['billingAccount.subscriptionDate']}"
+													field="subscriptionDate" />
+
+
+
+											</hftl:panelGroup>
+
+											<hftl:panelGroup columns="1">
+												<hf:formField
+													label="#{messages['accountEntity.defaultLevel']}"
+													field="defaultLevel" isMessage="true" />
+											</hftl:panelGroup>
+										</hftl:fieldset>
+									</p:tab>
+
+									<p:tab id="tabInformation"
+										title="#{messages['billingAccount.tab.information']}">
+										<hftl:fieldset name="#{messages['commons.contacts']}"
+											columns="1">
+											<hftl:panelGroup columns="1">
+												<hf:formEntityField label="#{messages['address.address1']}"
+													field="address" childField="address1" popup="false"
+													size="80" maxlength="80" />
+												<hf:formEntityField label="#{messages['address.address2']}"
+													field="address" childField="address2" popup="false"
+													size="80" maxlength="80" />
+												<hf:formEntityField label="#{messages['address.address3']}"
+													field="address" childField="address3" popup="false"
+													size="80" maxlength="80" />
+											</hftl:panelGroup>
+											<hftl:panelGroup columns="2">
+												<hf:formEntityField label="#{messages['address.zipCode']}"
+													field="address" childField="zipCode" popup="false"
+													required="true" size="5" maxlength="5" length="3" />
+												<hf:formEntityField label="#{messages['address.city']}"
+													field="address" childField="city" popup="false"
+													required="true" maxlength="50" />
+
+												<p:panelGrid id="countryPanel" columns="2">
+													<p:outputLabel for="country_select"
+														value="#{messages['address.country']}" />
+													<p:selectOneMenu id="country_select" required="true"
+														rendered="#{billingAccountBean.edit}"
+														value="#{billingAccountBean.entity.address.country}">
+														<f:selectItems
+															value="#{messages['address.countrys'].split(',')}"
+															var="country" itemLabel="#{country}" />
+													</p:selectOneMenu>
+													<h:outputText rendered="#{!billingAccountBean.edit}"
+														value="#{billingAccountBean.entity.address.country}" />
+												</p:panelGrid>
+
+											</hftl:panelGroup>
+										</hftl:fieldset>
+										<p:panelGrid columns="1" id="bankCoordinatePanel">
+											<hftl:fieldset name="#{messages['commons.bankCoordinates']}">
+												<hftl:panelGroup columns="1">
+													<a:outputPanel id="paymentMethodField">
+														<hf:formField
+															label="#{messages['billingAccount.paymentMethod']}"
+															field="paymentMethod" required="true" />
+													</a:outputPanel>
+												</hftl:panelGroup>
+												<hftl:panelGroup columns="2">
+													<a:outputPanel id="electronicBillingField">
+														<hf:formField
+															label="#{messages['billingAccount.electronicBilling']}"
+															field="electronicBilling" isMessage="true" />
+													</a:outputPanel>
+													<a:outputPanel id="emailField">
+
+														<h:panelGrid columns="2">
+															<p:outputLabel for="email_select"
+																value="#{messages['billingAccount.email']}" />
+
+															<p:inputText id="email_select"
+																rendered="#{billingAccountBean.edit}"
+																value="#{billingAccountBean.entity.email}"
+																required="#{billingAccountBean.entity.electronicBilling}"
+																size="20" maxlength="100"
+																converter="nullableStringConverter" />
+															<h:outputText rendered="#{!billingAccountBean.edit}"
+																id="emailText"
+																value="#{billingAccountBean.entity.email}"
+																required="#{billingAccountBean.entity.electronicBilling}" />
 														</h:panelGrid>
-														<hf:emtyFormField show="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}" />
-													</h:panelGrid>
-												</h:panelGroup>
-											</a:outputPanel>
-											<hftl:panelGroup columns="2">
-												<hf:formField label="#{messages['billingAccount.status']}" field="status" show="#{!billingAccountBean.edit}" />
-												<hf:formField label="#{messages['billingAccount.statusDate']}" field="statusDate" show="#{!billingAccountBean.edit}" />
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
-												<hf:formField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
-												<hf:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" show="#{!billingAccountBean.edit}" />
-												<hf:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-
-
-
-											</hftl:panelGroup>
-
-											<hftl:panelGroup columns="1">
-												<hf:formField label="#{messages['accountEntity.defaultLevel']}" field="defaultLevel" isMessage="true" />
-											</hftl:panelGroup>
-										</hftl:fieldset>
-									</rich:tab>
-
-									<rich:tab header="#{messages['billingAccount.tab.information']}">
-										<hftl:fieldset name="#{messages['commons.contacts']}" columns="1">
-											<hftl:panelGroup columns="1">
-												<hf:formEntityField label="#{messages['address.address1']}" field="address" childField="address1" popup="false" size="80" maxlength="80" />
-												<hf:formEntityField label="#{messages['address.address2']}" field="address" childField="address2" popup="false" size="80" maxlength="80" />
-												<hf:formEntityField label="#{messages['address.address3']}" field="address" childField="address3" popup="false" size="80" maxlength="80" />
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
-												<hf:formEntityField label="#{messages['address.zipCode']}" field="address" childField="zipCode" popup="false" required="true" size="5"
-													maxlength="5" length="3" />
-												<hf:formEntityField label="#{messages['address.city']}" field="address" childField="city" popup="false" required="true" maxlength="50" />
-												<a:outputPanel id="countryPanel">
-													<h:panelGrid columns="2">
-														<p:outputLabel for="country_select" value="#{messages['address.country']}" />
-														<h:selectOneMenu id="country_select" required="true" rendered="#{billingAccountBean.edit}" value="#{billingAccountBean.entity.address.country}">
-															<f:selectItems value="#{messages['address.countrys'].split(',')}" var="country" itemLabel="#{country}" />
-														</h:selectOneMenu>
-														<h:outputText rendered="#{!billingAccountBean.edit}" value="#{billingAccountBean.entity.address.country}" />
-													</h:panelGrid>
-												</a:outputPanel>
-											</hftl:panelGroup>
-										</hftl:fieldset>
-										<hftl:fieldset name="#{messages['commons.bankCoordinates']}">
-											<hftl:panelGroup columns="1">
-												<a:outputPanel id="paymentMethodField">
-													<hf:formField label="#{messages['billingAccount.paymentMethod']}" field="paymentMethod" required="true" event="onchange"
-														reRender="bankCoordinatesPanel" />
-												</a:outputPanel>
-											</hftl:panelGroup>
-											<hftl:panelGroup columns="2">
-												<a:outputPanel id="electronicBillingField">
-													<hf:formField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" event="onchange"
-														reRender="formId:emailField" isMessage="true" />
-												</a:outputPanel>
-												<a:outputPanel id="emailField">
-
-													<h:panelGrid columns="2">
-														<p:outputLabel for="email_select" value="#{messages['billingAccount.email']}" />
-
-														<h:inputText id="email_select" rendered="#{billingAccountBean.edit}" value="#{billingAccountBean.entity.email}"
-															required="#{billingAccountBean.entity.electronicBilling}" size="20" maxlength="100" converter="nullableStringConverter" />
-														<h:outputText rendered="#{!billingAccountBean.edit}" id="emailText" value="#{billingAccountBean.entity.email}"
-															required="#{billingAccountBean.entity.electronicBilling}" />
-													</h:panelGrid>
-												</a:outputPanel>
-											</hftl:panelGroup>
-											<a:outputPanel id="bankCoordinatesPanel">
-												<h:panelGroup rendered="#{entity.paymentMethod.toString() == 'DIRECTDEBIT' or entity.paymentMethod.toString() == 'TIP'}">
+													</a:outputPanel>
+												</hftl:panelGroup>
+												<h:panelGroup id="bankCoordinatesPanel"
+													rendered="#{entity.paymentMethod.toString() == 'DIRECTDEBIT' or entity.paymentMethod.toString() == 'TIP'}">
 													<hftl:panelGroup columns="2">
-														<hf:formEntityField label="#{messages['bankCoordinates.bankCode']}" field="bankCoordinates" childField="bankCode" size="5" maxlength="5"
-															required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" validateRib="true" />
-														<hf:formEntityField label="#{messages['bankCoordinates.branchCode']}" field="bankCoordinates" childField="branchCode" size="5"
-															maxlength="5" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
-														<hf:formEntityField label="#{messages['bankCoordinates.accountNumber']}" field="bankCoordinates" childField="accountNumber" size="11"
-															maxlength="11" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
-														<hf:formEntityField label="#{messages['bankCoordinates.key']}" field="bankCoordinates" childField="key" size="2" maxlength="2"
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.bankCode']}"
+															field="bankCoordinates" childField="bankCode" size="5"
+															maxlength="5"
+															required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}"
+															validateRib="true" />
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.branchCode']}"
+															field="bankCoordinates" childField="branchCode" size="5"
+															maxlength="5"
+															required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.accountNumber']}"
+															field="bankCoordinates" childField="accountNumber"
+															size="11" maxlength="11"
+															required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.key']}"
+															field="bankCoordinates" childField="key" size="2"
+															maxlength="2"
 															required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
 													</hftl:panelGroup>
 													<hftl:panelGroup columns="1">
-														<hf:formEntityField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" maxlength="11" />
-														<hf:formEntityField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="45" maxlength="34" />
-														<hf:formEntityField label="#{messages['bankCoordinates.accountOwner']}" field="bankCoordinates" childField="accountOwner" size="55"
-															maxlength="50" required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
-														<hf:formEntityField label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates" childField="bankName" size="55"
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.bic']}"
+															field="bankCoordinates" childField="bic" size="15"
+															maxlength="11" />
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.iban']}"
+															field="bankCoordinates" childField="iban" size="45"
+															maxlength="34" />
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.accountOwner']}"
+															field="bankCoordinates" childField="accountOwner"
+															size="55" maxlength="50"
+															required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
+														<hf:formEntityField
+															label="#{messages['bankCoordinates.bankName']}"
+															field="bankCoordinates" childField="bankName" size="55"
 															maxlength="50" />
 													</hftl:panelGroup>
 												</h:panelGroup>
-											</a:outputPanel>
-										</hftl:fieldset>
-									</rich:tab>
-								</rich:tabPanel>
+											</hftl:fieldset>
+										</p:panelGrid>
+									</p:tab>
+								</p:tabView>
 							</hf:formPanel>
 
-							<h:form id="operationsForm" rendered="#{!billingAccountBean.edit}">
+							<h:form id="operationsForm"
+								rendered="#{!billingAccountBean.edit}">
 								<!-- 								<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
-								<h:commandButton action="#{billingAccountBean.terminateAccount()}" value="#{messages['account.buttonResiliateAccount']}"
+								<h:commandButton
+									action="#{billingAccountBean.terminateAccount()}"
+									value="#{messages['account.buttonResiliateAccount']}"
 									onclick="if(confirm('#{messages['account.confirmResiliateAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<h:commandButton action="#{billingAccountBean.cancelAccount()}" value="#{messages['account.buttonCancelAccount']}"
+							<h:commandButton action="#{billingAccountBean.cancelAccount()}"
+									value="#{messages['account.buttonCancelAccount']}"
 									onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<h:commandButton action="#{billingAccountBean.closeAccount()}" value="#{messages['account.buttonCloseAccount']}"
+							<h:commandButton action="#{billingAccountBean.closeAccount()}"
+									value="#{messages['account.buttonCloseAccount']}"
 									onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString()!='CANCELLED'}" />&nbsp;&nbsp;
-							<h:commandButton action="addNewUserAccountAction" value="#{messages['billingAccount.addUserAccount']}"
+							<h:commandButton action="addNewUserAccountAction"
+									value="#{messages['billingAccount.addUserAccount']}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
 								<!-- 								</custom:listPanel> -->
 							</h:form>
 
-						</rich:tab>
+						</p:tab>
 
-						<rich:tab header="#{messages['billingAccount.tab.invoices']}" rendered="#{!billingAccountBean.edit}">
-							<hf:formPanel formId="form3" backingBean="#{billingAccountBean}" showFormButtons="false">
+						<p:tab title="#{messages['billingAccount.tab.invoices']}"
+							rendered="#{!billingAccountBean.edit}">
+							<hf:formPanel formId="form3" backingBean="#{billingAccountBean}"
+								showFormButtons="false">
 								<hftl:panelGroup columns="3">
-									<hf:formField label="#{messages['businessEntity.code']}" field="code" />
-									<hf:formField label="#{messages['billingAccount.status']}" field="status" />
-									<hf:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" />
+									<hf:formField label="#{messages['businessEntity.code']}"
+										field="code" />
+									<hf:formField label="#{messages['billingAccount.status']}"
+										field="status" />
+									<hf:formField label="#{messages['serviceInstance.statusDate']}"
+										field="statusDate" />
 								</hftl:panelGroup>
 								<hftl:panelGroup columns="3">
-									<hf:formEntityField id="customerAccountSelectId" label="#{messages['billingAccount.customerAccount']}" field="customerAccount"
-										childField="code" popup="false" />
-									<hf:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
-									<hf:formField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+									<hf:formEntityField id="customerAccountSelectId"
+										label="#{messages['billingAccount.customerAccount']}"
+										field="customerAccount" childField="code" popup="false" />
+									<hf:formField
+										label="#{messages['billingAccount.subscriptionDate']}"
+										field="subscriptionDate" />
+									<hf:formField
+										label="#{messages['billingAccount.terminationDate']}"
+										field="terminationDate" />
 								</hftl:panelGroup>
 							</hf:formPanel>
 							<br />
 							<br />
 
-							<hftl:dataList dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}" resultsId="i_results"
-								checkMany="false" backingBean="#{invoiceBean}">
-								<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" />
-								<hftl:column label="#{messages['invoice.invoiceDate']}" field="invoiceDate" />
-								<hftl:column label="#{messages['invoice.dueDate']}" field="dueDate" />
-								<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
-								<hftl:column label="#{messages['invoice.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />
+							<hftl:dataList
+								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
+								resultsId="i_results" checkMany="false"
+								backingBean="#{invoiceBean}">
+								<hftl:column label="#{messages['invoice.invoiceNumber']}"
+									field="invoiceNumber" />
+								<hftl:column label="#{messages['invoice.invoiceDate']}"
+									field="invoiceDate" />
+								<hftl:column label="#{messages['invoice.dueDate']}"
+									field="dueDate" />
+								<hftl:column label="#{messages['invoice.amountWithTax']}"
+									field="amountWithTax" />
+								<hftl:column label="#{messages['invoice.paymentMethod']}"
+									field="paymentMethod" childField="label" isMessage="true" />
 								<p:column width="100">
 									<f:facet name="header">
 										<h:outputText value="#{messages['billingAccount.status']}" />
 									</f:facet>
-									<h:outputText value="#{messages[entity.billingRun.status.label]}" />
+									<h:outputText
+										value="#{messages[entity.billingRun.status.label]}" />
 								</p:column>
 								<p:column width="100">
 									<f:facet name="header">
 										<h:outputText value="#{messages['billingAccount.invoice']}" />
 									</f:facet>
-									<h:commandLink action="#{billingAccountBean.generatePDF(entity.id)}" rendered="#{billingAccountBean.pdfExists(entity.id)}">
+									<h:commandLink
+										action="#{billingAccountBean.generatePDF(entity.id)}"
+										rendered="#{billingAccountBean.pdfExists(entity.id)}">
 										<h:graphicImage value="/img/pdf.gif" style="border:0" />
 									</h:commandLink>
 								</p:column>
-								<hftl:actionsColumn editView="/pages/billing/invoices/invoiceDetail.xhtml" />
+								<hftl:actionsColumn
+									editView="/pages/billing/invoices/invoiceDetail.xhtml" />
 							</hftl:dataList>
-						</rich:tab>
-					</rich:tabPanel>
+						</p:tab>
+					</p:tabView>
 				</div>
 			</h:panelGroup>
 		</h:panelGrid>

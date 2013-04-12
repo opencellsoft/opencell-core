@@ -1,9 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:s="http://jboss.com/products/seam/taglib" xmlns:f="http://java.sun.com/jsf/core" xmlns:rich="http://richfaces.org/rich"
-	xmlns:c="http://java.sun.com/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
 	<cc:attribute name="treeValue" required="true" />
@@ -18,38 +24,42 @@
 			<c:set var="panelWidth" value="26%" />
 		</c:if>
 
-		<rich:panel style="float:left; width:26%; ">
+		<p:panelGrid columns="1">
 			<f:facet name="header">
 				<h:outputText value="#{messages['customer.tree']}" />
 			</f:facet>
+
 			<h:form>
 
-				<rich:tree value="#{cc.attrs.treeValue}" var="acc" selectionChangeListener="#{customerTreeBean.processSelection()}" iconExpanded="true" selectionType="client" >
-				
-					<rich:treeNode>
-						<f:facet name="icon">
-							<h:graphicImage value="#{customerTreeBean.getIcon(acc.type)}" />
-						</f:facet>
-						<f:facet name="iconCollapsed">
-							<h:outputText value="B" />
-						</f:facet>
-						<f:facet name="iconExpanded">
-						</f:facet>
-						<f:facet name="iconLeaf">
-							<h:graphicImage value="#{customerTreeBean.getIcon(acc.type)}" />
-						</f:facet>
-						<h:link id="tree_value" value="#{acc}" outcome="http://kuku"
-							rendered="#{!((customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type))}">
-							<rich:tooltip rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
-						</h:link>
-						<h:link id="tree_value_selected" value="#{acc}" outcome="http://mumu"
-							rendered="#{(customerTreeBean.selected==acc.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==acc.type)}" styleClass="selectedTreeNode">
-							<rich:tooltip  rendered="#{acc.firstAndLastName != null}" for="tree_value" value="#{acc.firstAndLastName}" />
-						</h:link>
-					</rich:treeNode>
-				</rich:tree>
+				<p:tree id="#{cc.attrs.id}_tree" value="#{cc.attrs.treeValue}"
+					var="node" selectionMode="single"
+					selection="#{customerTreeBean.selectedNode}">
+
+					<p:treeNode type="customer.type"
+						icon="#{customerTreeBean.getIcon(node.type)}">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+
+					<p:treeNode type="customerAccount.type"
+						icon="#{customerTreeBean.getIcon(node.type)}">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+
+					<p:treeNode type="billingAccount.type"
+						icon="#{customerTreeBean.getIcon(node.type)}">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+
+					<p:treeNode type="userAccount.type"
+						icon="#{customerTreeBean.getIcon(node.type)}">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+
+				</p:tree>
+
 			</h:form>
-		</rich:panel>
+
+		</p:panelGrid>
 	</ui:fragment>
 </cc:implementation>
 

@@ -59,7 +59,7 @@ public class ServiceTemplate extends BusinessEntity {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DURATION_TERM_CALENDAR")
-	private Calendar durationTermCalendar;
+	private Calendar durationTermCalendar = new Calendar();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();

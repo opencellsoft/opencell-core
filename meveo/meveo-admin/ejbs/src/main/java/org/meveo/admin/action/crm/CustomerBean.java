@@ -16,13 +16,10 @@
 package org.meveo.admin.action.crm;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -62,34 +59,35 @@ public class CustomerBean extends BaseBean<Customer> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("customer")
-	public Customer init() {
-		return initEntity();
+	public Customer initEntity() {
+		return super.initEntity();
 	}
 
-//	TODO
-//	/**
-//	 * Factory method, that is invoked if data model is empty. In this window we
-//	 * don't need to display data table when page is loaded. Only when Search
-//	 * button is pressed we should show the list. In this method we check if
-//	 * list isn't called for sorting and pagination.
-//	 * 
-//	 * @see org.meveo.admin.action.BaseBean#list()
-//	 */
-//	@Produces
-//	@Named("customers")
-//	public void noList() {
-//		final FacesContext context = FacesContext.getCurrentInstance();
-//		final String sortField = context.getExternalContext().getRequestParameterMap()
-//				.get("sortField");
-//		final String resultsForm = context.getExternalContext().getRequestParameterMap()
-//				.get("results_form");
-//
-//		if ((sortField != null) || (resultsForm != null)) {
-//			this.list();
-//		}
-//	}
+	// TODO
+	// /**
+	// * Factory method, that is invoked if data model is empty. In this window
+	// we
+	// * don't need to display data table when page is loaded. Only when Search
+	// * button is pressed we should show the list. In this method we check if
+	// * list isn't called for sorting and pagination.
+	// *
+	// * @see org.meveo.admin.action.BaseBean#list()
+	// */
+	// @Produces
+	// @Named("customers")
+	// public void noList() {
+	// final FacesContext context = FacesContext.getCurrentInstance();
+	// final String sortField =
+	// context.getExternalContext().getRequestParameterMap()
+	// .get("sortField");
+	// final String resultsForm =
+	// context.getExternalContext().getRequestParameterMap()
+	// .get("results_form");
+	//
+	// if ((sortField != null) || (resultsForm != null)) {
+	// this.list();
+	// }
+	// }
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous
@@ -97,9 +95,10 @@ public class CustomerBean extends BaseBean<Customer> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
+	@Override
 	public String saveOrUpdate() {
 		saveOrUpdate(entity);
-		return "/pages/crm/customers/customerDetail.xhtml?edit=false&objectId=" + entity.getId()
+		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId()
 				+ "&faces-redirect=true";
 	}
 
