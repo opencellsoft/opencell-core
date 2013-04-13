@@ -834,3 +834,9 @@ td[role="gridcell"]
   height : 27px;
   background : -moz-linear-gradient(center top , #FFFFFF 0%, #EBEBEB 50%, #DBDBDB) repeat scroll 0 0 transparent;
 }
+
+.tree-customer-icon { background: url(../img/customer-icon.png) !important; height: 16px; width: 16px; }
+.tree-customer-account-icon { background: url(../img/customerAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-billing-account-icon { background: url(../img/billingAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-user-account-icon { background: url(../img/userAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-subscription-icon { background: url(../img/subscription-icon.png) !important; height: 16px; width: 16px; }
