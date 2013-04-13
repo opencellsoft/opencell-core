@@ -16,10 +16,22 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['pricePlanMatrix.search']}"
+	  <hftl:entityPopup id="searchSellerPopup" header="#{messages['customer.popup.header']}" backingBean="#{sellerBean}"
+			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			selection="#{pricePlanMatrixBean.filters['seller']}" updateField=":searchPanel:searchForm:seller:seller_child">
+		</hftl:entityPopup>
+	
+		<hf:searchPanel id ="searchPanel" label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixBean}">
 			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
+				 <hf:searchField id="seller"  
+				label="#{messages['seller.title']}" field="seller" childField="description"
+				  popup="true" popupId="searchSellerPopup" clearButton="true" />
+				  
+				
 			<!-- <hf:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
     			<hf:searchField label="#{messages['pricePlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
     			<hf:searchField label="#{messages['pricePlanMatrix.startRatingDate']}" field="startRatingDate" />
@@ -37,6 +49,7 @@
 			backingBean="#{pricePlanMatrixBean}">
 			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
 				field="eventCode" />
+		    <hftl:column label="#{messages['seller.title']}" field="seller" childField="description" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.startSubscriptionDate']}"
 				field="startSubscriptionDate" />
@@ -71,7 +84,6 @@
 				wrapHeader="true" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
-
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
