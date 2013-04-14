@@ -112,7 +112,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    public String saveOrUpdate() {
+    public String saveOrUpdate(boolean killConversation) {
         try {
 
             if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
@@ -122,7 +122,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
                 }
 
             }
-            saveOrUpdate(entity);
+            super.saveOrUpdate(killConversation);
             return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId=" + entity.getId() + "&cid=" + conversation.getId()
                     + "&faces-redirect=true";
         } catch (DuplicateDefaultAccountException e1) {

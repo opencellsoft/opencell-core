@@ -95,9 +95,8 @@ public class JobBean extends BaseBean<Job> {
 	/**
 	 * Executes currently loaded job.
 	 */
-	// @End(beforeRedirect = true)
 	public String executeJob() {
-		String save = saveOrUpdate();
+		String save = saveOrUpdate(true);
 		jobExecution.executeJob(entity.getName(), entity.getJobRepositoryId(), entity.getId(),
 				entity.getNextExecutionDate(), entity.getLastExecutionDate());
 		return save;

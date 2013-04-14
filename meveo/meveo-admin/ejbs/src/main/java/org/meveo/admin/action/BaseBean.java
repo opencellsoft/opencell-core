@@ -25,7 +25,6 @@ import java.util.Set;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 
@@ -87,13 +86,20 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Class<T> clazz;
 
     /**
-     * Request parameter.
+     * Request parameter. Should form be displayed in create/edit or view mode
      */
     @Inject
     @RequestParam()
     private Instance<String> edit;
 
     private Boolean editSaved;
+
+    /**
+     * Request parameter. A custom back view page instead of a regular list page
+     */
+    @Inject
+    @RequestParam()
+    private Instance<String> backView;
 
     /**
      * Request parameter. Used for loading in object by its id.
@@ -223,14 +229,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // entities.forceRefresh();
     // }
 
-    /**
-     * Conversation is ended and user is redirected from edit to his previous window.
-     */
-    // TODO: @End(beforeRedirect = true, root = false)
-    public String saveOrUpdate() {
-        return saveOrUpdate(entity);
-    }
-
     public String saveOrUpdate(boolean killConversation) {
         String outcome = saveOrUpdate(entity);
         if (killConversation) {
@@ -244,7 +242,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param entity Entity to save.
      */
-    public String saveOrUpdate(T entity) {
+    protected String saveOrUpdate(T entity) {
         if (entity.isTransient()) {
             getPersistenceService().create(entity);
             messages.info(new BundleKey("messages", "save.successful"));
@@ -277,13 +275,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return string for navigation
      */
     public String back() {
-        Object backViewParameter = null;
-        // endConversation();
-        if (FacesContext.getCurrentInstance() != null) {
-            backViewParameter = FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("backView");
-        }
-        if (backViewParameter != null) {
-            return backViewParameter.toString();
+
+        if (backView != null && backView.get() != null) {
+            System.out.println("AKK backview parameter is " + backView.get());
+
+            return backView.get();
         } else {
             return getListViewName();
         }

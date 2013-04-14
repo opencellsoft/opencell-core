@@ -23,13 +23,8 @@
 			<f:param name="#{cc.attrs.objectIdParamName}" value="#{cc.attrs.backingBean.objectId}" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
-		<p:commandButton rendered="#{cc.attrs.edit and cc.attrs.killConversationOnSave}" value="#{messages['action.save']}"
-			action="#{cc.attrs.backingBean.saveOrUpdate(true)}" icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
-			<f:param name="edit" value="#{cc.attrs.edit}" />
-		</p:commandButton>
-
-		<p:commandButton rendered="#{cc.attrs.edit and not(cc.attrs.killConversationOnSave)}" value="#{messages['action.save']}"
-			action="#{cc.attrs.backingBean.saveOrUpdate}" icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
+		<p:commandButton rendered="#{cc.attrs.edit}" value="#{messages['action.save']}"
+			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}" icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
 

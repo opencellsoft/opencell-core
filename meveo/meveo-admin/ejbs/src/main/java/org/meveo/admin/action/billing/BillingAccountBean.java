@@ -134,7 +134,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    public String saveOrUpdate() {
+    @Override
+    public String saveOrUpdate(boolean killConversation) {
         try {
             if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
                 if (billingAccountService.isDuplicationExist(entity)) {
@@ -143,7 +144,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
                 }
             }
 
-            saveOrUpdate(entity);
+            super.saveOrUpdate(killConversation);
             CustomerAccount customerAccount = entity.getCustomerAccount();
             if (customerAccount != null && !customerAccount.getBillingAccounts().contains(entity)) {
                 customerAccount.getBillingAccounts().add(entity);
