@@ -69,10 +69,8 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Produces
-    @Named("recurringChargeTemplate")
-    public RecurringChargeTemplate init() {
-        RecurringChargeTemplate recuChargeTemplate = initEntity();
+    public RecurringChargeTemplate initEntity() {
+        RecurringChargeTemplate recuChargeTemplate = super.initEntity();
         if (recuChargeTemplate.getId() != null) {
             for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName() + "_" + recuChargeTemplate.getId())) {
                 languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());

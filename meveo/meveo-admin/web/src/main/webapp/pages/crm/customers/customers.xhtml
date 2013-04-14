@@ -6,7 +6,7 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{customerBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{customerListBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['customer.search']}" backingBean="#{customerBean}">
+		<hf:searchPanel label="#{messages['customer.search']}" backingBean="#{customerListBean}">
 			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
 			<hf:searchField label="#{messages['businessEntity.description']}" field="description" />
 			<hf:searchField id="customerCategoryField" label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description"
@@ -25,10 +25,10 @@
 				listBean="#{customerBrandBean}" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['customer.search']}" backingBean="#{customerBean}">
+		<hftl:dataList label="#{messages['customer.search']}" backingBean="#{customerListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" isMessage="true" />
-			<hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" isMessage="true" />
+			<hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" isMessage="false" />
+			<hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['tradingCurrency.tradingCurrencyPanel']}" field="tradingCurrency" childField="currencyCode" />
 			<hftl:column label="#{messages['tradingCountry.title']}" field="tradingCountry" childField="countryCode" />

@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 	
-		<hf:formPanel edit="#{edit}" label="#{messages['accountOperation.form']}" backingBean="#{otherCreditAndChargeBean}" entity="#{otherCreditAndCharge}">				   		
+		<hf:formPanel label="#{messages['accountOperation.form']}" backingBean="#{otherCreditAndChargeBean}">				   		
        		<hf:formEntityField label="#{messages['accountOperation.customerAccount']}" field="customerAccount" childField="name" edit="false" />
 	       	<hf:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" childField="label" edit="false" isMessage="true" />	       	  
 	      	<hf:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />

@@ -70,7 +70,7 @@
 								formId="formCustomerAccount"
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
-								useCustomIdParam="true">
+								useCustomIdParam="true" killConversationOnSave="false"  killConversationOnBack="false">
 								<p:panelGrid columns="1">
 									<p:tabView id="childTab" style="width: 95%">
 										<p:tab id="accountTab"

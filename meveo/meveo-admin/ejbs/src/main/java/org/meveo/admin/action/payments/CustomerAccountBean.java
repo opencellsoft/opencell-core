@@ -18,8 +18,8 @@ package org.meveo.admin.action.payments;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -45,7 +45,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * @created 2009.10.13
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 
     private static final long serialVersionUID = 1L;

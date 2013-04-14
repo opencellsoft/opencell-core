@@ -58,21 +58,6 @@ public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 		super(UsageDiscountPlanItem.class);
 	}
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("usageDiscountPlanItem")
-	public UsageDiscountPlanItem init() {
-		return initEntity();
-
-	}
-
-
     @Override
     public DataTable search() {
         getFilters();

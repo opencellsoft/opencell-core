@@ -68,13 +68,11 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Produces
-    @Named("dunningPlanTransition")
-    public DunningPlanTransition init() {
+    public DunningPlanTransition initEntity() {
         if (dunningPlan != null && dunningPlan.getId() == null) {
             dunningPlanService.create(dunningPlan);
         }
-        initEntity();
+        super.initEntity();
         entity.setDunningPlan(dunningPlan);
         return entity;
     }

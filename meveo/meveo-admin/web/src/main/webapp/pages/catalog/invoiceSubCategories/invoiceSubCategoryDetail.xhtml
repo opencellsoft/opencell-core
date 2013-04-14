@@ -70,10 +70,9 @@
 			<rich:panel>
 				<rich:tabPanel switchType="client">
 					<rich:tab label="#{messages['invoiceSubCategory.tab1']}">
-						<hf:formPanel edit="#{edit}"
+						<hf:formPanel 
 							label="#{messages['invoiceSubCategory.panel']}"
-							backingBean="#{invoiceSubCategoryBean}"
-							entity="#{invoiceSubCategory}">
+							backingBean="#{invoiceSubCategoryBean}">
 
 							<hf:formEntityField id="categorySelectId"
 								label="#{messages['invoiceSubCategory.invoiceCategory']}"

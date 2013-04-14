@@ -11,6 +11,7 @@
 	<cc:attribute name="columns" required="true" />
 	<cc:attribute name="edit" required="true" />
 	<cc:attribute name="killConversationOnSave" default="true" />
+	<cc:attribute name="killConversationOnBack" default="true" />
 	<cc:attribute name="useCustomIdParam" default="false" />
 	<cc:attribute name="objectIdParamName" default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
 </cc:interface>
@@ -33,6 +34,7 @@
 		<hf:clearButton label="#{messages['action.reset']}" resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
 
 		<p:button id="buttonNew" value="#{messages['action.back']}" outcome="#{cc.attrs.backingBean.back()}">
+			<f:param name="cid" value="#{conversation.id}" disable="#{ not cc.attrs.killConversationOnBack}" />
 		</p:button>
 
 	</p:panelGrid>

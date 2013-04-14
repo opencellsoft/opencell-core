@@ -67,13 +67,11 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Produces
-    @Named("actionPlanItem")
-    public ActionPlanItem init() {
+    public ActionPlanItem initEntity() {
         if (dunningPlan != null && dunningPlan.getId() == null) {
             dunningPlanService.create(dunningPlan);
         }
-        initEntity();
+        super.initEntity();
         entity.setDunningPlan(dunningPlan);
         return entity;
     }

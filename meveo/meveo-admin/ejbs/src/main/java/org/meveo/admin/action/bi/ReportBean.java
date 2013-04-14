@@ -58,18 +58,6 @@ public class ReportBean extends BaseBean<Report> {
     }
 
     /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("report")
-    public Report init() {
-        return initEntity();
-    }
-
-    /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override

@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core" template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{customerAccountBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{customerAccountListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -17,11 +17,11 @@
 		<!-- Entity select popup. -->
 		<hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}"
 			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
-			selection="#{customerAccountBean.filters['customer']}" updateField=":searchPanel:searchForm:customer:customer_child">
+			selection="#{customerAccountListBean.filters['customer']}" updateField=":searchPanel:searchForm:customer:customer_child">
 		</hftl:entityPopup>
 
 
-		<hf:searchPanel id="searchPanel" label="#{messages['customerAccount.search']}" backingBean="#{customerAccountBean}">
+		<hf:searchPanel id="searchPanel" label="#{messages['customerAccount.search']}" backingBean="#{customerAccountListBean}">
 			<hf:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" childField="code" popup="true"
 				popupId="searchCustomerPopup" clearButton="true" />
 			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
@@ -34,7 +34,7 @@
 
 		</hf:searchPanel>
 
-		<hftl:dataList backingBean="#{customerAccountBean}">
+		<hftl:dataList backingBean="#{customerAccountListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['customerAccount.name']}" field="name" titleWithMessage="true" />

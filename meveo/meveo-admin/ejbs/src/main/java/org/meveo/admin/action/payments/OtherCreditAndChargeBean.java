@@ -100,14 +100,12 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Produces
-    @Named("otherCreditAndCharge")
-    public OtherCreditAndCharge init() {
+    public OtherCreditAndCharge initEntity() {
 
         // Initialize a new one from ID or empty
 
         if (initType == null) {
-            initEntity();
+            super.initEntity();
 
             // Either create a new entity from a user selected template
         } else if (initType.equals("loadFromTemplate")) {

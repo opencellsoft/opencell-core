@@ -13,60 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.meveo.admin.action.admin;
+package org.meveo.admin.action.payments;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.admin.MedinaInputHistory;
-import org.meveo.service.admin.impl.MedinaInputHistoryService;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
- * Standard backing bean for {@link MedinaInputHistory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
- * @author Gediminas Ubartas
- * @created 2010.08.23
+ * @author Ignas
+ * @created 2009.10.13
  */
 @Named
 @ConversationScoped
-// TODO: @Restrict("#{s:hasRole('meveo.medina')}")
-public class MedinaInputHistoryBean extends BaseBean<MedinaInputHistory> {
+public class CustomerAccountListBean extends BaseBean<CustomerAccount> {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * Injected @{link MedinaInputHistory} service. Extends {@link PersistenceService}.
+     * Injected @{link CustomerAccount} service. Extends {@link PersistenceService}.
      */
     @Inject
-    private MedinaInputHistoryService medinaInputHistoryService;
+    private CustomerAccountService customerAccountService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public MedinaInputHistoryBean() {
-        super(MedinaInputHistory.class);
-    }
-
-    /**
-     * Override default list view name. (By default view name is class name starting lower case + ending 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "medinaInputs";
+    public CustomerAccountListBean() {
+        super(CustomerAccount.class);
     }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<MedinaInputHistory> getPersistenceService() {
-        return medinaInputHistoryService;
+    protected IPersistenceService<CustomerAccount> getPersistenceService() {
+        return customerAccountService;
     }
-
 }

@@ -16,22 +16,18 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.GriegDunningInputHistory;
 import org.meveo.service.admin.impl.GriegDunningInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
 /**
- * Standard backing bean for {@link GriegDunningInputHistory} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link GriegDunningInputHistory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created Apr 14, 2011
@@ -40,52 +36,36 @@ import org.meveo.service.base.local.IPersistenceService;
 @ConversationScoped
 public class GriegDunningInputHistoryBean extends BaseBean<GriegDunningInputHistory> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link GriegDunningInputHistory} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private GriegDunningInputHistoryService griegDunningInputHistoryService;
+    /**
+     * Injected @{link GriegDunningInputHistory} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private GriegDunningInputHistoryService griegDunningInputHistoryService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public GriegDunningInputHistoryBean() {
-		super(GriegDunningInputHistory.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public GriegDunningInputHistoryBean() {
+        super(GriegDunningInputHistory.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("griegDunningInputHistory")
-	public GriegDunningInputHistory init() {
-		return initEntity();
-	}
+    /**
+     * Override default list view name. (By default view name is class name starting lower case + ending 's').
+     * 
+     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+     */
+    protected String getDefaultViewName() {
+        return "griegDunningInputs";
+    }
 
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "griegDunningInputs";
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<GriegDunningInputHistory> getPersistenceService() {
-		return griegDunningInputHistoryService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<GriegDunningInputHistory> getPersistenceService() {
+        return griegDunningInputHistoryService;
+    }
 
 }

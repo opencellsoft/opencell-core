@@ -16,7 +16,6 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -25,13 +24,10 @@ import org.meveo.model.admin.BayadInvoicingInputHistory;
 import org.meveo.service.admin.impl.BayadInvoicingInputHistoryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.primefaces.component.datatable.DataTable;
 
 /**
- * Standard backing bean for {@link BayadInvoicingInputHistory} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link BayadInvoicingInputHistory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created Apr 13, 2011
@@ -40,53 +36,35 @@ import org.primefaces.component.datatable.DataTable;
 @ConversationScoped
 public class BayadInvoicingInputHistoryBean extends BaseBean<BayadInvoicingInputHistory> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link BayadInvoicingInputHistory} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private BayadInvoicingInputHistoryService bayadInvoicingInputHistoryService;
+    /**
+     * Injected @{link BayadInvoicingInputHistory} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private BayadInvoicingInputHistoryService bayadInvoicingInputHistoryService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public BayadInvoicingInputHistoryBean() {
-		super(BayadInvoicingInputHistory.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public BayadInvoicingInputHistoryBean() {
+        super(BayadInvoicingInputHistory.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("bayadInvoicingInputHistory")
-	public BayadInvoicingInputHistory init() {
-		return initEntity();
-	}
+    /**
+     * Override default list view name. (By default view name is class name starting lower case + ending 's').
+     * 
+     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+     */
+    protected String getDefaultViewName() {
+        return "bayadInvoicingInputs";
+    }
 
-
-
-	/**
-	 * Override default list view name. (By default view name is class name
-	 * starting lower case + ending 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "bayadInvoicingInputs";
-	}
-
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<BayadInvoicingInputHistory> getPersistenceService() {
-		return bayadInvoicingInputHistoryService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<BayadInvoicingInputHistory> getPersistenceService() {
+        return bayadInvoicingInputHistoryService;
+    }
 }

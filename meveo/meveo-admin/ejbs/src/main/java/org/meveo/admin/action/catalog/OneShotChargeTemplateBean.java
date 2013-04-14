@@ -67,10 +67,8 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Produces
-    @Named("oneShotChargeTemplate")
-    public OneShotChargeTemplate init() {
-        OneShotChargeTemplate oneShotChargeTemplate = initEntity();
+    public OneShotChargeTemplate initEntity() {
+        OneShotChargeTemplate oneShotChargeTemplate = super.initEntity();
         if (oneShotChargeTemplate.getId() != null) {
             for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName() + "_" + oneShotChargeTemplate.getId())) {
                 languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());

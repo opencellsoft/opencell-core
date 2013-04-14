@@ -20,6 +20,7 @@
 	<cc:attribute name="formButtonsColumns" default="3" />
 	<cc:attribute name="ajaxSubmit" default="false" />
 	<cc:attribute name="killConversationOnSave" default="true" />
+	<cc:attribute name="killConversationOnBack" default="true" />
 	<cc:attribute name="useCustomIdParam" default="false" />
 </cc:interface>
 
@@ -41,6 +42,7 @@
 				columns="#{cc.attrs.formButtonsColumns}"
 				ajaxSubmit="#{cc.attrs.ajaxSubmit}"
 				killConversationOnSave="#{cc.attrs.killConversationOnSave}"
+				killConversationOnBack="#{cc.attrs.killConversationOnBack}"
 				useCustomIdParam="#{cc.attrs.useCustomIdParam}" />
 
 		</p:panelGrid>

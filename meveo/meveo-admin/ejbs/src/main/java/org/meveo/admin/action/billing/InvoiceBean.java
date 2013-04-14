@@ -16,19 +16,16 @@
 package org.meveo.admin.action.billing;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
 
 /**
@@ -61,18 +58,6 @@ public class InvoiceBean extends BaseBean<Invoice> {
      */
     public InvoiceBean() {
         super(Invoice.class);
-    }
-
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("invoice")
-    public Invoice init() {
-        return initEntity();
     }
 
     /**

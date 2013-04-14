@@ -73,7 +73,7 @@
 					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						backingBean="#{customerBean}" useCustomIdParam="true"
-						killConversationOnSave="false">
+						killConversationOnSave="false" killConversationOnBack="false">
 						<p:tabView id="tabView" style="width: 100%">
 							<p:tab title="#{messages['customer.tab.account']}">
 								<hf:formField label="#{messages['businessEntity.code']}"
@@ -88,11 +88,11 @@
 								<hf:formEntityField
 									label="#{messages['customer.customerCategory']}"
 									field="customerCategory" childField="description" popup="false"
-									service="#{customerCategoryService}" required="true" />
+									service="#{customerCategoryService}" required="true" listBean="#{customerCategoryBean}" />
 								<hf:formEntityField
 									label="#{messages['customer.customerBrand']}"
 									field="customerBrand" childField="description" popup="false"
-									service="#{customerBrandService}" required="true" />
+									service="#{customerBrandService}" required="true" listBean="#{customerBrandBean}"/>
 
 								<hf:formEntityField id="customerCurrencySelectId"
 									label="#{messages['currency.codeCurrency']}"
@@ -155,15 +155,13 @@
 					<h:form id="operationsForm" rendered="#{!customerBean.edit}">
 						<!-- <custom:listPanel
 							label="#{messages['customerAccount.operations']}"> -->
-
-						<h:commandButton action="addCustomerAccount"
-							value="#{messages['customer.buttonAddCustomerAccount']}" />
-							
-					<h:button outcome="addCustomerAccount"  value="#{messages['customer.buttonAddCustomerAccount']}" >
- 						<f:param name="edit" value="true"/>
- 						<f:param name="customerId" value="#{customerBean.entity.id}"/>
- 						<f:param name="backView" value="customerDetail"/>
-					</h:button>							
+						<h:button outcome="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}">
+							<f:param name="customerId" value="#{customerBean.entity.id}"></f:param>
+							<f:param name="cid" value="#{conversation.id}"/>
+						</h:button>
+						<h:commandButton action="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}">
+							<f:param name="customerId" value="#{customerBean.entity.id}" />
+						</h:commandButton>
 					</h:form>
 
 				</p:column>

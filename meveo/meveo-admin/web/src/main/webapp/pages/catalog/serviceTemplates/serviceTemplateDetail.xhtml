@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['serviceTemplate.serviceParameterPanel']}" backingBean="#{serviceTemplateBean}" entity="#{serviceTemplate}" >
+		<hf:formPanel label="#{messages['serviceTemplate.serviceParameterPanel']}" backingBean="#{serviceTemplateBean}">
 				<hftl:panelGroup columns="2">	
 					<hf:formField label="#{messages['serviceTemplate.code']}" field="code" required="true" validateUnique="true" />
 		    		<hf:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>

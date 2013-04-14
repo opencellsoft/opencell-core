@@ -52,21 +52,6 @@ public class ZoningPlanBean extends BaseBean<ZonningPlan> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("zoningPlan")
-	public ZonningPlan init() {
-		return initEntity();
-
-	}
-
-
-	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override

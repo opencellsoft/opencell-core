@@ -66,11 +66,8 @@ public class WalletBean extends BaseBean<Wallet> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-
-    @Produces
-    @Named("wallet")
-    public Wallet init() {
-        initEntity();
+    public Wallet initEntity() {
+        super.initEntity();
         if (customerAccountId != null) {
             // wallet.setCustomerAccount(customerAccountService.findById(customerAccountId));
         }

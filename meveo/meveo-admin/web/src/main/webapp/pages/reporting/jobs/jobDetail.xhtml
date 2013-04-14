@@ -16,7 +16,7 @@
     
     <ui:define name="body">
     	
-		<hf:formPanel label="#{messages['job.jobPanel']}" edit="#{edit}" backingBean="#{jobBean}" entity="#{job}" >
+		<hf:formPanel label="#{messages['job.jobPanel']}" backingBean="#{jobBean}" >
  			<hf:formField label="#{messages['job.name']}" field="name" edit="false" useConverter="false"/>
    		    <hf:formField label="#{messages['job.nextExecutionDate']}" field="nextExecutionDate" isDate="true"/>
    		     <hf:formField label="#{messages['job.lastExecutionDate']}" field="lastExecutionDate" isDate="true"/>

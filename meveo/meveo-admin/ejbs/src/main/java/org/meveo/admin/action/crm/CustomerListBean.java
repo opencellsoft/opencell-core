@@ -15,7 +15,7 @@
  */
 package org.meveo.admin.action.crm;
 
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -33,8 +33,8 @@ import org.meveo.service.crm.impl.CustomerService;
  * @created 2010.11.15
  */
 @Named
-@ViewScoped
-public class CustomerBean extends BaseBean<Customer> {
+@ConversationScoped
+public class CustomerListBean extends BaseBean<Customer> {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,7 +45,7 @@ public class CustomerBean extends BaseBean<Customer> {
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public CustomerBean() {
+    public CustomerListBean() {
         super(Customer.class);
     }
 
@@ -59,17 +59,31 @@ public class CustomerBean extends BaseBean<Customer> {
         return super.initEntity();
     }
 
-  
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    public String saveOrUpdate(boolean killConversation) {
-        super.saveOrUpdate(killConversation);
-        return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId() + "&faces-redirect=true";
-    }
+    // TODO
+    // /**
+    // * Factory method, that is invoked if data model is empty. In this window
+    // we
+    // * don't need to display data table when page is loaded. Only when Search
+    // * button is pressed we should show the list. In this method we check if
+    // * list isn't called for sorting and pagination.
+    // *
+    // * @see org.meveo.admin.action.BaseBean#list()
+    // */
+    // @Produces
+    // @Named("customers")
+    // public void noList() {
+    // final FacesContext context = FacesContext.getCurrentInstance();
+    // final String sortField =
+    // context.getExternalContext().getRequestParameterMap()
+    // .get("sortField");
+    // final String resultsForm =
+    // context.getExternalContext().getRequestParameterMap()
+    // .get("results_form");
+    //
+    // if ((sortField != null) || (resultsForm != null)) {
+    // this.list();
+    // }
+    // }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()

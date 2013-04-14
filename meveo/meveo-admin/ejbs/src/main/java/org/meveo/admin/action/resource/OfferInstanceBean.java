@@ -67,20 +67,6 @@ public class OfferInstanceBean extends BaseBean<OfferInstance> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("offerInstance")
-	public OfferInstance init() {
-		return initEntity();
-	}
-
-
-	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override

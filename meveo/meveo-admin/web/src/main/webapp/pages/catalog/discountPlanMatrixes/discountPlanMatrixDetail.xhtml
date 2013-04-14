@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['discountPlanMatrix.panel']}" backingBean="#{discountPlanMatrixBean}" entity="#{discountPlanMatrix}" >
+		<hf:formPanel label="#{messages['discountPlanMatrix.panel']}" backingBean="#{discountPlanMatrixBean}">
     			<hf:formField label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" required="true" validateUnique="true" />
     			<hf:formField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
     			<hf:formField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />

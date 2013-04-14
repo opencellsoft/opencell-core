@@ -58,16 +58,6 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
         super(ServiceTemplate.class);
     }
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    public ServiceTemplate initEntity() {
-        return super.initEntity();
-    }
-
     @Override
     public DataTable search() {
         getFilters();
