@@ -490,7 +490,7 @@ input[type="submit"]:hover,
   
   padding-bottom : 10px;
   border-bottom : 1px solid #e7e5e5;
-  border-top : 1px solid white;
+ 
 }
 .body form:first-child
 {
@@ -507,6 +507,8 @@ input[type="submit"]:hover,
 {
   background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb);
   background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb));
+  font-size : 14px;
+  height : 35px;
 }
 .ui-datatable 
 {
@@ -582,7 +584,7 @@ input[type="submit"]:hover,
 }
 .ui-inputfield[disabled="disabled"]
 {
-  margin-left : -10px;
+  margin-left : -2px;
 }
 .ui-outputlabel
 {
@@ -624,13 +626,32 @@ select[disabled]
    border-radius: 0px 0px 8px 8px;
 }
 
-div.body > table > thead
+div.body > table > thead,
+.panels > table  > thead
 {
 	font-size : 14px;
 	float : left;
-	//color : #0d5c59;
 	color : #4f4f4f;
 	border-bottom : 1px solid #d5d5d5;
+}
+.panels > table
+{
+  float : left;
+  clear : both;
+  margin-bottom : 20px;
+}
+#tab
+{
+  float : left;
+  width : 95%;
+}
+.panels > table  > thead tr th
+{
+    //margin-bottom : 100px !important;
+    float : left;
+    //background : red;
+    display : block;
+    paddin
 }
 .ui-picklist-list
 {
@@ -672,7 +693,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f6f7', end
    border-radius: 8px !important;
    border : 1px solid #d6d6d6 ;
    display : inline-block;
-   overflow : hidden;
+  // overflow : hidden;
   margin-top : 10px;
 }
 .ui-panelgrid tr,
@@ -760,3 +781,62 @@ table[id="j_idt114:formPricePlan:j_idt191"],
 {
   border : none;
 }
+.ui-panelgrid
+{
+  width : 100%;
+  padding : 0px;
+  margin : 0px;
+}
+.ui-widget-header
+{
+  width : 100%;
+}
+td[role="gridcell"]
+{
+  margin : 0px;
+  padding : 2px;
+  
+}
+.ui-fieldset-legend
+{
+  border : none !important;
+  background : none !important;
+  font-size : 14px;
+}
+.ui-tabs-top
+{
+ float : left;
+}
+.ui-tabs
+{
+  width : 100%;
+}
+.ui-tabs-nav
+{
+  width : 99%;
+  background : none !important;
+ 
+}
+.ui-widget-header 
+{
+  background : none;
+  text-align : left;
+  font-size : 14px;
+  
+}
+.ui-widget-header td[role="columnheader"]
+{
+  border-bottom : 1px solid #e8eded;
+}
+.ui-datatable .ui-widget-header
+{
+  font-size : 12px;
+  height : 27px;
+  background : -moz-linear-gradient(center top , #FFFFFF 0%, #EBEBEB 50%, #DBDBDB) repeat scroll 0 0 transparent;
+}
+
+.tree-customer-icon { background: url(../img/customer-icon.png) !important; height: 16px; width: 16px; }
+.tree-customer-account-icon { background: url(../img/customerAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-billing-account-icon { background: url(../img/billingAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-user-account-icon { background: url(../img/userAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-subscription-icon { background: url(../img/subscription-icon.png) !important; height: 16px; width: 16px; }
