@@ -25,7 +25,9 @@
 	</ui:define>
 
 	<ui:define name="body">
+
 		<c:if test="${billingAccountBean.edit}">
+
 			<hftl:entityPopup id="customerAccountPopup"
 				header="#{messages['customerAccount.popup.header']}"
 				backingBean="#{customerAccountBean}"
@@ -88,22 +90,22 @@
 
 		</c:if>
 
-		<h:panelGrid columns="1" width="100%">
-			<h:panelGroup>
-				<div class="panels">
-
+		<p:panelGrid style="width: 100%">
+			<p:row>
+				<p:column style="width: 25%; vertical-align: top;">
 					<hf:hierarchyPanel
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(billingAccountBean.entity)}"
 						entity="#{billingAccountBean.entity}" />
-
-					<p:tabView id="parentTab" styleClass="formPanel">
+				</p:column>
+				<p:column style="width: 75%">
+					<p:tabView id="parentTab">
 						<p:tab title="#{messages['billingAccount.tab.account']}">
 							<hf:formPanel id="formBillingAccountPanel"
 								label="#{messages['billingAccount.billingAccountPanel']}"
 								backingBean="#{billingAccountBean}" styleClass="formPanel"
 								killConversationOnSave="false" useCustomIdParam="true">
 
-								<p:tabView id="childTab" switchType="client">
+								<p:tabView id="childTab">
 									<p:tab title="#{messages['billingAccount.tab.account']}">
 										<hftl:fieldset
 											name="#{messages['billingAccount.billingAccountPanel']}"
@@ -122,7 +124,7 @@
 												<hf:formEntityField
 													label="#{messages['accountEntity.primaryContact']}"
 													field="primaryContact" childField="code" popup="false"
-													listBean="#{providerContactService}" />
+													listBean="#{providerContactBean}" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="1">
 												<hf:formField
@@ -184,7 +186,7 @@
 														value="#{billingAccountBean.entity.externalRef2}"
 														rendered="#{billingAccountBean.edit}"
 														valueChangeListener="#{billingAccountBean.processValueChange}">
-														<p:ajax event="valueChange" render="invoicePrefixPanel" />														
+														<p:ajax event="valueChange" render="invoicePrefixPanel" />
 													</p:inputText>
 													<h:outputText
 														value="#{billingAccountBean.entity.externalRef2}"
@@ -494,8 +496,10 @@
 							</hftl:dataList>
 						</p:tab>
 					</p:tabView>
-				</div>
-			</h:panelGroup>
-		</h:panelGrid>
+
+				</p:column>
+			</p:row>
+		</p:panelGrid>
+
 	</ui:define>
 </ui:composition>
