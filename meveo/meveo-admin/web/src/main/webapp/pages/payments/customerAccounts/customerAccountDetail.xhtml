@@ -14,10 +14,9 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:viewParam name="customerAccountId"
-				value="#{customerAccountBean.objectId}" />
-			<f:viewParam name="customerId"
-				value="#{customerAccountBean.customerId}" />
+			<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+			<f:viewParam name="customerId" value="#{customerAccountBean.customerId}" />
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
 	</ui:define>
 
@@ -274,12 +273,12 @@
 											onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}">
 											<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
 										</p:commandButton>
-										<p:commandButton
+										<p:button
 											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
-											action="addNewBillingAccount"
+											outcome="addBillingAccount"
 											value="#{messages['customerAccount.buttonAddBillingAccount']}">
-											<!-- 										<f:attribute name="backView" value="#{backView}" /> -->
-										</p:commandButton>
+												<f:param name="cid" value="#{conversation.id}"/>
+										</p:button>
 									</hf:formButtons>
 								</p:panelGrid>
 							</hf:formPanel>
