@@ -13,9 +13,12 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
-			<f:viewParam name="customerAccountId" value="#{billingAccountBean.customerAccountId}" />
-			<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+			<f:viewParam name="billingAccountId"
+				value="#{billingAccountBean.objectId}" />
+			<f:viewParam name="customerAccountId"
+				value="#{billingAccountBean.customerAccountId}" />
+			<f:viewParam name="customerAccountId"
+				value="#{customerAccountBean.objectId}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
 	</ui:define>
@@ -270,9 +273,6 @@
 												<hf:formField
 													label="#{messages['billingAccount.subscriptionDate']}"
 													field="subscriptionDate" />
-
-
-
 											</hftl:panelGroup>
 
 											<hftl:panelGroup columns="1">
@@ -323,22 +323,21 @@
 											</hftl:panelGroup>
 										</hftl:fieldset>
 										<p:panelGrid columns="1" id="bankCoordinatePanel">
-											<hftl:fieldset name="#{messages['commons.bankCoordinates']}">
+											<hftl:fieldset name="#{messages['commons.bankCoordinates']}"
+												columns="1">
 												<hftl:panelGroup columns="1">
-													<a:outputPanel id="paymentMethodField">
-														<hf:formField
-															label="#{messages['billingAccount.paymentMethod']}"
-															field="paymentMethod" required="true" />
-													</a:outputPanel>
+													<hf:formField
+														label="#{messages['billingAccount.paymentMethod']}"
+														field="paymentMethod" required="true" />
 												</hftl:panelGroup>
 												<hftl:panelGroup columns="2">
-													<a:outputPanel id="electronicBillingField">
+													<p:outputPanel id="electronicBillingField">
 														<hf:formField
 															label="#{messages['billingAccount.electronicBilling']}"
 															field="electronicBilling" isMessage="true" />
-													</a:outputPanel>
-													<a:outputPanel id="emailField">
+													</p:outputPanel>
 
+													<p:outputPanel id="emailField">
 														<h:panelGrid columns="2">
 															<p:outputLabel for="email_select"
 																value="#{messages['billingAccount.email']}" />
@@ -354,7 +353,7 @@
 																value="#{billingAccountBean.entity.email}"
 																required="#{billingAccountBean.entity.electronicBilling}" />
 														</h:panelGrid>
-													</a:outputPanel>
+													</p:outputPanel>
 												</hftl:panelGroup>
 												<h:panelGroup id="bankCoordinatesPanel"
 													rendered="#{entity.paymentMethod.toString() == 'DIRECTDEBIT' or entity.paymentMethod.toString() == 'TIP'}">
@@ -425,9 +424,9 @@
 									disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString()!='CANCELLED'}" />&nbsp;&nbsp;
 							<p:button outcome="addNewUserAccountAction"
 									value="#{messages['billingAccount.addUserAccount']}"
-									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" >
-								<f:param name="cid" value="#{conversation.id}"/>		
-							</p:button>
+									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
 								<!-- 								</custom:listPanel> -->
 							</h:form>
 
