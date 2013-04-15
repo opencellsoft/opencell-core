@@ -549,6 +549,7 @@ input[type="submit"]:hover,
 .ui-widget
 {
   font-size : 11px;
+  
 }
 .ui-selectonemenu .ui-inputfield
 {
@@ -840,3 +841,8 @@ td[role="gridcell"]
 .tree-billing-account-icon { background: url(../img/billingAccount-icon.png) !important; height: 16px; width: 16px; }
 .tree-user-account-icon { background: url(../img/userAccount-icon.png) !important; height: 16px; width: 16px; }
 .tree-subscription-icon { background: url(../img/subscription-icon.png) !important; height: 16px; width: 16px; }
+
+.ui-widget-content
+{
+  background : transparent;
+}
