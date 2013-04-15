@@ -549,6 +549,7 @@ input[type="submit"]:hover,
 .ui-widget
 {
   font-size : 11px;
+  
 }
 .ui-selectonemenu .ui-inputfield
 {
@@ -653,7 +654,8 @@ div.body > table > thead,
     display : block;
     paddin
 }
-.ui-picklist-list
+.ui-picklist-list,
+.ui-tree
 {
   -webkit-border-radius: 8px;
    border-radius: 8px;
@@ -840,3 +842,18 @@ td[role="gridcell"]
 .tree-billing-account-icon { background: url(../img/billingAccount-icon.png) !important; height: 16px; width: 16px; }
 .tree-user-account-icon { background: url(../img/userAccount-icon.png) !important; height: 16px; width: 16px; }
 .tree-subscription-icon { background: url(../img/subscription-icon.png) !important; height: 16px; width: 16px; }
+
+.ui-widget-content
+{
+  background : transparent;
+}
+.ui-tree
+{
+  margin-top : 5px;
+}
+.ui-tree .ui-treenode-label a
+{
+  font-size : 11px;
+  color : #6b6b6b;
+  text-decoration : none;
+}
