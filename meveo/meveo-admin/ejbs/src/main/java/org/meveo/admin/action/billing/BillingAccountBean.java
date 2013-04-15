@@ -89,9 +89,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
     @Inject
     private BillingRunService billingRunService;
 
-    @Inject
-    @RequestParam
-    private Instance<Long> customerAccountId;
+    private Long customerAccountId;
 
     @Inject
     private Messages messages;
@@ -121,14 +119,22 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
     public BillingAccount initEntity() {
         super.initEntity();
         returnToAgency = !(entity.getInvoicePrefix() == null);
-        if (entity.getId() == null && customerAccountId.get() != null) {
-            CustomerAccount customerAccount = customerAccountService.findById(customerAccountId.get());
-            entity.setCustomerAccount(customerAccountService.findById(customerAccountId.get()));
+        if (entity.getId() == null && customerAccountId != null) {
+            CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
+            entity.setCustomerAccount(customerAccountService.findById(customerAccountId));
             populateAccounts(customerAccount);
         }
         return entity;
     }
 
+    public void setCustomerAccountId(Long customerAccountId){
+        this.customerAccountId=customerAccountId;
+    }
+    
+    public Long getCustomerAccountId(){
+        return customerAccountId;
+    }
+    
     /**
      * Conversation is ended and user is redirected from edit to his previous window.
      * 
@@ -149,7 +155,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
             if (customerAccount != null && !customerAccount.getBillingAccounts().contains(entity)) {
                 customerAccount.getBillingAccounts().add(entity);
             }
-            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&billingAccountId=" + entity.getId() + "&faces-redirect=true";
+            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&billingAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {
@@ -167,7 +173,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
         return billingAccountService;
     }
 
-    public String saveOrUpdate(BillingAccount entity) {
+    protected String saveOrUpdate(BillingAccount entity) {
         try {
 
             if (entity.isTransient()) {

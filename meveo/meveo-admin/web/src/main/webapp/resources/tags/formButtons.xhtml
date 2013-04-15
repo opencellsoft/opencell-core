@@ -19,12 +19,12 @@
 <cc:implementation>
 
 	<p:panelGrid columns="#{cc.attrs.columns}" style="float: right;">
-		<p:button value="#{messages['commons.edit']}" rendered="#{!cc.attrs.edit}">
+		<p:button value="#{messages['commons.edit']}" rendered="#{!cc.attrs.edit}" includeViewParams="true">
 			<f:param name="edit" value="true" />
 			<f:param name="#{cc.attrs.objectIdParamName}" value="#{cc.attrs.backingBean.objectId}" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
-		<p:commandButton rendered="#{cc.attrs.edit}" value="#{messages['action.save']}"
+		<p:commandButton rendered="#{cc.attrs.edit}" value="#{messages['action.save']}" 
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}" icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
@@ -33,7 +33,7 @@
 
 		<hf:clearButton label="#{messages['action.reset']}" resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
 
-		<p:button id="buttonNew" value="#{messages['action.back']}" outcome="#{cc.attrs.backingBean.back()}">
+		<p:button id="buttonBack" value="#{messages['action.back']}" outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
 			<f:param name="cid" value="#{conversation.id}" disable="#{ not cc.attrs.killConversationOnBack}" />
 		</p:button>
 

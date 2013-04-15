@@ -153,17 +153,10 @@
 
 					</hf:formPanel>
 					<h:form id="operationsForm" rendered="#{!customerBean.edit}">
-						<!-- <custom:listPanel
-							label="#{messages['customerAccount.operations']}"> -->
-						<h:button outcome="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}">
-							<f:param name="customerId" value="#{customerBean.entity.id}"></f:param>
+						<p:button outcome="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}">
 							<f:param name="cid" value="#{conversation.id}"/>
-						</h:button>
-						<h:commandButton action="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}">
-							<f:param name="customerId" value="#{customerBean.entity.id}" />
-						</h:commandButton>
+						</p:button>
 					</h:form>
-
 				</p:column>
 			</p:row>
 		</p:panelGrid>

@@ -63,9 +63,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-    @Inject
-    @RequestParam
-    private Instance<Long> billingAccountId;
+    private Long billingAccountId;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -80,6 +78,14 @@ public class UserAccountBean extends BaseBean<UserAccount> {
         super(UserAccount.class);
     }
 
+    public Long getBillingAccountId() {
+        return billingAccountId;
+    }
+
+    public void setBillingAccountId(Long billingAccountId) {
+        this.billingAccountId = billingAccountId;
+    }
+
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
      * 
@@ -89,8 +95,8 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     @Override
     public UserAccount initEntity() {
         super.initEntity();
-        if (entity.getId() == null && billingAccountId.get() != null) {
-            BillingAccount billingAccount = billingAccountService.findById(billingAccountId.get());
+        if (entity.getId() == null && billingAccountId != null) {
+            BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
             entity.setBillingAccount(billingAccount);
             populateAccounts(billingAccount);
         }

@@ -13,8 +13,10 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:viewParam name="billingAccountId"
-				value="#{billingAccountBean.objectId}" />
+			<f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
+			<f:viewParam name="customerAccountId" value="#{billingAccountBean.customerAccountId}" />
+			<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
 	</ui:define>
 
@@ -421,9 +423,11 @@
 									value="#{messages['account.buttonCloseAccount']}"
 									onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString()!='CANCELLED'}" />&nbsp;&nbsp;
-							<h:commandButton action="addNewUserAccountAction"
+							<p:button outcome="addNewUserAccountAction"
 									value="#{messages['billingAccount.addUserAccount']}"
-									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
+									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" >
+								<f:param name="cid" value="#{conversation.id}"/>		
+							</p:button>
 								<!-- 								</custom:listPanel> -->
 							</h:form>
 

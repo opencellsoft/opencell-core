@@ -124,7 +124,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
             }
             super.saveOrUpdate(killConversation);
             return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId=" + entity.getId() + "&cid=" + conversation.getId()
-                    + "&faces-redirect=true";
+                    + "&faces-redirect=true&includeViewParams=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {
@@ -293,7 +293,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
         }
     }
 
-    private Long getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
