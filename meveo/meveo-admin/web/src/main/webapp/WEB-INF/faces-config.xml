@@ -967,5 +967,6 @@
 	<!-- <message severity="WARN">#{messages['error.unexpected']} #{handledException.message}</message> -->
 	<!-- </redirect> -->
 	<!-- </exception> -->
+	
 
 </faces-config>
