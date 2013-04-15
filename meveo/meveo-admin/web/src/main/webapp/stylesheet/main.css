@@ -654,7 +654,8 @@ div.body > table > thead,
     display : block;
     paddin
 }
-.ui-picklist-list
+.ui-picklist-list,
+.ui-tree
 {
   -webkit-border-radius: 8px;
    border-radius: 8px;
@@ -845,4 +846,14 @@ td[role="gridcell"]
 .ui-widget-content
 {
   background : transparent;
+}
+.ui-tree
+{
+  margin-top : 5px;
+}
+.ui-tree .ui-treenode-label a
+{
+  font-size : 11px;
+  color : #6b6b6b;
+  text-decoration : none;
 }
