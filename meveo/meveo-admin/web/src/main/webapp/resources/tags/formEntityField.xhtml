@@ -34,9 +34,9 @@
 <cc:implementation>
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.popup}">
-			<p:outputLabel for="#{cc.attrs.id}" value="#{cc.attrs.label}" />
+			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}" />
 			<p:panelGrid columns="3">
-				<p:inputText id="#{cc.attrs.id}" rendered="#{cc.attrs.edit}"
+				<p:inputText id="#{cc.attrs.id}_text" rendered="#{cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}"
 					disabled="true" />
 				<p:commandButton rendered="#{cc.attrs.edit}" id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"

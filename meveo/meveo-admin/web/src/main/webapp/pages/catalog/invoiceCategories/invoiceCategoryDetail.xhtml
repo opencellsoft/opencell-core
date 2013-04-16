@@ -21,11 +21,8 @@
 
 			<hf:formField label="#{messages['invoiceCategory.code']}"
 				field="code" required="true" validateUnique="true" />
-
-			<hf:formField label="#{messages['invoiceCategory.description']}"
-				required="true" field="description" />
-
-			<!-- <custom:languageFields /> -->
+				
+			<hf:languageFields />
 			<!-- <hf:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
 			<hf:formField label="#{messages['invoiceCategory.subcategories']}"
 				field="invoiceSubCategories" edit="true"

@@ -145,12 +145,13 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
                 languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
             }
         }
-        if (invoiceCategoryId != null) {
+        if (invoiceCategoryId.get() != null) {
             entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId.get()));
         }
         parseAccountingCode();
         return invoiceCatSub;
     }
+    
 
     public List<InvoiceSubCategory> listAll() {
         getFilters();
@@ -183,6 +184,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
                     catMessagesService.create(catMessages);
                 }
             }
+            entity.setAccountingCode(generateAccountingCode());
             back = super.saveOrUpdate(killConversation);
 
         } else {
@@ -197,6 +199,11 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
         }
 
         return back;
+    }
+    
+    @Override
+    protected String getListViewName() {
+    	 return "invoiceSubCategories";
     }
 
     /**

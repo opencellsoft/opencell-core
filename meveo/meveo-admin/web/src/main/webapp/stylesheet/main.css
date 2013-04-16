@@ -549,6 +549,7 @@ input[type="submit"]:hover,
 .ui-widget
 {
   font-size : 11px;
+  
 }
 .ui-selectonemenu .ui-inputfield
 {
@@ -653,7 +654,8 @@ div.body > table > thead,
     display : block;
     paddin
 }
-.ui-picklist-list
+.ui-picklist-list,
+.ui-tree
 {
   -webkit-border-radius: 8px;
    border-radius: 8px;
@@ -834,9 +836,50 @@ td[role="gridcell"]
   height : 27px;
   background : -moz-linear-gradient(center top , #FFFFFF 0%, #EBEBEB 50%, #DBDBDB) repeat scroll 0 0 transparent;
 }
-
-.tree-customer-icon { background: url(../img/customer-icon.png) !important; height: 16px; width: 16px; }
-.tree-customer-account-icon { background: url(../img/customerAccount-icon.png) !important; height: 16px; width: 16px; }
+.ui-treenode-leaf-icon
+{
+  
+}
+.tree-customer-icon,
+.ui-icon-folder-open
+{  
+  background-image: url(http://www.jobellevallega.com/numan/user.png) !important;
+  background-size : 13px 13px !important;
+  background-repeat : no-repeat !important;
+  background : transparent;
+}
+.tree-customer-account-icon
+{
+  background-image: url(http://www.jobellevallega.com/numan/folder.png) !important;
+  background-size : 15px 15px !important;
+  background-repeat : no-repeat !important;
+  background : transparent;
+}
 .tree-billing-account-icon { background: url(../img/billingAccount-icon.png) !important; height: 16px; width: 16px; }
-.tree-user-account-icon { background: url(../img/userAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-user-account-icon { background: url(http://www.jobellevallega.com/numan/user.png) !important; height: 16px; width: 16px; }
 .tree-subscription-icon { background: url(../img/subscription-icon.png) !important; height: 16px; width: 16px; }
+
+
+.ui-tree
+{
+  margin-top : 5px;
+}
+.ui-tree .ui-treenode-label a
+{
+  font-size : 11px;
+  color : #6b6b6b;
+  text-decoration : none;
+  font-family : helvetica;
+  padding : 5px 2px 0px 2px;
+  
+  
+}
+
+.ui-tabs-panel table tr td
+{
+   display : inline-block;
+}
+.ui-selectonemenu-list
+{
+  background : white;
+}
