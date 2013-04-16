@@ -136,10 +136,10 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
                     catMessagesService.create(catMessages);
                 }
             }
-            back = saveOrUpdate(killConversation);
+            back = super.saveOrUpdate(killConversation);
 
         } else {
-            back = saveOrUpdate(killConversation);
+            back = super.saveOrUpdate(killConversation);
             for (String msgKey : languageMessagesMap.keySet()) {
                 String description = languageMessagesMap.get(msgKey);
                 CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey, description);

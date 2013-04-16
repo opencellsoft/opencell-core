@@ -14,17 +14,12 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<script>
-			function showHide(id) {
-
-			}
-		</script>
 
 		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
 			header="#{messages['invoiceSubCategory.panel']}"
 			backingBean="#{invoiceSubCategoryBean}"
 			updateField=":formPanel:reccuringChargeId:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId_text"
-			selection="#{invoiceSubCategoryBean.entity.invoiceSubCategory}"
+			selection="#{recurringChargeTemplateBean.entity.invoiceSubCategory}"
 			searchField1Label="#{messages['invoiceSubCategory.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['invoiceSubCategory.description']}"
