@@ -184,6 +184,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
                     catMessagesService.create(catMessages);
                 }
             }
+            entity.setAccountingCode(generateAccountingCode());
             back = super.saveOrUpdate(killConversation);
 
         } else {
