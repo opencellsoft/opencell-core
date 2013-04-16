@@ -795,8 +795,8 @@ table[id="j_idt114:formPricePlan:j_idt191"],
 }
 td[role="gridcell"]
 {
-  margin : 0px;
-  padding : 2px;
+  margin : 0px ;
+  padding : 5px 2px;
   
 }
 .ui-fieldset-legend
@@ -882,4 +882,38 @@ td[role="gridcell"]
 .ui-selectonemenu-list
 {
   background : white;
+}
+/*country fix for admin < provider < contact < new */
+table[id="j_idt32:formId:j_idt118"]
+{
+  margin-left : 53px;
+  
+}
+table[id="j_idt32:formId:j_idt118"] tr td:first-child
+{
+  font-weight : bold;
+  margin-right : 10px !important;
+  display : inline-block;
+  padding-top : 5px;
+}
+/*end of country fix */
+/*fix for accounts<new , country field */
+table[id="parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:countryPanel"]
+{
+  margin-left : 12px;
+}
+
+/*fix for accounts details */
+.ui-tabs-panels .ui-tabs-panel > table[width="100%"] > tbody tr  td:nth-child(2)
+{
+  color : #649fa8 ;
+  padding : 5px 5px;
+  margin-right : 10px;
+  font-style : normal;
+ 
+}
+.ui-tabs-panels .ui-tabs-panel > table[width="100%"] > tbody > tr > td table tbody tr td:last-child,
+.ui-tabs-panels .ui-tabs-panel > table[width="100%"] > tbody > tr > td table tbody tr td:last-child > span
+{
+
 }
