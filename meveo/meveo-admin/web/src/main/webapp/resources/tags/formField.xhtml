@@ -42,7 +42,7 @@
 <cc:implementation>
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<!--  If the value binding is a string, display an inputText field. -->
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isText(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}" />
 			<p:inputText id="#{cc.attrs.id}_text"
@@ -66,10 +66,10 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
 		<!--  If the value binding is a number, display an input number spinner. -->
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isInteger(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_int" value="#{cc.attrs.label}" />
 			<p:spinner rendered="#{cc.attrs.edit}"
@@ -81,9 +81,9 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isByte(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_byte" value="#{cc.attrs.label}" />
 			<p:spinner rendered="#{cc.attrs.edit}"
@@ -95,9 +95,9 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isLong(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_long" value="#{cc.attrs.label}" />
 			<p:spinner rendered="#{cc.attrs.edit}"
@@ -109,9 +109,9 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isShort(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_short" value="#{cc.attrs.label}" />
 			<p:spinner rendered="#{cc.attrs.edit}"
@@ -123,10 +123,10 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
 		<!--  If the value binding is a rational number, display an input text field. -->
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isBigDecimal(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_bigDecimal"
 				value="#{cc.attrs.label}" />
@@ -140,9 +140,9 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isDouble(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_double" value="#{cc.attrs.label}" />
 			<p:inputText rendered="#{cc.attrs.edit}"
@@ -154,9 +154,9 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isFloat(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_float" value="#{cc.attrs.label}" />
 			<p:inputText rendered="#{cc.attrs.edit}"
@@ -169,10 +169,10 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
 		<!--  If the value binding is a boolean, display a selectBooleanCheckbox field. -->
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isBoolean(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_boolean" value="#{cc.attrs.label}" />
 
@@ -206,10 +206,10 @@
 				style="font-weight:bold;" />
 
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
 		<!--  If the value binding is a date, display a rich:calendar field. -->
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isDate(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_date" value="#{cc.attrs.label}" />
 			<p:calendar id="#{cc.attrs.id}_date"
@@ -224,10 +224,10 @@
 				<f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
 			</h:outputText>
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
 		<!--  If the value binding is an enum, display a drop down. -->
-		<h:panelGrid columns="2"
+		<p:panelGrid columns="2"
 			rendered="#{cc.isEnum(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_enum" value="#{cc.attrs.label}" />
 			<p:selectOneMenu rendered="#{cc.attrs.edit}"
@@ -243,15 +243,15 @@
 				value="#{messages[cc.entityFromBackingBeanOrAttribute[cc.attrs.field].label]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
-		</h:panelGrid>
+		</p:panelGrid>
 
 		<!--  If the value binding is a List, display a panel with list of entities. -->
 		<ui:fragment rendered="#{cc.isList(cc.attrs.field,cc.attrs.entity)}">
 
 			<ui:fragment rendered="#{cc.attrs.listType == 'simpleList'}">
-				<h:panelGrid columns="2">
+				<p:panelGrid columns="2">
 					<h:outputLabel value="#{cc.attrs.label}" />
-					<h:panelGrid>
+					<p:panelGrid>
 						<p:dataTable id="#{cc.attrs.id}_datatable"
 							value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 							var="listElement">
@@ -293,12 +293,12 @@
 							value="#{messages['commons.addNew']}"
 							onclick="alert('not implemented. formField.xhtml line 248')" />
 						<cc:insertChildren />
-					</h:panelGrid>
-				</h:panelGrid>
+					</p:panelGrid>
+				</p:panelGrid>
 			</ui:fragment>
 
 			<ui:fragment rendered="#{cc.attrs.listType=='pickUpList'}">
-				<h:panelGrid columns="2">
+				<p:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_picklist"
 						value="#{cc.attrs.label}" />
 					<c:set var="elements"
@@ -312,7 +312,7 @@
 						disabled="#{not cc.attrs.edit}">
 						<s:objectConverter />
 					</p:pickList>
-				</h:panelGrid>
+				</p:panelGrid>
 			</ui:fragment>
 		</ui:fragment>
 	</ui:fragment>

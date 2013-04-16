@@ -17,14 +17,13 @@
 		<!-- Entity select popup. -->
 		<hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}"
 			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
-			selection="#{customerAccountBean.filters['customer']}"
-			updateField=":searchPanel:searchForm:customer:customer_child">
+			selection="#{customerAccountBean.filters['customer']}" updateField=":searchPanel:searchForm:customer:customer_child">
 		</hftl:entityPopup>
 
 
 		<hf:searchPanel id="searchPanel" label="#{messages['customerAccount.search']}" backingBean="#{customerAccountBean}">
-			<hf:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" childField="code" popup="true" popupId="searchCustomerPopup"
-				clearButton="true" />
+			<hf:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" childField="code" popup="true"
+				popupId="searchCustomerPopup" clearButton="true" />
 			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
 			<hf:searchField label="#{messages['businessEntity.description']}" field="description" />
 			<hf:searchField label="#{messages['customerAccount.name']}" field="name" />
@@ -44,7 +43,7 @@
 			<hftl:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory" childField="label" isMessage="true" />
 			<hftl:column label="#{messages['customerAccount.customer']}" field="customer" childField="code" />
 			<hftl:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency" childField="currencyCode" />
-			<hftl:actionsColumn permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
+			<hftl:actionsColumn useCustomIdParam="true" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

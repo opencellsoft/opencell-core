@@ -10,19 +10,28 @@
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
-
+<f:metadata>
+		<f:event type="preRenderView" listener="#{discountPlanMatrixBean.preRenderView}" />
+	</f:metadata>
 	<ui:define name="body">
-
-		<hf:searchPanel label="#{messages['discountPlanMatrix.search']}" backingBean="#{discountPlanMatrixBean}">
+	     <hftl:entityPopup id="searchSellerPopup" header="#{messages['customer.popup.header']}" backingBean="#{sellerBean}"
+			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			selection="#{discountPlanMatrixBean.filters['seller']}" updateField=":searchPanel:searchForm:seller:seller_child">
+		    </hftl:entityPopup>
+		<hf:searchPanel  id="searchPanel" label="#{messages['discountPlanMatrix.search']}" backingBean="#{discountPlanMatrixBean}">
 			<hf:searchField label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" />
 			<hf:searchField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
 			<hf:searchField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
 			<hf:searchField label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />
 			<hf:searchField label="#{messages['discountPlanMatrix.percent']}" field="percent" />
+			<hf:searchField id="seller" label="#{messages['seller.title']}" field="seller" childField="description" popup="true" popupId="searchSellerPopup" clearButton="true" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['discountPlanMatrix.title']}" backingBean="#{discountPlanMatrixBean}">
 			<hftl:column label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" />
+			<hftl:column label="#{messages['seller.title']}" field="seller" childField="description" />
 			<hftl:column label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
 			<hftl:column label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
 			<hftl:column label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />

@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
 	<cc:attribute name="label" required="true" />
@@ -15,25 +20,31 @@
 	<cc:attribute name="formButtonsColumns" default="3" />
 	<cc:attribute name="ajaxSubmit" default="false" />
 	<cc:attribute name="killConversationOnSave" default="true" />
+	<cc:attribute name="useCustomIdParam" default="false" />
 </cc:interface>
 
 <cc:implementation>
-	<h:panelGrid>
-		<f:facet name="header">
-			<h:outputText value="#{cc.attrs.label}" />
-		</f:facet>
+	<h:form id="#{cc.attrs.formId}">
+		<p:panelGrid columns="1">
+			<f:facet name="header">
+				<h:outputText value="#{cc.attrs.label}" />
+			</f:facet>
 
-		<h:form id="#{cc.attrs.formId}">
 			<p:messages id="messages" />
-			<h:panelGrid columns="#{cc.attrs.columns}" columnClasses="#{cc.attrs.columnClasses}">
+			<p:panelGrid columns="#{cc.attrs.columns}"
+				columnClasses="#{cc.attrs.columnClasses}">
 				<cc:insertChildren />
-			</h:panelGrid>
+			</p:panelGrid>
 
-			<hf:formButtons rendered="#{cc.attrs.showFormButtons}" backingBean="#{cc.attrs.backingBean}" edit="#{cc.attrs.edit}"
-				columns="#{cc.attrs.formButtonsColumns}" ajaxSubmit="#{cc.attrs.ajaxSubmit}" killConversationOnSave="#{cc.attrs.killConversationOnSave}" />
-		</h:form>
+			<hf:formButtons rendered="#{cc.attrs.showFormButtons}"
+				backingBean="#{cc.attrs.backingBean}" edit="#{cc.attrs.edit}"
+				columns="#{cc.attrs.formButtonsColumns}"
+				ajaxSubmit="#{cc.attrs.ajaxSubmit}"
+				killConversationOnSave="#{cc.attrs.killConversationOnSave}"
+				useCustomIdParam="#{cc.attrs.useCustomIdParam}" />
 
-	</h:panelGrid>
+		</p:panelGrid>
+	</h:form>
 </cc:implementation>
 
 </html>

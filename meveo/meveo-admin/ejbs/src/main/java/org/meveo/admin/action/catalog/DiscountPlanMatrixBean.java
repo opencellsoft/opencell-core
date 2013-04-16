@@ -81,6 +81,11 @@ public class DiscountPlanMatrixBean extends BaseBean<DiscountPlanMatrix> {
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
+    protected String getListViewName() {
+    	 return "pricePlanMatrixes";
+    }
+    
+    @Override
     protected IPersistenceService<DiscountPlanMatrix> getPersistenceService() {
         return discountPlanMatrixService;
     }

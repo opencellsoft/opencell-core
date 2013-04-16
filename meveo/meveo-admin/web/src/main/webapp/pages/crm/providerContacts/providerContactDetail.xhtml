@@ -20,38 +20,34 @@
 
 		<hf:formPanel edit="#{providerContactBean.edit}"
 			label="#{messages['providerContact.title']}"
-			backingBean="#{providerContactBean}">
+			backingBean="#{providerContactBean}" columns="1">
 
 			<p:fieldset legend="#{messages['billingAccount.tab.account']}">
-				<h:panelGrid columns="1">
-					<hf:formField label="#{messages['businessEntity.code']}"
-						field="code" useConverter="false" size="50" maxlength="50"
-						required="true" />
-					<hf:formField label="#{messages['name.firstName']}"
-						field="firstName" />
-					<hf:formField label="#{messages['name.lastName']}" field="lastName" />
-					<hf:formField label="#{messages['businessEntity.description']}"
-						field="description" useConverter="false" size="50" maxlength="50"
-						required="true" />
-					<hf:formField label="#{messages['contactInformation.email']}"
-						field="email" size="50" maxlength="100" useConverter="false"
-						required="true" />
-				</h:panelGrid>
+				<hf:formField label="#{messages['businessEntity.code']}"
+					field="code" useConverter="false" size="50" maxlength="50"
+					required="true" />
+				<hf:formField label="#{messages['name.firstName']}"
+					field="firstName" />
+				<hf:formField label="#{messages['name.lastName']}" field="lastName" />
+				<hf:formField label="#{messages['businessEntity.description']}"
+					field="description" useConverter="false" size="50" maxlength="50"
+					required="true" />
+				<hf:formField label="#{messages['contactInformation.email']}"
+					field="email" size="50" maxlength="100" useConverter="false"
+					required="true" />
 			</p:fieldset>
 
 			<p:fieldset legend="#{messages['commons.contacts']}">
-				<h:panelGrid columns="1">
-					<hf:formField label="#{messages['contactInformation.email']}"
-						field="email" size="50" maxlength="100" useConverter="false"
-						required="true" />
-					<hf:formField label="#{messages['contactInformation.genericMail']}"
-						field="genericMail" size="50" maxlength="100" useConverter="false"
-						required="true" />					
-					<hf:formField label="#{messages['contactInformation.phone']}"
-						field="phone" size="50" maxlength="15" />
-					<hf:formField label="#{messages['contactInformation.mobile']}"
-						field="mobile" size="50" maxlength="15" />
-				</h:panelGrid>
+				<hf:formField label="#{messages['contactInformation.email']}"
+					field="email" size="50" maxlength="100" useConverter="false"
+					required="true" />
+				<hf:formField label="#{messages['contactInformation.genericMail']}"
+					field="genericMail" size="50" maxlength="100" useConverter="false"
+					required="true" />
+				<hf:formField label="#{messages['contactInformation.phone']}"
+					field="phone" size="50" maxlength="15" />
+				<hf:formField label="#{messages['contactInformation.mobile']}"
+					field="mobile" size="50" maxlength="15" />
 			</p:fieldset>
 
 			<p:fieldset legend="#{messages['commons.address']}">

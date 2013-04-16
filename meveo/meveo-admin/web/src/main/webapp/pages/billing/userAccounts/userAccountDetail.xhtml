@@ -1,7 +1,7 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
@@ -9,6 +9,12 @@
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -75,7 +81,8 @@
 					<h:panelGrid>
 						<hf:formPanel id="userAccountFormPanel"
 							label="#{messages['userAccount.userAccountPanel']}"
-							backingBean="#{userAccountBean}" killConversationOnSave="false">
+							backingBean="#{userAccountBean}" killConversationOnSave="false"
+							useCustomIdParam="true">
 							<p:tabView id="userAccountTab">
 								<p:tab title="#{messages['billingAccount.tab.account']}">
 									<hftl:panelGroup columns="1">
@@ -119,10 +126,10 @@
 
 										</hftl:panelGroup>
 										<hftl:panelGroup columns="1">
-											<h:panelGrid columns="2">
+											<p:panelGrid columns="2">
 												<p:outputLabel for="title_select"
 													value="#{messages['name.title']}" />
-												<h:selectOneMenu id="title_select"
+												<p:selectOneMenu id="title_select"
 													value="#{userAccountBean.entity.name.title}"
 													rendered="#{userAccountBean.edit}">
 													<f:selectItem itemLabel="#{messages['commons.select']}"
@@ -130,32 +137,31 @@
 													<f:selectItems value="#{titleBean.listAll()}" var="t"
 														itemLabel="#{messages['Title.'.concat(t.code)]}" />
 													<s:objectConverter />
-													<a:ajax event="valueChange" bypassUpdates="true"
-														limitRender="true"
-														render="userNamePanel, formId:countryPanel" />
-												</h:selectOneMenu>
+													<p:ajax event="valueChange"
+														update=":userAccountFormPanel:formId:userAccountTab:userNamePanel :userAccountFormPanel:formId:userAccountTab:countryPanel" />
+												</p:selectOneMenu>
 												<h:outputText
 													rendered="#{!userAccountBean.edit and userAccountBean.entity.name.title != null}"
 													value="#{messages['Title.'.concat(userAccountBean.entity.name.title.code)]}"
 													style="font-weight:bold;" />
-											</h:panelGrid>
+											</p:panelGrid>
 										</hftl:panelGroup>
-										<a:outputPanel id="userNamePanel">
-											<h:panelGroup>
-												<h:panelGrid columns="2" width="100%"
-													columnClasses="twoColGrid">
-													<hf:formEntityField label="#{messages['name.lastName']}"
-														field="name" childField="lastName" popup="false"
-														maxlength="50" />
-													<hf:formEntityField label="#{messages['name.firstName']}"
-														field="name" childField="firstName" popup="false"
-														show="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}"
-														maxlength="50" />
-													<hf:emtyFormField
-														show="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}" />
-												</h:panelGrid>
-											</h:panelGroup>
-										</a:outputPanel>
+
+										<h:panelGroup id="userNamePanel">
+											<h:panelGrid columns="2" width="100%"
+												columnClasses="twoColGrid">
+												<hf:formEntityField label="#{messages['name.lastName']}"
+													field="name" childField="lastName" popup="false"
+													maxlength="50" />
+												<hf:formEntityField label="#{messages['name.firstName']}"
+													field="name" childField="firstName" popup="false"
+													show="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}"
+													maxlength="50" />
+												<hf:emtyFormField
+													show="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}" />
+											</h:panelGrid>
+										</h:panelGroup>
+
 										<hftl:panelGroup columns="1">
 											<hf:formField
 												label="#{messages['accountEntity.defaultLevel']}"
@@ -184,21 +190,21 @@
 											<hf:formEntityField label="#{messages['address.city']}"
 												field="address" childField="city" popup="false"
 												required="true" maxlength="50" />
-											<a:outputPanel id="countryPanel">
-												<h:panelGrid columns="2">
-													<p:outputLabel for="country_select"
-														value="#{messages['address.country']}" />
-													<h:selectOneMenu id="country_select" required="true"
-														rendered="#{userAccountBean.edit}"
-														value="#{userAccountBean.entity.address.country}">
-														<f:selectItems
-															value="#{messages['address.countrys'].split(',')}"
-															var="country" itemLabel="#{country}" />
-													</h:selectOneMenu>
-													<h:outputText rendered="#{!userAccountBean.edit}"
-														value="#{userAccountBean.entity.address.country}" />
-												</h:panelGrid>
-											</a:outputPanel>
+
+											<p:panelGrid id="countryPanel" columns="2">
+												<p:outputLabel for="country_select"
+													value="#{messages['address.country']}" />
+												<p:selectOneMenu id="country_select" required="true"
+													rendered="#{userAccountBean.edit}"
+													value="#{userAccountBean.entity.address.country}">
+													<f:selectItems
+														value="#{messages['address.countrys'].split(',')}"
+														var="country" itemLabel="#{country}" />
+												</p:selectOneMenu>
+												<h:outputText rendered="#{!userAccountBean.edit}"
+													value="#{userAccountBean.entity.address.country}" />
+											</p:panelGrid>
+
 										</hftl:panelGroup>
 									</hftl:fieldset>
 								</p:tab>

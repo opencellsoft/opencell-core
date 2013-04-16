@@ -17,7 +17,7 @@
 
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true">
 		<h:form id="#{id}popupForm">
-			<h:panelGrid id="#{id}searchFormPanel" columns="2">
+			<p:panelGrid id="#{id}searchFormPanel" columns="2">
 				<c:if test="#{not empty searchField1}">
 					<hf:searchField label="#{searchField1Label}" backingBean="#{backingBean}" field="#{searchField1}" />
 				</c:if>
@@ -27,11 +27,11 @@
 				<c:if test="#{not empty searchField3}">
 					<hf:searchField label="#{searchField3Label}" backingBean="#{backingBean}" field="#{searchField3}" />
 				</c:if>
-			</h:panelGrid>
-			<h:panelGrid columns="2">
+			</p:panelGrid>
+			<p:panelGrid columns="2">
 				<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="#{id}popupForm" />
 				<p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm" />
-			</h:panelGrid>
+			</p:panelGrid>
 			<p:dataTable id="datatable" var="e" paginator="true" value="#{backingBean.lazyDataModel}" rows="10" selection="#{selection}" selectionMode="single"
 				lazy="true">
 				<p:ajax event="rowSelect" oncomplete="dlg_#{id}.hide()" update="#{updateField}"/>

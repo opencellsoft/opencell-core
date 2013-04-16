@@ -11,14 +11,16 @@
 	<cc:attribute name="columns" required="true" />
 	<cc:attribute name="edit" required="true" />
 	<cc:attribute name="killConversationOnSave" default="true" />
+	<cc:attribute name="useCustomIdParam" default="false" />
+	<cc:attribute name="objectIdParamName" default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
 </cc:interface>
 
 <cc:implementation>
 
-	<h:panelGrid columns="#{cc.attrs.columns}">
+	<p:panelGrid columns="#{cc.attrs.columns}" style="float: right;">
 		<p:button value="#{messages['commons.edit']}" rendered="#{!cc.attrs.edit}">
 			<f:param name="edit" value="true" />
-			<f:param name="objectId" value="#{cc.attrs.backingBean.objectId}" />
+			<f:param name="#{cc.attrs.objectIdParamName}" value="#{cc.attrs.backingBean.objectId}" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
 		<p:commandButton rendered="#{cc.attrs.edit and cc.attrs.killConversationOnSave}" value="#{messages['action.save']}"
@@ -38,7 +40,7 @@
 		<p:button id="buttonNew" value="#{messages['action.back']}" outcome="#{cc.attrs.backingBean.back()}">
 		</p:button>
 
-	</h:panelGrid>
+	</p:panelGrid>
 
 </cc:implementation>
 

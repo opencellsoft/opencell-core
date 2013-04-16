@@ -1,18 +1,12 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{customerBean.preRenderView}" />
+			<f:event type="preRenderView" listener="#{customerBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
 
@@ -21,40 +15,40 @@
 	</ui:define>
 
 	<ui:define name="body">
+	
+		   
+		   <hftl:entityPopup id="searchSellerPopup" header="#{messages['customer.popup.header']}" backingBean="#{sellerBean}"
+			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			selection="#{customerBean.filters['seller']}" updateField=":searchPanel:searchForm:seller:seller_child">
+		</hftl:entityPopup>
 
-		<hf:searchPanel label="#{messages['customer.search']}"
-			backingBean="#{customerBean}">
-			<hf:searchField label="#{messages['businessEntity.code']}"
-				field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hf:searchField id="customerCategoryField"
-				label="#{messages['customer.customerCategory']}"
-				field="customerCategory" childField="description"
-				listBean="#{customerCategoryBean}" />
-			<hf:searchField id="customerBrandField"
-				label="#{messages['customer.customerBrand']}" field="customerBrand"
-				childField="description" listBean="#{customerBrandBean}" />
+	
+		<hf:searchPanel id="searchPanel" label="#{messages['customer.search']}" backingBean="#{customerBean}">
+			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hf:searchField label="#{messages['businessEntity.description']}" field="description" />
+			
+		 <hf:searchField id="seller"  
+				label="#{messages['seller.parent']}" field="seller" childField="description"
+				  popup="true" popupId="searchSellerPopup" clearButton="true" />
+				  
+			<hf:searchField id="customerBrandField" label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description"
+				listBean="#{customerBrandBean}" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['customer.search']}"
-			backingBean="#{customerBean}">
+		<hftl:dataList label="#{messages['customer.search']}" backingBean="#{customerBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
-			<hftl:column label="#{messages['customer.customerCategory']}"
-				field="customerCategory" childField="description" isMessage="true" />
-			<hftl:column label="#{messages['customer.customerBrand']}"
-				field="customerBrand" childField="description" isMessage="true" />
-			<hftl:column label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hftl:column
-				label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
-				field="tradingCurrency" childField="currencyCode" />
-			<hftl:column label="#{messages['tradingCountry.title']}"
-				field="tradingCountry" childField="countryCode" />
-			<hftl:column label="#{messages['tradingLanguage.tradingLanguage']}"
-				field="tradingLanguage" childField="languageCode" />
-			<hftl:actionsColumn
-				permission="#{identity.hasPermission('account','accountManagement')}" />
+			<hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" isMessage="true" />
+			<hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" isMessage="true" />
+			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['tradingCurrency.tradingCurrencyPanel']}" field="tradingCurrency" childField="currencyCode" />
+			<hftl:column label="#{messages['tradingCountry.title']}" field="tradingCountry" childField="countryCode" />
+			<hftl:column label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" childField="languageCode" />
+			<hftl:column label="#{messages['seller.title']}" field="seller" childField="description" />
+				
+			<hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('account','accountManagement')}" />
+				
 		</hftl:dataList>
 
 	</ui:define>

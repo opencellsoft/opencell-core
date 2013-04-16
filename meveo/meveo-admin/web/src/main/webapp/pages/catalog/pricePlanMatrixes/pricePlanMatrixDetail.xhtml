@@ -32,17 +32,32 @@
 			column1="currencyCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
 			selection="#{pricePlanMatrixBean.entity.tax}">
 		</hftl:entityPopup>
+		<hftl:entityPopup id="sellerParentPopup" 
+			header="#{messages['seller.title']}"
+			backingBean="#{sellerBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{pricePlanMatrixBean.entity.seller}" 
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":priceFormPanel:formPricePlan:parentSelectId:parentSelectId">
+		</hftl:entityPopup>
 		
 
-		<hf:formPanel edit="#{edit}"
+		<hf:formPanel edit="#{edit}" id="priceFormPanel"
 			label="#{messages['pricePlanMatrix.panel']}"
 			backingBean="#{pricePlanMatrixBean}"
 			formId="formPricePlan">
 			<p:panelGrid columns="2">
 					<hf:formEntityField id="chargeSelectId" label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode"
 										childField="code" popup="true" popupId="searchChargePopup" />
+				    
 				<hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
 					field="criteria1Value" />
+					 <hf:formEntityField id="parentSelectId"
+										    label="#{messages['seller.title']}"
+											field="seller" childField="description" required="true"
+											popup="true" popupId="sellerParentPopup" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.startSubscriptionDate']}"
 					field="startSubscriptionDate" />
@@ -69,7 +84,6 @@
 				</p:panelGrid>
 					<hf:formEntityField id="taxSelectId" label="#{messages['invoiceSubCategoryCountry.taxe']}" field="tax"
 										childField="code" popup="true" popupId="pricPlanMatTaxPopup" />
-
 										<hf:formField
 				label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
 				field="minSubscriptionAgeInMonth" />

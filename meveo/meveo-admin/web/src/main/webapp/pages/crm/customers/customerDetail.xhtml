@@ -1,9 +1,20 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:s="http://jboss.com/products/seam/taglib"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -11,71 +22,148 @@
 
 	<ui:define name="body">
 
-	 <hftl:entityPopup id="tradingCountryPopup" header="#{messages['tradingCountry.popup.header']}" backingBean="#{tradingCountryBean}"
-			searchField1Label="#{messages['businessEntity.code']}" searchField1="countryCode" column1Label="#{messages['businessEntity.code']}"
-			column1="countryCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-			selection="#{customerBean.entity.tradingCountry}">
-		</hftl:entityPopup>
-		
-		
-		<hftl:entityPopup id="tradingLanguagePopup" header="#{messages['tradingLanguage.popup.header']}" backingBean="#{tradingLanguageBean}"
-			searchField1Label="#{messages['businessEntity.code']}" searchField1="languageCode" column1Label="#{messages['businessEntity.code']}"
-			column1="languageCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-			selection="#{customerBean.entity.tradingLanguage}">
-		</hftl:entityPopup>
-		
-		<hftl:entityPopup id="customerCurrencyPopup" header="#{messages['tradingCurrency.popup.header']}" backingBean="#{tradingCurrencyBean}"
-			searchField1Label="#{messages['businessEntity.code']}" searchField1="currencyCode" column1Label="#{messages['businessEntity.code']}"
-			column1="currencyCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-			selection="#{customerBean.entity.tradingCurrency}">
+
+		<hftl:entityPopup id="tradingCountryPopup"
+			header="#{messages['tradingCountry.popup.header']}"
+			backingBean="#{tradingCountryBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="countryCode"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="countryCode"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="prDescription"
+			selection="#{customerBean.entity.tradingCountry}"
+			updateField=":formCustomerPanel:formCustomer:tabView:trCountrySelectId:trCountrySelectId">
 		</hftl:entityPopup>
 
-		<h:panelGrid columns="1" width="100%">
-			<h:panelGroup>
-				<div class="panels">
-					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}" entity="#{customerBean.entity}" />
-					<hf:formPanel formId="formCustomer" label="#{messages['customer.customerPanel']}" backingBean="#{customerBean}" style="formPanel">
-						<p:tabView id="tabView">
+		<hftl:entityPopup id="tradingLanguagePopup"
+			header="#{messages['tradingLanguage.popup.header']}"
+			backingBean="#{tradingLanguageBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="languageCode"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="languageCode"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="prDescription"
+			selection="#{customerBean.entity.tradingLanguage}"
+			updateField=":formCustomerPanel:formCustomer:tabView:trLanguageSelectId:trLanguageSelectId">
+		</hftl:entityPopup>
+
+		<hftl:entityPopup id="customerCurrencyPopup"
+			header="#{messages['tradingCurrency.popup.header']}"
+			backingBean="#{tradingCurrencyBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="currencyCode"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="currencyCode"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="prDescription"
+			selection="#{customerBean.entity.tradingCurrency}"
+			updateField=":formCustomerPanel:formCustomer:tabView:customerCurrencySelectId:customerCurrencySelectId">
+		</hftl:entityPopup>
+		
+		 <hftl:entityPopup id="sellerParentPopup" 
+			header="#{messages['seller.title']}"
+			backingBean="#{sellerBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{customerBean.entity.seller}" 
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":formCustomerPanel:formCustomer:tabView:parentSelectId:parentSelectId">
+		</hftl:entityPopup>
+
+		<p:panelGrid style="width: 100%">
+			<p:row>
+				<p:column style="width: 25%; vertical-align: top;">
+					<hf:hierarchyPanel
+						treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}"
+						entity="#{customerBean.entity}" />
+				</p:column>
+				<p:column style="width: 73%;">
+					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
+						label="#{messages['customer.customerPanel']}"
+						backingBean="#{customerBean}" useCustomIdParam="true"
+						killConversationOnSave="false">
+						<p:tabView id="tabView" style="width: 100%">
 							<p:tab title="#{messages['customer.tab.account']}">
-								<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" />
-								<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" />
-								<hf:formField label="#{messages['customer.externalRef1']}" field="externalRef1" validateUnique="false" />
-								<hf:formField label="#{messages['customer.externalRef2']}" field="externalRef2" />
-								<hf:formEntityField label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" popup="false"
+								<hf:formField label="#{messages['businessEntity.code']}"
+									field="code" validateUnique="true" />
+								<hf:formField label="#{messages['businessEntity.description']}"
+									field="description" useConverter="false" size="50"
+									maxlength="50" />
+								<hf:formField label="#{messages['customer.externalRef1']}"
+									field="externalRef1" validateUnique="false" />
+								<hf:formField label="#{messages['customer.externalRef2']}"
+									field="externalRef2" />
+								<hf:formEntityField
+									label="#{messages['customer.customerCategory']}"
+									field="customerCategory" childField="description" popup="false"
 									service="#{customerCategoryService}" required="true" />
-								<hf:formEntityField label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" popup="false"
+								<hf:formEntityField
+									label="#{messages['customer.customerBrand']}"
+									field="customerBrand" childField="description" popup="false"
 									service="#{customerBrandService}" required="true" />
-								 
-									<hf:formEntityField id="customerCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency"
-										childField="currencyCode" popup="true" popupId="customerCurrencyPopup" />
-								 
-								<hf:formEntityField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry"
-									childField="countryCode" popup="true" popupId="tradingCountryPopup" />
-								<hf:formEntityField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage"
-									childField="languageCode" popup="true" popupId="tradingLanguagePopup" />
+
+								<hf:formEntityField id="customerCurrencySelectId"
+									label="#{messages['currency.codeCurrency']}"
+									field="tradingCurrency" childField="currencyCode" popup="true"
+									popupId="customerCurrencyPopup" />
+
+								<hf:formEntityField id="trCountrySelectId"
+									label="#{messages['tradingCountry.tradingCountry']}"
+									field="tradingCountry" childField="countryCode" popup="true"
+									popupId="tradingCountryPopup" />
+								<hf:formEntityField id="trLanguageSelectId"
+									label="#{messages['tradingLanguage.tradingLanguage']}"
+									field="tradingLanguage" childField="languageCode" popup="true"
+									popupId="tradingLanguagePopup" />
+									
+		                        <hf:formEntityField id="parentSelectId"
+										    label="#{messages['seller.parent']}"
+											field="seller" childField="description" required="true"
+											popup="true" popupId="sellerParentPopup" />
+									
+									
 							</p:tab>
 
 							<p:tab title="#{messages['customer.tab.information']}">
 								<p:fieldset legend="#{messages['commons.contacts']}">
 									<p:panelGrid columns="1">
-										<hf:formEntityField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false"
-											required="false" size="50" maxlength="100" useConverter="false" />
-										<hf:formEntityField label="#{messages['address.address1']}" field="address" childField="address1" popup="false" size="80" maxlength="80"
-											required="true" />
-										<hf:formEntityField label="#{messages['address.address2']}" field="address" childField="address2" popup="false" size="80" maxlength="80" />
-										<hf:formEntityField label="#{messages['address.address3']}" field="address" childField="address3" popup="false" size="80" maxlength="80" />
+										<hf:formEntityField
+											label="#{messages['contactInformation.email']}"
+											field="contactInformation" childField="email" popup="false"
+											required="false" size="50" maxlength="100"
+											useConverter="false" />
+										<hf:formEntityField label="#{messages['address.address1']}"
+											field="address" childField="address1" popup="false" size="80"
+											maxlength="80" required="true" />
+										<hf:formEntityField label="#{messages['address.address2']}"
+											field="address" childField="address2" popup="false" size="80"
+											maxlength="80" />
+										<hf:formEntityField label="#{messages['address.address3']}"
+											field="address" childField="address3" popup="false" size="80"
+											maxlength="80" />
 									</p:panelGrid>
 									<p:panelGrid columns="2">
-										<hf:formEntityField label="#{messages['address.zipCode']}" field="address" childField="zipCode" popup="false" required="true" maxlength="5"
-											size="5" />
-										<hf:formEntityField label="#{messages['address.city']}" field="address" childField="city" popup="false" required="true" maxlength="50" />
-										<p:outputPanel id="countryPanel">
+										<hf:formEntityField label="#{messages['address.zipCode']}"
+											field="address" childField="zipCode" popup="false"
+											required="true" maxlength="5" size="5" />
+										<hf:formEntityField label="#{messages['address.city']}"
+											field="address" childField="city" popup="false"
+											required="true" maxlength="50" />
+										<p:panelGrid columns="3" id="countryPanel">
 											<h:outputText value="#{messages['address.country']}" />
-											<h:selectOneMenu required="true" rendered="#{customerBean.edit}" value="#{customerBean.entity.address.country}">
-												<f:selectItems value="#{messages['address.countrys'].split(',')}" var="country" itemLabel="#{country}" />
-											</h:selectOneMenu>
-											<h:outputText rendered="#{!customerBean.edit}" value="#{customerBean.entity.address.country}" />
-										</p:outputPanel>
+											<p:selectOneMenu required="true"
+												rendered="#{customerBean.edit}"
+												value="#{customerBean.entity.address.country}">
+												<f:selectItems
+													value="#{messages['address.countrys'].split(',')}"
+													var="country" itemLabel="#{country}" />
+											</p:selectOneMenu>
+											<h:outputText rendered="#{!customerBean.edit}"
+												value="#{customerBean.entity.address.country}" />
+										</p:panelGrid>
 									</p:panelGrid>
 								</p:fieldset>
 							</p:tab>
@@ -85,11 +173,13 @@
 					<h:form id="operationsForm" rendered="#{!customerBean.edit}">
 						<!-- <custom:listPanel
 							label="#{messages['customerAccount.operations']}"> -->
-						<h:commandButton action="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}" />
+						<h:commandButton action="addCustomerAccount"
+							value="#{messages['customer.buttonAddCustomerAccount']}" />
 					</h:form>
-				</div>
-			</h:panelGroup>
-		</h:panelGrid>
+
+				</p:column>
+			</p:row>
+		</p:panelGrid>
 	</ui:define>
 
 </ui:composition>
