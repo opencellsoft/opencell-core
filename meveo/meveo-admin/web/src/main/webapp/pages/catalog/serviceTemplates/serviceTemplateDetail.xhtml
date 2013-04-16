@@ -1,13 +1,12 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -16,19 +15,36 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel label="#{messages['serviceTemplate.serviceParameterPanel']}" backingBean="#{serviceTemplateBean}">
-				<hftl:panelGroup columns="2">	
-					<hf:formField label="#{messages['serviceTemplate.code']}" field="code" required="true" validateUnique="true" />
-		    		<hf:formField  label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-					<hf:formField label="#{messages['serviceTemplate.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
-					<hf:formEntityField label="#{messages['serviceTemplate.calendar']}" field="durationTermCalendar" childField="name" required="false" popup="false"
-										service="#{calendarService}" listElements="#{calendarService.listDurationTermCalendars()}" />
-		    	</hftl:panelGroup>
-				<hf:formField label="#{messages['serviceTemplate.recurringCharges']}" field="recurringCharges" listType="pickUpList" listService="#{recurringChargeTemplateService}" childField="code"/>
-				<hf:formField label="#{messages['serviceTemplate.subscriptionCharges']}" field="subscriptionCharges" listType="pickUpList" listService="#{oneShotChargeTemplateService}" listMethod="subscriptionChargeTemplates" childField="code"/>
-				<hf:formField label="#{messages['serviceTemplate.terminationCharges']}" field="terminationCharges" listType="pickUpList" listService="#{oneShotChargeTemplateService}" listMethod="terminationChargeTemplates" childField="code"/>
-			
-	
+		<hf:formPanel
+			label="#{messages['serviceTemplate.serviceParameterPanel']}"
+			backingBean="#{serviceTemplateBean}" columns="1">
+
+			<hftl:panelGroup columns="2">
+				<hf:formField label="#{messages['serviceTemplate.code']}"
+					field="code" required="true" validateUnique="true" />
+				<hf:formField label="#{messages['enableEntity.active']}"
+					field="disabled" isMessage="true" />
+				<hf:formField label="#{messages['serviceTemplate.description']}"
+					field="description" required="true" useConverter="false" size="50"
+					maxlength="50" />
+				<hf:formEntityField label="#{messages['serviceTemplate.calendar']}"
+					field="durationTermCalendar" childField="name" required="false"
+					popup="false" service="#{calendarService}"
+					listElements="#{calendarService.listDurationTermCalendars()}" />
+			</hftl:panelGroup>
+
+			<hf:formField label="#{messages['serviceTemplate.recurringCharges']}"
+				field="recurringCharges" listType="pickUpList" childField="code"
+				dualListModel="#{serviceTemplateBean.recurringChargesModel}" />
+			<hf:formField
+				label="#{messages['serviceTemplate.subscriptionCharges']}"
+				field="subscriptionCharges" listType="pickUpList" childField="code"
+				dualListModel="#{serviceTemplateBean.subscriptionChargesModel}" />
+			<hf:formField
+				label="#{messages['serviceTemplate.terminationCharges']}"
+				field="terminationCharges" listType="pickUpList" childField="code"
+				dualListModel="#{serviceTemplateBean.terminationChargesModel}" />
+
 		</hf:formPanel>
 	</ui:define>
 
