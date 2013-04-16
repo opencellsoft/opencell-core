@@ -10,10 +10,11 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
-<cc:interface>
+<cc:interface componentType="formPanel">
 	<cc:attribute name="label" required="true" />
 	<cc:attribute name="backingBean" required="true" />
-	<cc:attribute name="entity" required="false" />
+	<cc:attribute name="entityVar" default="entity" />
+	<cc:attribute name="childEntityVar" required="false" />
 	<cc:attribute name="edit" default="#{cc.attrs.backingBean.edit}" />
 	<cc:attribute name="formId" default="formId" />
 	<cc:attribute name="columns" default="2" />
@@ -26,12 +27,12 @@
 </cc:interface>
 
 <cc:implementation>
+
 	<h:form id="#{cc.attrs.formId}">
-		<p:panelGrid columns="1">
+		<p:panelGrid columns="1"> 
 			<f:facet name="header">
 				<h:outputText value="#{cc.attrs.label}" />
 			</f:facet>
-
 			<p:messages id="messages" />
 			<p:panelGrid columns="#{cc.attrs.columns}"
 				columnClasses="#{cc.attrs.columnClasses}">

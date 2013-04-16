@@ -228,39 +228,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
         return null;
     }
 
-    /**
-
-	 * Because in customer search any type of customer can appear, this method
-	 * is used in UI to get link to concrete customer edit page.
-	 * 
-	 * @param type
-	 *            Account type of Customer
-	 * 
-	 * @return Edit page url.
-	 */
-	public String getView(String type, String id) {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		String rootURL = ec.getRequestContextPath();
-
-		if (type.equals(Customer.ACCOUNT_TYPE)) {
-			return rootURL + "/pages/crm/customers/customerDetail.jsf?edit=false&customerId=" + id + "&cid="
-					+ conversation.getId();
-		} else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
-			return rootURL + "/pages/payments/customerAccounts/customerAccountDetail.jsf?edit=false&customerAccountId=" + id
-					+ "&cid=" + conversation.getId();
-		}
-		if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
-			return rootURL + "/pages/billing/billingAccounts/billingAccountDetail.jsf?edit=false&billingAccountId=" + id
-					+ "&cid=" + conversation.getId();
-		}
-		if (type.equals(UserAccount.ACCOUNT_TYPE)) {
-			return rootURL + "/pages/billing/userAccounts/userAccountDetail.jsf?edit=false&userAccountId=" + id + "&cid="
-					+ conversation.getId();
-		} else {
-			throw new IllegalStateException("Wrong customer type provided in EL in .xhtml");
-		}
-	}
-
     public long getSelected() {
         return selected;
     }

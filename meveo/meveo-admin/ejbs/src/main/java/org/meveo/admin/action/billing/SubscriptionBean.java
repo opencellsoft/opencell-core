@@ -82,18 +82,14 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     private ServiceInstance selectedServiceInstance = new ServiceInstance();
 
     /** Entity to edit. */
-    // TODO: JavaEE6 migration. @Out(required = false)
     private Integer quantity = 1;
 
     /** Entity to edit. */
-    // TODO: JavaEE6 migration. @Out(required = false)
     private Long selectedServiceInstanceId;
 
     /** Entity to edit. */
-    // TODO: JavaEE6 migration. @Out(required = false)
     private OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
 
-    // TODO: JavaEE6 migration. @Out(required = false)
     private RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance();
 
     @Inject
@@ -329,7 +325,14 @@ public class SubscriptionBean extends BaseBean<Subscription> {
         return servicetemplates;
     }
 
-    // @Factory("oneShotChargeInstances")
+    public OneShotChargeInstance getOneShotChargeInstance(){
+        return oneShotChargeInstance;
+    }
+    
+    public RecurringChargeInstance getRecurringChargeInstance(){
+        return recurringChargeInstance;
+    }
+    
     public List<OneShotChargeInstance> getOneShotChargeInstances() {
         return (entity == null || entity.getId() == null) ? null : oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId());
     }

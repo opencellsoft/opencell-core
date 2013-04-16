@@ -34,7 +34,9 @@
 		<hf:clearButton label="#{messages['action.reset']}" resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
 
 		<p:button id="buttonBack" value="#{messages['action.back']}" outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
-			<f:param name="cid" value="#{conversation.id}" disable="#{ not cc.attrs.killConversationOnBack}" />
+			<c:if test="#{not cc.attrs.killConversationOnBack}">
+				<f:param name="cid" value="#{conversation.id}"/>
+			</c:if>
 		</p:button>
 
 	</p:panelGrid>
