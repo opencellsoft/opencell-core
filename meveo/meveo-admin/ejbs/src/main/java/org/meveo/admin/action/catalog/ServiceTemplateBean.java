@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -22,16 +23,22 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link ServiceTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link ServiceTemplate} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Dec 7, 2010
@@ -41,72 +48,158 @@ import org.primefaces.component.datatable.DataTable;
 @ConversationScoped
 public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link ServiceTemplate} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private ServiceTemplateService serviceTemplateService;
+	/**
+	 * Injected
+	 * 
+	 * @{link ServiceTemplate} service. Extends {@link PersistenceService}.
+	 */
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public ServiceTemplateBean() {
-        super(ServiceTemplate.class);
-    }
+	@Inject
+	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-    @Override
-    public DataTable search() {
-        getFilters();
-        if (!filters.containsKey("disabled")) {
-            filters.put("disabled", false);
-        }
-        return super.search();
-    }
+	@Inject
+	private RecurringChargeTemplateService recurringChargeTemplateService;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    public String saveOrUpdate(boolean killConversation) {
+	private DualListModel<RecurringChargeTemplate> recurringCharges;
+	private DualListModel<OneShotChargeTemplate> subscriptionCharges;
+	private DualListModel<OneShotChargeTemplate> terminationCharges;
 
-        List<RecurringChargeTemplate> recurringCharges = entity.getRecurringCharges();
-        for (RecurringChargeTemplate recurringCharge : recurringCharges) {
-            if (!recurringCharge.getApplyInAdvance()) {
-                break;
-            }
-        }
+	public DualListModel<OneShotChargeTemplate> getTerminationChargesModel() {
+		if (terminationCharges == null) {
+			List<OneShotChargeTemplate> source = oneShotChargeTemplateService.getTerminationChargeTemplates();
+			List<OneShotChargeTemplate> target = new ArrayList<OneShotChargeTemplate>();
+			if (getEntity().getTerminationCharges() != null) {
+				target.addAll(getEntity().getTerminationCharges());
+			}
+			source.removeAll(target);
+			terminationCharges = new DualListModel<OneShotChargeTemplate>(source, target);
+		}
+		return terminationCharges;
+	}
 
-        return super.saveOrUpdate(killConversation);
-    }
+	public void setTerminationChargesModel(DualListModel<OneShotChargeTemplate> temp) {
+		getEntity().setSubscriptionCharges(temp.getTarget());
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<ServiceTemplate> getPersistenceService() {
-        return serviceTemplateService;
-    }
+	public DualListModel<OneShotChargeTemplate> getSubscriptionChargesModel() {
+		if (subscriptionCharges == null) {
+			List<OneShotChargeTemplate> source = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
+			List<OneShotChargeTemplate> target = new ArrayList<OneShotChargeTemplate>();
+			if (getEntity().getSubscriptionCharges() != null) {
+				target.addAll(getEntity().getSubscriptionCharges());
+			}
+			source.removeAll(target);
+			subscriptionCharges = new DualListModel<OneShotChargeTemplate>(source, target);
+		}
+		return subscriptionCharges;
+	}
 
-    // /**
-    // * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-    // */
-    // protected List<String> getListFieldsToFetch() {
-    // return Arrays.asList("recurringCharges", "subscriptionCharges",
-    // "terminationCharges", "durationTermCalendar");
-    // }
-    //
-    // /**
-    // * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-    // */
-    // protected List<String> getFormFieldsToFetch() {
-    // return Arrays.asList("recurringCharges", "subscriptionCharges",
-    // "terminationCharges", "durationTermCalendar");
-    // }
+	public void setSubscriptionChargesModel(DualListModel<OneShotChargeTemplate> temp) {
+		getEntity().setSubscriptionCharges(temp.getTarget());
+	}
+
+	public DualListModel<RecurringChargeTemplate> getRecurringChargesModel() {
+		if (recurringCharges == null) {
+			List<RecurringChargeTemplate> source = recurringChargeTemplateService.list();
+			List<RecurringChargeTemplate> target = new ArrayList<RecurringChargeTemplate>();
+			if (getEntity().getRecurringCharges() != null) {
+				target.addAll(getEntity().getRecurringCharges());
+			}
+			source.removeAll(target);
+			recurringCharges = new DualListModel<RecurringChargeTemplate>(source, target);
+		}
+		return recurringCharges;
+	}
+
+	public void setRecurringChargesModel(DualListModel<RecurringChargeTemplate> temp) {
+		getEntity().setRecurringCharges(temp.getTarget());
+	}
+
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public ServiceTemplateBean() {
+		super(ServiceTemplate.class);
+	}
+
+	@Override
+	public DataTable search() {
+		getFilters();
+		if (!filters.containsKey("disabled")) {
+			filters.put("disabled", false);
+		}
+		return super.search();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
+	@Override
+	public String saveOrUpdate(boolean killConversation) {
+
+		List<RecurringChargeTemplate> recurringCharges = entity.getRecurringCharges();
+		for (RecurringChargeTemplate recurringCharge : recurringCharges) {
+			if (!recurringCharge.getApplyInAdvance()) {
+				break;
+			}
+		}
+
+		return super.saveOrUpdate(killConversation);
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<ServiceTemplate> getPersistenceService() {
+		return serviceTemplateService;
+	}
+
+	public DualListModel<RecurringChargeTemplate> getRecurringCharges() {
+		return recurringCharges;
+	}
+
+	public void setRecurringCharges(DualListModel<RecurringChargeTemplate> recurringCharges) {
+		this.recurringCharges = recurringCharges;
+	}
+
+	public DualListModel<OneShotChargeTemplate> getSubscriptionCharges() {
+		return subscriptionCharges;
+	}
+
+	public void setSubscriptionCharges(DualListModel<OneShotChargeTemplate> subscriptionCharges) {
+		this.subscriptionCharges = subscriptionCharges;
+	}
+
+	public DualListModel<OneShotChargeTemplate> getTerminationCharges() {
+		return terminationCharges;
+	}
+
+	public void setTerminationCharges(DualListModel<OneShotChargeTemplate> terminationCharges) {
+		this.terminationCharges = terminationCharges;
+	}
+
+	// /**
+	// * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+	// */
+	// protected List<String> getListFieldsToFetch() {
+	// return Arrays.asList("recurringCharges", "subscriptionCharges",
+	// "terminationCharges", "durationTermCalendar");
+	// }
+	//
+	// /**
+	// * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+	// */
+	// protected List<String> getFormFieldsToFetch() {
+	// return Arrays.asList("recurringCharges", "subscriptionCharges",
+	// "terminationCharges", "durationTermCalendar");
+	// }
 
 }

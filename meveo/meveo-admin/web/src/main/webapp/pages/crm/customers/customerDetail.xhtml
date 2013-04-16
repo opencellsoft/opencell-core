@@ -33,7 +33,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerBean.entity.tradingCountry}"
-			updateField=":formCustomerPanel:formCustomer:tabView:trCountrySelectId:trCountrySelectId">
+			updateField=":formCustomerPanel:formCustomer:tabView:trCountrySelectId:trCountrySelectId_text">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="tradingLanguagePopup"
@@ -46,7 +46,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerBean.entity.tradingLanguage}"
-			updateField=":formCustomerPanel:formCustomer:tabView:trLanguageSelectId:trLanguageSelectId">
+			updateField=":formCustomerPanel:formCustomer:tabView:trLanguageSelectId:trLanguageSelectId_text">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="customerCurrencyPopup"
@@ -59,7 +59,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerBean.entity.tradingCurrency}"
-			updateField=":formCustomerPanel:formCustomer:tabView:customerCurrencySelectId:customerCurrencySelectId">
+			updateField=":formCustomerPanel:formCustomer:tabView:customerCurrencySelectId:customerCurrencySelectId_text">
 		</hftl:entityPopup>
 
 		<p:panelGrid style="width: 100%">
