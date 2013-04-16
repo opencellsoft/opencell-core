@@ -14,8 +14,10 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-			<f:viewParam name="customerId" value="#{customerAccountBean.customerId}" />
+			<f:viewParam name="customerAccountId"
+				value="#{customerAccountBean.objectId}" />
+			<f:viewParam name="customerId"
+				value="#{customerAccountBean.customerId}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
 	</ui:define>
@@ -32,7 +34,7 @@
 			searchField1Label="#{messages['customer.code']}" searchField1="code"
 			column1Label="#{messages['customer.code']}" column1="code"
 			selection="#{customerAccountBean.entity.customer}"
-			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId:customerSelectId">
+			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId:customerSelectId_text">
 		</hftl:entityPopup>
 		<!-- select link -->
 		<!-- 				<a:commandLink value="#{messages['commons.select']}" render="formCustomerAccount" action="#{customerAccountBean.populateAccounts(entity)}" -->
@@ -50,7 +52,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerAccountBean.entity.tradingCurrency}"
-			updateField=":formCustomerAccountPanel:formCustomerAccount:currencySelectId:currencySelectId">
+			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId:currencySelectId_text">
 		</hftl:entityPopup>
 
 		<p:panelGrid style="width: 100%">
@@ -69,7 +71,8 @@
 								formId="formCustomerAccount"
 								label="#{messages['customerAccount.form']}"
 								backingBean="#{customerAccountBean}" showFormButtons="false"
-								useCustomIdParam="true" killConversationOnSave="false"  killConversationOnBack="false">
+								useCustomIdParam="true" killConversationOnSave="false"
+								killConversationOnBack="false">
 								<p:panelGrid columns="1">
 									<p:tabView id="childTab" style="width: 95%">
 										<p:tab id="accountTab"
@@ -85,7 +88,7 @@
 													field="code" maxlength="35" size="35" validateUnique="true" />
 												<hf:formEntityField
 													label="#{messages['accountEntity.primaryContact']}"
-													field="primaryContact" childField="code" 
+													field="primaryContact" childField="code"
 													listBean="#{providerContactBean}" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="1">
@@ -277,7 +280,7 @@
 											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
 											outcome="addBillingAccount"
 											value="#{messages['customerAccount.buttonAddBillingAccount']}">
-												<f:param name="cid" value="#{conversation.id}"/>
+											<f:param name="cid" value="#{conversation.id}" />
 										</p:button>
 									</hf:formButtons>
 								</p:panelGrid>

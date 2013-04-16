@@ -41,7 +41,7 @@
 				column1Label="#{messages['customerAccount.code']}" column1="code"
 				column2Label="#{messages['customerAccount.name']}" column2="name"
 				selection="#{billingAccountBean.entity.customerAccount}"
-				updateField=":parentTab:formBillingAccountPanel:formId:childTab:customerSelectId:customerSelectId">
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:customerSelectId:customerSelectId_text">
 				<!-- select link -->
 				<!-- 				<a:commandLink value="#{messages['commons.select']}" render="formId" immediate="true" action="#{billingAccountBean.populateAccounts(entity)}" -->
 				<!-- 					oncomplete="Richfaces.hideModalPanel('customerAccountPopup')"> -->
@@ -59,7 +59,7 @@
 				column2Label="#{messages['businessEntity.description']}"
 				column2="description"
 				selection="#{billingAccountBean.entity.billingCycle}"
-				updateField=":parentTab:formBillingAccountPanel:formId:childTab:cycleSelectId:cycleSelectId">
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:cycleSelectId:cycleSelectId_text">
 
 			</hftl:entityPopup>
 
@@ -73,7 +73,7 @@
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription"
 				selection="#{billingAccountBean.entity.tradingCountry}"
-				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trCountrySelectId:trCountrySelectId">
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trCountrySelectId:trCountrySelectId_text">
 
 			</hftl:entityPopup>
 
@@ -87,7 +87,7 @@
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription"
 				selection="#{billingAccountBean.entity.tradingLanguage}"
-				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trLanguageSelectId:trLanguageSelectId">
+				updateField=":parentTab:formBillingAccountPanel:formId:childTab:trLanguageSelectId:trLanguageSelectId_text">
 
 			</hftl:entityPopup>
 

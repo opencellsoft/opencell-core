@@ -13,10 +13,13 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
-			<f:viewParam name="billingAccountId" value="#{userAccountBean.billingAccountId}" />
-			<f:viewParam name="billingAccountId" value="#{billingAccountBean.objectId}" />
-			<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
-			<f:viewParam name="customerId" value="#{customerBean.objectId}" />			
+			<f:viewParam name="billingAccountId"
+				value="#{userAccountBean.billingAccountId}" />
+			<f:viewParam name="billingAccountId"
+				value="#{billingAccountBean.objectId}" />
+			<f:viewParam name="customerAccountId"
+				value="#{customerAccountBean.objectId}" />
+			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
 	</ui:define>
 
@@ -32,7 +35,7 @@
 			searchField1Label="#{messages['billingAccount.code']}"
 			searchField1="code" column1Label="#{messages['billingAccount.code']}"
 			column1="code" selection="#{userAccountBean.entity.billingAccount}"
-			updateField=":userAccountFormPanel:formId:userAccountTab:billingAccountSelectId:billingAccountSelectId">
+			updateField=":userAccountFormPanel:formId:userAccountTab:billingAccountSelectId:billingAccountSelectId_text">
 
 			<!-- 			<a:commandLink value="#{messages['commons.select']}" render="formId" immediate="true" action="#{userAccountBean.populateAccounts(entity)}" -->
 			<!-- 				oncomplete="dlg_billingAccountPopup.hide()"> -->
@@ -217,6 +220,7 @@
 						</p:tabView>
 
 					</hf:formPanel>
+
 					<h:form id="operationsForm" rendered="#{!userAccountBean.edit}">
 						<!-- 							<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
 						<h:commandButton action="addNewSubscription"
@@ -234,10 +238,10 @@
 							value="#{messages['button.reactivateButton']}"
 							onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
 							disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />&nbsp;&nbsp;
-   	 	<a:commandButton
+   	 	<p:commandButton
 							value="#{messages['ratedTransactionNoInvoiced.button']}"
 							onclick="dlg_ratedTransactionsNoInvoicedPopup.show());" />&nbsp;&nbsp;
-		<a:commandButton
+		<p:commandButton
 							value="#{messages['ratedTransactionInvoiced.button']}"
 							onclick="dlg_ratedTransactionsInvoicedPopup.show();" />
 						<!-- 							</custom:listPanel> -->

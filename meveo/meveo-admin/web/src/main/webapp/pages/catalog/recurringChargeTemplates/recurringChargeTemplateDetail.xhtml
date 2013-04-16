@@ -1,60 +1,78 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	template="/layout/template.xhtml">
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-	
+
 	<ui:define name="body">
 		<script>
 			function showHide(id) {
-				
+
 			}
 		</script>
 
-	<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
+		<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
 			header="#{messages['invoiceSubCategory.panel']}"
-			backingBean="#{invoiceSubCategoryBean}" dataModel="#{invoiceSubCategories}"
-			searchField1Label="#{messages['invoiceSubCategory.code']}" searchField1="code"
+			backingBean="#{invoiceSubCategoryBean}"
+			updateField=":formPanel:reccuringChargeId:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId_text"
+			selection="#{invoiceSubCategoryBean.entity.invoiceSubCategory}"
+			searchField1Label="#{messages['invoiceSubCategory.code']}"
+			searchField1="code"
 			searchField2Label="#{messages['invoiceSubCategory.description']}"
 			searchField2="description"
 			column1Label="#{messages['invoiceSubCategory.code']}" column1="code"
 			column2Label="#{messages['invoiceSubCategory.description']}"
-			column2="description" filtersMap="#{invoiceSubCategoryBean.filters}">
-			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-				reRender="formId" action="#{recurringChargeTemplate.setInvoiceSubCategory(entity)}"
-				oncomplete="Richfaces.hideModalPanel('searchInvoiceSubCategoryPopup')">
-			</a:commandLink>
+			column2="description">
 		</hftl:entityPopup>
-		
-		<hf:formPanel id="formPanel" formId="reccuringChargeId"  label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}" backingBean="#{recurringChargeTemplateBean}">
-    			<hf:formField label="#{messages['chargeTemplate.code']}" field="code" required="true" validateUnique="true" />
-    			<hf:languageFields/>
-    			<hf:formField  label="#{messages['enableEntity.active']}" field="disabled" isMessage="true"/>
-    			<hf:formField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
-    			<hf:formField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
-    			<hf:formField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
-    			<hf:formField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
-    			<hf:formField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" />
-    			<hf:formEntityField id="invoiceSubCategorySelectedId"
-										label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory"
-										childField="code" required="true" popup="true"
-										popupId="searchInvoiceSubCategoryPopup" />
-				<hftl:panelGroup columns="2">	
-	    			<hf:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
-											show="#{entity.recurrenceType == 'CALENDAR'}" service="#{calendarService}" listElements="#{calendarService.listChargeApplicationCalendars()}" />
-					<hf:formEntityField label="#{messages['calendar.type']}" field="calendar" childField="type" show="#{!edit}"/>
-				</hftl:panelGroup>
+
+		<hf:formPanel id="formPanel" formId="reccuringChargeId"
+			label="#{messages['recurringChargeTemplate.chargeTemplatePanel']}"
+			backingBean="#{recurringChargeTemplateBean}">
+
+			<hf:formField label="#{messages['chargeTemplate.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hf:languageFields />
+			<hf:formField label="#{messages['enableEntity.active']}"
+				field="disabled" isMessage="true" />
+			<hf:formField label="#{messages['chargeTemplate.amountEditable']}"
+				field="amountEditable" />
+			<hf:formField
+				label="#{messages['recurringChargeTemplate.durationTermInMonth']}"
+				field="durationTermInMonth" />
+			<hf:formField
+				label="#{messages['recurringChargeTemplate.subscriptionProrata']}"
+				field="subscriptionProrata" />
+			<hf:formField
+				label="#{messages['recurringChargeTemplate.terminationProrata']}"
+				field="terminationProrata" />
+			<hf:formField
+				label="#{messages['recurringChargeTemplate.applyInAdvance']}"
+				field="applyInAdvance" />
+			<hf:formEntityField id="invoiceSubCategorySelectedId"
+				label="#{messages['invoiceSubCategory.panel']}"
+				field="invoiceSubCategory" childField="code" required="true"
+				popup="true" popupId="searchInvoiceSubCategoryPopup" />
+			<hftl:panelGroup columns="2">
+				<hf:formEntityField
+					label="#{messages['recurringChargeTemplate.calendar']}"
+					field="calendar" childField="name" required="true" popup="false"
+					show="#{entity.recurrenceType == 'CALENDAR'}"
+					service="#{calendarService}"
+					listElements="#{calendarService.listChargeApplicationCalendars()}" />
+				<hf:formEntityField label="#{messages['calendar.type']}"
+					field="calendar" childField="type"
+					show="#{!recurringChargeTemplateBean.edit}" />
+			</hftl:panelGroup>
+
 		</hf:formPanel>
 
 	</ui:define>
