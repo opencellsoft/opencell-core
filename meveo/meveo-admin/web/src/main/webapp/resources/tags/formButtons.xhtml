@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:cc="http://java.sun.com/jsf/composite">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
 	<cc:attribute name="backingBean" required="true" />
@@ -13,28 +18,37 @@
 	<cc:attribute name="killConversationOnSave" default="true" />
 	<cc:attribute name="killConversationOnBack" default="true" />
 	<cc:attribute name="useCustomIdParam" default="false" />
-	<cc:attribute name="objectIdParamName" default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
+	<cc:attribute name="objectIdParamName"
+		default="#{cc.attrs.useCustomIdParam?cc.attrs.backingBean.idParameterName:'objectId'}" />
 </cc:interface>
 
 <cc:implementation>
 
 	<p:panelGrid columns="#{cc.attrs.columns}" style="float: right;">
-		<p:button value="#{messages['commons.edit']}" rendered="#{!cc.attrs.edit}" includeViewParams="true">
+		<p:button value="#{messages['commons.edit']}"
+			rendered="#{!cc.attrs.edit}" includeViewParams="true">
 			<f:param name="edit" value="true" />
-			<f:param name="#{cc.attrs.objectIdParamName}" value="#{cc.attrs.backingBean.objectId}" />
+			<f:param name="#{cc.attrs.objectIdParamName}"
+				value="#{cc.attrs.backingBean.objectId}" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
-		<p:commandButton rendered="#{cc.attrs.edit}" value="#{messages['action.save']}" 
-			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}" icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
+		<p:commandButton rendered="#{cc.attrs.edit}"
+			value="#{messages['action.save']}"
+			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
+			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
 
 		<cc:insertChildren />
 
-		<hf:clearButton label="#{messages['action.reset']}" resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
+		<hf:clearButton label="#{messages['action.reset']}"
+			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
 
-		<p:button id="buttonBack" value="#{messages['action.back']}" outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
-			<f:param name="cid" value="#{conversation.id}" disable="#{ not cc.attrs.killConversationOnBack}" />
+		<p:button id="buttonBack" value="#{messages['action.back']}"
+			outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
+			<c:if test="#{not cc.attrs.killConversationOnBack}">
+				<f:param name="cid" value="#{conversation.id}" />
+			</c:if>
 		</p:button>
 
 	</p:panelGrid>
