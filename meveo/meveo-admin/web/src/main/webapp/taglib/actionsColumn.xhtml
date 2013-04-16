@@ -31,20 +31,20 @@
 			<h:outputText value="#{messages['commons.actions']}" />
 		</f:facet>
 
-		<p:tooltip for="viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" />
-		<p:button id="viewlink" outcome="#{editView}" icon="ui-icon-search" rendered="#{renderViewLink}">
+		<p:tooltip for="#{resultsId}viewlink" value="#{messages['commons.view']}" showEffect="slide" hideEffect="slide" />
+		<p:button id="#{resultsId}viewlink" outcome="#{editView}" icon="ui-icon-search" rendered="#{renderViewLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="false" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
-		<p:tooltip for="editlink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
-		<p:button id="editlink" outcome="#{editView}" icon="ui-icon-document" rendered="#{renderEditLink}">
+		<p:tooltip for="#{resultsId}editlink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+		<p:button id="#{resultsId}editlink" outcome="#{editView}" icon="ui-icon-document" rendered="#{renderEditLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="true" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
-		<p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-		<p:commandButton id="deletelink" action="#{backingBean.delete(entity.id)}" icon="ui-icon-trash" rendered="#{renderDeleteLink}" ajax="false" />
+		<p:tooltip for="#{resultsId}deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+		<p:commandButton id="#{resultsId}deletelink" action="#{backingBean.delete(entity.id)}" icon="ui-icon-trash" rendered="#{renderDeleteLink}" ajax="false" />
 	</p:column>
 </ui:composition>
 

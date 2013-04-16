@@ -23,13 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Instance;
-import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IEntity;
@@ -119,9 +116,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
      * subscription entry.
      */
-    @Inject
-    @RequestParam
-    private Instance<Long> userAccountId;
+    private Long userAccountId;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -202,7 +197,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
         }
 
         super.saveOrUpdate(killConversation);
-        return "/pages/billing/subscriptions/subscriptionDetail?edit=false&objectId=" + entity.getId() + "&faces-redirect=true";
+        return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
     }
 
     @SuppressWarnings("unchecked")
@@ -564,6 +559,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     }
 
     private Long getUserAccountId() {
-        return userAccountId.get();
+        return userAccountId;
+    }
+
+    public void setUserAccountId(Long userAccountId) {
+        this.userAccountId = userAccountId;
     }
 }

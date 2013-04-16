@@ -112,6 +112,25 @@
 						</h:link>
 					</p:treeNode>
 
+					<p:treeNode type="subscription" icon="tree-user-account-icon"
+						expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed">
+						<h:link id="subscription_tree_value" value="#{node}"
+							outcome="#{node.view}"
+							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+							<p:tooltip rendered="#{node.code != null}"
+								for="subscription_tree_value" value="#{node.code}" />
+						</h:link>
+						<h:link id="subscription_tree_value_selected" value="#{node}"
+							outcome="#{node.view}"
+							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
+							styleClass="selectedTreeNode">
+							<p:tooltip rendered="#{node.code != null}"
+								for="subscription_tree_value_selected"
+								value="#{node.code}" />
+						</h:link>
+					</p:treeNode>
+
 				</p:tree>
 
 			</h:form>

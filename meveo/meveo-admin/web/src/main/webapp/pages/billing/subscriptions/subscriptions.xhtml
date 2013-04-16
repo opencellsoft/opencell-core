@@ -10,6 +10,10 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{subscriptionBean.preRenderView}" />
+	</f:metadata>
+	
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -26,7 +30,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['subscription.title']}"
-			backingBean="#{subscriptionBean}">
+			backingBean="#{subscriptionBean}" >
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
@@ -42,7 +46,7 @@
 				view="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
 				backView="subscriptions" />
 
-			<hftl:actionsColumn
+			<hftl:actionsColumn useCustomIdParam="true" 
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
