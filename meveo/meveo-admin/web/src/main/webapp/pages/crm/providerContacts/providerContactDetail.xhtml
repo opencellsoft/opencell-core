@@ -32,9 +32,6 @@
 				<hf:formField label="#{messages['businessEntity.description']}"
 					field="description" useConverter="false" size="50" maxlength="50"
 					required="true" />
-				<hf:formField label="#{messages['contactInformation.email']}"
-					field="email" size="50" maxlength="100" useConverter="false"
-					required="true" />
 			</p:fieldset>
 
 			<p:fieldset legend="#{messages['commons.contacts']}">
@@ -52,10 +49,6 @@
 
 			<p:fieldset legend="#{messages['commons.address']}">
 				<p:panelGrid columns="2">
-					<hf:formField label="#{messages['contactInformation.email']}"
-						field="email" size="50" maxlength="100" useConverter="false"
-						required="true" />
-
 					<hf:formEntityField label="#{messages['address.address1']}"
 						field="address" childField="address1" popup="false" size="80"
 						maxlength="80" />
@@ -74,10 +67,11 @@
 					<hf:formEntityField label="#{messages['address.city']}"
 						required="true" field="address" childField="city" popup="false"
 						maxlength="50" />
-					
+
 					<p:panelGrid columns="2">
-						<h:outputText value="#{messages['address.country']}" />
-						<p:selectOneMenu required="true"
+						<p:outputLabel for="country"
+							value="#{messages['address.country']}" />
+						<p:selectOneMenu id="country" required="true"
 							rendered="#{providerContactBean.edit}"
 							value="#{providerContactBean.entity.address.country}">
 							<f:selectItems value="#{messages['address.countrys'].split(',')}"
