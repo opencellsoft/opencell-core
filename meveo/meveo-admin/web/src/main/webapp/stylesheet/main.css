@@ -986,7 +986,7 @@ table[id="j_idt27:formId:j_idt91"]  tr td[role="gridcell"] > table
 }
 form[id="tabView:invoiceSubCategoryCountries_results_form"] div[id="tabView:datatable"] tfoot tr td.ui-paginator-bottom
 {
-  width : 145% ;
+  width : 147% ;
   float : left;
 }
 td[id="tabView:datatable_paginator_bottom"]
@@ -1008,13 +1008,13 @@ table[id="formCustomerPanel:formCustomer:tabView:countryPanel"] > tbody > tr td:
 }
 .ui-dialog-titlebar
 {
-  width : 97% !important;
+  width : 95% !important;
 }
 .ui-dialog-titlebar .ui-dialog-titlebar-close:hover
 {
   background : #b8eff7;
 }
-div[id^="formCustomerPanel:formCustomer:tabView"],
+div[id="formCustomerPanel:formCustomer:tabView"],
 div[id="parentTab:formCustomerAccountPanel:formCustomerAccount:childTab"],
 div[id="parentTab:formBillingAccountPanel:formId:childTab"],
 div[id="userAccountFormPanel:formId:userAccountTab"]
@@ -1060,15 +1060,31 @@ table[id*="searchForm"]  > tbody > tr
   float : left;
 }
 /* account billing textfields fixes */
-label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt252"],
-label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt257"],
-label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt264"]
+label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt278"],
+label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt290"],
+label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt283"]
 {
-  margin-left : -10px;
+  margin-left : -12px;
 }
 input[id="parentTab:formBillingAccountPanel:formId:childTab:externalRef2"],
 div[id="parentTab:formBillingAccountPanel:formId:childTab:title_select"],
 input[id="parentTab:formBillingAccountPanel:formId:childTab:firstName_select"]
 {
-  margin-left : -18px;
+  margin-left : -15px;
+}
+/* detail table double border fix */
+.ui-paginator-top,
+.ui-paginator-bottom
+{
+  border : none;
+}
+table[id="searchPanel:searchForm:j_idt91:j_idt29"]
+{
+  margin-left : 37px;
+}
+button[id^="formCustomerPanel:formCustomer:tabView:"],
+button[id^="parentTab:formBillingAccountPanel"]
+{
+ 
+  margin-top : 14px;
 }
