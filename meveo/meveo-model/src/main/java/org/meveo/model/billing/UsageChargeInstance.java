@@ -15,8 +15,9 @@
  */
 package org.meveo.model.billing;
 
-import java.sql.Date;
+import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -43,6 +44,7 @@ public class UsageChargeInstance extends ChargeInstance{
 	private CounterInstance counter;
 	
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="LAST_UPDATE")
 	private Date lastUpdate;
 
 	public ServiceInstance getServiceInstance() {

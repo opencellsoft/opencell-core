@@ -24,7 +24,6 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.cache.CounterInstanceCache;
 import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
-import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -42,11 +41,9 @@ public class UsageRatingService {
     @Inject
     protected Logger log;
     
-    @Resource(lookup="java:jboss/infinispan/container/usageCharges")
-    private CacheContainer usageContainer;  
+    @Resource(lookup="java:jboss/infinispan/container/meveo")
+    private CacheContainer meveoContainer;  
     
-    @Resource(lookup="java:jboss/infinispan/container/counters")
-    private CacheContainer counterContainer;  
 
     private org.infinispan.Cache<Long, List<UsageChargeInstanceCache>> chargeCache;
     private org.infinispan.Cache<Long, CounterInstanceCache> counterCache;
@@ -68,8 +65,8 @@ public class UsageRatingService {
     
     @PostConstruct
     public void start() {
-      this.chargeCache = this.usageContainer.getCache();
-      this.counterCache = this.counterContainer.getCache();
+      this.chargeCache = this.meveoContainer.getCache("usageCharge");
+      this.counterCache = this.meveoContainer.getCache("counter");
       log.info("loading usage charge cache");
       @SuppressWarnings("unchecked")
 	  List<UsageChargeInstance> usageChargeInstances = em.createQuery("From UsageChargeInstance u").getResultList();
@@ -124,27 +121,14 @@ public class UsageRatingService {
 		return walletOperation;
     }
     
-    class CounterPass1Result{
-    	public CounterPass1Enum resultCode;
-    	public CounterPeriodCache periodCache;//use to store the periodCache for monetary counters to be used after rating
-    }
-    
-    enum CounterPass1Enum{
-    	NO_COUNTER,IS_MONETARY,FIT_IN_VOLUME,OUTSIDE_VOLUME;
-    }
-    
     /**
      * This method first look if there is a counter and a 
      * @param edr
      * @param charge
      * @return
      */
-    CounterPass1Result fitInCounters(EDR edr,UsageChargeInstanceCache charge){
-    	CounterPass1Result result=new CounterPass1Result();
-    	if(charge.getCounter()==null){
-    		result.resultCode=CounterPass1Enum.NO_COUNTER;
-    		return result;
-    	}
+    boolean fitInCounters(EDR edr,UsageChargeInstanceCache charge){
+    	boolean result=false;
     	CounterInstanceCache counterInstanceCache= counterCache.get(charge.getCounter().getKey());
 		CounterPeriodCache periodCache = null;
 		BigDecimal countedValue = BigDecimal.ZERO;
@@ -162,23 +146,16 @@ public class UsageRatingService {
 			CounterPeriod counterPeriod=counterInstanceService.createPeriod(counterInstance,edr.getEventDate());
 			periodCache = CounterPeriodCache.getInstance(counterPeriod,counterInstance.getCounterTemplate());
 		}
-		if(periodCache.getCounterType().equals(CounterTypeEnum.MONETARY)){
-			result.periodCache=periodCache;
-    		result.resultCode=CounterPass1Enum.IS_MONETARY;
-    		return result;
-		}
 		countedValue = edr.getQuantity().multiply(charge.getUnityMultiplicator());
 		if(charge.getUnityNbDecimal()>0){
 				countedValue=countedValue.setScale(charge.getUnityNbDecimal(), RoundingMode.HALF_UP);
 		}
 		if(periodCache.getValue().compareTo(countedValue)<0){
-    		result.resultCode=CounterPass1Enum.FIT_IN_VOLUME;
+    		result=true;
 			periodCache.setValue(periodCache.getValue().subtract(countedValue));
 				//TODO: check this is propagated on all server nodes
 				//TODO :set lastupdate of counterInstanceCache so it get persisted in BDD
-		} else {
-    		result.resultCode=CounterPass1Enum.OUTSIDE_VOLUME;
-		}
+		} 
     	return result;
     }
     
@@ -191,29 +168,21 @@ public class UsageRatingService {
      */
     public boolean rateEDRonChargeAndCounters(EDR edr,UsageChargeInstanceCache charge){
     	boolean result=false;
-    	CounterPass1Result counterPass1=fitInCounters(edr, charge);
-		
-		//it is not necessary to rate if the counter is not monetary and cannot be decremented
-		if(!counterPass1.resultCode.equals(CounterPass1Enum.OUTSIDE_VOLUME)){
+    	boolean continueRating=true;
+    	if(charge.getCounter()!=null){
+    		// if the charge is associated to a counter and we can decrement it then
+    		// we rate the charge if not we simply try the next charge
+    		continueRating=fitInCounters(edr, charge);
+    	}
+		if(continueRating){
 			Long currencyId = charge.getCurrencyId();
 			//TODO: replace by country
 			Long taxId = 0L;
 			Provider provider=charge.getProvider();
 			UsageChargeInstance chargeInstance =usageChargeInstanceService.findById(charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, chargeInstance, provider, currencyId, taxId);
-			boolean continueRating=true;
-			if(counterPass1.resultCode.equals(CounterPass1Enum.IS_MONETARY)){
-				if(counterPass1.periodCache.getValue().compareTo(walletOperation.getAmountWithTax())<0){
-					counterPass1.periodCache.setValue(counterPass1.periodCache.getValue().subtract(walletOperation.getAmountWithTax()));
-				} else {
-					continueRating=false;
-				}
-			}
-			//we finally persist the wallet operation
-			if(continueRating){
-				walletOperationService.create(walletOperation, null,provider);
-				result=true;
-			}
+			walletOperationService.create(walletOperation, null,provider);
+			result=true;			
 		}
 		return result;
     }
@@ -223,7 +192,7 @@ public class UsageRatingService {
      * @param edr
      */
     //TODO: this is only for postpaid wallets, for prepaid we dont need to check counters
-    public void rateUsage(EDR edr){
+    public void ratePostpaidUsage(EDR edr){
     	if(edr.getSubscription()==null){
     		edr.setStatus(EDRStatusEnum.REJECTED);
     		edr.setRejectReason("subscription null");
