@@ -92,11 +92,11 @@ public class EDR  extends BaseEntity {
 	private String rejectReason;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="PARAMETER_4")
+	@Column(name="CREATED")
 	private Date created;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="PARAMETER_4")
+	@Column(name="LAST_UPDATED")
 	private Date lastUpdate;
 	
 	public Subscription getSubscription() {

@@ -63,7 +63,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	private String filterParam4=WILCARD;
 	
 	@Column(name = "FILTER_EXPRESSION", length = 255)
-	private String filterExpression=WILCARD;
+	private String filterExpression=null;
 	
 	
 	public BigDecimal getUnityMultiplicator() {

@@ -141,16 +141,10 @@
 		<class>org.meveo.model.payments.DDRequestLotOp</class>
 		<class>org.meveo.model.payments.DDRequestItem</class>
 		<class>org.meveo.model.payments.MatchingAmount</class>
-		<class>org.meveo.model.rating.MatrixDefinition</class>
-		<class>org.meveo.model.rating.MatrixEntry</class>
-		<class>org.meveo.model.rating.UsageType</class>
-		<class>org.meveo.model.resource.Line</class>
-		<class>org.meveo.model.resource.OfferInstance</class>
-		<class>org.meveo.model.resource.UsageCounter</class>
+		<class>org.meveo.model.rating.EDR</class>
 		<class>org.meveo.model.shared.Title</class>
 		<class>org.meveo.model.security.Permission</class>
 		<class>org.meveo.model.payments.BankOperation</class>
-		<class>org.meveo.model.rating.EDRRatingPlan</class>
 		<class>org.meveo.model.mediation.Access</class>
 		<class>org.meveo.model.mediation.ZonningPlan</class>
 		<class>org.meveo.model.mediation.TimePlan</class>
