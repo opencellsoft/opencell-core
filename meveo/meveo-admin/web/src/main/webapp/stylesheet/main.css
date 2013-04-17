@@ -517,8 +517,10 @@ input[type="submit"]:hover,
   -moz-border-radius : 8px !important;
   margin-bottom : 10px;
   border : 1px solid #c2c2c2;
-  display : inline-block;
+  display : block !important;
   width : 100%;
+  //overflow : hidden;
+  
 }
 .ui-state-hover
 {
@@ -549,6 +551,7 @@ input[type="submit"]:hover,
 .ui-widget
 {
   font-size : 11px;
+  
 }
 .ui-selectonemenu .ui-inputfield
 {
@@ -653,7 +656,8 @@ div.body > table > thead,
     display : block;
     paddin
 }
-.ui-picklist-list
+.ui-picklist-list,
+.ui-tree
 {
   -webkit-border-radius: 8px;
    border-radius: 8px;
@@ -793,8 +797,8 @@ table[id="j_idt114:formPricePlan:j_idt191"],
 }
 td[role="gridcell"]
 {
-  margin : 0px;
-  padding : 2px;
+  margin : 0px ;
+  padding : 5px 2px;
   
 }
 .ui-fieldset-legend
@@ -814,6 +818,8 @@ td[role="gridcell"]
 .ui-tabs-nav
 {
   width : 99%;
+  background : none !important;
+ 
 }
 .ui-widget-header 
 {
@@ -831,4 +837,171 @@ td[role="gridcell"]
   font-size : 12px;
   height : 27px;
   background : -moz-linear-gradient(center top , #FFFFFF 0%, #EBEBEB 50%, #DBDBDB) repeat scroll 0 0 transparent;
+}
+.ui-treenode-leaf-icon
+{
+  
+}
+.tree-customer-icon,
+.ui-icon-folder-open
+{  
+  background-image: url(http://www.jobellevallega.com/numan/user.png) !important;
+  background-size : 13px 13px !important;
+  background-repeat : no-repeat !important;
+  background : transparent;
+}
+.tree-customer-account-icon
+{
+  background-image: url(http://www.jobellevallega.com/numan/folder.png) !important;
+  background-size : 15px 15px !important;
+  background-repeat : no-repeat !important;
+  background : transparent;
+}
+.tree-billing-account-icon { background: url(../img/billingAccount-icon.png) !important; height: 16px; width: 16px; }
+.tree-user-account-icon { background: url(http://www.jobellevallega.com/numan/user.png) !important; height: 16px; width: 16px; }
+.tree-subscription-icon { background: url(../img/subscription-icon.png) !important; height: 16px; width: 16px; }
+
+
+.ui-tree
+{
+  margin-top : 5px;
+}
+.ui-tree .ui-treenode-label a
+{
+  font-size : 11px;
+  color : #6b6b6b;
+  text-decoration : none;
+  font-family : helvetica;
+  padding : 5px 2px 0px 2px;
+  
+  
+}
+
+.ui-tabs-panel table tr td
+{
+    /* removed because of overflowing */
+   //display : inline-block;
+}
+.ui-selectonemenu-list
+{
+  background : white;
+}
+/*country fix for admin < provider < contact < new */
+table[id="j_idt32:formId:j_idt118"]
+{
+  margin-left : 53px;
+  
+}
+table[id="j_idt32:formId:j_idt118"] tr td:first-child
+{
+  font-weight : bold;
+  margin-right : 10px !important;
+  display : inline-block;
+  padding-top : 5px;
+}
+/*end of country fix */
+/*fix for accounts<new , country field */
+table[id="parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:countryPanel"]
+{
+  margin-left : 12px;
+}
+
+/*fix for accounts details */
+.ui-tabs-panels .ui-tabs-panel > table[width="100%"] > tbody tr  td:nth-child(2)
+{
+  color : #649fa8 ;
+  padding : 5px 5px;
+  margin-right : 10px;
+  font-style : normal;
+ 
+}
+.ui-tabs-panels .ui-tabs-panel > table[width="100%"] > tbody > tr > td table tbody tr td:last-child,
+.ui-tabs-panels .ui-tabs-panel > table[width="100%"] > tbody > tr > td table tbody tr td:last-child > span
+{
+
+}
+table[id="j_idt27:formId:j_idt103"] .ui-picklist-list
+{
+  margin-left : 0px !important;
+}
+.ui-picklist-list
+{
+  margin-left  : -10px !important;
+}
+/* label and value recolor for details in users */
+table[id^="formPanel:languagesFormId"] td[role="gridcell"] > table > tbody > tr > td > span,
+table[id^="formPanel:currenciesFormId:"] td[role="gridcell"] > table > tbody > tr > td > span,
+table[id^="formPanel:formId:"] td[role="gridcell"] > table > tbody > tr > td > span
+{
+   color : #649fa8 ;
+}
+/* fixes on search invoice sub category*/
+#j_idt110_content #tabView
+{
+  float : none;
+  display : block;
+
+}
+/* fix for description with flags unstyled text input */
+table[id="formPanel:formId:j_idt145:description"] input[type="text"],
+table[id="formPanel:reccuringChargeId:j_idt145:description"] input[type="text"],
+#j_idt110_content #tabView input[type="text"]
+{
+  border-radius : 4px;
+  background : white;
+  -webkit-box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 0, .2);
+  box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 0, .2);
+  padding : 4px;
+}
+/* fix on misaligned inputs on description with flags */
+#j_idt110_content #tabView input[name="tabView:formPanel:formId:j_idt179:j_idt186:0:j_idt190"],
+#j_idt110_content #tabView input[name="tabView:formPanel:formId:j_idt179:j_idt192:2:j_idt196"],
+table[id="j_idt27:formId:j_idt101"] span[id="j_idt27:formId:j_idt80:languageId"] input[name="j_idt27:formId:j_idt80:j_idt87:0:j_idt91"],
+table[id="formPanel:reccuringChargeId:j_idt145:description"] input[name="formPanel:reccuringChargeId:j_idt145:j_idt152:0:j_idt156"],
+table[id="formPanel:formId:j_idt145:description"] input[name="formPanel:formId:j_idt145:j_idt152:0:j_idt156"],
+table[id="j_idt27:formId:j_idt80:description"] input[name="j_idt27:formId:j_idt80:j_idt87:0:j_idt91"] 
+{
+  margin-left : 33px;
+  margin-bottom : -10px;
+}
+/* fix on mis aligned asterisk on billing cycle panel */
+label[id="j_idt27:formId:j_idt82:j_idt34"] 
+{
+  padding-top : 10px;
+}
+label[id="j_idt27:formId:j_idt82:j_idt34"] span.ui-outputlabel-rfi
+{
+  float : right;
+  margin-right : -8px;
+  margin-top : -10px;
+  display : inline-block;
+}
+/* fix on different margins on tabs with country dropdown */
+table[id="j_idt27:formId:j_idt91"]  tr td[role="gridcell"] > table
+{
+  margin-top : -5px;
+}
+td[id="tabView:datatable_paginator_bottom"]
+{
+  width : 138% !Important;
+  float : none;
+  display : inline-block;
+  margin-left : -3px !important;
+}
+
+table[id="formCustomerPanel:formCustomer:tabView:countryPanel"] > tbody > tr td:first-child
+{
+  color : #666666;
+  font-weight : bold;
+  width : 95px; 
+  text-align : right;
+  margin-right : 10px;
+}
+.ui-dialog-titlebar
+{
+  width : 97% !important;
+}
+.ui-dialog-titlebar .ui-dialog-titlebar-close:hover
+{
+  background : #b8eff7;
 }

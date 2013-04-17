@@ -17,7 +17,7 @@
     
     <ui:define name="body">
     	
-		<hf:formPanel edit="#{edit}" label="#{messages['provider.title']}" backingBean="#{providerBean}" entity="#{provider}" >
+		<hf:formPanel label="#{messages['provider.title']}" backingBean="#{providerBean}">
 		<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
 			<hf:formField label="#{messages['provider.serializedPaymentMethods']}" field="serializedPaymentMethods" />

@@ -32,6 +32,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 
 
@@ -97,9 +98,9 @@ public class PricePlanMatrix extends AuditableEntity {
 	@JoinColumn(name = "TRADING_CURRENCY_ID")
 	private TradingCurrency tradingCurrency;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TAX_ID")
-	private Tax tax;
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "TRADING_COUNTRY_ID")
+	 private TradingCountry tradingCountry; 
 
 	@Column(name = "BUSINESS_INTERMEDIARY_ID")
 	private Integer businessIntermediaryId;
@@ -221,12 +222,14 @@ public class PricePlanMatrix extends AuditableEntity {
 		this.tradingCurrency = tradingCurrency;
 	}
 
-	public Tax getTax() {
-		return tax;
+
+
+	public TradingCountry getTradingCountry() {
+		return tradingCountry;
 	}
 
-	public void setTax(Tax tax) {
-		this.tax = tax;
+	public void setTradingCountry(TradingCountry tradingCountry) {
+		this.tradingCountry = tradingCountry;
 	}
 
 	public Seller getSeller() {

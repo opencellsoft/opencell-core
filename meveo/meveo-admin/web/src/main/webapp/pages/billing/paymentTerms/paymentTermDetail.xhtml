@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['paymentTerm.panel']}" backingBean="#{paymentTermBean}" entity="#{paymentTerm}">
+		<hf:formPanel label="#{messages['paymentTerm.panel']}" backingBean="#{paymentTermBean}">
     			<hf:formField label="#{messages['paymentTerm.name']}" field="name" required="true"/>		
     			<hf:formField label="#{messages['paymentTerm.lines']}" field="paymentTermLines" showFields="paymentTermLine.percentage,percentage;paymentTermLine.dueNbDays,dueNbDays"/>				
 		</hf:formPanel>

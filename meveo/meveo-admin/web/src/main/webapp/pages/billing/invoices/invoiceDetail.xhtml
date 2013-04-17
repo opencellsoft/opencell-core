@@ -17,7 +17,7 @@
 	<ui:define name="body">
 		
 
-		<hf:formPanel edit="#{edit}" label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" entity="#{invoice}" showFormButtons="false">
+		<hf:formPanel label="#{messages['invoice.panel']}" backingBean="#{invoiceBean}" showFormButtons="false">
 				<hf:formEntityField label="#{messages['invoice.billingAccount']}" field="billingAccount" childField="code" popup="false" popupId="searchBillingAccountPopup" clearButton="true" />
     			<hf:formField label="#{messages['invoice.invoiceNumber']}" field="invoiceNumber" validateUnique="true"/>
     			<hf:formField label="#{messages['invoice.productDate']}" field="productDate" />

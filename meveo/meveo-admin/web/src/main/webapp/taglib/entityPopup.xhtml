@@ -14,8 +14,10 @@
 	<c:if test="${empty editParam}">
 		<c:set var="editParam" value="#{param['edit']}" />
 	</c:if>
-
-	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true">
+	<c:if test="${empty eventBackingBean}">
+		<c:set var="eventBackingBean" value="#{backingBean}" />
+	</c:if>
+	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true">
 		<h:form id="#{id}popupForm">
 			<p:panelGrid id="#{id}searchFormPanel" columns="2">
 				<c:if test="#{not empty searchField1}">
@@ -33,8 +35,8 @@
 				<p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm" />
 			</p:panelGrid>
 			<p:dataTable id="datatable" var="e" paginator="true" value="#{backingBean.lazyDataModel}" rows="10" selection="#{selection}" selectionMode="single"
-				lazy="true">
-				<p:ajax event="rowSelect" oncomplete="dlg_#{id}.hide()" update="#{updateField}"/>
+				lazy="true" rowSelectListener="#{rowSelectListener}">
+				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"  oncomplete="dlg_#{id}.hide()" update="#{updateField}"/>
 
 				<c:if test="#{not empty column1}">
 					<p:column>

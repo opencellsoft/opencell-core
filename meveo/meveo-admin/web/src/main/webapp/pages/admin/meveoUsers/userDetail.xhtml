@@ -28,23 +28,22 @@
 					rendered="#{(userBean.show or user.id==null) and userBean.edit}">
 					<p:outputLabel for="password" value="#{messages['user.password']}"></p:outputLabel>
 					<p:password autocomplete="off" id="password"
-						value="#{userBean.password}">
+						value="#{userBean.password}" required="true">
 					</p:password>
 					<p:outputLabel for="repeatedPassword"
 						value="#{messages['user.repeatedPassword']}">
 					</p:outputLabel>
 					<p:password id="repeatedPassword"
-						value="#{userBean.repeatedPassword}"
-						autocomplete="off"></p:password>
+						value="#{userBean.repeatedPassword}" autocomplete="off"></p:password>
 				</p:panelGrid>
 			</p:outputPanel>
 			<hf:formField label="#{messages['user.roles']}" field="roles"
-				listType="pickUpList" 
-				childField="name" required="true" dualListModel="#{userBean.dualListModel}"/>
+				listType="pickUpList" childField="name" required="true"
+				dualListModel="#{userBean.dualListModel}" />
 			<!-- <c:if test="#{identity.hasPermission('superAdministrateur')}"> -->
-				<hf:formField label="#{messages['user.providers']}"
-					field="providers" listType="pickUpList" 
-					childField="code" required="true" dualListModel="#{userBean.providersDualListModel}"/>
+			<hf:formField label="#{messages['user.providers']}" field="providers"
+				listType="pickUpList" childField="code" required="true"
+				dualListModel="#{userBean.providersDualListModel}" />
 			<!-- </c:if> -->
 		</hf:formPanel>
 	</ui:define>

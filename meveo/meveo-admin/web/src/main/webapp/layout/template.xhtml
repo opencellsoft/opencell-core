@@ -6,11 +6,13 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:custom="http://manaty.net/custom" contentType="text/html">
+
+	<ui:insert name="metadata" />
+	
 	<html>
-<ui:insert name="metadata" />
+
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
@@ -21,7 +23,6 @@
 	<link rel="stylesheet" type="text/css"
 		href="#{request.contextPath}/stylesheet/main.css" />
 
-	<s:remote include="javaScriptAction" />
 	<ui:insert name="head" />
 	<p:resources />
 
@@ -89,11 +90,7 @@
 			NAVIGATION
 	   </ui:insert>
 	<div class="body">
-		<a:outputPanel layout="block" ajaxRendered="true">
-			<h:messages id="messages" globalOnly="true" styleClass="message"
-				errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-				rendered="#{showGlobalMessages != 'false'}" />
-		</a:outputPanel>
+		
 		<ui:insert name="body" />
 	</div>
 

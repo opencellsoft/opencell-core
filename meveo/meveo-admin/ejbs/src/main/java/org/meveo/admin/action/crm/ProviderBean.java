@@ -19,13 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.admin.CurrentProvider;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -57,15 +54,6 @@ public class ProviderBean extends BaseBean<Provider> {
      */
     public ProviderBean() {
         super(Provider.class);
-    }
-
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     */
-    @Produces
-    @Named("provider")
-    public Provider init() {
-        return initEntity();
     }
 
     @Override

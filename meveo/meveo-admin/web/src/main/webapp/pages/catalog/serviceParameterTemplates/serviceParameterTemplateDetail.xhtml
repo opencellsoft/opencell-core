@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['serviceParameterTemplate.serviceParameterPanel']}" backingBean="#{serviceParameterTemplateBean}" entity="#{serviceParameterTemplate}" >
+		<hf:formPanel label="#{messages['serviceParameterTemplate.serviceParameterPanel']}" backingBean="#{serviceParameterTemplateBean}" >
 				<hf:formField label="#{messages['serviceParameterTemplate.code']}" field="code" required="true" validateUnique="true" />
     		    <hf:formField label="#{messages['serviceParameterTemplate.name']}" field="name" useConverter="false"/>
     			<hf:formField label="#{messages['serviceParameterTemplate.serviceTemplates']}" field="serviceTemplates" listType="pickUpList" listService="#{serviceTemplateService}" childField="name" />

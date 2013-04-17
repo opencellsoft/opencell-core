@@ -16,12 +16,10 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.MedinaConfiguration;
 import org.meveo.service.admin.impl.MedinaConfigurationService;
 import org.meveo.service.base.PersistenceService;
@@ -53,18 +51,6 @@ public class MedinaConfigurationBean extends BaseBean<MedinaConfiguration> {
      */
     public MedinaConfigurationBean() {
         super(MedinaConfiguration.class);
-    }
-
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("medinaConfiguration")
-    public MedinaConfiguration init() {
-        return initEntity();
     }
 
     /**

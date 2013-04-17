@@ -21,11 +21,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -33,10 +31,8 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
 
 /**
- * Standard backing bean for {@link OneShotChargeTemplate} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link OneShotChargeTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
+ * their create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Nov 18, 2010
@@ -45,138 +41,127 @@ import org.primefaces.component.datatable.DataTable;
 @Named
 @ConversationScoped
 public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link OneShotChargeTemplate} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private OneShotChargeTemplateService oneShotChargeTemplateService;
+    /**
+     * Injected @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private OneShotChargeTemplateService oneShotChargeTemplateService;
 
-	@Inject
-	private CatMessagesService catMessagesService;
+    @Inject
+    private CatMessagesService catMessagesService;
 
-	private String descriptionFr;
+    private String descriptionFr;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public OneShotChargeTemplateBean() {
-		super(OneShotChargeTemplate.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public OneShotChargeTemplateBean() {
+        super(OneShotChargeTemplate.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("oneShotChargeTemplate")
-	public OneShotChargeTemplate init() {
-		OneShotChargeTemplate oneShotChargeTemplate = initEntity();
-		if (oneShotChargeTemplate.getId() != null) {
-			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
-					.getSimpleName() + "_" + oneShotChargeTemplate.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-			}
-		}
-		return oneShotChargeTemplate;
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public OneShotChargeTemplate initEntity() {
+        OneShotChargeTemplate oneShotChargeTemplate = super.initEntity();
+        if (oneShotChargeTemplate.getId() != null) {
+            for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class.getSimpleName() + "_" + oneShotChargeTemplate.getId())) {
+                languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+            }
+        }
+        return oneShotChargeTemplate;
+    }
 
-	
-	@Override
-	public DataTable search() {
-	    getFilters();
+    @Override
+    public DataTable search() {
+        getFilters();
         if (!filters.containsKey("disabled")) {
             filters.put("disabled", false);
         }
         return super.search();
-	}
+    }
 
-//	/**
-//	 * Data model of entities for data table in GUI. Filters charges of Usage
-//	 * type.
-//	 * 
-//	 * @return filtered entities.
-//	 */
-//	// @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
-//	protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
-//		return entities;
-//	}
+    // /**
+    // * Data model of entities for data table in GUI. Filters charges of Usage
+    // * type.
+    // *
+    // * @return filtered entities.
+    // */
+    // // @Out(value = "oneShotChargeTemplatesForUsageType", required = false)
+    // protected PaginationDataModel<OneShotChargeTemplate> getDataModelForUsageType() {
+    // return entities;
+    // }
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it. Filters charges of Usage type.
-	 * 
-	 * @return
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
-	 */
-//	@Produces
-//	@Named("oneShotChargeTemplatesForUsageType")
-//	public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
-//		getFilters();
-//		if (!filters.containsKey("disabled")) {
-//			filters.put("disabled", false);
-//		}
-//		filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
-//		return super.list();
-//	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it. Filters charges of Usage type.
+     * 
+     * @return
+     * 
+     * @see org.meveo.admin.action.BaseBean#list()
+     */
+    // @Produces
+    // @Named("oneShotChargeTemplatesForUsageType")
+    // public PaginationDataModel<OneShotChargeTemplate> listForUsageType() {
+    // getFilters();
+    // if (!filters.containsKey("disabled")) {
+    // filters.put("disabled", false);
+    // }
+    // filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.USAGE);
+    // return super.list();
+    // }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	public String saveOrUpdate() {
-		String back = null;
-		if (entity.getId() != null) {
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(
-						ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
-				if (catMsg != null) {
-					catMsg.setDescription(description);
-					catMessagesService.update(catMsg);
-				} else {
-					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-							+ "_" + entity.getId(), msgKey, description);
-					catMessagesService.create(catMessages);
-				}
-			}
-			back = saveOrUpdate(entity);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
+    public String saveOrUpdate(boolean killConversation) {
+        String back = null;
+        if (entity.getId() != null) {
+            for (String msgKey : languageMessagesMap.keySet()) {
+                String description = languageMessagesMap.get(msgKey);
+                CatMessages catMsg = catMessagesService.getCatMessages(ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
+                if (catMsg != null) {
+                    catMsg.setDescription(description);
+                    catMessagesService.update(catMsg);
+                } else {
+                    CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey, description);
+                    catMessagesService.create(catMessages);
+                }
+            }
+            back = super.saveOrUpdate(killConversation);
 
-		} else {
-			back = saveOrUpdate(entity);
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-						+ "_" + entity.getId(), msgKey, description);
-				catMessagesService.create(catMessages);
-			}
-		}
-		return back;
-	}
+        } else {
+            back = super.saveOrUpdate(killConversation);
+            for (String msgKey : languageMessagesMap.keySet()) {
+                String description = languageMessagesMap.get(msgKey);
+                CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey, description);
+                catMessagesService.create(catMessages);
+            }
+        }
+        return back;
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
-		return oneShotChargeTemplateService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<OneShotChargeTemplate> getPersistenceService() {
+        return oneShotChargeTemplateService;
+    }
 
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
+    public String getDescriptionFr() {
+        return descriptionFr;
+    }
 
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
-	}
+    public void setDescriptionFr(String descriptionFr) {
+        this.descriptionFr = descriptionFr;
+    }
 }

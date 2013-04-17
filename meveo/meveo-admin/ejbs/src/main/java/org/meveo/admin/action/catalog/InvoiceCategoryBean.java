@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,10 +31,8 @@ import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
 /**
- * Standard backing bean for {@link InvoiceCategory} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link InvoiceCategory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created Dec 15, 2010
@@ -44,120 +41,112 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 @ConversationScoped
 public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private CatMessagesService catMessagesService;
+    @Inject
+    private CatMessagesService catMessagesService;
 
-	/**
-	 * Injected @{link InvoiceCategory} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private InvoiceCategoryService invoiceCategoryService;
+    /**
+     * Injected @{link InvoiceCategory} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private InvoiceCategoryService invoiceCategoryService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public InvoiceCategoryBean() {
-		super(InvoiceCategory.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public InvoiceCategoryBean() {
+        super(InvoiceCategory.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public InvoiceCategory initEntity() {
-		InvoiceCategory invoicecat = super.initEntity();
-		languageMessagesMap.clear();
-		if (invoicecat.getId() != null) {
-			for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class
-					.getSimpleName() + "_" + invoicecat.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-			}
-		}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public InvoiceCategory initEntity() {
+        InvoiceCategory invoicecat = super.initEntity();
+        languageMessagesMap.clear();
+        if (invoicecat.getId() != null) {
+            for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class.getSimpleName() + "_" + invoicecat.getId())) {
+                languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+            }
+        }
 
-		return invoicecat;
-	}
+        return invoicecat;
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	public String saveOrUpdate() {
-		String back = null;
-		if (entity.getId() != null) {
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(entity.getClass()
-						.getSimpleName() + "_" + entity.getId(), msgKey);
-				if (catMsg != null) {
-					catMsg.setDescription(description);
-					catMessagesService.update(catMsg);
-				} else {
-					CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName()
-							+ "_" + entity.getId(), msgKey, description);
-					catMessagesService.create(catMessages);
-				}
-			}
-			back = saveOrUpdate(entity);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
+    public String saveOrUpdate(boolean killConversation) {
+        String back = null;
+        if (entity.getId() != null) {
+            for (String msgKey : languageMessagesMap.keySet()) {
+                String description = languageMessagesMap.get(msgKey);
+                CatMessages catMsg = catMessagesService.getCatMessages(entity.getClass().getSimpleName() + "_" + entity.getId(), msgKey);
+                if (catMsg != null) {
+                    catMsg.setDescription(description);
+                    catMessagesService.update(catMsg);
+                } else {
+                    CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_" + entity.getId(), msgKey, description);
+                    catMessagesService.create(catMessages);
+                }
+            }
+            back = super.saveOrUpdate(killConversation);
 
-		} else {
-			back = saveOrUpdate(entity);
-			for (String msgKey : languageMessagesMap.keySet()) {
-				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_"
-						+ entity.getId(), msgKey, description);
-				catMessagesService.create(catMessages);
-			}
+        } else {
+            back = super.saveOrUpdate(killConversation);
+            for (String msgKey : languageMessagesMap.keySet()) {
+                String description = languageMessagesMap.get(msgKey);
+                CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_" + entity.getId(), msgKey, description);
+                catMessagesService.create(catMessages);
+            }
 
-		}
+        }
 
-		return back;
-	}
+        return back;
+    }
 
-	/**
-	 * Override default list view name. (By default its class name starting
-	 * lower case + 's').
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-	 */
-	protected String getDefaultViewName() {
-		return "invoiceCategories";
-	}
+    /**
+     * Override default list view name. (By default its class name starting lower case + 's').
+     * 
+     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+     */
+    protected String getDefaultViewName() {
+        return "invoiceCategories";
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<InvoiceCategory> getPersistenceService() {
-		return invoiceCategoryService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<InvoiceCategory> getPersistenceService() {
+        return invoiceCategoryService;
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "invoiceCategories";
-	}
+    @Override
+    protected String getListViewName() {
+        return "invoiceCategories";
+    }
 
-	@Override
-	public String getNewViewName() {
-		return "invoiceCategoryDetail";
-	}
+    @Override
+    public String getNewViewName() {
+        return "invoiceCategoryDetail";
+    }
 
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("invoiceSubCategories");
-	}
+    @Override
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("invoiceSubCategories");
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("invoiceSubCategories");
-	}
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("invoiceSubCategories");
+    }
 
 }

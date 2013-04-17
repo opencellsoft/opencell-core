@@ -82,35 +82,6 @@
 			<to-view-id>/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
-		<navigation-case>
-			<from-outcome>sellers</from-outcome>
-			<to-view-id>/pages/admin/sellers/sellers.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>sellerDetail</from-outcome>
-			<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		
-		<navigation-case>
-			<from-outcome>jobTimers</from-outcome>
-			<to-view-id>/pages/admin/job/timers.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>jobTimerDetail</from-outcome>
-			<to-view-id>/pages/admin/job/timer.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		
-		<navigation-case>
-			<from-outcome>timers</from-outcome>
-			<to-view-id>/pages/admin/job/ejbTimers.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		
 		<navigation-case>
 			<from-outcome>users</from-outcome>
 			<to-view-id>/pages/admin/meveoUsers/users.xhtml</to-view-id>
@@ -545,18 +516,35 @@
 			<to-view-id>/pages/catalog/counterTemplates/counterTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
-		
 		<!-- CRM -->
 		<navigation-case>
 			<from-outcome>customers</from-outcome>
 			<to-view-id>/pages/crm/customers/customers.xhtml</to-view-id>
 			<redirect />
-		</navigation-case
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>customerDetail</from-outcome>
 			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
 			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>addCustomerAccount</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>customerDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>customerId</name> -->
+				<!-- <value>#{customerBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>customerSearch</from-outcome>
@@ -575,9 +563,47 @@
 		</navigation-case>
 
 		<navigation-case>
-			<from-outcome>addCustomerAccount</from-outcome>
-			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&amp;backView=customerDetail</to-view-id>
-			<redirect include-view-params="true"/>
+			<from-outcome>addBillingAccount</from-outcome>
+			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>customerAccountDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>customerAccountId</name> -->
+				<!-- <value>#{customerAccountBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>addNewOperation</from-outcome>
+			<to-view-id>/pages/payments/accountOperations/selectOCCTemplate.xhtml</to-view-id>
+			<redirect include-view-params="true"></redirect>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>addNewUserAccountAction</from-outcome>
+			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>billingAccountDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>billingAccountId</name> -->
+				<!-- <value>#{billingAccountBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
 		</navigation-case>
 
 		<navigation-case>
@@ -668,6 +694,7 @@
 			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+
 		<navigation-case>
 			<from-outcome>subscriptions</from-outcome>
 			<to-view-id>/pages/billing/subscriptions/subscriptions.xhtml</to-view-id>
@@ -688,6 +715,26 @@
 			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>addNewSubscription</from-outcome>
+			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>userAccountDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>userAccountId</name> -->
+				<!-- <value>#{userAccountBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
+		</navigation-case>
+
 		<navigation-case>
 			<from-outcome>customerCategorys</from-outcome>
 			<to-view-id>/pages/crm/customerCategories/customerCategories.xhtml</to-view-id>
@@ -887,6 +934,106 @@
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>customerDetail</from-outcome>
+			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerAccounts</from-outcome>
+			<if>#{customerAccountBean.customerId!=null}</if>
+			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>customerAccountDetail</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>billingAccounts</from-outcome>
+			<if>#{billingAccountBean.customerAccountId!=null}</if>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>billingAccountDetail</from-outcome>
+			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>userAccounts</from-outcome>
+			<if>#{userAccountBean.billingAccountId!=null}</if>
+			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>userAccountDetail</from-outcome>
+			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>subscriptions</from-outcome>
+			<if>#{subscriptionBean.userAccountId!=null}</if>
+			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+
 
 	<!-- Exception handling -->
 	<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->

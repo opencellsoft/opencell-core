@@ -17,7 +17,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['invoiceTasks.panel']}" backingBean="#{invoiceTaskBean}" entity="#{invoiceTask}">
+		<hf:formPanel label="#{messages['invoiceTasks.panel']}" backingBean="#{invoiceTaskBean}" >
 			<hf:formField label="#{messages['invoiceTask.executionTime']}" field="executionTime" required="true" />
 			<hf:formField label="#{messages['invoiceTask.processName']}" field="processName" required="true"  />
 				

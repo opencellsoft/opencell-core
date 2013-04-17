@@ -45,7 +45,7 @@
 		</hftl:entityPopup>
 
 
-		<hf:formPanel edit="#{edit}" label="#{messages['priceCode.priceCodePanel']}" backingBean="#{priceCodeBean}" entity="#{priceCode}" >
+		<hf:formPanel label="#{messages['priceCode.priceCodePanel']}" backingBean="#{priceCodeBean}">
 			<hf:formField label="#{messages['priceCode.code']}" field="code" required="true" />
 			<hf:formEntityField id="chargeTemplateInSelectId" label="#{messages['priceCode.chargeTemplateIn']}"
 				field="chargeTemplateIn" childField="code"   popup="true" popupId="chargeTemplateInPopup" />

@@ -61,20 +61,6 @@ public class MatrixBean extends BaseBean<MatrixDefinition> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("matrix")
-	public MatrixDefinition init() {
-		return initEntity();
-	}
-
-
-	/**
 	 * Override default list view name. (By default view name is class name
 	 * starting lower case + ending 's').
 	 * 
