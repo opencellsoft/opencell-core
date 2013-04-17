@@ -1,4 +1,4 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
@@ -20,7 +20,7 @@
 		<c:if test="#{tradingCurrencyBean.edit}">
 			<hftl:entityPopup id="currencyPopup"
 				header="#{messages['currency.popup.header']}"
-				updateField=":formPanel:currenciesFormId:currencySelectedId:currencySelectedId"
+				updateField=":formPanel:currenciesFormId:currencySelectedId:currencySelectedId_text,:formPanel:currenciesFormId:prDescription:prDescription_text"
 				selection="#{tradingCurrencyBean.entity.currency}"
 				backingBean="#{currencyBean}"
 				searchField1Label="#{messages['currency.currencyCode']}"
@@ -28,7 +28,7 @@
 				column1Label="#{messages['currency.currencyCode']}"
 				column1="currencyCode"
 				column2Label="#{messages['tradingCurrency.prDescription']}"
-				column2="descriptionEn">
+				column2="descriptionEn" eventBackingBean="#{tradingCurrencyBean}">
 			</hftl:entityPopup>
 		</c:if>
 
@@ -43,7 +43,7 @@
 				required="true" />
 
 			<hf:formField label="#{messages['tradingCurrency.prDescription']}"
-				field="prDescription" size="100" />
+				field="prDescription" size="100" id="prDescription"/>
 			<hf:formField label="#{messages['tradingCurrency.prCurrencyToThis']}"
 				field="prCurrencyToThis" />
 			<hf:formField label="#{messages['tradingCurrency.disabled']}"

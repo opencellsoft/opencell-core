@@ -82,10 +82,8 @@ public class MatrixEntryBean extends BaseBean<MatrixEntry> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	@Produces
-	@Named("matrixEntry")
-	public MatrixEntry init() {
-		initEntity();
+	public MatrixEntry initEntity() {
+		super.initEntity();
 		if (getMatrixId() != null) {
 			entity.setMatrixDefinition(matrixService.findById(getMatrixId()));
 		}

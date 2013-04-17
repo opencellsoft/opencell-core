@@ -16,10 +16,9 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}"
+		<hf:formPanel 
 			label="#{messages['vertinaConfiguration.vertinaConfigurationPanel']}"
-			backingBean="#{vertinaConfigurationBean}"
-			entity="#{vertinaConfiguration}">
+			backingBean="#{vertinaConfigurationBean}">
 			<hf:formField label="#{messages['vertinaConfiguration.field']}"
 				field="field" />
 			<hf:formField label="#{messages['vertinaConfiguration.value']}"

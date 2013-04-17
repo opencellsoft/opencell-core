@@ -33,7 +33,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerBean.entity.tradingCountry}"
-			updateField=":formCustomerPanel:formCustomer:tabView:trCountrySelectId:trCountrySelectId">
+			updateField=":formCustomerPanel:formCustomer:tabView:trCountrySelectId:trCountrySelectId_text">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="tradingLanguagePopup"
@@ -46,7 +46,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerBean.entity.tradingLanguage}"
-			updateField=":formCustomerPanel:formCustomer:tabView:trLanguageSelectId:trLanguageSelectId">
+			updateField=":formCustomerPanel:formCustomer:tabView:trLanguageSelectId:trLanguageSelectId_text">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="customerCurrencyPopup"
@@ -59,7 +59,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerBean.entity.tradingCurrency}"
-			updateField=":formCustomerPanel:formCustomer:tabView:customerCurrencySelectId:customerCurrencySelectId">
+			updateField=":formCustomerPanel:formCustomer:tabView:customerCurrencySelectId:customerCurrencySelectId_text">
 		</hftl:entityPopup>
 		
 		 <hftl:entityPopup id="sellerParentPopup" 
@@ -80,15 +80,15 @@
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}"
 						entity="#{customerBean.entity}" />
 				</p:column>
-				<p:column style="width: 73%;">
+				<p:column style="width: 75%;">
 					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						backingBean="#{customerBean}" useCustomIdParam="true"
-						killConversationOnSave="false">
+						killConversationOnSave="false" killConversationOnBack="false">
 						<p:tabView id="tabView" style="width: 100%">
 							<p:tab title="#{messages['customer.tab.account']}">
 								<hf:formField label="#{messages['businessEntity.code']}"
-									field="code" validateUnique="true" />
+									field="code" validateUnique="true" required="true" />
 								<hf:formField label="#{messages['businessEntity.description']}"
 									field="description" useConverter="false" size="50"
 									maxlength="50" />
@@ -99,11 +99,11 @@
 								<hf:formEntityField
 									label="#{messages['customer.customerCategory']}"
 									field="customerCategory" childField="description" popup="false"
-									service="#{customerCategoryService}" required="true" />
+									service="#{customerCategoryService}" required="true" listBean="#{customerCategoryBean}" />
 								<hf:formEntityField
 									label="#{messages['customer.customerBrand']}"
 									field="customerBrand" childField="description" popup="false"
-									service="#{customerBrandService}" required="true" />
+									service="#{customerBrandService}" required="true" listBean="#{customerBrandBean}"/>
 
 								<hf:formEntityField id="customerCurrencySelectId"
 									label="#{messages['currency.codeCurrency']}"
@@ -171,12 +171,10 @@
 
 					</hf:formPanel>
 					<h:form id="operationsForm" rendered="#{!customerBean.edit}">
-						<!-- <custom:listPanel
-							label="#{messages['customerAccount.operations']}"> -->
-						<h:commandButton action="addCustomerAccount"
-							value="#{messages['customer.buttonAddCustomerAccount']}" />
+						<p:button outcome="addCustomerAccount" value="#{messages['customer.buttonAddCustomerAccount']}">
+							<f:param name="cid" value="#{conversation.id}"/>
+						</p:button>
 					</h:form>
-
 				</p:column>
 			</p:row>
 		</p:panelGrid>

@@ -16,6 +16,7 @@
 package org.meveo.commons.utils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
@@ -29,10 +30,11 @@ public class NumberUtils {
         if (what == null) {
             return null;
         }
-        double number = Double.parseDouble(what.toString());
-        double formatedNumber = (double) ((int) (number * Math.pow(10, howmuch) + .5)) / Math.pow(10, howmuch);
-        return BigDecimal.valueOf(formatedNumber);
+        
+        what = what.setScale(howmuch, RoundingMode.HALF_UP);
+        return what;
     }
+   
 
     public static String format(BigDecimal amount, String format) {
         if (amount == null) {
@@ -46,5 +48,6 @@ public class NumberUtils {
         String value = decimalFormat.format(amount);
         return value;
     }
-
+    
+  
 }

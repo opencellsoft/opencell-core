@@ -15,7 +15,7 @@
 	</ui:define>
 	<ui:define name="body">	
 	<rich:panel>				
-				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}" entity="#{matchingCode}">
+				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
 					<hftl:panelGroup columns="2">
 						<hf:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate"  />	  
 						<hf:formField label="#{messages['matchingCode.matchingType']}" field="matchingType"  childField="label" isMessage="true" />

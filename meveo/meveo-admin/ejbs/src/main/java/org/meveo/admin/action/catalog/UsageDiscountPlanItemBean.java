@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.meveo.admin.action.medina;
+package org.meveo.admin.action.catalog;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
@@ -22,41 +22,57 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.mediation.ZonningPlan;
+import org.meveo.model.catalog.UsageDiscountPlanItem;
+import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.medina.impl.ZoningPlanService;
+import org.meveo.service.catalog.impl.UsageDiscountPlanItemService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
- * @author MBAREK
+ * Standard backing bean for {@link UsagePricePlanItem} (extends
+ * {@link BaseBean} that provides almost all common methods to handle entities
+ * filtering/sorting in datatable, their create, edit, view, delete operations).
+ * It works with Manaty custom JSF components.
+ * 
  * 
  */
 @Named
 @ConversationScoped
-public class ZoningPlanBean extends BaseBean<ZonningPlan> {
+public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Injected @{link PriceCode} service. Extends {@link PersistenceService}.
+	 * Injected @{link UsagePricePlanItem} service. Extends
+	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private ZoningPlanService zoningPlanService;
+	private UsageDiscountPlanItemService usageDiscountPlanItemService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public ZoningPlanBean() {
-		super(ZonningPlan.class);
+	public UsageDiscountPlanItemBean() {
+		super(UsageDiscountPlanItem.class);
 	}
+
+    @Override
+    public DataTable search() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.search();
+    }
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<ZonningPlan> getPersistenceService() {
-		return zoningPlanService;
+	protected IPersistenceService<UsageDiscountPlanItem> getPersistenceService() {
+		return usageDiscountPlanItemService;
 	}
 
 }

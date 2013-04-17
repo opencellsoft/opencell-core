@@ -9,13 +9,13 @@
 	<a:queue />
 
 	<p:menubar rendered="#{identity.loggedIn}">
-		<p:submenu label="#{messages['menu.admin']}"
+		<p:submenu id="admin" label="#{messages['menu.admin']}"
 			rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
 
-			<p:menuitem value="#{messages['menu.users']}" outcome="users"
+			<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
-			<p:submenu label="#{messages['menu.trading']}"
+			<p:submenu id="trading" label="#{messages['menu.trading']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 
 				<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
@@ -211,12 +211,12 @@
 			-->
 		</p:submenu>
 
-		<p:submenu label="#{messages['menu.catalog']}"
+		<p:submenu id="catalog" label="#{messages['menu.catalog']}"
 			rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
 
 			<p:menuitem
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="calendars" value="#{messages['menu.calendars']}" />
+				outcome="calendars" id="calendars" value="#{messages['menu.calendars']}" />
 
 			<p:menuitem id="offerTemplates" outcome="offerTemplates"
 				value="#{messages['menu.offerTemplates']}" />

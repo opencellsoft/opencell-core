@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 	
-		<hf:formPanel edit="#{edit}" label="#{messages['dunningPlan.panel']}" backingBean="#{dunningPlanBean}" entity="#{dunningPlan}">
+		<hf:formPanel label="#{messages['dunningPlan.panel']}" backingBean="#{dunningPlanBean}">
 			<hftl:panelGroup columns="2">
 			<hf:formField label="#{messages['businessEntity.code']}" field="code"  required="true" validateUnique="true"/>
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50"/>

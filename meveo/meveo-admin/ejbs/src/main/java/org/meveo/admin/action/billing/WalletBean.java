@@ -42,12 +42,12 @@ public class WalletBean extends BaseBean<WalletInstance> {
 
     private static final long serialVersionUID = 1L;
 
-    /** Injected @{link Wallet} service. Extends {@link PersistenceService}. */
+    /** Injected @{link WalletInstance} service. Extends {@link PersistenceService}. */
     @Inject
     private WalletService walletService;
 
     /**
-     * Customer account Id passed as a parameter. Used when creating new Wallet from customer account window, so default customer account will be set on newly created wallet.
+     * Customer account Id passed as a parameter. Used when creating new WalletInstance from customer account window, so default customer account will be set on newly created wallet.
      */
     @Inject
     @RequestParam
@@ -66,11 +66,8 @@ public class WalletBean extends BaseBean<WalletInstance> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-
-    @Produces
-    @Named("wallet")
-    public WalletInstance init() {
-        initEntity();
+    public WalletInstance initEntity() {
+        super.initEntity();
         if (customerAccountId != null) {
             // wallet.setCustomerAccount(customerAccountService.findById(customerAccountId));
         }
