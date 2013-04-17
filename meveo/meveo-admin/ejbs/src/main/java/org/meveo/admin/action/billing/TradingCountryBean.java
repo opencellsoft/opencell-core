@@ -75,12 +75,15 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 
 
     public void onRowSelect(SelectEvent event){  
-    	Country country = (Country)event.getObject();  
-        log.info("populatCountries country", country != null ? country.getCountryCode() : null);
-		if (country != null) {
-			entity.setCountry(country);
-			entity.setPrDescription(country.getDescriptionEn());
-		}
+    	if(event.getObject() instanceof Country){
+    		Country country = (Country)event.getObject();  
+            log.info("populatCountries country", country != null ? country.getCountryCode() : null);
+    		if (country != null) {
+    			entity.setCountry(country);
+    			entity.setPrDescription(country.getDescriptionEn());
+    		}
+    	}
+    	
     } 
 
 	/**
