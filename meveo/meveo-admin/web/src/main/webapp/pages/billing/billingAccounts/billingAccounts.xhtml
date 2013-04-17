@@ -6,7 +6,7 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{billingAccountBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{billingAccountListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -15,7 +15,7 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['billingAccount.search']}" backingBean="#{billingAccountBean}">
+		<hf:searchPanel label="#{messages['billingAccount.search']}" backingBean="#{billingAccountListBean}">
 			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
 			<hf:searchField label="#{messages['billingAccount.status']}" field="status" />
 			<hf:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
@@ -26,7 +26,7 @@
 			<hf:searchField label="#{messages['billingAccount.languageCode']}" field="tradingLanguage" childField="prDescription" />
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['billingAccount.title']}" backingBean="#{billingAccountBean}">
+		<hftl:dataList label="#{messages['billingAccount.title']}" backingBean="#{billingAccountListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['billingAccount.status']}" field="status" childField="label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" />

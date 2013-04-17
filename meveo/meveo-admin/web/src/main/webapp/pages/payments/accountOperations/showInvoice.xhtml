@@ -14,7 +14,7 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">	
-				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation_I.form']}" backingBean="#{recordedInvoiceBean}" entity="#{recordedInvoice}">
+				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation_I.form']}" backingBean="#{recordedInvoiceBean}">
 					<hftl:panelGroup columns="3">
 						<hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />									
 						<hf:formField label="#{messages['accountOperation.matchingStatus']}" field="matchingStatus" childField="label" isMessage="true"  />

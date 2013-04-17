@@ -31,7 +31,6 @@
 		<c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
 	</c:if>
 
-
 	<p:panel id="#{resultsId}_panel" width="100">
 
 		<h:form id="#{formId}" prependId="false">
@@ -45,10 +44,10 @@
 			</e:sortableDataTable>
 
 			<p:panelGrid columns="2" rendered="#{checkMany}">
-				<p:commandButton id="deleteEntitieslink" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
+				<p:commandButton id="#{formId}deleteEntitieslink" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
 					onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" ajax="false" />
 
-				<p:commandButton id="buttonExport" value="#{messages['commons.exportExcel']}" ajax="false">
+				<p:commandButton id="#{formId}buttonExport" value="#{messages['commons.exportExcel']}" ajax="false">
 					<p:dataExporter type="xls" target="datatable" fileName="data" pageOnly="false" />
 				</p:commandButton>
 			</p:panelGrid>

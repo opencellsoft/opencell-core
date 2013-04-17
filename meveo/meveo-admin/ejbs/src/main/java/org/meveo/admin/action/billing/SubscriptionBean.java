@@ -22,14 +22,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Instance;
-import javax.faces.application.FacesMessage.Severity;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IEntity;
@@ -61,7 +58,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
  * @created Dec 7, 2010
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class SubscriptionBean extends BaseBean<Subscription> {
 
     private static final long serialVersionUID = 1L;
@@ -85,18 +82,14 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     private ServiceInstance selectedServiceInstance = new ServiceInstance();
 
     /** Entity to edit. */
-    // TODO: JavaEE6 migration. @Out(required = false)
     private Integer quantity = 1;
 
     /** Entity to edit. */
-    // TODO: JavaEE6 migration. @Out(required = false)
     private Long selectedServiceInstanceId;
 
     /** Entity to edit. */
-    // TODO: JavaEE6 migration. @Out(required = false)
     private OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
 
-    // TODO: JavaEE6 migration. @Out(required = false)
     private RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance();
 
     @Inject
@@ -119,9 +112,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
      * User Account Id passed as a parameter. Used when creating new subscription entry from user account definition window, so default uset Account will be set on newly created
      * subscription entry.
      */
-    @Inject
-    @RequestParam
-    private Instance<Long> userAccountId;
+    private Long userAccountId;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -202,7 +193,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
         }
 
         super.saveOrUpdate(killConversation);
-        return "/pages/billing/subscriptions/subscriptionDetail?edit=false&objectId=" + entity.getId() + "&faces-redirect=true";
+        return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
     }
 
     @SuppressWarnings("unchecked")
@@ -334,7 +325,14 @@ public class SubscriptionBean extends BaseBean<Subscription> {
         return servicetemplates;
     }
 
-    // @Factory("oneShotChargeInstances")
+    public OneShotChargeInstance getOneShotChargeInstance(){
+        return oneShotChargeInstance;
+    }
+    
+    public RecurringChargeInstance getRecurringChargeInstance(){
+        return recurringChargeInstance;
+    }
+    
     public List<OneShotChargeInstance> getOneShotChargeInstances() {
         return (entity == null || entity.getId() == null) ? null : oneShotChargeInstanceService.findOneShotChargeInstancesBySubscriptionId(entity.getId());
     }
@@ -564,6 +562,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     }
 
     private Long getUserAccountId() {
-        return userAccountId.get();
+        return userAccountId;
+    }
+
+    public void setUserAccountId(Long userAccountId) {
+        this.userAccountId = userAccountId;
     }
 }
