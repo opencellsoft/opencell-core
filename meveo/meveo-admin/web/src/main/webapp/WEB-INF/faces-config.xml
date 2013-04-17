@@ -552,7 +552,7 @@
 			<from-outcome>customers</from-outcome>
 			<to-view-id>/pages/crm/customers/customers.xhtml</to-view-id>
 			<redirect />
-		</navigation-case
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>customerDetail</from-outcome>
 			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
