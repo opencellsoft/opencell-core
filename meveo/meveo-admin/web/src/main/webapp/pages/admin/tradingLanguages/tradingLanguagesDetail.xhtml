@@ -12,10 +12,10 @@
 	<ui:define name="body">
 		<c:if test="#{tradingLanguageBean.edit}">
 			<hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}"
-				updateField=":formPanel:languagesFormId:languageSelectedId:languageSelectedId_text" selection="#{tradingLanguageBean.entity.language}"
+				updateField=":formPanel:languagesFormId:languageSelectedId:languageSelectedId_text,:formPanel:languagesFormId:prDescription:prDescription_text" selection="#{tradingLanguageBean.entity.language}"
 				backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode"
 				column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}"
-				column2="descriptionEn">
+				column2="descriptionEn" eventBackingBean="#{tradingLanguageBean}">
 			</hftl:entityPopup>
 		</c:if>
 
@@ -24,7 +24,7 @@
 
 			<hf:formEntityField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" childField="languageCode"
 				popup="true" popupId="languagePopup" clearButton="true" required="true" />
-			<hf:formField label="#{messages['tradingLanguage.prDescription']}" field="prDescription" maxlength="100" />
+			<hf:formField label="#{messages['tradingLanguage.prDescription']}" field="prDescription" maxlength="100" id="prDescription"/>
 			<hf:formEntityField label="#{messages['tradingLanguage.created']}" field="auditable" childField="created" time="true" showOnlyOnConsult="true" />
 			<hf:formEntityField label="#{messages['tradingLanguage.updated']}" field="auditable" childField="updated" time="true" showOnlyOnConsult="true" />
 			<hf:formField label="#{messages['tradingLanguage.disabled']}" field="disabled" isMessage="true" />

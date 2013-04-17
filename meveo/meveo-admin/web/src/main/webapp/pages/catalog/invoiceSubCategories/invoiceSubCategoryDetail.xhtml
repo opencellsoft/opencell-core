@@ -16,8 +16,10 @@
 	<ui:define name="body">
 
 		<hftl:entityPopup id="invSubCatCountryPopup"
-			header="#{messages['tradingCountry.popup.header']}" updateField=""
-			selection="" backingBean="#{tradingCountryBean}"
+			header="#{messages['tradingCountry.popup.header']}"  
+			updateField=":tabView:formPanelTax:formTax:countrySelectedId:countrySelectedId_text"
+			  selection="#{invoiceSubcategoryCountry.tradingCountry}"
+			  backingBean="#{tradingCountryBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
 			searchField1="countryCode"
 			column1Label="#{messages['businessEntity.code']}"
@@ -40,7 +42,8 @@
 
 		<hftl:entityPopup id="invSubCatCountTaxPopup"
 			header="#{messages['tax.panel']}" backingBean="#{taxBean}"
-			updateField="" selection=""
+			updateField=":tabView:formPanelTax:formTax:taxSelectedId:taxSelectedId_text"
+			  selection="#{invoiceSubcategoryCountry.tax}"
 			searchField1Label="#{messages['tax.code']}" searchField1="code"
 			searchField2Label="#{messages['tax.description']}"
 			searchField2="description" column1Label="#{messages['tax.code']}"
@@ -138,7 +141,7 @@
 
 				</p:tab>
 
-				<p:tab title="#{messages['invoiceSubCategory.tab2']}">
+				<p:tab title="#{messages['invoiceSubCategory.tab2']}" id="tab2">
 
 					<p:outputPanel id="invoiceSubCategoryCountries_MSG_panel">
 						<h:graphicImage value="/img/msgerror.png" style="border:0"
@@ -171,35 +174,21 @@
 					<br />
 
 					<p:outputPanel id="invoiceSubCategoryCountries_panel">
-						<hftl:dataList
-							dataModel="#{invoiceSubCategoryBean.entity.invoiceSubcategoryCountries}"
-							resultsId="invoiceSubCategoryCountries_results" checkMany="false"
-							backingBean="#{invoiceSubCategoryBean}">
-
-							<p:column styleClass="actions-column">
-								<f:facet name="header">
-									<h:outputText
-										value="#{messages['invoiceSubCategoryCountry.countryCode']}" />
-								</f:facet>
-								<p:column>
-									<h:outputText
-										value="#{entity.tradingCountry.country.countryCode}"
-										style="font-weight:bold;" />
-								</p:column>
-							</p:column>
-
+						<hftl:dataList backingBean="#{invoiceSubCategoryCountryBean}" dataModel="#{invoiceSubCategoryBean.entity.invoiceSubcategoryCountries}"
+							resultsId="invoiceSubCategoryCountries_results" checkMany="false">
+						<hftl:column
+								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
+								field="tradingCountry" childField="countryCode" />
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxe']}"
 								field="tax" childField="code" />
-
 							<p:column styleClass="actions-column">
 								<f:facet name="header">
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>
 
 								<p:commandLink id="editSubCategoryCountryLink"
-									onclick="document.getElementById('subCategoryCountrydiv').style.display='';"
-									update=":tabView:subCategoryCountrySdiv"
+									update=":tabView:formPanelTax:formTax"
 									action="#{invoiceSubCategoryBean.editInvoiceSubcategoryCountry(entity)}">
 									<h:graphicImage value="/img/edit.gif" style="border:0" />
 								</p:commandLink>
@@ -208,50 +197,46 @@
 							</p:column>
 						</hftl:dataList>
 					</p:outputPanel>
-
 					<p:panel>
 						<h:form>
 							<p:commandButton
 								value="#{messages['invoiceSubCategory.oneInvSubCountButton']}"
 								action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
-								onclick="document.getElementById('subCategoryCountrydiv').style.display='';"
-								update=":tabView:subCategoryCountrySdiv"
-								rendered="#{invoiceSubCategoryBean.edit}" />&nbsp;&nbsp;
+								update=":tabView:subCategoryCountrydiv"
+								rendered="#{invoiceSubCategoryBean.edit}" />
                             </h:form>
 
 						<br />
 						<br />
 
-						<p:panel id="subCategoryCountrydiv" style="display: none">
+						<p:panel id="subCategoryCountrydiv" rendered="#{invoiceSubcategoryCountry!=null}">
+
 
 							<p:panel id="subCategoryCountrySdiv">
-								<hf:formPanel edit="#{invoiceSubCategoryBean.edit}"
+								<hf:formPanel id="formPanelTax" formId="formTax" edit="#{invoiceSubCategoryBean.edit}"
 									label="#{messages['invoiceSubCategoryCountry.panel']}"
-									backingBean="#{invoiceSubCategoryBean}"
-									formId="invSubCatCountForm1" showFormButtons="false"
+									backingBean="#{invoiceSubCategoryBean}" entity="#{invoiceSubcategoryCountry}"
+									 showFormButtons="false"
 									ajaxSubmit="true">
+ 
 
-									<hf:formField
-										label="#{messages['invoiceSubCategoryCountry.id']}" field="id"
-										disabled="true" />
-
-									<!-- <hf:formEntityField id="ISCTCSelectId"
+									 <hf:formEntityField id="countrySelectedId"
 										label="#{messages['address.country']}" field="tradingCountry"
 										childField="countryCode" popup="true"
-										popupId="invSubCatCountryPopup" required="true" /> -->
+										popupId="invSubCatCountryPopup" required="true" /> 
 
-									<!-- <hf:formEntityField id="ISCTSelectId"
+									 <hf:formEntityField id="taxSelectedId"
 										label="#{messages['invoiceSubCategoryCountry.taxe']}"
 										field="tax" childField="code" popup="true"
-										popupId="invSubCatCountTaxPopup" required="true" /> -->
+										popupId="invSubCatCountTaxPopup" required="true" /> 
 
 									<p:panelGrid columns="2">
 
 										<p:commandButton
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['action.save']}"
-											update=":tabView:invoiceSubCategoryCountries_panel :tabView:invoiceSubCategoryCountries_MSG_panel"
-											oncomplete="document.getElementById('subCategoryCountrydiv').style.display='none';" />
+											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax"
+											oncomplete="document.getElementById('subCategoryCountrydiv');" />
 
 										<p:button value="#{messages['action.cancel']}"
 											onclick="document.getElementById('subCategoryCountrydiv').style.display='none';" />

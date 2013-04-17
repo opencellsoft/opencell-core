@@ -29,7 +29,7 @@
 	<cc:attribute name="isHtml" default="false" />
 	<cc:attribute name="datePattern" default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat'):paramBean.getProperty('meveo.dateFormat')}" />
 	<cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
-	
+
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) or ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
 </cc:interface>
@@ -44,7 +44,7 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
 				size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}" />
 			<p:inputTextarea rendered="#{cc.attrs.textArea and cc.attrs.edit}" id="#{cc.attrs.id}_textArea" disabled="#{cc.attrs.disabled}"
-				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.required}" cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"
+				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}" cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"
 				maxlength="#{cc.attrs.maxlength}" />
 			<p:editor rendered="#{cc.attrs.isHtml and cc.attrs.edit}" id="#{cc.attrs.id}_editor" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}"></p:editor>
@@ -74,6 +74,7 @@
 			<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_long" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}" />
 			<h:outputText rendered="#{not cc.attrs.edit}" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" style="font-weight:bold;" />
+
 			<cc:insertChildren />
 		</p:panelGrid>
 
@@ -82,6 +83,7 @@
 			<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_short" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}" />
 			<h:outputText rendered="#{not cc.attrs.edit}" value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" style="font-weight:bold;" />
+
 			<cc:insertChildren />
 		</p:panelGrid>
 
@@ -207,7 +209,7 @@
 					<c:if test="#{!empty cc.attrs.dualListModel}">
 						<c:set var="elements" value="#{cc.attrs.dualListModel}" />
 					</c:if>
-					<p:pickList id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}"
+					<p:pickList required="#{cc.attrs.required}" id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}"
 						disabled="#{not cc.attrs.edit}">
 						<s:objectConverter />
 					</p:pickList>

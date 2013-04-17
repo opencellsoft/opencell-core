@@ -43,6 +43,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -614,6 +615,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         objectIdFromParam = null;
         objectIdFromSet = null;
     }
+    
+    public void onRowSelect(SelectEvent event){  
+        IEntity i = (T)event.getObject();  
+        System.out.println("OnRowSelect : "+i!=null?i.getId():null);  
+  
+    } 
 
     protected User getCurrentUser() {
         return ((MeveoUser) identity.getUser()).getUser();

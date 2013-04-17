@@ -25,6 +25,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
@@ -32,6 +33,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.primefaces.event.SelectEvent;
 
 /**
  * Standard backing bean for {@link TradingLanguage} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -101,13 +103,16 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
         return back;
     }
 
-    public void populateLanguages(Language language) {
+    public void onRowSelect(SelectEvent event){  
+        Language language = (Language)event.getObject();  
         log.info("populatLanguages language", language != null ? language.getLanguageCode() : null);
         if (language != null) {
             entity.setLanguage(language);
             entity.setPrDescription(language.getDescriptionEn());
-        }
-    }
+        } 
+  
+    } 
+    
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()

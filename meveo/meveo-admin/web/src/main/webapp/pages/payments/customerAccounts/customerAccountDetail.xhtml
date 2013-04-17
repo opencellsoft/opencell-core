@@ -85,7 +85,8 @@
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="2">
 												<hf:formField label="#{messages['businessEntity.code']}"
-													field="code" maxlength="35" size="35" validateUnique="true" />
+													field="code" maxlength="35" size="35" validateUnique="true"
+													required="true" />
 												<hf:formEntityField
 													label="#{messages['accountEntity.primaryContact']}"
 													field="primaryContact" childField="code"
@@ -331,15 +332,15 @@
 								label="#{messages['accountOperation.title']}" disabled="true"
 								checkMany="true">
 								<ui:define name="buttons">
-									<a:commandButton
+									<p:commandButton
 										action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
 										value="#{messages['customerAccount.buttonLettrage']}"
 										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;
-															<a:commandButton
+									<p:commandButton
 										action="#{accountOperationBean.consultMatching()}"
 										value="#{messages['customerAccount.buttonConsultMatching']}"
 										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;																				
-														</ui:define>
+								</ui:define>
 								<hftl:column label="#{messages['accountOperation.type']}"
 									field="type" />
 								<hftl:column label="#{messages['accountOperation.occCode']}"
