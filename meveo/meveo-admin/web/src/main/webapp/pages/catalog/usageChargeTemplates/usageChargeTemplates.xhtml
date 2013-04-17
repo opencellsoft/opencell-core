@@ -1,0 +1,55 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
+    
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{oneShotChargeTemplateBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+
+    	
+    	
+    		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}" backingBean="#{usageChargeTemplateBean}">
+    			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
+    			<hf:searchField label="#{messages['chargeTemplate.description']}" field="description"/>
+    			<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable"/>
+    			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" /> 
+    		</hf:searchPanel>	
+    		
+    		<hftl:dataList label="#{messages['usageChargeTemplate.title']}" checkMany="false" backingBean="#{usageChargeTemplateBean}">
+    			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
+    			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
+    			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
+    			
+    			<hftl:column label="#{messages['usageChargeTemplate.unityMultiplicator']}" field="unityMultiplicator" />
+    			<hftl:column label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription"/> 
+    			<hftl:column label="#{messages['usageChargeTemplate.unityFormatter']}" field="unityFormatter" />
+    			<hftl:column label="#{messages['usageChargeTemplate.unityNbDecimal']}" field="unityNbDecimal" />
+    			
+    			<hftl:column label="#{messages['usageChargeTemplate.filterParam1']}" field="filterParam1" />
+    			<hftl:column label="#{messages['usageChargeTemplate.filterParam2']}" field="filterParam2" />
+    			<hftl:column label="#{messages['usageChargeTemplate.filterParam3']}" field="filterParam3" />
+    			<hftl:column label="#{messages['usageChargeTemplate.filterParam4']}" field="filterParam4" />
+    			<hftl:column label="#{messages['usageChargeTemplate.filterExpression']}" field="filterExpression" />
+    			
+    			
+    		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+    			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		    </hftl:dataList>
+		   		
+    </ui:define>
+    
+</ui:composition>
