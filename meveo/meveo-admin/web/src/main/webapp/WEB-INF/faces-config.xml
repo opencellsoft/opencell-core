@@ -95,6 +95,17 @@
 		</navigation-case>
 		
 		<navigation-case>
+			<from-outcome>jobs</from-outcome>
+			<to-view-id>/pages/admin/job/timers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>timers</from-outcome>
+			<to-view-id>/pages/admin/job/ejbTimers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
 			<from-outcome>users</from-outcome>
 			<to-view-id>/pages/admin/meveoUsers/users.xhtml</to-view-id>
 			<redirect />
