@@ -15,13 +15,17 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Date;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -31,7 +35,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
 	@EJB
 	UserAccountService userAccountService;
-	
+
+	@EJB
+	CounterPeriodService counterPeriodService;
+		
 	public CounterInstance counterInstanciation(UserAccount userAccount,CounterTemplate counterTemplate, User creator)  throws BusinessException{
 		CounterInstance result=null;
 		if(userAccount==null){
@@ -53,5 +60,25 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			userAccountService.update(userAccount);
 		}
 		return result;
+	}
+
+	public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate) {
+		CounterPeriod counterPeriod =  new CounterPeriod();
+		counterPeriod.setCounterInstance(counterInstance);
+		Date startDate = counterInstance.getCounterTemplate().getCalendar().previousCalendarDate(chargeDate);
+		Date endDate = counterInstance.getCounterTemplate().getCalendar().nextCalendarDate(startDate);
+		log.info("create counter period from "+startDate+" to "+endDate);
+		counterPeriod.setPeriodStartDate(startDate);
+		counterPeriod.setPeriodEndDate(endDate);
+		counterPeriod.setValue(counterInstance.getCounterTemplate().getLevel());
+		counterPeriod.setCode(counterInstance.getCode());
+		counterPeriod.setDescription(counterInstance.getDescription());
+		Auditable auditable = new Auditable();
+		auditable.setCreated(new Date());
+		counterPeriod.setAuditable(auditable);
+		counterPeriodService.create(counterPeriod);
+		counterInstance.getCounterPeriods().add(counterPeriod);
+		update(counterInstance);
+		return counterPeriod;
 	}
 }

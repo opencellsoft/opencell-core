@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,6 +17,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.CounterTypeEnum;
 
 @Entity
 @Table(name="BILLING_COUNTER_PERIOD")
@@ -29,7 +32,10 @@ public class CounterPeriod extends BusinessEntity {
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "COUNTER_INSTANCE_ID")
 	private CounterInstance counterInstance;
-	
+
+	@Enumerated(EnumType.STRING)
+    @Column(name = "COUNTER_TYPE")
+    private CounterTypeEnum counterType;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "PERIOD_START_DATE")
@@ -38,7 +44,11 @@ public class CounterPeriod extends BusinessEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "PERIOD_END_DATE")
     private Date periodEndDate;
-    
+
+	@Column(name = "LEVEL", precision = 23, scale = 12)
+	@Digits(integer = 23, fraction = 12)
+	private BigDecimal level;
+	
 	@Column(name = "VALUE", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal value;
@@ -50,6 +60,14 @@ public class CounterPeriod extends BusinessEntity {
 
 	public void setCounterInstance(CounterInstance counterInstance) {
 		this.counterInstance = counterInstance;
+	}
+
+	public CounterTypeEnum getCounterType() {
+		return counterType;
+	}
+
+	public void setCounterType(CounterTypeEnum counterType) {
+		this.counterType = counterType;
 	}
 
 	public Date getPeriodStartDate() {
@@ -66,6 +84,14 @@ public class CounterPeriod extends BusinessEntity {
 
 	public void setPeriodEndDate(Date periodEndDate) {
 		this.periodEndDate = periodEndDate;
+	}
+
+	public BigDecimal getLevel() {
+		return level;
+	}
+
+	public void setLevel(BigDecimal level) {
+		this.level = level;
 	}
 
 	public BigDecimal getValue() {

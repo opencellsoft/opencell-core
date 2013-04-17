@@ -15,12 +15,16 @@
  */
 package org.meveo.model.billing;
 
+import java.sql.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "BILLING_USAGE_CHARGE_INST")
@@ -37,6 +41,9 @@ public class UsageChargeInstance extends ChargeInstance{
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTER_ID")
 	private CounterInstance counter;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastUpdate;
 
 	public ServiceInstance getServiceInstance() {
 		return serviceInstance;
@@ -53,5 +60,15 @@ public class UsageChargeInstance extends ChargeInstance{
 	public void setCounter(CounterInstance counter) {
 		this.counter = counter;
 	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+	
+	
 	
 }

@@ -48,10 +48,10 @@ public class RecurringChargeCron {
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
 	@Inject
-	private WalletOperationService chargeApplicationService;
+	private WalletOperationService walletOperationService;
 	
 	@Inject
-	private ChargeApplicationRatingService chargeApplicationRatingService;
+	private RatingService chargeApplicationRatingService;
 
 	@Inject
 	protected Logger log;
@@ -100,11 +100,11 @@ public class RecurringChargeCron {
 							serviceTemplate.getId());
 				}
 				if (!recurringChargeTemplate.getApplyInAdvance()) {
-					chargeApplicationService.applyNotAppliedinAdvanceReccuringCharge(
+					walletOperationService.applyNotAppliedinAdvanceReccuringCharge(
 							activeRecurringChargeInstance, false, recurringChargeTemplate, null);
 				} else if (nextDurationDate != null
 						&& nextDurationDate.getTime() >= applicationDate.getTime()) {
-					chargeApplicationService.applyReccuringCharge(activeRecurringChargeInstance,
+					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance,
 							false, recurringChargeTemplate, null);
 
 				} else {
@@ -128,7 +128,7 @@ public class RecurringChargeCron {
 					String param2 = "du " + sdf.format(previousapplicationDate) + " au "
 							+ sdf.format(DateUtils.addDaysToDate(applicationDate, -1));
 
-					WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(
+					WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(
 							activeRecurringChargeInstance.getCode(),
 							activeRecurringChargeInstance.getServiceInstance().getSubscription(),
 							activeRecurringChargeInstance,
@@ -145,9 +145,9 @@ public class RecurringChargeCron {
 					log.info("set application date to "
 							+ activeRecurringChargeInstance.getServiceInstance()
 									.getSubscriptionDate());
-					chargeApplication.setSubscriptionDate(activeRecurringChargeInstance
+					walletOperation.setSubscriptionDate(activeRecurringChargeInstance
 							.getServiceInstance().getSubscriptionDate());
-					chargeApplicationService.create(chargeApplication, null,
+					walletOperationService.create(walletOperation, null,
 							activeRecurringChargeInstance.getRecurringChargeTemplate()
 									.getProvider());
 

@@ -16,11 +16,13 @@
 package org.meveo.model.mediation;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -44,7 +46,6 @@ public class Access extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
     //input
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "START_DATE")
 	private Date startDate;
@@ -59,23 +60,9 @@ public class Access extends EnableEntity {
 	@Column(name = "ACCES_USER_ID")
 	private String accessUserId;
 
-
-	//output
-	//access can be attached to a user account, a subscription or a specific service
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID")
-    private UserAccount userAccount;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
-    private Subscription subscription;
+	@ManyToMany(fetch = FetchType.LAZY)
+    private List<Subscription> subscriptions;
 	 
-    @JoinColumn(name = "SERVICE_CODE")
-    private String serviceCode;
-    
-    @Column(name = "WALLET_NAME")
-    private String walletName;
     
 	public Date getStartDate() {
 		return startDate;
@@ -107,42 +94,6 @@ public class Access extends EnableEntity {
 
 	public void setAccessUserId(String accessUserId) {
 		this.accessUserId = accessUserId;
-	}
-
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
-
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
-
-	public Subscription getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-		userAccount=subscription.getUserAccount();
-		 
-	}
-
- 
-
-	public String getServiceCode() {
-		return serviceCode;
-	}
-
-	public void setServiceCode(String serviceCode) {
-		this.serviceCode = serviceCode;
-	}
-
-	public String getWalletName() {
-		return walletName;
-	}
-
-	public void setWalletName(String walletName) {
-		this.walletName = walletName;
 	}
 
 }

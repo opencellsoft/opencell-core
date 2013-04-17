@@ -29,6 +29,8 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_CHARGE_TEMPLATE_SEQ")
 public class UsageChargeTemplate extends ChargeTemplate {
 
+	static String WILCARD = "*";
+	
 	/**
 	 * 
 	 */
@@ -49,19 +51,19 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	private int unityNbDecimal = 2;
 	
 	@Column(name = "FILTER_PARAM_1", length = 20)
-	private String filterParam1;
+	private String filterParam1=WILCARD;
 	
 	@Column(name = "FILTER_PARAM_2", length = 20)
-	private String filterParam2;
+	private String filterParam2=WILCARD;
 	
 	@Column(name = "FILTER_PARAM_3", length = 20)
-	private String filterParam3;
+	private String filterParam3=WILCARD;
 	
 	@Column(name = "FILTER_PARAM_4", length = 20)
-	private String filterParam4;
+	private String filterParam4=WILCARD;
 	
 	@Column(name = "FILTER_EXPRESSION", length = 255)
-	private String filterExpression;
+	private String filterExpression=WILCARD;
 	
 	
 	public BigDecimal getUnityMultiplicator() {

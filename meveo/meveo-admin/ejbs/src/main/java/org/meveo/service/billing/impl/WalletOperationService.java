@@ -62,12 +62,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 
 	@Inject
-	private ChargeApplicationRatingService chargeApplicationRatingService;
+	private RatingService chargeApplicationRatingService;
 	
 	private DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private String str_tooPerceived = ResourceBundle.getBundle("messages").getString(
 			"str_tooPerceived");
 
+	public void usageWalletOperation(Subscription subscription,Date usageDate, BigDecimal quantity, String param1, String param2, String param3){
+		
+	}
+	
 	public void oneShotWalletOperation(Subscription subscription,
 			OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate,
 			User creator) throws BusinessException {

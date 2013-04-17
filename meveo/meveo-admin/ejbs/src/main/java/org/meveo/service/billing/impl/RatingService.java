@@ -13,18 +13,13 @@ import javax.persistence.EntityManager;
 
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.util.MeveoJpa;
@@ -32,7 +27,7 @@ import org.slf4j.Logger;
 
 @Stateless
 @LocalBean
-public class ChargeApplicationRatingService {
+public class RatingService {
 
     @Inject
     @MeveoJpa
@@ -69,7 +64,6 @@ public class ChargeApplicationRatingService {
         
         result.setWallet(subscription.getUserAccount().getWallet());
         result.setCode(code);
-        result.setOperationDate(applicationDate);
         result.setQuantity(quantity);
         result.setTaxPercent(taxPercent);
         result.setStartDate(startdate);
@@ -81,13 +75,13 @@ public class ChargeApplicationRatingService {
         if (unitPriceWithoutTax != null) {
         	unitPriceWithTax = amountWithTax;
         } 
-        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax,provider);
+        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax, currencyId,  taxId,provider);
         return result;
 		
 	}
 	
 	//used to rate or rerate a bareWalletOperation 
-	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Provider provider){
+	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long currencyId, Long taxId,Provider provider){
 
 		PricePlanMatrix ratePrice=null;
 		String providerCode=provider.getCode();
@@ -102,7 +96,7 @@ public class ChargeApplicationRatingService {
     		if(!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())){
     			throw new RuntimeException("no price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
     		}
-        	//ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,taxId,currencyId);
+        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,taxId,currencyId);
             if (ratePrice == null ||  ratePrice.getAmountWithoutTax()==null) {
             	throw new RuntimeException("invalid price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
             } else {
