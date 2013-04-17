@@ -34,37 +34,6 @@
 		selection="#{sellerBean.entity.tradingCurrency}" updateField=":sellerFormPanel:sellerFormId:sellerTab:trCurrencySelectId:trCurrencySelectId">
 		</hftl:entityPopup>
 		
-		<hftl:entityPopup id="sellerCustAccPopup" header="#{messages['customerAccount.popup.header']}" backingBean="#{customerAccountBean}"
-				searchField1Label="#{messages['customerAccount.code']}" searchField1="code" searchField2Label="#{messages['customerAccount.name']}"
-				searchField2="name" column1Label="#{messages['customerAccount.code']}" column1="code" column2Label="#{messages['customerAccount.name']}"
-				column2="name" selection="#{sellerBean.entity.customerAccount}" 
-				updateField=":sellerFormPanel:sellerFormId:sellerTab:custAccSelectId:custAccSelectId">
-			</hftl:entityPopup>
-			
-		 <hftl:entityPopup id="sellerCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
-			selection="#{sellerBean.entity.customer}" updateField=":sellerFormPanel:sellerFormId:sellerTab:customerSelectId:customerSelectId">
-		</hftl:entityPopup>
-		
-		
-		<hftl:entityPopup id="sellerBillingAccPopup" 
-			header="#{messages['billingAccount.popup.header']}"
-			backingBean="#{billingAccountBean}"
-			searchField1Label="#{messages['billingAccount.code']}"
-			searchField1="code" column1Label="#{messages['billingAccount.code']}"
-			column1="code" selection="#{sellerBean.entity.billingAccount}"
-			updateField=":sellerFormPanel:sellerFormId:sellerTab:billingAccountSelectId:billingAccountSelectId">
-		</hftl:entityPopup>
-		
-		<hftl:entityPopup id="sellerUserAccPopup" 
-			header="#{messages['userAccount.popup.header']}"
-			backingBean="#{userAccountBean}"
-			searchField1Label="#{messages['userAccount.code']}"
-			searchField1="code" column1Label="#{messages['userAccount.code']}"
-			column1="code" selection="#{sellerBean.entity.userAccount}" 
-			updateField=":sellerFormPanel:sellerFormId:sellerTab:userAccountSelectId:userAccountSelectId">
-		</hftl:entityPopup>
-		
 		<hftl:entityPopup id="sellerParentPopup" 
 			header="#{messages['seller.title']}"
 			backingBean="#{sellerBean}"
@@ -87,8 +56,10 @@
 							<p:tabView id="sellerTab">
 								<p:tab title="#{messages['billingAccount.tab.account']}"> 
 								
+								<hf:formField label="#{messages['businessEntity.code']}" field="code" size="35" maxlength="35" />
+								
 								<hf:formField label="#{messages['businessEntity.description']}" 
-								field="description" useConverter="false" size="50" maxlength="100" />
+								field="description" size="50" maxlength="100" />
 								 
 							 <hf:formEntityField id="trCurrencySelectId" label="#{messages['currency.codeCurrency']}"
 								 field="tradingCurrency" childField="currencyCode"
@@ -100,21 +71,6 @@
 							<hf:formEntityField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage"
 									childField="languageCode" popup="true" popupId="sellerLanguagePopup" />
 									
-						<hf:formEntityField id="customerSelectId" label="#{messages['customerAccount.customer']}" field="customer" childField="code"
-									required="true" popup="true" popupId="sellerCustomerPopup" />
-									
-							<hf:formEntityField id="custAccSelectId" label="#{messages['billingAccount.customerAccount']}" field="customerAccount" childField="code"
-									required="true" popup="true" popupId="sellerCustAccPopup" />
-									
-										<hf:formEntityField id="billingAccountSelectId"
-											label="#{messages['userAccount.billingAccount']}"
-											field="billingAccount" childField="code" required="true"
-											popup="true" popupId="sellerBillingAccPopup" />
-											
-								<hf:formEntityField id="userAccountSelectId"
-											label="#{messages['subscription.userAccount']}"
-											field="userAccount" childField="code" required="true"
-											popup="true" popupId="sellerUserAccPopup" />
 											
 								<hf:formEntityField id="parentSelectId"
 											label="#{messages['seller.parent']}"
@@ -153,14 +109,14 @@
 													<p:outputLabel for="country_select"
 														value="#{messages['address.country']}" />
 													<h:selectOneMenu id="country_select" required="true"
-														rendered="#{userAccountBean.edit}"
-														value="#{userAccountBean.entity.address.country}">
+														rendered="#{sellerBean.edit}"
+														value="#{sellerBean.entity.address.country}">
 														<f:selectItems
 															value="#{messages['address.countrys'].split(',')}"
 															var="country" itemLabel="#{country}" />
 													</h:selectOneMenu>
-													<h:outputText rendered="#{!userAccountBean.edit}"
-														value="#{userAccountBean.entity.address.country}" />
+													<h:outputText rendered="#{!sellerBean.edit}"
+														value="#{sellerBean.entity.address.country}" />
 												</h:panelGrid>
 											</a:outputPanel>
 										</hftl:panelGroup>
