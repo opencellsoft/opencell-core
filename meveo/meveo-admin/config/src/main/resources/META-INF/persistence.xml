@@ -155,6 +155,8 @@
 		<class>org.meveo.model.mediation.ZonningPlan</class>
 		<class>org.meveo.model.mediation.TimePlan</class>
 		<class>org.meveo.model.mediation.NumberingPlan</class>
+		<class>org.meveo.model.jobs.JobExecutionResultImpl</class>
+		<class>org.meveo.model.jobs.TimerEntity</class>
 
 	</persistence-unit>
 

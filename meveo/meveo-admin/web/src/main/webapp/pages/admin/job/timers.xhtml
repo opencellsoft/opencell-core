@@ -1,0 +1,55 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich" xmlns:a="http://richfaces.org/a4j" xmlns:s="http://jboss.org/seam/faces"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	template="/layout/template.xhtml">
+
+	<f:metadata>
+		<s:viewAction action="#{conversation.begin}" if="#{conversation.transient}" />
+	</f:metadata>
+	
+	<ui:param name="pageTitle" value="#{messages['timers.page.title']}" />
+	<ui:define name="body">
+
+		<rich:panel>
+			<f:facet name="header">#{messages['timers.page.title']}</f:facet>
+			<h:messages/>
+					<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+			<h:form id="searchCriteria" styleClass="mainForm">
+				<div class="actionButtons">
+					<h:button value="#{messages['action.timers.newTimer']}" outcome="jobTimerDetail" />
+				</div>
+			</h:form>
+		
+						<!-- ===================================== SEARCH USERS RESULTS ===================================== -->
+			<a:outputPanel id="searchTimersResults" rendered="#{timersDataModel!=null}">
+				<h:outputText value="#{messages['search.results.noitems']}" rendered="#{timersDataModel.rowCount==0}" />
+				<h:form id="resultTimerForm" rendered="#{timersDataModel.rowCount!=0}">
+					<h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;">
+						<h:outputText value="#{timersDataModel.size} #{messages['search.results.itemsFound']}" />
+					</h:panelGrid>
+					<rich:dataTable id="datatableTimers" value="#{timersDataModel}" var="_timer" rows="#{timersAction.pageSize}"
+						onRowMouseOver="this.style.backgroundColor='#F1F1F1'" onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['timer.jobName']}" />
+							</f:facet>
+							<h:link outcome="jobTimerDetail" value="#{_timer.jobName}">
+								<f:param name="timerId" value="#{_timer.id}" />
+							</h:link>
+						</rich:column>	
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['timer.schedule']}" />
+							</f:facet>
+							<h:outputText value="#{_timer.timerSchedule}" />
+						</rich:column>
+					</rich:dataTable>
+					<rich:dataScroller id="scrollerTimers" for="datatableTimers" renderIfSinglePage="false" maxPages="10" />
+				</h:form>
+			</a:outputPanel>
+		</rich:panel>
+	</ui:define>
+</ui:composition>
