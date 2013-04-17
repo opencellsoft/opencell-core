@@ -174,29 +174,42 @@
 					<br />
 
 					<p:outputPanel id="invoiceSubCategoryCountries_panel">
-						<hftl:dataList backingBean="#{invoiceSubCategoryCountryBean}">
+						<hftl:dataList backingBean="#{invoiceSubCategoryCountryBean}" dataModel="#{invoiceSubCategoryBean.entity.invoiceSubcategoryCountries}"
+							resultsId="invoiceSubCategoryCountries_results" checkMany="false">
 						<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
 								field="tradingCountry" childField="countryCode" />
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxe']}"
 								field="tax" childField="code" />
-		           </hftl:dataList>
+							<p:column styleClass="actions-column">
+								<f:facet name="header">
+									<h:outputText value="#{messages['commons.actions']}" />
+								</f:facet>
+
+								<p:commandLink id="editSubCategoryCountryLink"
+									update=":tabView:formPanelTax:formTax"
+									action="#{invoiceSubCategoryBean.editInvoiceSubcategoryCountry(entity)}">
+									<h:graphicImage value="/img/edit.gif" style="border:0" />
+								</p:commandLink>
+								<p:tooltip for="editSubCategoryCountryLink"
+									value="#{messages['commons.edit']}" />
+							</p:column>
+						</hftl:dataList>
 					</p:outputPanel>
 					<p:panel>
 						<h:form>
 							<p:commandButton
 								value="#{messages['invoiceSubCategory.oneInvSubCountButton']}"
 								action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
-								onclick="document.getElementById('subCategoryCountrydiv').style.display='';"
-								 render="subCategoryCountrydiv"
+								update=":tabView:subCategoryCountrydiv"
 								rendered="#{invoiceSubCategoryBean.edit}" />
                             </h:form>
 
 						<br />
 						<br />
 
-						<p:panel id="subCategoryCountrydiv">
+						<p:panel id="subCategoryCountrydiv" rendered="#{invoiceSubcategoryCountry!=null}">
 
 
 							<p:panel id="subCategoryCountrySdiv">
@@ -219,10 +232,10 @@
 
 									<p:panelGrid columns="2">
 
-										<h:commandButton
+										<p:commandButton
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['action.save']}"
-											update=":tabView:invoiceSubCategoryCountries_panel :tabView:invoiceSubCategoryCountries_MSG_panel"
+											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax"
 											oncomplete="document.getElementById('subCategoryCountrydiv');" />
 
 										<p:button value="#{messages['action.cancel']}"

@@ -24,10 +24,12 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingCountryService;
+import org.primefaces.event.SelectEvent;
 
 /**
  * Standard backing bean for {@link TradingCountry} (extends {@link BaseBean}
@@ -71,13 +73,15 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 		return super.initEntity();
 	}
 
-	public void populateCountries(Country country) {
-		log.info("populatCountries country", country != null ? country.getCountryCode() : null);
+
+    public void onRowSelect(SelectEvent event){  
+    	Country country = (Country)event.getObject();  
+        log.info("populatCountries country", country != null ? country.getCountryCode() : null);
 		if (country != null) {
 			entity.setCountry(country);
 			entity.setPrDescription(country.getDescriptionEn());
 		}
-	}
+    } 
 
 	/**
 	 * Factory method, that is invoked if data model is empty. Invokes

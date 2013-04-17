@@ -875,10 +875,6 @@ td[role="gridcell"]
   
 }
 
-.ui-tabs-panel table tr td
-{
-   display : inline-block;
-}
 .ui-selectonemenu-list
 {
   background : white;
