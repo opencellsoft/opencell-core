@@ -6,7 +6,7 @@
 	xmlns:e="http://jboss.com/products/seam/excel" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{userAccountBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{userAccountListBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -16,18 +16,18 @@
 
 	<ui:define name="body">
 
-		<hf:searchPanel label="#{messages['userAccount.search']}" backingBean="#{userAccountBean}">
+		<hf:searchPanel label="#{messages['userAccount.search']}" backingBean="#{userAccountListBean}">
 			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
 			<hf:searchField label="#{messages['billingAccount.status']}" field="status" />
 			<hf:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
 			<hf:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
 			<h:panelGrid columns="2">
 				<p:outputLabel for="lastName_text" value="#{messages['name.lastName']}" />
-				<p:inputText id="lastName_text" value="#{userAccountBean.filters['name.lastName']}" size="20" />
+				<p:inputText id="lastName_text" value="#{userAccountListBean.filters['name.lastName']}" size="20" />
 			</h:panelGrid>
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountBean}">
+		<hftl:dataList label="#{messages['userAccount.title']}" backingBean="#{userAccountListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['userAccount.name']}" field="name" />

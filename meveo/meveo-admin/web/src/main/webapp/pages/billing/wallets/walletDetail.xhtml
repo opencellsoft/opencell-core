@@ -35,7 +35,7 @@
 			</a:commandLink>
 		</custom:entityPopup>
 
-		<hf:formPanel edit="#{edit}" label="#{messages['wallet.walletPanel']}" backingBean="#{walletBean}" entity="#{wallet}" pdf="true">
+		<hf:formPanel edit="#{edit}" label="#{messages['wallet.walletPanel']}" backingBean="#{walletBean}" pdf="true">
 			<hf:formEntityField id="userAccount" label="#{messages['wallet.userAccount']}" field="userAccount" childField="name" required="true" popup="true" popupId="userAccountPopup" />
 			<hf:formField label="#{messages['wallet.name']}" field="name" />
 			<hf:formField label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" />

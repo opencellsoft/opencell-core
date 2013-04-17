@@ -8,8 +8,8 @@
 <cc:interface componentType="formEntityField">
 	<cc:attribute name="label" required="true" />
 	<cc:attribute name="field" required="true" />
-	<cc:attribute name="backingBean" required="false" />
-	<cc:attribute name="entity" required="false" />
+	<cc:attribute name="backingBean" required="true" type="org.meveo.admin.action.BaseBean" />
+	<cc:attribute name="entity" required="false" type="java.lang.Object"/>
 	<cc:attribute name="childField" required="true" />
 	<cc:attribute name="required" default="false" />
 	<cc:attribute name="size" default="20" />
@@ -34,11 +34,17 @@
 <cc:implementation>
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.popup}">
-			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}" />
+			<p:outputLabel for="#{cc.attrs.id}_text1" value="#{cc.attrs.label}" rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}"/>
+			<p:outputLabel for="#{cc.attrs.id}_text2" value="#{cc.attrs.label}" rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}"/>
 			<p:panelGrid columns="3">
-				<p:inputText id="#{cc.attrs.id}_text" rendered="#{cc.attrs.edit}"
+			  <p:panel id="#{cc.attrs.id}_text">
+				<p:inputText id="#{cc.attrs.id}_text1" rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}"
-					disabled="true" />
+					disabled="false" />
+				<p:inputText id="#{cc.attrs.id}_text2" rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}"
+					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}"
+					disabled="false" />
+			</p:panel>		
 				<p:commandButton rendered="#{cc.attrs.edit}" id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
 					icon="ui-icon-search" />
 				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
@@ -73,6 +79,7 @@
 
 			<!-- if service is not set, then just render fields for embedded entity -->
 			<ui:fragment rendered="#{cc.attrs.listBean==null and cc.attrs.listElements==null}">
+
 				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}" disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}"
 					entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}"
 					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}" validateRib="#{cc.attrs.validateRib}" />

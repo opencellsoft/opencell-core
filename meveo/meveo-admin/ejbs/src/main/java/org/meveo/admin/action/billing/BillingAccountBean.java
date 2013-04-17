@@ -21,9 +21,8 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -32,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -70,7 +68,7 @@ import com.lowagie.text.pdf.PdfStamper;
  * 
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class BillingAccountBean extends BaseBean<BillingAccount> {
 
     private static final long serialVersionUID = 1L;
@@ -127,14 +125,14 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
         return entity;
     }
 
-    public void setCustomerAccountId(Long customerAccountId){
-        this.customerAccountId=customerAccountId;
+    public void setCustomerAccountId(Long customerAccountId) {
+        this.customerAccountId = customerAccountId;
     }
-    
-    public Long getCustomerAccountId(){
+
+    public Long getCustomerAccountId() {
         return customerAccountId;
     }
-    
+
     /**
      * Conversation is ended and user is redirected from edit to his previous window.
      * 
@@ -305,7 +303,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
     public boolean pdfExists(long invoiceId) {
         Invoice invoice = invoiceService.findById(invoiceId);
-        if (invoice!=null && invoice.getPdf() != null) {
+        if (invoice != null && invoice.getPdf() != null) {
             return true;
         }
         return false;

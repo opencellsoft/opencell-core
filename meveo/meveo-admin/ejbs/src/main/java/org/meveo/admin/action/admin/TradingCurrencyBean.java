@@ -112,12 +112,15 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     
 
     public void onRowSelect(SelectEvent event){  
-    	Currency currency = (Currency)event.getObject();  
-    	 log.info("populatCurrencies currency", currency != null ? currency.getCurrencyCode() : null);
-         if (currency != null) {
-             entity.setCurrency(currency);
-             entity.setPrDescription(currency.getDescriptionEn());
-         }
+    	if(event.getObject() instanceof Currency){
+    		Currency currency = (Currency)event.getObject();  
+       	 log.info("populatCurrencies currency", currency != null ? currency.getCurrencyCode() : null);
+            if (currency != null) {
+                entity.setCurrency(currency);
+                entity.setPrDescription(currency.getDescriptionEn());
+            }
+    	}
+    	
     } 
 
     /**
