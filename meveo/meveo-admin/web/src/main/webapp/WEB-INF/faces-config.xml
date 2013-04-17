@@ -535,13 +535,24 @@
 			<redirect />
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>counterTemplates</from-outcome>
+			<to-view-id>/pages/catalog/counterTemplates/counterTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>counterTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/counterTemplates/counterTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
 		
 		<!-- CRM -->
 		<navigation-case>
 			<from-outcome>customers</from-outcome>
 			<to-view-id>/pages/crm/customers/customers.xhtml</to-view-id>
 			<redirect />
-		</navigation-case>
+		</navigation-case
 		<navigation-case>
 			<from-outcome>customerDetail</from-outcome>
 			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
