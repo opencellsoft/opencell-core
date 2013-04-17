@@ -1,0 +1,47 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+    xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="navigation">
+        <ui:include src="/layout/navigation.xhtml" />
+    </ui:define>
+
+    <ui:define name="body"> 
+
+        <hf:formPanel id="formPanel" formId="usageChargeId"
+            label="#{messages['usageChargeTemplate.chargeTemplatePanel']}"
+            backingBean="#{usageChargeTemplateBean}">
+
+            <hf:formField label="#{messages['chargeTemplate.code']}" field="code"
+                required="true" validateUnique="true" />
+            <hf:languageFields />
+            <hf:formField label="#{messages['enableEntity.active']}"
+                field="disabled" isMessage="true" />
+            <hf:formField label="#{messages['chargeTemplate.amountEditable']}"
+                field="amountEditable" />
+                
+                
+                <hf:formField label="#{messages['usageChargeTemplate.unityMultiplicator']}" field="unityMultiplicator" />
+    			<hf:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription"/> 
+    			<hf:formField label="#{messages['usageChargeTemplate.unityFormatter']}" field="unityFormatter" />
+    			<hf:formField label="#{messages['usageChargeTemplate.unityNbDecimal']}" field="unityNbDecimal" />
+    			
+    			<hf:formField label="#{messages['usageChargeTemplate.filterParam1']}" field="filterParam1" />
+    			<hf:formField label="#{messages['usageChargeTemplate.filterParam2']}" field="filterParam2" />
+    			<hf:formField label="#{messages['usageChargeTemplate.filterParam3']}" field="filterParam3" />
+    			<hf:formField label="#{messages['usageChargeTemplate.filterParam4']}" field="filterParam4" />
+    			<hf:formField label="#{messages['usageChargeTemplate.filterExpression']}" field="filterExpression" />
+              
+
+        </hf:formPanel>
+
+    </ui:define>
+
+</ui:composition>

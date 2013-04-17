@@ -507,6 +507,18 @@
 			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>usageChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>usageChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		
 		<!-- CRM -->
 		<navigation-case>
 			<from-outcome>customers</from-outcome>
