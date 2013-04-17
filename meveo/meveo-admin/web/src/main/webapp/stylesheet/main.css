@@ -517,8 +517,10 @@ input[type="submit"]:hover,
   -moz-border-radius : 8px !important;
   margin-bottom : 10px;
   border : 1px solid #c2c2c2;
-  display : inline-block;
+  display : block !important;
   width : 100%;
+  //overflow : hidden;
+  
 }
 .ui-state-hover
 {
@@ -877,7 +879,8 @@ td[role="gridcell"]
 
 .ui-tabs-panel table tr td
 {
-   display : inline-block;
+    /* removed because of overflowing */
+   //display : inline-block;
 }
 .ui-selectonemenu-list
 {
@@ -926,9 +929,9 @@ table[id="j_idt27:formId:j_idt103"] .ui-picklist-list
   margin-left  : -10px !important;
 }
 /* label and value recolor for details in users */
-table[id="formPanel:languagesFormId:j_idt164"] td[role="gridcell"] > table > tbody > tr > td > span,
-table[id="formPanel:currenciesFormId:j_idt167"] td[role="gridcell"] > table > tbody > tr > td > span,
-table[id="formPanel:formId:j_idt162"] td[role="gridcell"] > table > tbody > tr > td > span
+table[id^="formPanel:languagesFormId"] td[role="gridcell"] > table > tbody > tr > td > span,
+table[id^="formPanel:currenciesFormId:"] td[role="gridcell"] > table > tbody > tr > td > span,
+table[id^="formPanel:formId:"] td[role="gridcell"] > table > tbody > tr > td > span
 {
    color : #649fa8 ;
 }
@@ -955,9 +958,11 @@ table[id="formPanel:reccuringChargeId:j_idt145:description"] input[type="text"],
 #j_idt110_content #tabView input[name="tabView:formPanel:formId:j_idt179:j_idt192:2:j_idt196"],
 table[id="j_idt27:formId:j_idt101"] span[id="j_idt27:formId:j_idt80:languageId"] input[name="j_idt27:formId:j_idt80:j_idt87:0:j_idt91"],
 table[id="formPanel:reccuringChargeId:j_idt145:description"] input[name="formPanel:reccuringChargeId:j_idt145:j_idt152:0:j_idt156"],
-table[id="formPanel:formId:j_idt145:description"] input[name="formPanel:formId:j_idt145:j_idt152:0:j_idt156"] 
+table[id="formPanel:formId:j_idt145:description"] input[name="formPanel:formId:j_idt145:j_idt152:0:j_idt156"],
+table[id="j_idt27:formId:j_idt80:description"] input[name="j_idt27:formId:j_idt80:j_idt87:0:j_idt91"] 
 {
   margin-left : 33px;
+  margin-bottom : -10px;
 }
 /* fix on mis aligned asterisk on billing cycle panel */
 label[id="j_idt27:formId:j_idt82:j_idt34"] 
@@ -975,4 +980,28 @@ label[id="j_idt27:formId:j_idt82:j_idt34"] span.ui-outputlabel-rfi
 table[id="j_idt27:formId:j_idt91"]  tr td[role="gridcell"] > table
 {
   margin-top : -5px;
+}
+td[id="tabView:datatable_paginator_bottom"]
+{
+  width : 138% !Important;
+  float : none;
+  display : inline-block;
+  margin-left : -3px !important;
+}
+
+table[id="formCustomerPanel:formCustomer:tabView:countryPanel"] > tbody > tr td:first-child
+{
+  color : #666666;
+  font-weight : bold;
+  width : 95px; 
+  text-align : right;
+  margin-right : 10px;
+}
+.ui-dialog-titlebar
+{
+  width : 97% !important;
+}
+.ui-dialog-titlebar .ui-dialog-titlebar-close:hover
+{
+  background : #b8eff7;
 }
