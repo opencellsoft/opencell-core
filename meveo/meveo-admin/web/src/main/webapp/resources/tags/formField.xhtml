@@ -8,9 +8,8 @@
 <cc:interface componentType="formField">
 	<cc:attribute name="label" required="true" />
 	<cc:attribute name="field" required="true" />
-	<cc:attribute name="backingBean" required="false" />
-	<cc:attribute name="childEntityVar" required="false" />
-	<cc:attribute name="entityVar" default="#{cc.attrs.childEntityVar!=null?'entity':'kuku'}" />
+	<cc:attribute name="backingBean" required="true" type="org.meveo.admin.action.BaseBean" />
+	<cc:attribute name="entity" required="false" type="java.lang.Object"/>
 	<cc:attribute name="required" default="false" />
 	<cc:attribute name="size" default="20" />
 	<cc:attribute name="maxlength" default="40" />
@@ -30,13 +29,9 @@
 	<cc:attribute name="isHtml" default="false" />
 	<cc:attribute name="datePattern" default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat'):paramBean.getProperty('meveo.dateFormat')}" />
 	<cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
-	<cc:attribute name="fieldType"
-		default="#{cc.getFieldType(cc.attrs.field,cc.attrs.childEntityVar!=null?cc.backingBeanFromParentOrCurrent[cc.attrs.entityVar][cc.attrs.childEntityVar]:cc.backingBeanFromParentOrCurrent[cc.attrs.entityVar])}" />
-	<cc:attribute name="entity"
-		default="#{cc.attrs.childEntityVar!=null?cc.backingBeanFromParentOrCurrent[cc.attrs.entityVar][cc.attrs.childEntityVar]:cc.backingBeanFromParentOrCurrent[cc.attrs.entityVar]}" />
-
+	
 	<cc:attribute name="show"
-		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
+		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) or ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
 </cc:interface>
 
 <cc:implementation>
@@ -129,7 +124,7 @@
 					style="font-weight:bold;" />
 				<h:outputText rendered="#{fieldValue != null and fieldValue.toString() == 'false' and not cc.attrs.edit}" value="#{messages['commons.no']}"
 					style="font-weight:bold;" />
-				toString was some workaround - todo: maybe works without toString 
+<!-- 				toString was some workaround - todo: maybe works without toString  -->
 				<h:outputText rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false' and not cc.attrs.edit}"
 					value="#{messages[cc.entityFromBackingBeanOrAttribute[cc.attrs.field]]}" style="font-weight:bold;" />
 			</ui:fragment>

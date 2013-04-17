@@ -11,7 +11,7 @@
 	template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{subscriptionBean.preRenderView}" />
+		<f:event type="preRenderView" listener="#{subscriptionListBean.preRenderView}" />
 	</f:metadata>
 	
 	<ui:define name="navigation">
@@ -21,7 +21,7 @@
 	<ui:define name="body">
 
 		<hf:searchPanel columns="3" label="#{messages['subscription.search']}"
-			backingBean="#{subscriptionBean}">
+			backingBean="#{subscriptionListBean}">
 			<hf:searchField label="#{messages['subscription.code']}" field="code" />
 			<hf:searchField label="#{messages['subscription.status']}"
 				field="status" />
@@ -30,7 +30,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['subscription.title']}"
-			backingBean="#{subscriptionBean}" >
+			backingBean="#{subscriptionListBean}"  value="kuu">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />

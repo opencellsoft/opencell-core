@@ -27,10 +27,10 @@
 		<c:set var="formId" value="#{resultsId}_form" />
 	</c:if>
 
-	<c:if test="${empty dataModel}">
+
+	<c:if test="${dataModel==null}">
 		<c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
 	</c:if>
-
 
 	<p:panel id="#{resultsId}_panel" width="100">
 

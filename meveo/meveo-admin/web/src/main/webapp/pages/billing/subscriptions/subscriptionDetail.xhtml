@@ -48,7 +48,7 @@
 			searchField1Label="#{messages['userAccount.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
 			column1Label="#{messages['userAccount.code']}" column1="code" column2Label="#{messages['userAccount.name']}" column2="name"
 			selection="#{subscriptionBean.entity.userAccount}"
-			updateField=":subscriptionTab:subscriptionFormPanel:formId:userSelectId:userSelectId">
+			updateField=":subscriptionTab:subscriptionFormPanel:formId:userSelectId:userSelectId_text">
 			<!-- select link -->
 			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="formId" action="#{subscriptionBean.populateAccounts(entity)}" -->
 			<!-- 				oncomplete="Richfaces.hideModalPanel('userAccountPopup')"> -->
@@ -59,7 +59,7 @@
 			searchField1Label="#{messages['offerTemplate.code']}" searchField1="code" searchField2Label="#{messages['offerTemplate.description']}"
 			searchField2="description" column1Label="#{messages['offerTemplate.code']}" column1="code" column2Label="#{messages['offerTemplate.description']}"
 			column2="description" selection="#{subscriptionBean.entity.offer}"
-			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId:offerSelectId">
+			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId:offerSelectId_text">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="oneShotChargeTmpPopup" header="#{messages['oneShotChargeTmp.popup.header']}" backingBean="#{oneShotChargeTemplateBean}"
@@ -92,8 +92,8 @@
 		<p:dialog id="serviceTerminationPopup" header="#{messages['serviceTerminationPopup.title']}" widgetVar="dlg_serviceTerminationPopup" dynamic="true">
 			<a:outputPanel id="terminationPanel">
 				<hf:formPanel edit="true" label="#{messages['serviceTerminationPopup.title']}" backingBean="#{subscriptionBean}"
-					entityVar="selectedServiceInstance" styleClass="formPanel" formId="subscTermFrm" showFormButtons="false"
-					killConversationOnSave="false" useCustomIdParam="true">
+					entity="#{subscriptionBean.selectedServiceInstance}" styleClass="formPanel" formId="subscTermFrm" showFormButtons="false"
+					killConversationOnSave="false" killConversationOnBack="false" useCustomIdParam="true">
 					<hftl:panelGroup columns="2">
 						<hf:formField label="#{messages['serviceInstance.code']}" field="code" size="50" edit="false" />
 					</hftl:panelGroup>
@@ -120,7 +120,7 @@
 			<h:panelGroup>
 				<div class="panels">
 					<hf:hierarchyPanel treeValue="#{customerTreeBean.buildAccountsHierarchy(subscriptionBean.entity)}" entity="#{subscriptionBean.entity}" />
-					<rich:panel styleClass="formPanel">
+					<rich:panel styleClass="formPanel"> 
 						<f:facet name="header">
 							<h:outputText value="#{messages['subscription.panel']}" />
 						</f:facet>
@@ -144,15 +144,15 @@
 								<br />
 								<br />
 								<h:outputText value="Liste des services souscrits :" style="font-weight: bold;font-size=14;" />
-								<hftl:dataList dataModel="#{subscriptionBean.serviceInstances}" resultsId="SI_results1" backingBean="#{subscriptionBean}" checkMany="false"
-									formId="srvInstansFrm">
 
-									<rich:column id="checker1" width="10" styleClass="chech-column">
+								<h:form id="srvInstansFrm" prependId="false">
+								  <p:dataTable value="#{subscriptionBean.serviceInstances}" var="entity">
+									<p:column id="checker1" width="10" styleClass="chech-column">
 										<h:selectOneRadio id="myRadio" value="#{subscriptionBean.selectedServiceInstanceId}" onchange="unCheckedAll(this.id,'srvInstansFrm');">
 											<f:selectItem itemValue="#{entity.id}" />
 											<a:ajax event="click" render="terminationPanel,serviceInstOperations" action="#{subscriptionBean.setSelectedServiceInstanceId(entity.id)}" />
 										</h:selectOneRadio>
-									</rich:column>
+									</p:column>
 									<hftl:column label="#{messages['serviceInstance.code']}" field="code" />
 									<hftl:column label="#{messages['serviceInstance.status']}" field="status" showSortLinks="false" />
 									<hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" showSortLinks="false" />
@@ -164,7 +164,8 @@
 									<ui:define name="operations">
 
 									</ui:define>
-								</hftl:dataList>
+								  </p:dataTable>
+								</h:form>
 								<a:outputPanel id="serviceInstOperations">
 									<h:form id="operationFrm">
 										<h:commandButton action="#{subscriptionBean.activateService}" value="#{messages['button.activateButton']}"
@@ -186,7 +187,8 @@
 								<br />
 
 								<h:outputText value="Liste des services souscriptibles :" style="font-weight: bold;font-size=14;" />
-								<hftl:dataList dataModel="#{subscriptionBean.serviceTemplates}" resultsId="ST_results2" checkMany="true" backingBean="#{subscriptionBean}">
+								<h:form id="ST_results2_form" prependId="false">
+								  <p:dataTable value="#{subscriptionBean.serviceTemplates}" var="entity">
 									<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
 									<hftl:column label="#{messages['serviceTemplate.description']}" field="description" />
 									<br />
@@ -202,11 +204,12 @@
 											</h:panelGrid>
 										</div>
 									</ui:define>
-								</hftl:dataList>
+								   </p:dataTable>
+								</h:form>
 							</p:tab>
 							<p:tab id="accInfoTab" title="#{messages['billingAccount.tab.information']}">
 
-								<hf:formPanel id="subscriptionFormPanel" label="#{messages['subscription.panel']}" backingBean="#{subscriptionBean}">
+								<hf:formPanel id="subscriptionFormPanel" label="#{messages['subscription.panel']}" backingBean="#{subscriptionBean}" killConversationOnSave="false" killConversationOnBack="false">
 									<!--Creation window fields-->
 									<hf:formEntityField id="userSelectId" label="#{messages['subscription.userAccount']}" field="userAccount" childField="code" required="true"
 										popup="true" popupId="userAccountPopup" />
@@ -230,7 +233,7 @@
 									</hftl:panelGroup>
 								</hf:formPanel>
 							</p:tab>
-							<p:tab label="#{messages['subscription.tab.oneShotChg']}" rendered="#{!subscriptionBean.edit}">
+							<p:tab title="#{messages['subscription.tab.oneShotChg']}" rendered="#{!subscriptionBean.edit}">
 
 								<hf:formPanel formId="form3" backingBean="#{subscriptionBean}" showFormButtons="false">
 									<hftl:panelGroup columns="3">
@@ -249,8 +252,8 @@
 								<br />
 								<br />
 								<a:outputPanel id="oneShotDataPanel">
-									<hftl:dataList dataModel="#{subscriptionBean.oneShotChargeInstances}" resultsId="OS_oneShot_results" checkMany="false"
-										backingBean="#{subscriptionBean}">
+									<h:form id="OS_oneShot_results_form" prependId="false">
+									  <p:dataTable value="#{subscriptionBean.oneShotChargeInstances}" var="entity">
 										<hftl:column label="#{messages['chargeInstance.code']}" field="code" />
 										<hftl:column label="#{messages['chargeInstance.description']}" field="description" isMessage="true" />
 										<hftl:column label="#{messages['oneShotChargeInstance.amountWithoutTax']}" field="amountWithoutTax" />
@@ -270,7 +273,8 @@
 											</a:commandLink>
 											<p:tooltip for="editOneShotChgInsLink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
 										</p:column>
-									</hftl:dataList>
+									</p:dataTable>
+								  </h:form>
 								</a:outputPanel>
 								<rich:panel>
 									<h:form>
@@ -279,34 +283,34 @@
 	</h:form>
 									<br />
 									<br />
-									<div id="oneShotChgDiv" > <!-- style="display: none" -->
+									<div id="oneShotChgDiv"  style="display: none">
 										<div id="oneShotChgSdiv">
 											<hf:formPanel id="oneShotChargeFormPanel" edit="true" label="#{messages['subscription.tab.oneShotChg']}" backingBean="#{subscriptionBean}"
-												entityVar="oneShotChargeInstance" formId="oneShotChgForm1" showFormButtons="false" ajaxSubmit="true">
+												entity="#{subscriptionBean.oneShotChargeInstance}" formId="oneShotChgForm1" showFormButtons="false" ajaxSubmit="true">
 												<hf:formEntityField id="chargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="chargeTemplate" childField="code"
-													popup="true" popupId="oneShotChargeTmpPopup" />
-												<hf:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true" />
-												<hf:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" />
+													popup="true" popupId="oneShotChargeTmpPopup" edit="true"/>
+												<hf:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true"  edit="true" />
+												<hf:formField label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate"  edit="true"/>
 												<h:panelGrid columns="2">
 													<p:outputLabel for="amountWithoutTax2" value="#{messages['oneShotChargeInstance.amountWithoutTax']}" />
-													<h:inputText rendered="#{subscriptionBean.edit}" id="amountWithoutTax2" value="#{entity.amountWithoutTax}" size="5"
-														converter="bigDecimalConverter" onkeyup="validateAmounts();" disabled="#{!entity.chargeTemplate.amountEditable}">
+													<h:inputText rendered="#{subscriptionBean.edit}" id="amountWithoutTax2" value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}" size="5"
+														converter="bigDecimalConverter" onkeyup="validateAmounts();" disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 
 													</h:inputText>
-													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{entity.amountWithoutTax}" style="font-weight:bold;"
+													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}" style="font-weight:bold;"
 														converter="bigDecimalConverter" />
 												</h:panelGrid>
 
 												<h:panelGrid columns="2">
 													<p:outputLabel for="amount2" value="#{messages['oneShotChargeInstance.amount2']}" />
-													<h:inputText rendered="#{subscriptionBean.edit}" id="amount2" value="#{entity.amount2}" size="5" converter="bigDecimalConverter"
-														onkeyup="validateAmounts();" disabled="#{!entity.chargeTemplate.amountEditable}">
+													<h:inputText rendered="#{subscriptionBean.edit}" id="amount2" value="#{subscriptionBean.oneShotChargeInstance.amount2}" size="5" converter="bigDecimalConverter"
+														onkeyup="validateAmounts();" disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 													</h:inputText>
-													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{entity.amount2}" style="font-weight:bold;" converter="bigDecimalConverter" />
+													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{subscriptionBean.oneShotChargeInstance.amount2}" style="font-weight:bold;" converter="bigDecimalConverter" />
 												</h:panelGrid>
-												<hf:formField label="#{messages['oneShotChargeInstance.criteria1']}" field="criteria1" />
-												<hf:formField label="#{messages['oneShotChargeInstance.criteria2']}" field="criteria2" />
-												<hf:formField label="#{messages['oneShotChargeInstance.criteria3']}" field="criteria3" />
+												<hf:formField label="#{messages['oneShotChargeInstance.criteria1']}" field="criteria1"  edit="true"/>
+												<hf:formField label="#{messages['oneShotChargeInstance.criteria2']}" field="criteria2"  edit="true"/>
+												<hf:formField label="#{messages['oneShotChargeInstance.criteria3']}" field="criteria3"  edit="true"/>
 
 												<h:panelGrid columns="2">
 													<p:outputLabel for="amountWithoutTax" value="#{messages['serviceInstance.quantity']}" />
@@ -499,9 +503,8 @@
 								<br />
 								<br />
 								<a:outputPanel id="recurringChargeDataPanel">
-
-									<hftl:dataList dataModel="#{subscriptionBean.recurringChargeInstances}" resultsId="OS_recurring_results" checkMany="false"
-										backingBean="#{subscriptionBean}">
+								  <h:form id="OS_recurring_results_form" prependId="false">
+									<p:dataTable value="#{subscriptionBean.recurringChargeInstances}" var="entity" >
 										<hftl:column label="#{messages['chargeInstance.code']}" field="code" />
 										<hftl:column label="#{messages['chargeInstance.description']}" field="description" isMessage="true" />
 										<hftl:column label="#{messages['oneShotChargeInstance.amountWithoutTax']}" field="amountWithoutTax" />
@@ -520,33 +523,34 @@
 											</a:commandLink>
 											<p:tooltip for="editRecurringChgInsLink" value="#{messages['commons.edit']}" />
 										</p:column>
-									</hftl:dataList>
+									</p:dataTable>
+								  </h:form>
 								</a:outputPanel>
 								<rich:panel>
 									<div id="recurringChgDiv" style="display: none">
 										<div id="recurringChgSdiv">
 											<hf:formPanel edit="true" label="#{messages['subscription.tab.recurringShotChg']}" backingBean="#{subscriptionBean}"
-												entityVar="recurringChargeInstance" formId="recurringChgForm1" showFormButtons="false" ajaxSubmit="true">
+												entity="#{subscriptionBean.recurringChargeInstance}" formId="recurringChgForm1" showFormButtons="false" ajaxSubmit="true">
 												<hf:formEntityField id="RCchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="chargeTemplate" childField="code"
 													popup="true" popupId="recurringChargeTmpPopup" />
 												<hf:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true" />
 												<hf:formField label="#{messages['recurringChargeInstance.subscriptionDate']}" field="subscriptionDate" />
 												<h:panelGrid columns="2">
 													<p:outputLabel for="RCamountWithoutTax" value="#{messages['recurringChargeInstance.amountWithoutTax']}" />
-													<h:inputText rendered="#{subscriptionBean.edit}" id="RCamountWithoutTax" value="#{entity.amountWithoutTax}" size="5"
+													<h:inputText rendered="#{subscriptionBean.edit}" id="RCamountWithoutTax" value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}" size="5"
 														converter="bigDecimalConverter" onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});"
 														disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 													</h:inputText>
-													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{entity.amountWithoutTax}" style="font-weight:bold;"
+													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}" style="font-weight:bold;"
 														converter="bigDecimalConverter" />
 												</h:panelGrid>
 												<h:panelGrid columns="2">
 													<p:outputLabel for="RCamount2" value="#{messages['recurringChargeInstance.amount2']}" />
-													<h:inputText rendered="#{subscriptionBean.edit}" id="RCamount2" value="#{entity.amount2}" size="5" converter="bigDecimalConverter"
+													<h:inputText rendered="#{subscriptionBean.edit}" id="RCamount2" value="#{subscriptionBean.recurringChargeInstance.amount2}" size="5" converter="bigDecimalConverter"
 														onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});"
 														disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 													</h:inputText>
-													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{entity.amount2}" style="font-weight:bold;" converter="bigDecimalConverter" />
+													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{subscriptionBean.recurringChargeInstance.amount2}" style="font-weight:bold;" converter="bigDecimalConverter" />
 												</h:panelGrid>
 												<hf:formField label="#{messages['recurringChargeInstance.criteria1']}" field="criteria1"
 													disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />

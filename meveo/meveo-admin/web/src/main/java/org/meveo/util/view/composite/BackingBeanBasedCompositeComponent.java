@@ -10,10 +10,10 @@ import java.util.Set;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UINamingContainer;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.IEntity;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Ignas
@@ -23,10 +23,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     private static final String BOOLEAN_TRUE_STRING = "true";
 
-    private BaseBean<? extends IEntity> backingBean;
-
-    private Object entity;
-
+    @SuppressWarnings("rawtypes")
     private Class entityClass;
 
     ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
@@ -37,23 +34,23 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
      */
     @SuppressWarnings("unchecked")
     public BaseBean<? extends IEntity> getBackingBeanFromParentOrCurrent() {
-        // System.out.println("AKK BB is " + this.getId() + " BB " + backingBean);
+
+        BaseBean<? extends IEntity> backingBean = (BaseBean<? extends IEntity>) getStateHelper().get("backingBean");
         if (backingBean == null) {
-            UIComponent parent = getCompositeComponentParent(this);
-            if (parent != null) {
-                backingBean = (BaseBean<? extends IEntity>) parent.getAttributes().get("backingBean");
-                // System.out.println("AKK BB parent " + parent.getId() + " attributes " + parent.getAttributes().keySet());
-                // System.out.println("AKK BB parent " + parent.getId() + " contains entity " + parent.getAttributes().containsKey("entity"));
-                // System.out.println("AKK BB parent " + parent.getId() + " contains backingbean " + parent.getAttributes().containsKey("backingBean"));
-            }
+            backingBean = (BaseBean<? extends IEntity>) getAttributes().get("backingBean");
+            System.out.println("AKK BB this " + this.getId() + " contains backingBean " + backingBean);
+
             if (backingBean == null) {
-                backingBean = (BaseBean<? extends IEntity>) getAttributes().get("backingBean");
-                // System.out.println("AKK BB this " + this.getId() + " attributes " + this.getAttributes().keySet());
-                // System.out.println("AKK BB this " + this.getId() + " contains entity " + this.getAttributes().containsKey("entity"));
-                // System.out.println("AKK BB this " + this.getId() + " contains backingbean " + this.getAttributes().containsKey("backingBean"));
+                UIComponent parent = getCompositeComponentParent(this);
+                if (parent != null && parent instanceof BackingBeanBasedCompositeComponent) {
+                    backingBean = ((BackingBeanBasedCompositeComponent) parent).getBackingBeanFromParentOrCurrent();
+                    System.out.println("AKK BB this " + this.getId() + " parent " + parent.getId() + " contains backingBean " + backingBean);
+                }
             }
             if (backingBean == null) {
                 throw new IllegalStateException("No backing bean was set in parent or current composite component!");
+            } else {
+                getStateHelper().put("backingBean", backingBean);
             }
         }
         return backingBean;
@@ -71,65 +68,29 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
      */
     public Object getEntityFromBackingBeanOrAttribute() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
+
+        Object entity = getStateHelper().get("entity");
         if (entity == null) {
+            entity = (Object) getAttributes().get("entity");
+            System.out.println("AKK entity this " + this.getId() + " contains entity " + (entity != null ? entity.getClass().getSimpleName() : null));
 
-            String entityVar = (String) this.getAttributes().get("entityVar");
-            String childEntityVar = (String) this.getAttributes().get("childEntityVar");
-            // System.out.println("AKK component is " + this.getId() + " " + this.getClass().getSimpleName() + " entityVar " + entityVar + " childEntityVar " + childEntityVar);
-
-            if (entityVar == null) {
+            if (entity == null) {
                 UIComponent parent = getCompositeComponentParent(this);
-                if (parent != null && parent instanceof FormPanelCompositeComponent) {
-                    // System.out.println("AKK got from parent " + parent.getId() + " " + parent.getClass().getSimpleName() + " entity "
-                    // + ((FormPanelCompositeComponent) parent).getEntityFromBackingBeanOrAttribute());
-                    entity = ((FormPanelCompositeComponent) parent).getEntityFromBackingBeanOrAttribute();
+                if (parent != null && parent instanceof BackingBeanBasedCompositeComponent) {
+                    entity = ((BackingBeanBasedCompositeComponent) parent).getEntityFromBackingBeanOrAttribute();
+                    System.out.println("AKK entity this " + this.getId() + " parent " + parent.getId() + " contains entity "
+                            + (entity != null ? entity.getClass().getSimpleName() : null));
                 }
-            } else {
-
-                // Field entityField = // getBeanField(getBackingBeanFromParentOrCurrent().getClass(),
-                // entityVar);
-                Object entityObject = PropertyUtils.getProperty(getBackingBeanFromParentOrCurrent(), entityVar);// entityField.get(getBackingBeanFromParentOrCurrent());
-                // System.out.println("AKK entity is " + this.getId() + " entityVar " + entityVar + " " + entityObject);
-                if (childEntityVar == null) {
-                    entity = entityObject;
-                } else {
-                    // Field childEntityField = getBeanField(entityObject.getClass(), childEntityVar);
-                    Object childEntityObject = PropertyUtils.getProperty(entityObject, childEntityVar); // childEntityField.get(entityObject);
-                    // System.out.println("AKK entity is " + this.getId() + " childEntityVar " + childEntityVar + " " + childEntityObject);
-                    entity = childEntityObject;
+            }
+            if (entity == null && this instanceof FormPanelCompositeComponent) {
+                try {
+                    entity = getBackingBeanFromParentOrCurrent().getEntity();
+                } catch (Exception e) {
+                    LoggerFactory.getLogger(getClass()).error("Failed to instantiate a entity");
                 }
             }
         }
-
         return entity;
-
-        // System.out.println("AKK entity is " + this.getId() + " entity " + entity + " class " + this.getClass().getSimpleName());
-        // if (entity == null) {
-        // // entity = (Object) getAttributes().get("entity");
-        //
-        // UIComponent parent = getCompositeComponentParent(this);
-        // System.out.println("AKK id is " + this.getId() + " parent " + parent.getId() + " is " + parent.getClass().getSimpleName());
-        // if (entity == null && parent != null && parent instanceof FormPanelCompositeComponent) {
-        // System.out.println("AKK parent " + parent.getId() + " contains entity " + ((FormPanelCompositeComponent) parent).getEntity());
-        // entity = ((FormPanelCompositeComponent) parent).getEntity();
-        // }
-        // if (entity == null) {
-        // try {
-        // entity = getBackingBeanFromParentOrCurrent().getEntity();
-        // } catch (Exception e) {
-        // LoggerFactory.getLogger(getClass()).error("Failed to instantiate a entity");
-        // }
-        // }
-        // }
-        // return entity;
-    }
-
-    public Object getParentAttribute(String attributeName) {
-        UIComponent parent = getCompositeComponentParent(this);
-        if (parent != null && parent instanceof FormPanelCompositeComponent) {
-            return parent.getAttributes().get(attributeName);
-        }
-        return null;
     }
 
     /**
@@ -156,135 +117,93 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     public boolean isText(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            return field.getType() == String.class;
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found. Entity " + entity + " entityClass " + getEntityClass());
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        return field.getType() == String.class;
     }
 
     public boolean isBoolean(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == Boolean.class || (type.isPrimitive() && type.getName().equals("boolean"));
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Boolean.class || (type.isPrimitive() && type.getName().equals("boolean"));
     }
 
     public boolean isDate(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            return field.getType() == Date.class;
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        return field.getType() == Date.class;
     }
 
     public boolean isEnum(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            return field.getType().isEnum();
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        return field.getType().isEnum();
     }
 
     public boolean isInteger(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == Integer.class || (type.isPrimitive() && type.getName().equals("int"));
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Integer.class || (type.isPrimitive() && type.getName().equals("int"));
     }
 
     public boolean isLong(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == Long.class || (type.isPrimitive() && type.getName().equals("long"));
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Long.class || (type.isPrimitive() && type.getName().equals("long"));
     }
 
     public boolean isByte(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == Byte.class || (type.isPrimitive() && type.getName().equals("byte"));
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Byte.class || (type.isPrimitive() && type.getName().equals("byte"));
     }
 
     public boolean isShort(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == Short.class || (type.isPrimitive() && type.getName().equals("short"));
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Short.class || (type.isPrimitive() && type.getName().equals("short"));
     }
 
     public boolean isDouble(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == Double.class || (type.isPrimitive() && type.getName().equals("double"));
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Double.class || (type.isPrimitive() && type.getName().equals("double"));
     }
 
     public boolean isFloat(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == Float.class || (type.isPrimitive() && type.getName().equals("float"));
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == Float.class || (type.isPrimitive() && type.getName().equals("float"));
     }
 
     public boolean isBigDecimal(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            return field.getType() == BigDecimal.class;
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        return field.getType() == BigDecimal.class;
     }
 
     public boolean isEntity(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            return IEntity.class.isAssignableFrom(field.getType());
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        return IEntity.class.isAssignableFrom(field.getType());
     }
 
     public boolean isList(String fieldName, boolean determineFromEntityClass) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
-        Field field = getBeanField(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
-        if (field != null) {
-            Class<?> type = field.getType();
-            return type == List.class || type == Set.class;
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(determineFromEntityClass ? getEntityClass() : getEntityFromBackingBeanOrAttribute().getClass(), fieldName);
+        Class<?> type = field.getType();
+        return type == List.class || type == Set.class;
     }
 
     public Object[] getEnumConstants(String fieldName) throws SecurityException, NoSuchFieldException {
-        Field field = getBeanField(getEntityClass(), fieldName);
-        if (field != null && field.getType().isEnum()) {
-            return field.getType().getEnumConstants();
-        }
-        throw new IllegalStateException("No field with name '" + fieldName + "' was found");
+        Field field = getBeanFieldThrowException(getEntityClass(), fieldName);
+        return field.getType().getEnumConstants();
     }
 
     private Field getBeanField(Class<?> c, String fieldName) throws SecurityException, NoSuchFieldException {
@@ -300,20 +219,11 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         return field;
     }
 
-    public BaseBean<? extends IEntity> getBackingBean() {
-        return backingBean;
+    private Field getBeanFieldThrowException(Class<?> c, String fieldName) throws SecurityException, NoSuchFieldException {
+        Field field = getBeanField(c, fieldName);
+        if (field == null) {
+            throw new IllegalStateException("No field with name '" + fieldName + "' was found. EntityClass " + c);
+        }
+        return field;
     }
-
-    public void setBackingBean(BaseBean<? extends IEntity> backingBean) {
-        this.backingBean = backingBean;
-    }
-
-    public void setEntity(Object entity) {
-        this.entity = entity;
-    }
-
-    public Object getEntity() {
-        return entity;
-    }
-
 }

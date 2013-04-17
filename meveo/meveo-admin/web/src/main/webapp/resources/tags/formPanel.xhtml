@@ -12,9 +12,8 @@
 
 <cc:interface componentType="formPanel">
 	<cc:attribute name="label" required="true" />
-	<cc:attribute name="backingBean" required="true" />
-	<cc:attribute name="entityVar" default="entity" />
-	<cc:attribute name="childEntityVar" required="false" />
+	<cc:attribute name="backingBean" required="true" type="org.meveo.admin.action.BaseBean" />
+	<cc:attribute name="entity" required="false" type="java.lang.Object"/>
 	<cc:attribute name="edit" default="#{cc.attrs.backingBean.edit}" />
 	<cc:attribute name="formId" default="formId" />
 	<cc:attribute name="columns" default="2" />
