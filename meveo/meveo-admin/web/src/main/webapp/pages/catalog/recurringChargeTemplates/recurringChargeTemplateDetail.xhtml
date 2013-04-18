@@ -56,14 +56,10 @@
 				label="#{messages['invoiceSubCategory.panel']}"
 				field="invoiceSubCategory" childField="code" required="true"
 				popup="true" popupId="searchInvoiceSubCategoryPopup" />
-			<hftl:panelGroup columns="2">
-				<hf:formEntityField
-					label="#{messages['recurringChargeTemplate.calendar']}"
-					field="calendar" childField="name" required="true" popup="false"
-					show="#{entity.recurrenceType == 'CALENDAR'}"
-					service="#{calendarService}"
-					listElements="#{calendarService.listChargeApplicationCalendars()}" />
-			</hftl:panelGroup>
+			<hftl:panelGroup columns="2">	
+					<hf:formEntityField label="#{messages['recurringChargeTemplate.calendar']}" field="calendar" childField="name" required="true" popup="false"
+										listElements="#{calendarService.listChargeApplicationCalendars()}" />
+				</hftl:panelGroup>
 
 		</hf:formPanel>
 
