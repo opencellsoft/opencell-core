@@ -18,7 +18,7 @@
 	<hftl:entityPopup id="searchInvoiceSubCategoryPopup"
             header="#{messages['invoiceSubCategory.panel']}"
             backingBean="#{invoiceSubCategoryBean}"
-            updateField=":formPanel:usageChargeId:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId"
+            updateField=":panelUsage:usageChargeId:invoiceSubCategorySelectedId:invoiceSubCategorySelectedId_text"
             selection="#{usageChargeTemplateBean.entity.invoiceSubCategory}"
             searchField1Label="#{messages['invoiceSubCategory.code']}"
             searchField1="code"
@@ -31,7 +31,7 @@
 
 	
 	
-        <hf:formPanel id="formPanel" formId="usageChargeId"
+        <hf:formPanel id="panelUsage" formId="usageChargeId"
             label="#{messages['usageChargeTemplate.title']}"
             backingBean="#{usageChargeTemplateBean}">
 
