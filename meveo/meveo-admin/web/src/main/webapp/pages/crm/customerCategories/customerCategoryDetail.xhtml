@@ -10,7 +10,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['customerCategory.panel']}" backingBean="#{customerCategoryBean}">
+		<hf:formPanel label="#{messages['customerCategory.panel']}" backingBean="#{customerCategoryBean}">
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" />
 			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true" />
 		</hf:formPanel>
