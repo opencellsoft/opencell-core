@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="batch-apps/batch-apps-core/src/main/java"/>
+	<classpathentry kind="src" path="batch-apps/batch-apps-core/src/test/java"/>
+	<classpathentry kind="src" path="batch-apps/grieg/src/main/java"/>
+	<classpathentry kind="src" path="batch-apps/vertina/src/main/java"/>
+	<classpathentry kind="src" path="batch-apps/vertina/src/test/java"/>
+	<classpathentry kind="src" path="manaty-commons/src/main/java"/>
+	<classpathentry kind="src" path="manaty-commons/src/test/java"/>
+	<classpathentry kind="src" path="meveo-batch-apps/meveo-bayad/src/main/java"/>
+	<classpathentry kind="src" path="meveo-batch-apps/meveo-bayad/src/test/java"/>
+	<classpathentry kind="src" path="meveo-batch-apps/meveo-charge-vertina/src/main/java"/>
+	<classpathentry kind="src" path="meveo-batch-apps/meveo-charge-vertina/src/test/java"/>
+	<classpathentry kind="src" path="meveo-batch-apps/meveo-grieg/src/main/java"/>
+	<classpathentry kind="src" path="meveo-batch-apps/meveo-grieg/src/test/java"/>
+	<classpathentry kind="src" path="meveo-batch-apps/meveo-oudaya/src/main/java"/>
+	<classpathentry kind="src" path="meveo/meveo-admin/ejbs/src/main/java"/>
+	<classpathentry kind="src" path="meveo/meveo-admin/web/src/main/java"/>
+	<classpathentry kind="src" path="meveo/meveo-model/src/main/java"/>
+	<classpathentry kind="src" path="meveo/meveo-model/src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
