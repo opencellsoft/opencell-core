@@ -25,6 +25,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
@@ -87,19 +88,20 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     public String saveOrUpdate(boolean killConversation) {
         String back = null;
         try {
-            Provider currentProvider = providerService.findById(getCurrentProvider().getId());
             for (TradingLanguage tr : currentProvider.getTradingLanguages()) {
                 if (tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getLanguage().getLanguageCode()) && !tr.getId().equals(entity.getId())) {
-                    throw new Exception();
+                    throw new BusinessEntityException();
                 }
             }
-            
-
             currentProvider.addTradingLanguage(entity);
             back = super.saveOrUpdate(killConversation);
-        } catch (Exception e) {
+        } catch (BusinessEntityException e) {
             messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
-        }
+        }catch (Exception e) {
+			e.printStackTrace();
+
+            messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
+		}
 
         return back;
     }
