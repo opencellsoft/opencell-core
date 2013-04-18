@@ -45,10 +45,10 @@
 			<version>1.7.2</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.ocpsoft</groupId>
-			<artifactId>prettyfaces-jsf2</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.ocpsoft</groupId> -->
+<!-- 			<artifactId>prettyfaces-jsf2</artifactId> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>

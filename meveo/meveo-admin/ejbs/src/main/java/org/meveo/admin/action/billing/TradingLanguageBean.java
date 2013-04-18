@@ -93,9 +93,10 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
                     throw new Exception();
                 }
             }
+            
+
             currentProvider.addTradingLanguage(entity);
             back = super.saveOrUpdate(killConversation);
-
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
         }
@@ -103,13 +104,16 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
         return back;
     }
 
-    public void onRowSelect(SelectEvent event){  
-        Language language = (Language)event.getObject();  
-        log.info("populatLanguages language", language != null ? language.getLanguageCode() : null);
-        if (language != null) {
-            entity.setLanguage(language);
-            entity.setPrDescription(language.getDescriptionEn());
-        } 
+    public void onRowSelect(SelectEvent event){ 
+    	if(event.getObject() instanceof Language){
+    		  Language language = (Language)event.getObject();  
+    	        log.info("populatLanguages language", language != null ? language.getLanguageCode() : null);
+    	        if (language != null) {
+    	            entity.setLanguage(language);
+    	            entity.setPrDescription(language.getDescriptionEn());
+    	        } 
+    	}
+      
   
     } 
     

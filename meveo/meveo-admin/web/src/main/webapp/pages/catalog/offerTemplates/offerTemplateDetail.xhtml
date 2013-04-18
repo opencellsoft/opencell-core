@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['offerTemplate.offerTemplatePanel']}" backingBean="#{offerTemplateBean}">
+		<hf:formPanel label="#{messages['offerTemplate.offerTemplatePanel']}" backingBean="#{offerTemplateBean}">
     			<hf:formField label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
     			<hf:formField label="#{messages['offerTemplate.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
 		    	<hf:formField  label="#{messages['enableEntity.active']}" field="disabled" isMessage="true"/>

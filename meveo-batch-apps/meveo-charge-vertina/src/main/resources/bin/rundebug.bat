@@ -1,2 +1,0 @@
-SET VERTINACLASSPATH="log4j.properties;lib/*"
-java -Xms128m -Xmx768m -cp %VERTINACLASSPATH%;. -Xdebug -Xrunjdwp:transport=dt_socket,address=8998,server=y vertina.properties=vertina.properties org.meveo.vertina.Vertina

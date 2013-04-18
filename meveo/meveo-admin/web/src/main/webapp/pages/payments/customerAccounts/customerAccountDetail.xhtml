@@ -269,7 +269,7 @@
 									<hf:formButtons columns="4" saveId="save_2"
 										backingBean="#{customerAccountBean}"
 										edit="#{customerAccountBean.edit}" ajaxSubmit="false"
-										killConversationOnSave="false" useCustomIdParam="true">
+										killConversationOnSave="false"  killConversationOnBack="false" useCustomIdParam="true">
 										<p:commandButton
 											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
 											action="#{customerAccountBean.closeCustomerAccount}"

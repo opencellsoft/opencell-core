@@ -51,12 +51,16 @@
 			column2="description" />
 
 		<p:panel>
+		
+		<f:facet name="header">
+				<h:outputText value="#{messages['invoiceSubCategory.panel']}" />
+			</f:facet>
 			<p:tabView id="tabView">
-
 				<p:tab title="#{messages['invoiceSubCategory.tab1']}">
 
-					<hf:formPanel id="formPanel"
-						label="#{messages['invoiceSubCategory.panel']}"
+					
+<hf:formPanel id="formPanel"
+						label=""
 						backingBean="#{invoiceSubCategoryBean}">
 
 						<hf:formEntityField id="categorySelectId"
@@ -136,8 +140,8 @@
 								style="font-weight:bold;" />
 
 						</hftl:fieldset>
-
-					</hf:formPanel>
+</hf:formPanel>
+					
 
 				</p:tab>
 
