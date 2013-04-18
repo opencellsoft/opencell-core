@@ -10,6 +10,13 @@
 	xmlns:sc="http://java.sun.com/jsf/composite/components/seamfaces"
 	template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{customerSearchBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -27,6 +34,7 @@
 				field="externalRef1" />
 			<hf:searchField label="#{messages['accountEntity.externalRef2']}"
 				field="externalRef2" />
+
 			<p:panelGrid columns="2">
 				<p:outputLabel for="accountType"
 					value="#{messages['customerSearch.type']}"></p:outputLabel>
@@ -59,9 +67,9 @@
 			<hftl:column label="#{messages['customerSearch.type']}"
 				field="accountType" isMessage="true" />
 
-			<c:set var="type" value="#{entity.accountType}" />
 			<hftl:actionsColumn renderDeleteLink="false"
-				editView="#{customerSearchBean.getView(type)}"
+				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}"
+				editView="#{customerSearchBean.getView(entity['accountType'])}"
 				permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 
