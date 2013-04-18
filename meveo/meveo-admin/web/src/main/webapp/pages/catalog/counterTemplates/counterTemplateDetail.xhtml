@@ -30,26 +30,12 @@
                <hf:formField label="#{messages['counterTemplate.counterType']}" field="counterType" childField="label" isMessage="true" /> 
                <hf:formField label="#{messages['counterTemplate.level']}" field="level"
                 required="true"  />
-                
-                
             <hf:formField label="#{messages['enableEntity.active']}"
-                field="disabled" isMessage="true" />
-                
-                
-             
-           
-            <hftl:panelGroup columns="2">
-                <hf:formEntityField
-                    label="#{messages['recurringChargeTemplate.calendar']}"
-                    field="calendar" childField="name" required="true" popup="false"
-                    show="#{entity.countryType == 'CALENDAR'}"
-                    service="#{calendarService}"
-                    listElements="#{calendarService.listChargeApplicationCalendars()}" />
-                    
-                <hf:formEntityField label="#{messages['calendar.type']}"
-                    field="calendar" childField="type"
-                    show="#{!counterTemplateBean.edit}" />
-            </hftl:panelGroup>
+                field="disabled" isMessage="true" />  
+            <hftl:panelGroup columns="2">	
+					<hf:formEntityField label="#{messages['billingCycle.calendar']}" field="calendar" childField="name" required="true" popup="false"
+										listElements="#{calendarService.listBillingCalendars()}" />
+				</hftl:panelGroup>
 
            
         </hf:formPanel>
