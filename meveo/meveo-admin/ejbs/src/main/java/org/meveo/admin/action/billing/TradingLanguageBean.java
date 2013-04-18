@@ -21,6 +21,7 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -104,6 +105,23 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 		}
 
         return back;
+    }
+    
+    public void delete(Long id) {
+        try {
+            log.info(String.format("Deleting entity TradingLanguage with id = %s",  id));
+            getPersistenceService().remove(id);
+            messages.info(new BundleKey("messages", "delete.successful"));
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
     }
 
     public void onRowSelect(SelectEvent event){ 
