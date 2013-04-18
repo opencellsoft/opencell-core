@@ -127,7 +127,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Selected Entities in multiselect datatable.
      */
-    private IEntity[] selectedEntities;
+    private T[] selectedEntities;
 
     /**
      * Constructor
@@ -584,11 +584,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         this.dataTable = dataTable;
     }
 
-    public IEntity[] getSelectedEntities() {
+    public T[] getSelectedEntities() {
         return selectedEntities;
     }
 
-    public void setSelectedEntities(IEntity[] selectedEntities) {
+    public void setSelectedEntities(T[] selectedEntities) {
         this.selectedEntities = selectedEntities;
     }
 
