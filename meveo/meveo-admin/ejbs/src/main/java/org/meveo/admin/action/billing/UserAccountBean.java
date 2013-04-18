@@ -18,15 +18,13 @@ package org.meveo.admin.action.billing;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -47,7 +45,7 @@ import org.meveo.service.billing.impl.UserAccountService;
  * @created Dec 7, 2010
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class UserAccountBean extends BaseBean<UserAccount> {
 
     private static final long serialVersionUID = 1L;
@@ -119,7 +117,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 
             }
             super.saveOrUpdate(killConversation);
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId=" + entity.getId() + "&faces-redirect=true";
+            return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {

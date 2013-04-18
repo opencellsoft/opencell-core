@@ -64,14 +64,13 @@
 				permission="#{identity.hasPermission('administration','administrationManagement')}"
 				renderEditLink="false" renderDeleteLink="false"
 				editView="billingAccountDetail" />
-		</hftl:dataList>
-		<h:form>
-			<p:panel>
+
+			<ui:define name="add-on-buttons">
 				<p:commandButton
 					action="#{billingAccountBean.launchExceptionalInvoicing}"
 					ajax="false" value="#{messages['button.launchInvoicing']}" />
-			</p:panel>
-		</h:form>
+			</ui:define>
+		</hftl:dataList>
 	</ui:define>
 
 </ui:composition>

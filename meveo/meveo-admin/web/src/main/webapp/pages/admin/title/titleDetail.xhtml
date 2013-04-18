@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit="#{edit}" label="#{messages['title.panel']}"
+		<hf:formPanel label="#{messages['title.panel']}"
 			backingBean="#{titleBean}">
 			<hf:formField label="#{messages['title.code']}" field="code"
 				required="true" validateUnique="true" />
@@ -25,9 +25,9 @@
 			<s:decorate template="/layout/edit.xhtml">
 				<ui:define name="label">
 					<h:outputText value="#{messages['title.description']}"
-						rendered="#{!edit}" />
+						rendered="#{!titleBean.edit}" />
 				</ui:define>
-				<h:outputText rendered="#{!edit}"
+				<h:outputText rendered="#{!titleBean.edit}"
 					value="#{messages[title.descriptionKey]}" style="font-weight:bold;" />
 			</s:decorate>
 		</hf:formPanel>

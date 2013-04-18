@@ -14,7 +14,7 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">	
-				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}" entity="#{otherCreditAndCharge}">
+				<hf:formPanel  showFormButtons ="#{false}" edit="#{false}"  label="#{messages['accountOperation.form']}" backingBean="#{accountOperationBean}" entity="#{accountOperationBean.otherCreditAndCharge}">
 					<hftl:panelGroup columns="3">
 						<hf:formField label="#{messages['accountOperation.transactionDate']}" field="transactionDate"  />
 						<hf:formField label="#{messages['accountOperation.type']}" field="type"  />

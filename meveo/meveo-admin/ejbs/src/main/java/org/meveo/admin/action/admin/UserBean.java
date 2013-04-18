@@ -90,16 +90,6 @@ public class UserBean extends BaseBean<User> {
         super(User.class);
     }
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    public User initEntity() {
-        return super.initEntity();
-    }
-
     /*
      * (non-Javadoc)
      * 

@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.jsf.validator;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
@@ -36,35 +37,50 @@ import org.meveo.service.validation.ValidationService;
  */
 @FacesValidator("uniqueConstraintValidator")
 public class UniqueConstraintValidator implements Validator {
-	private ValidationService validationService;
-	
+    @Inject
+    private ValidationService validationService;
+
     @Inject
     private ResourceBundle resourceMessages;
-    
+
     @Inject
     @CurrentProvider
     private Provider currentProvider;
 
-	public void validate(FacesContext context, UIComponent component, Object value)
-			throws ValidatorException {
+    public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
-		/*
-		 * TODO: ModelValidator modelValidator = new ModelValidator();
-		 * modelValidator.validate(context, component, value);
-		 */
+        /*
+         * TODO: ModelValidator modelValidator = new ModelValidator(); modelValidator.validate(context, component, value);
+         */
 
-		String className = (String) component.getAttributes().get("className");
-		String fieldName = (String) component.getAttributes().get("fieldName");
-		Object id = component.getAttributes().get("idValue");
-		if (!validationService
-				.validateUniqueField(className, fieldName, id, value, currentProvider)) {
-			FacesMessage facesMessage = new FacesMessage();
-			String message = resourceMessages.getString("commons.unqueField");
-			facesMessage.setDetail(message);
-			facesMessage.setSummary(message);
-			facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
-			throw new ValidatorException(facesMessage);
-		}
-	}
+        String className = (String) component.getAttributes().get("className");
+        String fieldName = (String) component.getAttributes().get("fieldName");
+        Object id = component.getAttributes().get("idValue");
+
+        if (!validationService.validateUniqueField(className, fieldName, id, value, currentProvider)) {
+            FacesMessage facesMessage = new FacesMessage();
+            String message = resourceMessages.getString("commons.unqueField");
+            message = MessageFormat.format(message, getLabel(context, component));
+            facesMessage.setDetail(message);
+            facesMessage.setSummary(message);
+            facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+            throw new ValidatorException(facesMessage);
+        }
+
+    }
+
+    private Object getLabel(FacesContext context, UIComponent component) {
+
+        Object o = component.getAttributes().get("label");
+        if (o == null || (o instanceof String && ((String) o).length() == 0)) {
+            o = component.getValueExpression("label");
+        }
+        // Use the "clientId" if there was no label specified.
+        if (o == null) {
+            o = component.getClientId(context);
+        }
+        return o;
+    }
 
 }

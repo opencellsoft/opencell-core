@@ -89,7 +89,7 @@
 				<p:column style="width: 75%">
 					<hf:formPanel id="userAccountFormPanel"
 						label="#{messages['userAccount.userAccountPanel']}"
-						backingBean="#{userAccountBean}" killConversationOnSave="false"
+						backingBean="#{userAccountBean}" killConversationOnSave="false" killConversationOnBack="false"
 						useCustomIdParam="true">
 						<p:tabView id="userAccountTab">
 							<p:tab title="#{messages['billingAccount.tab.account']}">
@@ -223,9 +223,11 @@
 
 					<h:form id="operationsForm" rendered="#{!userAccountBean.edit}">
 						<!-- 							<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
-						<h:commandButton action="addNewSubscription"
-							value="#{messages['userAccount.addNewSubscription']}"
-							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+						<p:button outcome="addNewSubscription"
+							value="#{messages['userAccount.addNewSubscription']}" 
+							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" >
+							<f:param name="cid" value="#{conversation.id}"/>	
+						</p:button>
 						<h:commandButton action="#{userAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
 							onclick="if(confirm('#{messages['confirmationMessage.confirmTermination']}')){return true;}else{return false;}"

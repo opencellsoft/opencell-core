@@ -1,29 +1,7 @@
 <page xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd">
 
-	<param name="edit" />
-	<param name="backView" />
-	<param name="customerId" />
 	<restrict>#{persistentPermissionResolver.hasPermission('account','accountManagement') or (!edit and persistentPermissionResolver.hasPermission('account','accountVisualization'))}</restrict>
-	<navigation>
-		<rule if-outcome="addNewOperation">
-			<redirect view-id="/pages/payments/accountOperations/selectOCCTemplate.xhtml">
-				<param name="customerAccountId" value="#{customerAccount.id}" />
-			</redirect>
-		</rule>
-		<rule if-outcome="addNewBillingAccount">
-			<redirect view-id="/pages/billing/billingAccounts/billingAccountDetail.xhtml">
-				<param name="customerAccountId" value="#{customerAccount.id}" />
-				<param name="backView" value="customerAccountDetail" />
-				<param name="edit" value="true" />
-			</redirect>
-		</rule>
-		<rule if-outcome="customerDetail">
-			<redirect view-id="/pages/crm/customers/customerDetail.xhtml">
-				<param name="edit" value="false" />
-				<param name="objectId" value="#{customerId}" />
-			</redirect>
-		</rule>
-	</navigation>
+
 
 </page>

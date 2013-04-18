@@ -15,7 +15,7 @@
 		<c:set var="editParam" value="#{param['edit']}" />
 	</c:if>
 	<c:if test="${empty eventBackingBean}">
-		<c:set var="eventBackingBean" value="#{backingBean}" />
+		<c:set var="eventBackingBean" value="#{languageBean}" />
 	</c:if>
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true">
 		<h:form id="#{id}popupForm">

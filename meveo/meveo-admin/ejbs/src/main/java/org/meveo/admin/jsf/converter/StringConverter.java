@@ -29,12 +29,14 @@ import javax.faces.convert.FacesConverter;
 public class StringConverter implements Converter {
 	@Override
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-		return (value != null && value.trim().length() != 0) ? convert(value) : null;
+	
+	    return (value != null && value.trim().length() != 0) ? convert(value) : null;
 	}
 
 	@Override
 	public String getAsString(FacesContext fc, UIComponent uic, Object o) {
-		if (o == null)
+		
+	    if (o == null)
 			return null;
 
 		if (o instanceof String)
