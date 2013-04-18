@@ -63,9 +63,6 @@
 					show="#{entity.recurrenceType == 'CALENDAR'}"
 					service="#{calendarService}"
 					listElements="#{calendarService.listChargeApplicationCalendars()}" />
-				<hf:formEntityField label="#{messages['calendar.type']}"
-					field="calendar" childField="type"
-					show="#{!recurringChargeTemplateBean.edit}" />
 			</hftl:panelGroup>
 
 		</hf:formPanel>
