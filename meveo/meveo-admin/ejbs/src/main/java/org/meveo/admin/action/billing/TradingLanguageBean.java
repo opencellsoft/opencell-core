@@ -93,9 +93,10 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
                     throw new Exception();
                 }
             }
+            
+
             currentProvider.addTradingLanguage(entity);
             back = super.saveOrUpdate(killConversation);
-
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
         }

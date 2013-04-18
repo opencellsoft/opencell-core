@@ -1,2 +1,0 @@
-SET OUDAYACLASSPATH="log4j.properties;lib/*"
-java -Xms128m -Xmx768m -cp %OUDAYACLASSPATH%;. -Doudaya.properties=oudaya.properties -Xdebug -Xrunjdwp:transport=dt_socket,address=8998,server=y org.manaty.oudaya.Oudaya
