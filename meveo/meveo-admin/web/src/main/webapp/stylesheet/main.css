@@ -1088,3 +1088,7 @@ button[id^="parentTab:formBillingAccountPanel"]
  
   margin-top : 14px;
 }
+
+.input-text-popup { position: relative; top: -5px; }
+/* .ui-tab-panel .input-text-popup { position: relative; top: 1px; } */
+.ui-tabs-panel button.input-text-popup-button { position: relative; top: -4px !important; }
