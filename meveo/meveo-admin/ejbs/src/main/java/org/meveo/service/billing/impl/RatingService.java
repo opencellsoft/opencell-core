@@ -137,7 +137,8 @@ public class RatingService {
 	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long taxId, Long currencyId) {
 		// FIXME: the price plan properties could be null !
 		for (PricePlanMatrix pricePlan : listPricePlan) {
-			    boolean taxAreEqual = pricePlan.getTax().getId()==null || taxId==pricePlan.getTax().getId();
+			// FIXME: tax is not linked to priceplan, it is replaced by country
+			    boolean taxAreEqual=true;//pricePlan.getTax().getId()==null || taxId==pricePlan.getTax().getId(); 
 			    if(taxAreEqual){
 			    	boolean currencyAreEqual = pricePlan.getTradingCurrency().getId()==null || currencyId==pricePlan.getTradingCurrency().getId();
 				if(currencyAreEqual){
