@@ -22,17 +22,13 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.event.SelectEvent;
 
 /**
@@ -57,9 +53,6 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	 */
 	@Inject
 	private TradingCountryService tradingCountryService;
-	
-	  @Inject
-	    private ProviderService providerService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -102,31 +95,6 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-    
-    @Override
-    public String saveOrUpdate(boolean killConversation) {
-        String back = null;
-        try {
-            Provider currentProvider = providerService.findById(getCurrentProvider().getId());
-            for (TradingCountry tr : currentProvider.getTradingCountries()) {
-                if (tr.getCountry().getCountryCode().equalsIgnoreCase(entity.getCountry().getCountryCode()) && !tr.getId().equals(entity.getId())) {
-                    throw new Exception();
-                }
-            }
-            currentProvider.addTradingCountry(entity);
-            back = super.saveOrUpdate(killConversation);
-
-        } catch (Exception e) {
-            messages.error(new BundleKey("messages", "tradingCountry.uniqueField"));
-        }
-
-        return back;
-    }
-    
-    
-    
-    
-    
 	@Override
 	public List<TradingCountry> listAll() {
 		getFilters();
