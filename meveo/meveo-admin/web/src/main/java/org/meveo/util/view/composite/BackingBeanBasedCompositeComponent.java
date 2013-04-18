@@ -38,13 +38,13 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         BaseBean<? extends IEntity> backingBean = (BaseBean<? extends IEntity>) getStateHelper().get("backingBean");
         if (backingBean == null) {
             backingBean = (BaseBean<? extends IEntity>) getAttributes().get("backingBean");
-            System.out.println("AKK BB this " + this.getId() + " contains backingBean " + backingBean);
+//            System.out.println("AKK BB this " + this.getId() + " contains backingBean " + backingBean);
 
             if (backingBean == null) {
                 UIComponent parent = getCompositeComponentParent(this);
                 if (parent != null && parent instanceof BackingBeanBasedCompositeComponent) {
                     backingBean = ((BackingBeanBasedCompositeComponent) parent).getBackingBeanFromParentOrCurrent();
-                    System.out.println("AKK BB this " + this.getId() + " parent " + parent.getId() + " contains backingBean " + backingBean);
+//                    System.out.println("AKK BB this " + this.getId() + " parent " + parent.getId() + " contains backingBean " + backingBean);
                 }
             }
             if (backingBean == null) {
@@ -72,14 +72,14 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
         Object entity = getStateHelper().get("entity");
         if (entity == null) {
             entity = (Object) getAttributes().get("entity");
-            System.out.println("AKK entity this " + this.getId() + " contains entity " + (entity != null ? entity.getClass().getSimpleName() : null));
+//            System.out.println("AKK entity this " + this.getId() + " contains entity " + (entity != null ? entity.getClass().getSimpleName() : null));
 
             if (entity == null) {
                 UIComponent parent = getCompositeComponentParent(this);
                 if (parent != null && parent instanceof BackingBeanBasedCompositeComponent) {
                     entity = ((BackingBeanBasedCompositeComponent) parent).getEntityFromBackingBeanOrAttribute();
-                    System.out.println("AKK entity this " + this.getId() + " parent " + parent.getId() + " contains entity "
-                            + (entity != null ? entity.getClass().getSimpleName() : null));
+//                    System.out.println("AKK entity this " + this.getId() + " parent " + parent.getId() + " contains entity "
+//                            + (entity != null ? entity.getClass().getSimpleName() : null));
                 }
             }
             if (entity == null && this instanceof FormPanelCompositeComponent) {
