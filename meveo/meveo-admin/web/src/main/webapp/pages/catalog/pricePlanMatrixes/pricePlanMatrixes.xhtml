@@ -42,7 +42,7 @@
     			<hf:searchField label="#{messages['pricePlanMatrix.criteria2Value']}" field="criteria2Value" />
     			<hf:searchField label="#{messages['pricePlanMatrix.criteria3Value']}" field="criteria3Value" />
     			<hf:searchField label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" />
-    			<hf:searchField label="#{messages['pricePlanMatrix.amountWithoutTax2']}" field="amountWithoutTax2" /> -->
+    			<hf:searchField label="#{messages['pricePlanMatrix.amountWithTax']}" field="amountWithTax" /> -->
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
@@ -79,8 +79,8 @@
 				field="criteria3Value" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 				field="amountWithoutTax" converterParam="10digits" wrapHeader="true" />
-			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax2']}"
-				field="amountWithoutTax2" converterParam="10digits"
+			<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}"
+				field="amountWithTax" converterParam="10digits"
 				wrapHeader="true" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />

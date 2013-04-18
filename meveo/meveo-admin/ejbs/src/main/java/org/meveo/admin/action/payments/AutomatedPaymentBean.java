@@ -28,10 +28,8 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
 
 /**
- * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created 2009.10.13
@@ -40,53 +38,50 @@ import org.meveo.service.payments.impl.AutomatedPaymentService;
 @ConversationScoped
 public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link AutomatedPayment} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private AutomatedPaymentService automatedPaymentService;
+    /**
+     * Injected @{link AutomatedPayment} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private AutomatedPaymentService automatedPaymentService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public AutomatedPaymentBean() {
-		super(AutomatedPayment.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public AutomatedPaymentBean() {
+        super(AutomatedPayment.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("automatedPayment")
-	public AutomatedPayment init() {
-		return initEntity();
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("automatedPayment")
+    public AutomatedPayment init() {
+        return initEntity();
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	public String saveOrUpdate() {
-		entity.getCustomerAccount().getAccountOperations().add(entity);
-		return saveOrUpdate(entity);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
+    public String saveOrUpdate(boolean killConversation) {
+        entity.getCustomerAccount().getAccountOperations().add(entity);
+        return super.saveOrUpdate(killConversation);
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<AutomatedPayment> getPersistenceService() {
-		return automatedPaymentService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<AutomatedPayment> getPersistenceService() {
+        return automatedPaymentService;
+    }
 
 }

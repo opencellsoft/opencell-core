@@ -15,14 +15,12 @@
 	</c:if>
 	<f:view>
 		<p:panelGrid columns="1" width="100%">
-			<h:panelGroup>
-				<p:fieldset legend="#{name}">
-					<p:panelGrid columns="#{columns}" width="100%"
-						styleClass="panelGrid">
-						<ui:insert />
-					</p:panelGrid>
-				</p:fieldset>
-			</h:panelGroup>
+			<p:fieldset legend="#{name}">
+				<p:panelGrid columns="#{columns}" width="100%"
+					styleClass="panelGrid">
+					<ui:insert />
+				</p:panelGrid>
+			</p:fieldset>
 		</p:panelGrid>
 	</f:view>
 </ui:composition>

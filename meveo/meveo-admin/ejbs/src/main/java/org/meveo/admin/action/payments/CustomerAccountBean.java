@@ -18,8 +18,8 @@ package org.meveo.admin.action.payments;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -45,7 +45,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * @created 2009.10.13
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 
     private static final long serialVersionUID = 1L;
@@ -112,7 +112,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
      * 
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
      */
-    public String saveOrUpdate() {
+    public String saveOrUpdate(boolean killConversation) {
         try {
 
             if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
@@ -122,9 +122,9 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
                 }
 
             }
-            saveOrUpdate(entity);
+            super.saveOrUpdate(killConversation);
             return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId=" + entity.getId() + "&cid=" + conversation.getId()
-                    + "&faces-redirect=true";
+                    + "&faces-redirect=true&includeViewParams=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
         } catch (Exception e) {
@@ -293,7 +293,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
         }
     }
 
-    private Long getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 

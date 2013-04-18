@@ -31,7 +31,6 @@ import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.rating.impl.UsageTypeService;
 import org.primefaces.model.SortOrder;
 import org.richfaces.model.Arrangeable;
 import org.richfaces.model.ArrangeableState;

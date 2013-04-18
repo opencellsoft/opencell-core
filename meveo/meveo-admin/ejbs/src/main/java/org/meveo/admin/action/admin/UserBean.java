@@ -39,10 +39,8 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link User} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link User} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
+ * view, delete operations). It works with Manaty custom JSF components.
  * 
  * @author Gediminas Ubartas
  * @created 2010.05.31
@@ -51,168 +49,164 @@ import org.primefaces.model.DualListModel;
 @ConversationScoped
 public class UserBean extends BaseBean<User> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Injected @{link User} service. Extends {@link PersistenceService}. */
-	@Inject
-	private UserService userService;
+    /** Injected @{link User} service. Extends {@link PersistenceService}. */
+    @Inject
+    private UserService userService;
 
-	@Inject
-	private RoleService roleService;
-	
-	@Inject
-	private ProviderService providerService;
+    @Inject
+    private RoleService roleService;
 
-	@Inject
-	private Messages messages;
+    @Inject
+    private ProviderService providerService;
 
-	private DualListModel<Role> perks;
-	
-	private DualListModel<Provider> providerPerks;
+    @Inject
+    private Messages messages;
 
-	/**
-	 * Password set by user which is later encoded and set to user before saving
-	 * to db.
-	 */
-	private String password;
+    private DualListModel<Role> perks;
 
-	/**
-	 * For showing change password panel
-	 */
-	private boolean show = false;
+    private DualListModel<Provider> providerPerks;
 
-	/**
-	 * Repeated password to check if it matches another entered password and
-	 * user did not make a mistake.
-	 */
-	private String repeatedPassword;
+    /**
+     * Password set by user which is later encoded and set to user before saving to db.
+     */
+    private String password;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public UserBean() {
-		super(User.class);
-	}
+    /**
+     * For showing change password panel
+     */
+    private boolean show = false;
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public User initEntity() {
-		return super.initEntity();
-	}
+    /**
+     * Repeated password to check if it matches another entered password and user did not make a mistake.
+     */
+    private String repeatedPassword;
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	public String saveOrUpdate() {
-		if (password == null) {
-			return super.saveOrUpdate();
-		} else {
-			boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
-			if (passwordsDoNotMatch) {
-				messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
-				return null;
-			} else {
-				entity.setLastPasswordModification(new Date());
-				entity.setNewPassword(password);
-				entity.setPassword(password);
-				return super.saveOrUpdate();
-			}
-		}
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public UserBean() {
+        super(User.class);
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<User> getPersistenceService() {
-		return userService;
-	}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public User initEntity() {
+        return super.initEntity();
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	 */
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "roles", "providers");
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
+    public String saveOrUpdate(boolean killConversation) {
+        if (password == null) {
+            return super.saveOrUpdate(killConversation);
+        } else {
+            boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
+            if (passwordsDoNotMatch) {
+                messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
+                return null;
+            } else {
+                entity.setLastPasswordModification(new Date());
+                entity.setNewPassword(password);
+                entity.setPassword(password);
+                return super.saveOrUpdate(killConversation);
+            }
+        }
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	 */
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("providers", "roles", "provider");
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<User> getPersistenceService() {
+        return userService;
+    }
 
-	/**
-	 * Standard method for custom component with listType="pickList".
-	 */
-	public DualListModel<Role> getDualListModel() {
-		if (perks == null) {
-			List<Role> perksSource = roleService.list();
-			List<Role> perksTarget = new ArrayList<Role>();
-			if (getEntity().getRoles() != null) {
-				perksTarget.addAll(getEntity().getRoles());
-			}
-			perksSource.removeAll(perksTarget);
-			perks = new DualListModel<Role>(perksSource, perksTarget);
-		}
-		return perks;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+     */
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("provider", "roles", "providers");
+    }
 
-	public void setDualListModel(DualListModel<Role> perks) {
-		getEntity().setRoles(new HashSet<Role>((List<Role>) perks.getTarget()));
-	}
-	
-	public DualListModel<Provider> getProvidersDualListModel() {
-		if (providerPerks == null) {
-			List<Provider> perksSource = providerService.list();
-			List<Provider> perksTarget = new ArrayList<Provider>();
-			if (getEntity().getProviders() != null) {
-				perksTarget.addAll(getEntity().getProviders());
-			}
-			perksSource.removeAll(perksTarget);
-			providerPerks = new DualListModel<Provider>(perksSource, perksTarget);
-		}
-		return providerPerks;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+     */
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("providers", "roles", "provider");
+    }
 
-	public void setProvidersDualListModel(DualListModel<Provider> providerPerks) {
-		getEntity().setProviders(new HashSet<Provider>((List<Provider>) providerPerks.getTarget()));
-	}
+    /**
+     * Standard method for custom component with listType="pickList".
+     */
+    public DualListModel<Role> getDualListModel() {
+        if (perks == null) {
+            List<Role> perksSource = roleService.list();
+            List<Role> perksTarget = new ArrayList<Role>();
+            if (getEntity().getRoles() != null) {
+                perksTarget.addAll(getEntity().getRoles());
+            }
+            perksSource.removeAll(perksTarget);
+            perks = new DualListModel<Role>(perksSource, perksTarget);
+        }
+        return perks;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setDualListModel(DualListModel<Role> perks) {
+        getEntity().setRoles(new HashSet<Role>((List<Role>) perks.getTarget()));
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public DualListModel<Provider> getProvidersDualListModel() {
+        if (providerPerks == null) {
+            List<Provider> perksSource = providerService.list();
+            List<Provider> perksTarget = new ArrayList<Provider>();
+            if (getEntity().getProviders() != null) {
+                perksTarget.addAll(getEntity().getProviders());
+            }
+            perksSource.removeAll(perksTarget);
+            providerPerks = new DualListModel<Provider>(perksSource, perksTarget);
+        }
+        return providerPerks;
+    }
 
-	public String getRepeatedPassword() {
-		return repeatedPassword;
-	}
+    public void setProvidersDualListModel(DualListModel<Provider> providerPerks) {
+        getEntity().setProviders(new HashSet<Provider>((List<Provider>) providerPerks.getTarget()));
+    }
 
-	public void setRepeatedPassword(String repeatedPassword) {
-		this.repeatedPassword = repeatedPassword;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public boolean isShow() {
-		return show;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setShow(boolean show) {
-		this.show = show;
-	}
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
 
-	public void change() {
-		this.show = !this.show;
-	}
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+    }
+
+    public void change() {
+        this.show = !this.show;
+    }
 }

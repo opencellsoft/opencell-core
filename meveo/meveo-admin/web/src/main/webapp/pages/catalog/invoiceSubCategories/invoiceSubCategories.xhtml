@@ -60,8 +60,6 @@
 				field="description" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
-			<hftl:column label="#{messages['invoiceSubCategory.tax']}"
-				field="tax" childField="code" />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>

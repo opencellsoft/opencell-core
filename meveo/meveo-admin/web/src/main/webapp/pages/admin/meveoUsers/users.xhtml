@@ -9,7 +9,7 @@
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
-	
+
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView" listener="#{userBean.preRenderView}" />
@@ -32,7 +32,7 @@
 			<!-- Simple fields like numbers, strings, dates etc only needs field name provided. -->
 			<hftl:column label="#{messages['user.userName']}" field="userName" />
 			<hftl:column label="#{messages['user.roles']}" field="roles"
-				childField="name" isList="true" />
+				childField="name" isList="true" sort="false" />
 
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('administration','administrationManagement')}" />

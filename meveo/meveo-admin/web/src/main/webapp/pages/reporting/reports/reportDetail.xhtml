@@ -16,7 +16,7 @@
     
     <ui:define name="body">
     	
-		<hf:formPanel edit="#{edit}" label="#{messages['report.reportPanel']}" backingBean="#{reportBean}" entity="#{report}" >
+		<hf:formPanel label="#{messages['report.reportPanel']}" backingBean="#{reportBean}">
 			<hf:formField label="#{messages['report.name']}" field="name" useConverter="false"/>
 			<hftl:panelGroup columns="2">	
 				<hf:formField label="#{messages['report.startDate']}" field="startDate" isDate="true"/>

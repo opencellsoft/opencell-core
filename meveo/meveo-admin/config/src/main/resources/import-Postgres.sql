@@ -1,7 +1,7 @@
 /*----------IMPORT FOR POSTGRES-----------*/
 
 /*----------TRUNCATE ALL TABLES-----------*/
-/*
+
 TRUNCATE TABLE account_entity,adm_country,adm_currency,adm_input_history,adm_language,adm_medina_configuration,
 adm_messages,adm_role,adm_role_permission,adm_permission,adm_title,
 adm_user,adm_user_log,adm_user_provider,adm_user_role,adm_vertina_configuration,
@@ -27,7 +27,7 @@ crm_customer,crm_customer_brand,crm_customer_category,crm_email,crm_provider,crm
 crm_provider_contact,dwh_account_operation,dwh_journal_entries,mediation_magic_numbers,medina_access,
 medina_number_plan,medina_time_plan,medina_zonning_plan,provider_titles,
 rating_matrix_definition,rating_matrix_entry,rating_usage_type,report_emails,rm_line,rm_offer_instance,rm_usage_counter cascade;
-*/
+
 
 /*------TABLE + SEQUENCE ADM_USER_LOG CREATION----*/
 

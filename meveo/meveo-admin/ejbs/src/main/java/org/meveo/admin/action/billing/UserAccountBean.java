@@ -30,7 +30,6 @@ import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
@@ -64,9 +63,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-    @Inject
-    @RequestParam
-    private Instance<Long> billingAccountId;
+    private Long billingAccountId;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -81,6 +78,14 @@ public class UserAccountBean extends BaseBean<UserAccount> {
         super(UserAccount.class);
     }
 
+    public Long getBillingAccountId() {
+        return billingAccountId;
+    }
+
+    public void setBillingAccountId(Long billingAccountId) {
+        this.billingAccountId = billingAccountId;
+    }
+
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
      * 
@@ -90,22 +95,21 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     @Override
     public UserAccount initEntity() {
         super.initEntity();
-        if (entity.getId() == null && billingAccountId.get() != null) {
-            BillingAccount billingAccount = billingAccountService.findById(billingAccountId.get());
+        if (entity.getId() == null && billingAccountId != null) {
+            BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
             entity.setBillingAccount(billingAccount);
             populateAccounts(billingAccount);
         }
         return entity;
     }
 
-
-    /**
-     * Conversation is ended and user is redirected from edit to his previous window.
+    /*
+     * (non-Javadoc)
      * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
-    // @End(beforeRedirect = true, root=false)
-    public String saveOrUpdate() {
+    @Override
+    public String saveOrUpdate(boolean killConversation) {
         try {
             if (entity.getDefaultLevel()) {
                 if (userAccountService.isDuplicationExist(entity)) {
@@ -114,7 +118,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
                 }
 
             }
-            saveOrUpdate(entity);
+            super.saveOrUpdate(killConversation);
             return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId=" + entity.getId() + "&faces-redirect=true";
         } catch (DuplicateDefaultAccountException e1) {
             messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
@@ -135,7 +139,13 @@ public class UserAccountBean extends BaseBean<UserAccount> {
         return userAccountService;
     }
 
-    public String saveOrUpdate(UserAccount entity) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+     */
+    @Override
+    protected String saveOrUpdate(UserAccount entity) {
         try {
             if (entity.isTransient()) {
                 userAccountService.createUserAccount(entity.getBillingAccount().getCode(), entity, getCurrentUser());

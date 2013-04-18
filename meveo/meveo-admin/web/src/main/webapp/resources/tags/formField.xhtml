@@ -32,8 +32,10 @@
 	<cc:attribute name="showOnlyOnConsult" default="false" />
 	<cc:attribute name="dualListModel" />
 	<cc:attribute name="isHtml" default="false" />
-	<cc:attribute name="datePattern" default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat'):paramBean.getProperty('meveo.dateFormat')}"/>
-	<cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
+	<cc:attribute name="datePattern"
+		default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat'):paramBean.getProperty('meveo.dateFormat')}" />
+	<cc:attribute name="edit"
+		default="#{cc.backingBeanFromParentOrCurrent.edit}" />
 
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
@@ -50,19 +52,16 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
 				size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}" />
-			<p:inputTextarea
-				rendered="#{cc.attrs.textArea and cc.attrs.edit}"
+			<p:inputTextarea rendered="#{cc.attrs.textArea and cc.attrs.edit}"
 				id="#{cc.attrs.id}_textArea" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" cols="#{cc.attrs.cols}"
 				rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" />
-			<p:editor
-				rendered="#{cc.attrs.isHtml and cc.attrs.edit}"
+			<p:editor rendered="#{cc.attrs.isHtml and cc.attrs.edit}"
 				id="#{cc.attrs.id}_editor" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}"></p:editor>
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -72,12 +71,11 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isInteger(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_int" value="#{cc.attrs.label}" />
-			<p:spinner rendered="#{cc.attrs.edit}"
-				id="#{cc.attrs.id}_int" disabled="#{cc.attrs.disabled}"
+			<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_int"
+				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -86,12 +84,11 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isByte(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_byte" value="#{cc.attrs.label}" />
-			<p:spinner rendered="#{cc.attrs.edit}"
-				id="#{cc.attrs.id}_byte" disabled="#{cc.attrs.disabled}"
+			<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_byte"
+				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -100,12 +97,11 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isLong(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_long" value="#{cc.attrs.label}" />
-			<p:spinner rendered="#{cc.attrs.edit}"
-				id="#{cc.attrs.id}_long" disabled="#{cc.attrs.disabled}"
+			<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_long"
+				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -114,12 +110,11 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isShort(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_short" value="#{cc.attrs.label}" />
-			<p:spinner rendered="#{cc.attrs.edit}"
-				id="#{cc.attrs.id}_short" disabled="#{cc.attrs.disabled}"
+			<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_short"
+				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -135,8 +130,7 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" size="5"
 				maxlength="#{cc.attrs.maxlength}" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -145,12 +139,11 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isDouble(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_double" value="#{cc.attrs.label}" />
-			<p:inputText rendered="#{cc.attrs.edit}"
-				id="#{cc.attrs.id}_double" disabled="#{cc.attrs.disabled}"
+			<p:inputText rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_double"
+				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" size="5" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -159,13 +152,12 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isFloat(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_float" value="#{cc.attrs.label}" />
-			<p:inputText rendered="#{cc.attrs.edit}"
-				id="#{cc.attrs.id}_float" disabled="#{cc.attrs.disabled}"
+			<p:inputText rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_float"
+				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" size="5"
 				maxlength="#{cc.attrs.maxlength}" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;" />
 			<cc:insertChildren />
@@ -177,14 +169,12 @@
 			<p:outputLabel for="#{cc.attrs.id}_boolean" value="#{cc.attrs.label}" />
 
 			<p:selectBooleanCheckbox id="#{cc.attrs.id}_boolean"
-				rendered="#{cc.attrs.edit}"
-				disabled="#{cc.attrs.disabled}"
+				rendered="#{cc.attrs.edit}" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}">
 			</p:selectBooleanCheckbox>
 
-			<ui:fragment
-				rendered="#{not cc.attrs.edit and cc.attrs.isMessage}">
+			<ui:fragment rendered="#{not cc.attrs.edit and cc.attrs.isMessage}">
 				<c:set var="fieldValue"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" />
 				<h:outputText
@@ -212,13 +202,11 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isDate(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_date" value="#{cc.attrs.label}" />
-			<p:calendar id="#{cc.attrs.id}_date"
-				rendered="#{cc.attrs.edit}"
+			<p:calendar id="#{cc.attrs.id}_date" rendered="#{cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				disabled="#{cc.attrs.disabled}" pattern="#{cc.attrs.datePattern}"
 				required="#{cc.attrs.required}" />
-			<h:outputText
-				rendered="#{not cc.attrs.edit}"
+			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				style="font-weight:bold;">
 				<f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
@@ -230,8 +218,8 @@
 		<p:panelGrid columns="2"
 			rendered="#{cc.isEnum(cc.attrs.field,cc.attrs.entity)}">
 			<p:outputLabel for="#{cc.attrs.id}_enum" value="#{cc.attrs.label}" />
-			<p:selectOneMenu rendered="#{cc.attrs.edit}"
-				id="#{cc.attrs.id}_enum" disabled="#{cc.attrs.disabled}"
+			<p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_enum"
+				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}">
 				<f:selectItem itemLabel="" itemValue="" />
@@ -276,8 +264,7 @@
 								</p:column>
 							</c:forEach>
 
-							<p:column
-								rendered="#{cc.attrs.deleteButton and cc.attrs.edit}">
+							<p:column rendered="#{cc.attrs.deleteButton and cc.attrs.edit}">
 								<p:tooltip for="deletelink"
 									value="#{messages['commons.delete']}" showEffect="slide"
 									hideEffect="slide" />
@@ -306,9 +293,9 @@
 					<c:if test="#{!empty cc.attrs.dualListModel}">
 						<c:set var="elements" value="#{cc.attrs.dualListModel}" />
 					</c:if>
-					<p:pickList id="#{cc.attrs.id}_picklist" value="#{elements}"
-						var="elem" itemLabel="#{elem[cc.attrs.childField]}"
-						itemValue="#{elem}"
+					<p:pickList required="#{cc.attrs.required}"
+						id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
+						itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}"
 						disabled="#{not cc.attrs.edit}">
 						<s:objectConverter />
 					</p:pickList>

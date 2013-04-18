@@ -29,8 +29,6 @@ import org.meveo.security.MeveoUser;
 /**
  * Class used to set current system provider
  * 
- * @author Gediminas Ubartas
- * @created 2011-02-28
  * 
  */
 @Named

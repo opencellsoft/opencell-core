@@ -15,6 +15,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -22,12 +23,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link ServiceTemplate} (extends {@link BaseBean}
@@ -53,23 +58,73 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
+	@Inject
+	private OneShotChargeTemplateService oneShotChargeTemplateService;
+
+	@Inject
+	private RecurringChargeTemplateService recurringChargeTemplateService;
+
+	private DualListModel<RecurringChargeTemplate> recurringCharges;
+	private DualListModel<OneShotChargeTemplate> subscriptionCharges;
+	private DualListModel<OneShotChargeTemplate> terminationCharges;
+
+	public DualListModel<OneShotChargeTemplate> getTerminationChargesModel() {
+		if (terminationCharges == null) {
+			List<OneShotChargeTemplate> source = oneShotChargeTemplateService.getTerminationChargeTemplates();
+			List<OneShotChargeTemplate> target = new ArrayList<OneShotChargeTemplate>();
+			if (getEntity().getTerminationCharges() != null) {
+				target.addAll(getEntity().getTerminationCharges());
+			}
+			source.removeAll(target);
+			terminationCharges = new DualListModel<OneShotChargeTemplate>(source, target);
+		}
+		return terminationCharges;
+	}
+
+	public void setTerminationChargesModel(DualListModel<OneShotChargeTemplate> temp) {
+		getEntity().setSubscriptionCharges(temp.getTarget());
+	}
+
+	public DualListModel<OneShotChargeTemplate> getSubscriptionChargesModel() {
+		if (subscriptionCharges == null) {
+			List<OneShotChargeTemplate> source = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
+			List<OneShotChargeTemplate> target = new ArrayList<OneShotChargeTemplate>();
+			if (getEntity().getSubscriptionCharges() != null) {
+				target.addAll(getEntity().getSubscriptionCharges());
+			}
+			source.removeAll(target);
+			subscriptionCharges = new DualListModel<OneShotChargeTemplate>(source, target);
+		}
+		return subscriptionCharges;
+	}
+
+	public void setSubscriptionChargesModel(DualListModel<OneShotChargeTemplate> temp) {
+		getEntity().setSubscriptionCharges(temp.getTarget());
+	}
+
+	public DualListModel<RecurringChargeTemplate> getRecurringChargesModel() {
+		if (recurringCharges == null) {
+			List<RecurringChargeTemplate> source = recurringChargeTemplateService.list();
+			List<RecurringChargeTemplate> target = new ArrayList<RecurringChargeTemplate>();
+			if (getEntity().getRecurringCharges() != null) {
+				target.addAll(getEntity().getRecurringCharges());
+			}
+			source.removeAll(target);
+			recurringCharges = new DualListModel<RecurringChargeTemplate>(source, target);
+		}
+		return recurringCharges;
+	}
+
+	public void setRecurringChargesModel(DualListModel<RecurringChargeTemplate> temp) {
+		getEntity().setRecurringCharges(temp.getTarget());
+	}
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
 	public ServiceTemplateBean() {
 		super(ServiceTemplate.class);
-	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	public ServiceTemplate initEntity() {
-		return super.initEntity();
 	}
 
 	@Override
@@ -81,13 +136,13 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 		return super.search();
 	}
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
-	public String saveOrUpdate() {
+	@Override
+	public String saveOrUpdate(boolean killConversation) {
 
 		List<RecurringChargeTemplate> recurringCharges = entity.getRecurringCharges();
 		for (RecurringChargeTemplate recurringCharge : recurringCharges) {
@@ -96,7 +151,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 			}
 		}
 
-		return saveOrUpdate(entity);
+		return super.saveOrUpdate(killConversation);
 	}
 
 	/**
@@ -105,6 +160,30 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Override
 	protected IPersistenceService<ServiceTemplate> getPersistenceService() {
 		return serviceTemplateService;
+	}
+
+	public DualListModel<RecurringChargeTemplate> getRecurringCharges() {
+		return recurringCharges;
+	}
+
+	public void setRecurringCharges(DualListModel<RecurringChargeTemplate> recurringCharges) {
+		this.recurringCharges = recurringCharges;
+	}
+
+	public DualListModel<OneShotChargeTemplate> getSubscriptionCharges() {
+		return subscriptionCharges;
+	}
+
+	public void setSubscriptionCharges(DualListModel<OneShotChargeTemplate> subscriptionCharges) {
+		this.subscriptionCharges = subscriptionCharges;
+	}
+
+	public DualListModel<OneShotChargeTemplate> getTerminationCharges() {
+		return terminationCharges;
+	}
+
+	public void setTerminationCharges(DualListModel<OneShotChargeTemplate> terminationCharges) {
+		this.terminationCharges = terminationCharges;
 	}
 
 	// /**

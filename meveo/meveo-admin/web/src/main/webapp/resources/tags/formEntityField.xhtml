@@ -16,7 +16,7 @@
 	<cc:attribute name="popup" default="false" />
 	<cc:attribute name="popupId" default="popup" />
 	<cc:attribute name="disabled" default="false" />
-	<cc:attribute name="listBean" />
+	<cc:attribute name="listBean" required="false"/>
 	<cc:attribute name="maxlength" default="40" />
 	<cc:attribute name="textArea" default="false" />
 	<cc:attribute name="time" default="false" />
@@ -24,7 +24,7 @@
 	<cc:attribute name="rows" default="5" />
 	<cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
-	<cc:attribute name="listElements" />
+	<cc:attribute name="listElements" required="false"/>
 	<cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
 
 	<cc:attribute name="show"
@@ -34,9 +34,9 @@
 <cc:implementation>
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.popup}">
-			<p:outputLabel for="#{cc.attrs.id}" value="#{cc.attrs.label}" />
+			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}" />
 			<p:panelGrid columns="3">
-				<p:inputText id="#{cc.attrs.id}" rendered="#{cc.attrs.edit}"
+				<p:inputText id="#{cc.attrs.id}_text" rendered="#{cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}"
 					disabled="true" />
 				<p:commandButton rendered="#{cc.attrs.edit}" id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
@@ -50,7 +50,7 @@
 		<ui:fragment rendered="#{not cc.attrs.popup}">
 
 			<!-- if service is set, then load list of all entities from db and show as drop down list -->
-			<ui:fragment rendered="#{!empty cc.attrs.listBean or !empty cc.attrs.listElements}">
+			<ui:fragment rendered="#{ cc.attrs.listBean!=null or cc.attrs.listElements!=null}">
 				<p:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_level" value="#{cc.attrs.label}" />
 					<p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_level"
@@ -72,7 +72,7 @@
 			</ui:fragment>
 
 			<!-- if service is not set, then just render fields for embedded entity -->
-			<ui:fragment rendered="#{empty cc.attrs.listBean and empty cc.attrs.listElements}">
+			<ui:fragment rendered="#{cc.attrs.listBean==null and cc.attrs.listElements==null}">
 				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}" disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}"
 					entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}"
 					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}" validateRib="#{cc.attrs.validateRib}" />

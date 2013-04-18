@@ -35,24 +35,85 @@
 					var="node" selectionMode="single"
 					selection="#{customerTreeBean.selectedNode}">
 
-					<p:treeNode type="customer.type"
-						icon="#{customerTreeBean.getIcon(node.type)}">
-						<h:outputText value="#{node}" />
+					<p:treeNode type="customer.type" icon="tree-customer-icon"
+						expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed">
+						<h:outputLink id="customer_tree_value"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">#{node}</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="customer_tree_value" value="#{node.firstAndLastName}" />
+
+						<h:outputLink id="customer_tree_value_selected"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
+							styleClass="selectedTreeNode">
+							#{node}
+						</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="customer_tree_value_selected"
+							value="#{node.firstAndLastName}" />
 					</p:treeNode>
 
 					<p:treeNode type="customerAccount.type"
-						icon="#{customerTreeBean.getIcon(node.type)}">
-						<h:outputText value="#{node}" />
+						icon="tree-customer-account-icon"
+						expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed">
+						<h:outputLink id="customerAccount_tree_value"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+						#{node}</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="customerAccount_tree_value" value="#{node.firstAndLastName}" />
+
+						<h:outputLink id="customerAccount_tree_value_selected"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}">
+						#{node}</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="customerAccount_tree_value_selected"
+							value="#{node.firstAndLastName}" />
 					</p:treeNode>
 
 					<p:treeNode type="billingAccount.type"
-						icon="#{customerTreeBean.getIcon(node.type)}">
-						<h:outputText value="#{node}" />
+						icon="tree-billing-account-icon"
+						expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed">
+						<h:outputLink id="billingAccount_tree_value"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+						#{node}</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="billingAccount_tree_value" value="#{node.firstAndLastName}" />
+
+						<h:outputLink id="billingAccount_tree_value_selected"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
+							styleClass="selectedTreeNode">
+						#{node}</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="billingAccount_tree_value_selected"
+							value="#{node.firstAndLastName}" />
 					</p:treeNode>
 
-					<p:treeNode type="userAccount.type"
-						icon="#{customerTreeBean.getIcon(node.type)}">
-						<h:outputText value="#{node}" />
+					<p:treeNode type="userAccount.type" icon="tree-user-account-icon"
+						expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed">
+						<h:outputLink id="userAccount_tree_value"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+						#{node}</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="userAccount_tree_value" value="#{node.firstAndLastName}" />
+
+						<h:outputLink id="userAccount_tree_value_selected"
+							value="#{customerTreeBean.getView(node.type, node.id)}"
+							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
+							styleClass="selectedTreeNode">
+						#{node}</h:outputLink>
+						<p:tooltip rendered="#{node.firstAndLastName != null}"
+							for="userAccount_tree_value_selected"
+							value="#{node.firstAndLastName}" />
 					</p:treeNode>
 
 				</p:tree>

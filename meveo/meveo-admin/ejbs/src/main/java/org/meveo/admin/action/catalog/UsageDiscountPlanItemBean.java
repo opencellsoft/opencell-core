@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.meveo.admin.action.rating;
+package org.meveo.admin.action.catalog;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
@@ -22,60 +22,57 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.rating.UsageType;
+import org.meveo.model.catalog.UsageDiscountPlanItem;
+import org.meveo.model.catalog.UsagePricePlanItem;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.rating.impl.UsageTypeService;
+import org.meveo.service.catalog.impl.UsageDiscountPlanItemService;
+import org.primefaces.component.datatable.DataTable;
 
 /**
- * Standard backing bean for {@link UsageType} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link UsagePricePlanItem} (extends
+ * {@link BaseBean} that provides almost all common methods to handle entities
+ * filtering/sorting in datatable, their create, edit, view, delete operations).
+ * It works with Manaty custom JSF components.
  * 
- * @author Ignas
- * @created 2009.09.15
+ * 
  */
 @Named
 @ConversationScoped
-public class UsageTypeBean extends BaseBean<UsageType> {
+public class UsageDiscountPlanItemBean extends BaseBean<UsageDiscountPlanItem> {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Injected @{link UsageType} service. Extends {@link PersistenceService}.
+	 * Injected @{link UsagePricePlanItem} service. Extends
+	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private UsageTypeService usageTypeService;
+	private UsageDiscountPlanItemService usageDiscountPlanItemService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public UsageTypeBean() {
-		super(UsageType.class);
+	public UsageDiscountPlanItemBean() {
+		super(UsageDiscountPlanItem.class);
 	}
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("usageType")
-	public UsageType init() {
-		return initEntity();
-	}
-
+    @Override
+    public DataTable search() {
+        getFilters();
+        if (!filters.containsKey("disabled")) {
+            filters.put("disabled", false);
+        }
+        return super.search();
+    }
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<UsageType> getPersistenceService() {
-		return usageTypeService;
+	protected IPersistenceService<UsageDiscountPlanItem> getPersistenceService() {
+		return usageDiscountPlanItemService;
 	}
 
 }

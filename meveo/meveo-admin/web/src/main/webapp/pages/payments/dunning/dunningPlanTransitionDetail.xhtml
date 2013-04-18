@@ -16,7 +16,7 @@
 
 	<ui:define name="body">
 	
-		<hf:formPanel edit="#{edit}" label="#{messages['dunningPlanTransition.panel']}" backingBean="#{dunningPlanTransitionBean}" entity="#{dunningPlanTransition}" backButtonView="/pages/payments/dunning/dunningPlanTransitions.xhtml">
+		<hf:formPanel label="#{messages['dunningPlanTransition.panel']}" backingBean="#{dunningPlanTransitionBean}" backButtonView="/pages/payments/dunning/dunningPlanTransitions.xhtml">
 			<hf:formField label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" required="true" isMessage="true"/>
 			<hf:formField label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" required="true" isMessage="true"/>
 			<hf:formField label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" required="true"/>

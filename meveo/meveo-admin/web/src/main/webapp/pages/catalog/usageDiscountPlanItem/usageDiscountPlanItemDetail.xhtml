@@ -49,7 +49,7 @@
 				</a:commandLink>
 		</hftl:entityPopup>
 			
-		<hf:formPanel edit="#{edit}" label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usageDiscountPlanItemBean}" entity="#{usageDiscountPlanItem}" >
+		<hf:formPanel label="#{messages['usagePricePlanItem.usagePricePlanItemPanel']}" backingBean="#{usageDiscountPlanItemBean}">
 			<hf:formField label="#{messages['usagePricePlanItem.type']}" field="type" childField="label" isMessage="true" />
 			<hf:formEntityField id="serviceTemplateSelectId" label="#{messages['usagePricePlanItem.serviceTemplate']}"
 				field="serviceTemplate" childField="code"   popup="true" popupId="serviceTemplatePopup" />

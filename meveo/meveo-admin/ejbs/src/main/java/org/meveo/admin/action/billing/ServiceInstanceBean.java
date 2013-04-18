@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,7 +27,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.PersistenceService;
@@ -39,8 +37,6 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
  * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
  * 
  */
 @Named
@@ -56,6 +52,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
      */
     @Inject
     private ServiceInstanceService serviceInstanceService;
+    
 
     @Inject
     private Messages messages;
@@ -80,25 +77,15 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    @Produces
-    @Named("serviceInstance")
-    public ServiceInstance init() {
-        initEntity();
-        if (offerInstanceId.get() != null) {
-            // serviceInstance.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
+    @Override
+    public ServiceInstance initEntity() {
+        super.initEntity();
+        if (offerInstanceId!=null &&  offerInstanceId.get() != null) {
+//            entity.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
         }
         return entity;
     }
 
-     /**
-     * Conversation is ended and user is redirected from edit to his previous window.
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    // TODO: @End(beforeRedirect = true, root = false)
-    public String saveOrUpdate() {
-        return saveOrUpdate(entity);
-    }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -120,18 +107,6 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             messages.error(e.getMessage());
         }
         return null;
-    }
-
-    public String saveOrUpdate(ServiceInstance entity) {
-        if (entity.isTransient()) {
-            serviceInstanciation(entity);
-            messages.info(new BundleKey("messages", "save.successful"));
-        } else {
-            getPersistenceService().update(entity);
-            messages.info(new BundleKey("messages", "update.successful"));
-        }
-
-        return back();
     }
 
     public String activateService() {

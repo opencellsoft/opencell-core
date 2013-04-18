@@ -55,20 +55,6 @@ public class DiscountPlanMatrixBean extends BaseBean<DiscountPlanMatrix> {
     }
 
     /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("discountPlanMatrix")
-    public DiscountPlanMatrix init() {
-        return initEntity();
-
-    }
-
-
-    /**
      * Override default list view name. (By default view name is class name starting lower case + ending 's').
      * 
      * @see org.meveo.admin.action.BaseBean#getDefaultViewName()

@@ -52,20 +52,6 @@ public class AccessBean extends BaseBean<Access> {
 	}
 
 	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("access")
-	public Access init() {
-		return initEntity();
-	}
-
-
-	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override

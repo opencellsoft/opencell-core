@@ -20,15 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
@@ -83,20 +80,6 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	public DDRequestLOTBean() {
 		super(DDRequestLOT.class);
 	}
-
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("ddrequestLOT")
-	public DDRequestLOT init() {
-		return initEntity();
-	}
-
 
 	/**
 	 * Regenerate file from entity DDRequestLOT
