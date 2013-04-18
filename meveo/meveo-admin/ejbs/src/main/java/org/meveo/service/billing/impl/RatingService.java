@@ -45,7 +45,7 @@ public class RatingService {
 	public WalletOperation rateChargeApplication(String code, Subscription subscription,
             ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
-            BigDecimal amountWithTax, BigDecimal quantity, Long currencyId, Long taxId, BigDecimal taxPercent,
+            BigDecimal amountWithTax, BigDecimal quantity, Long currencyId, Long countryId, BigDecimal taxPercent,
             BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2,
             String criteria3, Date startdate, Date endDate,ChargeApplicationModeEnum mode){
@@ -75,13 +75,13 @@ public class RatingService {
         if (unitPriceWithoutTax != null) {
         	unitPriceWithTax = amountWithTax;
         } 
-        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax, currencyId,  taxId,provider);
+        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax, currencyId,  countryId,provider);
         return result;
 		
 	}
 	
 	//used to rate or rerate a bareWalletOperation 
-	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long currencyId, Long taxId,Provider provider){
+	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long currencyId, Long countryId,Provider provider){
 
 		PricePlanMatrix ratePrice=null;
 		String providerCode=provider.getCode();
@@ -96,7 +96,7 @@ public class RatingService {
     		if(!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())){
     			throw new RuntimeException("no price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
     		}
-        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,taxId,currencyId);
+        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,countryId,currencyId);
             if (ratePrice == null ||  ratePrice.getAmountWithoutTax()==null) {
             	throw new RuntimeException("invalid price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
             } else {
@@ -134,11 +134,11 @@ public class RatingService {
 	}
 	
 	
-	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long taxId, Long currencyId) {
+	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long countryId, Long currencyId) {
 		// FIXME: the price plan properties could be null !
 		for (PricePlanMatrix pricePlan : listPricePlan) {
-			    boolean taxAreEqual = pricePlan.getTradingCountry().getId()==null || taxId==pricePlan.getTradingCountry().getId();
-			    if(taxAreEqual){
+			    boolean countryAreEqual = pricePlan.getTradingCountry()==null || countryId==pricePlan.getTradingCountry().getId();
+			    if(countryAreEqual){
 			    	boolean currencyAreEqual = pricePlan.getTradingCurrency().getId()==null || currencyId==pricePlan.getTradingCurrency().getId();
 				if(currencyAreEqual){
 			    	boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null

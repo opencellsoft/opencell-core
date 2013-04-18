@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.infinispan.Cache;
 import org.meveo.model.billing.UsageChargeInstance;
@@ -12,6 +13,8 @@ import org.meveo.model.crm.Provider;
 
 public class UsageChargeInstanceCache {
 
+    private static Logger log=Logger.getLogger(UsageChargeInstanceCache.class.getName());
+	
 	private Long chargeInstanceId;
 	private Provider provider;
 	private Long currencyId;
@@ -124,20 +127,23 @@ public class UsageChargeInstanceCache {
 			UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
 			
 			Long key = usageChargeInstance.getServiceInstance().getSubscription().getId();
-			
+			log.info("put in cache key (subs Id)="+key);
 			boolean cacheContainsKey=usageCache.containsKey(key);
 			boolean cacheContainsCharge=false;
 
 			List<UsageChargeInstanceCache> charges = null;
 			if(cacheContainsKey){
+				log.info("the cache contains the key");
 				charges = usageCache.get(key);
 				for(UsageChargeInstanceCache charge:charges){
 					if(charge.getChargeInstanceId()==usageChargeInstance.getId()){
 						if(charge.getLastUpdate().before(usageChargeInstance.getLastUpdate())){
+							log.info("the cache contains the charge and is dirty, so it is updated");
 							cachedValue=charge;//cache is older than DB, we will update it
 							cacheContainsCharge=true;
 							//TODO: check that it works for associated counters	
 						} else {
+							log.info("the cache contains the charge but is not dirty, we do not update it");
 							//DB is older than cache.. we dont update the cache
 							return;
 							//TODO: make sure this is what we want
@@ -145,6 +151,7 @@ public class UsageChargeInstanceCache {
 					}
 				}
 			} else {
+				log.info("the cache does not contains the key");
 				charges =  new ArrayList<UsageChargeInstanceCache>();
 			}
 			
@@ -155,10 +162,14 @@ public class UsageChargeInstanceCache {
 			if(usageChargeInstance.getCounter()!=null){
 				CounterInstanceCache counterCacheValue = null;
 				Long counterKey = CounterInstanceCache.getKey(usageChargeInstance.getCounter());
+
+				log.info("counter key:"+counterKey);
 				if(counterCache.containsKey(counterKey)){
+					log.info("the counter cache contains the key");
 					counterCacheValue=counterCache.get(counterKey);
 				}
 				else{
+					log.info("the counter cache doesnt contain the key, we add it");
 					counterCacheValue=CounterInstanceCache.getInstance(usageChargeInstance.getCounter());
 					counterCache.put(counterKey, counterCacheValue);
 				}
@@ -174,9 +185,11 @@ public class UsageChargeInstanceCache {
 			cachedValue.setUnityNbDecimal(usageChargeTemplate.getUnityNbDecimal());
 			
 			if(!cacheContainsCharge){
+				log.info("charge added");
 				charges.add(cachedValue);
 			}
 			if(cacheContainsKey){
+				log.info("key added to charge cache");
 				usageCache.put(key, charges);
 			}
 		}

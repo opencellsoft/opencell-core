@@ -31,6 +31,8 @@
     			<hftl:column label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription" /> 
     			<hftl:column label="#{messages['counterTemplate.counterType']}" field="counterType" childField="label" isMessage="true" /> 
     			<hftl:column label="#{messages['counterTemplate.level']}" field="level" /> 
+    			<hftl:column label="#{messages['billingCycle.calendar']}"
+				field="calendar" childField="name" />
     			
     		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
     			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />

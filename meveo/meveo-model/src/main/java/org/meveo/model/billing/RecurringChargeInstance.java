@@ -29,10 +29,7 @@ import javax.persistence.TemporalType;
 
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
+
 @Entity
 @Table(name = "BILLING_RECURRING_CHARGE_INST")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RECURRING_CHRG_INST_SEQ")

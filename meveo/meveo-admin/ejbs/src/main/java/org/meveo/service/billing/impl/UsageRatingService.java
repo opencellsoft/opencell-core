@@ -18,6 +18,7 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -72,7 +73,7 @@ public class UsageRatingService {
 	  List<UsageChargeInstance> usageChargeInstances = em.createQuery("From UsageChargeInstance u").getResultList();
       if(usageChargeInstances!=null){
     	  for(UsageChargeInstance usageChargeInstance:usageChargeInstances){
-    		  UsageChargeInstanceCache.putInCache(usageChargeInstance,chargeCache,counterCache);
+    	      	  UsageChargeInstanceCache.putInCache(usageChargeInstance,chargeCache,counterCache);
     	  }
       }
     }
@@ -89,7 +90,7 @@ public class UsageRatingService {
      * @return
      */
     //TODO: change TaxId to country
-    public WalletOperation rateEDRwithMatchingCharge(EDR edr, UsageChargeInstance chargeInstance, Provider provider, Long currencyId, Long taxId){
+    public WalletOperation rateEDRwithMatchingCharge(EDR edr, UsageChargeInstance chargeInstance, Provider provider){
     	WalletOperation walletOperation = new WalletOperation();
 		walletOperation.setSubscriptionDate(null);
 		walletOperation.setOperationDate(edr.getEventDate());
@@ -99,17 +100,19 @@ public class UsageRatingService {
 		
         walletOperation.setProvider(provider);
         
-        //TODO: copy those info in chargeInstance instead of performing multiple queries
+        //FIXME: copy those info in chargeInstance instead of performing multiple queries
         InvoiceSubCategory invoiceSubCat = chargeInstance
 				.getChargeTemplate().getInvoiceSubCategory();
+        TradingCountry country=edr.getSubscription().getUserAccount().getBillingAccount()
+				.getTradingCountry();
+        Long countryId=country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(),
-						edr.getSubscription().getUserAccount().getBillingAccount()
-								.getTradingCountry().getId());
+				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(),countryId);
+		Long currencyId=country.getCountry().getCurrency().getId();
 		Tax tax = invoiceSubcategoryCountry.getTax();
         walletOperation.setChargeInstance(chargeInstance); 
         
-        //TODO: get the wallet from the ServiceUsageChargeTemplate
+        //FIXME: get the wallet from the ServiceUsageChargeTemplate
         walletOperation.setWallet(edr.getSubscription().getUserAccount().getWallet());
         walletOperation.setCode(chargeInstance.getCode());
         walletOperation.setQuantity(edr.getQuantity());
@@ -117,7 +120,7 @@ public class UsageRatingService {
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
-		ratingService.rateBareWalletOperation(walletOperation, null, null, currencyId, taxId, provider);
+		ratingService.rateBareWalletOperation(walletOperation, null, null, currencyId, countryId, provider);
 		return walletOperation;
     }
     
@@ -175,12 +178,9 @@ public class UsageRatingService {
     		continueRating=fitInCounters(edr, charge);
     	}
 		if(continueRating){
-			Long currencyId = charge.getCurrencyId();
-			//TODO: replace by country
-			Long taxId = 0L;
 			Provider provider=charge.getProvider();
 			UsageChargeInstance chargeInstance =usageChargeInstanceService.findById(charge.getChargeInstanceId());
-			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, chargeInstance, provider, currencyId, taxId);
+			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, chargeInstance, provider);
 			walletOperationService.create(walletOperation, null,provider);
 			result=true;			
 		}

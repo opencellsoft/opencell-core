@@ -32,6 +32,8 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -119,15 +121,24 @@ public class RecurringChargeCron {
 											.getTradingCountry().getId());
 					Tax tax = invoiceSubcategoryCountry.getTax();
 
-					Long currencyId = activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
-					if (currencyId == null) {
+					//FIXME: put currency in charge instance
+					TradingCurrency currency=activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
+					if (currency == null) {
 						throw new IncorrectChargeTemplateException(
 								"no currency exists for customerAccount id="
 										+ activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
 					}
-					String param2 = "du " + sdf.format(previousapplicationDate) + " au "
-							+ sdf.format(DateUtils.addDaysToDate(applicationDate, -1));
-
+					Long currencyId = currency.getId();
+					
+					//FIXME: put country in charge instance
+					TradingCountry country=activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
+					if (country == null) {
+						throw new IncorrectChargeTemplateException(
+								"no country exists for billingAccount id="
+										+ activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+					}
+					Long countryId = country.getId();
+					
 					WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(
 							activeRecurringChargeInstance.getCode(),
 							activeRecurringChargeInstance.getServiceInstance().getSubscription(),
@@ -137,7 +148,7 @@ public class RecurringChargeCron {
 							activeRecurringChargeInstance.getAmountWithoutTax(),
 							activeRecurringChargeInstance.getAmountWithTax(),
 							new BigDecimal(activeRecurringChargeInstance.getServiceInstance().getQuantity()),
-							currencyId,tax.getId(), tax.getPercent(), null, applicationDate, invoiceSubCat,
+							currencyId,countryId, tax.getPercent(), null, applicationDate, invoiceSubCat,
 							activeRecurringChargeInstance.getCriteria1(),
 							activeRecurringChargeInstance.getCriteria2(),
 							activeRecurringChargeInstance.getCriteria3(), previousapplicationDate,

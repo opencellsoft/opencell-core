@@ -38,13 +38,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ChargeTemplate;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @Table(name = "BILLING_CHARGE_INSTANCE")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CHARGE_INSTANCE_SEQ")
@@ -91,31 +86,12 @@ public class ChargeInstance extends BusinessEntity {
     protected String criteria3;
 
     @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_LANGUAGE_ID")
-    private TradingLanguage tradingLanguage;
-    
-    public Seller getSeller() {
-		return seller;
-	}
-
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_CURRENCY_ID")
-    private TradingCurrency tradingCurrency ;
+    protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
     
     
     @Column(name = "PR_DESCRIPTION", length = 100)
-	private String prDescription;
+    protected String prDescription;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SELLER_ID")
-    private Seller seller;
 
     public String getCriteria1() {
         return criteria1;
@@ -200,28 +176,12 @@ public class ChargeInstance extends BusinessEntity {
 		this.walletOperations = walletOperations;
 	}
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
-
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
-
 	public String getPrDescription() {
 		return prDescription;
 	}
 
 	public void setPrDescription(String prDescription) {
 		this.prDescription = prDescription;
-	}
-
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
-	}
-
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
 	}
 
 	public BigDecimal getAmountWithTax() {
