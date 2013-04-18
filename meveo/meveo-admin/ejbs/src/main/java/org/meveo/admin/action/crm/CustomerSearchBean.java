@@ -35,9 +35,14 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.AccountEntitySearchService;
 
 /**
- * Standard backing bean for {@link AccountEntity} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable. For this
- * window create, edit, view, delete operations are not used, because it just searches of all subtypes of AccountEntity. Crud operations is dedicated to concrete entity window
- * (e.g. {@link CustomerAccount} window). Concrete windows also show more of the fields and filters specific for that entity. This bean works with Manaty custom JSF components.
+ * Standard backing bean for {@link AccountEntity} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable. For this window create, edit, view, delete operations are not
+ * used, because it just searches of all subtypes of AccountEntity. Crud
+ * operations is dedicated to concrete entity window (e.g.
+ * {@link CustomerAccount} window). Concrete windows also show more of the
+ * fields and filters specific for that entity. This bean works with Manaty
+ * custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Dec 7, 2010
@@ -47,87 +52,112 @@ import org.meveo.service.crm.impl.AccountEntitySearchService;
 @ConversationScoped
 public class CustomerSearchBean extends BaseBean<AccountEntity> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link AccountEntity} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private AccountEntitySearchService accountEntitySearchService;
+	/**
+	 * Injected @{link AccountEntity} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private AccountEntitySearchService accountEntitySearchService;
 
-    private String customerPage;
+	private String customerPage;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public CustomerSearchBean() {
-        super(AccountEntity.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public CustomerSearchBean() {
+		super(AccountEntity.class);
+	}
 
-    /**
-     * Override get instance method because AccountEntity is abstract class and can not be instantiated in {@link BaseBean}.
-     */
-    @Override
-    public AccountEntity getInstance() throws InstantiationException, IllegalAccessException {
-        return new AccountEntity() {
-            private static final long serialVersionUID = 1L;
+	/**
+	 * Override get instance method because AccountEntity is abstract class and
+	 * can not be instantiated in {@link BaseBean}.
+	 */
+	@Override
+	public AccountEntity getInstance() throws InstantiationException, IllegalAccessException {
+		return new AccountEntity() {
+			private static final long serialVersionUID = 1L;
 
-            @Override
-            public String getAccountType() {
-                return "";
-            }
-        };
-    }
+			@Override
+			public String getAccountType() {
+				return "";
+			}
+		};
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<AccountEntity> getPersistenceService() {
-        return accountEntitySearchService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<AccountEntity> getPersistenceService() {
+		return accountEntitySearchService;
+	}
 
-    /**
-     * Because in customer search any type of customer can appear, this method is used in UI to get link to concrete customer edit page.
-     * 
-     * @param type Account type of Customer
-     * 
-     * @return Edit page url.
-     */
-    public String getView(String type) {
-        if (type.equals(Customer.ACCOUNT_TYPE)) {
-            return "/pages/crm/customers/customerDetail.xhtml";
-        } else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
-            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml";
-        }
-        if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
-            return "/pages/billing/billingAccounts/billingAccountDetail.xhtml";
-        }
-        if (type.equals(UserAccount.ACCOUNT_TYPE)) {
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml";
-        } else {
-            return "/pages/crm/customers/customerDetail.xhtml";
-            //throw new IllegalStateException("Wrong customer type provided in EL in .xhtml");
-        }
-    }
+	/**
+	 * Because in customer search any type of customer can appear, this method
+	 * is used in UI to get link to concrete customer edit page.
+	 * 
+	 * @param type
+	 *            Account type of Customer
+	 * 
+	 * @return Edit page url.
+	 */
+	public String getView(String type) {
+		if (type.equals(Customer.ACCOUNT_TYPE)) {
+			return "/pages/crm/customers/customerDetail.xhtml";
+		} else if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml";
+		}
+		if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml";
+		}
+		if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml";
+		} else {
+			return "/pages/crm/customers/customerDetail.xhtml";
+			// throw new
+			// IllegalStateException("Wrong customer type provided in EL in .xhtml");
+		}
+	}
 
-    /**
-     * Redirect to view that is selected as type in search field. (for example when user selects customer account type in search, he is redirected to custmer accounts search page).
-     */
-    public String changeCustomerPage(ValueChangeEvent event) throws IOException {
-        String page = (String) event.getNewValue();
-        /*
-         * TODO: Redirect.instance().setViewId(page); Redirect.instance().execute();
-         */
-        return page;
-    }
+	/**
+	 * Redirect to view that is selected as type in search field. (for example
+	 * when user selects customer account type in search, he is redirected to
+	 * custmer accounts search page).
+	 */
+	public String changeCustomerPage(ValueChangeEvent event) throws IOException {
+		String page = (String) event.getNewValue();
+		/*
+		 * TODO: Redirect.instance().setViewId(page);
+		 * Redirect.instance().execute();
+		 */
+		return page;
+	}
 
-    public String getCustomerPage() {
-        return customerPage;
-    }
+	public String getCustomerPage() {
+		return customerPage;
+	}
 
-    public void setCustomerPage(String customerPage) {
-        this.customerPage = customerPage;
-    }
+	public void setCustomerPage(String customerPage) {
+		this.customerPage = customerPage;
+	}
+
+	public String getIdParameterName(String type) {
+		if (type.equals(Customer.ACCOUNT_TYPE)) {
+			return "customerId";
+		}
+		if (type.equals(CustomerAccount.ACCOUNT_TYPE)) {
+			return "customerAccountId";
+		}
+		if (type.equals(BillingAccount.ACCOUNT_TYPE)) {
+			return "billingAccountId";
+		}
+		if (type.equals(UserAccount.ACCOUNT_TYPE)) {
+			return "userAccountId";
+		}
+		return "customerId";
+	}
 
 }
