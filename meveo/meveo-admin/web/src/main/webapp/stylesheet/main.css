@@ -1088,3 +1088,25 @@ button[id^="parentTab:formBillingAccountPanel"]
  
   margin-top : 14px;
 }
+/*fix on not aligned magnify button */
+table[id^="formPanel:languagesFormId:languageSelectedId"] > tbody > tr > td[role="gridcell"] input,
+table[id^="formPanel:currenciesFormId:"] > tbody > tr  > td[role="gridcell"] input[onclick*="dlg"],
+table[id^="formPanel:formId:"] > tbody > tr > td td[role="gridcell"] input[onclick*="dlg"],
+table[id^="tabView:formPanel:formId:categorySelectId"] input[onclick*="dlg"],
+table[id^="tabView:formPanelTax:formTax"] input[onclick*="dlg"],
+table[id^="formPanel:reccuringChargeId"] input[onclick*="dlg"],
+td[role="gridcell"] input[onclick*="dlg"]
+ 
+{
+  margin-top: -9px;
+  background : red !important;
+}
+/* restore magnify fix on this page */
+div[id^="formCustomerPanel:formCustomer:tabView"] td[role="gridcell"] input[onclick*="dlg"]
+{
+  margin-top: 0px;
+}
+/* fix on same form fields spacing on customer details */
+table[id^="formCustomerPanel:formCustomer:tabView:"] tr:nth-child(2)
+{
+ }
