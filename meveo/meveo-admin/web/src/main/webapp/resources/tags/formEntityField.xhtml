@@ -1,34 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
-	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hf="http://java.sun.com/jsf/composite/tags">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags">
 
 <cc:interface componentType="formEntityField">
 	<cc:attribute name="label" required="true" />
 	<cc:attribute name="field" required="true" />
-	<cc:attribute name="backingBean" required="true" type="org.meveo.admin.action.BaseBean" />
-	<cc:attribute name="entity" required="false" type="java.lang.Object"/>
+	<cc:attribute name="backingBean" required="true"
+		type="org.meveo.admin.action.BaseBean" />
+	<cc:attribute name="entity" required="false" type="java.lang.Object" />
 	<cc:attribute name="childField" required="true" />
 	<cc:attribute name="required" default="false" />
 	<cc:attribute name="size" default="20" />
 	<cc:attribute name="popup" default="false" />
 	<cc:attribute name="popupId" default="popup" />
 	<cc:attribute name="disabled" default="false" />
-	<cc:attribute name="listBean" required="false"/>
+	<cc:attribute name="listBean" required="false" />
 	<cc:attribute name="maxlength" default="40" />
 	<cc:attribute name="textArea" default="false" />
 	<cc:attribute name="time" default="false" />
 	<cc:attribute name="cols" default="20" />
 	<cc:attribute name="rows" default="5" />
-	<cc:attribute name="useConverter" default="false"/>
-	<cc:attribute name="validateUnique" default="false"/>
-	<cc:attribute name="validateRib" default="false"/>
+	<cc:attribute name="useConverter" default="false" />
+	<cc:attribute name="validateUnique" default="false" />
+	<cc:attribute name="validateRib" default="false" />
 	<cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
-	<cc:attribute name="listElements" required="false"/>
-	<cc:attribute name="edit" default="#{cc.backingBeanFromParentOrCurrent.edit}" />
+	<cc:attribute name="listElements" required="false" />
+	<cc:attribute name="edit"
+		default="#{cc.backingBeanFromParentOrCurrent.edit}" />
 
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) and ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
@@ -37,33 +45,43 @@
 <cc:implementation>
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.popup}">
-			<p:outputLabel for="#{cc.attrs.id}_text1" value="#{cc.attrs.label}" rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}"/>
-			<p:outputLabel for="#{cc.attrs.id}_text2" value="#{cc.attrs.label}" rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}"/>
+			<p:outputLabel for="#{cc.attrs.id}_text1" value="#{cc.attrs.label}"
+				rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}" />
+			<p:outputLabel for="#{cc.attrs.id}_text2" value="#{cc.attrs.label}"
+				rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}" />
 			<p:panelGrid columns="3">
-			  <p:panel id="#{cc.attrs.id}_text">
-				<p:inputText id="#{cc.attrs.id}_text1" rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}"
-					disabled="false" />
-				<p:inputText id="#{cc.attrs.id}_text2" rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}"
-					disabled="false" />
-			</p:panel>		
-				<p:commandButton rendered="#{cc.attrs.edit}" id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
-					icon="ui-icon-search" />
+				<p:panel id="#{cc.attrs.id}_text">
+					<p:inputText id="#{cc.attrs.id}_text1"
+						rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}"
+						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
+						required="#{cc.attrs.required}" size="#{cc.attrs.size}"
+						disabled="false" onclick="dlg_#{cc.attrs.popupId}.show()" />
+					<p:inputText id="#{cc.attrs.id}_text2"
+						rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}"
+						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						required="#{cc.attrs.required}" size="#{cc.attrs.size}"
+						disabled="false" onclick="dlg_#{cc.attrs.popupId}.show()" />
+				</p:panel>
+				<p:commandButton rendered="#{cc.attrs.edit}" id="selectLink"
+					onclick="dlg_#{cc.attrs.popupId}.show()" icon="ui-icon-search" />
 				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 				<h:outputText rendered="#{!cc.attrs.edit}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" style="font-weight:bold;" />
+					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
+					style="font-weight:bold;" />
 			</p:panelGrid>
 		</p:panelGrid>
 
 		<ui:fragment rendered="#{not cc.attrs.popup}">
 
 			<!-- if service is set, then load list of all entities from db and show as drop down list -->
-			<ui:fragment rendered="#{ cc.attrs.listBean!=null or cc.attrs.listElements!=null}">
+			<ui:fragment
+				rendered="#{ cc.attrs.listBean!=null or cc.attrs.listElements!=null}">
 				<p:panelGrid columns="2">
 					<p:outputLabel for="#{cc.attrs.id}_level" value="#{cc.attrs.label}" />
-					<p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_level"
-						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" required="#{cc.attrs.required}">
+					<p:selectOneMenu rendered="#{cc.attrs.edit}"
+						id="#{cc.attrs.id}_level"
+						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						required="#{cc.attrs.required}">
 
 						<c:if test="#{empty cc.attrs.listElements}">
 							<c:set var="elements" value="#{cc.attrs.listBean.listAll()}" />
@@ -72,20 +90,30 @@
 							<c:set var="elements" value="#{cc.attrs.listElements}" />
 						</c:if>
 						<f:selectItem itemLabel="" itemValue="" />
-						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
+						<f:selectItems value="#{elements}" var="elem"
+							itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}" />
 						<s:objectConverter />
 					</p:selectOneMenu>
 					<h:outputText rendered="#{not cc.attrs.edit}"
-						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" style="font-weight:bold;" />
+						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
+						style="font-weight:bold;" />
 				</p:panelGrid>
 			</ui:fragment>
 
 			<!-- if service is not set, then just render fields for embedded entity -->
-			<ui:fragment rendered="#{cc.attrs.listBean==null and cc.attrs.listElements==null}">
+			<ui:fragment
+				rendered="#{cc.attrs.listBean==null and cc.attrs.listElements==null}">
 
-				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}" disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}"
-					entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}"
-					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}" required="#{cc.attrs.required}" useConverter="#{cc.attrs.useConverter}" validateUnique="#{cc.attrs.validateUnique}"  validateRib="#{cc.attrs.validateRib}" />
+				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}"
+					disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}"
+					entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+					field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}"
+					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"
+					maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}"
+					required="#{cc.attrs.required}"
+					useConverter="#{cc.attrs.useConverter}"
+					validateUnique="#{cc.attrs.validateUnique}"
+					validateRib="#{cc.attrs.validateRib}" />
 			</ui:fragment>
 		</ui:fragment>
 
