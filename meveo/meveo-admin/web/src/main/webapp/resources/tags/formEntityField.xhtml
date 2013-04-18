@@ -22,6 +22,9 @@
 	<cc:attribute name="time" default="false" />
 	<cc:attribute name="cols" default="20" />
 	<cc:attribute name="rows" default="5" />
+	<cc:attribute name="useConverter" default="false"/>
+	<cc:attribute name="validateUnique" default="false"/>
+	<cc:attribute name="validateRib" default="false"/>
 	<cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
 	<cc:attribute name="listElements" required="false"/>
@@ -82,7 +85,7 @@
 
 				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}" disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}"
 					entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" field="#{cc.attrs.childField}" textArea="#{cc.attrs.textArea}"
-					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}" validateRib="#{cc.attrs.validateRib}" />
+					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}" maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}" required="#{cc.attrs.required}" useConverter="#{cc.attrs.useConverter}" validateUnique="#{cc.attrs.validateUnique}"  validateRib="#{cc.attrs.validateRib}" />
 			</ui:fragment>
 		</ui:fragment>
 
