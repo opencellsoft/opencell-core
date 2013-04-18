@@ -519,7 +519,7 @@ input[type="submit"]:hover,
   border : 1px solid #c2c2c2;
   display : block !important;
   width : 100%;
-  //overflow : hidden;
+  overflow : hidden;
   
 }
 .ui-state-hover
@@ -654,7 +654,7 @@ div.body > table > thead,
     float : left;
     //background : red;
     display : block;
-    paddin
+   
 }
 .ui-picklist-list,
 .ui-tree
@@ -832,6 +832,8 @@ td[role="gridcell"]
 .ui-widget-header td[role="columnheader"]
 {
   border-bottom : 1px solid #e8eded;
+  //background : red;
+  width : 10%;
 }
 .ui-datatable .ui-widget-header
 {
@@ -982,9 +984,14 @@ table[id="j_idt27:formId:j_idt91"]  tr td[role="gridcell"] > table
 {
   margin-top : -5px;
 }
+form[id="tabView:invoiceSubCategoryCountries_results_form"] div[id="tabView:datatable"] tfoot tr td.ui-paginator-bottom
+{
+  width : 147% ;
+  float : left;
+}
 td[id="tabView:datatable_paginator_bottom"]
 {
-  width : 138% !Important;
+  width : 138% ;
   float : none;
   display : inline-block;
   margin-left : -3px !important;
@@ -1001,13 +1008,13 @@ table[id="formCustomerPanel:formCustomer:tabView:countryPanel"] > tbody > tr td:
 }
 .ui-dialog-titlebar
 {
-  width : 97% !important;
+  width : 95% !important;
 }
 .ui-dialog-titlebar .ui-dialog-titlebar-close:hover
 {
   background : #b8eff7;
 }
-div[id^="formCustomerPanel:formCustomer:tabView"],
+div[id="formCustomerPanel:formCustomer:tabView"],
 div[id="parentTab:formCustomerAccountPanel:formCustomerAccount:childTab"],
 div[id="parentTab:formBillingAccountPanel:formId:childTab"],
 div[id="userAccountFormPanel:formId:userAccountTab"]
@@ -1036,4 +1043,48 @@ div[id="formCustomerPanel:formCustomer:tabView:j_idt139"] div[id^="formCustomerP
 table[id="formCustomerPanel:formCustomer:tabView:countryPanel"] div[id^="formCustomerPanel:formCustomer:tabView"]
 {
   width : 120px !important;
+}
+table[id="j_idt27:formId:j_idt115"] > tr > td,
+table[id="j_idt27:formId:j_idt117"] tbody tr td fieldset[id^="j_id"]
+{
+  width : 174%;
+ 
+}
+/*title and search panel widen fix */
+table[id*="searchForm"]  > tbody > tr
+{
+ // background: red !important;
+ 
+  color : red !important;
+  width : 100% !important;
+  float : left;
+}
+/* account billing textfields fixes */
+label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt278"],
+label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt290"],
+label[id="parentTab:formBillingAccountPanel:formId:childTab:j_idt283"]
+{
+  margin-left : -12px;
+}
+input[id="parentTab:formBillingAccountPanel:formId:childTab:externalRef2"],
+div[id="parentTab:formBillingAccountPanel:formId:childTab:title_select"],
+input[id="parentTab:formBillingAccountPanel:formId:childTab:firstName_select"]
+{
+  margin-left : -15px;
+}
+/* detail table double border fix */
+.ui-paginator-top,
+.ui-paginator-bottom
+{
+  border : none;
+}
+table[id="searchPanel:searchForm:j_idt91:j_idt29"]
+{
+  margin-left : 37px;
+}
+button[id^="formCustomerPanel:formCustomer:tabView:"],
+button[id^="parentTab:formBillingAccountPanel"]
+{
+ 
+  margin-top : 14px;
 }
