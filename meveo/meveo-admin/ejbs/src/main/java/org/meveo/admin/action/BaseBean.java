@@ -615,8 +615,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
     
     public void onRowSelect(SelectEvent event){  
-        IEntity i = (T)event.getObject();  
-        System.out.println("OnRowSelect : "+i!=null?i.getId():null);  
   
     } 
 
