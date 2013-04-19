@@ -77,13 +77,13 @@ public class PricePlanMatrix extends AuditableEntity {
 	private Long maxSubscriptionAgeInMonth;
 
 	@Column(name = "CRITERIA_1")
-	private String criteria1Value;
+	private String criteria1Value="*";
 
 	@Column(name = "CRITERIA_2")
-	private String criteria2Value;
+	private String criteria2Value="*";
 
 	@Column(name = "CRITERIA_3")
-	private String criteria3Value;
+	private String criteria3Value="*";
 
 	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
