@@ -70,5 +70,13 @@ public class CalendarService extends PersistenceService<Calendar> {
 				.getQuery(em);
 		return query.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Calendar> listCounterCalendars() {
+		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
+				.addCriterionEnum("type", CalendarTypeEnum.COUNTER)
+				.getQuery(em);
+		return query.getResultList();
+	}
 
 }

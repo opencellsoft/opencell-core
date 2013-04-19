@@ -50,8 +50,6 @@ import org.primefaces.model.SortOrder;
 /**
  * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
  * 
- * @author Ignas
- * @created 2009.09.21
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
@@ -93,7 +91,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @RequestParam()
     private Instance<String> edit;
 
-    private Boolean editSaved;
+    private boolean editSaved;
 
     /**
      * Request parameter. A custom back view page instead of a regular list page
@@ -605,7 +603,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public boolean isEdit() {
-        if (edit.get() != null && !edit.get().equals(editSaved != null ? editSaved.toString() : null)) {
+        if (edit!=null && edit.get() != null && !edit.get().equals(""+editSaved)) {
             editSaved = Boolean.valueOf(edit.get());
         }
         return editSaved;

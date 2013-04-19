@@ -40,10 +40,6 @@ import javax.persistence.TemporalType;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @Table(name = "BILLING_CHARGE_INSTANCE")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CHARGE_INSTANCE_SEQ")
@@ -77,8 +73,8 @@ public class ChargeInstance extends BusinessEntity {
     @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
     protected BigDecimal amountWithoutTax;
 
-    @Column(name = "AMOUNT_2", precision = 23, scale = 12)
-    protected BigDecimal amount2;
+    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+    protected BigDecimal amountWithTax;
 
     @Column(name = "CRITERIA_1")
     protected String criteria1;
@@ -90,19 +86,12 @@ public class ChargeInstance extends BusinessEntity {
     protected String criteria3;
 
     @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ChargeApplication> chargeApplications = new HashSet<ChargeApplication>();
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_LANGUAGE_ID")
-    private TradingLanguage tradingLanguage;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_CURRENCY_ID")
-    private TradingCurrency tradingCurrency ;
+    protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
     
     
     @Column(name = "PR_DESCRIPTION", length = 100)
-	private String prDescription;
+    protected String prDescription;
+    
 
     public String getCriteria1() {
         return criteria1;
@@ -179,20 +168,12 @@ public class ChargeInstance extends BusinessEntity {
         this.chargeDate = chargeDate;
     }
 
-    public Set<ChargeApplication> getChargeApplications() {
-        return chargeApplications;
-    }
-
-    public void setChargeApplications(Set<ChargeApplication> chargeApplications) {
-        this.chargeApplications = chargeApplications;
-    }
-
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
+	public Set<WalletOperation> getWalletOperations() {
+		return walletOperations;
 	}
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
+	public void setWalletOperations(Set<WalletOperation> walletOperations) {
+		this.walletOperations = walletOperations;
 	}
 
 	public String getPrDescription() {
@@ -203,23 +184,12 @@ public class ChargeInstance extends BusinessEntity {
 		this.prDescription = prDescription;
 	}
 
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
 	}
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
 	}
-
-	public BigDecimal getAmount2() {
-		return amount2;
-	}
-
-	public void setAmount2(BigDecimal amount2) {
-		this.amount2 = amount2;
-	}
-	
-	
-     
 
 }

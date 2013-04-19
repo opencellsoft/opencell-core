@@ -23,7 +23,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.meveo.model.ProviderBusinessEntity;
+import org.meveo.model.BusinessEntity;
 
 /**
  * @author R.AITYAAZZA
@@ -33,7 +33,7 @@ import org.meveo.model.ProviderBusinessEntity;
 @Table(name = "BILLING_INVOICE_CAT")
 // @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
 // "BILLING_INVOICE_CAT_SEQ")
-public class InvoiceCategory extends ProviderBusinessEntity {
+public class InvoiceCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 

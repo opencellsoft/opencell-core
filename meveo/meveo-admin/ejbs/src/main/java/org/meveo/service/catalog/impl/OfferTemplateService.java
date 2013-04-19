@@ -19,13 +19,13 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.service.base.ProviderBusinessService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * Offer Template service implementation.
  * 
  */
 @Stateless @LocalBean
-public class OfferTemplateService extends ProviderBusinessService<OfferTemplate> {
+public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 }

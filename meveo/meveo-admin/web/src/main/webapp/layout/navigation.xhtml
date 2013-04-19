@@ -29,6 +29,13 @@
 
 			</p:submenu>
 
+
+		    <p:menuitem value="#{messages['menu.jobs']}" id="jobs" outcome="jobTimers"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}" /> 
+
+			<p:menuitem value="#{messages['menu.activeTimers']}" id="timers" outcome="timers"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+	  			
 			<!--
 			<rich:menuItem id="userRoles" rendered="#{identity.hasPermission('administration','roleManagement')}">
 				<h:link outcome="userRoles">
@@ -93,9 +100,9 @@
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
 
-			<!-- <p:menuitem id="sellers"
+			<p:menuitem id="sellers"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="sellers" value="#{messages['menu.sellers']}" /> -->
+				outcome="sellers" value="#{messages['menu.sellers']}" />
 
 			<!-- <p:menuitem id="titles" 
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
@@ -216,6 +223,9 @@
 
 			<p:menuitem id="serviceTemplates" outcome="serviceTemplates"
 				value="#{messages['menu.serviceTemplates']}" />
+				
+				<p:menuitem id="serviceUsageChargeTemplates" outcome="serviceUsageChargeTemplates"
+				value="#{messages['menu.serviceUsageChargeTemplates']}" />
 
 			<p:submenu id="charges" label="#{messages['menu.charges']}">
 
@@ -227,16 +237,19 @@
 					outcome="oneShotChargeTemplates"
 					value="#{messages['menu.oneShotChargeTemplates']}" />
 
-				<!-- <p:menuitem id="usageChargeTemplates" outcome="usageChargeTemplates"
-					value="#{messages['menu.usageChargeTemplates']}" /> -->
+				<p:menuitem id="usageChargeTemplates" outcome="usageChargeTemplates"
+					value="#{messages['menu.usageChargeTemplates']}" /> 
 
 			</p:submenu>
 
 			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes"
 				value="#{messages['menu.pricePlanMatrixes']}" />
+				
+           <p:menuitem id="counterTemplates" outcome="counterTemplates"
+				value="#{messages['menu.counterTemplates']}" />
 
-			<!-- <p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
-				value="#{messages['menu.discountPlanMatrixes']}" /> -->
+			<!--<p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
+				value="#{messages['menu.discountPlanMatrixes']}" />-->
 
 			<!-- <p:menuitem id="serviceParameterTemplates"
 				outcome="serviceParameterTemplates"

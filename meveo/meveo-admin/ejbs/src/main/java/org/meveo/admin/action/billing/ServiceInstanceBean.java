@@ -32,14 +32,11 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.resource.impl.OfferInstanceService;
 
 /**
  * Standard backing bean for {@link ServiceInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
  * 
  */
 @Named
@@ -56,8 +53,6 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
     @Inject
     private ServiceInstanceService serviceInstanceService;
     
-    @Inject
-    private OfferInstanceService offerInstanceService;
 
     @Inject
     private Messages messages;
@@ -176,7 +171,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
     public String suspendService() {
         log.info("closeAccount serviceInstanceId:" + entity.getId());
         try {
-            serviceInstanceService.serviceSusupension(entity, new Date(), getCurrentUser());
+            serviceInstanceService.serviceSuspension(entity, new Date(), getCurrentUser());
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
             return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {

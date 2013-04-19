@@ -82,6 +82,34 @@
 			<to-view-id>/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+				<navigation-case>
+			<from-outcome>sellers</from-outcome>
+			<to-view-id>/pages/admin/sellers/sellers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>sellerDetail</from-outcome>
+			<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>jobTimers</from-outcome>
+			<to-view-id>/pages/admin/job/timers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>jobTimerDetail</from-outcome>
+			<to-view-id>/pages/admin/job/timer.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>timers</from-outcome>
+			<to-view-id>/pages/admin/job/ejbTimers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
 		<navigation-case>
 			<from-outcome>users</from-outcome>
 			<to-view-id>/pages/admin/meveoUsers/users.xhtml</to-view-id>
@@ -411,10 +439,21 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>serviceUsageChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceUsageChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>serviceTemplateDetail</from-outcome>
 			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
 		<navigation-case>
 			<from-outcome>serviceParameterTemplates</from-outcome>
 			<to-view-id>/pages/catalog/serviceParameterTemplates/serviceParameterTemplates.xhtml</to-view-id>
@@ -493,6 +532,27 @@
 		<navigation-case>
 			<from-outcome>invoiceSubCategoryDetail</from-outcome>
 			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>usageChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>usageChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>counterTemplates</from-outcome>
+			<to-view-id>/pages/catalog/counterTemplates/counterTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>counterTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/counterTemplates/counterTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<!-- CRM -->

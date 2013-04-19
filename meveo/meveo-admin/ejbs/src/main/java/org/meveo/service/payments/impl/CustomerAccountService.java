@@ -152,7 +152,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 			}
 			balance = balanceDebit.subtract(balanceCredit);
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-			int balanceFlag = Integer.parseInt(param.getProperty("balance.flagLDE"));
+			int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier","1"));
 			balance = balance.multiply(new BigDecimal(balanceFlag));
 			log.info(
 					"successfully end customerAccountBalanceExligible with customerAccount code:#0 , balanceExigible:#1 ",

@@ -54,10 +54,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 	private RecurringChargeTemplateService recurringChargeTemplateService;
 
 	@EJB
-	private ChargeApplicationService chargeApplicationService;
+	private WalletOperationService chargeApplicationService;
 
-	@EJB
-	private RatedTransactionService ratedTransactionService;
 
 	@SuppressWarnings("unchecked")
 	public P findByCodeAndService(String code, Long subscriptionId) {
@@ -109,8 +107,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		chargeInstance.setChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setServiceInstance(serviceInst);
-		recurringChargeInstanceService.create(chargeInstance, creator,
-				recurringChargeTemplate.getProvider());
+		recurringChargeInstanceService.create(chargeInstance, creator,recurringChargeTemplate.getProvider());
 
 	}
 
@@ -122,25 +119,14 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 
 		log.debug(
 				"recurringChargeDeactivation : recurringChargeInstanceId=#0,ChargeApplications size=#1",
-				recurringChargeInstance.getId(), recurringChargeInstance.getChargeApplications()
+				recurringChargeInstance.getId(), recurringChargeInstance.getWalletOperations()
 						.size());
 
 		recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 
-		chargeApplicationService.cancelChargeApplications(recurringChargeInstanId, null, updater);
+		//chargeApplicationService.cancelChargeApplications(recurringChargeInstanId, null, updater);
 
 		recurringChargeInstanceService.update(recurringChargeInstance, updater);
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public void chargeInstanceCancellation(long chargeInstanceId, User updater)
-			throws BusinessException {
-		ChargeInstance chargeInstance = findById(chargeInstanceId, true);
-		P p = (P) chargeInstance;
-		p.setStatus(InstanceStatusEnum.CANCELED);
-		chargeApplicationService.cancelChargeApplications(chargeInstanceId, null, updater);
-		this.update(p, updater);
 
 	}
 
@@ -164,9 +150,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		for (RecurringChargeInstance recurringChargeInstance : serviceInst
 				.getRecurringChargeInstances()) {
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-			recurringChargeInstance.setSubscriptionDate(subscriptionDate);
+			//recurringChargeInstance.setSubscriptionDate(subscriptionDate);
 			recurringChargeInstance.setTerminationDate(null);
-			// TODO: Why change the charge date ??
 			recurringChargeInstance.setChargeDate(subscriptionDate);
 			recurringChargeInstanceService.update(recurringChargeInstance);
 		}

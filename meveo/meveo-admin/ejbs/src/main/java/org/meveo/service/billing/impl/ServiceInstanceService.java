@@ -34,7 +34,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationChgStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -46,12 +45,15 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.Wallet;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.ServiceUsageChargeTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -81,7 +83,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
     @EJB
-    private ChargeApplicationService chargeApplicationService;
+    private UsageChargeInstanceService usageChargeInstanceService;
+    
+    @EJB
+    private CounterInstanceService counterInstanceService;
+
+    @EJB
+    private WalletOperationService chargeApplicationService;
     
     @EJB
     private CustomerAccountService customerAccountService;
@@ -156,6 +164,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
                     terminationChargeTemplate, serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, creator);
         }
+        
+        for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()){        	
+        	usageChargeInstanceService.usageChargeInstanciation(serviceInstance, serviceUsageChargeTemplate.getChargeTemplate(),serviceInstance.getSubscriptionDate(),  creator);
+        	if(serviceUsageChargeTemplate.getCounterTemplate()!=null){
+        		counterInstanceService.counterInstanciation(subscription.getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
+        	}
+        }
     }
 
     public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax,
@@ -223,7 +238,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             oneShotChargeInstance.setStatusDate(new Date());
             oneShotChargeInstanceService.update(oneShotChargeInstance);
         }
-
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
+        	usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
+        }
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance.setStatusDate(new Date());
         update(serviceInstance, creator);
@@ -307,6 +324,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
         }
 
+        for(UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()){
+        	usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate);
+        }
+        
         serviceInstance.setTerminationDate(terminationDate);
         serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
         serviceInstance.setStatusDate(new Date());
@@ -327,7 +348,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(customerAccountService.isAllServiceInstancesTerminated(customerAccount)){
         	for(BillingAccount ba : customerAccount.getBillingAccounts()){
         		for(UserAccount ua:ba.getUsersAccounts()){
-        			Wallet wallet=ua.getWallet();
+        			WalletInstance wallet=ua.getWallet();
         			for(RatedTransaction rt:wallet.getRatedTransactions()){
         				rt.setDoNotTriggerInvoicing(false);
         				ratedTransactionService.update(rt);
@@ -338,6 +359,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         
     }
 
+    
     public void updateTerminationMode(ServiceInstance serviceInstance, Date terminationDate, User user)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         log.info("updateTerminationMode terminationDate=#0,serviceInstanceId=#1", terminationDate, serviceInstance
@@ -363,7 +385,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     + serviceCode + ",subscription Code" + subscription.getCode());
         }
 
-        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+        /*for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
             chargeApplicationService.cancelChargeApplications(recurringChargeInstance.getId(),
                     ChargeApplicationModeEnum.AGREEMENT, user);
@@ -376,13 +398,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             chargeApplicationService.cancelOneShotChargeApplications(oneShotChargeInstance,
                     OneShotChargeTemplateTypeEnum.TERMINATION, user);
         }
+        */
 
         terminateService(serviceInstance, terminationDate, newReason.isApplyAgreement(), newReason
                 .isApplyReimbursment(), newReason.isApplyTerminationCharges(), user);
 
     }
 
-    public void serviceSusupension(ServiceInstance serviceInstance, Date terminationDate, User updater)
+    public void serviceSuspension(ServiceInstance serviceInstance, Date suspensionDate, User updater)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
         String serviceCode = serviceInstance.getCode();
@@ -400,14 +423,19 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
             if (recurringChargeInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-                chargeInstanceService.recurringChargeDeactivation(recurringChargeInstance.getId(), terminationDate,
+                chargeInstanceService.recurringChargeDeactivation(recurringChargeInstance.getId(), suspensionDate,
                         updater);
             }
 
         }
+        
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()){
+        	usageChargeInstanceService.suspendUsageChargeInstance(usageChargeInstance, suspensionDate);
+        }
+        
         serviceInstance.setStatus(InstanceStatusEnum.SUSPENDED);
         serviceInstance.setStatusDate(new Date());
-        serviceInstance.setTerminationDate(terminationDate);
+        serviceInstance.setTerminationDate(suspensionDate);
         update(serviceInstance, updater);
     }
 
@@ -439,12 +467,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 chargeInstanceService.recurringChargeReactivation(serviceInstance, subscription.getCode(),
                         subscriptionDate, updater);
             }
-
         }
-
+        
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()){
+        	usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, subscriptionDate);
+        }
         update(serviceInstance, updater);
     }
 
+    /*
     public void cancelService(ServiceInstance serviceInstance, User updater) throws IncorrectServiceInstanceException,
             BusinessException {
 
@@ -482,7 +513,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setStatus(InstanceStatusEnum.CANCELED);
         serviceInstance.setStatusDate(new Date());
         update(serviceInstance, updater);
-    }
+    }*/
 
     public void serviceTermination(ServiceInstance serviceInstance, Date terminationDate, User updater)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -513,12 +544,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     serviceInstance.getQuantity(), updater);
         }
 
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()){
+        	usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate);
+        }
+        
         serviceInstance.setTerminationDate(terminationDate);
         serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
         serviceInstance.setStatusDate(new Date());
         update(serviceInstance, updater);
     }
 
+    /*
     public void serviceCancellation(ServiceInstance serviceInstance, Date terminationDate, User updater)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
@@ -545,6 +581,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
         serviceInstance.setStatusDate(new Date());
         update(serviceInstance, updater);
-    }
+    }*/
 
 }

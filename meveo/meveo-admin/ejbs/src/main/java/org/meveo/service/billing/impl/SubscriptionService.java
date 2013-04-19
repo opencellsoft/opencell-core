@@ -169,14 +169,14 @@ public class SubscriptionService extends BusinessService<Subscription>
 			throw new IncorrectSusbcriptionException(
 					"subscription does not exist. code=" + subscriptionCode);
 		}
-		List<ServiceInstance> serviceInstances = subscription
+		/*List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
 			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
 				serviceInstanceService.serviceCancellation(serviceInstance,
 						terminationDate, updater);
 			}
-		}
+		}*/
 		subscription.setTerminationDate(terminationDate);
 		subscription.setStatus(SubscriptionStatusEnum.CANCELED);
 		subscription.setStatusDate(new Date());
@@ -199,7 +199,7 @@ public class SubscriptionService extends BusinessService<Subscription>
 				.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
 			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
-				serviceInstanceService.serviceSusupension(serviceInstance,
+				serviceInstanceService.serviceSuspension(serviceInstance,
 						suspensionDate, updater);
 			}
 		}
