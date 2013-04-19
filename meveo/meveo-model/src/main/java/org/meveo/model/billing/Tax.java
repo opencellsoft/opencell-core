@@ -36,7 +36,7 @@ public class Tax extends ProviderBusinessEntity {
 	@Column(name = "ACCOUNTING_CODE", length = 255)
 	private String accountingCode;
 
-	@Column(name = "PERCENT", precision = 19, scale = 8)
+	@Column(name = "PERCENT", precision = 19, scale = 4)
 	private BigDecimal percent;
 
 	public String getAccountingCode() {

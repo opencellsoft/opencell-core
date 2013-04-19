@@ -37,10 +37,10 @@
 			<p:fieldset legend="#{messages['commons.contacts']}">
 				<hf:formField label="#{messages['contactInformation.email']}"
 					field="email" size="50" maxlength="100" useConverter="false"
-					required="true" />
+					required="true" validateEmail="true" />
 				<hf:formField label="#{messages['contactInformation.genericMail']}"
 					field="genericMail" size="50" maxlength="100" useConverter="false"
-					required="true" />
+					required="true" validateEmail="true" />
 				<hf:formField label="#{messages['contactInformation.phone']}"
 					field="phone" size="50" maxlength="15" />
 				<hf:formField label="#{messages['contactInformation.mobile']}"

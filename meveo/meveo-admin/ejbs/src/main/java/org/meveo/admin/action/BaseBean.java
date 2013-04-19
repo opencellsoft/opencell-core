@@ -69,7 +69,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     @CurrentProvider
-    private Provider currentProvider;
+    protected Provider currentProvider;
 
     @Inject
     ProviderService providerService;
@@ -627,17 +627,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public List<TradingLanguage> getProviderLanguages() {
-        List<TradingLanguage> result = new ArrayList<TradingLanguage>();
-        if (getCurrentProvider() != null) {
-            for (TradingLanguage tradingLanguage : getCurrentProvider().getTradingLanguages()) {
-                if (!getCurrentProvider().getLanguage().getLanguageCode().equalsIgnoreCase(tradingLanguage.getLanguage().getLanguageCode())) {
-                    result.add(tradingLanguage);
-                }
-            }
-        }
-
-        log.info("getProviderLanguages result size=#0", result != null ? result.size() : null);
-        return result;
+        return  getCurrentProvider().getTradingLanguages();
     }
 
     public String getProviderLanguageCode() {

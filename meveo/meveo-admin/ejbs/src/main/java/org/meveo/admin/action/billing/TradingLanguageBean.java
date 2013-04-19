@@ -21,10 +21,12 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
@@ -87,21 +89,39 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     public String saveOrUpdate(boolean killConversation) {
         String back = null;
         try {
-            Provider currentProvider = providerService.findById(getCurrentProvider().getId());
             for (TradingLanguage tr : currentProvider.getTradingLanguages()) {
                 if (tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getLanguage().getLanguageCode()) && !tr.getId().equals(entity.getId())) {
-                    throw new Exception();
+                    throw new BusinessEntityException();
                 }
             }
-            
-
             currentProvider.addTradingLanguage(entity);
             back = super.saveOrUpdate(killConversation);
-        } catch (Exception e) {
+        } catch (BusinessEntityException e) {
             messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
-        }
+        }catch (Exception e) {
+			e.printStackTrace();
+
+            messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
+		}
 
         return back;
+    }
+    
+    public void delete(Long id) {
+        try {
+            log.info(String.format("Deleting entity TradingLanguage with id = %s",  id));
+            getPersistenceService().remove(id);
+            messages.info(new BundleKey("messages", "delete.successful"));
+        } catch (Throwable t) {
+            if (t.getCause() instanceof EntityExistsException) {
+                log.info("delete was unsuccessful because entity is used in the system", t);
+                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+
+            } else {
+                log.info("unexpected exception when deleting!", t);
+                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            }
+        }
     }
 
     public void onRowSelect(SelectEvent event){ 
