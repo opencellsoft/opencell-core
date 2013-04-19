@@ -627,12 +627,15 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public List<TradingLanguage> getProviderLanguages() {
-        return  getCurrentProvider().getTradingLanguages();
+    	Provider provider=providerService.findById(currentProvider.getId(), true);
+        return  provider.getTradingLanguages();
     }
 
     public String getProviderLanguageCode() {
         if (getCurrentProvider() != null) {
-            return getCurrentProvider().getLanguage().getLanguageCode();
+
+        	Provider provider=providerService.findById(currentProvider.getId(), true);
+            return provider.getLanguage().getLanguageCode();
         }
         return "";
     }

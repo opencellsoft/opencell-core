@@ -107,23 +107,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
         return back;
     }
     
-    public void delete(Long id) {
-        try {
-            log.info(String.format("Deleting entity TradingLanguage with id = %s",  id));
-            getPersistenceService().remove(id);
-            messages.info(new BundleKey("messages", "delete.successful"));
-        } catch (Throwable t) {
-            if (t.getCause() instanceof EntityExistsException) {
-                log.info("delete was unsuccessful because entity is used in the system", t);
-                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-            } else {
-                log.info("unexpected exception when deleting!", t);
-                messages.error(new BundleKey("messages", "error.delete.unexpected"));
-            }
-        }
-    }
-
+  
     public void onRowSelect(SelectEvent event){ 
     	if(event.getObject() instanceof Language){
     		  Language language = (Language)event.getObject();  
