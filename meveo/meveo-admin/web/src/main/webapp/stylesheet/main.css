@@ -571,6 +571,12 @@ input[type="submit"]:hover
   -webkit-border-radius: 0px 0px 8px 8px;
    border-radius: 0px 0px 8px 8px;
 }
+/* detail table double border fix */
+.ui-paginator-top,
+.ui-paginator-bottom
+{
+  border : none;
+}
 div.body > table > thead,
 .panels > table  > thead
 {
@@ -825,7 +831,7 @@ select[disabled]
 td[role="gridcell"]
 {
   margin : 0px ;
-  padding : 5px 2px;
+  padding : 2px 2px;
 }
 /* SELECTION MENU LIST */
 .ui-selectonemenu-list
@@ -841,35 +847,23 @@ td[role="gridcell"]
 {
   background : #b8eff7;
 }
+/* tabs to widen */
+.ui-tabs-panels div[id*="childTab"]
+{
+   width : 870px !important;
+}
+.ui-tabs-panels fieldset[id*="childTab"]
+{
+  width : 800px !important;
+}
 
-/* --------SPECIFIC CSS FIXES HERE---------- */
+
 table[role="grid"]
 {
   border : none;
 }
- /* magnify button alignment fix */
-/*fix on not aligned magnify button */
-table[id^="formPanel:languagesFormId:languageSelectedId"] > tbody > tr > td[role="gridcell"] input,
-table[id^="formPanel:currenciesFormId:"] > tbody > tr  > td[role="gridcell"] input[onclick*="dlg"],
-table[id^="formPanel:formId:"] > tbody > tr > td td[role="gridcell"] input[onclick*="dlg"],
-table[id^="tabView:formPanel:formId:categorySelectId"] input[onclick*="dlg"],
-table[id^="tabView:formPanelTax:formTax"] input[onclick*="dlg"],
-table[id^="formPanel:reccuringChargeId"] input[onclick*="dlg"],
-td[role="gridcell"] input[onclick*="dlg"]
- 
-{
-  margin-top: -9px;
-  //background : red !important;
-}
-/* restore magnify fix on this page */
-div[id^="formCustomerPanel:formCustomer:tabView"] td[role="gridcell"] input[onclick*="dlg"]
-{
-  margin-top: 0px;
-}
-/* label and value recolor for details in users */
-table[id^="formPanel:languagesFormId"] td[role="gridcell"] > table > tbody > tr > td > span,
-table[id^="formPanel:currenciesFormId:"] td[role="gridcell"] > table > tbody > tr > td > span,
-table[id^="formPanel:formId:"] td[role="gridcell"] > table > tbody > tr > td > span
-{
-   color : #649fa8 ;
-}
+
+/* --------SPECIFIC CSS FIXES HERE---------- */
+
+
+
