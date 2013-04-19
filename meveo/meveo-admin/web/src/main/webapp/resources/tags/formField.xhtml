@@ -31,6 +31,7 @@
 	<cc:attribute name="cols" default="20" />
 	<cc:attribute name="rows" default="5" />
 	<cc:attribute name="childField" required="false" />
+	<cc:attribute name="childField2" required="false" />
 	<cc:attribute name="isMessage" required="false" />
 	<cc:attribute name="showOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
@@ -372,12 +373,22 @@
 					<c:if test="#{!empty cc.attrs.dualListModel}">
 						<c:set var="elements" value="#{cc.attrs.dualListModel}" />
 					</c:if>
-					<p:pickList required="#{cc.attrs.required}"
-						id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
-						itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}"
-						disabled="#{not cc.attrs.edit}">
-						<s:objectConverter />
-					</p:pickList>
+					<c:if test="#{not empty(cc.attrs.childField2)}">
+						<p:pickList required="#{cc.attrs.required}"
+							id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
+							itemLabel="#{elem[cc.attrs.childField]} #{elem[cc.attrs.childField2]}"
+							itemValue="#{elem}" disabled="#{not cc.attrs.edit}">
+							<s:objectConverter />
+						</p:pickList>
+					</c:if>
+					<c:if test="#{empty(cc.attrs.childField2)}">
+						<p:pickList required="#{cc.attrs.required}"
+							id="#{cc.attrs.id}_picklist" value="#{elements}" var="elem"
+							itemLabel="#{elem[cc.attrs.childField]}" itemValue="#{elem}"
+							disabled="#{not cc.attrs.edit}">
+							<s:objectConverter />
+						</p:pickList>
+					</c:if>
 				</p:panelGrid>
 			</ui:fragment>
 		</ui:fragment>
