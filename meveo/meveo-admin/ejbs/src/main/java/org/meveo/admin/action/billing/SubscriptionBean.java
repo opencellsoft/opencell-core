@@ -368,7 +368,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		return results;
 	}
 
-	public List<WalletOperation> getRecurringChargeApplications() {
+	public List<WalletOperation> getRecurringWalletOperations() {
 		log.info("run recurringChargeApplications");
 		if (this.recurringChargeInstance == null || this.recurringChargeInstance.getId() == null) {
 			return null;

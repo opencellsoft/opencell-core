@@ -389,8 +389,8 @@
 												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
 												field="amountWithoutTax" />
 											<hftl:column
-												label="#{messages['oneShotChargeInstance.amount2']}"
-												field="amount2" />
+												label="#{messages['oneShotChargeInstance.amountWithTax']}"
+												field="amountWithTax" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" isMessage="true" />
@@ -465,17 +465,17 @@
 												</h:panelGrid>
 
 												<h:panelGrid columns="2">
-													<p:outputLabel for="amount2"
-														value="#{messages['oneShotChargeInstance.amount2']}" />
+													<p:outputLabel for="amountWithTax"
+														value="#{messages['oneShotChargeInstance.amountWithTax']}" />
 													<h:inputText rendered="#{subscriptionBean.edit}"
-														id="amount2"
-														value="#{subscriptionBean.oneShotChargeInstance.amount2}"
+														id="amountWithTax"
+														value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 														size="5" converter="bigDecimalConverter"
 														onkeyup="validateAmounts();"
 														disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 													</h:inputText>
 													<h:outputText rendered="#{!subscriptionBean.edit}"
-														value="#{subscriptionBean.oneShotChargeInstance.amount2}"
+														value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 														style="font-weight:bold;" converter="bigDecimalConverter" />
 												</h:panelGrid>
 												<hf:formField
@@ -497,27 +497,27 @@
 														size="5" maxlength="3">
 													</h:inputText>
 												</h:panelGrid>
-												<a:outputPanel id="oneShotChargeApplicationsPanel"
+												<a:outputPanel id="oneShotWalletOperationsPanel"
 													rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
 													<span style="height: 1px" />
 													<h:outputText value="#{messages['commons.noItems']}"
-														rendered="#{empty subscriptionBean.oneShotChargeApplications}" />
+														rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
 													<h:panelGrid width="100%" columns="1" border="0"
 														style="padding:0px; margin:0px;text-align: right;"
-														rendered="#{not empty subscriptionBean.oneShotChargeApplications}">
+														rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
 														<h:outputText
-															value="#{subscriptionBean.oneShotChargeApplications.size} #{messages['commons.itemsFound']}" />
+															value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
 
-														<rich:dataTable id="oneShotChargeApplicationTable"
-															value="#{subscriptionBean.oneShotChargeApplications}"
+														<rich:dataTable id="oneShotWalletOperationTable"
+															value="#{subscriptionBean.oneShotWalletOperations}"
 															var="shotApplication"
 															onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 															onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-															reRender="oneShotChargeApplicationScroller" rows="10">
+															reRender="oneShotWalletOperationScroller" rows="10">
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.applicationDate']}" />
+																		value="#{messages['walletOperation.applicationDate']}" />
 																</f:facet>
 																<h:outputText value="#{shotApplication.applicationDate}">
 																	<f:convertDateTime pattern="dd/MM/yyyy" />
@@ -526,7 +526,7 @@
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.description']}" />
+																		value="#{messages['walletOperation.description']}" />
 																</f:facet>
 																<h:outputText value="#{shotApplication.description}">
 																</h:outputText>
@@ -534,7 +534,7 @@
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.amountWithoutTax']}" />
+																		value="#{messages['walletOperation.amountWithoutTax']}" />
 																</f:facet>
 																<h:outputText
 																	value="#{shotApplication.amountWithoutTax}" />
@@ -542,22 +542,22 @@
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.amount2']}" />
+																		value="#{messages['walletOperation.amountWithTax']}" />
 																</f:facet>
-																<h:outputText value="#{shotApplication.amount2}" />
+																<h:outputText value="#{shotApplication.amountWithTax}" />
 															</rich:column>
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.status']}" />
+																		value="#{messages['walletOperation.status']}" />
 																</f:facet>
 																<h:outputText
 																	value="#{messages[shotApplication.status.label]}" />
 															</rich:column>
 
 														</rich:dataTable>
-														<rich:dataScroller id="oneShotChargeApplicationScroller"
-															for="oneShotChargeApplicationTable"
+														<rich:dataScroller id="oneShotWalletOperationScroller"
+															for="oneShotWalletOperationTable"
 															renderIfSinglePage="false" maxPages="10" />
 													</h:panelGrid>
 												</a:outputPanel>
@@ -568,22 +568,22 @@
     var validAmount;
     var amountWithoutTax;
     var chargeTemplate;
-    var amount2;
+    var amountWithTax;
     var calculatedAmount;
     var calculatedAmountWithoutTax;
     var formatedValue;
     var formatedValueHT;
 
     function caseTTCamount(){
-    	if ((document.getElementById('#{rich:clientId('amount2')}').value!='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value=='')) 
+    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value=='')) 
     	{return true;} else {return false;}
     }
     function caseHTamount(){
-    	if ((document.getElementById('#{rich:clientId('amount2')}').value=='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='')) 
+    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='')) 
     	{return true;} else {return false;}
     }
     function caseHTandTTCamouts(){
-    	if ((document.getElementById('#{rich:clientId('amount2')}').value!='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='')) 
+    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='')) 
     	{return true;} else {return false;}
     }
 	
@@ -603,7 +603,7 @@
 		return text;
 	}
 	function getAlertTextForCaseTTCamount(){
-		var text =  'Attention : pour le Montant TTC '+amount2 +', le Montant HT attendu est '+calculatedAmountWithoutTax;
+		var text =  'Attention : pour le Montant TTC '+amountWithTax +', le Montant HT attendu est '+calculatedAmountWithoutTax;
 		return text;
 	}
 	function getAlertTextForCaseHTamount(){
@@ -617,8 +617,8 @@
 	function validateAmounts(){
        	amountWithoutTax = document.getElementById('#{rich:clientId('amountWithoutTax')}').value; 
     	chargeTemplate= document.getElementById('#{rich:clientId('chargeTemplateSelectId')}').value;
-    	amount2 = document.getElementById('#{rich:clientId('amount2')}').value;
-    	if ((document.getElementById('#{rich:clientId('amount2')}').value=='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value=='')) 
+    	amountWithTax = document.getElementById('#{rich:clientId('amountWithTax')}').value;
+    	if ((document.getElementById('#{rich:clientId('amountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('amountWithoutTax')}').value=='')) 
     	{validAmount = true;}
     	else {
     		if(document.getElementById('#{rich:clientId('amountWithoutTax')}').value!='') {
@@ -626,12 +626,12 @@
     	getValidFormatHT(amountWithoutTax);
 		amountWithoutTax = formatedValueHT;
 		}
-    	if(document.getElementById('#{rich:clientId('amount2')}').value!='') {
-    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplate, amount2, function(result) {calculatedAmountWithoutTax=result;}, exceptionHandler);
-    	getValidFormat(amount2);
-		amount2 = formatedValue;
+    	if(document.getElementById('#{rich:clientId('amountWithTax')}').value!='') {
+    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplate, amountWithTax, function(result) {calculatedAmountWithoutTax=result;}, exceptionHandler);
+    	getValidFormat(amountWithTax);
+		amountWithTax = formatedValue;
     	}
-    	if (calculatedAmount==amount2)
+    	if (calculatedAmount==amountWithTax)
 		 {validAmount = true;}
 		 else {validAmount = false;}
     	}
@@ -730,8 +730,8 @@
 												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
 												field="amountWithoutTax" />
 											<hftl:column
-												label="#{messages['oneShotChargeInstance.amount2']}"
-												field="amount2" />
+												label="#{messages['oneShotChargeInstance.amountWithTax']}"
+												field="amountWithTax" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" isMessage="true" />
@@ -793,17 +793,17 @@
 														style="font-weight:bold;" converter="bigDecimalConverter" />
 												</h:panelGrid>
 												<h:panelGrid columns="2">
-													<p:outputLabel for="RCamount2"
-														value="#{messages['recurringChargeInstance.amount2']}" />
+													<p:outputLabel for="RCamountWithTax"
+														value="#{messages['recurringChargeInstance.amountWithTax']}" />
 													<h:inputText rendered="#{subscriptionBean.edit}"
-														id="RCamount2"
-														value="#{subscriptionBean.recurringChargeInstance.amount2}"
+														id="RCamountWithTax"
+														value="#{subscriptionBean.recurringChargeInstance.amountWithTax}"
 														size="5" converter="bigDecimalConverter"
 														onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});"
 														disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 													</h:inputText>
 													<h:outputText rendered="#{!subscriptionBean.edit}"
-														value="#{subscriptionBean.recurringChargeInstance.amount2}"
+														value="#{subscriptionBean.recurringChargeInstance.amountWithTax}"
 														style="font-weight:bold;" converter="bigDecimalConverter" />
 												</h:panelGrid>
 												<hf:formField
@@ -825,25 +825,25 @@
 														minValue="1"
 														value="#{subscriptionBean.recurringChargeServiceInstanceQuantity}" />
 												</h:panelGrid>
-												<a:outputPanel id="recurringChargeApplicationsPanel">
+												<a:outputPanel id="recurringWalletOperationsPanel">
 													<span style="height: 1px" />
 													<h:outputText value="#{messages['commons.noItems']}"
-														rendered="#{empty subscriptionBean.recurringChargeApplications}" />
+														rendered="#{empty subscriptionBean.recurringWalletOperations}" />
 													<h:panelGrid width="100%" columns="1" border="0"
 														style="padding:0px; margin:0px;text-align: right;"
-														rendered="#{not empty subscriptionBean.recurringChargeApplications}">
+														rendered="#{not empty subscriptionBean.recurringWalletOperations}">
 														<h:outputText
-															value="#{subscriptionBean.recurringChargeApplications.size} #{messages['commons.itemsFound']}" />
-														<rich:dataTable id="recurringChargeApplicationTable"
-															value="#{subscriptionBean.recurringChargeApplications}"
+															value="#{subscriptionBean.recurringWalletOperations.size} #{messages['commons.itemsFound']}" />
+														<rich:dataTable id="recurringWalletOperationTable"
+															value="#{subscriptionBean.recurringWalletOperations}"
 															var="shotApplication"
 															onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 															onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-															reRender="recurringChargeApplicationScroller" rows="10">
+															reRender="recurringWalletOperationScroller" rows="10">
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.applicationDate']}" />
+																		value="#{messages['walletOperation.applicationDate']}" />
 																</f:facet>
 																<h:outputText value="#{shotApplication.applicationDate}">
 																	<f:convertDateTime pattern="dd/MM/yyyy" />
@@ -852,7 +852,7 @@
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.description']}" />
+																		value="#{messages['walletOperation.description']}" />
 																</f:facet>
 																<h:outputText value="#{shotApplication.description}">
 																</h:outputText>
@@ -860,7 +860,7 @@
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.parameter2']}" />
+																		value="#{messages['walletOperation.parameter2']}" />
 																</f:facet>
 																<h:outputText value="#{shotApplication.parameter2}">
 																</h:outputText>
@@ -868,7 +868,7 @@
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.amountWithoutTax']}" />
+																		value="#{messages['walletOperation.amountWithoutTax']}" />
 																</f:facet>
 																<h:outputText
 																	value="#{shotApplication.amountWithoutTax}" />
@@ -876,22 +876,22 @@
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.amount2']}" />
+																		value="#{messages['walletOperation.amountWithTax']}" />
 																</f:facet>
-																<h:outputText value="#{shotApplication.amount2}" />
+																<h:outputText value="#{shotApplication.amountWithTax}" />
 															</rich:column>
 															<rich:column>
 																<f:facet name="header">
 																	<h:outputText
-																		value="#{messages['chargeApplication.status']}" />
+																		value="#{messages['walletOperation.status']}" />
 																</f:facet>
 																<h:outputText
 																	value="#{messages[shotApplication.status.label]}" />
 															</rich:column>
 
 														</rich:dataTable>
-														<rich:dataScroller id="recurringChargeApplicationScroller"
-															for="recurringChargeApplicationTable"
+														<rich:dataScroller id="recurringWalletOperationScroller"
+															for="recurringWalletOperationTable"
 															renderIfSinglePage="false" maxPages="10" />
 													</h:panelGrid>
 												</a:outputPanel>
@@ -901,22 +901,22 @@
     var validAmountRC;
     var amountWithoutTaxRC;
     var chargeTemplateRC;
-    var amount2RC;
+    var amountWithTaxRC;
     var calculatedAmountRC;
     var calculatedAmountWithoutTaxRC;
     var formatedValueRC;
     var formatedValueHTRC;
 
     function caseTTCamountRC(){
-    	if ((document.getElementById('#{rich:clientId('RCamount2')}').value!='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value=='')) 
+    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value=='')) 
     	{return true;} else {return false;}
     }
     function caseHTamountRC(){
-    	if ((document.getElementById('#{rich:clientId('RCamount2')}').value=='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='')) 
+    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='')) 
     	{return true;} else {return false;}
     }
     function caseHTandTTCamoutsRC(){
-    	if ((document.getElementById('#{rich:clientId('RCamount2')}').value!='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='')) 
+    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value!='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='')) 
     	{return true;} else {return false;}
     }
 	
@@ -936,7 +936,7 @@
 		return text;
 	}
 	function getAlertTextForCaseTTCamountRC(){
-		var text =  'Attention : pour le Montant TTC '+amount2RC +', le Montant HT attendu est '+calculatedAmountWithoutTaxRC;
+		var text =  'Attention : pour le Montant TTC '+amountWithTaxRC +', le Montant HT attendu est '+calculatedAmountWithoutTaxRC;
 		return text;
 	}
 	function getAlertTextForCaseHTamountRC(){
@@ -949,8 +949,8 @@
 	function validateAmountsRC(){
        	amountWithoutTaxRC = document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value; 
     	chargeTemplateRC = document.getElementById('#{rich:clientId('RCchargeTemplateSelectId')}').value;
-    	amount2RC = document.getElementById('#{rich:clientId('RCamount2')}').value;
-    	if ((document.getElementById('#{rich:clientId('RCamount2')}').value=='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value=='')) 
+    	amountWithTaxRC = document.getElementById('#{rich:clientId('RCamountWithTax')}').value;
+    	if ((document.getElementById('#{rich:clientId('RCamountWithTax')}').value=='')&&(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value=='')) 
     	{validAmountRC = true;}
     	else {
     		if(document.getElementById('#{rich:clientId('RCamountWithoutTax')}').value!='') {
@@ -958,12 +958,12 @@
     	getValidFormatRC(amountWithoutTaxRC);
 		amountWithoutTaxRC = formatedValueHTRC;
 		}
-    	if(document.getElementById('#{rich:clientId('RCamount2')}').value!='') {
-    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplateRC, amount2RC, function(result) {calculatedAmountWithoutTaxRC=result;}, exceptionHandler);
-    	getValidFormatRC(amount2RC);
-		amount2RC = formatedValueRC;
+    	if(document.getElementById('#{rich:clientId('RCamountWithTax')}').value!='') {
+    	Seam.Component.getInstance("javaScriptAction").calculateOneShotChargeInstanceAmountWithoutTax(chargeTemplateRC, amountWithTaxRC, function(result) {calculatedAmountWithoutTaxRC=result;}, exceptionHandler);
+    	getValidFormatRC(amountWithTaxRC);
+		amountWithTaxRC = formatedValueRC;
     	}
-    	if (calculatedAmountRC==amount2RC)
+    	if (calculatedAmountRC==amountWithTaxRC)
 		 {validAmountRC = true;}
 		 else {validAmountRC = false;}
     	}
