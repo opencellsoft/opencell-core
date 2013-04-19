@@ -89,8 +89,8 @@
 				<p:column style="width: 75%">
 					<hf:formPanel id="userAccountFormPanel"
 						label="#{messages['userAccount.userAccountPanel']}"
-						backingBean="#{userAccountBean}" killConversationOnSave="false" killConversationOnBack="false"
-						useCustomIdParam="true">
+						backingBean="#{userAccountBean}" killConversationOnSave="false"
+						killConversationOnBack="false" useCustomIdParam="true">
 						<p:tabView id="userAccountTab">
 							<p:tab title="#{messages['billingAccount.tab.account']}">
 								<hftl:panelGroup columns="1">
@@ -104,7 +104,8 @@
 									<hftl:panelGroup columns="2">
 										<!--Creation window fields-->
 										<hf:formField label="#{messages['businessEntity.code']}"
-											field="code" maxlength="35" validateUnique="true" size="35" required="true" />
+											field="code" maxlength="35" validateUnique="true" size="35"
+											required="true" />
 										<hf:formEntityField
 											label="#{messages['accountEntity.primaryContact']}"
 											field="primaryContact" childField="code" popup="false"
@@ -116,7 +117,7 @@
 											field="description" showOnlyOnNew="true" useConverter="false"
 											size="70" maxlength="100" />
 									</hftl:panelGroup>
-									<hftl:panelGroup columns="2">
+									<!-- <hftl:panelGroup columns="2">
 										<hf:formField
 											label="#{messages['userAccount.subscriptionDate']}"
 											field="subscriptionDate" showOnlyOnConsult="true" />
@@ -131,8 +132,7 @@
 										<hf:emtyFormField showOnlyOnNew="true" />
 										<hf:formField label="#{messages['userAccount.statusDate']}"
 											field="statusDate" showOnlyOnConsult="true" />
-
-									</hftl:panelGroup>
+									</hftl:panelGroup> -->
 									<hftl:panelGroup columns="1">
 										<p:panelGrid columns="2">
 											<p:outputLabel for="title_select"
@@ -224,9 +224,9 @@
 					<h:form id="operationsForm" rendered="#{!userAccountBean.edit}">
 						<!-- 							<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
 						<p:button outcome="addNewSubscription"
-							value="#{messages['userAccount.addNewSubscription']}" 
-							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" >
-							<f:param name="cid" value="#{conversation.id}"/>	
+							value="#{messages['userAccount.addNewSubscription']}"
+							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
+							<f:param name="cid" value="#{conversation.id}" />
 						</p:button>
 						<h:commandButton action="#{userAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
