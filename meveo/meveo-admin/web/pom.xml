@@ -57,6 +57,10 @@
 			<artifactId>omnifaces</artifactId>
 			<version>1.4.1</version>
 		</dependency>
+		<dependency>
+          <groupId>com.ocpsoft</groupId>
+          <artifactId>prettyfaces-jsf2</artifactId>
+        </dependency>
 	</dependencies>
 	<profiles>
 		<profile>
