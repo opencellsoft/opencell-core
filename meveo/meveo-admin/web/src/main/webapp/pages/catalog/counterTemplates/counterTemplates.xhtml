@@ -1,0 +1,43 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
+    
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{counterTemplateBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+    		<hf:searchPanel label="#{messages['counterTemplate.search']}" backingBean="#{counterTemplateBean}">
+    			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
+    			<hf:searchField label="#{messages['businessEntity.description']}" field="description"/>
+    		</hf:searchPanel>	
+    		
+    		<hftl:dataList label="#{messages['counterTemplate.title']}" checkMany="false" backingBean="#{counterTemplateBean}">
+    			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+    			<hftl:column label="#{messages['businessEntity.description']}" field="description" /> 
+    			<hftl:column label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription" /> 
+    			<hftl:column label="#{messages['counterTemplate.counterType']}" field="counterType" childField="label" isMessage="true" /> 
+    			<hftl:column label="#{messages['counterTemplate.level']}" field="level" /> 
+    			<hftl:column label="#{messages['billingCycle.calendar']}"
+				field="calendar" childField="name" />
+    			
+    		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
+    			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		    </hftl:dataList>
+		   		
+    </ui:define>
+    
+</ui:composition>

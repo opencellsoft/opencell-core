@@ -15,13 +15,26 @@
 	</ui:define>
 
 	<ui:define name="body">
-
-		<hf:formPanel label="#{messages['discountPlanMatrix.panel']}" backingBean="#{discountPlanMatrixBean}">
+	
+	<hftl:entityPopup id="sellerParentPopup" 
+			header="#{messages['seller.title']}"
+			backingBean="#{sellerBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{discountPlanMatrixBean.entity.seller}" 
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":discountFormPanel:formDiscountPlan:parentSelectId:parentSelectId">
+		</hftl:entityPopup>
+		
+		<hf:formPanel edit="#{edit}" id="discountFormPanel" formId="formDiscountPlan"  label="#{messages['discountPlanMatrix.panel']}" backingBean="#{discountPlanMatrixBean}" >
     			<hf:formField label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" required="true" validateUnique="true" />
     			<hf:formField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
-    			<hf:formField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
+    			<hf:formEntityField id="parentSelectId" label="#{messages['seller.title']}" field="seller" childField="description" required="true" popup="true" popupId="sellerParentPopup" />
+				<hf:formField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
     			<hf:formField label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />
     			<hf:formField label="#{messages['discountPlanMatrix.percent']}" field="percent" />
+				
 		</hf:formPanel>
 
 	</ui:define>

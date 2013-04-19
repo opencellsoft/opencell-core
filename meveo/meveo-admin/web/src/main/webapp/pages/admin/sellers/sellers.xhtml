@@ -1,0 +1,68 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" 
+	template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{pricePlanMatrixBean.preRenderView}" />
+	</f:metadata>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		
+			<hftl:entityPopup id="searchSellerPopup"
+			header="#{messages['seller.search']}" 
+			updateField=":searchPanel:searchForm:seller:seller_child"
+			selection="#{sellerBean.filters['seller']}"
+			backingBean="#{sellerBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code"
+			column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description">
+		   </hftl:entityPopup>
+
+		<hf:searchPanel id="searchPanel" backingBean="#{sellerBean}"
+			label="#{messages['seller.search']}">
+			<hf:searchField label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			<hf:searchField id="seller"
+				label="#{messages['BusinessEntity.code']}" field="seller" childField="code"
+				  popup="true" popupId="searchSellerPopup" clearButton="true" />
+		</hf:searchPanel>
+			 
+		
+
+		<hftl:dataList label="#{messages['seller.title']}"
+			backingBean="#{sellerBean}">
+			<hftl:column label="#{messages['BusinessEntity.code']}"
+				field="code" />
+			<hftl:column
+				label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			<hftl:column
+				label="#{messages['tradingCurrency.tradingCurrencyPanel']}"
+				field="tradingCurrency" childField="currencyCode" />
+			<hftl:column label="#{messages['tradingCountry.title']}"
+				field="tradingCountry" childField="countryCode" />
+			<hftl:column label="#{messages['seller.title']}"
+				field="seller" childField="code" />	
+				<hftl:column label="#{messages['tradingLanguage.created']}"
+				field="auditable" childField="created" width="15%" time="true" />
+				
+			
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+	</ui:define>
+
+</ui:composition>

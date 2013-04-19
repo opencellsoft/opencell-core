@@ -89,6 +89,12 @@ public class ServiceInstance extends BusinessEntity {
     //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OneShotChargeInstance> terminationChargeInstances = new ArrayList<OneShotChargeInstance>();
 
+
+    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //TODO : Add orphanRemoval annotation. @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
+   
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUB_TERMIN_REASON_ID", nullable = true)
     private SubscriptionTerminationReason subscriptionTerminationReason;
@@ -177,7 +183,16 @@ public class ServiceInstance extends BusinessEntity {
         this.terminationChargeInstances = terminationChargeInstances;
     }
 
-    public Integer getQuantity() {
+    public List<UsageChargeInstance> getUsageChargeInstances() {
+		return usageChargeInstances;
+	}
+
+	public void setUsageChargeInstances(
+			List<UsageChargeInstance> usageChargeInstances) {
+		this.usageChargeInstances = usageChargeInstances;
+	}
+
+	public Integer getQuantity() {
         return quantity;
     }
 

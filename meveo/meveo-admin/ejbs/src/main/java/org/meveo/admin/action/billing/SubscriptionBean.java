@@ -30,7 +30,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IEntity;
-import org.meveo.model.billing.ChargeApplication;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -38,6 +37,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -243,7 +243,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity,
 						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), oneShotChargeInstance
 								.getChargeDate() == null ? new Date() : oneShotChargeInstance.getChargeDate(),
-						oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmount2(),
+						oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(),
 						oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(), oneShotChargeInstance
 								.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser());
 				oneShotChargeInstance.setId(id);
@@ -284,7 +284,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 					Long id = recurringChargeInstanceService.recurringChargeApplication(entity,
 							(RecurringChargeTemplate) recurringChargeInstance.getChargeTemplate(),
 							recurringChargeInstance.getChargeDate(), recurringChargeInstance.getAmountWithoutTax(),
-							recurringChargeInstance.getAmount2(), 1, recurringChargeInstance.getCriteria1(),
+							recurringChargeInstance.getAmountWithTax(), 1, recurringChargeInstance.getCriteria1(),
 							recurringChargeInstance.getCriteria2(), recurringChargeInstance.getCriteria3(),
 							getCurrentUser());
 					recurringChargeInstance.setId(id);
@@ -350,35 +350,35 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				.findOneShotChargeInstancesBySubscriptionId(entity.getId());
 	}
 
-	public List<ChargeApplication> getOneShotChargeApplications() {
+	public List<WalletOperation> getOneShotWalletOperations() {
 		log.info("run oneShotChargeApplications");
 		if (this.oneShotChargeInstance == null || this.oneShotChargeInstance.getId() == null) {
 			return null;
 		}
-		List<ChargeApplication> results = new ArrayList<ChargeApplication>(
-				oneShotChargeInstance.getChargeApplications());
+		List<WalletOperation> results = new ArrayList<WalletOperation>(
+				oneShotChargeInstance.getWalletOperations());
 
-		Collections.sort(results, new Comparator<ChargeApplication>() {
-			public int compare(ChargeApplication c0, ChargeApplication c1) {
+		Collections.sort(results, new Comparator<WalletOperation>() {
+			public int compare(WalletOperation c0, WalletOperation c1) {
 
-				return c1.getApplicationDate().compareTo(c0.getApplicationDate());
+				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
 		log.info("retrieve #0 chargeApplications", results != null ? results.size() : 0);
 		return results;
 	}
 
-	public List<ChargeApplication> getRecurringChargeApplications() {
+	public List<WalletOperation> getRecurringChargeApplications() {
 		log.info("run recurringChargeApplications");
 		if (this.recurringChargeInstance == null || this.recurringChargeInstance.getId() == null) {
 			return null;
 		}
-		List<ChargeApplication> results = new ArrayList<ChargeApplication>(
-				recurringChargeInstance.getChargeApplications());
-		Collections.sort(results, new Comparator<ChargeApplication>() {
-			public int compare(ChargeApplication c0, ChargeApplication c1) {
+		List<WalletOperation> results = new ArrayList<WalletOperation>(
+				recurringChargeInstance.getWalletOperations());
+		Collections.sort(results, new Comparator<WalletOperation>() {
+			public int compare(WalletOperation c0, WalletOperation c1) {
 
-				return c1.getApplicationDate().compareTo(c0.getApplicationDate());
+				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
 		log.info("retrieve #0 chargeApplications", results != null ? results.size() : 0);
@@ -502,7 +502,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				messages.error(new BundleKey("messages", "error.termination.inactiveService"));
 				return;
 			}
-			serviceInstanceService.cancelService(serviceInstance, getCurrentUser());
+			//serviceInstanceService.cancelService(serviceInstance, getCurrentUser());
 
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 		} catch (Exception e) {
@@ -514,7 +514,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	public void suspendService() {
 		try {
 			ServiceInstance serviceInstance = serviceInstanceService.findById(selectedServiceInstanceId);
-			serviceInstanceService.serviceSusupension(serviceInstance, new Date(), getCurrentUser());
+			serviceInstanceService.serviceSuspension(serviceInstance, new Date(), getCurrentUser());
 
 			messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 		} catch (BusinessException e1) {

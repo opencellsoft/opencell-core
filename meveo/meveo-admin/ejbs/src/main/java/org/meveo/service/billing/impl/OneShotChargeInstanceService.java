@@ -43,7 +43,7 @@ import org.meveo.service.base.BusinessService;
 public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> {
 
 	@EJB
-	private ChargeApplicationService chargeApplicationService;
+	private WalletOperationService chargeApplicationService;
 
 	public OneShotChargeInstance findByCodeAndSubsription(String code, Long subscriptionId) {
 		OneShotChargeInstance oneShotChargeInstance = null;
@@ -113,7 +113,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 		create(oneShotChargeInstance, creator, chargetemplate.getProvider());
 
-		chargeApplicationService.oneShotChargeApplication(subscription, oneShotChargeInstance,
+		chargeApplicationService.oneShotWalletOperation(subscription, oneShotChargeInstance,
 				quantity, effetDate, creator);
 
 		return oneShotChargeInstance.getId();
@@ -123,7 +123,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			OneShotChargeInstance oneShotChargeInstance, Date effetDate, Integer quantity,
 			User creator) throws BusinessException {
 
-		chargeApplicationService.oneShotChargeApplication(subscription, oneShotChargeInstance,
+		chargeApplicationService.oneShotWalletOperation(subscription, oneShotChargeInstance,
 				quantity, effetDate, creator);
 
 	}

@@ -27,13 +27,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+
 
 /**
  * Price plan matrix entity used when rating transactions.
@@ -51,7 +52,6 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	@Column(name = "EVENT_CODE", length = 20, nullable = false)
 	@Size(min = 1, max = 20)
-	@NotNull
 	private String eventCode;
 
 	@Column(name = "START_SUBSCRIPTION_DATE")
@@ -77,22 +77,22 @@ public class PricePlanMatrix extends AuditableEntity {
 	private Long maxSubscriptionAgeInMonth;
 
 	@Column(name = "CRITERIA_1")
-	private String criteria1Value;
+	private String criteria1Value="*";
 
 	@Column(name = "CRITERIA_2")
-	private String criteria2Value;
+	private String criteria2Value="*";
 
 	@Column(name = "CRITERIA_3")
-	private String criteria3Value;
+	private String criteria3Value="*";
 
 	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal amountWithoutTax;
 
 	/** Should be called extraAmount because thats what this field is. */
-	@Column(name = "AMOUNT_WITHOUT_TAX2", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
-	private BigDecimal amountWithoutTax2;
+	private BigDecimal amountWithTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_CURRENCY_ID")
@@ -104,6 +104,11 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	@Column(name = "BUSINESS_INTERMEDIARY_ID")
 	private Integer businessIntermediaryId;
+	
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "SELLER_ID")
+	 private Seller seller;
+	
 
 	public Integer getBusinessIntermediaryId() {
 		return businessIntermediaryId;
@@ -201,12 +206,12 @@ public class PricePlanMatrix extends AuditableEntity {
 		this.amountWithoutTax = amountWithoutTax;
 	}
 
-	public BigDecimal getAmountWithoutTax2() {
-		return amountWithoutTax2;
+	public BigDecimal getAmountWithTax() {
+		return amountWithTax;
 	}
 
-	public void setAmountWithoutTax2(BigDecimal amountWithoutTax2) {
-		this.amountWithoutTax2 = amountWithoutTax2;
+	public void setAmountWithTax(BigDecimal amountWithTax) {
+		this.amountWithTax = amountWithTax;
 	}
 
 	public TradingCurrency getTradingCurrency() {
@@ -225,6 +230,14 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	public void setTradingCountry(TradingCountry tradingCountry) {
 		this.tradingCountry = tradingCountry;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 
 	@Override
