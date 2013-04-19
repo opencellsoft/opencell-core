@@ -33,7 +33,7 @@ public class ContactInformation implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "EMAIL", length = 100)
-	@Pattern(regexp = ".+@.+\\..{2,4}")
+	//@Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String email;
 

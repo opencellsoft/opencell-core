@@ -65,7 +65,7 @@ public class BillingAccount extends AccountEntity {
 	private BankCoordinates bankCoordinates = new BankCoordinates();
 
 	@Column(name = "EMAIL")
-	@Pattern(regexp = ".+@.+\\..{2,4}")
+	//@Pattern(regexp = ".+@.+\\..{2,4}")
 	private String email;
 
 	@Column(name = "ELECTRONIC_BILLING")
