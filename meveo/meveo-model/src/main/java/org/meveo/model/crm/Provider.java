@@ -414,12 +414,7 @@ public class Provider extends BusinessEntity {
 		}
 		tradingLanguages.add(tradingLanguage);
 	}
-	public void removeTradingLanguage(TradingLanguage tradingLanguage) {
-		if (tradingLanguages != null && tradingLanguages.contains(tradingLanguage)) {
-			tradingLanguages.remove(tradingLanguage);
-		}
-		
-	}
+
 
 	public void addTradingCountry(TradingCountry tradingCountry) {
 		if (tradingCountries == null) {
