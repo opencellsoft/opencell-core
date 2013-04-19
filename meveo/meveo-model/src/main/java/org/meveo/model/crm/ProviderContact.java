@@ -41,7 +41,7 @@ public class ProviderContact extends BusinessEntity {
 	protected String lastName;
 
 	@Column(name = "EMAIL", length = 100)
-	@Pattern(regexp = ".+@.+\\..{2,4}")
+	//@Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String email;
 
@@ -58,7 +58,7 @@ public class ProviderContact extends BusinessEntity {
 	protected String fax;
 
 	@Column(name = "GENERIC_MAIL", length = 100)
-	@Pattern(regexp = ".+@.+\\..{2,4}")
+	//@Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String genericMail;
 

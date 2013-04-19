@@ -8,6 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:o="http://omnifaces.org/ui"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
@@ -106,7 +107,8 @@
 							<hf:formPanel id="formBillingAccountPanel"
 								label="#{messages['billingAccount.billingAccountPanel']}"
 								backingBean="#{billingAccountBean}" styleClass="formPanel"
-								killConversationOnSave="false" killConversationOnBack="false" useCustomIdParam="true">
+								killConversationOnSave="false" killConversationOnBack="false"
+								useCustomIdParam="true">
 
 								<p:tabView id="childTab">
 									<p:tab title="#{messages['billingAccount.tab.account']}">
@@ -122,8 +124,9 @@
 											<!--Creation window fields-->
 											<hftl:panelGroup columns="2">
 												<hf:formField label="#{messages['businessEntity.code']}"
-													field="code" showOnlyOnNew="true" showOnlyOnConsult="true" validateUnique="true"
-													size="35" maxlength="35" required="true"/>
+													field="code" showOnlyOnNew="true" showOnlyOnConsult="true"
+													validateUnique="true" size="35" maxlength="35"
+													required="true" />
 												<hf:formEntityField
 													label="#{messages['accountEntity.primaryContact']}"
 													field="primaryContact" childField="code" popup="false"
@@ -347,7 +350,11 @@
 																value="#{billingAccountBean.entity.email}"
 																required="#{billingAccountBean.entity.electronicBilling}"
 																size="20" maxlength="100"
-																converter="nullableStringConverter" />
+																converter="nullableStringConverter">
+																<o:validator validatorId="javax.faces.RegularExpression"
+																	pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
+																	message="#{messages['validator.email.invalid']}" />
+															</p:inputText>
 															<h:outputText rendered="#{!billingAccountBean.edit}"
 																id="emailText"
 																value="#{billingAccountBean.entity.email}"
