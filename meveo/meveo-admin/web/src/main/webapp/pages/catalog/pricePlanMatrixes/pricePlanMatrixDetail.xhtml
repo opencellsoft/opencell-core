@@ -61,16 +61,16 @@
 				<hf:formField id="chargeSelectId"
 					label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode" />
 				<hf:formEntityField id="parentSelectId"
-										    label="#{messages['seller.title']}"
-											field="seller" childField="description"
-											popup="true" popupId="sellerParentPopup" />	
+					label="#{messages['seller.title']}"
+					field="seller" childField="description" required="true" 
+					popup="true" popupId="sellerParentPopup" />	
 				<hf:formEntityField id="trCountrySelectId"
 					label="#{messages['tradingCountry.tradingCountry']}"
-					field="tradingCountry" childField="countryCode" required="true" popup="true"
+					field="tradingCountry" childField="countryCode" popup="true"
 					popupId="tradingCountryPopup" />
 				<hf:formEntityField id="customerCurrencySelectId"
 						label="#{messages['currency.codeCurrency']}"
-						field="tradingCurrency" childField="currencyCode" required="true" popup="true"
+						field="tradingCurrency" childField="currencyCode" popup="true"
 						popupId="pricPlanMatCurrencyPopup" />
 				<hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
 					field="criteria1Value" />
