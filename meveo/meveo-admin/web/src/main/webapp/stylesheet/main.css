@@ -859,7 +859,7 @@ select[disabled]
 .ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td > table >tbody > tr > td span
 {
    color : #416a68 !Important;
-   font-style : italic;
+  
 }
 .ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td > table >tbody > tr > td > label
 {
