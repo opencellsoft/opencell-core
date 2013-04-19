@@ -49,7 +49,7 @@ a:hover {
 	background: #e9f6f4;
 	width: 100%;
 	margin-top : -2px;
-  display : none;
+	display : none;
 }
 
 #headerleft {
@@ -167,11 +167,11 @@ a:hover {
 {
  	font-style: italic;
 	margin-top : 20px;
-  font-family : helvetica;
-  color : #55585b;
-  text-align : center;
-  font-size : 11px;
-  margin : 30px 10px;
+	font-family : helvetica;
+	color : #55585b;
+	text-align : center;
+	font-size : 11px;
+	margin : 30px 10px;
 }
 #languagePanel ul { list-style-type: none; }
 #languagePanel ul li 
@@ -193,10 +193,9 @@ a:hover {
 #admin-bar ul
 {
   padding-top: 15px;
-	margin-left: auto;
-	margin-right: 5%;
+  margin-left: auto;
+  margin-right: 5%;
   float : right;
-  
 }
 #admin-bar ul li:first-child
 {
@@ -224,14 +223,12 @@ a:hover {
 	border-left: 1px solid #0ac0af;
 	border-right: 1px solid #03554d;
 	float: left;
-	
-	
 }
 #admin-bar ul li.right-part
 {
 	float : left;
-  margin-left : 0px;
-  margin-right : 0px;
+	margin-left : 0px;
+	margin-right : 0px;
 }
 #admin-bar ul li,
 #admin-bar ul li a
@@ -316,7 +313,6 @@ a:hover {
 {
   border-top : 1px solid  #b3cecb;
   padding : 3px 1px 1px 3px;
-  //background : red !important;
   margin-left : 3px;
 }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menuitem
@@ -345,7 +341,6 @@ a:hover {
 }
 .ui-menu .ui-menuitem-text
 {
-    //color : white;
     font-size : 12px;
     padding : 2px;
 }
@@ -359,11 +354,9 @@ a:hover {
 }
 .ui-menubar .ui-menuitem
 {
- 
   -webkit-border-radius: 10px 10px 0px 0px;
    border-radius: 10px 10px 0px 0px;
   margin : 0px 0px !important ;
-  
 }
 .ui-menubar .ui-menuitem a
 {
@@ -387,8 +380,6 @@ a:hover {
 .ui-menu-child  .ui-menuitem-text
 {
   color : #73777c;
-  
-  
 }
 .ui-menu-child li
 {
@@ -423,12 +414,12 @@ a:hover {
 {
   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
 }
+
 /* BUTTONS */
 input[type="submit"],
 .ui-button
 {
-  margin-top : 5px;
-  margin-bottom : 5px;
+	margin : 3px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	padding: 0px 0px;
@@ -497,7 +488,6 @@ input[type="submit"]:hover
 .ui-widget-header td[role="columnheader"]
 {
   border-bottom : 1px solid #e8eded;
-  //background : red;
   width : 10%;
 }
 .ui-datatable .ui-widget-header
@@ -521,16 +511,6 @@ input[type="submit"]:hover
   padding : 0px !Important;
 }
 
-.ui-panelgrid
-{
-  border : none;
-}
-.ui-panelgrid
-{
-  width : 100%;
-  padding : 0px;
-  margin : 0px;
-}
 
 /* DATA TABLE */
 .ui-datatable 
@@ -543,7 +523,6 @@ input[type="submit"]:hover
   display : block !important;
   width : 100%;
   overflow : hidden;
-  
 }
 .ui-datatable table .ui-state-hover
 {
@@ -571,6 +550,13 @@ input[type="submit"]:hover
   -webkit-border-radius: 0px 0px 8px 8px;
    border-radius: 0px 0px 8px 8px;
 }
+
+.ui-datatable-empty-message > td
+{
+  border : 1px solid #aeaeae !important;
+  margin-right : -6px;
+}
+
 /* detail table double border fix */
 .ui-paginator-top,
 .ui-paginator-bottom
@@ -685,6 +671,12 @@ select[disabled]
   color : #494949 !important;
 }
 /* PANEL GRIDS */
+.ui-panelgrid
+{
+  width : 100%;
+  padding : 0px;
+  margin : 0px;
+}
 .ui-panelgrid 
 {
   -webkit-border-radius: 8px !important;
@@ -697,7 +689,9 @@ select[disabled]
 .ui-panelgrid td
 {
   border : none;
+  //border : 1px solid red;
 }
+
 / * DATE PICKER */
 .ui-chkbox .ui-state-hover,
 .ui-datepicker tr:first-child th
@@ -827,12 +821,7 @@ select[disabled]
   font-size : 14px;
 }
 
-/* TD ROLE GRIDCELL */
-td[role="gridcell"]
-{
-  margin : 0px ;
-  padding : 2px 2px;
-}
+
 /* SELECTION MENU LIST */
 .ui-selectonemenu-list
 {
@@ -852,19 +841,49 @@ td[role="gridcell"]
 {
    width : 870px !important;
 }
+/* table data on details "view" */
+.ui-tabs-panels div[id*="childTab"] >table
+{
+  //background : yellow;
+  width : 90%;
+}
+.ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td
+{
+  /*per cell */
+  width : 300px;
+}
+/* key - value coloring on details */
+.ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td > table >tbody > tr > td,
+.ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td > table >tbody > tr > td span
+{
+   color : #416a68 !Important;
+   font-style : italic;
+}
+.ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td > table >tbody > tr > td > label
+{
+  font-style : normal;
+}
+
 .ui-tabs-panels fieldset[id*="childTab"]
 {
   width : 800px !important;
 }
-
-
+/* TD ROLE GRIDCELL */
+td[role="gridcell"]
+{
+  margin : 0px ;
+  padding : 0px 2px;
+}
 table[role="grid"]
 {
   border : none;
 }
+td[role="gridcell"]>table
+{
+  margin : 5px 0px;
+}
 
 /* --------SPECIFIC CSS FIXES HERE---------- */
-
 
 
 
