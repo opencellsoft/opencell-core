@@ -151,15 +151,15 @@
 				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_long"
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}" max="1"
-					maxlength="#{cc.attrs.maxlength}" />
+					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
+					max="#{cc.attrs.maxValue}" maxlength="#{cc.attrs.maxlength}" />
 			</c:if>
 			<c:if test="#{empty(cc.attrs.maxValue)}">
 				<p:spinner rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_long"
 					disabled="#{cc.attrs.disabled}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" min="#{cc.attrs.minValue}"
-					maxlength="#{cc.attrs.maxlength}" max="1" />
+					maxlength="#{cc.attrs.maxlength}" />
 			</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
