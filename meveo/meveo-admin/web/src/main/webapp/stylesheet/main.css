@@ -837,10 +837,12 @@ select[disabled]
   background : #b8eff7;
 }
 /* tabs to widen */
-.ui-tabs-panels div[id*="childTab"]
+.ui-tabs .ui-tabs-panels form > table > tbody > tr > td[role="gridcell"] > table[id*="parentTab"] > tbody > tr > td > table >tbody > tr > td > div[id*="parentTab"]
 {
-   width : 870px !important;
+   //background : red !important;
+    width : 870px !Important;
 }
+
 /* table data on details "view" */
 .ui-tabs-panels div[id*="childTab"] >table
 {
@@ -884,6 +886,10 @@ td[role="gridcell"]>table
 }
 
 /* --------SPECIFIC CSS FIXES HERE---------- */
+
+
+
+
 
 
 
