@@ -439,10 +439,21 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>serviceUsageChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceUsageChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>serviceTemplateDetail</from-outcome>
 			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
 		<navigation-case>
 			<from-outcome>serviceParameterTemplates</from-outcome>
 			<to-view-id>/pages/catalog/serviceParameterTemplates/serviceParameterTemplates.xhtml</to-view-id>

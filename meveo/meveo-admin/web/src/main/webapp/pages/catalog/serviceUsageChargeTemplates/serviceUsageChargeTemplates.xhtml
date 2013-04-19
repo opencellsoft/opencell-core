@@ -1,0 +1,96 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
+    
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{serviceUsageChargeTemplateBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+    
+    <ui:define name="body">
+    	
+		<hftl:entityPopup id="searchChargeTemplatePopup"
+			header="#{messages['usageChargeTemplate.title']}"
+			updateField=":searchPanel:searchForm:usageChargeTemplate:chargeTemplate_child"
+			selection="#{serviceUsageChargeTemplateBean.filters['chargeTemplate']}"
+			backingBean="#{usageChargeTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		
+		<hftl:entityPopup id="searchServiceTemplatePopup"
+			header="#{messages['serviceTemplate.title']}"
+			updateField=":searchPanel:searchForm:serviceTemplate:serviceTemplate_child"
+			selection="#{serviceUsageChargeTemplateBean.filters['serviceTemplate']}"
+			backingBean="#{serviceTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+		
+		<hftl:entityPopup id="searchCounterTemplatePopup"
+			header="#{messages['counterTemplate.title']}"
+			updateField=":searchPanel:searchForm:counterTemplate:counterTemplate_child"
+			selection="#{serviceUsageChargeTemplateBean.filters['counterTemplate']}"
+			backingBean="#{counterTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+
+		<hf:searchPanel id="searchPanel" 
+			label="#{messages['serviceUsageChargeTemplate.search']}"
+			backingBean="#{serviceUsageChargeTemplateBean}">
+			
+			<hf:searchField id="serviceTemplate"
+				label="#{messages['serviceTemplate.title']}" field="serviceTemplate"
+				childField="code" popup="true" popupId="searchServiceTemplatePopup"
+				clearButton="true" />
+				
+			<hf:searchField id="usageChargeTemplate"
+				label="#{messages['menu.usageChargeTemplates']}" field="chargeTemplate"
+				childField="code" popup="true" popupId="searchChargeTemplatePopup"
+				clearButton="true" />
+				
+			<hf:searchField id="counterTemplate"
+				label="#{messages['counterTemplate.title']}" field="counterTemplate"
+				childField="code" popup="true" popupId="searchCounterTemplatePopup"
+				clearButton="true" />
+    		</hf:searchPanel>	
+    		
+    		<hftl:dataList label="#{messages['serviceUsageChargeTemplate.title']}" checkMany="false" backingBean="#{serviceUsageChargeTemplateBean}">
+    		<hftl:column label="#{messages['serviceTemplate.code']}"
+				field="serviceTemplate" childField="code" width="20%" />
+			
+			<hftl:column label="#{messages['usageChargeTemplate.title']}"
+				field="chargeTemplate" childField="code" width="20%" />
+				<hftl:column label="#{messages['counterTemplate.title']}"
+				field="counterTemplate" childField="code" width="20%" />
+    			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		    </hftl:dataList>
+		   		
+    </ui:define>
+    
+</ui:composition>

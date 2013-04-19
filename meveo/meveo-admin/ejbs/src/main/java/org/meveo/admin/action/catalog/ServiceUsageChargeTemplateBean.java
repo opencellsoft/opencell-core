@@ -64,7 +64,7 @@ public class ServiceUsageChargeTemplateBean extends BaseBean<ServiceUsageChargeT
      * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
      */
     protected String getDefaultViewName() {
-        return "ServiceUsageChargeTemplates";
+        return "serviceUsageChargeTemplates";
     }
 
     /**
@@ -77,7 +77,7 @@ public class ServiceUsageChargeTemplateBean extends BaseBean<ServiceUsageChargeT
     
     @Override
     protected String getListViewName() {
-    	 return "ServiceUsageChargeTemplates";
+    	 return "serviceUsageChargeTemplates";
     }
 
 }
