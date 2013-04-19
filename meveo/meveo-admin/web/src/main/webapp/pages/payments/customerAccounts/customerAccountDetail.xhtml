@@ -214,7 +214,8 @@
 												<hf:formEntityField
 													label="#{messages['contactInformation.email']}"
 													field="contactInformation" childField="email" popup="false"
-													required="false" size="50" maxlength="100" validateEmail="true" />
+													required="false" size="50" maxlength="100"
+													validateEmail="true" />
 												<hftl:panelGroup columns="2">
 													<hf:formEntityField
 														label="#{messages['contactInformation.phone']}"
@@ -269,7 +270,8 @@
 									<hf:formButtons columns="4" saveId="save_2"
 										backingBean="#{customerAccountBean}"
 										edit="#{customerAccountBean.edit}" ajaxSubmit="false"
-										killConversationOnSave="false"  killConversationOnBack="false" useCustomIdParam="true">
+										killConversationOnSave="false" killConversationOnBack="false"
+										useCustomIdParam="true">
 										<p:commandButton
 											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
 											action="#{customerAccountBean.closeCustomerAccount}"
@@ -315,15 +317,15 @@
 							</hf:searchPanel>
 							<br />
 							<h:form id="addOperationForm">
-								<h:commandButton
+								<p:commandButton
 									value="#{messages['customerAccount.addOperation']}"
 									action="addNewOperation"
 									rendered="#{customerAccountBean.isActiveAccount()}" />
-								<h:commandButton
+								<p:commandButton
 									value="#{messages['customerAccount.addPaymentCheck']}"
 									action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
 									rendered="#{customerAccountBean.isActiveAccount()}" />
-								<a:commandButton
+								<p:commandButton
 									value="#{messages['customerAccount.buttonTransfert']}"
 									action="transferAccount"
 									rendered="#{customerAccountBean.isActiveAccount()}" />
