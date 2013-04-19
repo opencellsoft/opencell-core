@@ -16,13 +16,13 @@
  <hftl:entityPopup id="sellerCountryPopup" header="#{messages['tradingCountry.popup.header']}" backingBean="#{tradingCountryBean}"
 				searchField1Label="#{messages['businessEntity.code']}" searchField1="countryCode" column1Label="#{messages['businessEntity.code']}"
 				column1="countryCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-				selection="#{sellerBean.entity.tradingCountry}" updateField=":sellerFormPanel:sellerFormId:sellerTab:trCountrySelectId:trCountrySelectId">
+				selection="#{sellerBean.entity.tradingCountry}" updateField=":sellerFormPanel:sellerFormId:sellerTab:trCountrySelectId:trCountrySelectId_text">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="sellerLanguagePopup" header="#{messages['tradingLanguage.popup.header']}" backingBean="#{tradingLanguageBean}"
     searchField1Label="#{messages['businessEntity.code']}" searchField1="languageCode" column1Label="#{messages['businessEntity.code']}"
     column1="languageCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription"
-    selection="#{sellerBean.entity.tradingLanguage}" updateField=":sellerFormPanel:sellerFormId:sellerTab:trLanguageSelectId:trLanguageSelectId">
+    selection="#{sellerBean.entity.tradingLanguage}" updateField=":sellerFormPanel:sellerFormId:sellerTab:trLanguageSelectId:trLanguageSelectId_text">
    </hftl:entityPopup>
 		
 		
@@ -31,7 +31,7 @@
 			searchField1Label="#{messages['businessEntity.code']}" 
 			searchField1="currencyCode" column1Label="#{messages['businessEntity.code']}"
 			column1="currencyCode" column2Label="#{messages['businessEntity.description']}" column2="prDescription" 
-		selection="#{sellerBean.entity.tradingCurrency}" updateField=":sellerFormPanel:sellerFormId:sellerTab:trCurrencySelectId:trCurrencySelectId">
+		selection="#{sellerBean.entity.tradingCurrency}" updateField=":sellerFormPanel:sellerFormId:sellerTab:trCurrencySelectId:trCurrencySelectId_text">
 		</hftl:entityPopup>
 		
 		<hftl:entityPopup id="sellerParentPopup" 
@@ -40,7 +40,7 @@
 			searchField1Label="#{messages['BusinessEntity.code']}"
 			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
 			column1="code" selection="#{sellerBean.entity.seller}" 
-			updateField=":sellerFormPanel:sellerFormId:sellerTab:parentSelectId:parentSelectId">
+			updateField=":sellerFormPanel:sellerFormId:sellerTab:parentSelectId:parentSelectId_text">
 		</hftl:entityPopup>
 		</c:if>
 		
