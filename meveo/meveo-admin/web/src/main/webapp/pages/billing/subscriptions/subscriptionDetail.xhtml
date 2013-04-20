@@ -85,11 +85,12 @@
 			searchField1Label="#{messages['chargeTemplate.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['chargeTemplate.description']}"
-			searchField2="name" column1Label="#{messages['chargeTemplate.code']}"
+			searchField2="description" column1Label="#{messages['chargeTemplate.description']}"
 			column1="code"
 			column2Label="#{messages['chargeTemplate.description']}"
 			column2="description"
-			selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}">
+			selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"
+			updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId:chargeTemplateSelectId_text">
 			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="oneShotChgForm1" action="#{subscriptionBean.oneShotChargeInstance.setChargeTemplate(entity)}" -->
 			<!-- 				oncomplete="Richfaces.hideModalPanel('oneShotChargeTmpPopup')"> -->
 			<!-- 			</a:commandLink> -->
@@ -421,7 +422,7 @@
 								</a:outputPanel>
 								<p:panel>
 									<h:form>
-										<a:commandButton
+										<p:commandButton
 											value="#{messages['subscription.oneShotChgButton']}"
 											action="#{subscriptionBean.newOneShotChargeInstance}"
 											onclick="document.getElementById('oneShotChgDiv').style.display='';"
@@ -671,11 +672,11 @@
 
 													</h:commandButton>
 
-													<a:commandButton
+													<p:commandButton
 														action="#{subscriptionBean.saveOneShotChargeIns}"
 														value="#{messages['action.save']}"
-														render="OS_oneShot_results_form"
-														onclick="document.getElementById('oneShotChgDiv').style.display='none';"
+														update=":subscriptionTab:OS_oneShot_results_form"
+														oncomplete="document.getElementById('oneShotChgDiv').style.display='none';"
 														rendered="#{!currentProvider.amountValidation}" />
 
 

@@ -219,6 +219,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public void newOneShotChargeInstance() {
+		log.info("newOneShotChargeInstance ");
 		this.oneShotChargeInstance = new OneShotChargeInstance();
 	}
 
@@ -227,22 +228,25 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public void saveOneShotChargeIns() {
-		log.info("saveOneShotChargeIns getObjectId=#0", getObjectId());
+		log.info("saveOneShotChargeIns getObjectId="+getObjectId());
 
 		try {
 			if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
 				oneShotChargeInstanceService.update(oneShotChargeInstance);
 			} else {
+				if(oneShotChargeInstance
+								.getChargeDate() == null){
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date());
 				calendar.set(Calendar.HOUR_OF_DAY, 0);
 				calendar.set(Calendar.MINUTE, 0);
 				oneShotChargeInstance.setChargeDate(calendar.getTime());
+				}
 
 				oneShotChargeInstance.setSubscription(entity);
 				Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity,
-						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), oneShotChargeInstance
-								.getChargeDate() == null ? new Date() : oneShotChargeInstance.getChargeDate(),
+						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
+						oneShotChargeInstance.getChargeDate(),
 						oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(),
 						oneShotChargeInstanceQuantity, oneShotChargeInstance.getCriteria1(), oneShotChargeInstance
 								.getCriteria2(), oneShotChargeInstance.getCriteria3(), getCurrentUser());
@@ -327,13 +331,13 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	public List<ServiceInstance> getServiceInstances() {
 
-		log.info("serviceInstances2=" + serviceInstances.size());
+		log.info("getServiceInstances=" + serviceInstances.size());
 		return serviceInstances;
 	}
 
 	public List<ServiceTemplate> getServiceTemplates() {
 
-		log.info("servicetemplates2=" + servicetemplates.size());
+		log.info("getServiceTemplates=" + servicetemplates.size());
 		return servicetemplates;
 	}
 
@@ -351,7 +355,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public List<WalletOperation> getOneShotWalletOperations() {
-		log.info("run oneShotChargeApplications");
+		log.info("getOneShotWalletOperations");
 		if (this.oneShotChargeInstance == null || this.oneShotChargeInstance.getId() == null) {
 			return null;
 		}
@@ -364,12 +368,12 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
-		log.info("retrieve #0 chargeApplications", results != null ? results.size() : 0);
+		log.info("retrieve #0 WalletOperations", results != null ? results.size() : 0);
 		return results;
 	}
 
 	public List<WalletOperation> getRecurringWalletOperations() {
-		log.info("run recurringChargeApplications");
+		log.info("getRecurringWalletOperations");
 		if (this.recurringChargeInstance == null || this.recurringChargeInstance.getId() == null) {
 			return null;
 		}
@@ -381,7 +385,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
-		log.info("retrieve #0 chargeApplications", results != null ? results.size() : 0);
+		log.info("retrieve #0 WalletOperations", results != null ? results.size() : 0);
 		return results;
 	}
 

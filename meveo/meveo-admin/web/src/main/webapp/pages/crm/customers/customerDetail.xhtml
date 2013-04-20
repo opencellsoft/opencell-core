@@ -23,45 +23,6 @@
 	<ui:define name="body">
 
 
-		<hftl:entityPopup id="tradingCountryPopup"
-			header="#{messages['tradingCountry.popup.header']}"
-			backingBean="#{tradingCountryBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="countryCode"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="countryCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription"
-			selection="#{customerBean.entity.tradingCountry}"
-			updateField=":formCustomerPanel:formCustomer:tabView:trCountrySelectId:trCountrySelectId_text">
-		</hftl:entityPopup>
-
-		<hftl:entityPopup id="tradingLanguagePopup"
-			header="#{messages['tradingLanguage.popup.header']}"
-			backingBean="#{tradingLanguageBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="languageCode"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="languageCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription"
-			selection="#{customerBean.entity.tradingLanguage}"
-			updateField=":formCustomerPanel:formCustomer:tabView:trLanguageSelectId:trLanguageSelectId_text">
-		</hftl:entityPopup>
-
-		<hftl:entityPopup id="customerCurrencyPopup"
-			header="#{messages['tradingCurrency.popup.header']}"
-			backingBean="#{tradingCurrencyBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="currencyCode"
-			column1Label="#{messages['businessEntity.code']}"
-			column1="currencyCode"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="prDescription"
-			selection="#{customerBean.entity.tradingCurrency}"
-			updateField=":formCustomerPanel:formCustomer:tabView:customerCurrencySelectId:customerCurrencySelectId_text">
-		</hftl:entityPopup>
-		
 		 <hftl:entityPopup id="sellerParentPopup" 
 			header="#{messages['seller.title']}"
 			backingBean="#{sellerBean}"
@@ -105,20 +66,7 @@
 									field="customerBrand" childField="description" popup="false"
 									service="#{customerBrandService}" required="true" listBean="#{customerBrandBean}"/>
 
-								<hf:formEntityField id="customerCurrencySelectId"
-									label="#{messages['currency.codeCurrency']}"
-									field="tradingCurrency" childField="currencyCode" popup="true"
-									popupId="customerCurrencyPopup" />
-
-								<hf:formEntityField id="trCountrySelectId"
-									label="#{messages['tradingCountry.tradingCountry']}"
-									field="tradingCountry" childField="countryCode" popup="true"
-									popupId="tradingCountryPopup" />
-								<hf:formEntityField id="trLanguageSelectId"
-									label="#{messages['tradingLanguage.tradingLanguage']}"
-									field="tradingLanguage" childField="languageCode" popup="true"
-									popupId="tradingLanguagePopup" />
-									
+								
 		                        <hf:formEntityField id="parentSelectId"
 										    label="#{messages['seller.parent']}"
 											field="seller" childField="description" required="true"

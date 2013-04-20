@@ -102,22 +102,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"invoiceSubCategory is null for chargeTemplate code="
 							+ chargeTemplate.getCode());
 		}
-
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(),
-						subscription.getUserAccount().getBillingAccount().getTradingCountry()
-								.getId());
-		if (invoiceSubcategoryCountry == null) {
-			throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
-					+ invoiceSubCategory.getCode());
-		}
-		Tax tax = invoiceSubcategoryCountry.getTax();
-
-		if (tax == null) {
-			throw new IncorrectChargeTemplateException(
-					"no tax exists for invoiceSubcategoryCountry id="
-							+ invoiceSubcategoryCountry.getId());
-		}
 		
 		Long currencyId = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
 		if (currencyId == null) {
@@ -125,11 +109,32 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"no currency exists for customerAccount id="
 							+ subscription.getUserAccount().getBillingAccount().getCustomerAccount().getId());
 		}
+		//FIXME: put country in charge instance
+		TradingCountry country=chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
+		if (country == null) {
+			throw new IncorrectChargeTemplateException(
+					"no country exists for billingAccount id="
+							+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+		}
+		Long countryId = country.getId();
+		
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+		if (invoiceSubcategoryCountry == null) {
+			throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code="
+					+ invoiceSubCategory.getCode()+" and trading country="+countryId);
+		}
+		Tax tax = invoiceSubcategoryCountry.getTax();
+		if (tax == null) {
+			throw new IncorrectChargeTemplateException(
+					"no tax exists for invoiceSubcategoryCountry id="
+							+ invoiceSubcategoryCountry.getId());
+		}
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(),
 				subscription, chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate,
 				chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity==null?null:new BigDecimal(quantity),
-				currencyId,tax.getId(), tax.getPercent(), null, null, invoiceSubCategory,
+				currencyId,countryId, tax.getPercent(), null, null, invoiceSubCategory,
 				chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 				chargeInstance.getCriteria3(), null, null,null);
 
@@ -184,13 +189,27 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ chargeTemplate.getCode());
 		}
 
+		
+		Long currencyId = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
+		if (currencyId == null) {
+			throw new IncorrectChargeTemplateException(
+					"no currency exists for customerAccount id="
+							+ subscription.getUserAccount().getBillingAccount().getCustomerAccount().getId());
+		}
+		//FIXME: put country in charge instance
+		TradingCountry country=chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
+		if (country == null) {
+			throw new IncorrectChargeTemplateException(
+					"no country exists for billingAccount id="
+							+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+		}
+		Long countryId = country.getId();
+		
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(),
-						subscription.getUserAccount().getBillingAccount().getTradingCountry()
-								.getId());
+				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 		if (invoiceSubcategoryCountry == null) {
-			throw new IncorrectChargeTemplateException("no tax exists for invoiceSubCategory code="
-					+ invoiceSubCategory.getCode());
+			throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code="
+					+ invoiceSubCategory.getCode()+" and trading country="+countryId);
 		}
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
@@ -198,18 +217,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"no tax exists for invoiceSubcategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
 		}
-		Long currencyId = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
-		if (currencyId == null) {
-			throw new IncorrectChargeTemplateException(
-					"no currency exists for customerAccount id="
-							+ subscription.getUserAccount().getBillingAccount().getCustomerAccount().getId());
-		}
 
 		WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication(chargeTemplate.getCode(),
 				subscription, chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate,
 				chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity==null?null:new BigDecimal(quantity),
-				currencyId,tax.getId(), tax.getPercent(), null, null, invoiceSubCategory,
+				currencyId,countryId, tax.getPercent(), null, null, invoiceSubCategory,
 				chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 				chargeInstance.getCriteria3(), null, null,null);
 
@@ -297,25 +310,35 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 								+ recurringChargeTemplate.getCode());
 			}
 
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-					.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), chargeInstance
-							.getSubscription().getUserAccount().getBillingAccount()
-							.getTradingCountry().getId());
-			if (invoiceSubcategoryCountry == null) {
+			
+			
+			Long currencyId = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
+			if (currencyId == null) {
 				throw new IncorrectChargeTemplateException(
-						"no tax exists for invoiceSubCategory code=" + invoiceSubCategory.getCode());
+						"no currency exists for customerAccount id="
+								+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+			}
+			
+			//FIXME: put country in charge instance
+			TradingCountry country=chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
+			if (country == null) {
+				throw new IncorrectChargeTemplateException(
+						"no country exists for billingAccount id="
+								+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+			}
+			Long countryId = country.getId();
+			
+			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+					.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+			if (invoiceSubcategoryCountry == null) {
+				throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code="
+						+ invoiceSubCategory.getCode()+" and trading country="+countryId);
 			}
 			Tax tax = invoiceSubcategoryCountry.getTax();
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException(
 						"no tax exists for invoiceSubcategoryCountry id="
 								+ invoiceSubcategoryCountry.getId());
-			}
-			Long currencyId = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
-			if (currencyId == null) {
-				throw new IncorrectChargeTemplateException(
-						"no currency exists for customerAccount id="
-								+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
 			}
 
 			if (!recurringChargeTemplate.getApplyInAdvance()) {
@@ -326,7 +349,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					 ApplicationTypeEnum.PRORATA_SUBSCRIPTION,
 					applicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), quantity,
-					currencyId,tax.getId(), tax.getPercent(), null, nextapplicationDate,
+					currencyId,countryId, tax.getPercent(), null, nextapplicationDate,
 					recurringChargeTemplate.getInvoiceSubCategory(),
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 					chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(
