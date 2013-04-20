@@ -75,13 +75,15 @@ public class RatingService {
         if (unitPriceWithoutTax != null) {
         	unitPriceWithTax = amountWithTax;
         } 
-        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax, currencyId,  countryId,provider);
+        
+        Long sellerId =  subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
+        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax, currencyId,  countryId,sellerId,provider);
         return result;
 		
 	}
 	
 	//used to rate or rerate a bareWalletOperation 
-	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long currencyId, Long countryId,Provider provider){
+	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long currencyId, Long countryId,Long sellerId,Provider provider){
 
 		PricePlanMatrix ratePrice=null;
 		String providerCode=provider.getCode();
@@ -96,7 +98,7 @@ public class RatingService {
     		if(!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())){
     			throw new RuntimeException("no price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
     		}
-        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,countryId,currencyId);
+        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,countryId,currencyId,sellerId);
             if (ratePrice == null ||  ratePrice.getAmountWithoutTax()==null) {
             	throw new RuntimeException("invalid price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
             } else {
@@ -134,9 +136,11 @@ public class RatingService {
 	}
 	
 	
-	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long countryId, Long currencyId) {
+	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long countryId, Long currencyId,Long sellerId) {
 		// FIXME: the price plan properties could be null !
 		for (PricePlanMatrix pricePlan : listPricePlan) {
+			boolean sellerAreEqual = pricePlan.getSeller()==null || sellerId==pricePlan.getSeller().getId();
+			if(sellerAreEqual){
 			    boolean countryAreEqual = pricePlan.getTradingCountry()==null || countryId==pricePlan.getTradingCountry().getId();
 			    if(countryAreEqual){
 			    	boolean currencyAreEqual = pricePlan.getTradingCurrency().getId()==null || currencyId==pricePlan.getTradingCurrency().getId();
@@ -167,7 +171,7 @@ public class RatingService {
 							boolean criteria1SameInPricePlan = WILCARD.equals(pricePlan.getCriteria1Value())
 									|| (pricePlan.getCriteria1Value()!=null && pricePlan.getCriteria1Value().equals(bareOperation.getParameter1()))
 								|| ((pricePlan.getCriteria1Value() == null || "".equals(pricePlan
-													.getCriteria1Value())) && bareOperation.getParameter1() == null);
+													.getCriteria1Value())) && ("".equals(bareOperation.getParameter1()) || bareOperation.getParameter1() == null));
 							log.debug("criteria1SameInPricePlan("
 									+ pricePlan.getCriteria1Value() + ")="
 									+ criteria1SameInPricePlan);
@@ -175,7 +179,7 @@ public class RatingService {
 								boolean criteria2SameInPricePlan = WILCARD.equals(pricePlan.getCriteria2Value())
 										|| (pricePlan.getCriteria2Value()!=null && pricePlan.getCriteria2Value().equals(bareOperation.getParameter2()))
 									|| ((pricePlan.getCriteria2Value() == null || "".equals(pricePlan
-														.getCriteria2Value())) && bareOperation.getParameter2() == null);
+														.getCriteria2Value())) && ("".equals(bareOperation.getParameter2()) || bareOperation.getParameter2() == null));
 								log.debug("criteria2SameInPricePlan("
 										+ pricePlan.getCriteria2Value() + ")="
 										+ criteria2SameInPricePlan);
@@ -183,7 +187,7 @@ public class RatingService {
 									boolean criteria3SameInPricePlan = WILCARD.equals(pricePlan.getCriteria3Value())
 											|| (pricePlan.getCriteria3Value()!=null && pricePlan.getCriteria3Value().equals(bareOperation.getParameter3()))
 									|| ((pricePlan.getCriteria3Value() == null || "".equals(pricePlan
-															.getCriteria3Value())) && bareOperation.getParameter3() == null);
+															.getCriteria3Value())) && ("".equals(bareOperation.getParameter3()) || bareOperation.getParameter3() == null));
 									log.debug("criteria3SameInPricePlan("
 											+ pricePlan.getCriteria3Value()
 											+ ")=" + criteria3SameInPricePlan);
@@ -195,6 +199,7 @@ public class RatingService {
 						  }
 						}
 					}
+				}
 				}
 			    }
 			    }
