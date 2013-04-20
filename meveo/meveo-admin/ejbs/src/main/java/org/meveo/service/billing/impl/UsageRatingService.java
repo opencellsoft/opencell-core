@@ -90,7 +90,7 @@ public class UsageRatingService {
      * @return
      */
     //TODO: change TaxId to country
-    public WalletOperation rateEDRwithMatchingCharge(EDR edr, UsageChargeInstance chargeInstance, Provider provider){
+    public WalletOperation rateEDRwithMatchingCharge(EDR edr, UsageChargeInstanceCache chargeCache, UsageChargeInstance chargeInstance, Provider provider){
     	WalletOperation walletOperation = new WalletOperation();
 		walletOperation.setSubscriptionDate(null);
 		walletOperation.setOperationDate(edr.getEventDate());
@@ -111,6 +111,7 @@ public class UsageRatingService {
 		Long currencyId=country.getCountry().getCurrency().getId();
 		Tax tax = invoiceSubcategoryCountry.getTax();
         walletOperation.setChargeInstance(chargeInstance); 
+        Long sellerId= edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
         
         //FIXME: get the wallet from the ServiceUsageChargeTemplate
         walletOperation.setWallet(edr.getSubscription().getUserAccount().getWallet());
@@ -120,7 +121,7 @@ public class UsageRatingService {
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
-		ratingService.rateBareWalletOperation(walletOperation, null, null, currencyId, countryId, provider);
+		ratingService.rateBareWalletOperation(walletOperation, null, null, currencyId, countryId,sellerId, provider);
 		return walletOperation;
     }
     
@@ -180,7 +181,7 @@ public class UsageRatingService {
 		if(continueRating){
 			Provider provider=charge.getProvider();
 			UsageChargeInstance chargeInstance =usageChargeInstanceService.findById(charge.getChargeInstanceId());
-			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, chargeInstance, provider);
+			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, charge,chargeInstance, provider);
 			walletOperationService.create(walletOperation, null,provider);
 			result=true;			
 		}
