@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -62,14 +63,20 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
+    @Inject
+    private ResourceBundle resourceMessages;
 
 	@Inject
 	private RatingService chargeApplicationRatingService;
 	
 	private DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	private String str_tooPerceived = ResourceBundle.getBundle("messages").getString(
-			"str_tooPerceived");
+	private String str_tooPerceived = null;
 
+	@PostConstruct
+	private void init(){
+	    str_tooPerceived = resourceMessages.getString("str_tooPerceived");
+	}
+	
 	public void usageWalletOperation(Subscription subscription,Date usageDate, BigDecimal quantity, String param1, String param2, String param3){
 		
 	}

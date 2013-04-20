@@ -32,8 +32,8 @@
 			<h:form>
 
 				<p:tree id="#{cc.attrs.id}_tree" value="#{cc.attrs.treeValue}"
-					var="node" selectionMode="single"
-					selection="#{customerTreeBean.selectedNode}">
+					var="node" selectionMode="single">
+<!-- 					selection="#{customerTreeBean.selectedNode}"> -->
 
 					<p:treeNode type="customer.type" icon="tree-customer-icon"
 						expandedIcon="ui-icon-folder-open"
@@ -41,7 +41,7 @@
 						<h:link id="customer_tree_value"
 							value="#{node}"
 							outcome="#{node.view}"
-							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+							styleClass="#{node.selected?'selectedTreeNode':''}">
 							<f:param name="customerId" value="#{node.id}"/>
 							<f:param name="cid" value="#{conversation.id}" />
 							<f:param name="edit" value="false" />
@@ -49,18 +49,18 @@
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
 							for="customer_tree_value" value="#{node.firstAndLastName}" />
 
-						<h:link id="customer_tree_value_selected"
-							value="#{node}"
-							outcome="#{node.view}"
-							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
-							styleClass="selectedTreeNode">
-							<f:param name="customerId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
-							<f:param name="edit" value="false" />
-						</h:link>
-						<p:tooltip rendered="#{node.firstAndLastName != null}"
-							for="customer_tree_value_selected"
-							value="#{node.firstAndLastName}" />
+<!-- 						<h:link id="customer_tree_value_selected" -->
+<!-- 							value="#{node}" -->
+<!-- 							outcome="#{node.view}" -->
+<!-- 							rendered="#{node.selected}" -->
+<!-- 							styleClass="selectedTreeNode"> -->
+<!-- 							<f:param name="customerId" value="#{node.id}"/> -->
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
+<!-- 							<f:param name="edit" value="false" /> -->
+<!-- 						</h:link> -->
+<!-- 						<p:tooltip rendered="#{node.firstAndLastName != null}" -->
+<!-- 							for="customer_tree_value_selected" -->
+<!-- 							value="#{node.firstAndLastName}" /> -->
 					</p:treeNode>
 
 					<p:treeNode type="customerAccount.type"
@@ -70,7 +70,7 @@
 						<h:link id="customerAccount_tree_value"
 							value="#{node}"
 							outcome="#{node.view}"
-							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+							styleClass="#{node.selected?'selectedTreeNode':''}">
 							<f:param name="customerAccountId" value="#{node.id}"/>
 							<f:param name="cid" value="#{conversation.id}" />
 							<f:param name="edit" value="false" />
@@ -78,17 +78,17 @@
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
 							for="customerAccount_tree_value" value="#{node.firstAndLastName}" />
 
-						<h:link id="customerAccount_tree_value_selected"
-							value="#{node}"
-							outcome="#{node.view}"
-							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}">
-							<f:param name="customerAccountId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
-							<f:param name="edit" value="false" />
-						</h:link>
-						<p:tooltip rendered="#{node.firstAndLastName != null}"
-							for="customerAccount_tree_value_selected"
-							value="#{node.firstAndLastName}" />
+<!-- 						<h:link id="customerAccount_tree_value_selected" -->
+<!-- 							value="#{node}" -->
+<!-- 							outcome="#{node.view}" -->
+<!-- 							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"> -->
+<!-- 							<f:param name="customerAccountId" value="#{node.id}"/> -->
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
+<!-- 							<f:param name="edit" value="false" /> -->
+<!-- 						</h:link> -->
+<!-- 						<p:tooltip rendered="#{node.firstAndLastName != null}" -->
+<!-- 							for="customerAccount_tree_value_selected" -->
+<!-- 							value="#{node.firstAndLastName}" /> -->
 					</p:treeNode>
 
 					<p:treeNode type="billingAccount.type"
@@ -98,7 +98,7 @@
 						<h:link id="billingAccount_tree_value"
 							value="#{node}"
 							outcome="#{node.view}"
-							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+							styleClass="#{node.selected?'selectedTreeNode':''}">
 							<f:param name="billingAccountId" value="#{node.id}"/>
 							<f:param name="cid" value="#{conversation.id}" />
 							<f:param name="edit" value="false" />
@@ -106,18 +106,18 @@
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
 							for="billingAccount_tree_value" value="#{node.firstAndLastName}" />
 
-						<h:link id="billingAccount_tree_value_selected"
-							value="#{node}"
-							outcome="#{node.view}"
-							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
-							styleClass="selectedTreeNode">
-							<f:param name="billingAccountId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
-							<f:param name="edit" value="false" />
-						</h:link>
-						<p:tooltip rendered="#{node.firstAndLastName != null}"
-							for="billingAccount_tree_value_selected"
-							value="#{node.firstAndLastName}" />
+<!-- 						<h:link id="billingAccount_tree_value_selected" -->
+<!-- 							value="#{node}" -->
+<!-- 							outcome="#{node.view}" -->
+<!-- 							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}" -->
+<!-- 							styleClass="selectedTreeNode"> -->
+<!-- 							<f:param name="billingAccountId" value="#{node.id}"/> -->
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
+<!-- 							<f:param name="edit" value="false" /> -->
+<!-- 						</h:link> -->
+<!-- 						<p:tooltip rendered="#{node.firstAndLastName != null}" -->
+<!-- 							for="billingAccount_tree_value_selected" -->
+<!-- 							value="#{node.firstAndLastName}" /> -->
 					</p:treeNode>
 
 					<p:treeNode type="userAccount.type" icon="tree-user-account-icon"
@@ -125,50 +125,49 @@
 						collapsedIcon="ui-icon-folder-collapsed">
 						<h:link id="userAccount_tree_value" value="#{node}"
 							outcome="#{node.view}"
-							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
-							<f:param name="subscriptionId" value="#{node.id}"/>
+							styleClass="#{node.selected?'selectedTreeNode':''}">
+							<f:param name="userAccountId" value="#{node.id}"/>
 							<f:param name="cid" value="#{conversation.id}" />
 							<f:param name="edit" value="false" />
 						</h:link>
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
 							for="userAccount_tree_value" value="#{node.firstAndLastName}" />
 
-						<h:link id="userAccount_tree_value_selected" value="#{node}"
-							outcome="#{node.view}"
-							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
-							styleClass="selectedTreeNode">
-							<f:param name="subscriptionId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
-							<f:param name="edit" value="false" />
-						</h:link>
-						<p:tooltip rendered="#{node.firstAndLastName != null}"
-							for="userAccount_tree_value_selected"
-							value="#{node.firstAndLastName}" />
+<!-- 						<h:link id="userAccount_tree_value_selected" value="#{node}" -->
+<!-- 							outcome="#{node.view}" -->
+<!-- 							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}" -->
+<!-- 							styleClass="selectedTreeNode"> -->
+<!-- 							<f:param name="subscriptionId" value="#{node.id}"/> -->
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
+<!-- 							<f:param name="edit" value="false" /> -->
+<!-- 						</h:link> -->
+<!-- 						<p:tooltip rendered="#{node.firstAndLastName != null}" -->
+<!-- 							for="userAccount_tree_value_selected" -->
+<!-- 							value="#{node.firstAndLastName}" /> -->
 					</p:treeNode>
 
 					<p:treeNode type="subscription" icon="tree-user-account-icon"
 						expandedIcon="ui-icon-folder-open"
 						collapsedIcon="ui-icon-folder-collapsed">
 						<h:link id="subscription_tree_value" value="#{node}"
-							outcome="#{node.view}"
-							rendered="#{!((customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type))}">
+							outcome="#{node.view}">
 							<f:param name="subscriptionId" value="#{node.id}"/>
 							<f:param name="cid" value="#{conversation.id}" />		
 							<f:param name="edit" value="false" />
 						</h:link>					
 						<p:tooltip rendered="#{node.code != null}"
 							for="subscription_tree_value" value="#{node.code}" />
-						<h:link id="subscription_tree_value_selected" value="#{node}"
-							outcome="#{node.view}"
-							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}"
-							styleClass="selectedTreeNode">
-							<f:param name="subscriptionId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
-							<f:param name="edit" value="false" />
-						</h:link>	
-						<p:tooltip rendered="#{node.code != null}"
-							for="subscription_tree_value_selected"
-							value="#{node.code}" />
+<!-- 						<h:link id="subscription_tree_value_selected" value="#{node}" -->
+<!-- 							outcome="#{node.view}" -->
+<!-- 							rendered="#{(customerTreeBean.selected==node.id) and (customerTreeBean.getEntityType(cc.attrs.entity)==node.type)}" -->
+<!-- 							styleClass="selectedTreeNode"> -->
+<!-- 							<f:param name="subscriptionId" value="#{node.id}"/> -->
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
+<!-- 							<f:param name="edit" value="false" /> -->
+<!-- 						</h:link>	 -->
+<!-- 						<p:tooltip rendered="#{node.code != null}" -->
+<!-- 							for="subscription_tree_value_selected" -->
+<!-- 							value="#{node.code}" /> -->
 						
 					</p:treeNode>
 
