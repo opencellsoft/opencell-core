@@ -14,8 +14,21 @@
 	</ui:define>
 
 	<ui:define name="body">
-
-
+	
+	
+		<hftl:entityPopup id="pricPlanMatChargePopup"
+			header="#{messages['charge.popup.header']}"
+			backingBean="#{chargeTemplateBean}"
+			searchField1Label="#{messages['charge.code']}"
+			searchField1="code"
+			column1Label="#{messages['charge.description']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			selection="#{chargeTemplateBean.entity}"
+			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId:chargeSelectId_text"
+			eventBackingBean="#{pricePlanMatrixBean}">
+		</hftl:entityPopup>
 
 		<hftl:entityPopup id="pricPlanMatCurrencyPopup"
 			header="#{messages['tradingLanguage.header']}"
@@ -58,20 +71,12 @@
 			label="#{messages['pricePlanMatrix.panel']}"
 			backingBean="#{pricePlanMatrixBean}" formId="formPricePlan">
 			<p:panelGrid columns="2">
-				<hf:formField id="chargeSelectId"
-					label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode" />
+				<hf:formField id="chargeSelectId" required="true"
+					label="#{messages['pricePlanMatrix.eventCode']}" field="eventCode" popup="true" popupId="pricPlanMatChargePopup" disabled="true"/>
 				<hf:formEntityField id="parentSelectId"
-					label="#{messages['seller.title']}"
-					field="seller" childField="description" 
-					popup="true" popupId="sellerParentPopup" />	
-				<hf:formEntityField id="trCountrySelectId"
-					label="#{messages['tradingCountry.tradingCountry']}"
-					field="tradingCountry" childField="countryCode" popup="true" required="true" 
-					popupId="tradingCountryPopup" />
-				<hf:formEntityField id="customerCurrencySelectId"
-						label="#{messages['currency.codeCurrency']}"
-						field="tradingCurrency" childField="currencyCode" popup="true" required="true" 
-						popupId="pricPlanMatCurrencyPopup" />
+										    label="#{messages['seller.title']}"
+											field="seller" childField="description" required="true"
+											popup="true" popupId="sellerParentPopup" />	
 				<hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
 					field="criteria1Value" />
 				<hf:formField
@@ -94,6 +99,17 @@
 				<hf:formField
 					label="#{messages['pricePlanMatrix.amountWithTax']}"
 					field="amountWithTax" converterParam="10digits" />
+				<p:panelGrid columns="1">
+					<hf:formEntityField id="customerCurrencySelectId"
+						label="#{messages['currency.codeCurrency']}"
+						field="tradingCurrency" childField="currencyCode" popup="true"
+						popupId="pricPlanMatCurrencyPopup" />
+				</p:panelGrid>
+				<hf:formEntityField id="trCountrySelectId"
+					label="#{messages['tradingCountry.tradingCountry']}"
+					field="tradingCountry" childField="countryCode" popup="true"
+					popupId="tradingCountryPopup" />
+
 				<hf:formField
 					label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
 					field="minSubscriptionAgeInMonth" />

@@ -20,10 +20,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.billing.Country;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.primefaces.event.SelectEvent;
 
 /**
  * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -84,5 +87,17 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
     protected String getListViewName() {
     	 return "pricePlanMatrixes";
     }
+    
+    public void onRowSelect(SelectEvent event){  
+    	System.out.println("onRowSelect : event.getObject()");
+    	if(event.getObject() instanceof ChargeTemplate){
+    		ChargeTemplate chargeTemplate = (ChargeTemplate)event.getObject();  
+    		System.out.println("onRowSelect chargeTemplate:"+ chargeTemplate.getCode());
+    		if (chargeTemplate != null) {
+    			entity.setEventCode(chargeTemplate.getCode());
+    		}
+    	}
+    	
+    } 
 
 }

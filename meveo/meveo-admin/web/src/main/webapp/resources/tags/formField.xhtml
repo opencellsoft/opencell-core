@@ -47,6 +47,8 @@
 		default="#{cc.backingBeanFromParentOrCurrent.edit}" />
 	<cc:attribute name="minValue" default="0" />
 	<cc:attribute name="maxValue" default="" />
+	<cc:attribute name="popup" default="false" />
+	<cc:attribute name="popupId" default="popup" />
 
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) or ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
@@ -56,14 +58,15 @@
 
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<!--  If the value binding is a string, display an inputText field. -->
-		<p:panelGrid columns="2" rendered="#{cc.isText(cc.attrs.field,false)}">
+		<p:panelGrid columns="3" rendered="#{cc.isText(cc.attrs.field,false)}">
 			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}" />
 			<p:inputText id="#{cc.attrs.id}_text"
 				rendered="#{not cc.attrs.isHtml and not cc.attrs.textArea and cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
 				size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}">
-
+				
+			
 				<c:if test="#{cc.attrs.useConverter}">
 					<f:converter converterId="stringConverter" />
 				</c:if>
@@ -93,7 +96,10 @@
 				</c:if>
 
 			</p:inputText>
-
+			<p:commandButton rendered="#{cc.attrs.edit and cc.attrs.popup}" id="selectLink"
+					onclick="dlg_#{cc.attrs.popupId}.show()" icon="ui-icon-search" />
+					
+				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 			<p:inputTextarea rendered="#{cc.attrs.textArea and cc.attrs.edit}"
 				id="#{cc.attrs.id}_textArea" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
