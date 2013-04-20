@@ -110,8 +110,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ chargeTemplate.getCode());
 		}
 		
-		Long currencyId = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
-		if (currencyId == null) {
+		TradingCurrency currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
+		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
 							+ subscription.getUserAccount().getBillingAccount().getCustomerAccount().getId());
@@ -141,7 +141,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				subscription, chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate,
 				chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity==null?null:new BigDecimal(quantity),
-				currencyId,countryId, tax.getPercent(), null, null, invoiceSubCategory,
+				currency,countryId, tax.getPercent(), null, null, invoiceSubCategory,
 				chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 				chargeInstance.getCriteria3(), null, null,null);
 
@@ -197,8 +197,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		
-		Long currencyId = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
-		if (currencyId == null) {
+		TradingCurrency currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
+		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
 							+ subscription.getUserAccount().getBillingAccount().getCustomerAccount().getId());
@@ -229,7 +229,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				subscription, chargeInstance,
 				ApplicationTypeEnum.PUNCTUAL, applicationDate,
 				chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), quantity==null?null:new BigDecimal(quantity),
-				currencyId,countryId, tax.getPercent(), null, null, invoiceSubCategory,
+				currency,countryId, tax.getPercent(), null, null, invoiceSubCategory,
 				chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 				chargeInstance.getCriteria3(), null, null,null);
 
@@ -319,8 +319,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			
 			
-			Long currencyId = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency().getId();
-			if (currencyId == null) {
+			TradingCurrency currency = chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
+			if (currency == null) {
 				throw new IncorrectChargeTemplateException(
 						"no currency exists for customerAccount id="
 								+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
@@ -356,7 +356,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					 ApplicationTypeEnum.PRORATA_SUBSCRIPTION,
 					applicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), quantity,
-					currencyId,countryId, tax.getPercent(), null, nextapplicationDate,
+					currency,countryId, tax.getPercent(), null, nextapplicationDate,
 					recurringChargeTemplate.getInvoiceSubCategory(),
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 					chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(
@@ -468,7 +468,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						"no currency exists for customerAccount id="
 								+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
 			}
-			Long currencyId = currency.getId();
 			
 			//FIXME: put country in charge instance
 			TradingCountry country=chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
@@ -497,7 +496,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					ApplicationTypeEnum.PRORATA_TERMINATION,
 					applicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), quantity,
-					currencyId,countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
+					currency,countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
 					chargeInstance.getCriteria1(),
 					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), periodStart,
 					DateUtils.addDaysToDate(nextapplicationDate, -1),ChargeApplicationModeEnum.REIMBURSMENT);
@@ -570,7 +569,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							"no currency exists for customerAccount id="
 									+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
 				}
-				Long currencyId = currency.getId();
 				
 				//FIXME: put country in charge instance
 				TradingCountry country=chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
@@ -617,7 +615,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION
 							: ApplicationTypeEnum.RECURRENT, applicationDate,
 					chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(),
-					quantity, currencyId,countryId,
+					quantity, currency,countryId,
 					tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
 					chargeInstance.getCriteria1(),
 					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate,
@@ -679,7 +677,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							"no currency exists for customerAccount id="
 									+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
 				}
-				Long currencyId = currency.getId();
 				
 				//FIXME: put country in charge instance
 				TradingCountry country=chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
@@ -765,7 +762,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum,
 					applicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), quantity,
-					currencyId,countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
+					currency,countryId, tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 					chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1),
 					reimbursement?ChargeApplicationModeEnum.REIMBURSMENT:ChargeApplicationModeEnum.SUBSCRIPTION);
@@ -822,7 +819,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"no currency exists for customerAccount id="
 							+ chargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
 		}
-		Long currencyId = currency.getId();
 		
 		//FIXME: put country in charge instance
 		TradingCountry country=chargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
@@ -881,7 +877,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					type, applicationDate,
 					chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(),
 					quantity, 
-					currencyId,countryId,
+					currency,countryId,
 					tax.getPercent(), null, nextapplicationDate, invoiceSubCategory,  chargeInstance.getCriteria1(),
 					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), applicationDate,
 					endDate,ChargeApplicationModeEnum.AGREEMENT);

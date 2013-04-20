@@ -19,6 +19,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -108,7 +109,7 @@ public class UsageRatingService {
         Long countryId=country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(),countryId);
-		Long currencyId=country.getCountry().getCurrency().getId();
+		TradingCurrency currency=edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
         walletOperation.setChargeInstance(chargeInstance); 
         Long sellerId= edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
@@ -121,7 +122,7 @@ public class UsageRatingService {
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
-		ratingService.rateBareWalletOperation(walletOperation, null, null, currencyId, countryId,sellerId, provider);
+		ratingService.rateBareWalletOperation(walletOperation, null, null, countryId,currency,sellerId, provider);
 		return walletOperation;
     }
     

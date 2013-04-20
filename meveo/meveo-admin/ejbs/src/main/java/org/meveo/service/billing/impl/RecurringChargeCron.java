@@ -128,7 +128,6 @@ public class RecurringChargeCron {
 								"no currency exists for customerAccount id="
 										+ activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
 					}
-					Long currencyId = currency.getId();
 					
 					//FIXME: put country in charge instance
 					TradingCountry country=activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
@@ -148,7 +147,7 @@ public class RecurringChargeCron {
 							activeRecurringChargeInstance.getAmountWithoutTax(),
 							activeRecurringChargeInstance.getAmountWithTax(),
 							new BigDecimal(activeRecurringChargeInstance.getServiceInstance().getQuantity()),
-							currencyId,countryId, tax.getPercent(), null, applicationDate, invoiceSubCat,
+							currency,countryId, tax.getPercent(), null, applicationDate, invoiceSubCat,
 							activeRecurringChargeInstance.getCriteria1(),
 							activeRecurringChargeInstance.getCriteria2(),
 							activeRecurringChargeInstance.getCriteria3(), previousapplicationDate,

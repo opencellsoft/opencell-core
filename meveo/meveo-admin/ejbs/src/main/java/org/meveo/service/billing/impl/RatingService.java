@@ -18,6 +18,7 @@ import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -45,7 +46,7 @@ public class RatingService {
 	public WalletOperation rateChargeApplication(String code, Subscription subscription,
             ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
-            BigDecimal amountWithTax, BigDecimal quantity, Long currencyId, Long countryId, BigDecimal taxPercent,
+            BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
             BigDecimal discountPercent, Date nextApplicationDate,
             InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2,
             String criteria3, Date startdate, Date endDate,ChargeApplicationModeEnum mode){
@@ -66,6 +67,7 @@ public class RatingService {
         result.setCode(code);
         result.setQuantity(quantity);
         result.setTaxPercent(taxPercent);
+        result.setCurrency(tCurrency.getCurrency());
         result.setStartDate(startdate);
         result.setEndDate(endDate);
         result.setStatus(WalletOperationStatusEnum.OPEN);
@@ -77,13 +79,13 @@ public class RatingService {
         } 
         
         Long sellerId =  subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
-        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax, currencyId,  countryId,sellerId,provider);
+        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax,countryId,tCurrency,sellerId,provider);
         return result;
 		
 	}
 	
 	//used to rate or rerate a bareWalletOperation 
-	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long currencyId, Long countryId,Long sellerId,Provider provider){
+	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long countryId,TradingCurrency tcurrency, Long sellerId,Provider provider){
 
 		PricePlanMatrix ratePrice=null;
 		String providerCode=provider.getCode();
@@ -98,7 +100,7 @@ public class RatingService {
     		if(!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())){
     			throw new RuntimeException("no price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
     		}
-        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,countryId,currencyId,sellerId);
+        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,countryId,tcurrency,sellerId);
             if (ratePrice == null ||  ratePrice.getAmountWithoutTax()==null) {
             	throw new RuntimeException("invalid price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
             } else {
@@ -136,14 +138,14 @@ public class RatingService {
 	}
 	
 	
-	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long countryId, Long currencyId,Long sellerId) {
+	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency,Long sellerId) {
 		// FIXME: the price plan properties could be null !
 		for (PricePlanMatrix pricePlan : listPricePlan) {
 			boolean sellerAreEqual = pricePlan.getSeller()==null || sellerId==pricePlan.getSeller().getId();
 			if(sellerAreEqual){
 			    boolean countryAreEqual = pricePlan.getTradingCountry()==null || countryId==pricePlan.getTradingCountry().getId();
 			    if(countryAreEqual){
-			    	boolean currencyAreEqual = pricePlan.getTradingCurrency().getId()==null || currencyId==pricePlan.getTradingCurrency().getId();
+			    	boolean currencyAreEqual = pricePlan.getTradingCurrency().getId()==null || (tcurrency!=null && tcurrency.getId()==pricePlan.getTradingCurrency().getId());
 				if(currencyAreEqual){
 			    	boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null
 				|| ((pricePlan.getStartSubscriptionDate() == null || bareOperation.getSubscriptionDate().after(pricePlan.getStartSubscriptionDate()) || bareOperation.getSubscriptionDate()

@@ -285,6 +285,7 @@
 										<hftl:column
 											label="#{messages['serviceTemplate.description']}"
 											field="description" />
+									</p:dataTable>
 										<br />
 										<br />
 										<ui:define name="operations">
@@ -294,14 +295,13 @@
 														value="#{messages['serviceInstance.quantity']}:"></h:outputText>
 													<h:inputText value="#{subscriptionBean.quantity}" size="5"
 														maxlength="3" />
-													<a:commandButton id="cbutton"
+													<p:commandButton id="cbutton"
 														action="#{subscriptionBean.instanciateManyServices}"
-														render="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel"
+														update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel"
 														value="#{messages['button.instanciateButton']}" />
 												</h:panelGrid>
 											</div>
 										</ui:define>
-									</p:dataTable>
 								</h:form>
 							</p:tab>
 							<p:tab id="accInfoTab"
@@ -385,7 +385,7 @@
 												field="code" />
 											<hftl:column
 												label="#{messages['chargeInstance.description']}"
-												field="description" isMessage="true" />
+												field="description" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
 												field="amountWithoutTax" />
@@ -394,25 +394,26 @@
 												field="amountWithTax" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria1']}"
-												field="criteria1" isMessage="true" />
+												field="criteria1"/>
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria2']}"
-												field="criteria2" isMessage="true" />
+												field="criteria2"/>
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria3']}"
-												field="criteria3" isMessage="true" />
+												field="criteria3"/>
 
 											<p:column styleClass="actions-column">
 												<f:facet name="header">
 													<h:outputText value="#{messages['commons.actions']}" />
 												</f:facet>
 
-												<a:commandLink id="editOneShotChgInsLink"
+												<p:commandLink id="editOneShotChgInsLink"
 													render="oneShotChgSdiv"
-													onclick="document.getElementById('oneShotChgDiv').style.display='';"
+													update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
+												onclick="document.getElementById('oneShotChgDiv').style.display='';"
 													action="#{subscriptionBean.editOneShotChargeIns(entity)}">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
-												</a:commandLink>
+												</p:commandLink>
 												<p:tooltip for="editOneShotChgInsLink"
 													value="#{messages['commons.edit']}" showEffect="slide"
 													hideEffect="slide" />
@@ -498,7 +499,7 @@
 														size="5" maxlength="3">
 													</h:inputText>
 												</h:panelGrid>
-												<a:outputPanel id="oneShotWalletOperationsPanel"
+												<p:outputPanel id="oneShotWalletOperationsPanel"
 													rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
 													<span style="height: 1px" />
 													<h:outputText value="#{messages['commons.noItems']}"
@@ -509,59 +510,28 @@
 														<h:outputText
 															value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
 
-														<rich:dataTable id="oneShotWalletOperationTable"
+														<p:dataTable id="oneShotWalletOperationTable"
 															value="#{subscriptionBean.oneShotWalletOperations}"
-															var="shotApplication"
-															onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
-															onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-															reRender="oneShotWalletOperationScroller" rows="10">
-															<rich:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['walletOperation.applicationDate']}" />
-																</f:facet>
-																<h:outputText value="#{shotApplication.applicationDate}">
-																	<f:convertDateTime pattern="dd/MM/yyyy" />
-																</h:outputText>
-															</rich:column>
-															<rich:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['walletOperation.description']}" />
-																</f:facet>
-																<h:outputText value="#{shotApplication.description}">
-																</h:outputText>
-															</rich:column>
-															<rich:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['walletOperation.amountWithoutTax']}" />
-																</f:facet>
-																<h:outputText
-																	value="#{shotApplication.amountWithoutTax}" />
-															</rich:column>
-															<rich:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['walletOperation.amountWithTax']}" />
-																</f:facet>
-																<h:outputText value="#{shotApplication.amountWithTax}" />
-															</rich:column>
-															<rich:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['walletOperation.status']}" />
-																</f:facet>
-																<h:outputText
-																	value="#{messages[shotApplication.status.label]}" />
-															</rich:column>
+															var="shotApplication" rows="10">
+															<hftl:column 
+															  label="#{messages['chargeApplication.applicationDate']}" 
+															  field="applicationDate"/>
+															<hftl:column 
+															  label="#{messages['chargeApplication.description']}"
+															   field="description"/>
+															<hftl:column 
+															  label="#{messages['chargeApplication.amountWithoutTax']}"
+															   field="amountWithoutTax" />
+															<hftl:column 
+															  label="#{messages['walletOperation.amountWithTax']}"
+															   field="amountWithTax" />
+															<hftl:column 
+															  label="#{messages['chargeApplication.status']}"
+															   field="status" />
 
-														</rich:dataTable>
-														<rich:dataScroller id="oneShotWalletOperationScroller"
-															for="oneShotWalletOperationTable"
-															renderIfSinglePage="false" maxPages="10" />
+														</p:dataTable>
 													</h:panelGrid>
-												</a:outputPanel>
+												</p:outputPanel>
 
 												<script type="text/javascript">
     //<![CDATA[
@@ -747,12 +717,12 @@
 												<f:facet name="header">
 													<h:outputText value="#{messages['commons.actions']}" />
 												</f:facet>
-												<a:commandLink id="editRecurringChgInsLink"
-													render="recurringChgSdiv"
+												<p:commandLink id="editRecurringChgInsLink"
+													update="recurringChgSdiv"
 													onclick="document.getElementById('recurringChgDiv').style.display='';"
 													action="#{subscriptionBean.editRecurringChargeIns(entity)}">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
-												</a:commandLink>
+												</p:commandLink>
 												<p:tooltip for="editRecurringChgInsLink"
 													value="#{messages['commons.edit']}" />
 											</p:column>
