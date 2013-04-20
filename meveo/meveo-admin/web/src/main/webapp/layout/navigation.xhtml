@@ -29,12 +29,16 @@
 
 			</p:submenu>
 
+			<p:submenu id="job" label="#{messages['menu.job']}"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+				
+		    	<p:menuitem id="jobs" outcome="jobTimers"
+					value="#{messages['menu.jobs']}" /> 
 
-		    <p:menuitem value="#{messages['menu.jobs']}" id="jobs" outcome="jobTimers"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}" /> 
-
-			<p:menuitem value="#{messages['menu.activeTimers']}" id="timers" outcome="timers"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+				<p:menuitem id="timers" outcome="timers"
+					value="#{messages['menu.activeTimers']}" />
+					
+			</p:submenu>
 	  			
 			<!--
 			<rich:menuItem id="userRoles" rendered="#{identity.hasPermission('administration','roleManagement')}">
@@ -93,16 +97,15 @@
 
 				<p:menuitem id="customerCategories" outcome="customerCategories"
 					value="#{messages['menu.customerCategories']}" />
+				
+				<p:menuitem id="sellers" outcome="sellers" 
+					value="#{messages['menu.sellers']}" />
 
 			</p:submenu>
 
 			<p:menuitem id="emailTemplates"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
-
-			<p:menuitem id="sellers"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="sellers" value="#{messages['menu.sellers']}" />
 
 			<!-- <p:menuitem id="titles" 
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
