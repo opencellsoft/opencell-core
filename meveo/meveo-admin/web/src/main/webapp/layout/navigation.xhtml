@@ -29,12 +29,16 @@
 
 			</p:submenu>
 
+			<p:submenu id="job" label="#{messages['menu.job']}"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+				
+		    	<p:menuitem id="jobs" outcome="jobTimers"
+					value="#{messages['menu.jobs']}" /> 
 
-		    <p:menuitem value="#{messages['menu.jobs']}" id="jobs" outcome="jobTimers"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}" /> 
-
-			<p:menuitem value="#{messages['menu.activeTimers']}" id="timers" outcome="timers"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
+				<p:menuitem id="timers" outcome="timers"
+					value="#{messages['menu.activeTimers']}" />
+					
+			</p:submenu>
 	  			
 			<!--
 			<rich:menuItem id="userRoles" rendered="#{identity.hasPermission('administration','roleManagement')}">
