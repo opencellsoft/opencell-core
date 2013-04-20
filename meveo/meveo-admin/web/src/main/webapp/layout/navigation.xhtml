@@ -97,16 +97,15 @@
 
 				<p:menuitem id="customerCategories" outcome="customerCategories"
 					value="#{messages['menu.customerCategories']}" />
+				
+				<p:menuitem id="sellers"
+					outcome="sellers" value="#{messages['menu.sellers']}" />
 
 			</p:submenu>
 
 			<p:menuitem id="emailTemplates"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
-
-			<p:menuitem id="sellers"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="sellers" value="#{messages['menu.sellers']}" />
 
 			<!-- <p:menuitem id="titles" 
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
