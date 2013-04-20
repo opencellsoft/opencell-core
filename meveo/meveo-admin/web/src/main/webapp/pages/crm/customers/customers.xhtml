@@ -41,9 +41,6 @@
 			<hftl:column label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['tradingCurrency.tradingCurrencyPanel']}" field="tradingCurrency" childField="currencyCode" />
-			<hftl:column label="#{messages['tradingCountry.title']}" field="tradingCountry" childField="countryCode" />
-			<hftl:column label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" childField="languageCode" />
 			<hftl:column label="#{messages['seller.title']}" field="seller" childField="description" />
 			<hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
