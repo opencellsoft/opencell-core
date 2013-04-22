@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -233,12 +234,16 @@
 										popupId="invSubCatCountTaxPopup" required="true" /> 
 
 									<p:panelGrid columns="3">
-
-										<p:commandButton
+										<p:commandButton rendered="#{invoiceSubcategoryCountry.id==null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
-											value="#{messages['action.save']}"
+											value="#{messages['invoiceSubCategoryCountry.saveNewtax']}"
 											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv"
 											/>
+										<p:commandButton rendered="#{invoiceSubcategoryCountry.id!=null}"
+											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
+											value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
+											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv"
+											/>	
 
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
