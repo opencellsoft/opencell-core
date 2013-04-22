@@ -18,6 +18,8 @@
 		default="true" />
 	<cc:attribute name="newButtonView"
 		default="#{cc.attrs.backingBean.getNewViewName()}" />
+	<cc:attribute name="ajax" default="false" />
+	<cc:attribute name="ajaxUpdateIds" required="false" />
 </cc:interface>
 
 <cc:implementation>
@@ -33,8 +35,8 @@
 			</p:panelGrid>
 			<p:panelGrid columns="3" style="float: right;">
 				<p:commandButton id="buttonSearch"
-					value="#{messages['commons.search']}" ajax="false"
-					action="#{cc.attrs.backingBean.search}" />
+					value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}"
+					action="#{cc.attrs.backingBean.search}" update="#{cc.attrs.ajaxUpdateIds}" />
 				<hf:clearButton label="#{messages['commons.clean']}"
 					resetAction="#{cc.attrs.backingBean.clean}" />
 				<p:button id="buttonNew" value="#{messages['commons.new']}"

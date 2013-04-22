@@ -10,13 +10,18 @@
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
+	<f:metadata>
+		<f:viewParam name="customerAccountId" value="#{customerAccountBean.objectId}" />
+		<f:viewParam name="customerId" value="#{customerBean.objectId}" />
+	</f:metadata>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
 	
-		<hf:formPanel label="#{messages['accountOperation.form']}" backingBean="#{otherCreditAndChargeBean}">				   		
+		<hf:formPanel label="#{messages['accountOperation.form']}" backingBean="#{otherCreditAndChargeBean}" killConversationOnSave="#{otherCreditAndChargeBean.customerAccount==null}" killConversationOnBack="#{otherCreditAndChargeBean.customerAccount==null}">				   		
        		<hf:formEntityField label="#{messages['accountOperation.customerAccount']}" field="customerAccount" childField="name" edit="false" />
 	       	<hf:formField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" childField="label" edit="false" isMessage="true" />	       	  
 	      	<hf:formField label="#{messages['accountOperation.occCode']}" field="occCode" edit="false" />
