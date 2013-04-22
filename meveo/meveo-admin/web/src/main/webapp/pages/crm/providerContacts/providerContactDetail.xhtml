@@ -50,22 +50,22 @@
 			<p:fieldset legend="#{messages['commons.address']}">
 				<p:panelGrid columns="2">
 					<hf:formEntityField label="#{messages['address.address1']}"
-						field="address" childField="address1" popup="false" size="80"
+						field="address" id="address1" childField="address1" popup="false" size="80"
 						maxlength="80" />
 
 					<hf:formEntityField label="#{messages['address.address2']}"
-						field="address" childField="address2" popup="false" size="80"
+						field="address" id="address2" childField="address2" popup="false" size="80"
 						maxlength="80" />
 
 					<hf:formEntityField label="#{messages['address.address3']}"
-						field="address" childField="address3" popup="false" size="80"
+						field="address" id="address3" childField="address3" popup="false" size="80"
 						maxlength="80" />
 
 					<hf:formEntityField label="#{messages['address.zipCode']}" size="5"
-						required="true" field="address" childField="zipCode" length="3"
+						required="true" id="zipCode" field="address" childField="zipCode" length="3"
 						popup="false" maxlength="5" />
 					<hf:formEntityField label="#{messages['address.city']}"
-						required="true" field="address" childField="city" popup="false"
+						required="true" id="city"vfield="address" childField="city" popup="false"
 						maxlength="50" />
 
 					<p:panelGrid columns="2">

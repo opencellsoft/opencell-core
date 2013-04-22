@@ -18,7 +18,7 @@
 
 		<hf:formPanel edit ="#{billingCycleBean.edit}" label="#{messages['billingCycle.panel']}" backingBean="#{billingCycleBean}">
     			<hf:formField label="#{messages['billingCycle.code']}" field="code" validateUnique="true" required="true"/>
-    			<hf:formField label="#{messages['billingCycle.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
+    			<hf:formField label="#{messages['billingCycle.description']}" id="description" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
     			<hf:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" size="20" maxlength="20" required="true"/>
 				<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}" field="invoiceDateDelay" required="true"/>
 				<hf:formField label="#{messages['billingCycle.dueDateDelay']}" field="dueDateDelay" required="true" />
