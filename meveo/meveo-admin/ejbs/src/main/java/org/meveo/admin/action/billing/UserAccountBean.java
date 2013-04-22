@@ -31,11 +31,13 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletOperationService;
 
 /**
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -60,6 +62,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+
+    @Inject
+    private WalletOperationService walletOperationService;
 
     private Long billingAccountId;
 
@@ -210,9 +215,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     }
 
     @Produces
-    @Named("getRatedTransactionsNoInvoiced")
-    public List<RatedTransaction> getRatedTransactionsNoInvoiced() {
-        return ratedTransactionService.getRatedTransactionsNoInvoiced(entity);
+    @Named("getWalletOperationsNoInvoiced")
+    public List<WalletOperation> getWalletOperationsNoInvoiced() {
+        return walletOperationService.getWalletOperationsNoInvoiced(entity);
     }
 
     @Produces

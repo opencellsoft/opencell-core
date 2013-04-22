@@ -42,22 +42,24 @@
 			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
-		<hftl:entityPopup id="ratedTransactionsNoInvoicedPopup"
+		<hftl:entityPopup id="walletOperationPopup"
 			header="#{messages['ratedTransactionsNoInvoiced.popup.header']}"
-			showSearchButton="false" backingBean="#{ratedTransactionBean}"
-			dataModel="#{getRatedTransactionsNoInvoiced}"
-			column1Label="#{messages['ratedTransaction.usageDate']}"
-			column1="usageDate"
-			column2Label="#{messages['ratedTransaction.usageCode']}"
-			column2="usageCode"
-			column3Label="#{messages['ratedTransaction.description']}"
-			column3="prDescription"
-			column4Label="#{messages['ratedTransaction.usageQuantity']}"
-			column4="usageQuantity"
-			column5Label="#{messages['ratedTransaction.amount1WithoutTax']}"
-			column5="amount"
-			column6Label="#{messages['ratedTransaction.amount1WithTax']}"
-			column6="amount2">
+			showSearchButton="false" backingBean="#{walletOperationBean}"
+			dataModel="#{getWalletOperationsNoInvoiced}"
+			column1Label="#{messages['walletOperation.operationDate']}"
+			column1="operationDate"
+			column2Label="#{messages['chargeInstance.code']}"
+			column2="chargeInstance.code"
+			column3Label="#{messages['chargeInstance.description']}"
+			column3="chargeInstance.description"
+			column4Label="#{messages['walletOperation.quantity']}"
+			column4="quantity"
+			column5Label="#{messages['walletOperation.amountWithoutTax']}"
+			column5="amountWithoutTax"
+			column6Label="#{messages['walletOperation.amountWithTax']}"
+			column6="amountWithTax"
+			column7Label="#{messages['walletOperation.status']}"
+			column7="status">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="ratedTransactionsInvoicedPopup"
@@ -75,7 +77,7 @@
 			column5Label="#{messages['ratedTransaction.amount1WithoutTax']}"
 			column5="amount"
 			column6Label="#{messages['ratedTransaction.amount1WithTax']}"
-			column6="amount2">
+			column6="amountWithTax">
 		</hftl:entityPopup>
 
 
@@ -241,8 +243,8 @@
 							onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
 							disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />&nbsp;&nbsp;
    	 	<p:commandButton
-							value="#{messages['ratedTransactionNoInvoiced.button']}"
-							onclick="dlg_ratedTransactionsNoInvoicedPopup.show());" />&nbsp;&nbsp;
+							value="#{messages['walletOperationPopup.button']}"
+							onclick="dlg_walletOperationPopup.show());" />&nbsp;&nbsp;
 		<p:commandButton
 							value="#{messages['ratedTransactionInvoiced.button']}"
 							onclick="dlg_ratedTransactionsInvoicedPopup.show();" />
