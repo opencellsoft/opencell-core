@@ -43,8 +43,7 @@
 		</hftl:entityPopup>
 	
 	
-<p:panel>
-		
+<p:panelGrid columns="1"> 
 		<f:facet name="header">
 				<h:outputText value="#{messages['menu.serviceTemplates']}" />
 			</f:facet>
@@ -83,7 +82,7 @@
 		</hf:formPanel>
 	</p:tab>
 	
-	  <p:tab title="#{messages['serviceUsageChargeTemplate.title']}" id="tab2">
+	  <p:tab title="#{messages['serviceUsageChargeTemplate.title']}" id="tab2" rendered="#{serviceTemplateBean.entity.id!=null}">
 	    <p:outputPanel id="invoiceSubCategoryCountries_MSG_panel">
 						<h:graphicImage value="/img/msgerror.png" style="border:0"
 							rendered="#{validation.failed}" />
@@ -133,18 +132,18 @@
         <p:commandButton id="editUsageChargeTemplateLink"  update=":tabView:formPanelUsageCharge:formUsageCharge"
          action="#{serviceTemplateBean.editServiceUsageChargeTemplate(entity)}"
          icon="ui-icon-document"/>
+		 <p:tooltip for="editServiceUsageChargedeletelink"
+									value="#{messages['commons.delete']}" showEffect="slide"
+									hideEffect="slide" />
+								<p:commandButton id="editServiceUsageChargedeletelink"
+									action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity)}" icon="ui-icon-trash"
+									ajax="true" update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge"/>	
+									
 		 	
 							</p:column>
 						</hftl:dataList>
 					</p:outputPanel>
 					<p:panel>
-						<h:form>
-							<p:commandButton
-								value="#{messages['serviceTemplate.oneServiceUsageChargeButton']}"
-								action="#{serviceTemplateBean.newServiceUsageChargeTemplate}"
-								update=":tabView:serviceUsageChargediv"
-								rendered="#{serviceTemplateBean.edit}" />
-                            </h:form>
 
 						<br />
 						<br />
@@ -168,15 +167,26 @@
 				                        popup="true" popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
 
 
-									<p:panelGrid columns="2">
+									<p:panelGrid columns="3">
 
 										<p:commandButton
 											action="#{serviceTemplateBean.saveServiceUsageChargeTemplate}"
 											value="#{messages['action.save']}"
-											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge"
+											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge ,:tabView:serviceUsageChargediv"
 											oncomplete="document.getElementById('serviceUsageChargediv');" />
-
+											
+                                         <p:commandButton value="#{messages['action.cancel']}"
+											action="#{serviceTemplateBean.newServiceUsageChargeTemplate}"
+											update=":tabView:serviceUsageChargediv" />
+											
+										<p:button id="buttonBack" value="#{messages['action.back']}"
+											outcome="#{serviceTemplateBean.back()}" includeViewParams="true">
+										<f:param name="cid" value="#{conversation.id}" />
+										</p:button>
+											
 									</p:panelGrid>
+									
+									 
 
 								</hf:formPanel>
 							</p:panel>
@@ -188,7 +198,7 @@
      	</p:tab>
 
 			</p:tabView>
-		</p:panel>
+		</p:panelGrid> 
 	</ui:define>
 
 </ui:composition>

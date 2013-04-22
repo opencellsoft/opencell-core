@@ -198,10 +198,14 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	            log.error("exception when applying one serviceUsageChargeTemplate !", e);
 	            messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
 	        }
+	        serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
 	    }
 	
 	
-	
+	  public void deleteServiceUsageChargeTemplate(ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
+		  serviceUsageChargeTemplateService.remove(serviceUsageChargeTemplate);
+	    	entity.getServiceUsageCharges().remove(serviceUsageChargeTemplate);
+	    }
 	
 	 public void editServiceUsageChargeTemplate(ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
 	        this.serviceUsageChargeTemplate = serviceUsageChargeTemplate;

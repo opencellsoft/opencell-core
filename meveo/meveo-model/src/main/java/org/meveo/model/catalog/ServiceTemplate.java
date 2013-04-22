@@ -28,6 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.ServiceInstance;
 
 /**
@@ -53,9 +54,9 @@ public class ServiceTemplate extends BusinessEntity {
 	@JoinTable(name = "CAT_SERV_ONECHARGE_T_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
 	private List<OneShotChargeTemplate> terminationCharges = new ArrayList<OneShotChargeTemplate>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_SERV_USAGE_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
-	private List<ServiceUsageChargeTemplate> serviceUsageCharges;
+	 @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
+	 private List<ServiceUsageChargeTemplate> serviceUsageCharges=new ArrayList<ServiceUsageChargeTemplate>();
+	    
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DURATION_TERM_CALENDAR")
