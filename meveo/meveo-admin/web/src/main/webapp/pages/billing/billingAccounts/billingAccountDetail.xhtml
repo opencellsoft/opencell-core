@@ -202,12 +202,12 @@
 
 												<hf:formEntityField id="trCountrySelectId"
 													label="#{messages['tradingCountry.tradingCountry']}"
-													field="tradingCountry" childField="countryCode" required="true"
-													popup="true" popupId="tradingCountryPopup" />
+													field="tradingCountry" childField="countryCode"
+													required="true" popup="true" popupId="tradingCountryPopup" />
 												<hf:formEntityField id="trLanguageSelectId"
 													label="#{messages['tradingLanguage.tradingLanguage']}"
-													field="tradingLanguage" childField="languageCode" required="true"
-													popup="true" popupId="tradingLanguagePopup" />
+													field="tradingLanguage" childField="languageCode"
+													required="true" popup="true" popupId="tradingLanguagePopup" />
 
 											</hftl:panelGroup>
 											<!--Edit window fields-->
@@ -416,16 +416,16 @@
 							<h:form id="operationsForm"
 								rendered="#{!billingAccountBean.edit}">
 								<!-- 								<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
-								<h:commandButton
+								<p:commandButton
 									action="#{billingAccountBean.terminateAccount()}"
 									value="#{messages['account.buttonResiliateAccount']}"
 									onclick="if(confirm('#{messages['account.confirmResiliateAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<h:commandButton action="#{billingAccountBean.cancelAccount()}"
+							<p:commandButton action="#{billingAccountBean.cancelAccount()}"
 									value="#{messages['account.buttonCancelAccount']}"
 									onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<h:commandButton action="#{billingAccountBean.closeAccount()}"
+							<p:commandButton action="#{billingAccountBean.closeAccount()}"
 									value="#{messages['account.buttonCloseAccount']}"
 									onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString()!='CANCELLED'}" />&nbsp;&nbsp;
