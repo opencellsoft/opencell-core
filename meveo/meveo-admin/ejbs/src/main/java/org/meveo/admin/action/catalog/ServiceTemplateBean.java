@@ -19,18 +19,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.ServiceUsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
@@ -49,6 +54,18 @@ import org.primefaces.model.DualListModel;
 public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
+	
+	 @Produces
+	    @Named
+	    private ServiceUsageChargeTemplate serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
+	 
+	 
+	 public void newServiceUsageChargeTemplate() {
+	        this.serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
+	    }
+	 
+	    @Inject
+	    private ServiceUsageChargeTemplateService serviceUsageChargeTemplateService;
 
 	/**
 	 * Injected
@@ -153,6 +170,42 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 		return super.saveOrUpdate(killConversation);
 	}
+	
+	
+	  public void saveServiceUsageChargeTemplate() {
+	        log.info("saveServiceUsageChargeTemplate getObjectId=#0", getObjectId());
+
+	        try {
+	            if (serviceUsageChargeTemplate != null) {
+	                for (ServiceUsageChargeTemplate inc : entity.getServiceUsageCharges()) {
+	                    if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceUsageChargeTemplate.getChargeTemplate().getCode())
+	                            && inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceUsageChargeTemplate.getCounterTemplate().getCode())
+	                            && !inc.getId().equals(serviceUsageChargeTemplate.getId())) {
+	                        throw new Exception();
+	                    }
+	                }
+	                if (serviceUsageChargeTemplate.getId() != null) {
+	                	serviceUsageChargeTemplateService.update(serviceUsageChargeTemplate);
+	                    messages.info(new BundleKey("messages", "update.successful"));
+	                } else {
+	                	serviceUsageChargeTemplate.setServiceTemplate(entity);
+	                	serviceUsageChargeTemplateService.create(serviceUsageChargeTemplate);
+	                    entity.getServiceUsageCharges().add(serviceUsageChargeTemplate);
+	                    messages.info(new BundleKey("messages", "save.successful"));
+	                }
+	            }
+	        } catch (Exception e) {
+	            log.error("exception when applying one serviceUsageChargeTemplate !", e);
+	            messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
+	        }
+	    }
+	
+	
+	
+	
+	 public void editServiceUsageChargeTemplate(ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
+	        this.serviceUsageChargeTemplate = serviceUsageChargeTemplate;
+	    }
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

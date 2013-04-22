@@ -53,19 +53,19 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 	@Inject
 	private BillingAccountService billingAccountService;
 
-	@Named
-	@Produces
+//	@Named TODO migration
+//	@Produces
 	private CustomerAccount synCustomerAccount;
 
-	@Named
+//  @Named TODO migration
 	@Produces
 	private BillingAccount synBillingAccount;
 
-	@Named
+//  @Named TODO migration
 	@Produces
 	private List<Invoice> synInvoices;
 
-	@Named
+//  @Named TODO migration
 	@Produces
 	private BigDecimal customerAccountBalance;
 

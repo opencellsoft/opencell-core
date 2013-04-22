@@ -29,6 +29,12 @@
 	<p:tooltip for="usageChargeTemplates">#{help['menu.usageChargeTemplates']}</p:tooltip>
 	<p:tooltip for="pricePlanMatrixes">#{help['menu.pricePlanMatrixes']}</p:tooltip>
 	<p:tooltip for="counterTemplates">#{help['menu.counterTemplates']}</p:tooltip>
+	<p:tooltip for="customerSearch">#{help['menu.customerSearch']}</p:tooltip>
+	<p:tooltip for="customers">#{help['menu.customers']}</p:tooltip>
+	<p:tooltip for="customerAccounts">#{help['menu.customerAccounts']}</p:tooltip>
+	<p:tooltip for="billingAccounts">#{help['menu.billingAccounts']}</p:tooltip>
+	<p:tooltip for="userAccounts">#{help['menu.userAccounts']}</p:tooltip>
+	<p:tooltip for="subscriptions">#{help['menu.subscriptions']}</p:tooltip>
 	
 	<p:menubar rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.admin']}"
@@ -247,8 +253,6 @@
 			<p:menuitem id="serviceTemplates" outcome="serviceTemplates"
 				value="#{messages['menu.serviceTemplates']}" />
 				
-				<p:menuitem id="serviceUsageChargeTemplates" outcome="serviceUsageChargeTemplates"
-				value="#{messages['menu.serviceUsageChargeTemplates']}" />
 
 			<p:submenu id="charges" label="#{messages['menu.charges']}">
 

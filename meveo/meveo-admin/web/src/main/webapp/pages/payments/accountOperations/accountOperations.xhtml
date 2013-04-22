@@ -16,25 +16,22 @@
     
     <ui:define name="body">
     	
-    	<custom:listPanel label="#{messages['accountOperation.title']}" backingBean="#{otherCreditAndChargeBean}">
-    	
-    		<custom:searchPanel label="#{messages['accountOperation.search']}" newButtonView="/pages/payments/accountOperations/accountOperationDetail.xhtml">    			    			    				
-    			<custom:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />					
-    			<custom:searchField label="#{messages['accountOperation.reference']}" field="reference" />
-    			<custom:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
-    			<custom:searchField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
-    			<custom:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />      			    			
-    			<custom:searchField label="#{messages['accountOperation.operationDate']}" field="operationDate" />
-    		</custom:searchPanel>
+    		<hf:searchPanel label="#{messages['accountOperation.search']}"  backingBean="#{otherCreditAndChargeListBean}" newButtonView="/pages/payments/accountOperations/accountOperationDetail.xhtml">    			    			    				
+    			<hf:searchField label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />					
+    			<hf:searchField label="#{messages['accountOperation.reference']}" field="reference" />
+    			<hf:searchField label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />
+    			<hf:searchField label="#{messages['accountOperation.dueDate']}" field="dueDate" />
+    			<hf:searchField label="#{messages['accountOperation.occCode']}" field="occCode" />      			    			
+    			<hf:searchField label="#{messages['accountOperation.operationDate']}" field="operationDate" />
+    		</hf:searchPanel>
     		
-    		<custom:dataList dataModel="#{otherCreditAndCharges}">    			    			
-    			<custom:column label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />	   
-    			<custom:column label="#{messages['accountOperation.amount']}" field="amount" />	   
-    			<custom:column label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />	       			      				    	
-    			<custom:column label="#{messages['accountOperation.dueDate']}" field="dueDate" />
-		   	   	<custom:actionsColumn editView="/pages/payments/accountOperations/accountOperationDetail.xhtml"  />
-		    </custom:dataList>
-    	</custom:listPanel>	
+    		<hftl:dataList label="#{messages['accountOperation.title']}"   backingBean="#{otherCreditAndChargeListBean}">    			    			
+    			<hftl:column label="#{messages['accountOperation.transactionCategory']}" field="transactionCategory" />	   
+    			<hftl:column label="#{messages['accountOperation.amount']}" field="amount" />	   
+    			<hftl:column label="#{messages['accountOperation.transactionDate']}" field="transactionDate" />	       			      				    	
+    			<hftl:column label="#{messages['accountOperation.dueDate']}" field="dueDate" />
+		   	   	<hftl:actionsColumn editView="/pages/payments/accountOperations/accountOperationDetail.xhtml"  />
+		    </hftl:dataList>
 		
     </ui:define>
     
