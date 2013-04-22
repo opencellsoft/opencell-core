@@ -145,7 +145,7 @@
 
 				</p:tab>
 
-				<p:tab title="#{messages['invoiceSubCategory.tab2']}" id="tab2">
+				<p:tab title="#{messages['invoiceSubCategory.tab2']}" id="tab2" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
 
 					<p:outputPanel id="invoiceSubCategoryCountries_MSG_panel">
 						<h:graphicImage value="/img/msgerror.png" style="border:0"
