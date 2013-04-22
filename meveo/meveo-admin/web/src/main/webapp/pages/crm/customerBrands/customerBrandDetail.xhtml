@@ -18,7 +18,7 @@
 	
 		<hf:formPanel label="#{messages['customerBrand.panel']}" backingBean="#{customerBrandBean}" >
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<hf:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
+			<hf:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" maxlength="50" required="true"/>
 		</hf:formPanel>
 	</ui:define>
 

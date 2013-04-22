@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
@@ -37,12 +38,15 @@ import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -1014,4 +1018,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             }
         }*/
     }
+
+	@SuppressWarnings("unchecked")
+	public List<WalletOperation> getWalletOperationsNoInvoiced(UserAccount userAccount) {
+	        if (userAccount == null || userAccount.getWallet() == null) {
+	            return null;
+	        }
+	        return (List<WalletOperation>) em
+	                .createQuery(
+	                        "from "
+	                                + WalletOperation.class.getSimpleName()
+	                                + " where wallet=:wallet and status!=:status order by operationDate desc")
+	                .setParameter("wallet", userAccount.getWallet())
+	                .setParameter("status", WalletOperationStatusEnum.TREATED).getResultList();
+	    }
+
 }

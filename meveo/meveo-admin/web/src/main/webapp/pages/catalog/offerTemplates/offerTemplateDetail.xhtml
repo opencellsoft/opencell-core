@@ -18,7 +18,7 @@
 
 		<hf:formPanel label="#{messages['offerTemplate.offerTemplatePanel']}" backingBean="#{offerTemplateBean}">
     			<hf:formField label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
-    			<hf:formField label="#{messages['offerTemplate.description']}" field="description" required="true" useConverter="false" size="50" maxlength="50"/>
+    			<hf:formField label="#{messages['offerTemplate.description']}" field="description" required="true" useConverter="false" id="description" maxlength="50"/>
 		    	<hf:formField  label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true"/>
     			<hf:formField  label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" listType="pickUpList" listService="#{serviceTemplateService}" childField="code"/>	
 		

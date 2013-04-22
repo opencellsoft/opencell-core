@@ -135,7 +135,7 @@
 											<hftl:panelGroup columns="1">
 												<hf:formField
 													label="#{messages['businessEntity.description']}"
-													field="description" useConverter="false" size="70"
+													id="description" field="description" useConverter="false" size="70"
 													maxlength="100" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="2">
@@ -202,12 +202,12 @@
 
 												<hf:formEntityField id="trCountrySelectId"
 													label="#{messages['tradingCountry.tradingCountry']}"
-													field="tradingCountry" childField="countryCode" required="true"
-													popup="true" popupId="tradingCountryPopup" />
+													field="tradingCountry" childField="countryCode"
+													required="true" popup="true" popupId="tradingCountryPopup" />
 												<hf:formEntityField id="trLanguageSelectId"
 													label="#{messages['tradingLanguage.tradingLanguage']}"
-													field="tradingLanguage" childField="languageCode" required="true"
-													popup="true" popupId="tradingLanguagePopup" />
+													field="tradingLanguage" childField="languageCode"
+													required="true" popup="true" popupId="tradingLanguagePopup" />
 
 											</hftl:panelGroup>
 											<!--Edit window fields-->
@@ -296,7 +296,7 @@
 													size="80" maxlength="80" />
 												<hf:formEntityField label="#{messages['address.address2']}"
 													field="address" childField="address2" popup="false"
-													size="80" maxlength="80" />
+													size="80" maxlength="80" required="true" />
 												<hf:formEntityField label="#{messages['address.address3']}"
 													field="address" childField="address3" popup="false"
 													size="80" maxlength="80" />
@@ -330,6 +330,7 @@
 												columns="1">
 												<hftl:panelGroup columns="1">
 													<hf:formField
+														id="paymentMethod"
 														label="#{messages['billingAccount.paymentMethod']}"
 														field="paymentMethod" required="true" />
 												</hftl:panelGroup>
@@ -337,30 +338,28 @@
 													<p:outputPanel id="electronicBillingField">
 														<hf:formField
 															label="#{messages['billingAccount.electronicBilling']}"
-															field="electronicBilling" isMessage="true" />
+															field="electronicBilling" isMessage="true"
+															listenerUpdate=":parentTab:formBillingAccountPanel:formId:childTab:emailField" />
 													</p:outputPanel>
 
-													<p:outputPanel id="emailField">
-														<h:panelGrid columns="2">
-															<p:outputLabel for="email_select"
-																value="#{messages['billingAccount.email']}" />
+													<p:panelGrid columns="2" id="emailField">
+														<p:outputLabel for="email_select"
+															value="#{messages['billingAccount.email']}" />
 
-															<p:inputText id="email_select"
-																rendered="#{billingAccountBean.edit}"
-																value="#{billingAccountBean.entity.email}"
-																required="#{billingAccountBean.entity.electronicBilling}"
-																size="20" maxlength="100"
-																converter="nullableStringConverter">
-																<o:validator validatorId="javax.faces.RegularExpression"
-																	pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
-																	message="#{messages['validator.email.invalid']}" />
-															</p:inputText>
-															<h:outputText rendered="#{!billingAccountBean.edit}"
-																id="emailText"
-																value="#{billingAccountBean.entity.email}"
-																required="#{billingAccountBean.entity.electronicBilling}" />
-														</h:panelGrid>
-													</p:outputPanel>
+														<p:inputText id="email_select"
+															rendered="#{billingAccountBean.edit}"
+															value="#{billingAccountBean.entity.email}"
+															required="#{billingAccountBean.entity.electronicBilling}"
+															size="20" maxlength="100"
+															converter="nullableStringConverter">
+															<o:validator validatorId="javax.faces.RegularExpression"
+																pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
+																message="#{messages['validator.email.invalid']}" />
+														</p:inputText>
+														<h:outputText rendered="#{!billingAccountBean.edit}"
+															id="emailText" value="#{billingAccountBean.entity.email}"
+															required="#{billingAccountBean.entity.electronicBilling}" />
+													</p:panelGrid>
 												</hftl:panelGroup>
 												<h:panelGroup id="bankCoordinatesPanel"
 													rendered="#{entity.paymentMethod.toString() == 'DIRECTDEBIT' or entity.paymentMethod.toString() == 'TIP'}">
@@ -416,16 +415,16 @@
 							<h:form id="operationsForm"
 								rendered="#{!billingAccountBean.edit}">
 								<!-- 								<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
-								<h:commandButton
+								<p:commandButton
 									action="#{billingAccountBean.terminateAccount()}"
 									value="#{messages['account.buttonResiliateAccount']}"
 									onclick="if(confirm('#{messages['account.confirmResiliateAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<h:commandButton action="#{billingAccountBean.cancelAccount()}"
+							<p:commandButton action="#{billingAccountBean.cancelAccount()}"
 									value="#{messages['account.buttonCancelAccount']}"
 									onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<h:commandButton action="#{billingAccountBean.closeAccount()}"
+							<p:commandButton action="#{billingAccountBean.closeAccount()}"
 									value="#{messages['account.buttonCloseAccount']}"
 									onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}"
 									disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString()!='CANCELLED'}" />&nbsp;&nbsp;
