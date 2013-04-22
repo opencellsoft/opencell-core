@@ -40,7 +40,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
  * @author Ignas
  * @created 2009.10.13
  */
-@Named
+@Named("occTemplateBean")
 @ConversationScoped
 public class OCCTemplateBean extends BaseBean<OCCTemplate> {
 

@@ -938,6 +938,15 @@ select[disabled]
   width : 100%;
   //background : yellow;
 }
+div#parentTab form > table > tbody > tr > td > table > tbody,
+div#parentTab form > table > tbody > tr > td > table > tbody > tr,
+div#parentTab form > table > tbody > tr > td > table > tbody > tr > td,
+div#parentTab form > table > tbody > tr > td > table > tbody > tr > td > table > tbody > tr 
+{
+   width : 100%;
+   display : inline-block;
+}
+
 /* TD ROLE GRIDCELL */
 td[role="gridcell"]
 {
@@ -960,6 +969,7 @@ td[role="gridcell"]>table
 {
    size : 80;
 }
+
 
 
 
