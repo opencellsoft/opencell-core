@@ -74,7 +74,7 @@
 								useCustomIdParam="true" killConversationOnSave="false"
 								killConversationOnBack="false">
 								<p:panelGrid columns="1">
-									<p:tabView id="childTab" style="width: 95%">
+									<p:tabView id="childTab" style="width: 95%" >
 										<p:tab id="accountTab"
 											title="#{messages['customerAccount.tab.account']}">
 											<hftl:panelGroup columns="1">
@@ -289,13 +289,13 @@
 								</p:panelGrid>
 							</hf:formPanel>
 						</p:tab>
-						<p:tab id="ops" title="#{messages['customerAccount.operations']}">
+						<p:tab id="ops" title="#{messages['customerAccount.operations']}" >
 							<!-- 							onclick="#{accountOperationBean.filters.put('customerAccount',customerAccountBean.entity)}"> -->
 							<!-- 							<a:param name="sortField" value="transactionDate" /> -->
 							<!-- 							<a:param name="sortOrder" value="desc" /> -->
 							<hf:searchPanel renderNewButton="false"
 								label="#{messages['accountOperation.search']}" columns="1"
-								backingBean="#{accountOperationBean}">
+								backingBean="#{accountOperationBean}" ajax="true" ajaxUpdateIds=":parentTab:results_panel">
 								<hftl:panelGroup columns="2">
 									<hf:searchField
 										label="#{messages['accountOperation.transactionCategory']}"
@@ -317,10 +317,12 @@
 							</hf:searchPanel>
 							<br />
 							<h:form id="addOperationForm">
-								<p:commandButton
+								<p:button
 									value="#{messages['customerAccount.addOperation']}"
-									action="addNewOperation"
-									rendered="#{customerAccountBean.isActiveAccount()}" />
+									outcome="addNewOperation"
+									rendered="#{customerAccountBean.isActiveAccount()}" includeViewParams="true" >
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
 								<p:commandButton
 									value="#{messages['customerAccount.addPaymentCheck']}"
 									action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
@@ -367,6 +369,7 @@
 								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
 									field="matchingStatus" childField="label" isMessage="true" />
+
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
 							</hftl:dataList>

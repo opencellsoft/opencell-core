@@ -1022,6 +1022,24 @@
 			</redirect>
 		</navigation-case>
 	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/pages/payments/accountOperations/accountOperationDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>customerAccountDetail</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+				<view-param>
+					<name>tab</name>
+					<value>ops</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>	
 
 	<navigation-rule>
 		<from-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</from-view-id>
