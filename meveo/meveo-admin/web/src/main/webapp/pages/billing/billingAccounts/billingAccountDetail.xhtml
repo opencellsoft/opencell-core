@@ -296,7 +296,7 @@
 													size="80" maxlength="80" />
 												<hf:formEntityField label="#{messages['address.address2']}"
 													field="address" childField="address2" popup="false"
-													size="80" maxlength="80"  required="true" />
+													size="80" maxlength="80" required="true" />
 												<hf:formEntityField label="#{messages['address.address3']}"
 													field="address" childField="address3" popup="false"
 													size="80" maxlength="80" />
@@ -337,30 +337,28 @@
 													<p:outputPanel id="electronicBillingField">
 														<hf:formField
 															label="#{messages['billingAccount.electronicBilling']}"
-															field="electronicBilling" isMessage="true" />
+															field="electronicBilling" isMessage="true"
+															listenerUpdate=":parentTab:formBillingAccountPanel:formId:childTab:emailField" />
 													</p:outputPanel>
 
-													<p:outputPanel id="emailField">
-														<h:panelGrid columns="2">
-															<p:outputLabel for="email_select"
-																value="#{messages['billingAccount.email']}" />
+													<p:panelGrid columns="2" id="emailField">
+														<p:outputLabel for="email_select"
+															value="#{messages['billingAccount.email']}" />
 
-															<p:inputText id="email_select"
-																rendered="#{billingAccountBean.edit}"
-																value="#{billingAccountBean.entity.email}"
-																required="#{billingAccountBean.entity.electronicBilling}"
-																size="20" maxlength="100"
-																converter="nullableStringConverter">
-																<o:validator validatorId="javax.faces.RegularExpression"
-																	pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
-																	message="#{messages['validator.email.invalid']}" />
-															</p:inputText>
-															<h:outputText rendered="#{!billingAccountBean.edit}"
-																id="emailText"
-																value="#{billingAccountBean.entity.email}"
-																required="#{billingAccountBean.entity.electronicBilling}" />
-														</h:panelGrid>
-													</p:outputPanel>
+														<p:inputText id="email_select"
+															rendered="#{billingAccountBean.edit}"
+															value="#{billingAccountBean.entity.email}"
+															required="#{billingAccountBean.entity.electronicBilling}"
+															size="20" maxlength="100"
+															converter="nullableStringConverter">
+															<o:validator validatorId="javax.faces.RegularExpression"
+																pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
+																message="#{messages['validator.email.invalid']}" />
+														</p:inputText>
+														<h:outputText rendered="#{!billingAccountBean.edit}"
+															id="emailText" value="#{billingAccountBean.entity.email}"
+															required="#{billingAccountBean.entity.electronicBilling}" />
+													</p:panelGrid>
 												</hftl:panelGroup>
 												<h:panelGroup id="bankCoordinatesPanel"
 													rendered="#{entity.paymentMethod.toString() == 'DIRECTDEBIT' or entity.paymentMethod.toString() == 'TIP'}">
