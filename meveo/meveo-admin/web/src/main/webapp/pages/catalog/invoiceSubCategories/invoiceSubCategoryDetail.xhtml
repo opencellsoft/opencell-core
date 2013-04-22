@@ -186,7 +186,7 @@
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxe']}"
 								field="tax" childField="code" />
-							<p:column styleClass="actions-column">
+							<p:column styleClass="actions-column" rendered="#{invoiceSubCategoryBean.edit}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>
