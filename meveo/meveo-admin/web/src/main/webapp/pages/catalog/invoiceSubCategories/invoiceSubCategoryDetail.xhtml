@@ -232,17 +232,22 @@
 										field="tax" childField="code" popup="true"
 										popupId="invSubCatCountTaxPopup" required="true" /> 
 
-									<p:panelGrid columns="2">
+									<p:panelGrid columns="3">
 
 										<p:commandButton
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['action.save']}"
 											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv"
-											oncomplete="document.getElementById('subCategoryCountrydiv');" />
+											/>
 
-										<p:button value="#{messages['action.cancel']}"
+										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
 											update=":tabView:subCategoryCountrydiv" />
+											
+										<p:button id="buttonBack" value="#{messages['action.back']}"
+											outcome="#{invoiceSubCategoryBean.back()}" includeViewParams="true">
+												<f:param name="cid" value="#{conversation.id}" />
+										</p:button>
 									</p:panelGrid>
 
 								</hf:formPanel>
