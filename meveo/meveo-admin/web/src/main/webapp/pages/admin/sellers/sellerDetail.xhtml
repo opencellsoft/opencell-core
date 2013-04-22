@@ -92,7 +92,7 @@
 												size="80" maxlength="80" />
 											<hf:formEntityField label="#{messages['address.address2']}"
 												field="address" childField="address2" popup="false"
-												size="80" maxlength="80" />
+												size="80" maxlength="80"  required="true" />
 											<hf:formEntityField label="#{messages['address.address3']}"
 												field="address" childField="address3" popup="false"
 												size="80" maxlength="80" />
@@ -104,7 +104,21 @@
 											<hf:formEntityField label="#{messages['address.city']}"
 												field="address" childField="city" popup="false"
 												required="true" maxlength="50" />
-											<a:outputPanel id="countryPanel">
+											<p:panelGrid id="countryPanel" columns="2">
+												<p:outputLabel for="country_select"
+													value="#{messages['address.country']}" />
+												<p:selectOneMenu id="country_select" required="true"
+													rendered="#{sellerBean.edit}"
+													value="#{sellerBean.entity.address.country}">
+													<f:selectItems
+														value="#{messages['address.countrys'].split(',')}"
+														var="country" itemLabel="#{country}" />
+												</p:selectOneMenu>
+												<h:outputText rendered="#{!sellerBean.edit}"
+													value="#{sellerBean.entity.address.country}" />
+											</p:panelGrid>
+											
+											<!-- <a:outputPanel id="countryPanel">
 												<h:panelGrid columns="2">
 													<p:outputLabel for="country_select"
 														value="#{messages['address.country']}" />
@@ -118,7 +132,8 @@
 													<h:outputText rendered="#{!sellerBean.edit}"
 														value="#{sellerBean.entity.address.country}" />
 												</h:panelGrid>
-											</a:outputPanel>
+											</a:outputPanel>-->
+											
 										</hftl:panelGroup>
 									</hftl:fieldset>
 								</p:tab>
