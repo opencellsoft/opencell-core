@@ -77,13 +77,12 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     public String saveOrUpdate(boolean killConversation) {
         String back = null;
         try {
-            Provider currentProvider = providerService.findById(getCurrentProvider().getId());
+        	providerService.refresh(currentProvider);
             for (TradingCurrency tr : currentProvider.getTradingCurrencies()) {
                 if (tr.getCurrency().getCurrencyCode().equalsIgnoreCase(entity.getCurrency().getCurrencyCode()) && !tr.getId().equals(entity.getId())) {
                     throw new Exception();
                 }
             }
-            currentProvider.addTradingCurrency(entity);
             back = super.saveOrUpdate(killConversation);
 
         } catch (Exception e) {
