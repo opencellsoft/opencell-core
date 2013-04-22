@@ -115,8 +115,15 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
             log.error("exception when applying one invoiceSubCategoryCountry !", e);
             messages.error(new BundleKey("messages", "invoiceSubCategory.uniqueTaxFlied"));
         }
+        invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
     }
 
+    
+    public void deleteInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+    	invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
+    	entity.getInvoiceSubcategoryCountries().remove(invoiceSubcategoryCountry);
+    }
+    
     public void editInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
         this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
     }
@@ -185,17 +192,22 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
                 }
             }
             entity.setAccountingCode(generateAccountingCode());
-            back = super.saveOrUpdate(killConversation);
+            super.saveOrUpdate(killConversation);
 
         } else {
             entity.setAccountingCode(generateAccountingCode());
-            back = super.saveOrUpdate(killConversation);
+            entity.setAccountingCode(generateAccountingCode());
+            getPersistenceService().create(entity);
+            messages.info(new BundleKey("messages", "invoiceSubCaterogy.AddTax"));
+            if (killConversation) {
+                endConversation();
+            }
             for (String msgKey : languageMessagesMap.keySet()) {
                 String description = languageMessagesMap.get(msgKey);
                 CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_" + entity.getId(), msgKey, description);
                 catMessagesService.create(catMessages);
             }
-
+            
         }
 
         return back;
