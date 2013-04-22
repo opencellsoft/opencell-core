@@ -8,6 +8,16 @@
 
 	<a:queue />
 
+	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
+    <p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
+	<p:tooltip for="tradingCurrencies">#{help['menu.tradingCurrencies']}</p:tooltip>
+	<p:tooltip for="tradingCountries">#{help['menu.tradingCountries']}</p:tooltip>
+	<p:tooltip for="calendars">#{help['menu.calendars']}</p:tooltip>
+	<p:tooltip for="billingCycles">#{help['menu.billingCycles']}</p:tooltip>
+	<p:tooltip for="taxes">#{help['menu.taxes']}</p:tooltip>
+	<p:tooltip for="invoiceCategories">#{help['menu.invoiceCategories']}</p:tooltip>
+	<p:tooltip for="invoiceSubCategories">#{help['menu.invoiceSubCategories']}</p:tooltip>
+	
 	<p:menubar rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.admin']}"
 			rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
@@ -17,7 +27,6 @@
 
 			<p:submenu id="trading" label="#{messages['menu.trading']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-
 				<p:menuitem id="tradingLanguages" outcome="tradingLanguages"
 					value="#{messages['menu.comLanguages']}" />
 
@@ -50,6 +59,13 @@
 
 			<p:submenu id="categories" label="#{messages['menu.invoicing']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
+				<p:menuitem
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				outcome="calendars" id="calendars" value="#{messages['menu.calendars']}" />
+
+				<p:menuitem id="taxes"
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+					outcome="taxes" value="#{messages['menu.taxes']}" />
 
 				<p:menuitem id="invoiceCategories"
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}"
@@ -60,10 +76,6 @@
 					rendered="#{identity.hasPermission('catalog','catalogVisualization')}"
 					outcome="invoiceSubCategories"
 					value="#{messages['menu.invoiceSubCategories']}" />
-
-				<p:menuitem id="taxes"
-					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-					outcome="taxes" value="#{messages['menu.taxes']}" />
 
 				<p:menuitem id="billingCycles"
 					rendered="#{identity.hasPermission('billing','billingVisualization')}"
@@ -216,10 +228,6 @@
 
 		<p:submenu id="catalog" label="#{messages['menu.catalog']}"
 			rendered="#{identity.hasPermission('catalog','catalogVisualization')}">
-
-			<p:menuitem
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="calendars" id="calendars" value="#{messages['menu.calendars']}" />
 
 			<p:menuitem id="offerTemplates" outcome="offerTemplates"
 				value="#{messages['menu.offerTemplates']}" />

@@ -14,6 +14,10 @@
 			<base-name>messages</base-name>
 			<var>messages</var>
 		</resource-bundle>
+		<resource-bundle>
+			<base-name>help</base-name>
+			<var>help</var>
+		</resource-bundle>
 		<message-bundle>messages</message-bundle>
 	</application>
 
