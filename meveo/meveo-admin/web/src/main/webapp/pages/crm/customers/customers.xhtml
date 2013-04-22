@@ -2,7 +2,8 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich" xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
+	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:c="http://java.sun.com/jstl/core" 
+	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -15,20 +16,23 @@
 	</ui:define>
 
 	<ui:define name="body">
-	
-	   <hftl:entityPopup id="searchSellerPopup" header="#{messages['seller.search']}" backingBean="#{sellerBean}"
+	<c:set var="field" value="seller" />
+	   <hftl:entityPopup id="searchSellerPopup" header="#{messages['seller.search']}" 
+	        updateField=":searchPanel:searchForm:seller:seller_child"
+			selection="#{customerListBean.filters['seller']}"
+	        backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
 			column2Label="#{messages['BusinessEntity.description']}"
-			column2="description"
-			selection="#{customerBean.filters['seller']}" updateField=":searchPanel:searchForm:seller:seller_child">
+			column2="description">
 		</hftl:entityPopup>
+		
 
-		<hf:searchPanel label="#{messages['customer.search']}" backingBean="#{customerListBean}">
+		<hf:searchPanel id="searchPanel" label="#{messages['customer.search']}" backingBean="#{customerListBean}">
 			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
 			<hf:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
 			<hf:searchField id="customerCategoryField" label="#{messages['customer.customerCategory']}" field="customerCategory" childField="description"
 				listBean="#{customerCategoryBean}" />
-			<hf:searchField id="seller"  
+			<hf:searchField id="seller" 
 				label="#{messages['seller.parent']}" field="seller" childField="description"
 				  popup="true" popupId="searchSellerPopup" clearButton="true" />
 				  
