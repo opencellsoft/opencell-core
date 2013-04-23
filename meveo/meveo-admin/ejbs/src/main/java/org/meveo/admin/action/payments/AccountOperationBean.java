@@ -16,6 +16,7 @@
 package org.meveo.admin.action.payments;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -245,4 +246,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		this.matchingAmounts = matchingAmounts;
 	}
 
+	public String getDate(){
+	    return (new Date()).toString();
+	}
 }

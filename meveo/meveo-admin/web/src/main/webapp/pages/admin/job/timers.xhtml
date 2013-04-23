@@ -10,7 +10,10 @@
 		<s:viewAction action="#{conversation.begin}" if="#{conversation.transient}" />
 	</f:metadata>
 	
-	<ui:param name="pageTitle" value="#{messages['timers.page.title']}" />
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+	
 	<ui:define name="body">
 
 		<rich:panel>

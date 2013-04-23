@@ -858,6 +858,13 @@ select[disabled]
 	width : 25% !Important;
   float : left;
 }
+.body > table > tbody > tr > td[style^="width: 25%"] > table > tbody > tr > td > form > div.ui-tree
+{
+ 
+  width : 97% !important;
+  display : inline-block;
+  float : left;
+}
 .body > table > tbody > tr > td[style^="width: 75%"]
 {
   width : 73% !Important;
@@ -914,12 +921,32 @@ select[disabled]
 {
   font-style : normal;
 }
+.body >table >tbody > tr > td[style^="width: 75%"] > div.ui-tabs > div.ui-tabs-panels > div.ui-tabs-panel > form > table > tbody > tr > td > table > tbody > tr > td>  table >tbody > tr > td >div > div.ui-tabs-panels >div.ui-tabs-panel > table >tbody,
+.body >table >tbody > tr > td[style^="width: 75%"] > div.ui-tabs > div.ui-tabs-panels > div.ui-tabs-panel > form > table > tbody > tr > td > table > tbody > tr > td>  table >tbody > tr > td >div > div.ui-tabs-panels >div.ui-tabs-panel > table >tbody> tr
 
+{
+  width : 100% !important;
+  display : inline-block;
+}
+.body >table >tbody > tr > td[style^="width: 75%"] > div.ui-tabs > div.ui-tabs-panels > div.ui-tabs-panel > form > table > tbody > tr > td > table > tbody > tr > td>  table >tbody > tr > td >div > div.ui-tabs-panels >div.ui-tabs-panel > table >tbody >tr >td
+{
+  width : 96% !important;
+  display : inline-block;
+}
 .ui-tabs-panels fieldset[id*="childTab"]
 {
-  /*width : 800px !important;*/
   width : 100%;
+  //background : yellow;
 }
+div#parentTab form > table > tbody > tr > td > table > tbody,
+div#parentTab form > table > tbody > tr > td > table > tbody > tr,
+div#parentTab form > table > tbody > tr > td > table > tbody > tr > td,
+div#parentTab form > table > tbody > tr > td > table > tbody > tr > td > table > tbody > tr 
+{
+   width : 100%;
+   display : inline-block;
+}
+
 /* TD ROLE GRIDCELL */
 td[role="gridcell"]
 {
@@ -937,6 +964,11 @@ td[role="gridcell"]>table
 
 /* --------SPECIFIC CSS FIXES HERE---------- */
 
+#prDescription,
+#description
+{
+   size : 80;
+}
 
 
 

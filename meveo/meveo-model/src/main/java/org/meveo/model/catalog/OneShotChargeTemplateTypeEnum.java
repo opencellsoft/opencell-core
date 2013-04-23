@@ -24,7 +24,6 @@ public enum OneShotChargeTemplateTypeEnum {
 
     SUBSCRIPTION(1, "oneShotChargeTemplateTypeEnum.subscription"),
     TERMINATION(2, "oneShotChargeTemplateTypeEnum.termination"),
-    USAGE(4, "oneShotChargeTemplateTypeEnum.usage"),
     OTHER(3, "oneShotChargeTemplateTypeEnum.other");
 
     private Integer id;

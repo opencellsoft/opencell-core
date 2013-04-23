@@ -50,7 +50,7 @@
 								<hf:formField label="#{messages['businessEntity.code']}"
 									field="code" validateUnique="true" required="true" />
 								<hf:formField label="#{messages['businessEntity.description']}"
-									field="description" useConverter="false" size="50"
+									field="description" useConverter="false" id="description"
 									maxlength="50" />
 								<hf:formField label="#{messages['customer.externalRef1']}"
 									field="externalRef1" validateUnique="false" />
@@ -85,22 +85,22 @@
 											required="false" size="50" maxlength="100"
 											useConverter="false" validateEmail="true" />
 										<hf:formEntityField label="#{messages['address.address1']}"
-											field="address" childField="address1" popup="false" size="80"
+											field="address" id="address1" childField="address1" popup="false" size="80"
 											maxlength="80" />
 										<hf:formEntityField label="#{messages['address.address2']}"
-											field="address" childField="address2" popup="false" size="80"
+											field="address" id ="address2" childField="address2" popup="false" size="80"
 											maxlength="80"  required="true" />
 										<hf:formEntityField label="#{messages['address.address3']}"
-											field="address" childField="address3" popup="false" size="80"
+											field="address" id="address3" childField="address3" popup="false" size="80"
 											maxlength="80" />
 									</p:panelGrid>
 									<p:panelGrid columns="2">
 										<hf:formEntityField label="#{messages['address.zipCode']}"
 											field="address" childField="zipCode" popup="false"
-											required="true" maxlength="5" size="5" />
+											required="true" id="zipCode" maxlength="5" size="5" />
 										<hf:formEntityField label="#{messages['address.city']}"
 											field="address" childField="city" popup="false"
-											required="true" maxlength="50" />
+											required="true" id="city" maxlength="50" />
 									</p:panelGrid>
 									<p:panelGrid columns="3" id="countryPanel">
 										<p:outputLabel for="country"

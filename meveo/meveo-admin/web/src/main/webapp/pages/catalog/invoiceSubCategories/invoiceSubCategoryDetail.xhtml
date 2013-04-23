@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -50,12 +51,12 @@
 			column1="code" column2Label="#{messages['tax.description']}"
 			column2="description" />
 
-		<p:panel>
-		
-		<f:facet name="header">
+	
+<p:panelGrid columns="1"> 
+			<f:facet name="header">
 				<h:outputText value="#{messages['invoiceSubCategory.panel']}" />
 			</f:facet>
-			<p:tabView id="tabView">
+<p:tabView id="tabView">
 				<p:tab title="#{messages['invoiceSubCategory.tab1']}">
 
 					
@@ -145,7 +146,7 @@
 
 				</p:tab>
 
-				<p:tab title="#{messages['invoiceSubCategory.tab2']}" id="tab2">
+				<p:tab title="#{messages['invoiceSubCategory.tab2']}" id="tab2" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
 
 					<p:outputPanel id="invoiceSubCategoryCountries_MSG_panel">
 						<h:graphicImage value="/img/msgerror.png" style="border:0"
@@ -186,32 +187,30 @@
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxe']}"
 								field="tax" childField="code" />
-							<p:column styleClass="actions-column">
+							<p:column styleClass="actions-column" rendered="#{invoiceSubCategoryBean.edit}">
 								<f:facet name="header">
 									<h:outputText value="#{messages['commons.actions']}" />
 								</f:facet>
-
-								<p:commandLink id="editSubCategoryCountryLink"
-									update=":tabView:formPanelTax:formTax"
-									action="#{invoiceSubCategoryBean.editInvoiceSubcategoryCountry(entity)}">
-									<h:graphicImage value="/img/edit.gif" style="border:0" />
-								</p:commandLink>
+									
 								<p:tooltip for="editSubCategoryCountryLink"
-									value="#{messages['commons.edit']}" />
+									value="#{messages['commons.edit']}" showEffect="slide"
+									hideEffect="slide" />
+								<p:commandButton id="editSubCategoryCountryLink" 	update=":tabView:formPanelTax:formTax"
+									action="#{invoiceSubCategoryBean.editInvoiceSubcategoryCountry(entity)}"
+									icon="ui-icon-document"/>
+								<p:tooltip for="editSubCategoryCountrydeletelink"
+									value="#{messages['commons.delete']}" showEffect="slide"
+									hideEffect="slide" />
+								<p:commandButton id="editSubCategoryCountrydeletelink"
+									action="#{invoiceSubCategoryBean.deleteInvoiceSubcategoryCountry(entity)}" icon="ui-icon-trash"
+									ajax="true" update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax"/>	
+									
+									
 							</p:column>
 						</hftl:dataList>
 					</p:outputPanel>
 					<p:panel>
-						<h:form>
-							<p:commandButton
-								value="#{messages['invoiceSubCategory.oneInvSubCountButton']}"
-								action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
-								update=":tabView:subCategoryCountrydiv"
-								rendered="#{invoiceSubCategoryBean.edit}" />
-                            </h:form>
-
-						<br />
-						<br />
+						
 
 						<p:panel id="subCategoryCountrydiv" rendered="#{invoiceSubCategoryBean.edit}">
 
@@ -234,16 +233,26 @@
 										field="tax" childField="code" popup="true"
 										popupId="invSubCatCountTaxPopup" required="true" /> 
 
-									<p:panelGrid columns="2">
-
-										<p:commandButton
+									<p:panelGrid columns="3">
+										<p:commandButton rendered="#{invoiceSubcategoryCountry.id==null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
-											value="#{messages['action.save']}"
-											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax"
-											oncomplete="document.getElementById('subCategoryCountrydiv');" />
+											value="#{messages['invoiceSubCategoryCountry.saveNewtax']}"
+											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv"
+											/>
+										<p:commandButton rendered="#{invoiceSubcategoryCountry.id!=null}"
+											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
+											value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
+											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv"
+											/>	
 
-										<p:button value="#{messages['action.cancel']}"
-											onclick="document.getElementById('subCategoryCountrydiv').style.display='none';" />
+										<p:commandButton value="#{messages['action.cancel']}"
+											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
+											update=":tabView:subCategoryCountrydiv" />
+											
+										<p:button id="buttonBack" value="#{messages['action.back']}"
+											outcome="#{invoiceSubCategoryBean.back()}" includeViewParams="true">
+												<f:param name="cid" value="#{conversation.id}" />
+										</p:button>
 									</p:panelGrid>
 
 								</hf:formPanel>
@@ -255,7 +264,7 @@
 				</p:tab>
 
 			</p:tabView>
-		</p:panel>
+		</p:panelGrid>
 	</ui:define>
 
 </ui:composition>

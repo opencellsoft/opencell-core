@@ -120,13 +120,12 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	    public String saveOrUpdate(boolean killConversation) {
 	        String back = null;
 	        try {
-	            Provider currentProvider = providerService.findById(getCurrentProvider().getId());
+	        	providerService.refresh(currentProvider);
 	            for (TradingCountry tr : currentProvider.getTradingCountries()) {
 	                if (tr.getCountry().getCountryCode().equalsIgnoreCase(entity.getCountry().getCountryCode()) && !tr.getId().equals(entity.getId())) {
 	                    throw new Exception();
 	                }
 	            }
-	            currentProvider.addTradingCountry(entity);
 	            back = super.saveOrUpdate(killConversation);
 
 	        } catch (Exception e) {

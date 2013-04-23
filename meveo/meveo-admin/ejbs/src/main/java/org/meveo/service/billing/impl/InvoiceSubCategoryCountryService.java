@@ -34,8 +34,7 @@ import org.meveo.service.billing.remote.InvoiceSubCategoryCountryServiceRemote;
 @Stateless
 @Named
 @LocalBean
-public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry>
-		implements InvoiceSubCategoryCountryServiceRemote {
+public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry>{
 
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,
 			Long countryId) {

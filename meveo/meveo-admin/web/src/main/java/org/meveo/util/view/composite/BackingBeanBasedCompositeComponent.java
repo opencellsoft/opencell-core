@@ -86,7 +86,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
                 try {
                     entity = getBackingBeanFromParentOrCurrent().getEntity();
                 } catch (Exception e) {
-                    LoggerFactory.getLogger(getClass()).error("Failed to instantiate a entity");
+                    LoggerFactory.getLogger(getClass()).error("Failed to instantiate a entity", e);
                 }
             }
         }
