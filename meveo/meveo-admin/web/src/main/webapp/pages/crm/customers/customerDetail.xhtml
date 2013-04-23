@@ -33,19 +33,19 @@
 			updateField=":formCustomerPanel:formCustomer:tabView:parentSelectId:parentSelectId_text">
 		</hftl:entityPopup>
 
-		<p:panelGrid style="width: 100%">
+		<p:panelGrid styleClass="col2-set">
 			<p:row>
-				<p:column style="width: 25%; vertical-align: top;">
+				<p:column styleClass="col1">
 					<hf:hierarchyPanel
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(customerBean.entity)}"
 						entity="#{customerBean.entity}" />
 				</p:column>
-				<p:column style="width: 75%;">
+				<p:column styleClass="col2 tab-view-container">
 					<hf:formPanel id="formCustomerPanel" formId="formCustomer"
 						label="#{messages['customer.customerPanel']}"
 						backingBean="#{customerBean}" useCustomIdParam="true"
 						killConversationOnSave="false" killConversationOnBack="false">
-						<p:tabView id="tabView" style="width: 100%">
+						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}">
 								<hf:formField label="#{messages['businessEntity.code']}"
 									field="code" validateUnique="true" required="true" />
