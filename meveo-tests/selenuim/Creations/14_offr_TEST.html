@@ -4,41 +4,41 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://meveo.asg.env-integration.com/" />
-<title>devi_TEST</title>
+<title>offr_TEST</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">devi_TEST</td></tr>
+<tr><td rowspan="1" colspan="3">offr_TEST</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>//a[@id='menu:tradingCurrencies']</td>
+	<td>//a[@id='menu:offerTemplates']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//td[3]/button</td>
+	<td>id=j_idt27:searchForm:buttonNew</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//td[2]/input</td>
+	<td>offr_TEST</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//td[2]/table/tbody/tr/td[2]/input</td>
+	<td>offr_TEST</td>
+</tr>
+<tr>
+	<td>doubleClick</td>
+	<td>//td/ul/li</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=formPanel:currenciesFormId:currencySelectedId:selectLink</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='currencyPopuppopupForm:datatable_data']/tr[10]/td/div</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>//button[@type='button']</td>
 	<td></td>
 </tr>
 <tr>
@@ -52,19 +52,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>//div[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//li[11]</td>
-	<td></td>
+	<td>type</td>
+	<td>//td[2]/input</td>
+	<td>offr_TEST</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -73,8 +63,8 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
-	<td>ARS</td>
+	<td>css=td &gt; div.ui-dt-c</td>
+	<td>offr_TEST</td>
 </tr>
 </tbody></table>
 </body>

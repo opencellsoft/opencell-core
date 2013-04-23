@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://meveo.asg.env-integration.com/" />
-<title>rub_TEST</title>
+<title>cal_TEST</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">rub_TEST</td></tr>
+<tr><td rowspan="1" colspan="3">cal_TEST</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>//a[@id='menu:invoiceCategories']</td>
+	<td>//a[@id='menu:calendars']</td>
 	<td></td>
 </tr>
 <tr>
@@ -23,27 +23,27 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>//td[2]/table/tbody/tr/td[2]/input</td>
-	<td>rub_TEST</td>
+	<td>//td[2]/input</td>
+	<td>cal_TEST</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//td[2]/input</td>
+	<td>//div/label</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>//td[2]/input</td>
-	<td>rub_TEST</td>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>//td[2]/table/tbody/tr/td/table/tbody/tr/td[2]/input</td>
+	<td>click</td>
+	<td>//div[6]/div/ul/li[3]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//button</td>
+	<td>//tr[2]/td/button</td>
 	<td></td>
 </tr>
 <tr>
@@ -54,7 +54,7 @@
 <tr>
 	<td>type</td>
 	<td>//td[2]/input</td>
-	<td>rub_TEST</td>
+	<td>cal_TEST</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -62,9 +62,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>//div/table/tbody/tr/td/div</td>
-	<td>RUB_TEST</td>
+	<td>verifyText</td>
+	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
+	<td>cal_TEST</td>
 </tr>
 </tbody></table>
 </body>

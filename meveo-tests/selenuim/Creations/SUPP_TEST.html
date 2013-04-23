@@ -4,68 +4,64 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://meveo.asg.env-integration.com/" />
-<title>offr_TEST</title>
+<title>SUPP_TEST</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">offr_TEST</td></tr>
+<tr><td rowspan="1" colspan="3">SUPP_TEST</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>//a[@id='menu:offerTemplates']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>id=j_idt27:searchForm:buttonNew</td>
+	<td>//a[@id='menu:users']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>//td[2]/input</td>
-	<td>offr_TEST</td>
+	<td>util_TEST</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>//td[2]/table/tbody/tr/td[2]/input</td>
-	<td>0</td>
+	<td>clickAndWait</td>
+	<td>id=searchPanel:searchForm:buttonSearch</td>
+	<td></td>
 </tr>
 <tr>
-	<td>doubleClick</td>
-	<td>//td/ul/li</td>
+	<td>verifyText</td>
+	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
+	<td>UTIL_TEST</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=datatable:0:resultsdeletelink</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[@id='menu:tradingLanguages']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@type='button']</td>
+	<td>//tbody[@id='searchLanguagePopuppopupForm:datatable_data']/tr[10]/td/div</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//tr[2]/td/button</td>
+	<td>id=searchPanel:searchForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyElementPresent</td>
-	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
+	<td>verifyText</td>
+	<td>//tbody[@id='datatable_data']/tr[4]/td[2]/div</td>
+	<td>FAO</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>//td[2]/input</td>
-	<td>offr_TEST</td>
+	<td>verifyText</td>
+	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
+	<td>FAO</td>
 </tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>//button</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>css=td &gt; div.ui-dt-c</td>
-	<td></td>
-</tr>
+
 </tbody></table>
 </body>
 </html>

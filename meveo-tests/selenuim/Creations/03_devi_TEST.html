@@ -4,42 +4,57 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://meveo.asg.env-integration.com/" />
-<title>pays_TEST</title>
+<title>devi_TEST</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">pays_TEST</td></tr>
+<tr><td rowspan="1" colspan="3">devi_TEST</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>//a[@id='menu:tradingCountries']</td>
+	<td>//a[@id='menu:tradingCurrencies']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=searchPanel:searchForm:buttonNew</td>
+	<td>//td[3]/button</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=formPanel:formId:countrySelectedId:selectLink</td>
+	<td>id=formPanel:currenciesFormId:currencySelectedId:selectLink</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>waitForElementPresent</td>
+	<td>id=currencyPopuppopupForm</td>
 	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//td[2]/input</td>
+	<td>ARS</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='popuppopupForm:datatable_data']/tr[10]/td/div</td>
+	<td>id=currencyPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
+	<td>waitForText</td>
+	<td>css=td &gt; div.ui-dt-c</td>
+	<td>ARS</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td &gt; div.ui-dt-c</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForValue</td>
+	<td>//td[2]/table/tbody/tr/td/input</td>
+	<td>ARS</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -53,28 +68,23 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=searchPanel:searchForm:country:selectLink</td>
+	<td>//li[11]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='popuppopupForm:datatable_data']/tr[10]/td/div</td>
-	<td></td>
+	<td>waitForValue</td>
+	<td>//div/label</td>
+	<td>ARS</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=searchPanel:searchForm:buttonSearch</td>
+	<td>//button</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyText</td>
 	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
-	<td>AR</td>
+	<td>ARS</td>
 </tr>
 </tbody></table>
 </body>

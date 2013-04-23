@@ -4,66 +4,41 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://meveo.asg.env-integration.com/" />
-<title>charge_rec_TEST</title>
+<title>serv_TEST</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">charge_rec_TEST</td></tr>
+<tr><td rowspan="1" colspan="3">serv_TEST</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>//a[@id='menu:recurringChargeTemplate']</td>
+	<td>//a[@id='menu:serviceTemplates']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=j_idt27:searchForm:buttonNew</td>
+	<td>//td[3]/button</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>//td[2]/input</td>
-	<td>rec_TEST</td>
+	<td>serv_TEST</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//td[2]/table/tbody/tr/td[2]/input</td>
+	<td>//tr[2]/td/table/tbody/tr/td[2]/input</td>
 	<td>0</td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>//table[2]/tbody/tr/td[2]/table/tbody/tr/td[2]/input</td>
-	<td>0</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=formPanel:reccuringChargeId:invoiceSubCategorySelectedId:selectLink</td>
+	<td>doubleClick</td>
+	<td>//td/ul/li</td>
 	<td></td>
 </tr>
 <tr>
 	<td>pause</td>
 	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=td &gt; div.ui-dt-c</td>
-	<td>SUB_SRV</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tr[6]/td/table/tbody/tr/td/table/tbody/tr/td[2]/div/div[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[6]/div/ul/li[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -79,7 +54,12 @@
 <tr>
 	<td>type</td>
 	<td>//td[2]/input</td>
-	<td>rec_TEST</td>
+	<td>serv_TEST</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//td[2]/table/tbody/tr/td[2]/input</td>
+	<td>0</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -88,8 +68,8 @@
 </tr>
 <tr>
 	<td>verifyText</td>
-	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
-	<td>rec_TEST</td>
+	<td>//tbody[@id='datatable_data']/tr/td[1]</td>
+	<td>SERV_TEST</td>
 </tr>
 </tbody></table>
 </body>
