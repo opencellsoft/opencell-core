@@ -210,13 +210,12 @@
 								<br />
 								<br />
 
-								<h:outputText value="Liste des services souscrits :"
-									style="font-weight: bold;font-size=14;" />
+								<h:outputText value="#{messages['subscription.subscribedServices']}:" />
 								<h:form id="srvInstansFrm" prependId="false">
 									<p:dataTable value="#{subscriptionBean.serviceInstances}"
 										var="entity" selection="#{subscriptionBean.selectedServiceInstance}"  rowKey="#{entity.id}">
 										<p:ajax event="rowSelectRadio"   update=":#{p:component('terminationPanel')} :#{p:component('serviceInstOperations')}" />
-										<p:column selectionMode="single" style="width:2%" />
+										<p:column selectionMode="single"/>
 										<hftl:column label="#{messages['serviceInstance.code']}"
 											field="code" />
 										<hftl:column label="#{messages['serviceInstance.status']}"
@@ -262,18 +261,17 @@
 								<br />
 								<br />
 
-								<h:outputText value="Liste des services souscriptibles :"
-									style="font-weight: bold;font-size: 14px;" />
+								<h:outputText value="#{messages['subscription.subscribableServices']}:"/>
 								<h:form id="ST_results2_form" prependId="false">
 									<p:dataTable value="#{subscriptionBean.serviceTemplates}" var="entity" selection="#{subscriptionBean.serviceTemplates.selectedItems}" >
-										<p:column selectionMode="multiple" style="width:2%"/>
+										<p:column selectionMode="multiple"/>
 										<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
 										<hftl:column label="#{messages['serviceTemplate.description']}" field="description" />
 									</p:dataTable>
 									<br />
 									<br />
 									<div style="text-align: center;">
-										<h:panelGrid columns="3" style="border:2px;">
+										<h:panelGrid columns="3">
 											<h:outputText value="#{messages['serviceInstance.quantity']}:"></h:outputText>
 											<h:inputText value="#{subscriptionBean.quantity}" size="5" maxlength="3" />
 											<p:commandButton id="cbutton" action="#{subscriptionBean.instanciateManyServices}" value="#{messages['button.instanciateButton']}" ajax="true"
@@ -301,7 +299,7 @@
 										required="true" modifyOnCreate="true" />
 									<hftl:panelGroup columns="1">
 										<hf:formField label="#{messages['businessEntity.code']}"
-											field="code" required="true" validateUnique="true" size="35"
+											field="code" required="true" validateUnique="true"
 											maxlength="35" />
 										<hf:formField
 											label="#{messages['businessEntity.description']}"
@@ -629,7 +627,7 @@
 														rendered="#{!currentProvider.amountValidation}" />
 
 
-													<h:button value="#{messages['action.cancel']}"
+													<p:commandButton value="#{messages['action.cancel']}"
 														onclick="document.getElementById('oneShotChgDiv').style.display='none';return false;" />
 												</h:panelGrid>
 											</hf:formPanel>
@@ -961,7 +959,7 @@
 														onclick="document.getElementById('recurringChgDiv').style.display='none';"
 														rendered="#{!currentProvider.amountValidation}" />
 
-													<h:button value="#{messages['action.cancel']}"
+													<p:commandButton value="#{messages['action.cancel']}"
 														onclick="document.getElementById('recurringChgDiv').style.display='none';return false;" />
 												</h:panelGrid>
 
