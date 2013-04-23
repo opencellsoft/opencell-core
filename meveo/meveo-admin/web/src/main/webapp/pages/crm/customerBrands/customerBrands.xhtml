@@ -17,7 +17,7 @@
 
 		<hf:searchPanel label="#{messages['customerBrand.search']}" backingBean="#{customerBrandBean}">
 			<hf:searchField label="#{messages['businessEntity.code']}" field="code" />
-			<hf:searchField label="#{messages['businessEntity.description']}" field="description" />
+			<hf:searchField label="#{messages['businessEntity.description']}" id="description" field="description" />
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerBrandBean}" label="#{messages['customerBrand.title']}">

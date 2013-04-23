@@ -34,6 +34,7 @@
 	<cc:attribute name="validateRib" default="false" />
 	<cc:attribute name="validateEmail" default="false" />
 	<cc:attribute name="showOnlyOnNew" default="false" />
+	<cc:attribute name="showPopupOnlyOnNew" default="false" />
 	<cc:attribute name="showOnlyOnConsult" default="false" />
 	<cc:attribute name="listElements" required="false" />
 	<cc:attribute name="edit"
@@ -52,7 +53,7 @@
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
 					required="#{cc.attrs.required}" size="#{cc.attrs.size}"
 					disabled="true" />
-				<p:commandButton rendered="#{cc.attrs.edit}" id="selectLink"
+				<p:commandButton rendered="#{(cc.attrs.edit and !cc.attrs.showPopupOnlyOnNew) or (cc.attrs.edit and cc.attrs.showPopupOnlyOnNew and cc.entityFromBackingBeanOrAttribute.id==null)}" id="selectLink"
 					onclick="dlg_#{cc.attrs.popupId}.show()" icon="ui-icon-search" />
 				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 				<h:outputText rendered="#{!cc.attrs.edit}"

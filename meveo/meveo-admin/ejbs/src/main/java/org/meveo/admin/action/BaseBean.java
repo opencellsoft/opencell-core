@@ -276,7 +276,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String back() {
 
         if (backView != null && backView.get() != null) {
-            System.out.println("AKK backview parameter is " + backView.get());
+//            System.out.println("AKK backview parameter is " + backView.get());
 
             return backView.get();
         } else {
@@ -615,8 +615,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
     
     public void onRowSelect(SelectEvent event){  
-        IEntity i = (T)event.getObject();  
-        System.out.println("OnRowSelect : "+i!=null?i.getId():null);  
   
     } 
 

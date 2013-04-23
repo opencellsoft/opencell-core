@@ -72,7 +72,7 @@
 <!-- 		<url-pattern>*.rtf</url-pattern> -->
 <!-- 	</servlet-mapping> -->
 	
-	      <!-- Facelets taglib -->
+	  <!-- Facelets taglib -->
 	  <context-param>
 			<param-name>javax.faces.FACELETS_LIBRARIES</param-name>
 			<param-value>/taglib/happyfaces.taglib.xml;/taglib/primefacesextension.taglib.xml</param-value>
@@ -90,26 +90,34 @@
 	  <context-param>
 		    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
 		    <param-value>true</param-value>
-		</context-param>
+	  </context-param>
 		
-		<!-- Standard JSF date converters use system time zone - not default -->
-		<context-param>
+	  <!-- Standard JSF date converters use system time zone - not default -->
+	  <context-param>
 		    <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
 		    <param-value>true</param-value>
-		</context-param>
+	  </context-param>
 	      
-	<session-config>
-		<session-timeout>30</session-timeout>
-	</session-config>
-	<!-- Error page -->
-	<error-page>
-		<error-code>500</error-code>
-		<location>/applicationerror.jsp</location>
-	</error-page>
-	<error-page>
-		<exception-type>java.lang.IllegalStateException</exception-type>
-		<location>/toomanysessionserror.html</location>
-	</error-page>
+	  <session-config>
+		    <session-timeout>30</session-timeout>
+	  </session-config>
+	  
+	  <!-- Error page -->
+	  <error-page>
+		    <error-code>500</error-code>
+		    <location>/applicationerror.jsp</location>
+	  </error-page>
+	  <error-page>
+		    <exception-type>java.lang.IllegalStateException</exception-type>
+		    <location>/toomanysessionserror.html</location>
+	  </error-page>
+	  
+	  <!-- Primefaces theme -->
+	  <!-- <context-param>  
+    		<param-name>primefaces.THEME</param-name>  
+    		<param-value>south-street</param-value>  
+	  </context-param> -->  
+	  
 	<!-- Security -->
 <!-- 	<security-constraint> -->
 <!-- 		<display-name>Restrict raw XHTML Documents</display-name> -->

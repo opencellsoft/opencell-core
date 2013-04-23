@@ -58,18 +58,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 .setParameter("wallet", userAccount.getWallet()).getResultList();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<RatedTransaction> getRatedTransactionsNoInvoiced(UserAccount userAccount) {
-        if (userAccount == null || userAccount.getWallet() == null) {
-            return null;
-        }
-        return (List<RatedTransaction>) em
-                .createQuery(
-                        "from "
-                                + RatedTransaction.class.getSimpleName()
-                                + " where wallet=:wallet and invoice is null order by usageDate desc")
-                .setParameter("wallet", userAccount.getWallet()).getResultList();
-    }
 
     @SuppressWarnings("unchecked")
     public ConsumptionDTO getConsumption(String subscriptionCode, String infoType,

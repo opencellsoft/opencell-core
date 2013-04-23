@@ -24,9 +24,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -120,23 +122,24 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	    public String saveOrUpdate(boolean killConversation) {
 	        String back = null;
 	        try {
-	            Provider currentProvider = providerService.findById(getCurrentProvider().getId());
+	        	Provider currentProvider = providerService.findById(getCurrentProvider().getId());
 	            for (TradingCountry tr : currentProvider.getTradingCountries()) {
 	                if (tr.getCountry().getCountryCode().equalsIgnoreCase(entity.getCountry().getCountryCode()) && !tr.getId().equals(entity.getId())) {
-	                    throw new Exception();
+	                    throw new BusinessEntityException();
 	                }
 	            }
-	            currentProvider.addTradingCountry(entity);
 	            back = super.saveOrUpdate(killConversation);
 
-	        } catch (Exception e) {
+	        } catch (BusinessEntityException e) {
 	            messages.error(new BundleKey("messages", "tradingCountry.uniqueField"));
-	        }
+	        }catch (Exception e) {
+				e.printStackTrace();
 
+	            messages.error(new BundleKey("messages", "tradingCountry.uniqueField"));
+			}
 	        return back;
-	
 	 }
-	
+
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

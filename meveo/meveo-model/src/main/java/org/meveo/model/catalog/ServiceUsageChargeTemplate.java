@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 
 @Entity
 @Table(name = "CAT_SERV_USAGE_CHARGE_TEMPLATE")
@@ -83,6 +84,33 @@ public class ServiceUsageChargeTemplate extends BaseEntity {
 		this.counterTemplate = counterTemplate;
 	}
 
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((getId() == null) ? 0 : getId().hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ServiceUsageChargeTemplate other = (ServiceUsageChargeTemplate) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 
 
 }
