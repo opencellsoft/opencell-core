@@ -917,6 +917,18 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
   width : 99% !important;
   display : inline-block;
 }
+.col1-set >tbody > tr > td
+{
+  
+  width : 99% !Important;
+  display : inline-block;
+}
+.form-panel-fields > tbody >tr > td
+{
+  
+  width : 99% !Important;
+  display : inline-block;
+}
 .form-panel-fields .ui-tabs-panel > table >tbody > tr fieldset
 {
   width : 99%;
@@ -942,3 +954,4 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
 }
 
 .tab-view-container .ui-panel-titlebar { border: 0px; margin: 0px; padding: 10px 0px 0px 0px !important; vertical-align: middle !important; height: 28px; }
+
