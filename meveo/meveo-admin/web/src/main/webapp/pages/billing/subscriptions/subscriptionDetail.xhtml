@@ -179,7 +179,7 @@
 							<h:outputText value="#{messages['subscription.panel']}" />
 						</f:facet>
 						<p:tabView id="subscriptionTab">
-							<p:tab title="#{messages['subscription.tab.services']}"
+							<p:tab id="serviceTab" title="#{messages['subscription.tab.services']}"
 								rendered="#{!subscriptionBean.edit}">
 								<hf:formPanel formId="headerInfo1"
 									backingBean="#{subscriptionBean}" showFormButtons="false"
@@ -278,30 +278,23 @@
 								<h:outputText value="Liste des services souscriptibles :"
 									style="font-weight: bold;font-size: 14px;" />
 								<h:form id="ST_results2_form" prependId="false">
-									<p:dataTable value="#{subscriptionBean.serviceTemplates}"
-										var="entity">
-										<hftl:column label="#{messages['serviceTemplate.code']}"
-											field="code" />
-										<hftl:column
-											label="#{messages['serviceTemplate.description']}"
-											field="description" />
+									<p:dataTable value="#{subscriptionBean.serviceTemplates}" var="entity" selection="#{subscriptionBean.serviceTemplates.selectedItems}" >
+										<p:column selectionMode="multiple" style="width:2%"/>
+										<hftl:column label="#{messages['serviceTemplate.code']}" field="code" />
+										<hftl:column label="#{messages['serviceTemplate.description']}" field="description" />
 									</p:dataTable>
+									<br />
 										<br />
-										<br />
-										<ui:define name="operations">
-											<div style="text-align: center;">
-												<h:panelGrid columns="3" style="border:2px;">
-													<h:outputText
-														value="#{messages['serviceInstance.quantity']}:"></h:outputText>
-													<h:inputText value="#{subscriptionBean.quantity}" size="5"
-														maxlength="3" />
-													<p:commandButton id="cbutton"
-														action="#{subscriptionBean.instanciateManyServices}"
-														update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel"
-														value="#{messages['button.instanciateButton']}" />
-												</h:panelGrid>
-											</div>
-										</ui:define>
+									<div style="text-align: center;">
+										<h:panelGrid columns="3" style="border:2px;">
+											<h:outputText value="#{messages['serviceInstance.quantity']}:"></h:outputText>
+											<h:inputText value="#{subscriptionBean.quantity}" size="5" maxlength="3" />
+											<p:commandButton id="cbutton" action="#{subscriptionBean.instanciateManyServices}" value="#{messages['button.instanciateButton']}" ajax="true"
+											update=":subscriptionTab:ST_results2_form,:subscriptionTab:srvInstansFrm,:subscriptionTab:OS_oneShot_results_form,:subscriptionTab:OS_recurring_results_form"/>
+<!-- 												update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" -->
+												
+										</h:panelGrid>
+									</div>
 								</h:form>
 							</p:tab>
 							<p:tab id="accInfoTab"
@@ -310,7 +303,7 @@
 								<hf:formPanel id="subscriptionFormPanel"
 									label="#{messages['subscription.panel']}"
 									backingBean="#{subscriptionBean}"
-									killConversationOnSave="false" killConversationOnBack="false">
+									killConversationOnSave="false" killConversationOnBack="false" useCustomIdParam="true">
 									<!--Creation window fields-->
 									<hf:formEntityField id="userSelectId"
 										label="#{messages['subscription.userAccount']}"
@@ -348,7 +341,7 @@
 									</hftl:panelGroup>
 								</hf:formPanel>
 							</p:tab>
-							<p:tab title="#{messages['subscription.tab.oneShotChg']}"
+							<p:tab id="oneShotChgTab" title="#{messages['subscription.tab.oneShotChg']}"
 								rendered="#{!subscriptionBean.edit}">
 
 								<hf:formPanel formId="form3" backingBean="#{subscriptionBean}"
@@ -659,7 +652,7 @@
 								</p:panel>
 							</p:tab>
 							<!-- recurring charge instance -->
-							<p:tab title="#{messages['subscription.tab.recurringShotChg']}"
+							<p:tab id="recurringShotChgTab" title="#{messages['subscription.tab.recurringShotChg']}"
 								rendered="#{!subscriptionBean.edit}">
 
 								<hf:formPanel formId="form4" backingBean="#{subscriptionBean}"
@@ -718,9 +711,9 @@
 													<h:outputText value="#{messages['commons.actions']}" />
 												</f:facet>
 												<p:commandLink id="editRecurringChgInsLink"
-													update="recurringChgSdiv"
 													onclick="document.getElementById('recurringChgDiv').style.display='';"
 													action="#{subscriptionBean.editRecurringChargeIns(entity)}">
+<!-- 													update=":recurringChgSdiv" -->
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
 												</p:commandLink>
 												<p:tooltip for="editRecurringChgInsLink"
@@ -729,8 +722,8 @@
 										</p:dataTable>
 									</h:form>
 								</a:outputPanel>
-								<p:panel>
-									<div id="recurringChgDiv" style="display: none">
+								<p:panel id="recurringChgDiv">
+									<div  style="display: none">
 										<div id="recurringChgSdiv">
 											<hf:formPanel edit="true"
 												label="#{messages['subscription.tab.recurringShotChg']}"
