@@ -941,3 +941,4 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
   font-style : normal;
 }
 
+.tab-view-container .ui-panel-titlebar { border: 0px; margin: 0px; padding: 10px 0px 0px 0px !important; vertical-align: middle !important; height: 28px; }
