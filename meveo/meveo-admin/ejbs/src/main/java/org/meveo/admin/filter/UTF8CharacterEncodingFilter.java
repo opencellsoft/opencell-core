@@ -17,28 +17,31 @@ package org.meveo.admin.filter;
 
 import java.io.IOException;
 
-import javax.ejb.Startup;
-import javax.enterprise.context.ApplicationScoped;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * @author Tyshan(tyshanchn@manaty.net)
- * @created 2011-1-6
+ * @author R.AITYAAZZA
+ *
  */
+public class UTF8CharacterEncodingFilter implements Filter {
 
-@Startup
-@ApplicationScoped
-/*TODO: javaee6 @Name("org.meveo.admin.filter.UTF8CharacterEncodingFilter")
-@org.jboss.seam.annotations.web.Filter(around = "org.jboss.seam.web.ajax4jsfFilter")*/
-public class UTF8CharacterEncodingFilter /*extends AbstractFilter*/ {
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        chain.doFilter(req, resp);
+    }
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		request.setCharacterEncoding("UTF-8");
-		chain.doFilter(request, response);
-	}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
+    @Override
+    public void destroy() {
+    }
 }

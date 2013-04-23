@@ -112,6 +112,15 @@
 		    <location>/toomanysessionserror.html</location>
 	  </error-page>
 	  
+	    <filter>
+       		<filter-name>UTF8CharacterEncodingFilter</filter-name>
+       		<filter-class>org.meveo.admin.filter.UTF8CharacterEncodingFilter</filter-class>
+       	</filter>
+       	<filter-mapping>
+       		<filter-name>UTF8CharacterEncodingFilter</filter-name>
+       		<url-pattern>*.jsf</url-pattern>
+       	</filter-mapping> 
+	  
 	  <!-- Primefaces theme -->
 	  <!-- <context-param>  
     		<param-name>primefaces.THEME</param-name>  
