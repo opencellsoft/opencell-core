@@ -169,13 +169,19 @@
 
 									<p:panelGrid columns="3">
 
-										<p:commandButton
+										<p:commandButton rendered="#{serviceUsageChargeTemplate.id==null}"
 											action="#{serviceTemplateBean.saveServiceUsageChargeTemplate}"
-											value="#{messages['action.save']}"
+											value="#{messages['serviceUsageChargeTemplate.saveUsageCharge']}"
 											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge ,:tabView:serviceUsageChargediv"
-											oncomplete="document.getElementById('serviceUsageChargediv');" />
-											
-                                         <p:commandButton value="#{messages['action.cancel']}"
+											  />
+										
+											<p:commandButton rendered="#{serviceUsageChargeTemplate.id!=null}"
+											action="#{serviceTemplateBean.saveServiceUsageChargeTemplate}"
+											value="#{messages['serviceUsageChargeTemplate.modifyServiceUsageCharge']}"
+											update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge ,:tabView:serviceUsageChargediv"
+											  />
+											  
+											 <p:commandButton value="#{messages['action.cancel']}"
 											action="#{serviceTemplateBean.newServiceUsageChargeTemplate}"
 											update=":tabView:serviceUsageChargediv" />
 											
@@ -185,6 +191,9 @@
 										</p:button>
 											
 									</p:panelGrid>
+									
+									 
+									
 									
 									 
 
