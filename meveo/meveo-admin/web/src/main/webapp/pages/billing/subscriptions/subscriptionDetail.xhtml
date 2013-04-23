@@ -85,7 +85,8 @@
 			searchField1Label="#{messages['chargeTemplate.code']}"
 			searchField1="code"
 			searchField2Label="#{messages['chargeTemplate.description']}"
-			searchField2="description" column1Label="#{messages['chargeTemplate.description']}"
+			searchField2="description"
+			column1Label="#{messages['chargeTemplate.description']}"
 			column1="code"
 			column2Label="#{messages['chargeTemplate.description']}"
 			column2="description"
@@ -157,11 +158,10 @@
 					</hftl:panelGroup>
 					<h:commandButton action="#{subscriptionBean.terminateService()}"
 						value="#{messages['button.terminateButton']}"
-						onclick="dlg_serviceTerminationPopup.hide()" />&nbsp;&nbsp;
-							<a:commandButton action="#{subscriptionBean.getQuantity()}"
-						immediate="true" onclick="dlg_serviceTerminationPopup.hide()"
+						onclick="dlg_serviceTerminationPopup.hide()" />
+					<p:commandButton action="#{subscriptionBean.getQuantity()}"
+						immediate="true" ajax="true" onclick="dlg_serviceTerminationPopup.hide()"
 						value="#{messages['management.close']}" />
-
 				</hf:formPanel>
 			</a:outputPanel>
 		</p:dialog>
@@ -224,6 +224,10 @@
 												<a:ajax event="click"
 													render="terminationPanel,serviceInstOperations"
 													action="#{subscriptionBean.setSelectedServiceInstanceId(entity.id)}" />
+												<!-- <p:ajax
+													update=":#{p:component('terminationPanel')} :#{p:component('serviceInstOperations')}"
+													event="click"
+													listener="#{subscriptionBean.setSelectedServiceInstanceId(entity.id)}"></p:ajax> -->
 											</h:selectOneRadio>
 										</p:column>
 										<hftl:column label="#{messages['serviceInstance.code']}"
@@ -253,23 +257,22 @@
 								</h:form>
 								<a:outputPanel id="serviceInstOperations">
 									<h:form id="operationFrm">
-										<h:commandButton action="#{subscriptionBean.activateService}"
+										<p:commandButton  ajax="false" action="#{subscriptionBean.activateService}"
 											value="#{messages['button.activateButton']}"
 											onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />&nbsp;&nbsp;
-				<a:commandButton value="#{messages['button.terminateButton']}"
+											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />
+										<p:commandButton value="#{messages['button.terminateButton']}"
 											oncomplete="dlg_serviceTerminationPopup.show()"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />&nbsp;&nbsp;
-				<h:commandButton action="#{subscriptionBean.cancelService}"
+											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
+										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}"
 											value="#{messages['button.cancelButton']}"
 											onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />&nbsp;&nbsp;
-				<h:commandButton action="#{subscriptionBean.suspendService}"
+											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
+										<p:commandButton ajax="false" action="#{subscriptionBean.suspendService}"
 											value="#{messages['button.suspendButton']}"
 											onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />&nbsp;&nbsp;
-				
-				</h:form>
+											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
+									</h:form>
 								</a:outputPanel>
 
 								<br />
@@ -284,7 +287,7 @@
 										<hftl:column label="#{messages['serviceTemplate.description']}" field="description" />
 									</p:dataTable>
 									<br />
-										<br />
+									<br />
 									<div style="text-align: center;">
 										<h:panelGrid columns="3" style="border:2px;">
 											<h:outputText value="#{messages['serviceInstance.quantity']}:"></h:outputText>
@@ -301,7 +304,6 @@
 								title="#{messages['billingAccount.tab.information']}">
 
 								<hf:formPanel id="subscriptionFormPanel"
-									label="#{messages['subscription.panel']}"
 									backingBean="#{subscriptionBean}"
 									killConversationOnSave="false" killConversationOnBack="false" useCustomIdParam="true">
 									<!--Creation window fields-->
@@ -387,13 +389,13 @@
 												field="amountWithTax" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria1']}"
-												field="criteria1"/>
+												field="criteria1" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria2']}"
-												field="criteria2"/>
+												field="criteria2" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria3']}"
-												field="criteria3"/>
+												field="criteria3" />
 
 											<p:column styleClass="actions-column">
 												<f:facet name="header">
@@ -403,7 +405,7 @@
 												<p:commandLink id="editOneShotChgInsLink"
 													render="oneShotChgSdiv"
 													update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
-												onclick="document.getElementById('oneShotChgDiv').style.display='';"
+													onclick="document.getElementById('oneShotChgDiv').style.display='';"
 													action="#{subscriptionBean.editOneShotChargeIns(entity)}">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
 												</p:commandLink>
@@ -420,8 +422,8 @@
 											value="#{messages['subscription.oneShotChgButton']}"
 											action="#{subscriptionBean.newOneShotChargeInstance}"
 											onclick="document.getElementById('oneShotChgDiv').style.display='';"
-											render="oneShotChgSdiv" />&nbsp;&nbsp;
-	</h:form>
+											render="oneShotChgSdiv" />
+									</h:form>
 									<br />
 									<br />
 									<div id="oneShotChgDiv" style="display: none">
@@ -506,21 +508,21 @@
 														<p:dataTable id="oneShotWalletOperationTable"
 															value="#{subscriptionBean.oneShotWalletOperations}"
 															var="shotApplication" rows="10">
-															<hftl:column 
-															  label="#{messages['chargeApplication.applicationDate']}" 
-															  field="applicationDate"/>
-															<hftl:column 
-															  label="#{messages['chargeApplication.description']}"
-															   field="description"/>
-															<hftl:column 
-															  label="#{messages['chargeApplication.amountWithoutTax']}"
-															   field="amountWithoutTax" />
-															<hftl:column 
-															  label="#{messages['walletOperation.amountWithTax']}"
-															   field="amountWithTax" />
-															<hftl:column 
-															  label="#{messages['chargeApplication.status']}"
-															   field="status" />
+															<hftl:column
+																label="#{messages['chargeApplication.applicationDate']}"
+																field="applicationDate" />
+															<hftl:column
+																label="#{messages['chargeApplication.description']}"
+																field="description" />
+															<hftl:column
+																label="#{messages['chargeApplication.amountWithoutTax']}"
+																field="amountWithoutTax" />
+															<hftl:column
+																label="#{messages['walletOperation.amountWithTax']}"
+																field="amountWithTax" />
+															<hftl:column
+																label="#{messages['chargeApplication.status']}"
+																field="status" />
 
 														</p:dataTable>
 													</h:panelGrid>
@@ -722,8 +724,8 @@
 										</p:dataTable>
 									</h:form>
 								</a:outputPanel>
-								<p:panel id="recurringChgDiv">
-									<div  style="display: none">
+								<p:panel>
+									<div  id="recurringChgDiv" style="display: none">
 										<div id="recurringChgSdiv">
 											<hf:formPanel edit="true"
 												label="#{messages['subscription.tab.recurringShotChg']}"
