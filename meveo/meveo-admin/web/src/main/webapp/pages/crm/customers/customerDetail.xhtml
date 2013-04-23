@@ -47,33 +47,31 @@
 						killConversationOnSave="false" killConversationOnBack="false">
 						<p:tabView id="tabView">
 							<p:tab title="#{messages['customer.tab.account']}">
-								<hf:formField label="#{messages['businessEntity.code']}"
-									field="code" validateUnique="true" required="true" />
-								<hf:formField label="#{messages['businessEntity.description']}"
-									field="description" useConverter="false" id="description"
-									maxlength="50" />
-								<hf:formField label="#{messages['customer.externalRef1']}"
-									field="externalRef1" validateUnique="false" />
-								<hf:formField label="#{messages['customer.externalRef2']}"
-									field="externalRef2" />
-								<hf:formEntityField
-									label="#{messages['customer.customerCategory']}"
-									field="customerCategory" childField="description" popup="false"
-									service="#{customerCategoryService}" required="true"
-									listBean="#{customerCategoryBean}" />
-								<hf:formEntityField
-									label="#{messages['customer.customerBrand']}"
-									field="customerBrand" childField="description" popup="false"
-									service="#{customerBrandService}" required="true"
-									listBean="#{customerBrandBean}" />
-
-
-								<hf:formEntityField id="parentSelectId"
-									label="#{messages['seller.parent']}" field="seller"
-									childField="description" required="true" popup="true"
-									popupId="sellerParentPopup" />
-
-
+								<hftl:panelGroup columns="2">
+									<hf:formField label="#{messages['businessEntity.code']}"
+										field="code" validateUnique="true" required="true" />
+									<hf:formField label="#{messages['businessEntity.description']}"
+										field="description" useConverter="false" id="description"
+										maxlength="50" />
+									<hf:formField label="#{messages['customer.externalRef1']}"
+										field="externalRef1" validateUnique="false" />
+									<hf:formField label="#{messages['customer.externalRef2']}"
+										field="externalRef2" />
+									<hf:formEntityField
+										label="#{messages['customer.customerCategory']}"
+										field="customerCategory" childField="description" popup="false"
+										service="#{customerCategoryService}" required="true"
+										listBean="#{customerCategoryBean}" />
+									<hf:formEntityField
+										label="#{messages['customer.customerBrand']}"
+										field="customerBrand" childField="description" popup="false"
+										service="#{customerBrandService}" required="true"
+										listBean="#{customerBrandBean}" />	
+									<hf:formEntityField id="parentSelectId"
+										label="#{messages['seller.parent']}" field="seller"
+										childField="description" required="true" popup="true"
+										popupId="sellerParentPopup" />
+								</hftl:panelGroup>
 							</p:tab>
 
 							<p:tab title="#{messages['customer.tab.information']}">
