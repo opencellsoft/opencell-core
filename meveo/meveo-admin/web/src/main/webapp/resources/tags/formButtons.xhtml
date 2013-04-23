@@ -24,7 +24,8 @@
 
 <cc:implementation>
 
-	<p:panelGrid columns="#{cc.attrs.columns}" style="float: right;">
+	<p:panelGrid columns="#{cc.attrs.columns}"
+		styleClass="form-panel-actions">
 		<p:button value="#{messages['commons.edit']}"
 			rendered="#{!cc.attrs.edit}" includeViewParams="true">
 			<f:param name="edit" value="true" />

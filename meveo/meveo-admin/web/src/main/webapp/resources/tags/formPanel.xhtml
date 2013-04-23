@@ -12,8 +12,9 @@
 
 <cc:interface componentType="formPanel">
 	<cc:attribute name="label" required="true" />
-	<cc:attribute name="backingBean" required="true" type="org.meveo.admin.action.BaseBean" />
-	<cc:attribute name="entity" required="false" type="java.lang.Object"/>
+	<cc:attribute name="backingBean" required="true"
+		type="org.meveo.admin.action.BaseBean" />
+	<cc:attribute name="entity" required="false" type="java.lang.Object" />
 	<cc:attribute name="edit" default="#{cc.attrs.backingBean.edit}" />
 	<cc:attribute name="formId" default="formId" />
 	<cc:attribute name="columns" default="2" />
@@ -28,13 +29,13 @@
 <cc:implementation>
 
 	<h:form id="#{cc.attrs.formId}">
-		<p:panelGrid columns="1"> 
+		<p:panelGrid columns="1" styleClass="form-panel">
 			<f:facet name="header">
 				<h:outputText value="#{cc.attrs.label}" />
 			</f:facet>
 			<p:messages id="messages" />
 			<p:panelGrid columns="#{cc.attrs.columns}"
-				columnClasses="#{cc.attrs.columnClasses}">
+				styleClass="form-panel-fields">
 				<cc:insertChildren />
 			</p:panelGrid>
 
