@@ -25,9 +25,11 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -77,17 +79,22 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
     public String saveOrUpdate(boolean killConversation) {
         String back = null;
         try {
-        	providerService.refresh(currentProvider);
+        	Provider currentProvider = providerService.findById(getCurrentProvider().getId());
             for (TradingCurrency tr : currentProvider.getTradingCurrencies()) {
                 if (tr.getCurrency().getCurrencyCode().equalsIgnoreCase(entity.getCurrency().getCurrencyCode()) && !tr.getId().equals(entity.getId())) {
-                    throw new Exception();
+                    throw new BusinessEntityException();
+                                      
                 }
             }
             back = super.saveOrUpdate(killConversation);
 
-        } catch (Exception e) {
+        } catch (BusinessEntityException e) {
             messages.error(new BundleKey("messages", "tradingCurrency.uniqueField"));
-        }
+        }catch (Exception e) {
+			e.printStackTrace();
+
+            messages.error(new BundleKey("messages", "tradingCurrency.uniqueField"));
+		}
         return back;
 
     }

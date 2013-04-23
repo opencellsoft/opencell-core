@@ -89,7 +89,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
     public String saveOrUpdate(boolean killConversation) {
         String back = null;
         try {
-        	 providerService.refresh(currentProvider);
+        	Provider currentProvider = providerService.findById(getCurrentProvider().getId());
             for (TradingLanguage tr : currentProvider.getTradingLanguages()) {
                 if (tr.getLanguage().getLanguageCode().equalsIgnoreCase(entity.getLanguage().getLanguageCode()) && !tr.getId().equals(entity.getId())) {
                     throw new BusinessEntityException();
