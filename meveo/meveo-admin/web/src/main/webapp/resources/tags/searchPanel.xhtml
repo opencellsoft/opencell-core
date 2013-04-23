@@ -23,20 +23,23 @@
 </cc:interface>
 
 <cc:implementation>
-	<h:form id="searchForm" styleClass="mainForm">
-		<p:panelGrid columns="1">
+	<h:form id="searchForm">
+		<p:panelGrid columns="1" styleClass="m-search-panel">
 			<f:facet name="header">
 				<h:outputText value="#{cc.attrs.label}" />
 			</f:facet>
 
 			<p:messages />
-			<p:panelGrid columns="#{cc.attrs.columns}">
+			<p:panelGrid columns="#{cc.attrs.columns}"
+				styleClass="m-search-panel-fields">
 				<cc:insertChildren />
 			</p:panelGrid>
-			<p:panelGrid columns="3" style="float: right;">
+			<p:panelGrid columns="3" style="float: right;"
+				styleClass="m-search-panel-actions">
 				<p:commandButton id="buttonSearch"
 					value="#{messages['commons.search']}" ajax="#{cc.attrs.ajax}"
-					action="#{cc.attrs.backingBean.search}" update="#{cc.attrs.ajaxUpdateIds}" />
+					action="#{cc.attrs.backingBean.search}"
+					update="#{cc.attrs.ajaxUpdateIds}" />
 				<hf:clearButton label="#{messages['commons.clean']}"
 					resetAction="#{cc.attrs.backingBean.clean}" />
 				<p:button id="buttonNew" value="#{messages['commons.new']}"
