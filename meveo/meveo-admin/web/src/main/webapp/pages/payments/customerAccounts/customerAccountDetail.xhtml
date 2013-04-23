@@ -69,7 +69,7 @@
 								useCustomIdParam="true" killConversationOnSave="false"
 								killConversationOnBack="false">
 								<p:panelGrid columns="1">
-									<p:tabView id="childTab" style="width: 95%" >
+									<p:tabView id="childTab">
 										<p:tab id="accountTab"
 											title="#{messages['customerAccount.tab.account']}">
 											<hftl:panelGroup columns="1">
@@ -154,7 +154,7 @@
 														style="font-weight:bold;" />
 												</p:panelGrid>
 
-												<p:panelGrid id="userNamePanel" columns="2" width="100%"
+												<p:panelGrid id="userNamePanel" columns="2"
 													columnClasses="twoColGrid">
 													<hf:formEntityField label="#{messages['name.lastName']}"
 														field="name" childField="lastName" popup="false"
