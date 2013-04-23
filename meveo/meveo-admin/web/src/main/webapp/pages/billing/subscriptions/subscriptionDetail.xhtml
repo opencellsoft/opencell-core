@@ -492,7 +492,7 @@
 															var="shotApplication" rows="10">
 															<hftl:column
 																label="#{messages['chargeApplication.applicationDate']}"
-																field="applicationDate" />
+																field="operationDate" />
 															<hftl:column
 																label="#{messages['chargeApplication.description']}"
 																field="description" />
@@ -502,6 +502,9 @@
 															<hftl:column
 																label="#{messages['walletOperation.amountWithTax']}"
 																field="amountWithTax" />
+															 <hftl:column
+																label="#{messages['currency.codeCurrency']}"
+																 field="currency" childField="currencyCode" />
 															<hftl:column
 																label="#{messages['chargeApplication.status']}"
 																field="status" />
