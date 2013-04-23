@@ -50,14 +50,14 @@
 			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId:currencySelectId_text">
 		</hftl:entityPopup>
 
-		<p:panelGrid style="width: 100%">
+		<p:panelGrid styleClass="col2-set">
 			<p:row>
-				<p:column style="width: 25%; vertical-align: top;">
+				<p:column styleClass="col1">
 					<hf:hierarchyPanel
 						treeValue="#{customerTreeBean.buildAccountsHierarchy(customerAccountBean.entity)}"
 						entity="#{customerAccountBean.entity}" />
 				</p:column>
-				<p:column style="width: 75%">
+				<p:column styleClass="col2">
 					<p:tabView id="parentTab"
 						activeIndex="#{customerAccountBean.selectedTab}">
 						<p:tab id="compte"
@@ -100,9 +100,10 @@
 													label="#{messages['customerAccount.externalRef2']}"
 													field="externalRef2" maxlength="50" />
 												<hf:formEntityField id="currencySelectId"
-													label="#{messages['currency.codeCurrency']}" required="true"
-													field="tradingCurrency" childField="currencyCode"
-													popup="true" popupId="customerAccCurrencyPopup" />
+													label="#{messages['currency.codeCurrency']}"
+													required="true" field="tradingCurrency"
+													childField="currencyCode" popup="true"
+													popupId="customerAccCurrencyPopup" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="2">
 												<p:panelGrid columns="2"
@@ -226,14 +227,14 @@
 												columns="1">
 												<hftl:panelGroup columns="1">
 													<hf:formEntityField label="#{messages['address.address1']}"
-														field="address" id="address1" childField="address1" popup="false"
-														size="80" maxlength="80" />
+														field="address" id="address1" childField="address1"
+														popup="false" size="80" maxlength="80" />
 													<hf:formEntityField label="#{messages['address.address2']}"
-														field="address" id="address2" childField="address2" popup="false"
-														size="80" maxlength="80"  required="true" />
+														field="address" id="address2" childField="address2"
+														popup="false" size="80" maxlength="80" required="true" />
 													<hf:formEntityField label="#{messages['address.address3']}"
-														field="address" id="address3" childField="address3" popup="false"
-														size="80" maxlength="80" />
+														field="address" id="address3" childField="address3"
+														popup="false" size="80" maxlength="80" />
 												</hftl:panelGroup>
 												<hftl:panelGroup columns="2">
 													<hf:formEntityField label="#{messages['address.zipCode']}"
@@ -241,8 +242,8 @@
 														childField="zipCode" length="3" popup="false"
 														maxlength="5" />
 													<hf:formEntityField label="#{messages['address.city']}"
-														required="true" id="city" field="address" childField="city"
-														popup="false" maxlength="50" />
+														required="true" id="city" field="address"
+														childField="city" popup="false" maxlength="50" />
 												</hftl:panelGroup>
 												<p:panelGrid columns="2" id="countryPanel">
 													<p:outputLabel for="country_select"
@@ -284,13 +285,14 @@
 								</p:panelGrid>
 							</hf:formPanel>
 						</p:tab>
-						<p:tab id="ops" title="#{messages['customerAccount.operations']}" >
+						<p:tab id="ops" title="#{messages['customerAccount.operations']}">
 							<!-- 							onclick="#{accountOperationBean.filters.put('customerAccount',customerAccountBean.entity)}"> -->
 							<!-- 							<a:param name="sortField" value="transactionDate" /> -->
 							<!-- 							<a:param name="sortOrder" value="desc" /> -->
 							<hf:searchPanel renderNewButton="false"
 								label="#{messages['accountOperation.search']}" columns="1"
-								backingBean="#{accountOperationBean}" ajax="true" ajaxUpdateIds=":parentTab:results_panel">
+								backingBean="#{accountOperationBean}" ajax="true"
+								ajaxUpdateIds=":parentTab:results_panel">
 								<hftl:panelGroup columns="2">
 									<hf:searchField
 										label="#{messages['accountOperation.transactionCategory']}"
@@ -312,10 +314,10 @@
 							</hf:searchPanel>
 							<br />
 							<h:form id="addOperationForm">
-								<p:button
-									value="#{messages['customerAccount.addOperation']}"
+								<p:button value="#{messages['customerAccount.addOperation']}"
 									outcome="addNewOperation"
-									rendered="#{customerAccountBean.isActiveAccount()}" includeViewParams="true" >
+									rendered="#{customerAccountBean.isActiveAccount()}"
+									includeViewParams="true">
 									<f:param name="cid" value="#{conversation.id}" />
 								</p:button>
 								<p:commandButton
