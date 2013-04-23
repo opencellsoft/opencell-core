@@ -512,6 +512,7 @@ input[type="submit"]:hover
 }
 
 
+
 /* DATA TABLE */
 .ui-datatable 
 {
@@ -685,11 +686,15 @@ select[disabled]
   display : inline-block;
   margin-top : 10px;
 }
+.ui-panelgrid-header
+{
+	margin-bottom : 10px;
+}
 .ui-panelgrid tr,
 .ui-panelgrid td
 {
   border : none;
-  //border : 1px solid red;
+  
 }
 
 / * DATE PICKER */
@@ -735,7 +740,7 @@ select[disabled]
 }
 .ui-tabs
 {
-  width : 100%;
+  width : 99%;
 }
 
 .ui-tabs-nav
@@ -914,7 +919,7 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
 }
 .form-panel-fields .ui-tabs-panel > table >tbody > tr fieldset
 {
-  width : 100%;
+  width : 99%;
   display : inline-block;
 }
 
@@ -936,10 +941,4 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
   font-style : normal;
 }
 
-
-
-
-
-
-
-
+.tab-view-container .ui-panel-titlebar { border: 0px; margin: 0px; padding: 10px 0px 0px 0px !important; vertical-align: middle !important; height: 28px; }
