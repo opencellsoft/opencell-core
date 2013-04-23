@@ -62,11 +62,11 @@
           <artifactId>prettyfaces-jsf2</artifactId>
         </dependency>
         
-        <dependency>  
+        <!-- <dependency>  
     		<groupId>org.primefaces.themes</groupId>  
     		<artifactId>south-street</artifactId>  
     		<version>1.0.9</version>  
-		</dependency>
+		</dependency> -->
         
 	</dependencies>
 	<profiles>
