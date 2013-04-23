@@ -114,8 +114,8 @@
 	  
 	  <!-- Primefaces theme -->
 	  <context-param>  
-    		<param-name>primefaces.south-street</param-name>  
-    		<param-value>bootstrap</param-value>  
+    		<param-name>primefaces.THEME</param-name>  
+    		<param-value>south-street</param-value>  
 	  </context-param>  
 	  
 	<!-- Security -->
