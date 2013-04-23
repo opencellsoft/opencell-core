@@ -212,24 +212,11 @@
 
 								<h:outputText value="Liste des services souscrits :"
 									style="font-weight: bold;font-size=14;" />
-
 								<h:form id="srvInstansFrm" prependId="false">
 									<p:dataTable value="#{subscriptionBean.serviceInstances}"
-										var="entity">
-										<p:column id="checker1" width="10" styleClass="chech-column">
-											<h:selectOneRadio id="myRadio"
-												value="#{subscriptionBean.selectedServiceInstanceId}"
-												onchange="unCheckedAll(this.id,'srvInstansFrm');">
-												<f:selectItem itemValue="#{entity.id}" />
-												<a:ajax event="click"
-													render="terminationPanel,serviceInstOperations"
-													action="#{subscriptionBean.setSelectedServiceInstanceId(entity.id)}" />
-												<!-- <p:ajax
-													update=":#{p:component('terminationPanel')} :#{p:component('serviceInstOperations')}"
-													event="click"
-													listener="#{subscriptionBean.setSelectedServiceInstanceId(entity.id)}"></p:ajax> -->
-											</h:selectOneRadio>
-										</p:column>
+										var="entity" selection="#{subscriptionBean.selectedServiceInstance}"  rowKey="#{entity.id}">
+										<p:ajax event="rowSelectRadio"   update=":#{p:component('terminationPanel')} :#{p:component('serviceInstOperations')}" />
+										<p:column selectionMode="single" style="width:2%" />
 										<hftl:column label="#{messages['serviceInstance.code']}"
 											field="code" />
 										<hftl:column label="#{messages['serviceInstance.status']}"
@@ -250,30 +237,27 @@
 										<hftl:actionsColumn
 											editView="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
 											showSortLinks="false" />
-										<ui:define name="operations">
-
-										</ui:define>
 									</p:dataTable>
 								</h:form>
-								<a:outputPanel id="serviceInstOperations">
+								<p:outputPanel id="serviceInstOperations">
 									<h:form id="operationFrm">
-										<p:commandButton  ajax="false" action="#{subscriptionBean.activateService}"
+										<p:commandButton action="#{subscriptionBean.activateService}"
 											value="#{messages['button.activateButton']}"
 											onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />
+											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />
 										<p:commandButton value="#{messages['button.terminateButton']}"
 											oncomplete="dlg_serviceTerminationPopup.show()"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
+											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
 										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}"
 											value="#{messages['button.cancelButton']}"
 											onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
+											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
 										<p:commandButton ajax="false" action="#{subscriptionBean.suspendService}"
 											value="#{messages['button.suspendButton']}"
 											onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstanceId==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
+											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
 									</h:form>
-								</a:outputPanel>
+								</p:outputPanel>
 
 								<br />
 								<br />
@@ -293,7 +277,7 @@
 											<h:outputText value="#{messages['serviceInstance.quantity']}:"></h:outputText>
 											<h:inputText value="#{subscriptionBean.quantity}" size="5" maxlength="3" />
 											<p:commandButton id="cbutton" action="#{subscriptionBean.instanciateManyServices}" value="#{messages['button.instanciateButton']}" ajax="true"
-											update=":subscriptionTab:ST_results2_form,:subscriptionTab:srvInstansFrm,:subscriptionTab:OS_oneShot_results_form,:subscriptionTab:OS_recurring_results_form"/>
+											update=":subscriptionTab:ST_results2_form :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form"/>
 <!-- 												update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" -->
 												
 										</h:panelGrid>

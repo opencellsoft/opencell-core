@@ -49,6 +49,7 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.primefaces.event.SelectEvent;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -77,17 +78,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     @Inject
     private UserAccountService userAccountService;
 
-    /** set only in termination action* */
-    // TODO: JavaEE6 migration. @Out(required = false)
-    private ServiceInstance selectedServiceInstance = new ServiceInstance();
+    private ServiceInstance selectedServiceInstance;
 
-    /** Entity to edit. */
     private Integer quantity = 1;
 
-    /** Entity to edit. */
-    private Long selectedServiceInstanceId;
-
-    /** Entity to edit. */
     private OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
 
     private RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance();
@@ -120,8 +114,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
     private EntityListDataModelPF<ServiceTemplate> serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
 
-    // TODO: JavaEE6 migration. @Out(required = false)
-    private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
+    private EntityListDataModelPF<ServiceInstance> serviceInstances = new EntityListDataModelPF<ServiceInstance>(new ArrayList<ServiceInstance>());
 
     public SubscriptionBean() {
         super(Subscription.class);
@@ -163,12 +156,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
                 }
             }
-            serviceInstances.clear();
             serviceInstances.addAll(entity.getServiceInstances());
 
         }
 
-        log.info("serviceInstances=" + serviceInstances.size());
+        log.info("serviceInstances=" + serviceInstances.getSize());
         log.info("servicetemplates=" + serviceTemplates.getSize());
         return entity;
 
@@ -198,7 +190,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     @Override
     protected String saveOrUpdate(Subscription entity) {
         if (entity.isTransient()) {
-            serviceInstances.clear();
             subscriptionService.create(entity);
             serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
             messages.info(new BundleKey("messages", "save.successful"));
@@ -313,7 +304,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     // return Arrays.asList("serviceInstances");
     // }
 
-    public List<ServiceInstance> getServiceInstances() {
+    public EntityListDataModelPF<ServiceInstance> getServiceInstances() {
         return serviceInstances;
     }
 
@@ -419,30 +410,30 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     public void activateService() {
         log.info("activateService...");
         try {
-            log.debug("activateService id=#0 checked", selectedServiceInstanceId);
-            ServiceInstance serviceInstance = serviceInstanceService.findById(selectedServiceInstanceId);
-            if (serviceInstance != null) {
-                log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size=#0", serviceInstance.getRecurringChargeInstances().size());
+            log.debug("activateService id=#0 checked", selectedServiceInstance.getId());
+            if (selectedServiceInstance != null) {
+                log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size=#0", selectedServiceInstance.getRecurringChargeInstances().size());
 
-                if (serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
+                if (selectedServiceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
                     messages.info(new BundleKey("messages", "error.activation.terminatedService"));
                     return;
                 }
-                if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+                if (selectedServiceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
                     messages.info(new BundleKey("messages", "error.activation.activeService"));
                     return;
                 }
 
-                serviceInstanceService.serviceActivation(serviceInstance, null, null, getCurrentUser());
+                serviceInstanceService.serviceActivation(selectedServiceInstance, null, null, getCurrentUser());
             } else {
                 log.error("activateService id=#0 is NOT a serviceInstance");
             }
-
+            selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "activation.activateSuccessful"));
+
         } catch (BusinessException e1) {
             messages.error(e1.getMessage());
         } catch (Exception e) {
-            log.error("unexpected exception when deleting!", e);
+            log.error("unexpected exception when activating service!", e);
             messages.error(e.getMessage());
         }
     }
@@ -453,7 +444,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
             SubscriptionTerminationReason newSubscriptionTerminationReason = selectedServiceInstance.getSubscriptionTerminationReason();
             log.info("selected subscriptionTerminationReason=#0,terminationDate=#1,selectedServiceInstanceId=#2,status=#3",
-                newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason.getId() : null, terminationDate, selectedServiceInstanceId,
+                newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason.getId() : null, terminationDate, selectedServiceInstance.getId(),
                 selectedServiceInstance.getStatus());
 
             if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
@@ -462,42 +453,46 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                 serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate, getCurrentUser());
             }
 
+            selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+
         } catch (BusinessException e1) {
             messages.error(e1.getMessage());
         } catch (Exception e) {
-            log.error("unexpected exception when deleting!", e);
+            log.error("unexpected exception when terminating service!", e);
             messages.error(e.getMessage());
         }
     }
 
     public void cancelService() {
         try {
-            ServiceInstance serviceInstance = serviceInstanceService.findById(selectedServiceInstanceId);
 
-            if (serviceInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
+            if (selectedServiceInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
                 messages.error(new BundleKey("messages", "error.termination.inactiveService"));
                 return;
             }
-            // serviceInstanceService.cancelService(serviceInstance, getCurrentUser());
+            // serviceInstanceService.cancelService(selectedServiceInstance, getCurrentUser());
 
+            selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
+
         } catch (Exception e) {
-            log.error("unexpected exception when deleting!", e);
+            log.error("unexpected exception when canceling service!", e);
             messages.error(e.getMessage());
         }
     }
 
     public void suspendService() {
         try {
-            ServiceInstance serviceInstance = serviceInstanceService.findById(selectedServiceInstanceId);
-            serviceInstanceService.serviceSuspension(serviceInstance, new Date(), getCurrentUser());
+            serviceInstanceService.serviceSuspension(selectedServiceInstance, new Date(), getCurrentUser());
 
+            selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
+
         } catch (BusinessException e1) {
             messages.error(e1.getMessage());
         } catch (Exception e) {
-            log.error("unexpected exception when deleting!", e);
+            log.error("unexpected exception when suspending service!", e);
             messages.error(e.getMessage());
         }
     }
@@ -516,18 +511,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
     public void setOneShotChargeInstanceQuantity(Integer oneShotChargeInstanceQuantity) {
         this.oneShotChargeInstanceQuantity = oneShotChargeInstanceQuantity;
-    }
-
-    public Long getSelectedServiceInstanceId() {
-        return selectedServiceInstanceId;
-    }
-
-    public void setSelectedServiceInstanceId(Long selectedServiceInstanceId) {
-        this.selectedServiceInstanceId = selectedServiceInstanceId;
-        if (selectedServiceInstanceId != null) {
-            selectedServiceInstance = serviceInstanceService.findById(selectedServiceInstanceId);
-        }
-
     }
 
     public ServiceInstance getSelectedServiceInstance() {
@@ -565,5 +548,9 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
     public void setUserAccountId(Long userAccountId) {
         this.userAccountId = userAccountId;
+    }
+
+    public String getDate() {
+        return (new Date()).toString();
     }
 }
