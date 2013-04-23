@@ -76,71 +76,8 @@
 
 						<hf:languageFields />
 
-						<hftl:fieldset
-							name="#{messages['invoiceSubCategory.accountingCode']}"
-							columns="4">
-
-							<p:outputLabel for="accountingField1"
-								value="#{messages['invoiceSubCategory.accountingCodeField1']}" />
-							<p:inputText rendered="#{invoiceSubCategoryBean.edit}"
-								id="accountingField1"
-								value="#{invoiceSubCategoryBean.accountingCodeField1}" size="5"
-								maxlength="5" required="true" />
-							<h:outputText rendered="#{!invoiceSubCategoryBean.edit}"
-								value="#{invoiceSubCategoryBean.accountingCodeField1}"
-								style="font-weight:bold;" />
-
-							<p:outputLabel for="accountingField2"
-								value="#{messages['invoiceSubCategory.accountingCodeField2']}" />
-							<p:inputText rendered="#{invoiceSubCategoryBean.edit}"
-								id="accountingField2"
-								value="#{invoiceSubCategoryBean.accountingCodeField2}" size="8"
-								maxlength="8" required="true" />
-							<h:outputText rendered="#{!invoiceSubCategoryBean.edit}"
-								value="#{invoiceSubCategoryBean.accountingCodeField2}"
-								style="font-weight:bold;" />
-
-							<p:outputLabel for="accountingField3"
-								value="#{messages['invoiceSubCategory.accountingCodeField3']}" />
-							<p:inputText rendered="#{invoiceSubCategoryBean.edit}"
-								id="accountingField3"
-								value="#{invoiceSubCategoryBean.accountingCodeField3}" size="5"
-								maxlength="5" required="true" />
-							<h:outputText rendered="#{!invoiceSubCategoryBean.edit}"
-								value="#{invoiceSubCategoryBean.accountingCodeField3}"
-								style="font-weight:bold;" />
-
-							<p:outputLabel for="accountingField4"
-								value="#{messages['invoiceSubCategory.accountingCodeField4']}" />
-							<p:inputText rendered="#{invoiceSubCategoryBean.edit}"
-								id="accountingField4"
-								value="#{invoiceSubCategoryBean.accountingCodeField4}" size="3"
-								maxlength="3" required="true" />
-							<h:outputText rendered="#{!invoiceSubCategoryBean.edit}"
-								value="#{invoiceSubCategoryBean.accountingCodeField4}"
-								style="font-weight:bold;" />
-
-							<p:outputLabel for="accountingField6"
-								value="#{messages['invoiceSubCategory.accountingCodeField6']}" />
-							<p:inputText rendered="#{invoiceSubCategoryBean.edit}"
-								id="accountingField6"
-								value="#{invoiceSubCategoryBean.accountingCodeField6}" size="8"
-								maxlength="8" required="true" />
-							<h:outputText rendered="#{!invoiceSubCategoryBean.edit}"
-								value="#{invoiceSubCategoryBean.accountingCodeField6}"
-								style="font-weight:bold;" />
-
-							<p:outputLabel for="accountingField7"
-								value="#{messages['invoiceSubCategory.accountingCodeField7']}" />
-							<p:inputText rendered="#{invoiceSubCategoryBean.edit}"
-								id="accountingField7"
-								value="#{invoiceSubCategoryBean.accountingCodeField7}" size="5"
-								maxlength="5" required="true" />
-							<h:outputText rendered="#{!invoiceSubCategoryBean.edit}"
-								value="#{invoiceSubCategoryBean.accountingCodeField7}"
-								style="font-weight:bold;" />
-
-						</hftl:fieldset>
+						
+						<hf:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" />
 </hf:formPanel>
 					
 
