@@ -30,7 +30,7 @@
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['subscription.title']}"
-			backingBean="#{subscriptionListBean}"  value="kuu">
+			backingBean="#{subscriptionListBean}"  checkMany="false">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
@@ -46,7 +46,7 @@
 				view="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
 				backView="subscriptions" />
 
-			<hftl:actionsColumn useCustomIdParam="true" 
+			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 

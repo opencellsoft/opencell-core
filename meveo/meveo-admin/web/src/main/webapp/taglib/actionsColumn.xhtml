@@ -57,7 +57,7 @@
 		</p:button>
 		<p:tooltip for="#{resultsId}deletelink"
 			value="#{messages['commons.delete']}" showEffect="slide"
-			hideEffect="slide" />
+			hideEffect="slide" rendered="#{renderDeleteLink}"/>
 		<p:commandButton id="#{resultsId}deletelink"
 			action="#{backingBean.delete(entity.id)}" icon="ui-icon-trash"
 			rendered="#{renderDeleteLink}" ajax="false" />
