@@ -29,6 +29,10 @@ SELECT pg_catalog.setval('access_seq', 1, false);
 --
 
 INSERT INTO account_entity VALUES (125, 2, false, '2013-04-12 10:51:37.077', '2013-04-17 12:15:47.741', '55', 'hfbf', '', '', '', '', 'Australie', NULL, '', true, '52', '', 'ben', 'gbvdv', NULL, 1, 1, 1, 1, NULL);
+INSERT INTO account_entity VALUES (1044, 0, false, '2013-04-23 20:34:31.578', NULL, 'CUST_TEST', 'Customer test', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', NULL, NULL, NULL, 1, 1, NULL, NULL, NULL);
+INSERT INTO account_entity VALUES (1045, 0, false, '2013-04-23 20:35:10.083', NULL, 'CUST_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', '', 'Name', NULL, 1, 1, NULL, NULL, NULL);
+INSERT INTO account_entity VALUES (1046, 0, false, '2013-04-23 20:36:04.818', NULL, 'BIL_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', '', '', NULL, 1, 1, NULL, NULL, NULL);
+INSERT INTO account_entity VALUES (1047, 2, false, '2013-04-23 20:36:26.117', '2013-04-23 20:37:12.853', 'USR_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, NULL, NULL, '', '', NULL, 1, 1, 1, NULL, NULL);
 
 
 --
@@ -42,417 +46,417 @@ SELECT pg_catalog.setval('account_entity_seq', 1, false);
 -- Data for Name: adm_country; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-INSERT INTO adm_country VALUES (1, '2013-04-19 18:45:43.824949', NULL, 1, 'AD', 'Andorra', NULL, NULL, 5, 8);
-INSERT INTO adm_country VALUES (2, '2013-04-19 18:45:43.824949', NULL, 1, 'AE', 'United Arab Emirates', NULL, NULL, 54, 3);
-INSERT INTO adm_country VALUES (3, '2013-04-19 18:45:43.824949', NULL, 1, 'AF', 'Afghanistan', NULL, NULL, 1, 2);
-INSERT INTO adm_country VALUES (4, '2013-04-19 18:45:43.824949', NULL, 1, 'AG', 'Antigua and Barbuda', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (5, '2013-04-19 18:45:43.824949', NULL, 1, 'AI', 'Anguilla', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (6, '2013-04-19 18:45:43.824949', NULL, 1, 'AL', 'Albania', NULL, NULL, 3, 2);
-INSERT INTO adm_country VALUES (7, '2013-04-19 18:45:43.824949', NULL, 1, 'AM', 'Armenia', NULL, NULL, 11, 2);
-INSERT INTO adm_country VALUES (8, '2013-04-19 18:45:43.824949', NULL, 1, 'AN', 'Netherlands Antilles', NULL, NULL, 8, 21);
-INSERT INTO adm_country VALUES (9, '2013-04-19 18:45:43.824949', NULL, 1, 'AO', 'Angola', NULL, NULL, 6, 2);
-INSERT INTO adm_country VALUES (10, '2013-04-19 18:45:43.824949', NULL, 1, 'AR', 'Argentina', NULL, NULL, 10, 8);
-INSERT INTO adm_country VALUES (11, '2013-04-19 18:45:43.824949', NULL, 1, 'AS', 'American Samoa', NULL, NULL, 49, 1);
-INSERT INTO adm_country VALUES (12, '2013-04-19 18:45:43.824949', NULL, 1, 'AT', 'Austria', NULL, NULL, 5, 1);
-INSERT INTO adm_country VALUES (13, '2013-04-19 18:45:43.824949', NULL, 1, 'AU', 'Australia', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (14, '2013-04-19 18:45:43.824949', NULL, 1, 'AW', 'Aruba', NULL, NULL, 12, 2);
-INSERT INTO adm_country VALUES (15, '2013-04-19 18:45:43.824949', NULL, 1, 'AZ', 'Azerbaijan', NULL, NULL, 6, 2);
-INSERT INTO adm_country VALUES (16, '2013-04-19 18:45:43.824949', NULL, 1, 'BA', 'Bosnia and Herzegovina', NULL, NULL, 25, 2);
-INSERT INTO adm_country VALUES (17, '2013-04-19 18:45:43.824949', NULL, 1, 'BB', 'Barbados', NULL, NULL, 18, 2);
-INSERT INTO adm_country VALUES (18, '2013-04-19 18:45:43.824949', NULL, 1, 'BD', 'Bangladesh', NULL, NULL, 17, 2);
-INSERT INTO adm_country VALUES (19, '2013-04-19 18:45:43.824949', NULL, 1, 'BE', 'Belgium', NULL, NULL, 5, 12);
-INSERT INTO adm_country VALUES (20, '2013-04-19 18:45:43.824949', NULL, 1, 'BF', 'Burkina Faso', NULL, NULL, 20, 2);
-INSERT INTO adm_country VALUES (21, '2013-04-19 18:45:43.824949', NULL, 1, 'BG', 'Bulgaria', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (22, '2013-04-19 18:45:43.824949', NULL, 1, 'BH', 'Bahrain', NULL, NULL, 16, 2);
-INSERT INTO adm_country VALUES (23, '2013-04-19 18:45:43.824949', NULL, 1, 'BI', 'Burundi', NULL, NULL, 30, 2);
-INSERT INTO adm_country VALUES (24, '2013-04-19 18:45:43.824949', NULL, 1, 'BJ', 'Benin', NULL, NULL, 20, 2);
-INSERT INTO adm_country VALUES (25, '2013-04-19 18:45:43.824949', NULL, 1, 'BM', 'Bermuda', NULL, NULL, 21, 2);
-INSERT INTO adm_country VALUES (26, '2013-04-19 18:45:43.824949', NULL, 1, 'BN', 'Brunei Darussalam', NULL, NULL, 28, 2);
-INSERT INTO adm_country VALUES (27, '2013-04-19 18:45:43.824949', NULL, 1, 'BO', 'Bolivia', NULL, NULL, 24, 2);
-INSERT INTO adm_country VALUES (28, '2013-04-19 18:45:43.824949', NULL, 1, 'BR', 'Brazil', NULL, NULL, 27, 2);
-INSERT INTO adm_country VALUES (29, '2013-04-19 18:45:43.824949', NULL, 1, 'BS', 'The Bahamas', NULL, NULL, 15, 2);
-INSERT INTO adm_country VALUES (30, '2013-04-19 18:45:43.824949', NULL, 1, 'BT', 'Bhutan', NULL, NULL, 16, 2);
-INSERT INTO adm_country VALUES (31, '2013-04-19 18:45:43.824949', NULL, 1, 'BV', 'Bouvet Island', NULL, NULL, 31, 2);
-INSERT INTO adm_country VALUES (32, '2013-04-19 18:45:43.824949', NULL, 1, 'BW', 'Botswana', NULL, NULL, 26, 2);
-INSERT INTO adm_country VALUES (33, '2013-04-19 18:45:43.824949', NULL, 1, 'BY', 'Belarus', NULL, NULL, 23, 2);
-INSERT INTO adm_country VALUES (34, '2013-04-19 18:45:43.824949', NULL, 1, 'BZ', 'Belize', NULL, NULL, 19, 2);
-INSERT INTO adm_country VALUES (35, '2013-04-19 18:45:43.824949', NULL, 1, 'CA', 'Canada', NULL, NULL, 35, 2);
-INSERT INTO adm_country VALUES (36, '2013-04-19 18:45:43.824949', NULL, 1, 'CC', 'Cocos (Keeling) Islands', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (37, '2013-04-19 18:45:43.824949', NULL, 1, 'CD', 'Congo, Democratic Republic of th', NULL, NULL, 43, 12);
-INSERT INTO adm_country VALUES (38, '2013-04-19 18:45:43.824949', NULL, 1, 'CF', 'Central African Republic', NULL, NULL, 34, 12);
-INSERT INTO adm_country VALUES (39, '2013-04-19 18:45:43.824949', NULL, 1, 'CG', 'Congo, Republic of the', NULL, NULL, 34, 12);
-INSERT INTO adm_country VALUES (40, '2013-04-19 18:45:43.824949', NULL, 1, 'CH', 'Switzerland', NULL, NULL, 92, 2);
-INSERT INTO adm_country VALUES (41, '2013-04-19 18:45:43.824949', NULL, 1, 'CI', 'Cote Ivoire', NULL, NULL, 20, 12);
-INSERT INTO adm_country VALUES (42, '2013-04-19 18:45:43.824949', NULL, 1, 'CK', 'Cook Islands', NULL, NULL, 72, 2);
-INSERT INTO adm_country VALUES (43, '2013-04-19 18:45:43.824949', NULL, 1, 'CL', 'Chile', NULL, NULL, 38, 2);
-INSERT INTO adm_country VALUES (44, '2013-04-19 18:45:43.824949', NULL, 1, 'CM', 'Cameroon', NULL, NULL, 34, 12);
-INSERT INTO adm_country VALUES (45, '2013-04-19 18:45:43.824949', NULL, 1, 'CN', 'China', NULL, NULL, 39, 6);
-INSERT INTO adm_country VALUES (46, '2013-04-19 18:45:43.824949', NULL, 1, 'CO', 'Colombia', NULL, NULL, 41, 8);
-INSERT INTO adm_country VALUES (47, '2013-04-19 18:45:43.824949', NULL, 1, 'CR', 'Costa Rica', NULL, NULL, 46, 8);
-INSERT INTO adm_country VALUES (48, '2013-04-19 18:45:43.824949', NULL, 1, 'CU', 'Cuba', NULL, NULL, 48, 8);
-INSERT INTO adm_country VALUES (49, '2013-04-19 18:45:43.824949', NULL, 1, 'CV', 'Cape Verde', NULL, NULL, 36, 8);
-INSERT INTO adm_country VALUES (50, '2013-04-19 18:45:43.824949', NULL, 1, 'CX', 'Christmas Island', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (51, '2013-04-19 18:45:43.824949', NULL, 1, 'CY', 'Cyprus', NULL, NULL, 40, 2);
-INSERT INTO adm_country VALUES (52, '2013-04-19 18:45:43.824949', NULL, 1, 'CZ', 'Czech Republic', NULL, NULL, 152, 2);
-INSERT INTO adm_country VALUES (53, '2013-04-19 18:45:43.824949', NULL, 1, 'DE', 'Germany', NULL, NULL, 5, 1);
-INSERT INTO adm_country VALUES (54, '2013-04-19 18:45:43.824949', NULL, 1, 'DJ', 'Djibouti', NULL, NULL, 51, 12);
-INSERT INTO adm_country VALUES (55, '2013-04-19 18:45:43.824949', NULL, 1, 'DK', 'Denmark', NULL, NULL, 50, 2);
-INSERT INTO adm_country VALUES (56, '2013-04-19 18:45:43.824949', NULL, 1, 'DM', 'Dominica', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (57, '2013-04-19 18:45:43.824949', NULL, 1, 'DO', 'Dominican Republic', NULL, NULL, 52, 2);
-INSERT INTO adm_country VALUES (58, '2013-04-19 18:45:43.824949', NULL, 1, 'DZ', 'Algeria', NULL, NULL, 4, 8);
-INSERT INTO adm_country VALUES (59, '2013-04-19 18:45:43.824949', NULL, 1, 'EC', 'Ecuador', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (60, '2013-04-19 18:45:43.824949', NULL, 1, 'EE', 'Estonia', NULL, NULL, 56, 2);
-INSERT INTO adm_country VALUES (61, '2013-04-19 18:45:43.824949', NULL, 1, 'EG', 'Egypt', NULL, NULL, 53, 8);
-INSERT INTO adm_country VALUES (62, '2013-04-19 18:45:43.824949', NULL, 1, 'ER', 'Eritrea', NULL, NULL, 55, 2);
-INSERT INTO adm_country VALUES (63, '2013-04-19 18:45:43.824949', NULL, 1, 'ES', 'Spain', NULL, NULL, 5, 8);
-INSERT INTO adm_country VALUES (64, '2013-04-19 18:45:43.824949', NULL, 1, 'ET', 'Ethiopia', NULL, NULL, 57, 2);
-INSERT INTO adm_country VALUES (65, '2013-04-19 18:45:43.824949', NULL, 1, 'FI', 'Finland', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (66, '2013-04-19 18:45:43.824949', NULL, 1, 'FJ', 'Fiji', NULL, NULL, 59, 2);
-INSERT INTO adm_country VALUES (67, '2013-04-19 18:45:43.824949', NULL, 1, 'FK', 'Falkland Islands (Islas Malvinas', NULL, NULL, 58, 2);
-INSERT INTO adm_country VALUES (68, '2013-04-19 18:45:43.824949', NULL, 1, 'FM', 'Micronesia, Federated States of', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (69, '2013-04-19 18:45:43.824949', NULL, 1, 'FO', 'Faroe Islands', NULL, NULL, 50, 2);
-INSERT INTO adm_country VALUES (70, '2013-04-19 18:45:43.824949', NULL, 1, 'FR', 'France', NULL, NULL, 5, 12);
-INSERT INTO adm_country VALUES (71, '2013-04-19 18:45:43.824949', NULL, 1, 'GA', 'Gabon', NULL, NULL, 34, 12);
-INSERT INTO adm_country VALUES (72, '2013-04-19 18:45:43.824949', NULL, 1, 'GD', 'Grenada', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (73, '2013-04-19 18:45:43.824949', NULL, 1, 'GE', 'Georgia', NULL, NULL, 61, 2);
-INSERT INTO adm_country VALUES (74, '2013-04-19 18:45:43.824949', NULL, 1, 'GF', 'French Guiana', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (75, '2013-04-19 18:45:43.824949', NULL, 1, 'GH', 'Ghana', NULL, NULL, 62, 2);
-INSERT INTO adm_country VALUES (76, '2013-04-19 18:45:43.824949', NULL, 1, 'GI', 'Gibraltar', NULL, NULL, 63, 2);
-INSERT INTO adm_country VALUES (77, '2013-04-19 18:45:43.824949', NULL, 1, 'GL', 'Greenland', NULL, NULL, 50, 2);
-INSERT INTO adm_country VALUES (78, '2013-04-19 18:45:43.824949', NULL, 1, 'GM', 'The Gambia', NULL, NULL, 60, 2);
-INSERT INTO adm_country VALUES (79, '2013-04-19 18:45:43.824949', NULL, 1, 'GN', 'Guinea', NULL, NULL, 66, 2);
-INSERT INTO adm_country VALUES (80, '2013-04-19 18:45:43.824949', NULL, 1, 'GP', 'Guadeloupe', NULL, NULL, 5, 12);
-INSERT INTO adm_country VALUES (81, '2013-04-19 18:45:43.824949', NULL, 1, 'GQ', 'Equatorial Guinea', NULL, NULL, 34, 2);
-INSERT INTO adm_country VALUES (82, '2013-04-19 18:45:43.824949', NULL, 1, 'GR', 'Greece', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (83, '2013-04-19 18:45:43.824949', NULL, 1, 'GS', 'South Georgia and the South Sand', NULL, NULL, 65, 2);
-INSERT INTO adm_country VALUES (84, '2013-04-19 18:45:43.824949', NULL, 1, 'GT', 'Guatemala', NULL, NULL, 64, 2);
-INSERT INTO adm_country VALUES (85, '2013-04-19 18:45:43.824949', NULL, 1, 'GU', 'Guam', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (86, '2013-04-19 18:45:43.824949', NULL, 1, 'GW', 'Guinea-Bissau', NULL, NULL, 20, 2);
-INSERT INTO adm_country VALUES (87, '2013-04-19 18:45:43.824949', NULL, 1, 'GY', 'Guyana', NULL, NULL, 67, 2);
-INSERT INTO adm_country VALUES (88, '2013-04-19 18:45:43.824949', NULL, 1, 'HK', 'Hong Kong (SAR)', NULL, NULL, 70, 2);
-INSERT INTO adm_country VALUES (89, '2013-04-19 18:45:43.824949', NULL, 1, 'HM', 'Heard Island and McDonald Island', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (90, '2013-04-19 18:45:43.824949', NULL, 1, 'HN', 'Honduras', NULL, NULL, 69, 2);
-INSERT INTO adm_country VALUES (91, '2013-04-19 18:45:43.824949', NULL, 1, 'HR', 'Croatia', NULL, NULL, 47, 2);
-INSERT INTO adm_country VALUES (92, '2013-04-19 18:45:43.824949', NULL, 1, 'HT', 'Haiti', NULL, NULL, 68, 2);
-INSERT INTO adm_country VALUES (93, '2013-04-19 18:45:43.824949', NULL, 1, 'HU', 'Hungary', NULL, NULL, 71, 2);
-INSERT INTO adm_country VALUES (94, '2013-04-19 18:45:43.824949', NULL, 1, 'ID', 'Indonesia', NULL, NULL, 74, 2);
-INSERT INTO adm_country VALUES (95, '2013-04-19 18:45:43.824949', NULL, 1, 'IE', 'Ireland', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (96, '2013-04-19 18:45:43.824949', NULL, 1, 'IL', 'Israel', NULL, NULL, 78, 2);
-INSERT INTO adm_country VALUES (97, '2013-04-19 18:45:43.824949', NULL, 1, 'IN', 'India', NULL, NULL, 73, 2);
-INSERT INTO adm_country VALUES (98, '2013-04-19 18:45:43.824949', NULL, 1, 'IO', 'British Indian Ocean Territory', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (99, '2013-04-19 18:45:43.824949', NULL, 1, 'IQ', 'Iraq', NULL, NULL, 76, 8);
-INSERT INTO adm_country VALUES (100, '2013-04-19 18:45:43.824949', NULL, 1, 'IR', 'Iran', NULL, NULL, 75, 2);
-INSERT INTO adm_country VALUES (101, '2013-04-19 18:45:43.824949', NULL, 1, 'IS', 'Iceland', NULL, NULL, 77, 2);
-INSERT INTO adm_country VALUES (102, '2013-04-19 18:45:43.824949', NULL, 1, 'IT', 'Italy', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (103, '2013-04-19 18:45:43.824949', NULL, 1, 'JM', 'Jamaica', NULL, NULL, 79, 2);
-INSERT INTO adm_country VALUES (104, '2013-04-19 18:45:43.824949', NULL, 1, 'JO', 'Jordan', NULL, NULL, 81, 2);
-INSERT INTO adm_country VALUES (105, '2013-04-19 18:45:43.824949', NULL, 1, 'JP', 'Japan', NULL, NULL, 80, 2);
-INSERT INTO adm_country VALUES (106, '2013-04-19 18:45:43.824949', NULL, 1, 'KE', 'Kenya', NULL, NULL, 83, 2);
-INSERT INTO adm_country VALUES (107, '2013-04-19 18:45:43.824949', NULL, 1, 'KG', 'Kyrgyzstan', NULL, NULL, 84, 2);
-INSERT INTO adm_country VALUES (108, '2013-04-19 18:45:43.824949', NULL, 1, 'KH', 'Cambodia', NULL, NULL, 33, 2);
-INSERT INTO adm_country VALUES (109, '2013-04-19 18:45:43.824949', NULL, 1, 'KI', 'Kiribati', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (110, '2013-04-19 18:45:43.824949', NULL, 1, 'KM', 'Comoros', NULL, NULL, 42, 2);
-INSERT INTO adm_country VALUES (111, '2013-04-19 18:45:43.824949', NULL, 1, 'KN', 'Saint Kitts and Nevis', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (112, '2013-04-19 18:45:43.824949', NULL, 1, 'KP', 'Korea, North', NULL, NULL, 45, 2);
-INSERT INTO adm_country VALUES (113, '2013-04-19 18:45:43.824949', NULL, 1, 'KR', 'Korea, South', NULL, NULL, 44, 2);
-INSERT INTO adm_country VALUES (114, '2013-04-19 18:45:43.824949', NULL, 1, 'KW', 'Kuwait', NULL, NULL, 85, 2);
-INSERT INTO adm_country VALUES (115, '2013-04-19 18:45:43.824949', NULL, 1, 'KY', 'Cayman Islands', NULL, NULL, 32, 2);
-INSERT INTO adm_country VALUES (116, '2013-04-19 18:45:43.824949', NULL, 1, 'KZ', 'Kazakhstan', NULL, NULL, 82, 2);
-INSERT INTO adm_country VALUES (117, '2013-04-19 18:45:43.824949', NULL, 1, 'LA', 'Laos', NULL, NULL, 86, 2);
-INSERT INTO adm_country VALUES (118, '2013-04-19 18:45:43.824949', NULL, 1, 'LB', 'Lebanon', NULL, NULL, 89, 2);
-INSERT INTO adm_country VALUES (119, '2013-04-19 18:45:43.824949', NULL, 1, 'LC', 'Saint Lucia', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (120, '2013-04-19 18:45:43.824949', NULL, 1, 'LI', 'Liechtenstein', NULL, NULL, 92, 2);
-INSERT INTO adm_country VALUES (121, '2013-04-19 18:45:43.824949', NULL, 1, 'LK', 'Sri Lanka', NULL, NULL, 143, 2);
-INSERT INTO adm_country VALUES (122, '2013-04-19 18:45:43.824949', NULL, 1, 'LR', 'Liberia', NULL, NULL, 90, 2);
-INSERT INTO adm_country VALUES (123, '2013-04-19 18:45:43.824949', NULL, 1, 'LS', 'Lesotho', NULL, NULL, 87, 2);
-INSERT INTO adm_country VALUES (124, '2013-04-19 18:45:43.824949', NULL, 1, 'LT', 'Lithuania', NULL, NULL, 93, 2);
-INSERT INTO adm_country VALUES (125, '2013-04-19 18:45:43.824949', NULL, 1, 'LU', 'Luxembourg', NULL, NULL, 5, 12);
-INSERT INTO adm_country VALUES (126, '2013-04-19 18:45:43.824949', NULL, 1, 'LV', 'Latvia', NULL, NULL, 88, 2);
-INSERT INTO adm_country VALUES (127, '2013-04-19 18:45:43.824949', NULL, 1, 'LY', 'Libya', NULL, NULL, 91, 2);
-INSERT INTO adm_country VALUES (128, '2013-04-19 18:45:43.824949', NULL, 1, 'MA', 'Morocco', NULL, NULL, 102, 3);
-INSERT INTO adm_country VALUES (129, '2013-04-19 18:45:43.824949', NULL, 1, 'MC', 'Monaco', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (130, '2013-04-19 18:45:43.824949', NULL, 1, 'MD', 'Moldova', NULL, NULL, 106, 2);
-INSERT INTO adm_country VALUES (131, '2013-04-19 18:45:43.824949', NULL, 1, 'MG', 'Madagascar', NULL, NULL, 97, 2);
-INSERT INTO adm_country VALUES (132, '2013-04-19 18:45:43.824949', NULL, 1, 'MH', 'Marshall Islands', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (133, '2013-04-19 18:45:43.824949', NULL, 1, 'MK', 'Macedonia, The Former Yugoslav R', NULL, NULL, 95, 2);
-INSERT INTO adm_country VALUES (134, '2013-04-19 18:45:43.824949', NULL, 1, 'ML', 'Mali', NULL, NULL, 20, 12);
-INSERT INTO adm_country VALUES (135, '2013-04-19 18:45:43.824949', NULL, 1, 'MM', 'Burma', NULL, NULL, 109, 2);
-INSERT INTO adm_country VALUES (136, '2013-04-19 18:45:43.824949', NULL, 1, 'MN', 'Mongolia', NULL, NULL, 107, 2);
-INSERT INTO adm_country VALUES (137, '2013-04-19 18:45:43.824949', NULL, 1, 'MO', 'Macao', NULL, NULL, 94, 2);
-INSERT INTO adm_country VALUES (138, '2013-04-19 18:45:43.824949', NULL, 1, 'MP', 'Northern Mariana Islands', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (139, '2013-04-19 18:45:43.824949', NULL, 1, 'MQ', 'Martinique', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (140, '2013-04-19 18:45:43.824949', NULL, 1, 'MR', 'Mauritania', NULL, NULL, 104, 2);
-INSERT INTO adm_country VALUES (141, '2013-04-19 18:45:43.824949', NULL, 1, 'MS', 'Montserrat', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (142, '2013-04-19 18:45:43.824949', NULL, 1, 'MT', 'Malta', NULL, NULL, 101, 2);
-INSERT INTO adm_country VALUES (143, '2013-04-19 18:45:43.824949', NULL, 1, 'MU', 'Mauritius', NULL, NULL, 103, 2);
-INSERT INTO adm_country VALUES (144, '2013-04-19 18:45:43.824949', NULL, 1, 'MV', 'Maldives', NULL, NULL, 100, 2);
-INSERT INTO adm_country VALUES (145, '2013-04-19 18:45:43.824949', NULL, 1, 'MW', 'Malawi', NULL, NULL, 99, 2);
-INSERT INTO adm_country VALUES (146, '2013-04-19 18:45:43.824949', NULL, 1, 'MX', 'Mexico', NULL, NULL, 105, 2);
-INSERT INTO adm_country VALUES (147, '2013-04-19 18:45:43.824949', NULL, 1, 'MY', 'Malaysia', NULL, NULL, 98, 2);
-INSERT INTO adm_country VALUES (148, '2013-04-19 18:45:43.824949', NULL, 1, 'MZ', 'Mozambique', NULL, NULL, 108, 2);
-INSERT INTO adm_country VALUES (149, '2013-04-19 18:45:43.824949', NULL, 1, 'NA', 'Namibia', NULL, NULL, 110, 2);
-INSERT INTO adm_country VALUES (150, '2013-04-19 18:45:43.824949', NULL, 1, 'NC', 'New Caledonia', NULL, NULL, 114, 2);
-INSERT INTO adm_country VALUES (151, '2013-04-19 18:45:43.824949', NULL, 1, 'NE', 'Niger', NULL, NULL, 20, 12);
-INSERT INTO adm_country VALUES (152, '2013-04-19 18:45:43.824949', NULL, 1, 'NF', 'Norfolk Island', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (153, '2013-04-19 18:45:43.824949', NULL, 1, 'NG', 'Nigeria', NULL, NULL, 113, 2);
-INSERT INTO adm_country VALUES (154, '2013-04-19 18:45:43.824949', NULL, 1, 'NI', 'Nicaragua', NULL, NULL, 112, 8);
-INSERT INTO adm_country VALUES (155, '2013-04-19 18:45:43.824949', NULL, 1, 'NL', 'Netherlands', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (156, '2013-04-19 18:45:43.824949', NULL, 1, 'NO', 'Norway', NULL, NULL, 31, 2);
-INSERT INTO adm_country VALUES (157, '2013-04-19 18:45:43.824949', NULL, 1, 'NP', 'Nepal', NULL, NULL, 111, 2);
-INSERT INTO adm_country VALUES (158, '2013-04-19 18:45:43.824949', NULL, 1, 'NR', 'Nauru', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (159, '2013-04-19 18:45:43.824949', NULL, 1, 'NU', 'Niue', NULL, NULL, 72, 2);
-INSERT INTO adm_country VALUES (160, '2013-04-19 18:45:43.824949', NULL, 1, 'NZ', 'New Zealand', NULL, NULL, 72, 2);
-INSERT INTO adm_country VALUES (161, '2013-04-19 18:45:43.824949', NULL, 1, 'OM', 'Oman', NULL, NULL, 115, 2);
-INSERT INTO adm_country VALUES (162, '2013-04-19 18:45:43.824949', NULL, 1, 'PA', 'Panama', NULL, NULL, 120, 8);
-INSERT INTO adm_country VALUES (163, '2013-04-19 18:45:43.824949', NULL, 1, 'PE', 'Peru', NULL, NULL, 123, 8);
-INSERT INTO adm_country VALUES (164, '2013-04-19 18:45:43.824949', NULL, 1, 'PF', 'French Polynesia', NULL, NULL, 114, 12);
-INSERT INTO adm_country VALUES (165, '2013-04-19 18:45:43.824949', NULL, 1, 'PG', 'Papua New Guinea', NULL, NULL, 121, 12);
-INSERT INTO adm_country VALUES (166, '2013-04-19 18:45:43.824949', NULL, 1, 'PH', 'Philippines', NULL, NULL, 124, 2);
-INSERT INTO adm_country VALUES (167, '2013-04-19 18:45:43.824949', NULL, 1, 'PK', 'Pakistan', NULL, NULL, 119, 2);
-INSERT INTO adm_country VALUES (168, '2013-04-19 18:45:43.824949', NULL, 1, 'PL', 'Poland', NULL, NULL, 125, 2);
-INSERT INTO adm_country VALUES (169, '2013-04-19 18:45:43.824949', NULL, 1, 'PM', 'Saint Pierre and Miquelon', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (170, '2013-04-19 18:45:43.824949', NULL, 1, 'PN', 'Pitcairn Islands', NULL, NULL, 72, 2);
-INSERT INTO adm_country VALUES (171, '2013-04-19 18:45:43.824949', NULL, 1, 'PR', 'Puerto Rico', NULL, NULL, 49, 8);
-INSERT INTO adm_country VALUES (172, '2013-04-19 18:45:43.824949', NULL, 1, 'PS', 'Palestinian Territory, Occupied', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (173, '2013-04-19 18:45:43.824949', NULL, 1, 'PT', 'Portugal', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (174, '2013-04-19 18:45:43.824949', NULL, 1, 'PW', 'Palau', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (175, '2013-04-19 18:45:43.824949', NULL, 1, 'PY', 'Paraguay', NULL, NULL, 122, 2);
-INSERT INTO adm_country VALUES (176, '2013-04-19 18:45:43.824949', NULL, 1, 'QA', 'Qatar', NULL, NULL, 126, 2);
-INSERT INTO adm_country VALUES (177, '2013-04-19 18:45:43.824949', NULL, 1, 'RE', 'RÃ©union', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (178, '2013-04-19 18:45:43.824949', NULL, 1, 'RO', 'Romania', NULL, NULL, 128, 2);
-INSERT INTO adm_country VALUES (179, '2013-04-19 18:45:43.824949', NULL, 1, 'RU', 'Russia', NULL, NULL, 129, 2);
-INSERT INTO adm_country VALUES (180, '2013-04-19 18:45:43.824949', NULL, 1, 'RW', 'Rwanda', NULL, NULL, 130, 2);
-INSERT INTO adm_country VALUES (181, '2013-04-19 18:45:43.824949', NULL, 1, 'SA', 'Saudi Arabia', NULL, NULL, 9, 2);
-INSERT INTO adm_country VALUES (182, '2013-04-19 18:45:43.824949', NULL, 1, 'SB', 'Solomon Islands', NULL, NULL, 131, 2);
-INSERT INTO adm_country VALUES (183, '2013-04-19 18:45:43.824949', NULL, 1, 'SC', 'Seychelles', NULL, NULL, 136, 2);
-INSERT INTO adm_country VALUES (184, '2013-04-19 18:45:43.824949', NULL, 1, 'SD', 'Sudan', NULL, NULL, 21, 2);
-INSERT INTO adm_country VALUES (185, '2013-04-19 18:45:43.824949', NULL, 1, 'SE', 'Sweden', NULL, NULL, 145, 2);
-INSERT INTO adm_country VALUES (186, '2013-04-19 18:45:43.824949', NULL, 1, 'SG', 'Singapore', NULL, NULL, 138, 2);
-INSERT INTO adm_country VALUES (187, '2013-04-19 18:45:43.824949', NULL, 1, 'SH', 'Saint Helena', NULL, NULL, 144, 2);
-INSERT INTO adm_country VALUES (188, '2013-04-19 18:45:43.824949', NULL, 1, 'SI', 'Slovenia', NULL, NULL, 140, 2);
-INSERT INTO adm_country VALUES (189, '2013-04-19 18:45:43.824949', NULL, 1, 'SJ', 'Svalbard', NULL, NULL, 31, 2);
-INSERT INTO adm_country VALUES (190, '2013-04-19 18:45:43.824949', NULL, 1, 'SK', 'Slovakia', NULL, NULL, 139, 2);
-INSERT INTO adm_country VALUES (191, '2013-04-19 18:45:43.824949', NULL, 1, 'SL', 'Sierra Leone', NULL, NULL, 137, 2);
-INSERT INTO adm_country VALUES (192, '2013-04-19 18:45:43.824949', NULL, 1, 'SM', 'San Marino', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (193, '2013-04-19 18:45:43.824949', NULL, 1, 'SN', 'Senegal', NULL, NULL, 20, 2);
-INSERT INTO adm_country VALUES (194, '2013-04-19 18:45:43.824949', NULL, 1, 'SO', 'Somalia', NULL, NULL, 141, 2);
-INSERT INTO adm_country VALUES (195, '2013-04-19 18:45:43.824949', NULL, 1, 'SR', 'Suriname', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (196, '2013-04-19 18:45:43.824949', NULL, 1, 'ST', 'SÃ£o TomÃ© and PrÃ_ncipe', NULL, NULL, 134, 2);
-INSERT INTO adm_country VALUES (197, '2013-04-19 18:45:43.824949', NULL, 1, 'SV', 'El Salvador', NULL, NULL, 132, 2);
-INSERT INTO adm_country VALUES (198, '2013-04-19 18:45:43.824949', NULL, 1, 'SY', 'Syria', NULL, NULL, 148, 2);
-INSERT INTO adm_country VALUES (199, '2013-04-19 18:45:43.824949', NULL, 1, 'SZ', 'Swaziland', NULL, NULL, 147, 2);
-INSERT INTO adm_country VALUES (200, '2013-04-19 18:45:43.824949', NULL, 1, 'TC', 'Turks and Caicos Islands', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (201, '2013-04-19 18:45:43.824949', NULL, 1, 'TD', 'Chad', NULL, NULL, 34, 2);
-INSERT INTO adm_country VALUES (202, '2013-04-19 18:45:43.824949', NULL, 1, 'TF', 'French Southern and Antarctic La', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (203, '2013-04-19 18:45:43.824949', NULL, 1, 'TG', 'Togo', NULL, NULL, 20, 2);
-INSERT INTO adm_country VALUES (204, '2013-04-19 18:45:43.824949', NULL, 1, 'TH', 'Thailand', NULL, NULL, 153, 2);
-INSERT INTO adm_country VALUES (205, '2013-04-19 18:45:43.824949', NULL, 1, 'TJ', 'Tajikistan', NULL, NULL, 149, 2);
-INSERT INTO adm_country VALUES (206, '2013-04-19 18:45:43.824949', NULL, 1, 'TK', 'Tokelau', NULL, NULL, 72, 2);
-INSERT INTO adm_country VALUES (207, '2013-04-19 18:45:43.824949', NULL, 1, 'TM', 'Turkmenistan', NULL, NULL, 157, 2);
-INSERT INTO adm_country VALUES (208, '2013-04-19 18:45:43.824949', NULL, 1, 'TN', 'Tunisia', NULL, NULL, 156, 2);
-INSERT INTO adm_country VALUES (209, '2013-04-19 18:45:43.824949', NULL, 1, 'TO', 'Tonga', NULL, NULL, 154, 2);
-INSERT INTO adm_country VALUES (210, '2013-04-19 18:45:43.824949', NULL, 1, 'TL', 'East timor', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (211, '2013-04-19 18:45:43.824949', NULL, 1, 'TR', 'Turkey', NULL, NULL, 159, 2);
-INSERT INTO adm_country VALUES (212, '2013-04-19 18:45:43.824949', NULL, 1, 'TT', 'Trinidad and Tobago', NULL, NULL, 155, 2);
-INSERT INTO adm_country VALUES (213, '2013-04-19 18:45:43.824949', NULL, 1, 'TV', 'Tuvalu', NULL, NULL, 13, 2);
-INSERT INTO adm_country VALUES (214, '2013-04-19 18:45:43.824949', NULL, 1, 'TW', 'Taiwan', NULL, NULL, 150, 2);
-INSERT INTO adm_country VALUES (215, '2013-04-19 18:45:43.824949', NULL, 1, 'TZ', 'Tanzania', NULL, NULL, 151, 2);
-INSERT INTO adm_country VALUES (216, '2013-04-19 18:45:43.824949', NULL, 1, 'UA', 'Ukraine', NULL, NULL, 160, 2);
-INSERT INTO adm_country VALUES (217, '2013-04-19 18:45:43.824949', NULL, 1, 'UG', 'Uganda', NULL, NULL, 117, 2);
-INSERT INTO adm_country VALUES (218, '2013-04-19 18:45:43.824949', NULL, 1, 'GB', 'United Kingdom', NULL, NULL, 65, 2);
-INSERT INTO adm_country VALUES (219, '2013-04-19 18:45:43.824949', NULL, 1, 'UM', 'United States Minor Outlying Isl', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (220, '2013-04-19 18:45:43.824949', NULL, 1, 'US', 'United States', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (221, '2013-04-19 18:45:43.824949', NULL, 1, 'UY', 'Uruguay', NULL, NULL, 161, 2);
-INSERT INTO adm_country VALUES (222, '2013-04-19 18:45:43.824949', NULL, 1, 'UZ', 'Uzbekistan', NULL, NULL, 118, 2);
-INSERT INTO adm_country VALUES (223, '2013-04-19 18:45:43.824949', NULL, 1, 'VA', 'Holy See Vatican City', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (224, '2013-04-19 18:45:43.824949', NULL, 1, 'VC', 'Saint Vincent and the Grenadines', NULL, NULL, 7, 2);
-INSERT INTO adm_country VALUES (225, '2013-04-19 18:45:43.824949', NULL, 1, 'VE', 'Venezuela', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (226, '2013-04-19 18:45:43.824949', NULL, 1, 'VG', 'British Virgin Islands', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (227, '2013-04-19 18:45:43.824949', NULL, 1, 'VI', 'Virgin Islands', NULL, NULL, 49, 2);
-INSERT INTO adm_country VALUES (228, '2013-04-19 18:45:43.824949', NULL, 1, 'VN', 'Vietnam', NULL, NULL, 164, 2);
-INSERT INTO adm_country VALUES (229, '2013-04-19 18:45:43.824949', NULL, 1, 'VU', 'Vanuatu', NULL, NULL, 162, 2);
-INSERT INTO adm_country VALUES (230, '2013-04-19 18:45:43.824949', NULL, 1, 'WF', 'Wallis and Futuna', NULL, NULL, 114, 2);
-INSERT INTO adm_country VALUES (231, '2013-04-19 18:45:43.824949', NULL, 1, 'WS', 'Samoa', NULL, NULL, 133, 2);
-INSERT INTO adm_country VALUES (232, '2013-04-19 18:45:43.824949', NULL, 1, 'YE', 'Yemen', NULL, NULL, 165, 2);
-INSERT INTO adm_country VALUES (233, '2013-04-19 18:45:43.824949', NULL, 1, 'YT', 'Mayotte', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (234, '2013-04-19 18:45:43.824949', NULL, 1, 'YU', 'Yugoslavia', NULL, NULL, 5, 2);
-INSERT INTO adm_country VALUES (235, '2013-04-19 18:45:43.824949', NULL, 1, 'ZA', 'South Africa', NULL, NULL, 2, 2);
-INSERT INTO adm_country VALUES (236, '2013-04-19 18:45:43.824949', NULL, 1, 'ZM', 'Zambia', NULL, NULL, 166, 2);
-INSERT INTO adm_country VALUES (237, '2013-04-19 18:45:43.824949', NULL, 1, 'ZW', 'Zimbabwe', NULL, NULL, 167, 2);
+INSERT INTO adm_country VALUES (1, '2013-04-23 20:25:20.006133', NULL, 1, 'AD', 'Andorra', NULL, NULL, 5, 8);
+INSERT INTO adm_country VALUES (2, '2013-04-23 20:25:20.006133', NULL, 1, 'AE', 'United Arab Emirates', NULL, NULL, 54, 3);
+INSERT INTO adm_country VALUES (3, '2013-04-23 20:25:20.006133', NULL, 1, 'AF', 'Afghanistan', NULL, NULL, 1, 2);
+INSERT INTO adm_country VALUES (4, '2013-04-23 20:25:20.006133', NULL, 1, 'AG', 'Antigua and Barbuda', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (5, '2013-04-23 20:25:20.006133', NULL, 1, 'AI', 'Anguilla', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (6, '2013-04-23 20:25:20.006133', NULL, 1, 'AL', 'Albania', NULL, NULL, 3, 2);
+INSERT INTO adm_country VALUES (7, '2013-04-23 20:25:20.006133', NULL, 1, 'AM', 'Armenia', NULL, NULL, 11, 2);
+INSERT INTO adm_country VALUES (8, '2013-04-23 20:25:20.006133', NULL, 1, 'AN', 'Netherlands Antilles', NULL, NULL, 8, 21);
+INSERT INTO adm_country VALUES (9, '2013-04-23 20:25:20.006133', NULL, 1, 'AO', 'Angola', NULL, NULL, 6, 2);
+INSERT INTO adm_country VALUES (10, '2013-04-23 20:25:20.006133', NULL, 1, 'AR', 'Argentina', NULL, NULL, 10, 8);
+INSERT INTO adm_country VALUES (11, '2013-04-23 20:25:20.006133', NULL, 1, 'AS', 'American Samoa', NULL, NULL, 49, 1);
+INSERT INTO adm_country VALUES (12, '2013-04-23 20:25:20.006133', NULL, 1, 'AT', 'Austria', NULL, NULL, 5, 1);
+INSERT INTO adm_country VALUES (13, '2013-04-23 20:25:20.006133', NULL, 1, 'AU', 'Australia', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (14, '2013-04-23 20:25:20.006133', NULL, 1, 'AW', 'Aruba', NULL, NULL, 12, 2);
+INSERT INTO adm_country VALUES (15, '2013-04-23 20:25:20.006133', NULL, 1, 'AZ', 'Azerbaijan', NULL, NULL, 6, 2);
+INSERT INTO adm_country VALUES (16, '2013-04-23 20:25:20.006133', NULL, 1, 'BA', 'Bosnia and Herzegovina', NULL, NULL, 25, 2);
+INSERT INTO adm_country VALUES (17, '2013-04-23 20:25:20.006133', NULL, 1, 'BB', 'Barbados', NULL, NULL, 18, 2);
+INSERT INTO adm_country VALUES (18, '2013-04-23 20:25:20.006133', NULL, 1, 'BD', 'Bangladesh', NULL, NULL, 17, 2);
+INSERT INTO adm_country VALUES (19, '2013-04-23 20:25:20.006133', NULL, 1, 'BE', 'Belgium', NULL, NULL, 5, 12);
+INSERT INTO adm_country VALUES (20, '2013-04-23 20:25:20.006133', NULL, 1, 'BF', 'Burkina Faso', NULL, NULL, 20, 2);
+INSERT INTO adm_country VALUES (21, '2013-04-23 20:25:20.006133', NULL, 1, 'BG', 'Bulgaria', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (22, '2013-04-23 20:25:20.006133', NULL, 1, 'BH', 'Bahrain', NULL, NULL, 16, 2);
+INSERT INTO adm_country VALUES (23, '2013-04-23 20:25:20.006133', NULL, 1, 'BI', 'Burundi', NULL, NULL, 30, 2);
+INSERT INTO adm_country VALUES (24, '2013-04-23 20:25:20.006133', NULL, 1, 'BJ', 'Benin', NULL, NULL, 20, 2);
+INSERT INTO adm_country VALUES (25, '2013-04-23 20:25:20.006133', NULL, 1, 'BM', 'Bermuda', NULL, NULL, 21, 2);
+INSERT INTO adm_country VALUES (26, '2013-04-23 20:25:20.006133', NULL, 1, 'BN', 'Brunei Darussalam', NULL, NULL, 28, 2);
+INSERT INTO adm_country VALUES (27, '2013-04-23 20:25:20.006133', NULL, 1, 'BO', 'Bolivia', NULL, NULL, 24, 2);
+INSERT INTO adm_country VALUES (28, '2013-04-23 20:25:20.006133', NULL, 1, 'BR', 'Brazil', NULL, NULL, 27, 2);
+INSERT INTO adm_country VALUES (29, '2013-04-23 20:25:20.006133', NULL, 1, 'BS', 'The Bahamas', NULL, NULL, 15, 2);
+INSERT INTO adm_country VALUES (30, '2013-04-23 20:25:20.006133', NULL, 1, 'BT', 'Bhutan', NULL, NULL, 16, 2);
+INSERT INTO adm_country VALUES (31, '2013-04-23 20:25:20.006133', NULL, 1, 'BV', 'Bouvet Island', NULL, NULL, 31, 2);
+INSERT INTO adm_country VALUES (32, '2013-04-23 20:25:20.006133', NULL, 1, 'BW', 'Botswana', NULL, NULL, 26, 2);
+INSERT INTO adm_country VALUES (33, '2013-04-23 20:25:20.006133', NULL, 1, 'BY', 'Belarus', NULL, NULL, 23, 2);
+INSERT INTO adm_country VALUES (34, '2013-04-23 20:25:20.006133', NULL, 1, 'BZ', 'Belize', NULL, NULL, 19, 2);
+INSERT INTO adm_country VALUES (35, '2013-04-23 20:25:20.006133', NULL, 1, 'CA', 'Canada', NULL, NULL, 35, 2);
+INSERT INTO adm_country VALUES (36, '2013-04-23 20:25:20.006133', NULL, 1, 'CC', 'Cocos (Keeling) Islands', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (37, '2013-04-23 20:25:20.006133', NULL, 1, 'CD', 'Congo, Democratic Republic of th', NULL, NULL, 43, 12);
+INSERT INTO adm_country VALUES (38, '2013-04-23 20:25:20.006133', NULL, 1, 'CF', 'Central African Republic', NULL, NULL, 34, 12);
+INSERT INTO adm_country VALUES (39, '2013-04-23 20:25:20.006133', NULL, 1, 'CG', 'Congo, Republic of the', NULL, NULL, 34, 12);
+INSERT INTO adm_country VALUES (40, '2013-04-23 20:25:20.006133', NULL, 1, 'CH', 'Switzerland', NULL, NULL, 92, 2);
+INSERT INTO adm_country VALUES (41, '2013-04-23 20:25:20.006133', NULL, 1, 'CI', 'Cote Ivoire', NULL, NULL, 20, 12);
+INSERT INTO adm_country VALUES (42, '2013-04-23 20:25:20.006133', NULL, 1, 'CK', 'Cook Islands', NULL, NULL, 72, 2);
+INSERT INTO adm_country VALUES (43, '2013-04-23 20:25:20.006133', NULL, 1, 'CL', 'Chile', NULL, NULL, 38, 2);
+INSERT INTO adm_country VALUES (44, '2013-04-23 20:25:20.006133', NULL, 1, 'CM', 'Cameroon', NULL, NULL, 34, 12);
+INSERT INTO adm_country VALUES (45, '2013-04-23 20:25:20.006133', NULL, 1, 'CN', 'China', NULL, NULL, 39, 6);
+INSERT INTO adm_country VALUES (46, '2013-04-23 20:25:20.006133', NULL, 1, 'CO', 'Colombia', NULL, NULL, 41, 8);
+INSERT INTO adm_country VALUES (47, '2013-04-23 20:25:20.006133', NULL, 1, 'CR', 'Costa Rica', NULL, NULL, 46, 8);
+INSERT INTO adm_country VALUES (48, '2013-04-23 20:25:20.006133', NULL, 1, 'CU', 'Cuba', NULL, NULL, 48, 8);
+INSERT INTO adm_country VALUES (49, '2013-04-23 20:25:20.006133', NULL, 1, 'CV', 'Cape Verde', NULL, NULL, 36, 8);
+INSERT INTO adm_country VALUES (50, '2013-04-23 20:25:20.006133', NULL, 1, 'CX', 'Christmas Island', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (51, '2013-04-23 20:25:20.006133', NULL, 1, 'CY', 'Cyprus', NULL, NULL, 40, 2);
+INSERT INTO adm_country VALUES (52, '2013-04-23 20:25:20.006133', NULL, 1, 'CZ', 'Czech Republic', NULL, NULL, 152, 2);
+INSERT INTO adm_country VALUES (53, '2013-04-23 20:25:20.006133', NULL, 1, 'DE', 'Germany', NULL, NULL, 5, 1);
+INSERT INTO adm_country VALUES (54, '2013-04-23 20:25:20.006133', NULL, 1, 'DJ', 'Djibouti', NULL, NULL, 51, 12);
+INSERT INTO adm_country VALUES (55, '2013-04-23 20:25:20.006133', NULL, 1, 'DK', 'Denmark', NULL, NULL, 50, 2);
+INSERT INTO adm_country VALUES (56, '2013-04-23 20:25:20.006133', NULL, 1, 'DM', 'Dominica', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (57, '2013-04-23 20:25:20.006133', NULL, 1, 'DO', 'Dominican Republic', NULL, NULL, 52, 2);
+INSERT INTO adm_country VALUES (58, '2013-04-23 20:25:20.006133', NULL, 1, 'DZ', 'Algeria', NULL, NULL, 4, 8);
+INSERT INTO adm_country VALUES (59, '2013-04-23 20:25:20.006133', NULL, 1, 'EC', 'Ecuador', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (60, '2013-04-23 20:25:20.006133', NULL, 1, 'EE', 'Estonia', NULL, NULL, 56, 2);
+INSERT INTO adm_country VALUES (61, '2013-04-23 20:25:20.006133', NULL, 1, 'EG', 'Egypt', NULL, NULL, 53, 8);
+INSERT INTO adm_country VALUES (62, '2013-04-23 20:25:20.006133', NULL, 1, 'ER', 'Eritrea', NULL, NULL, 55, 2);
+INSERT INTO adm_country VALUES (63, '2013-04-23 20:25:20.006133', NULL, 1, 'ES', 'Spain', NULL, NULL, 5, 8);
+INSERT INTO adm_country VALUES (64, '2013-04-23 20:25:20.006133', NULL, 1, 'ET', 'Ethiopia', NULL, NULL, 57, 2);
+INSERT INTO adm_country VALUES (65, '2013-04-23 20:25:20.006133', NULL, 1, 'FI', 'Finland', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (66, '2013-04-23 20:25:20.006133', NULL, 1, 'FJ', 'Fiji', NULL, NULL, 59, 2);
+INSERT INTO adm_country VALUES (67, '2013-04-23 20:25:20.006133', NULL, 1, 'FK', 'Falkland Islands (Islas Malvinas', NULL, NULL, 58, 2);
+INSERT INTO adm_country VALUES (68, '2013-04-23 20:25:20.006133', NULL, 1, 'FM', 'Micronesia, Federated States of', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (69, '2013-04-23 20:25:20.006133', NULL, 1, 'FO', 'Faroe Islands', NULL, NULL, 50, 2);
+INSERT INTO adm_country VALUES (70, '2013-04-23 20:25:20.006133', NULL, 1, 'FR', 'France', NULL, NULL, 5, 12);
+INSERT INTO adm_country VALUES (71, '2013-04-23 20:25:20.006133', NULL, 1, 'GA', 'Gabon', NULL, NULL, 34, 12);
+INSERT INTO adm_country VALUES (72, '2013-04-23 20:25:20.006133', NULL, 1, 'GD', 'Grenada', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (73, '2013-04-23 20:25:20.006133', NULL, 1, 'GE', 'Georgia', NULL, NULL, 61, 2);
+INSERT INTO adm_country VALUES (74, '2013-04-23 20:25:20.006133', NULL, 1, 'GF', 'French Guiana', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (75, '2013-04-23 20:25:20.006133', NULL, 1, 'GH', 'Ghana', NULL, NULL, 62, 2);
+INSERT INTO adm_country VALUES (76, '2013-04-23 20:25:20.006133', NULL, 1, 'GI', 'Gibraltar', NULL, NULL, 63, 2);
+INSERT INTO adm_country VALUES (77, '2013-04-23 20:25:20.006133', NULL, 1, 'GL', 'Greenland', NULL, NULL, 50, 2);
+INSERT INTO adm_country VALUES (78, '2013-04-23 20:25:20.006133', NULL, 1, 'GM', 'The Gambia', NULL, NULL, 60, 2);
+INSERT INTO adm_country VALUES (79, '2013-04-23 20:25:20.006133', NULL, 1, 'GN', 'Guinea', NULL, NULL, 66, 2);
+INSERT INTO adm_country VALUES (80, '2013-04-23 20:25:20.006133', NULL, 1, 'GP', 'Guadeloupe', NULL, NULL, 5, 12);
+INSERT INTO adm_country VALUES (81, '2013-04-23 20:25:20.006133', NULL, 1, 'GQ', 'Equatorial Guinea', NULL, NULL, 34, 2);
+INSERT INTO adm_country VALUES (82, '2013-04-23 20:25:20.006133', NULL, 1, 'GR', 'Greece', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (83, '2013-04-23 20:25:20.006133', NULL, 1, 'GS', 'South Georgia and the South Sand', NULL, NULL, 65, 2);
+INSERT INTO adm_country VALUES (84, '2013-04-23 20:25:20.006133', NULL, 1, 'GT', 'Guatemala', NULL, NULL, 64, 2);
+INSERT INTO adm_country VALUES (85, '2013-04-23 20:25:20.006133', NULL, 1, 'GU', 'Guam', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (86, '2013-04-23 20:25:20.006133', NULL, 1, 'GW', 'Guinea-Bissau', NULL, NULL, 20, 2);
+INSERT INTO adm_country VALUES (87, '2013-04-23 20:25:20.006133', NULL, 1, 'GY', 'Guyana', NULL, NULL, 67, 2);
+INSERT INTO adm_country VALUES (88, '2013-04-23 20:25:20.006133', NULL, 1, 'HK', 'Hong Kong (SAR)', NULL, NULL, 70, 2);
+INSERT INTO adm_country VALUES (89, '2013-04-23 20:25:20.006133', NULL, 1, 'HM', 'Heard Island and McDonald Island', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (90, '2013-04-23 20:25:20.006133', NULL, 1, 'HN', 'Honduras', NULL, NULL, 69, 2);
+INSERT INTO adm_country VALUES (91, '2013-04-23 20:25:20.006133', NULL, 1, 'HR', 'Croatia', NULL, NULL, 47, 2);
+INSERT INTO adm_country VALUES (92, '2013-04-23 20:25:20.006133', NULL, 1, 'HT', 'Haiti', NULL, NULL, 68, 2);
+INSERT INTO adm_country VALUES (93, '2013-04-23 20:25:20.006133', NULL, 1, 'HU', 'Hungary', NULL, NULL, 71, 2);
+INSERT INTO adm_country VALUES (94, '2013-04-23 20:25:20.006133', NULL, 1, 'ID', 'Indonesia', NULL, NULL, 74, 2);
+INSERT INTO adm_country VALUES (95, '2013-04-23 20:25:20.006133', NULL, 1, 'IE', 'Ireland', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (96, '2013-04-23 20:25:20.006133', NULL, 1, 'IL', 'Israel', NULL, NULL, 78, 2);
+INSERT INTO adm_country VALUES (97, '2013-04-23 20:25:20.006133', NULL, 1, 'IN', 'India', NULL, NULL, 73, 2);
+INSERT INTO adm_country VALUES (98, '2013-04-23 20:25:20.006133', NULL, 1, 'IO', 'British Indian Ocean Territory', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (99, '2013-04-23 20:25:20.006133', NULL, 1, 'IQ', 'Iraq', NULL, NULL, 76, 8);
+INSERT INTO adm_country VALUES (100, '2013-04-23 20:25:20.006133', NULL, 1, 'IR', 'Iran', NULL, NULL, 75, 2);
+INSERT INTO adm_country VALUES (101, '2013-04-23 20:25:20.006133', NULL, 1, 'IS', 'Iceland', NULL, NULL, 77, 2);
+INSERT INTO adm_country VALUES (102, '2013-04-23 20:25:20.006133', NULL, 1, 'IT', 'Italy', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (103, '2013-04-23 20:25:20.006133', NULL, 1, 'JM', 'Jamaica', NULL, NULL, 79, 2);
+INSERT INTO adm_country VALUES (104, '2013-04-23 20:25:20.006133', NULL, 1, 'JO', 'Jordan', NULL, NULL, 81, 2);
+INSERT INTO adm_country VALUES (105, '2013-04-23 20:25:20.006133', NULL, 1, 'JP', 'Japan', NULL, NULL, 80, 2);
+INSERT INTO adm_country VALUES (106, '2013-04-23 20:25:20.006133', NULL, 1, 'KE', 'Kenya', NULL, NULL, 83, 2);
+INSERT INTO adm_country VALUES (107, '2013-04-23 20:25:20.006133', NULL, 1, 'KG', 'Kyrgyzstan', NULL, NULL, 84, 2);
+INSERT INTO adm_country VALUES (108, '2013-04-23 20:25:20.006133', NULL, 1, 'KH', 'Cambodia', NULL, NULL, 33, 2);
+INSERT INTO adm_country VALUES (109, '2013-04-23 20:25:20.006133', NULL, 1, 'KI', 'Kiribati', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (110, '2013-04-23 20:25:20.006133', NULL, 1, 'KM', 'Comoros', NULL, NULL, 42, 2);
+INSERT INTO adm_country VALUES (111, '2013-04-23 20:25:20.006133', NULL, 1, 'KN', 'Saint Kitts and Nevis', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (112, '2013-04-23 20:25:20.006133', NULL, 1, 'KP', 'Korea, North', NULL, NULL, 45, 2);
+INSERT INTO adm_country VALUES (113, '2013-04-23 20:25:20.006133', NULL, 1, 'KR', 'Korea, South', NULL, NULL, 44, 2);
+INSERT INTO adm_country VALUES (114, '2013-04-23 20:25:20.006133', NULL, 1, 'KW', 'Kuwait', NULL, NULL, 85, 2);
+INSERT INTO adm_country VALUES (115, '2013-04-23 20:25:20.006133', NULL, 1, 'KY', 'Cayman Islands', NULL, NULL, 32, 2);
+INSERT INTO adm_country VALUES (116, '2013-04-23 20:25:20.006133', NULL, 1, 'KZ', 'Kazakhstan', NULL, NULL, 82, 2);
+INSERT INTO adm_country VALUES (117, '2013-04-23 20:25:20.006133', NULL, 1, 'LA', 'Laos', NULL, NULL, 86, 2);
+INSERT INTO adm_country VALUES (118, '2013-04-23 20:25:20.006133', NULL, 1, 'LB', 'Lebanon', NULL, NULL, 89, 2);
+INSERT INTO adm_country VALUES (119, '2013-04-23 20:25:20.006133', NULL, 1, 'LC', 'Saint Lucia', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (120, '2013-04-23 20:25:20.006133', NULL, 1, 'LI', 'Liechtenstein', NULL, NULL, 92, 2);
+INSERT INTO adm_country VALUES (121, '2013-04-23 20:25:20.006133', NULL, 1, 'LK', 'Sri Lanka', NULL, NULL, 143, 2);
+INSERT INTO adm_country VALUES (122, '2013-04-23 20:25:20.006133', NULL, 1, 'LR', 'Liberia', NULL, NULL, 90, 2);
+INSERT INTO adm_country VALUES (123, '2013-04-23 20:25:20.006133', NULL, 1, 'LS', 'Lesotho', NULL, NULL, 87, 2);
+INSERT INTO adm_country VALUES (124, '2013-04-23 20:25:20.006133', NULL, 1, 'LT', 'Lithuania', NULL, NULL, 93, 2);
+INSERT INTO adm_country VALUES (125, '2013-04-23 20:25:20.006133', NULL, 1, 'LU', 'Luxembourg', NULL, NULL, 5, 12);
+INSERT INTO adm_country VALUES (126, '2013-04-23 20:25:20.006133', NULL, 1, 'LV', 'Latvia', NULL, NULL, 88, 2);
+INSERT INTO adm_country VALUES (127, '2013-04-23 20:25:20.006133', NULL, 1, 'LY', 'Libya', NULL, NULL, 91, 2);
+INSERT INTO adm_country VALUES (128, '2013-04-23 20:25:20.006133', NULL, 1, 'MA', 'Morocco', NULL, NULL, 102, 3);
+INSERT INTO adm_country VALUES (129, '2013-04-23 20:25:20.006133', NULL, 1, 'MC', 'Monaco', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (130, '2013-04-23 20:25:20.006133', NULL, 1, 'MD', 'Moldova', NULL, NULL, 106, 2);
+INSERT INTO adm_country VALUES (131, '2013-04-23 20:25:20.006133', NULL, 1, 'MG', 'Madagascar', NULL, NULL, 97, 2);
+INSERT INTO adm_country VALUES (132, '2013-04-23 20:25:20.006133', NULL, 1, 'MH', 'Marshall Islands', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (133, '2013-04-23 20:25:20.006133', NULL, 1, 'MK', 'Macedonia, The Former Yugoslav R', NULL, NULL, 95, 2);
+INSERT INTO adm_country VALUES (134, '2013-04-23 20:25:20.006133', NULL, 1, 'ML', 'Mali', NULL, NULL, 20, 12);
+INSERT INTO adm_country VALUES (135, '2013-04-23 20:25:20.006133', NULL, 1, 'MM', 'Burma', NULL, NULL, 109, 2);
+INSERT INTO adm_country VALUES (136, '2013-04-23 20:25:20.006133', NULL, 1, 'MN', 'Mongolia', NULL, NULL, 107, 2);
+INSERT INTO adm_country VALUES (137, '2013-04-23 20:25:20.006133', NULL, 1, 'MO', 'Macao', NULL, NULL, 94, 2);
+INSERT INTO adm_country VALUES (138, '2013-04-23 20:25:20.006133', NULL, 1, 'MP', 'Northern Mariana Islands', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (139, '2013-04-23 20:25:20.006133', NULL, 1, 'MQ', 'Martinique', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (140, '2013-04-23 20:25:20.006133', NULL, 1, 'MR', 'Mauritania', NULL, NULL, 104, 2);
+INSERT INTO adm_country VALUES (141, '2013-04-23 20:25:20.006133', NULL, 1, 'MS', 'Montserrat', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (142, '2013-04-23 20:25:20.006133', NULL, 1, 'MT', 'Malta', NULL, NULL, 101, 2);
+INSERT INTO adm_country VALUES (143, '2013-04-23 20:25:20.006133', NULL, 1, 'MU', 'Mauritius', NULL, NULL, 103, 2);
+INSERT INTO adm_country VALUES (144, '2013-04-23 20:25:20.006133', NULL, 1, 'MV', 'Maldives', NULL, NULL, 100, 2);
+INSERT INTO adm_country VALUES (145, '2013-04-23 20:25:20.006133', NULL, 1, 'MW', 'Malawi', NULL, NULL, 99, 2);
+INSERT INTO adm_country VALUES (146, '2013-04-23 20:25:20.006133', NULL, 1, 'MX', 'Mexico', NULL, NULL, 105, 2);
+INSERT INTO adm_country VALUES (147, '2013-04-23 20:25:20.006133', NULL, 1, 'MY', 'Malaysia', NULL, NULL, 98, 2);
+INSERT INTO adm_country VALUES (148, '2013-04-23 20:25:20.006133', NULL, 1, 'MZ', 'Mozambique', NULL, NULL, 108, 2);
+INSERT INTO adm_country VALUES (149, '2013-04-23 20:25:20.006133', NULL, 1, 'NA', 'Namibia', NULL, NULL, 110, 2);
+INSERT INTO adm_country VALUES (150, '2013-04-23 20:25:20.006133', NULL, 1, 'NC', 'New Caledonia', NULL, NULL, 114, 2);
+INSERT INTO adm_country VALUES (151, '2013-04-23 20:25:20.006133', NULL, 1, 'NE', 'Niger', NULL, NULL, 20, 12);
+INSERT INTO adm_country VALUES (152, '2013-04-23 20:25:20.006133', NULL, 1, 'NF', 'Norfolk Island', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (153, '2013-04-23 20:25:20.006133', NULL, 1, 'NG', 'Nigeria', NULL, NULL, 113, 2);
+INSERT INTO adm_country VALUES (154, '2013-04-23 20:25:20.006133', NULL, 1, 'NI', 'Nicaragua', NULL, NULL, 112, 8);
+INSERT INTO adm_country VALUES (155, '2013-04-23 20:25:20.006133', NULL, 1, 'NL', 'Netherlands', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (156, '2013-04-23 20:25:20.006133', NULL, 1, 'NO', 'Norway', NULL, NULL, 31, 2);
+INSERT INTO adm_country VALUES (157, '2013-04-23 20:25:20.006133', NULL, 1, 'NP', 'Nepal', NULL, NULL, 111, 2);
+INSERT INTO adm_country VALUES (158, '2013-04-23 20:25:20.006133', NULL, 1, 'NR', 'Nauru', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (159, '2013-04-23 20:25:20.006133', NULL, 1, 'NU', 'Niue', NULL, NULL, 72, 2);
+INSERT INTO adm_country VALUES (160, '2013-04-23 20:25:20.006133', NULL, 1, 'NZ', 'New Zealand', NULL, NULL, 72, 2);
+INSERT INTO adm_country VALUES (161, '2013-04-23 20:25:20.006133', NULL, 1, 'OM', 'Oman', NULL, NULL, 115, 2);
+INSERT INTO adm_country VALUES (162, '2013-04-23 20:25:20.006133', NULL, 1, 'PA', 'Panama', NULL, NULL, 120, 8);
+INSERT INTO adm_country VALUES (163, '2013-04-23 20:25:20.006133', NULL, 1, 'PE', 'Peru', NULL, NULL, 123, 8);
+INSERT INTO adm_country VALUES (164, '2013-04-23 20:25:20.006133', NULL, 1, 'PF', 'French Polynesia', NULL, NULL, 114, 12);
+INSERT INTO adm_country VALUES (165, '2013-04-23 20:25:20.006133', NULL, 1, 'PG', 'Papua New Guinea', NULL, NULL, 121, 12);
+INSERT INTO adm_country VALUES (166, '2013-04-23 20:25:20.006133', NULL, 1, 'PH', 'Philippines', NULL, NULL, 124, 2);
+INSERT INTO adm_country VALUES (167, '2013-04-23 20:25:20.006133', NULL, 1, 'PK', 'Pakistan', NULL, NULL, 119, 2);
+INSERT INTO adm_country VALUES (168, '2013-04-23 20:25:20.006133', NULL, 1, 'PL', 'Poland', NULL, NULL, 125, 2);
+INSERT INTO adm_country VALUES (169, '2013-04-23 20:25:20.006133', NULL, 1, 'PM', 'Saint Pierre and Miquelon', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (170, '2013-04-23 20:25:20.006133', NULL, 1, 'PN', 'Pitcairn Islands', NULL, NULL, 72, 2);
+INSERT INTO adm_country VALUES (171, '2013-04-23 20:25:20.006133', NULL, 1, 'PR', 'Puerto Rico', NULL, NULL, 49, 8);
+INSERT INTO adm_country VALUES (172, '2013-04-23 20:25:20.006133', NULL, 1, 'PS', 'Palestinian Territory, Occupied', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (173, '2013-04-23 20:25:20.006133', NULL, 1, 'PT', 'Portugal', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (174, '2013-04-23 20:25:20.006133', NULL, 1, 'PW', 'Palau', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (175, '2013-04-23 20:25:20.006133', NULL, 1, 'PY', 'Paraguay', NULL, NULL, 122, 2);
+INSERT INTO adm_country VALUES (176, '2013-04-23 20:25:20.006133', NULL, 1, 'QA', 'Qatar', NULL, NULL, 126, 2);
+INSERT INTO adm_country VALUES (177, '2013-04-23 20:25:20.006133', NULL, 1, 'RE', 'RÃ©union', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (178, '2013-04-23 20:25:20.006133', NULL, 1, 'RO', 'Romania', NULL, NULL, 128, 2);
+INSERT INTO adm_country VALUES (179, '2013-04-23 20:25:20.006133', NULL, 1, 'RU', 'Russia', NULL, NULL, 129, 2);
+INSERT INTO adm_country VALUES (180, '2013-04-23 20:25:20.006133', NULL, 1, 'RW', 'Rwanda', NULL, NULL, 130, 2);
+INSERT INTO adm_country VALUES (181, '2013-04-23 20:25:20.006133', NULL, 1, 'SA', 'Saudi Arabia', NULL, NULL, 9, 2);
+INSERT INTO adm_country VALUES (182, '2013-04-23 20:25:20.006133', NULL, 1, 'SB', 'Solomon Islands', NULL, NULL, 131, 2);
+INSERT INTO adm_country VALUES (183, '2013-04-23 20:25:20.006133', NULL, 1, 'SC', 'Seychelles', NULL, NULL, 136, 2);
+INSERT INTO adm_country VALUES (184, '2013-04-23 20:25:20.006133', NULL, 1, 'SD', 'Sudan', NULL, NULL, 21, 2);
+INSERT INTO adm_country VALUES (185, '2013-04-23 20:25:20.006133', NULL, 1, 'SE', 'Sweden', NULL, NULL, 145, 2);
+INSERT INTO adm_country VALUES (186, '2013-04-23 20:25:20.006133', NULL, 1, 'SG', 'Singapore', NULL, NULL, 138, 2);
+INSERT INTO adm_country VALUES (187, '2013-04-23 20:25:20.006133', NULL, 1, 'SH', 'Saint Helena', NULL, NULL, 144, 2);
+INSERT INTO adm_country VALUES (188, '2013-04-23 20:25:20.006133', NULL, 1, 'SI', 'Slovenia', NULL, NULL, 140, 2);
+INSERT INTO adm_country VALUES (189, '2013-04-23 20:25:20.006133', NULL, 1, 'SJ', 'Svalbard', NULL, NULL, 31, 2);
+INSERT INTO adm_country VALUES (190, '2013-04-23 20:25:20.006133', NULL, 1, 'SK', 'Slovakia', NULL, NULL, 139, 2);
+INSERT INTO adm_country VALUES (191, '2013-04-23 20:25:20.006133', NULL, 1, 'SL', 'Sierra Leone', NULL, NULL, 137, 2);
+INSERT INTO adm_country VALUES (192, '2013-04-23 20:25:20.006133', NULL, 1, 'SM', 'San Marino', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (193, '2013-04-23 20:25:20.006133', NULL, 1, 'SN', 'Senegal', NULL, NULL, 20, 2);
+INSERT INTO adm_country VALUES (194, '2013-04-23 20:25:20.006133', NULL, 1, 'SO', 'Somalia', NULL, NULL, 141, 2);
+INSERT INTO adm_country VALUES (195, '2013-04-23 20:25:20.006133', NULL, 1, 'SR', 'Suriname', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (196, '2013-04-23 20:25:20.006133', NULL, 1, 'ST', 'SÃ£o TomÃ© and PrÃ_ncipe', NULL, NULL, 134, 2);
+INSERT INTO adm_country VALUES (197, '2013-04-23 20:25:20.006133', NULL, 1, 'SV', 'El Salvador', NULL, NULL, 132, 2);
+INSERT INTO adm_country VALUES (198, '2013-04-23 20:25:20.006133', NULL, 1, 'SY', 'Syria', NULL, NULL, 148, 2);
+INSERT INTO adm_country VALUES (199, '2013-04-23 20:25:20.006133', NULL, 1, 'SZ', 'Swaziland', NULL, NULL, 147, 2);
+INSERT INTO adm_country VALUES (200, '2013-04-23 20:25:20.006133', NULL, 1, 'TC', 'Turks and Caicos Islands', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (201, '2013-04-23 20:25:20.006133', NULL, 1, 'TD', 'Chad', NULL, NULL, 34, 2);
+INSERT INTO adm_country VALUES (202, '2013-04-23 20:25:20.006133', NULL, 1, 'TF', 'French Southern and Antarctic La', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (203, '2013-04-23 20:25:20.006133', NULL, 1, 'TG', 'Togo', NULL, NULL, 20, 2);
+INSERT INTO adm_country VALUES (204, '2013-04-23 20:25:20.006133', NULL, 1, 'TH', 'Thailand', NULL, NULL, 153, 2);
+INSERT INTO adm_country VALUES (205, '2013-04-23 20:25:20.006133', NULL, 1, 'TJ', 'Tajikistan', NULL, NULL, 149, 2);
+INSERT INTO adm_country VALUES (206, '2013-04-23 20:25:20.006133', NULL, 1, 'TK', 'Tokelau', NULL, NULL, 72, 2);
+INSERT INTO adm_country VALUES (207, '2013-04-23 20:25:20.006133', NULL, 1, 'TM', 'Turkmenistan', NULL, NULL, 157, 2);
+INSERT INTO adm_country VALUES (208, '2013-04-23 20:25:20.006133', NULL, 1, 'TN', 'Tunisia', NULL, NULL, 156, 2);
+INSERT INTO adm_country VALUES (209, '2013-04-23 20:25:20.006133', NULL, 1, 'TO', 'Tonga', NULL, NULL, 154, 2);
+INSERT INTO adm_country VALUES (210, '2013-04-23 20:25:20.006133', NULL, 1, 'TL', 'East timor', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (211, '2013-04-23 20:25:20.006133', NULL, 1, 'TR', 'Turkey', NULL, NULL, 159, 2);
+INSERT INTO adm_country VALUES (212, '2013-04-23 20:25:20.006133', NULL, 1, 'TT', 'Trinidad and Tobago', NULL, NULL, 155, 2);
+INSERT INTO adm_country VALUES (213, '2013-04-23 20:25:20.006133', NULL, 1, 'TV', 'Tuvalu', NULL, NULL, 13, 2);
+INSERT INTO adm_country VALUES (214, '2013-04-23 20:25:20.006133', NULL, 1, 'TW', 'Taiwan', NULL, NULL, 150, 2);
+INSERT INTO adm_country VALUES (215, '2013-04-23 20:25:20.006133', NULL, 1, 'TZ', 'Tanzania', NULL, NULL, 151, 2);
+INSERT INTO adm_country VALUES (216, '2013-04-23 20:25:20.006133', NULL, 1, 'UA', 'Ukraine', NULL, NULL, 160, 2);
+INSERT INTO adm_country VALUES (217, '2013-04-23 20:25:20.006133', NULL, 1, 'UG', 'Uganda', NULL, NULL, 117, 2);
+INSERT INTO adm_country VALUES (218, '2013-04-23 20:25:20.006133', NULL, 1, 'GB', 'United Kingdom', NULL, NULL, 65, 2);
+INSERT INTO adm_country VALUES (219, '2013-04-23 20:25:20.006133', NULL, 1, 'UM', 'United States Minor Outlying Isl', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (220, '2013-04-23 20:25:20.006133', NULL, 1, 'US', 'United States', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (221, '2013-04-23 20:25:20.006133', NULL, 1, 'UY', 'Uruguay', NULL, NULL, 161, 2);
+INSERT INTO adm_country VALUES (222, '2013-04-23 20:25:20.006133', NULL, 1, 'UZ', 'Uzbekistan', NULL, NULL, 118, 2);
+INSERT INTO adm_country VALUES (223, '2013-04-23 20:25:20.006133', NULL, 1, 'VA', 'Holy See Vatican City', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (224, '2013-04-23 20:25:20.006133', NULL, 1, 'VC', 'Saint Vincent and the Grenadines', NULL, NULL, 7, 2);
+INSERT INTO adm_country VALUES (225, '2013-04-23 20:25:20.006133', NULL, 1, 'VE', 'Venezuela', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (226, '2013-04-23 20:25:20.006133', NULL, 1, 'VG', 'British Virgin Islands', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (227, '2013-04-23 20:25:20.006133', NULL, 1, 'VI', 'Virgin Islands', NULL, NULL, 49, 2);
+INSERT INTO adm_country VALUES (228, '2013-04-23 20:25:20.006133', NULL, 1, 'VN', 'Vietnam', NULL, NULL, 164, 2);
+INSERT INTO adm_country VALUES (229, '2013-04-23 20:25:20.006133', NULL, 1, 'VU', 'Vanuatu', NULL, NULL, 162, 2);
+INSERT INTO adm_country VALUES (230, '2013-04-23 20:25:20.006133', NULL, 1, 'WF', 'Wallis and Futuna', NULL, NULL, 114, 2);
+INSERT INTO adm_country VALUES (231, '2013-04-23 20:25:20.006133', NULL, 1, 'WS', 'Samoa', NULL, NULL, 133, 2);
+INSERT INTO adm_country VALUES (232, '2013-04-23 20:25:20.006133', NULL, 1, 'YE', 'Yemen', NULL, NULL, 165, 2);
+INSERT INTO adm_country VALUES (233, '2013-04-23 20:25:20.006133', NULL, 1, 'YT', 'Mayotte', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (234, '2013-04-23 20:25:20.006133', NULL, 1, 'YU', 'Yugoslavia', NULL, NULL, 5, 2);
+INSERT INTO adm_country VALUES (235, '2013-04-23 20:25:20.006133', NULL, 1, 'ZA', 'South Africa', NULL, NULL, 2, 2);
+INSERT INTO adm_country VALUES (236, '2013-04-23 20:25:20.006133', NULL, 1, 'ZM', 'Zambia', NULL, NULL, 166, 2);
+INSERT INTO adm_country VALUES (237, '2013-04-23 20:25:20.006133', NULL, 1, 'ZW', 'Zimbabwe', NULL, NULL, 167, 2);
 
 
 --
 -- Data for Name: adm_currency; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-INSERT INTO adm_currency VALUES (1, '2013-04-19 18:45:43.824949', NULL, 1, 'AFA', 'Afghani', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (2, '2013-04-19 18:45:43.824949', NULL, 1, 'ZAR', 'Rand', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (3, '2013-04-19 18:45:43.824949', NULL, 1, 'ALL', 'Lek', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (4, '2013-04-19 18:45:43.824949', NULL, 1, 'DZD', 'Dinar algérien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (5, '2013-04-19 18:45:43.824949', NULL, 1, 'EUR', 'Euro', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (6, '2013-04-19 18:45:43.824949', NULL, 1, 'AOA', 'Kwanza', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (7, '2013-04-19 18:45:43.824949', NULL, 1, 'XCD', 'Dollar des Cara bes de lEst', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (8, '2013-04-19 18:45:43.824949', NULL, 1, 'ANG', 'Florin des Antilles', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (9, '2013-04-19 18:45:43.824949', NULL, 1, 'SAR', 'Riyal saoudien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (10, '2013-04-19 18:45:43.824949', NULL, 1, 'ARS', 'Peso', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (11, '2013-04-19 18:45:43.824949', NULL, 1, 'AMD', 'Dram', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (12, '2013-04-19 18:45:43.824949', NULL, 1, 'AWG', 'Florin d Aruba', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (13, '2013-04-19 18:45:43.824949', NULL, 1, 'AUD', 'Dollar australien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (14, '2013-04-19 18:45:43.824949', NULL, 1, 'AZM', 'Manat azerbaïdjanais', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (15, '2013-04-19 18:45:43.824949', NULL, 1, 'BSD', 'Dollar des Bahamas', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (16, '2013-04-19 18:45:43.824949', NULL, 1, 'BHD', 'Dinar de Bahreïn', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (17, '2013-04-19 18:45:43.824949', NULL, 1, 'BDT', 'Taka', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (18, '2013-04-19 18:45:43.824949', NULL, 1, 'BBD', 'Dollar de Barbade', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (19, '2013-04-19 18:45:43.824949', NULL, 1, 'BZD', 'Dollar de Belize', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (20, '2013-04-19 18:45:43.824949', NULL, 1, 'XOF', 'Franc CFA - BCEAO', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (21, '2013-04-19 18:45:43.824949', NULL, 1, 'BMD', 'Dollar des Bermudes', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (22, '2013-04-19 18:45:43.824949', NULL, 1, 'BTN', 'Ngultrum', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (23, '2013-04-19 18:45:43.824949', NULL, 1, 'BYR', 'Rouble biãlorussie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (24, '2013-04-19 18:45:43.824949', NULL, 1, 'BOB', 'Boliviano', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (25, '2013-04-19 18:45:43.824949', NULL, 1, 'BAM', 'Mark bosniaque convertible', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (26, '2013-04-19 18:45:43.824949', NULL, 1, 'BWP', 'Pula', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (27, '2013-04-19 18:45:43.824949', NULL, 1, 'BRL', 'Real', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (28, '2013-04-19 18:45:43.824949', NULL, 1, 'BND', 'Dollar de Brunéi', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (29, '2013-04-19 18:45:43.824949', NULL, 1, 'BGN', 'Lev', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (30, '2013-04-19 18:45:43.824949', NULL, 1, 'BIF', 'Franc du Burundi', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (31, '2013-04-19 18:45:43.824949', NULL, 1, 'NOK', 'Couronne norvégienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (32, '2013-04-19 18:45:43.824949', NULL, 1, 'KYD', 'Dollar des îles Caïmanes', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (33, '2013-04-19 18:45:43.824949', NULL, 1, 'KHR', 'Riel', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (34, '2013-04-19 18:45:43.824949', NULL, 1, 'XAF', 'Franc CFA - BEAC', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (35, '2013-04-19 18:45:43.824949', NULL, 1, 'CAD', 'Dollar canadien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (36, '2013-04-19 18:45:43.824949', NULL, 1, 'CVE', 'Escudo du Cap-Vert', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (37, '2013-04-19 18:45:43.824949', NULL, 1, 'CFA', 'FRANC CFA-BEAC', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (38, '2013-04-19 18:45:43.824949', NULL, 1, 'CLP', 'Peso chilien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (39, '2013-04-19 18:45:43.824949', NULL, 1, 'CNY', 'Yuan Ren-Min-Bi', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (40, '2013-04-19 18:45:43.824949', NULL, 1, 'CYP', 'Livre chypriote', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (41, '2013-04-19 18:45:43.824949', NULL, 1, 'COP', 'Peso colombien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (42, '2013-04-19 18:45:43.824949', NULL, 1, 'KMF', 'Franc des Comores', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (43, '2013-04-19 18:45:43.824949', NULL, 1, 'CDF', 'FRANC DU CONGO DEMOCRATIQUE', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (44, '2013-04-19 18:45:43.824949', NULL, 1, 'KRW', 'Won', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (45, '2013-04-19 18:45:43.824949', NULL, 1, 'KPW', 'Won de la Corée du Nord', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (46, '2013-04-19 18:45:43.824949', NULL, 1, 'CRC', 'Colon de Costa Rica', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (47, '2013-04-19 18:45:43.824949', NULL, 1, 'HRK', 'Kuna', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (48, '2013-04-19 18:45:43.824949', NULL, 1, 'CUP', 'Peso cubain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (49, '2013-04-19 18:45:43.824949', NULL, 1, 'USD', 'Dollar des Etats-unis', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (50, '2013-04-19 18:45:43.824949', NULL, 1, 'DKK', 'Couronne danoise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (51, '2013-04-19 18:45:43.824949', NULL, 1, 'DJF', 'Franc de Djibouti', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (52, '2013-04-19 18:45:43.824949', NULL, 1, 'DOP', 'Peso dominicain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (53, '2013-04-19 18:45:43.824949', NULL, 1, 'EGP', 'Livre égyptienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (54, '2013-04-19 18:45:43.824949', NULL, 1, 'AED', 'Dirham des émirats arabes unis', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (55, '2013-04-19 18:45:43.824949', NULL, 1, 'ERN', 'Nafka', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (56, '2013-04-19 18:45:43.824949', NULL, 1, 'EEK', 'Couronne d Estonie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (57, '2013-04-19 18:45:43.824949', NULL, 1, 'ETB', 'Birr éthiopien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (58, '2013-04-19 18:45:43.824949', NULL, 1, 'FKP', 'Livre de Falkland', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (59, '2013-04-19 18:45:43.824949', NULL, 1, 'FJD', 'Dollar des Fidji', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (60, '2013-04-19 18:45:43.824949', NULL, 1, 'GMD', 'Dalasie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (61, '2013-04-19 18:45:43.824949', NULL, 1, 'GEL', 'Lari', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (62, '2013-04-19 18:45:43.824949', NULL, 1, 'GHC', 'Cedi ghanéen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (63, '2013-04-19 18:45:43.824949', NULL, 1, 'GIP', 'Livre de Gibraltar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (64, '2013-04-19 18:45:43.824949', NULL, 1, 'GTQ', 'Quetzal', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (65, '2013-04-19 18:45:43.824949', NULL, 1, 'GBP', 'Livre sterling', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (66, '2013-04-19 18:45:43.824949', NULL, 1, 'GNF', 'Franc guinéen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (67, '2013-04-19 18:45:43.824949', NULL, 1, 'GYD', 'Dollar de Guyane', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (68, '2013-04-19 18:45:43.824949', NULL, 1, 'HTG', 'Gourde', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (69, '2013-04-19 18:45:43.824949', NULL, 1, 'HNL', 'Lempira', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (70, '2013-04-19 18:45:43.824949', NULL, 1, 'HKD', 'Dollar de Hong-Kong', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (71, '2013-04-19 18:45:43.824949', NULL, 1, 'HUF', 'Forint', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (72, '2013-04-19 18:45:43.824949', NULL, 1, 'NZD', 'Dollar néo-zélandais', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (73, '2013-04-19 18:45:43.824949', NULL, 1, 'INR', 'Roupie indienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (74, '2013-04-19 18:45:43.824949', NULL, 1, 'IDR', 'Rupiah', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (75, '2013-04-19 18:45:43.824949', NULL, 1, 'IRR', 'Rial iranien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (76, '2013-04-19 18:45:43.824949', NULL, 1, 'IQD', 'Dinar iraquien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (77, '2013-04-19 18:45:43.824949', NULL, 1, 'ISK', 'Couronne islandaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (78, '2013-04-19 18:45:43.824949', NULL, 1, 'ILS', 'Sheqel', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (79, '2013-04-19 18:45:43.824949', NULL, 1, 'JMD', 'Dollar jamaïcain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (80, '2013-04-19 18:45:43.824949', NULL, 1, 'JPY', 'Yen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (81, '2013-04-19 18:45:43.824949', NULL, 1, 'JOD', 'Dinar jordanien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (82, '2013-04-19 18:45:43.824949', NULL, 1, 'KZT', 'Tenge', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (83, '2013-04-19 18:45:43.824949', NULL, 1, 'KES', 'Shilling du Kenya', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (84, '2013-04-19 18:45:43.824949', NULL, 1, 'KGS', 'Som', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (85, '2013-04-19 18:45:43.824949', NULL, 1, 'KWD', 'Dinar koweïtien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (86, '2013-04-19 18:45:43.824949', NULL, 1, 'LAK', 'Kip', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (87, '2013-04-19 18:45:43.824949', NULL, 1, 'LSL', 'Loti', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (88, '2013-04-19 18:45:43.824949', NULL, 1, 'LVL', 'Lats letton', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (89, '2013-04-19 18:45:43.824949', NULL, 1, 'LBP', 'Livre libanaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (90, '2013-04-19 18:45:43.824949', NULL, 1, 'LRD', 'Dollar libérien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (91, '2013-04-19 18:45:43.824949', NULL, 1, 'LYD', 'Dinar libyen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (92, '2013-04-19 18:45:43.824949', NULL, 1, 'CHF', 'Franc suisse', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (93, '2013-04-19 18:45:43.824949', NULL, 1, 'LTL', 'Litas lituanien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (94, '2013-04-19 18:45:43.824949', NULL, 1, 'MOP', 'Pataca', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (95, '2013-04-19 18:45:43.824949', NULL, 1, 'MKD', 'Denar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (96, '2013-04-19 18:45:43.824949', NULL, 1, 'MGA', 'Ariary malgache', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (97, '2013-04-19 18:45:43.824949', NULL, 1, 'MGF', 'Franc malgache', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (98, '2013-04-19 18:45:43.824949', NULL, 1, 'MYR', 'Ringgit de Malaisie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (99, '2013-04-19 18:45:43.824949', NULL, 1, 'MWK', 'Kwacha', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (100, '2013-04-19 18:45:43.824949', NULL, 1, 'MVR', 'Rufiyaa', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (101, '2013-04-19 18:45:43.824949', NULL, 1, 'MTL', 'Livre maltaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (102, '2013-04-19 18:45:43.824949', NULL, 1, 'MAD', 'Dirham marocain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (103, '2013-04-19 18:45:43.824949', NULL, 1, 'MUR', 'Roupie mauricienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (104, '2013-04-19 18:45:43.824949', NULL, 1, 'MRO', 'Ouguija', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (105, '2013-04-19 18:45:43.824949', NULL, 1, 'MXN', 'Peso mexicain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (106, '2013-04-19 18:45:43.824949', NULL, 1, 'MDL', 'Leu de Moldave', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (107, '2013-04-19 18:45:43.824949', NULL, 1, 'MNT', 'Tugrik', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (108, '2013-04-19 18:45:43.824949', NULL, 1, 'MZM', 'Metical', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (109, '2013-04-19 18:45:43.824949', NULL, 1, 'MMK', 'Kyat', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (110, '2013-04-19 18:45:43.824949', NULL, 1, 'NAD', 'Dollar namibien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (111, '2013-04-19 18:45:43.824949', NULL, 1, 'NPR', 'Roupie Népalaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (112, '2013-04-19 18:45:43.824949', NULL, 1, 'NIO', 'Cordoba oro', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (113, '2013-04-19 18:45:43.824949', NULL, 1, 'NGN', 'Naira', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (114, '2013-04-19 18:45:43.824949', NULL, 1, 'XPF', 'Franc CFP', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (115, '2013-04-19 18:45:43.824949', NULL, 1, 'OMR', 'Rial Omani', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (116, '2013-04-19 18:45:43.824949', NULL, 1, 'XAU', 'Opérations sur or', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (117, '2013-04-19 18:45:43.824949', NULL, 1, 'UGX', 'Shilling ougandais', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (118, '2013-04-19 18:45:43.824949', NULL, 1, 'UZS', 'Soum ouzbek', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (119, '2013-04-19 18:45:43.824949', NULL, 1, 'PKR', 'Roupie pakistanaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (120, '2013-04-19 18:45:43.824949', NULL, 1, 'PAB', 'Balboa', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (121, '2013-04-19 18:45:43.824949', NULL, 1, 'PGK', 'Kina', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (122, '2013-04-19 18:45:43.824949', NULL, 1, 'PYG', 'Guarani', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (123, '2013-04-19 18:45:43.824949', NULL, 1, 'PEN', 'Nouveau sol', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (124, '2013-04-19 18:45:43.824949', NULL, 1, 'PHP', 'Peso philippin', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (125, '2013-04-19 18:45:43.824949', NULL, 1, 'PLN', 'Zloty', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (126, '2013-04-19 18:45:43.824949', NULL, 1, 'QAR', 'Riyal du Qatar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (127, '2013-04-19 18:45:43.824949', NULL, 1, 'RON', 'LEI (Nouveau Leu)', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (128, '2013-04-19 18:45:43.824949', NULL, 1, 'ROL', 'Leu', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (129, '2013-04-19 18:45:43.824949', NULL, 1, 'RUB', 'Rouble russe (nouveau)', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (130, '2013-04-19 18:45:43.824949', NULL, 1, 'RWF', 'Franc du Rwanda', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (131, '2013-04-19 18:45:43.824949', NULL, 1, 'SBD', 'Dollar des îles Salomon', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (132, '2013-04-19 18:45:43.824949', NULL, 1, 'SVC', 'Colon salvadorien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (133, '2013-04-19 18:45:43.824949', NULL, 1, 'WST', 'Tala', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (134, '2013-04-19 18:45:43.824949', NULL, 1, 'STD', 'Dobra', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (135, '2013-04-19 18:45:43.824949', NULL, 1, 'CSD', 'Dinar Serbe', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (136, '2013-04-19 18:45:43.824949', NULL, 1, 'SCR', 'Roupie des Seychelles', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (137, '2013-04-19 18:45:43.824949', NULL, 1, 'SLL', 'Leone', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (138, '2013-04-19 18:45:43.824949', NULL, 1, 'SGD', 'Dollar de Singapour', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (139, '2013-04-19 18:45:43.824949', NULL, 1, 'SKK', 'Couronne slovaque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (140, '2013-04-19 18:45:43.824949', NULL, 1, 'SIT', 'Tolar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (141, '2013-04-19 18:45:43.824949', NULL, 1, 'SOS', 'Shilling Somalien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (142, '2013-04-19 18:45:43.824949', NULL, 1, 'SDG', 'Livre soudanaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (143, '2013-04-19 18:45:43.824949', NULL, 1, 'LKR', 'Roupie de Sri Lanka', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (144, '2013-04-19 18:45:43.824949', NULL, 1, 'SHP', 'Livre de Sainte-Hélène', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (145, '2013-04-19 18:45:43.824949', NULL, 1, 'SEK', 'Couronne suédoise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (146, '2013-04-19 18:45:43.824949', NULL, 1, 'SRD', 'Florin du suriname', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (147, '2013-04-19 18:45:43.824949', NULL, 1, 'SZL', 'Lilangeni', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (148, '2013-04-19 18:45:43.824949', NULL, 1, 'SYP', 'Livre syrienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (149, '2013-04-19 18:45:43.824949', NULL, 1, 'TJS', 'Somoni', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (150, '2013-04-19 18:45:43.824949', NULL, 1, 'TWD', 'Nouveau dollar de Taïwan', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (151, '2013-04-19 18:45:43.824949', NULL, 1, 'TZS', 'Shilling tanzanien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (152, '2013-04-19 18:45:43.824949', NULL, 1, 'CZK', 'Couronne tchèque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (153, '2013-04-19 18:45:43.824949', NULL, 1, 'THB', 'Baht', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (154, '2013-04-19 18:45:43.824949', NULL, 1, 'TOP', 'Pa anga', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (155, '2013-04-19 18:45:43.824949', NULL, 1, 'TTD', 'Dollar de Trinité et de Tobago', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (156, '2013-04-19 18:45:43.824949', NULL, 1, 'TND', 'Dinar tunisien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (157, '2013-04-19 18:45:43.824949', NULL, 1, 'TMM', 'Manat turkmène', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (158, '2013-04-19 18:45:43.824949', NULL, 1, 'TRY', 'Nouvelle Livre turque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (159, '2013-04-19 18:45:43.824949', NULL, 1, 'TRL', 'Livre turque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (160, '2013-04-19 18:45:43.824949', NULL, 1, 'UAH', 'HRYVNIA', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (161, '2013-04-19 18:45:43.824949', NULL, 1, 'UYU', 'Nouveau Peso uruguayen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (162, '2013-04-19 18:45:43.824949', NULL, 1, 'VUV', 'Vatu', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (163, '2013-04-19 18:45:43.824949', NULL, 1, 'VEF', 'Bolivar Fuerte', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (164, '2013-04-19 18:45:43.824949', NULL, 1, 'VND', 'Dong', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (165, '2013-04-19 18:45:43.824949', NULL, 1, 'YER', 'Riyal yéménite', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (166, '2013-04-19 18:45:43.824949', NULL, 1, 'ZMK', 'Kwacha de Zambie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (167, '2013-04-19 18:45:43.824949', NULL, 1, 'ZWD', 'Dollar du Zimbabwe', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (168, '2013-04-19 18:45:43.824949', NULL, 1, 'GHS', 'Cedi ghanéen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (1, '2013-04-23 20:25:20.006133', NULL, 1, 'AFA', 'Afghani', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (2, '2013-04-23 20:25:20.006133', NULL, 1, 'ZAR', 'Rand', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (3, '2013-04-23 20:25:20.006133', NULL, 1, 'ALL', 'Lek', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (4, '2013-04-23 20:25:20.006133', NULL, 1, 'DZD', 'Dinar algérien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (5, '2013-04-23 20:25:20.006133', NULL, 1, 'EUR', 'Euro', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (6, '2013-04-23 20:25:20.006133', NULL, 1, 'AOA', 'Kwanza', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (7, '2013-04-23 20:25:20.006133', NULL, 1, 'XCD', 'Dollar des Cara bes de lEst', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (8, '2013-04-23 20:25:20.006133', NULL, 1, 'ANG', 'Florin des Antilles', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (9, '2013-04-23 20:25:20.006133', NULL, 1, 'SAR', 'Riyal saoudien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (10, '2013-04-23 20:25:20.006133', NULL, 1, 'ARS', 'Peso', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (11, '2013-04-23 20:25:20.006133', NULL, 1, 'AMD', 'Dram', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (12, '2013-04-23 20:25:20.006133', NULL, 1, 'AWG', 'Florin d Aruba', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (13, '2013-04-23 20:25:20.006133', NULL, 1, 'AUD', 'Dollar australien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (14, '2013-04-23 20:25:20.006133', NULL, 1, 'AZM', 'Manat azerbaïdjanais', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (15, '2013-04-23 20:25:20.006133', NULL, 1, 'BSD', 'Dollar des Bahamas', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (16, '2013-04-23 20:25:20.006133', NULL, 1, 'BHD', 'Dinar de Bahreïn', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (17, '2013-04-23 20:25:20.006133', NULL, 1, 'BDT', 'Taka', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (18, '2013-04-23 20:25:20.006133', NULL, 1, 'BBD', 'Dollar de Barbade', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (19, '2013-04-23 20:25:20.006133', NULL, 1, 'BZD', 'Dollar de Belize', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (20, '2013-04-23 20:25:20.006133', NULL, 1, 'XOF', 'Franc CFA - BCEAO', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (21, '2013-04-23 20:25:20.006133', NULL, 1, 'BMD', 'Dollar des Bermudes', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (22, '2013-04-23 20:25:20.006133', NULL, 1, 'BTN', 'Ngultrum', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (23, '2013-04-23 20:25:20.006133', NULL, 1, 'BYR', 'Rouble biãlorussie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (24, '2013-04-23 20:25:20.006133', NULL, 1, 'BOB', 'Boliviano', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (25, '2013-04-23 20:25:20.006133', NULL, 1, 'BAM', 'Mark bosniaque convertible', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (26, '2013-04-23 20:25:20.006133', NULL, 1, 'BWP', 'Pula', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (27, '2013-04-23 20:25:20.006133', NULL, 1, 'BRL', 'Real', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (28, '2013-04-23 20:25:20.006133', NULL, 1, 'BND', 'Dollar de Brunéi', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (29, '2013-04-23 20:25:20.006133', NULL, 1, 'BGN', 'Lev', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (30, '2013-04-23 20:25:20.006133', NULL, 1, 'BIF', 'Franc du Burundi', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (31, '2013-04-23 20:25:20.006133', NULL, 1, 'NOK', 'Couronne norvégienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (32, '2013-04-23 20:25:20.006133', NULL, 1, 'KYD', 'Dollar des îles Caïmanes', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (33, '2013-04-23 20:25:20.006133', NULL, 1, 'KHR', 'Riel', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (34, '2013-04-23 20:25:20.006133', NULL, 1, 'XAF', 'Franc CFA - BEAC', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (35, '2013-04-23 20:25:20.006133', NULL, 1, 'CAD', 'Dollar canadien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (36, '2013-04-23 20:25:20.006133', NULL, 1, 'CVE', 'Escudo du Cap-Vert', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (37, '2013-04-23 20:25:20.006133', NULL, 1, 'CFA', 'FRANC CFA-BEAC', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (38, '2013-04-23 20:25:20.006133', NULL, 1, 'CLP', 'Peso chilien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (39, '2013-04-23 20:25:20.006133', NULL, 1, 'CNY', 'Yuan Ren-Min-Bi', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (40, '2013-04-23 20:25:20.006133', NULL, 1, 'CYP', 'Livre chypriote', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (41, '2013-04-23 20:25:20.006133', NULL, 1, 'COP', 'Peso colombien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (42, '2013-04-23 20:25:20.006133', NULL, 1, 'KMF', 'Franc des Comores', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (43, '2013-04-23 20:25:20.006133', NULL, 1, 'CDF', 'FRANC DU CONGO DEMOCRATIQUE', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (44, '2013-04-23 20:25:20.006133', NULL, 1, 'KRW', 'Won', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (45, '2013-04-23 20:25:20.006133', NULL, 1, 'KPW', 'Won de la Corée du Nord', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (46, '2013-04-23 20:25:20.006133', NULL, 1, 'CRC', 'Colon de Costa Rica', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (47, '2013-04-23 20:25:20.006133', NULL, 1, 'HRK', 'Kuna', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (48, '2013-04-23 20:25:20.006133', NULL, 1, 'CUP', 'Peso cubain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (49, '2013-04-23 20:25:20.006133', NULL, 1, 'USD', 'Dollar des Etats-unis', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (50, '2013-04-23 20:25:20.006133', NULL, 1, 'DKK', 'Couronne danoise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (51, '2013-04-23 20:25:20.006133', NULL, 1, 'DJF', 'Franc de Djibouti', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (52, '2013-04-23 20:25:20.006133', NULL, 1, 'DOP', 'Peso dominicain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (53, '2013-04-23 20:25:20.006133', NULL, 1, 'EGP', 'Livre égyptienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (54, '2013-04-23 20:25:20.006133', NULL, 1, 'AED', 'Dirham des émirats arabes unis', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (55, '2013-04-23 20:25:20.006133', NULL, 1, 'ERN', 'Nafka', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (56, '2013-04-23 20:25:20.006133', NULL, 1, 'EEK', 'Couronne d Estonie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (57, '2013-04-23 20:25:20.006133', NULL, 1, 'ETB', 'Birr éthiopien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (58, '2013-04-23 20:25:20.006133', NULL, 1, 'FKP', 'Livre de Falkland', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (59, '2013-04-23 20:25:20.006133', NULL, 1, 'FJD', 'Dollar des Fidji', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (60, '2013-04-23 20:25:20.006133', NULL, 1, 'GMD', 'Dalasie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (61, '2013-04-23 20:25:20.006133', NULL, 1, 'GEL', 'Lari', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (62, '2013-04-23 20:25:20.006133', NULL, 1, 'GHC', 'Cedi ghanéen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (63, '2013-04-23 20:25:20.006133', NULL, 1, 'GIP', 'Livre de Gibraltar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (64, '2013-04-23 20:25:20.006133', NULL, 1, 'GTQ', 'Quetzal', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (65, '2013-04-23 20:25:20.006133', NULL, 1, 'GBP', 'Livre sterling', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (66, '2013-04-23 20:25:20.006133', NULL, 1, 'GNF', 'Franc guinéen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (67, '2013-04-23 20:25:20.006133', NULL, 1, 'GYD', 'Dollar de Guyane', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (68, '2013-04-23 20:25:20.006133', NULL, 1, 'HTG', 'Gourde', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (69, '2013-04-23 20:25:20.006133', NULL, 1, 'HNL', 'Lempira', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (70, '2013-04-23 20:25:20.006133', NULL, 1, 'HKD', 'Dollar de Hong-Kong', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (71, '2013-04-23 20:25:20.006133', NULL, 1, 'HUF', 'Forint', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (72, '2013-04-23 20:25:20.006133', NULL, 1, 'NZD', 'Dollar néo-zélandais', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (73, '2013-04-23 20:25:20.006133', NULL, 1, 'INR', 'Roupie indienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (74, '2013-04-23 20:25:20.006133', NULL, 1, 'IDR', 'Rupiah', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (75, '2013-04-23 20:25:20.006133', NULL, 1, 'IRR', 'Rial iranien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (76, '2013-04-23 20:25:20.006133', NULL, 1, 'IQD', 'Dinar iraquien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (77, '2013-04-23 20:25:20.006133', NULL, 1, 'ISK', 'Couronne islandaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (78, '2013-04-23 20:25:20.006133', NULL, 1, 'ILS', 'Sheqel', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (79, '2013-04-23 20:25:20.006133', NULL, 1, 'JMD', 'Dollar jamaïcain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (80, '2013-04-23 20:25:20.006133', NULL, 1, 'JPY', 'Yen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (81, '2013-04-23 20:25:20.006133', NULL, 1, 'JOD', 'Dinar jordanien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (82, '2013-04-23 20:25:20.006133', NULL, 1, 'KZT', 'Tenge', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (83, '2013-04-23 20:25:20.006133', NULL, 1, 'KES', 'Shilling du Kenya', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (84, '2013-04-23 20:25:20.006133', NULL, 1, 'KGS', 'Som', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (85, '2013-04-23 20:25:20.006133', NULL, 1, 'KWD', 'Dinar koweïtien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (86, '2013-04-23 20:25:20.006133', NULL, 1, 'LAK', 'Kip', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (87, '2013-04-23 20:25:20.006133', NULL, 1, 'LSL', 'Loti', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (88, '2013-04-23 20:25:20.006133', NULL, 1, 'LVL', 'Lats letton', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (89, '2013-04-23 20:25:20.006133', NULL, 1, 'LBP', 'Livre libanaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (90, '2013-04-23 20:25:20.006133', NULL, 1, 'LRD', 'Dollar libérien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (91, '2013-04-23 20:25:20.006133', NULL, 1, 'LYD', 'Dinar libyen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (92, '2013-04-23 20:25:20.006133', NULL, 1, 'CHF', 'Franc suisse', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (93, '2013-04-23 20:25:20.006133', NULL, 1, 'LTL', 'Litas lituanien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (94, '2013-04-23 20:25:20.006133', NULL, 1, 'MOP', 'Pataca', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (95, '2013-04-23 20:25:20.006133', NULL, 1, 'MKD', 'Denar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (96, '2013-04-23 20:25:20.006133', NULL, 1, 'MGA', 'Ariary malgache', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (97, '2013-04-23 20:25:20.006133', NULL, 1, 'MGF', 'Franc malgache', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (98, '2013-04-23 20:25:20.006133', NULL, 1, 'MYR', 'Ringgit de Malaisie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (99, '2013-04-23 20:25:20.006133', NULL, 1, 'MWK', 'Kwacha', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (100, '2013-04-23 20:25:20.006133', NULL, 1, 'MVR', 'Rufiyaa', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (101, '2013-04-23 20:25:20.006133', NULL, 1, 'MTL', 'Livre maltaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (102, '2013-04-23 20:25:20.006133', NULL, 1, 'MAD', 'Dirham marocain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (103, '2013-04-23 20:25:20.006133', NULL, 1, 'MUR', 'Roupie mauricienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (104, '2013-04-23 20:25:20.006133', NULL, 1, 'MRO', 'Ouguija', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (105, '2013-04-23 20:25:20.006133', NULL, 1, 'MXN', 'Peso mexicain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (106, '2013-04-23 20:25:20.006133', NULL, 1, 'MDL', 'Leu de Moldave', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (107, '2013-04-23 20:25:20.006133', NULL, 1, 'MNT', 'Tugrik', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (108, '2013-04-23 20:25:20.006133', NULL, 1, 'MZM', 'Metical', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (109, '2013-04-23 20:25:20.006133', NULL, 1, 'MMK', 'Kyat', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (110, '2013-04-23 20:25:20.006133', NULL, 1, 'NAD', 'Dollar namibien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (111, '2013-04-23 20:25:20.006133', NULL, 1, 'NPR', 'Roupie Népalaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (112, '2013-04-23 20:25:20.006133', NULL, 1, 'NIO', 'Cordoba oro', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (113, '2013-04-23 20:25:20.006133', NULL, 1, 'NGN', 'Naira', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (114, '2013-04-23 20:25:20.006133', NULL, 1, 'XPF', 'Franc CFP', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (115, '2013-04-23 20:25:20.006133', NULL, 1, 'OMR', 'Rial Omani', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (116, '2013-04-23 20:25:20.006133', NULL, 1, 'XAU', 'Opérations sur or', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (117, '2013-04-23 20:25:20.006133', NULL, 1, 'UGX', 'Shilling ougandais', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (118, '2013-04-23 20:25:20.006133', NULL, 1, 'UZS', 'Soum ouzbek', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (119, '2013-04-23 20:25:20.006133', NULL, 1, 'PKR', 'Roupie pakistanaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (120, '2013-04-23 20:25:20.006133', NULL, 1, 'PAB', 'Balboa', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (121, '2013-04-23 20:25:20.006133', NULL, 1, 'PGK', 'Kina', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (122, '2013-04-23 20:25:20.006133', NULL, 1, 'PYG', 'Guarani', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (123, '2013-04-23 20:25:20.006133', NULL, 1, 'PEN', 'Nouveau sol', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (124, '2013-04-23 20:25:20.006133', NULL, 1, 'PHP', 'Peso philippin', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (125, '2013-04-23 20:25:20.006133', NULL, 1, 'PLN', 'Zloty', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (126, '2013-04-23 20:25:20.006133', NULL, 1, 'QAR', 'Riyal du Qatar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (127, '2013-04-23 20:25:20.006133', NULL, 1, 'RON', 'LEI (Nouveau Leu)', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (128, '2013-04-23 20:25:20.006133', NULL, 1, 'ROL', 'Leu', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (129, '2013-04-23 20:25:20.006133', NULL, 1, 'RUB', 'Rouble russe (nouveau)', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (130, '2013-04-23 20:25:20.006133', NULL, 1, 'RWF', 'Franc du Rwanda', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (131, '2013-04-23 20:25:20.006133', NULL, 1, 'SBD', 'Dollar des îles Salomon', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (132, '2013-04-23 20:25:20.006133', NULL, 1, 'SVC', 'Colon salvadorien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (133, '2013-04-23 20:25:20.006133', NULL, 1, 'WST', 'Tala', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (134, '2013-04-23 20:25:20.006133', NULL, 1, 'STD', 'Dobra', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (135, '2013-04-23 20:25:20.006133', NULL, 1, 'CSD', 'Dinar Serbe', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (136, '2013-04-23 20:25:20.006133', NULL, 1, 'SCR', 'Roupie des Seychelles', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (137, '2013-04-23 20:25:20.006133', NULL, 1, 'SLL', 'Leone', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (138, '2013-04-23 20:25:20.006133', NULL, 1, 'SGD', 'Dollar de Singapour', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (139, '2013-04-23 20:25:20.006133', NULL, 1, 'SKK', 'Couronne slovaque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (140, '2013-04-23 20:25:20.006133', NULL, 1, 'SIT', 'Tolar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (141, '2013-04-23 20:25:20.006133', NULL, 1, 'SOS', 'Shilling Somalien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (142, '2013-04-23 20:25:20.006133', NULL, 1, 'SDG', 'Livre soudanaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (143, '2013-04-23 20:25:20.006133', NULL, 1, 'LKR', 'Roupie de Sri Lanka', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (144, '2013-04-23 20:25:20.006133', NULL, 1, 'SHP', 'Livre de Sainte-Hélène', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (145, '2013-04-23 20:25:20.006133', NULL, 1, 'SEK', 'Couronne suédoise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (146, '2013-04-23 20:25:20.006133', NULL, 1, 'SRD', 'Florin du suriname', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (147, '2013-04-23 20:25:20.006133', NULL, 1, 'SZL', 'Lilangeni', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (148, '2013-04-23 20:25:20.006133', NULL, 1, 'SYP', 'Livre syrienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (149, '2013-04-23 20:25:20.006133', NULL, 1, 'TJS', 'Somoni', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (150, '2013-04-23 20:25:20.006133', NULL, 1, 'TWD', 'Nouveau dollar de Taïwan', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (151, '2013-04-23 20:25:20.006133', NULL, 1, 'TZS', 'Shilling tanzanien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (152, '2013-04-23 20:25:20.006133', NULL, 1, 'CZK', 'Couronne tchèque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (153, '2013-04-23 20:25:20.006133', NULL, 1, 'THB', 'Baht', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (154, '2013-04-23 20:25:20.006133', NULL, 1, 'TOP', 'Pa anga', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (155, '2013-04-23 20:25:20.006133', NULL, 1, 'TTD', 'Dollar de Trinité et de Tobago', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (156, '2013-04-23 20:25:20.006133', NULL, 1, 'TND', 'Dinar tunisien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (157, '2013-04-23 20:25:20.006133', NULL, 1, 'TMM', 'Manat turkmène', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (158, '2013-04-23 20:25:20.006133', NULL, 1, 'TRY', 'Nouvelle Livre turque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (159, '2013-04-23 20:25:20.006133', NULL, 1, 'TRL', 'Livre turque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (160, '2013-04-23 20:25:20.006133', NULL, 1, 'UAH', 'HRYVNIA', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (161, '2013-04-23 20:25:20.006133', NULL, 1, 'UYU', 'Nouveau Peso uruguayen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (162, '2013-04-23 20:25:20.006133', NULL, 1, 'VUV', 'Vatu', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (163, '2013-04-23 20:25:20.006133', NULL, 1, 'VEF', 'Bolivar Fuerte', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (164, '2013-04-23 20:25:20.006133', NULL, 1, 'VND', 'Dong', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (165, '2013-04-23 20:25:20.006133', NULL, 1, 'YER', 'Riyal yéménite', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (166, '2013-04-23 20:25:20.006133', NULL, 1, 'ZMK', 'Kwacha de Zambie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (167, '2013-04-23 20:25:20.006133', NULL, 1, 'ZWD', 'Dollar du Zimbabwe', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (168, '2013-04-23 20:25:20.006133', NULL, 1, 'GHS', 'Cedi ghanéen', true, NULL, NULL);
 
 
 --
@@ -466,89 +470,89 @@ SELECT pg_catalog.setval('adm_currency_seq', 1, false);
 -- Data for Name: adm_language; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-INSERT INTO adm_language VALUES (1, '2013-04-19 18:45:43.824949', NULL, 1, 'allemand', 'DEU', NULL, NULL);
-INSERT INTO adm_language VALUES (2, '2013-04-19 18:45:43.824949', NULL, 1, 'anglais', 'ENG', NULL, NULL);
-INSERT INTO adm_language VALUES (3, '2013-04-19 18:45:43.824949', NULL, 1, 'arabe', 'ARA', NULL, NULL);
-INSERT INTO adm_language VALUES (4, '2013-04-19 18:45:43.824949', NULL, 1, 'bulgare', 'BUL', NULL, NULL);
-INSERT INTO adm_language VALUES (5, '2013-04-19 18:45:43.824949', NULL, 1, 'catalan', 'CAT', NULL, NULL);
-INSERT INTO adm_language VALUES (6, '2013-04-19 18:45:43.824949', NULL, 1, 'chinois', 'ZHO', NULL, NULL);
-INSERT INTO adm_language VALUES (7, '2013-04-19 18:45:43.824949', NULL, 1, 'danois', 'DAN', NULL, NULL);
-INSERT INTO adm_language VALUES (8, '2013-04-19 18:45:43.824949', NULL, 1, 'espagnol', 'ESL', NULL, NULL);
-INSERT INTO adm_language VALUES (9, '2013-04-19 18:45:43.824949', NULL, 1, 'estonien', 'EST', NULL, NULL);
-INSERT INTO adm_language VALUES (10, '2013-04-19 18:45:43.824949', NULL, 1, 'féroïen', 'FAO', NULL, NULL);
-INSERT INTO adm_language VALUES (11, '2013-04-19 18:45:43.824949', NULL, 1, 'finlandais', 'FIN', NULL, NULL);
-INSERT INTO adm_language VALUES (12, '2013-04-19 18:45:43.824949', NULL, 1, 'français', 'FRA', NULL, NULL);
-INSERT INTO adm_language VALUES (13, '2013-04-19 18:45:43.824949', NULL, 1, 'grec', 'ELL', NULL, NULL);
-INSERT INTO adm_language VALUES (14, '2013-04-19 18:45:43.824949', NULL, 1, 'hindi', 'HIN', NULL, NULL);
-INSERT INTO adm_language VALUES (15, '2013-04-19 18:45:43.824949', NULL, 1, 'hongrois', 'HUN', NULL, NULL);
-INSERT INTO adm_language VALUES (16, '2013-04-19 18:45:43.824949', NULL, 1, 'islandais', 'ISL', NULL, NULL);
-INSERT INTO adm_language VALUES (17, '2013-04-19 18:45:43.824949', NULL, 1, 'italien', 'ITA', NULL, NULL);
-INSERT INTO adm_language VALUES (18, '2013-04-19 18:45:43.824949', NULL, 1, 'japonais', 'JPN', NULL, NULL);
-INSERT INTO adm_language VALUES (19, '2013-04-19 18:45:43.824949', NULL, 1, 'letton', 'LAV', NULL, NULL);
-INSERT INTO adm_language VALUES (20, '2013-04-19 18:45:43.824949', NULL, 1, 'lituanien', 'LIT', NULL, NULL);
-INSERT INTO adm_language VALUES (21, '2013-04-19 18:45:43.824949', NULL, 1, 'néerlandais', 'NLD', NULL, NULL);
-INSERT INTO adm_language VALUES (22, '2013-04-19 18:45:43.824949', NULL, 1, 'norvégien', 'NOR', NULL, NULL);
-INSERT INTO adm_language VALUES (23, '2013-04-19 18:45:43.824949', NULL, 1, 'polonais', 'POL', NULL, NULL);
-INSERT INTO adm_language VALUES (24, '2013-04-19 18:45:43.824949', NULL, 1, 'portugais', 'POR', NULL, NULL);
-INSERT INTO adm_language VALUES (25, '2013-04-19 18:45:43.824949', NULL, 1, 'roumain', 'RON', NULL, NULL);
-INSERT INTO adm_language VALUES (26, '2013-04-19 18:45:43.824949', NULL, 1, 'russe', 'RUS', NULL, NULL);
-INSERT INTO adm_language VALUES (27, '2013-04-19 18:45:43.824949', NULL, 1, 'serbe', 'SRP', NULL, NULL);
-INSERT INTO adm_language VALUES (28, '2013-04-19 18:45:43.824949', NULL, 1, 'slovaque', 'SLK', NULL, NULL);
-INSERT INTO adm_language VALUES (29, '2013-04-19 18:45:43.824949', NULL, 1, 'slovène', 'SLV', NULL, NULL);
-INSERT INTO adm_language VALUES (30, '2013-04-19 18:45:43.824949', NULL, 1, 'suédois', 'SVE', NULL, NULL);
-INSERT INTO adm_language VALUES (31, '2013-04-19 18:45:43.824949', NULL, 1, 'tchèque', 'CES', NULL, NULL);
-INSERT INTO adm_language VALUES (32, '2013-04-19 18:45:43.824949', NULL, 1, 'turc', 'TUR', NULL, NULL);
+INSERT INTO adm_language VALUES (1, '2013-04-23 20:25:20.006133', NULL, 1, 'allemand', 'DEU', NULL, NULL);
+INSERT INTO adm_language VALUES (2, '2013-04-23 20:25:20.006133', NULL, 1, 'anglais', 'ENG', NULL, NULL);
+INSERT INTO adm_language VALUES (3, '2013-04-23 20:25:20.006133', NULL, 1, 'arabe', 'ARA', NULL, NULL);
+INSERT INTO adm_language VALUES (4, '2013-04-23 20:25:20.006133', NULL, 1, 'bulgare', 'BUL', NULL, NULL);
+INSERT INTO adm_language VALUES (5, '2013-04-23 20:25:20.006133', NULL, 1, 'catalan', 'CAT', NULL, NULL);
+INSERT INTO adm_language VALUES (6, '2013-04-23 20:25:20.006133', NULL, 1, 'chinois', 'ZHO', NULL, NULL);
+INSERT INTO adm_language VALUES (7, '2013-04-23 20:25:20.006133', NULL, 1, 'danois', 'DAN', NULL, NULL);
+INSERT INTO adm_language VALUES (8, '2013-04-23 20:25:20.006133', NULL, 1, 'espagnol', 'ESL', NULL, NULL);
+INSERT INTO adm_language VALUES (9, '2013-04-23 20:25:20.006133', NULL, 1, 'estonien', 'EST', NULL, NULL);
+INSERT INTO adm_language VALUES (10, '2013-04-23 20:25:20.006133', NULL, 1, 'féroïen', 'FAO', NULL, NULL);
+INSERT INTO adm_language VALUES (11, '2013-04-23 20:25:20.006133', NULL, 1, 'finlandais', 'FIN', NULL, NULL);
+INSERT INTO adm_language VALUES (12, '2013-04-23 20:25:20.006133', NULL, 1, 'français', 'FRA', NULL, NULL);
+INSERT INTO adm_language VALUES (13, '2013-04-23 20:25:20.006133', NULL, 1, 'grec', 'ELL', NULL, NULL);
+INSERT INTO adm_language VALUES (14, '2013-04-23 20:25:20.006133', NULL, 1, 'hindi', 'HIN', NULL, NULL);
+INSERT INTO adm_language VALUES (15, '2013-04-23 20:25:20.006133', NULL, 1, 'hongrois', 'HUN', NULL, NULL);
+INSERT INTO adm_language VALUES (16, '2013-04-23 20:25:20.006133', NULL, 1, 'islandais', 'ISL', NULL, NULL);
+INSERT INTO adm_language VALUES (17, '2013-04-23 20:25:20.006133', NULL, 1, 'italien', 'ITA', NULL, NULL);
+INSERT INTO adm_language VALUES (18, '2013-04-23 20:25:20.006133', NULL, 1, 'japonais', 'JPN', NULL, NULL);
+INSERT INTO adm_language VALUES (19, '2013-04-23 20:25:20.006133', NULL, 1, 'letton', 'LAV', NULL, NULL);
+INSERT INTO adm_language VALUES (20, '2013-04-23 20:25:20.006133', NULL, 1, 'lituanien', 'LIT', NULL, NULL);
+INSERT INTO adm_language VALUES (21, '2013-04-23 20:25:20.006133', NULL, 1, 'néerlandais', 'NLD', NULL, NULL);
+INSERT INTO adm_language VALUES (22, '2013-04-23 20:25:20.006133', NULL, 1, 'norvégien', 'NOR', NULL, NULL);
+INSERT INTO adm_language VALUES (23, '2013-04-23 20:25:20.006133', NULL, 1, 'polonais', 'POL', NULL, NULL);
+INSERT INTO adm_language VALUES (24, '2013-04-23 20:25:20.006133', NULL, 1, 'portugais', 'POR', NULL, NULL);
+INSERT INTO adm_language VALUES (25, '2013-04-23 20:25:20.006133', NULL, 1, 'roumain', 'RON', NULL, NULL);
+INSERT INTO adm_language VALUES (26, '2013-04-23 20:25:20.006133', NULL, 1, 'russe', 'RUS', NULL, NULL);
+INSERT INTO adm_language VALUES (27, '2013-04-23 20:25:20.006133', NULL, 1, 'serbe', 'SRP', NULL, NULL);
+INSERT INTO adm_language VALUES (28, '2013-04-23 20:25:20.006133', NULL, 1, 'slovaque', 'SLK', NULL, NULL);
+INSERT INTO adm_language VALUES (29, '2013-04-23 20:25:20.006133', NULL, 1, 'slovène', 'SLV', NULL, NULL);
+INSERT INTO adm_language VALUES (30, '2013-04-23 20:25:20.006133', NULL, 1, 'suédois', 'SVE', NULL, NULL);
+INSERT INTO adm_language VALUES (31, '2013-04-23 20:25:20.006133', NULL, 1, 'tchèque', 'CES', NULL, NULL);
+INSERT INTO adm_language VALUES (32, '2013-04-23 20:25:20.006133', NULL, 1, 'turc', 'TUR', NULL, NULL);
 
 
 --
 -- Data for Name: adm_title; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-INSERT INTO adm_title VALUES (1, 0, false, '2013-04-19 18:45:43.824949', NULL, 'AGCE', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (2, 0, false, '2013-04-19 18:45:43.824949', NULL, 'ASSO', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (3, 0, false, '2013-04-19 18:45:43.824949', NULL, 'CAB', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (4, 0, false, '2013-04-19 18:45:43.824949', NULL, 'COLL', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (5, 0, false, '2013-04-19 18:45:43.824949', NULL, 'COM', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (6, 0, false, '2013-04-19 18:45:43.824949', NULL, 'COPR', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (7, 0, false, '2013-04-19 18:45:43.824949', NULL, 'CSSE', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (8, 0, false, '2013-04-19 18:45:43.824949', NULL, 'EARL', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (9, 0, false, '2013-04-19 18:45:43.824949', NULL, 'ETS', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (10, 0, false, '2013-04-19 18:45:43.824949', NULL, 'EURL', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (11, 0, false, '2013-04-19 18:45:43.824949', NULL, 'GAEC', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (12, 0, false, '2013-04-19 18:45:43.824949', NULL, 'HLM', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (13, 0, false, '2013-04-19 18:45:43.824949', NULL, 'HOPI', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (14, 0, false, '2013-04-19 18:45:43.824949', NULL, 'INST', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (15, 0, false, '2013-04-19 18:45:43.824949', NULL, 'LABO', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (16, 0, false, '2013-04-19 18:45:43.824949', NULL, 'M', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (17, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MLLES', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (18, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MLLE_M', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (19, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MLLE', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (20, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MM', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (21, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MME', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (22, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MME_M', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (23, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MMES', false, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (24, 0, false, '2013-04-19 18:45:43.824949', NULL, 'MTRE', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (25, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SA', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (26, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SARL', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (27, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SCEA', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (28, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SCI', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (29, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SCM', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (30, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SCP', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (31, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SELARL', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (32, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SNC', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (33, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SNI', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (34, 0, false, '2013-04-19 18:45:43.824949', NULL, 'STE', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (35, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SUCC', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (36, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SYNDIC', true, 1, NULL, NULL);
-INSERT INTO adm_title VALUES (37, 0, false, '2013-04-19 18:45:43.824949', NULL, 'SYNDCOP', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (1, 0, false, '2013-04-23 20:25:20.006133', NULL, 'AGCE', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (2, 0, false, '2013-04-23 20:25:20.006133', NULL, 'ASSO', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (3, 0, false, '2013-04-23 20:25:20.006133', NULL, 'CAB', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (4, 0, false, '2013-04-23 20:25:20.006133', NULL, 'COLL', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (5, 0, false, '2013-04-23 20:25:20.006133', NULL, 'COM', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (6, 0, false, '2013-04-23 20:25:20.006133', NULL, 'COPR', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (7, 0, false, '2013-04-23 20:25:20.006133', NULL, 'CSSE', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (8, 0, false, '2013-04-23 20:25:20.006133', NULL, 'EARL', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (9, 0, false, '2013-04-23 20:25:20.006133', NULL, 'ETS', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (10, 0, false, '2013-04-23 20:25:20.006133', NULL, 'EURL', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (11, 0, false, '2013-04-23 20:25:20.006133', NULL, 'GAEC', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (12, 0, false, '2013-04-23 20:25:20.006133', NULL, 'HLM', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (13, 0, false, '2013-04-23 20:25:20.006133', NULL, 'HOPI', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (14, 0, false, '2013-04-23 20:25:20.006133', NULL, 'INST', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (15, 0, false, '2013-04-23 20:25:20.006133', NULL, 'LABO', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (16, 0, false, '2013-04-23 20:25:20.006133', NULL, 'M', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (17, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MLLES', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (18, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MLLE_M', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (19, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MLLE', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (20, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MM', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (21, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MME', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (22, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MME_M', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (23, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MMES', false, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (24, 0, false, '2013-04-23 20:25:20.006133', NULL, 'MTRE', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (25, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SA', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (26, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SARL', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (27, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SCEA', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (28, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SCI', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (29, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SCM', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (30, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SCP', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (31, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SELARL', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (32, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SNC', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (33, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SNI', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (34, 0, false, '2013-04-23 20:25:20.006133', NULL, 'STE', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (35, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SUCC', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (36, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SYNDIC', true, 1, NULL, NULL);
+INSERT INTO adm_title VALUES (37, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SYNDCOP', true, 1, NULL, NULL);
 
 
 --
 -- Data for Name: adm_user; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-INSERT INTO adm_user VALUES (1, 0, false, '2013-04-19 18:45:43.824949', NULL, '2014-04-19', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.ADMIN', 1, 1, NULL, NULL);
-INSERT INTO adm_user VALUES (6, 0, false, '2013-04-19 18:45:43.824949', NULL, '2014-04-19', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.SUPERADMIN', 1, 1, NULL, NULL);
+INSERT INTO adm_user VALUES (1, 0, false, '2013-04-23 20:25:20.006133', NULL, '2014-04-23', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.ADMIN', 1, 1, NULL, NULL);
+INSERT INTO adm_user VALUES (6, 0, false, '2013-04-23 20:25:20.006133', NULL, '2014-04-23', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.SUPERADMIN', 1, 1, NULL, NULL);
 
 
 --
@@ -556,68 +560,35 @@ INSERT INTO adm_user VALUES (6, 0, false, '2013-04-19 18:45:43.824949', NULL, '2
 --
 
 INSERT INTO ar_customer_account VALUES ('', NULL, '', '', 'PART_M', '2013-04-12 10:49:14.295', NULL, 'R0', 'OtKqFUph', 'CHECK', 'ACTIVE', 125, NULL, NULL);
+INSERT INTO ar_customer_account VALUES ('', NULL, '', '', 'PART_C', '2013-04-23 20:34:35.327', NULL, 'R0', 'nVyvfXlq', 'TIP', 'ACTIVE', 1045, 1044, 145);
 
 
 --
 -- Data for Name: billing_billing_account; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-
-
---
--- Data for Name: billing_trading_country; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_trading_country VALUES (154, 0, false, '2013-04-12 12:20:09.074', NULL, 'United Arab emirats', 1, 1, NULL, 2);
-INSERT INTO billing_trading_country VALUES (155, 0, false, '2013-04-12 12:27:34.972', NULL, 'Turkey', 1, 1, NULL, 211);
-INSERT INTO billing_trading_country VALUES (156, 0, false, '2013-04-12 12:28:10.266', NULL, 'Germany', 1, 1, NULL, 53);
-INSERT INTO billing_trading_country VALUES (157, 0, false, '2013-04-12 12:28:45.833', NULL, 'France', 1, 1, NULL, 70);
-INSERT INTO billing_trading_country VALUES (158, 0, false, '2013-04-12 12:29:51.276', NULL, 'Saoudi Arabia', 1, 1, NULL, 181);
-INSERT INTO billing_trading_country VALUES (159, 0, false, '2013-04-12 12:30:22.05', NULL, 'Qatar', 1, 1, NULL, 176);
-INSERT INTO billing_trading_country VALUES (160, 0, false, '2013-04-12 12:30:48.308', NULL, 'Bahrain', 1, 1, NULL, 22);
-INSERT INTO billing_trading_country VALUES (239, 0, false, '2013-04-17 15:01:46.92', NULL, 'Kuwait', 1, 1, NULL, 114);
-
-
---
--- Data for Name: billing_trading_currency; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_trading_currency VALUES (146, 2, false, '2013-04-12 12:02:59.77', '2013-04-17 14:49:18.052', 0.266600000000, 'Riyal Saoudien', 1, 1, 1, 9);
-INSERT INTO billing_trading_currency VALUES (145, 1, false, '2013-04-12 12:01:16.438', '2013-04-17 14:49:33.718', 1.313600000000, 'Euro', 1, 1, 1, 5);
-INSERT INTO billing_trading_currency VALUES (232, 2, false, '2013-04-16 16:12:50.03', '2013-04-17 14:51:25.339', 0.272300000000, 'Dirham des Ã©mirats unis', 1, 1, 1, 54);
-INSERT INTO billing_trading_currency VALUES (149, 1, false, '2013-04-12 12:09:54.989', '2013-04-17 14:52:29.742', 2.652100000000, 'Bahrein Dinar', 1, 1, 1, 16);
-INSERT INTO billing_trading_currency VALUES (218, 5, false, '2013-04-16 11:39:48.855', '2013-04-17 14:53:50.639', 3.514200000000, 'Dinar Koweitien', 1, 1, 1, 85);
-INSERT INTO billing_trading_currency VALUES (237, 0, false, '2013-04-17 14:54:42.397', NULL, 0.558200000000, 'Livre turque', 1, 1, NULL, 158);
-INSERT INTO billing_trading_currency VALUES (238, 0, false, '2013-04-17 14:56:22.139', NULL, 0.274600000000, 'Riyal du Qatar', 1, 1, NULL, 126);
-
-
---
--- Data for Name: billing_trading_language; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_trading_language VALUES (139, 1, false, '2013-04-12 11:19:50.57', '2013-04-12 11:22:07.895', 'Arabic ', 1, 1, 1, 3);
-INSERT INTO billing_trading_language VALUES (141, 0, false, '2013-04-12 11:25:44.671', NULL, 'French', 1, 1, NULL, 12);
-INSERT INTO billing_trading_language VALUES (138, 1, false, '2013-04-12 11:10:03.388', '2013-04-12 11:29:02.661', 'Turkish ', 1, 1, 1, 32);
-INSERT INTO billing_trading_language VALUES (244, 0, false, '2013-04-17 15:27:34.349', NULL, 'German', 1, 1, NULL, 1);
+INSERT INTO billing_billing_account VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, '', NULL, '2013-04-23 20:36:04.818', 'TIP', 'ACTIVE', '2013-04-23 20:36:04.817', '2013-04-23 20:36:04.818', NULL, 1046, 1042, NULL, 1045, 157, 141);
 
 
 --
 -- Data for Name: billing_user_account; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_user_account VALUES ('ACTIVE', '2013-04-23 20:36:09.728', '2013-04-23 20:36:09.728', NULL, 1047, 1046, 1048);
 
 
 --
 -- Data for Name: crm_customer; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO crm_customer VALUES ('', NULL, NULL, NULL, 1044, 317, 315, 1043);
 
 
 --
 -- Data for Name: crm_provider; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-INSERT INTO crm_provider VALUES (1, 1, false, '2013-04-19 18:45:43.824949', NULL, 'ASG', NULL, false, false, '33333333333', 'owner', 'SGMB', '11', 'SGMB', '11', '12345', '11', 'PROV1', '1111', '11', NULL, NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 1, NULL);
+INSERT INTO crm_provider VALUES (1, 1, false, '2013-04-23 20:25:20.006133', NULL, 'ASG', NULL, false, false, '33333333333', 'owner', 'SGMB', '11', 'SGMB', '11', '12345', '11', 'PROV1', '1111', '11', NULL, NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 1, NULL);
 
 
 --
@@ -1091,12 +1062,14 @@ SELECT pg_catalog.setval('bi_report_seq', 1, false);
 --
 
 INSERT INTO cat_calendar VALUES (318, 1, false, '2013-04-17 16:14:22.094', '2013-04-17 17:09:51.689', 'Monthly subscription calendar', 'CAL_SUB_MT', 'DURATION_TERM', 1, 1, 1);
+INSERT INTO cat_calendar VALUES (1041, 0, false, '2013-04-23 20:31:30.257', NULL, 'Monthly invoicing calendar', 'CAL_INV_MT', 'BILLING', 1, 1, NULL);
 
 
 --
 -- Data for Name: billing_cycle; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_cycle VALUES (1042, 0, false, '2013-04-23 20:32:13.081', NULL, 'CYC_INV_MT', 'Monthlly invoice cycle', '1', 4, 2, 1, 1, NULL, 1041);
 
 
 --
@@ -1239,6 +1212,43 @@ SELECT pg_catalog.setval('billing_invoic_sub_country_seq', 1, false);
 
 
 --
+-- Data for Name: billing_trading_country; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_trading_country VALUES (154, 0, false, '2013-04-12 12:20:09.074', NULL, 'United Arab emirats', 1, 1, NULL, 2);
+INSERT INTO billing_trading_country VALUES (155, 0, false, '2013-04-12 12:27:34.972', NULL, 'Turkey', 1, 1, NULL, 211);
+INSERT INTO billing_trading_country VALUES (156, 0, false, '2013-04-12 12:28:10.266', NULL, 'Germany', 1, 1, NULL, 53);
+INSERT INTO billing_trading_country VALUES (157, 0, false, '2013-04-12 12:28:45.833', NULL, 'France', 1, 1, NULL, 70);
+INSERT INTO billing_trading_country VALUES (158, 0, false, '2013-04-12 12:29:51.276', NULL, 'Saoudi Arabia', 1, 1, NULL, 181);
+INSERT INTO billing_trading_country VALUES (159, 0, false, '2013-04-12 12:30:22.05', NULL, 'Qatar', 1, 1, NULL, 176);
+INSERT INTO billing_trading_country VALUES (160, 0, false, '2013-04-12 12:30:48.308', NULL, 'Bahrain', 1, 1, NULL, 22);
+INSERT INTO billing_trading_country VALUES (239, 0, false, '2013-04-17 15:01:46.92', NULL, 'Kuwait', 1, 1, NULL, 114);
+
+
+--
+-- Data for Name: billing_trading_currency; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_trading_currency VALUES (146, 2, false, '2013-04-12 12:02:59.77', '2013-04-17 14:49:18.052', 0.266600000000, 'Riyal Saoudien', 1, 1, 1, 9);
+INSERT INTO billing_trading_currency VALUES (145, 1, false, '2013-04-12 12:01:16.438', '2013-04-17 14:49:33.718', 1.313600000000, 'Euro', 1, 1, 1, 5);
+INSERT INTO billing_trading_currency VALUES (232, 2, false, '2013-04-16 16:12:50.03', '2013-04-17 14:51:25.339', 0.272300000000, 'Dirham des Ã©mirats unis', 1, 1, 1, 54);
+INSERT INTO billing_trading_currency VALUES (149, 1, false, '2013-04-12 12:09:54.989', '2013-04-17 14:52:29.742', 2.652100000000, 'Bahrein Dinar', 1, 1, 1, 16);
+INSERT INTO billing_trading_currency VALUES (218, 5, false, '2013-04-16 11:39:48.855', '2013-04-17 14:53:50.639', 3.514200000000, 'Dinar Koweitien', 1, 1, 1, 85);
+INSERT INTO billing_trading_currency VALUES (237, 0, false, '2013-04-17 14:54:42.397', NULL, 0.558200000000, 'Livre turque', 1, 1, NULL, 158);
+INSERT INTO billing_trading_currency VALUES (238, 0, false, '2013-04-17 14:56:22.139', NULL, 0.274600000000, 'Riyal du Qatar', 1, 1, NULL, 126);
+
+
+--
+-- Data for Name: billing_trading_language; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_trading_language VALUES (139, 1, false, '2013-04-12 11:19:50.57', '2013-04-12 11:22:07.895', 'Arabic ', 1, 1, 1, 3);
+INSERT INTO billing_trading_language VALUES (141, 0, false, '2013-04-12 11:25:44.671', NULL, 'French', 1, 1, NULL, 12);
+INSERT INTO billing_trading_language VALUES (138, 1, false, '2013-04-12 11:10:03.388', '2013-04-12 11:29:02.661', 'Turkish ', 1, 1, 1, 32);
+INSERT INTO billing_trading_language VALUES (244, 0, false, '2013-04-17 15:27:34.349', NULL, 'German', 1, 1, NULL, 1);
+
+
+--
 -- Data for Name: billing_invoice; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
@@ -1355,6 +1365,7 @@ INSERT INTO cat_offer_template VALUES (328, 1, false, '2013-04-17 16:43:03.925',
 -- Data for Name: billing_subscription; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_subscription VALUES (1049, 0, false, '2013-04-23 20:36:48.046', NULL, 'SUB_TEST', '', true, NULL, 'CREATED', '2013-04-23 20:36:31.937', '2013-04-23 00:00:00', NULL, 1, 1, NULL, 327, NULL, 1047);
 
 
 --
@@ -1402,6 +1413,7 @@ SELECT pg_catalog.setval('billing_priceplan_instanciation_seq', 1, false);
 -- Data for Name: billing_wallet; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_wallet VALUES (1048, 0, false, '2013-04-23 20:36:26.12', NULL, 'PRINCIPAL', NULL, 1, 1, NULL, 1047, NULL);
 
 
 --
@@ -1895,6 +1907,7 @@ INSERT INTO cat_day_in_year VALUES (1127, 1, 27, 'DECEMBER', 1);
 INSERT INTO cat_day_in_year VALUES (1128, 1, 28, 'DECEMBER', 1);
 INSERT INTO cat_day_in_year VALUES (1129, 1, 29, 'DECEMBER', 1);
 INSERT INTO cat_day_in_year VALUES (1130, 1, 30, 'DECEMBER', 1);
+INSERT INTO cat_day_in_year VALUES (1131, 1, 31, 'DECEMBER', 1);
 
 
 --
@@ -1913,6 +1926,18 @@ INSERT INTO cat_calendar_days VALUES (318, 801);
 INSERT INTO cat_calendar_days VALUES (318, 901);
 INSERT INTO cat_calendar_days VALUES (318, 1001);
 INSERT INTO cat_calendar_days VALUES (318, 1101);
+INSERT INTO cat_calendar_days VALUES (1041, 1);
+INSERT INTO cat_calendar_days VALUES (1041, 101);
+INSERT INTO cat_calendar_days VALUES (1041, 201);
+INSERT INTO cat_calendar_days VALUES (1041, 301);
+INSERT INTO cat_calendar_days VALUES (1041, 401);
+INSERT INTO cat_calendar_days VALUES (1041, 501);
+INSERT INTO cat_calendar_days VALUES (1041, 601);
+INSERT INTO cat_calendar_days VALUES (1041, 701);
+INSERT INTO cat_calendar_days VALUES (1041, 801);
+INSERT INTO cat_calendar_days VALUES (1041, 901);
+INSERT INTO cat_calendar_days VALUES (1041, 1001);
+INSERT INTO cat_calendar_days VALUES (1041, 1101);
 
 
 --
@@ -1940,6 +1965,7 @@ SELECT pg_catalog.setval('cat_day_in_year_seq', 1, false);
 -- Data for Name: crm_seller; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO crm_seller VALUES (1043, 4, false, '2013-04-23 20:34:10.437', '2013-04-23 20:37:42.586', 'SEL_TEST', 'Seller Test', '', 'Street', '', 'PARIS', 'France', NULL, '00000', 1, 1, 1, NULL, 158, 232, 139);
 
 
 --
@@ -2025,12 +2051,6 @@ INSERT INTO cat_serv_reccharge_templates VALUES (359, 355);
 
 --
 -- Data for Name: cat_serv_usage_charge_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_serv_usage_templates; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
 
@@ -2265,7 +2285,7 @@ SELECT pg_catalog.setval('dwh_sales_seq', 1, false);
 -- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('hibernate_sequence', 756, true);
+SELECT pg_catalog.setval('hibernate_sequence', 1049, true);
 
 
 --
