@@ -496,14 +496,7 @@ input[type="submit"]:hover
   height : 27px;
   background : -moz-linear-gradient(center top , #FFFFFF 0%, #EBEBEB 50%, #DBDBDB) repeat scroll 0 0 transparent;
 }
-.ui-panel-titlebar {
-	border: 0px;
-	border-bottom : 1px solid #e8eded;
-	margin: 0px;
-	margin-bottom: 10px;
-	padding: 0px !important;
-	height: 25px; 
-}
+
 
 /* PANELS */
 .ui-panel

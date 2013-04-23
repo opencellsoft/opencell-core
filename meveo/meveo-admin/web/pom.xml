@@ -61,6 +61,13 @@
           <groupId>com.ocpsoft</groupId>
           <artifactId>prettyfaces-jsf2</artifactId>
         </dependency>
+        
+        <!-- <dependency>  
+    		<groupId>org.primefaces.themes</groupId>  
+    		<artifactId>south-street</artifactId>  
+    		<version>1.0.9</version>  
+		</dependency> -->
+        
 	</dependencies>
 	<profiles>
 		<profile>
