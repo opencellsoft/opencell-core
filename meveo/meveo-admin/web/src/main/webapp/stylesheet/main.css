@@ -530,6 +530,24 @@ input[type="submit"]:hover
   display : block !important;
   width : 100%;
   overflow : hidden;
+ 
+}
+
+.ui-datatable .ui-datatable-data tr td
+{
+  border : 1px solid #c2c2c2;
+}
+.ui-datatable .ui-datatable-data tr td:first-child
+{
+  border-left : 1px solid transparent;
+}
+.ui-datatable .ui-datatable-data tr td:last-child
+{
+   border-right : 1px solid transparent;
+}
+.ui-datatable .ui-datatable-data tr:last-child td
+{
+   border-bottom : 1px solid transparent;
 }
 .ui-datatable table .ui-state-hover
 {
@@ -553,22 +571,31 @@ input[type="submit"]:hover
 }
 #datatable_paginator_bottom
 {
-  border : none;
+ 
   -webkit-border-radius: 0px 0px 8px 8px;
    border-radius: 0px 0px 8px 8px;
+   -webkit-box-shadow: 0px -1px 0px 0px #b8b8b8;
+   box-shadow: 0px -1px 0px 0px #b8b8b8;
 }
 
 .ui-datatable-empty-message > td
 {
-  border : 1px solid #aeaeae !important;
+ // border : 1px solid #aeaeae !important;
   margin-right : -6px;
 }
+.ui-datatable-empty-message > td
+
 
 /* detail table double border fix */
 .ui-paginator-top,
 .ui-paginator-bottom
 {
   border : none;
+}
+.ui-paginator-bottom
+{
+  -webkit-box-shadow: 0px -1px 0px 0px #b8b8b8;
+  box-shadow: 0px -1px 0px 0px #b8b8b8;
 }
 div.body > table > thead,
 .panels > table  > thead
@@ -781,22 +808,23 @@ select[disabled]
  
 /* TREE STRUCTURE */
 .tree-customer-icon,
-.ui-icon-folder-open
+.ui-icon-folder-open,
+.tree-user-account-icon,
+.tree-billing-account-icon
 {  
   background-image: url(http://www.jobellevallega.com/numan/user.png) !important;
   background-size : 13px 13px !important;
   background-repeat : no-repeat !important;
   background : transparent;
 }
-.tree-customer-account-icon
+.tree-customer-account-icon,
 {
   background-image: url(http://www.jobellevallega.com/numan/folder.png) !important;
   background-size : 15px 15px !important;
   background-repeat : no-repeat !important;
   background : transparent;
 }
-.tree-billing-account-icon { background: url(../img/billingAccount-icon.png) !important; height: 16px; width: 16px; }
-.tree-user-account-icon { background: url(http://www.jobellevallega.com/numan/user.png) !important; height: 16px; width: 16px; }
+
 .tree-subscription-icon { background: url(../img/subscription-icon.png) !important; height: 16px; width: 16px; }
 
 .ui-tree
