@@ -1,11 +1,17 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{billingRunBean.preRenderView}" />
+		<f:event type="preRenderView"
+			listener="#{billingRunBean.preRenderView}" />
 	</f:metadata>
 
 	<ui:define name="navigation">
@@ -14,21 +20,40 @@
 
 	<ui:define name="body">
 
-		<hftl:entityPopup id="billingCyclePopup" header="#{messages['billingCycle.popup.header']}" backingBean="#{billingCycleBean}"
-			searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}"
-			searchField2="description" column1Label="#{messages['businessEntity.code']}" column1="code"
-			column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['billingCycle.nextInvoiceDate']}"
-			column3="nextCalendarDate" selection="#{billingRunBean.entity.billingCycle}" updateField=":formPanel:formId:billingCycleId:billingCycleId">
+		<hftl:entityPopup id="billingCyclePopup"
+			header="#{messages['billingCycle.popup.header']}"
+			backingBean="#{billingCycleBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description"
+			column3Label="#{messages['billingCycle.nextInvoiceDate']}"
+			column3="nextCalendarDate"
+			selection="#{billingRunBean.entity.billingCycle}"
+			updateField=":formPanel:formId:billingCycleId:billingCycleId">
 
 		</hftl:entityPopup>
 
-		<hf:formPanel id="formPanel" edit="true" label="#{messages['billingRun.panel']}" backingBean="#{billingRunBean}" showFormButtons="false">
-			<hf:formEntityField id="billingCycleId" label="#{messages['billingRun.billingCycle']}" field="billingCycle" childField="code" required="true"
-				popup="true" popupId="billingCyclePopup" edit="true" />
-			<hf:formField label="#{messages['billingRun.type']}" field="processType" required="true" noSelectionLabel="false" disabled="true" edit="true" />
-			<hf:formField label="#{messages['billingRun.startDate']}" field="startDate" edit="true" />
-			<hf:formField label="#{messages['billingRun.endDate']}" field="endDate" required="false" edit="true" />
-			<h:commandButton action="#{billingRunBean.lunchRecurringInvoicing}" value="#{messages['button.launchInvoicing']}" edit="true" />
+		<hf:formPanel id="formPanel" edit="true"
+			label="#{messages['billingRun.panel']}"
+			backingBean="#{billingRunBean}" showFormButtons="false">
+			<hf:formEntityField id="billingCycleId"
+				label="#{messages['billingRun.billingCycle']}" field="billingCycle"
+				childField="code" required="true" popup="true"
+				popupId="billingCyclePopup" edit="true" />
+			<hf:formField label="#{messages['billingRun.type']}"
+				field="processType" required="true" noSelectionLabel="false"
+				disabled="true" edit="true" />
+			<hf:formField label="#{messages['billingRun.startDate']}"
+				field="startDate" edit="true" />
+			<hf:formField label="#{messages['billingRun.endDate']}"
+				field="endDate" required="false" edit="true" />
+
+			<p:commandButton action="#{billingRunBean.lunchRecurringInvoicing}"
+				value="#{messages['button.launchInvoicing']}" />
 		</hf:formPanel>
 
 	</ui:define>
