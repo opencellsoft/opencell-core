@@ -133,7 +133,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code="
-					+ invoiceSubCategory.getCode()+" and trading country="+countryId);
+					+ invoiceSubCategory.getCode()+" and trading country="+country.getCountryCode());
 		}
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
