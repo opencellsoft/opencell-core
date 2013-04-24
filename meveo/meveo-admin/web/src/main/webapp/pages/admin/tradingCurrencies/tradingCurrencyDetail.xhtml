@@ -20,7 +20,7 @@
 		<c:if test="#{tradingCurrencyBean.edit}">
 			<hftl:entityPopup id="currencyPopup"
 				header="#{messages['currency.popup.header']}"
-				updateField=":formPanel:currenciesFormId:currencySelectedId:currencySelectedId_text,:formPanel:currenciesFormId:prDescription:prDescription_text"
+				updateField=":formPanel:currenciesFormId:currencySelectedId:currencySelectedId,:formPanel:currenciesFormId:prDescription:prDescription_text2"
 				selection="#{tradingCurrencyBean.entity.currency}"
 				backingBean="#{currencyBean}"
 				searchField1Label="#{messages['currency.currencyCode']}"

@@ -43,7 +43,7 @@
 		<hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
 			searchField1Label="#{messages['userAccount.code']}" searchField1="code" searchField2Label="#{messages['userAccount.name']}" searchField2="name"
 			column1Label="#{messages['userAccount.code']}" column1="code" column2Label="#{messages['userAccount.name']}" column2="name"
-			selection="#{subscriptionBean.entity.userAccount}" updateField=":subscriptionTab:subscriptionFormPanel:formId:userSelectId:userSelectId_text">
+			selection="#{subscriptionBean.entity.userAccount}" updateField=":subscriptionTab:subscriptionFormPanel:formId:userSelectId:userSelectId">
 			<!-- select link -->
 			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="formId" action="#{subscriptionBean.populateAccounts(entity)}" -->
 			<!-- 				oncomplete="Richfaces.hideModalPanel('userAccountPopup')"> -->
@@ -54,14 +54,14 @@
 			searchField1Label="#{messages['offerTemplate.code']}" searchField1="code" searchField2Label="#{messages['offerTemplate.description']}"
 			searchField2="description" column1Label="#{messages['offerTemplate.code']}" column1="code" column2Label="#{messages['offerTemplate.description']}"
 			column2="description" selection="#{subscriptionBean.entity.offer}"
-			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId:offerSelectId_text">
+			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId:offerSelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="oneShotChargeTmpPopup" header="#{messages['oneShotChargeTmp.popup.header']}" backingBean="#{oneShotChargeTemplateBean}"
 			searchField1Label="#{messages['chargeTemplate.code']}" searchField1="code" searchField2Label="#{messages['chargeTemplate.description']}"
 			searchField2="description" column1Label="#{messages['chargeTemplate.description']}" column1="code"
 			column2Label="#{messages['chargeTemplate.description']}" column2="description" selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"
-			updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId:chargeTemplateSelectId_text">
+			updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId:chargeTemplateSelectId">
 			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="oneShotChgForm1" action="#{subscriptionBean.oneShotChargeInstance.setChargeTemplate(entity)}" -->
 			<!-- 				oncomplete="Richfaces.hideModalPanel('oneShotChargeTmpPopup')"> -->
 			<!-- 			</a:commandLink> -->
@@ -80,7 +80,7 @@
 			searchField1Label="#{messages['chargeTemplate.code']}" searchField1="code" searchField2Label="#{messages['chargeTemplate.description']}"
 			searchField2="description" column1Label="#{messages['chargeTemplate.code']}" column1="code" column2Label="#{messages['chargeTemplate.description']}"
 			column2="description" selection="#{subscriptionBean.recurringChargeInstance.chargeTemplate}"
-			updateField=":recurringChgForm1Panel:recurringChgForm1:RCchargeTemplateSelectId:RCchargeTemplateSelectId_text"
+			updateField=":recurringChgForm1Panel:recurringChgForm1:RCchargeTemplateSelectId:RCchargeTemplateSelectId"
 			>
 			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="recurringChgForm1" action="#{subscriptionBean.recurringChargeInstance.setChargeTemplate(entity)}" -->
 			<!-- 				oncomplete="Richfaces.hideModalPanel('recurringChargeTmpPopup')"> -->

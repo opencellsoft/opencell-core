@@ -17,7 +17,7 @@
 
 	<ui:define name="body">
 		<hftl:entityPopup header="#{messages['tradingCountry.popup.header']}"
-			updateField=":formPanel:formId:countrySelectedId:countrySelectedId_text,:formPanel:formId:prDescription:prDescription_text"
+			updateField=":formPanel:formId:countrySelectedId:countrySelectedId :formPanel:formId:prDescription:prDescription_text2"
 			selection="#{tradingCountryBean.entity.country}"
 			backingBean="#{countryBean}"
 			searchField1Label="#{messages['country.countryCode']}"
@@ -28,7 +28,7 @@
 			column2="descriptionEn" eventBackingBean="#{tradingCountryBean}">
 		</hftl:entityPopup>
 
-		<hf:formPanel id="formPanel" edit="#{tradingCountryBean.edit}"
+		<hf:formPanel id="formPanel" 
 			label="#{messages['tradingCountry.tradingCountryPanel']}"
 			backingBean="#{tradingCountryBean}">
 

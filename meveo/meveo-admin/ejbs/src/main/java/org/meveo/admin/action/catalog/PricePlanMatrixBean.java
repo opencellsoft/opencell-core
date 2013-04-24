@@ -89,10 +89,8 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
     }
     
     public void onRowSelect(SelectEvent event){  
-    	System.out.println("onRowSelect : event.getObject()");
     	if(event.getObject() instanceof ChargeTemplate){
     		ChargeTemplate chargeTemplate = (ChargeTemplate)event.getObject();  
-    		System.out.println("onRowSelect chargeTemplate:"+ chargeTemplate.getCode());
     		if (chargeTemplate != null) {
     			entity.setEventCode(chargeTemplate.getCode());
     		}

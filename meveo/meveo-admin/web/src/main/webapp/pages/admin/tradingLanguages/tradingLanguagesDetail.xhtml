@@ -12,7 +12,7 @@
 	<ui:define name="body">
 		<c:if test="#{tradingLanguageBean.edit}">
 			<hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}"
-				updateField=":formPanel:languagesFormId:languageSelectedId:languageSelectedId_text,:formPanel:languagesFormId:prDescription:prDescription_text" selection="#{tradingLanguageBean.entity.language}"
+				updateField=":formPanel:languagesFormId:languageSelectedId:languageSelectedId :formPanel:languagesFormId:prDescription:prDescription_text2" selection="#{tradingLanguageBean.entity.language}"
 				backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode"
 				column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}"
 				column2="descriptionEn" eventBackingBean="#{tradingLanguageBean}">

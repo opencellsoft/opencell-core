@@ -22,7 +22,7 @@
 	<c:if test="${empty eventBackingBean}">
 		<c:set var="eventBackingBean" value="#{backingBean}" />
 	</c:if>
-	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
+	<p:dialog id="#{id}" header="#{header}jjjj" widgetVar="dlg_#{id}"
 		dynamic="true" modal="true">
 		<h:form id="#{id}popupForm">
 			<p:panelGrid id="#{id}searchFormPanel" columns="2">
@@ -47,8 +47,8 @@
 			</p:panelGrid>
 			<p:dataTable id="datatable" var="e" paginator="true"
 				value="#{backingBean.lazyDataModel}" rows="10"
-				selection="#{selection}" selectionMode="single" lazy="true"
-				rowSelectListener="#{rowSelectListener}">
+				selection="#{selection}" selectionMode="single" lazy="true">
+<!-- 				rowSelectListener="#{rowSelectListener}"> -->
 				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"
 					oncomplete="dlg_#{id}.hide()" update="#{updateField}" />
 
