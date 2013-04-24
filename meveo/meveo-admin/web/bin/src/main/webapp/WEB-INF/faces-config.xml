@@ -14,6 +14,10 @@
 			<base-name>messages</base-name>
 			<var>messages</var>
 		</resource-bundle>
+		<resource-bundle>
+			<base-name>help</base-name>
+			<var>help</var>
+		</resource-bundle>
 		<message-bundle>messages</message-bundle>
 	</application>
 
@@ -30,16 +34,13 @@
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
-
 	<navigation-rule>
-
 		<navigation-case>
 			<from-outcome>home</from-outcome>
 			<to-view-id>/home.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<!-- Admin -->
-
 		<navigation-case>
 			<from-outcome>systemCurrency</from-outcome>
 			<to-view-id>/pages/admin/currencies/systemCurrency.xhtml</to-view-id>
@@ -55,7 +56,6 @@
 			<to-view-id>/pages/admin/currencies/currencyDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>tradingCurrencyDetail</from-outcome>
 			<to-view-id>/pages/admin/tradingCurrencies/tradingCurrencyDetail.xhtml</to-view-id>
@@ -66,7 +66,6 @@
 			<to-view-id>/pages/admin/tradingCurrencies/tradingCurrencies.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>tradingCountryDetail</from-outcome>
 			<to-view-id>/pages/admin/tradingCountries/tradingCountryDetail.xhtml</to-view-id>
@@ -77,7 +76,6 @@
 			<to-view-id>/pages/admin/tradingCountries/tradingCountries.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>tradingLanguages</from-outcome>
 			<to-view-id>/pages/admin/tradingLanguages/tradingLanguages.xhtml</to-view-id>
@@ -88,8 +86,7 @@
 			<to-view-id>/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
-		<navigation-case>
+				<navigation-case>
 			<from-outcome>sellers</from-outcome>
 			<to-view-id>/pages/admin/sellers/sellers.xhtml</to-view-id>
 			<redirect />
@@ -99,8 +96,24 @@
 			<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
-
+		
+		<navigation-case>
+			<from-outcome>jobTimers</from-outcome>
+			<to-view-id>/pages/admin/job/timers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>jobTimerDetail</from-outcome>
+			<to-view-id>/pages/admin/job/timer.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>timers</from-outcome>
+			<to-view-id>/pages/admin/job/ejbTimers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
 		<navigation-case>
 			<from-outcome>users</from-outcome>
 			<to-view-id>/pages/admin/meveoUsers/users.xhtml</to-view-id>
@@ -111,7 +124,6 @@
 			<to-view-id>/pages/admin/meveoUsers/userDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>userRoles</from-outcome>
 			<to-view-id>/pages/admin/userRoles/userRoles.xhtml</to-view-id>
@@ -122,7 +134,6 @@
 			<to-view-id>/pages/admin/userRoles/userRoleDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>medinaInputs</from-outcome>
 			<to-view-id>/pages/admin/medina/medinaInputs/medinaInputs.xhtml</to-view-id>
@@ -133,7 +144,6 @@
 			<to-view-id>/pages/admin/medina/medinaInputs/medinaInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>vertinaInputs</from-outcome>
 			<to-view-id>/pages/admin/vertina/vertinaInputs/vertinaInputs.xhtml</to-view-id>
@@ -144,7 +154,6 @@
 			<to-view-id>/pages/admin/vertina/vertinaInputs/vertinaInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>oudayaInputs</from-outcome>
 			<to-view-id>/pages/admin/oudaya/oudayaInputs/oudayaInputs.xhtml</to-view-id>
@@ -155,7 +164,6 @@
 			<to-view-id>/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>griegDunningInputs</from-outcome>
 			<to-view-id>/pages/admin/grieg/griegInputs/griegDunningInputs.xhtml</to-view-id>
@@ -166,7 +174,6 @@
 			<to-view-id>/pages/admin/grieg/griegInputs/griegDunningInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>griegValidatedInputs</from-outcome>
 			<to-view-id>/pages/admin/grieg/griegInputs/griegValidatedInputs.xhtml</to-view-id>
@@ -177,7 +184,6 @@
 			<to-view-id>/pages/admin/grieg/griegInputs/griegValidatedInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>griegConverterInputs</from-outcome>
 			<to-view-id>/pages/admin/grieg/griegInputs/griegConverterInputs.xhtml</to-view-id>
@@ -188,7 +194,6 @@
 			<to-view-id>/pages/admin/grieg/griegInputs/griegConverterInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>bayadInvoicingInputs</from-outcome>
 			<to-view-id>/pages/admin/bayad/bayadInputs/bayadInvoicingInputs.xhtml</to-view-id>
@@ -199,7 +204,6 @@
 			<to-view-id>/pages/admin/bayad/bayadInputs/bayadInvoicingInputDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>bayadDunningInputs</from-outcome>
 			<to-view-id>/pages/admin/bayad/bayadInputs/bayadDunningInputs.xhtml</to-view-id>
@@ -229,7 +233,6 @@
 			<to-view-id>/pages/admin/oudaya/configuration/oudayaConfigurations.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>medinaConfigurationDetail</from-outcome>
 			<to-view-id>/pages/admin/medina/configuration/medinaConfigurationDetail.xhtml</to-view-id>
@@ -240,7 +243,6 @@
 			<to-view-id>/pages/admin/medina/configuration/medinaConfigurations.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>vertinaConfigurationDetail</from-outcome>
 			<to-view-id>/pages/admin/vertina/configuration/vertinaConfigurationDetail.xhtml</to-view-id>
@@ -251,7 +253,6 @@
 			<to-view-id>/pages/admin/vertina/configuration/vertinaConfigurations.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>medinaManagement</from-outcome>
 			<to-view-id>/pages/admin/medina/management/medinaManagement.xhtml</to-view-id>
@@ -262,19 +263,16 @@
 			<to-view-id>/pages/admin/vertina/management/vertinaManagement.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>taxes</from-outcome>
 			<to-view-id>/pages/admin/taxes/taxes.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>taxDetail</from-outcome>
 			<to-view-id>/pages/admin/taxes/taxDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>titles</from-outcome>
 			<to-view-id>/pages/admin/title/titles.xhtml</to-view-id>
@@ -327,7 +325,6 @@
 			<to-view-id>/pages/admin/history/crmConnectorRejectedFiles.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>providers</from-outcome>
 			<to-view-id>/pages/crm/providers/providers.xhtml</to-view-id>
@@ -358,9 +355,7 @@
 			<to-view-id>/pages/admin/communication/emailTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<!-- Billing -->
-
 		<navigation-case>
 			<from-outcome>invoices</from-outcome>
 			<to-view-id>/pages/billing/invoices/invoices.xhtml</to-view-id>
@@ -371,7 +366,6 @@
 			<to-view-id>/pages/billing/invoices/invoiceDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>wallets</from-outcome>
 			<to-view-id>/pages/billing/wallets/wallets.xhtml</to-view-id>
@@ -382,7 +376,6 @@
 			<to-view-id>/pages/billing/wallets/walletDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>invoiceTasks</from-outcome>
 			<to-view-id>/pages/billing/invoiceTasks/invoiceTasks.xhtml</to-view-id>
@@ -393,7 +386,6 @@
 			<to-view-id>/pages/billing/invoiceTasks/invoiceTaskDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>billingCycles</from-outcome>
 			<to-view-id>/pages/billing/billingCycles/billingCycles.xhtml</to-view-id>
@@ -404,10 +396,7 @@
 			<to-view-id>/pages/billing/billingCycles/billingCycleDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
-
 		<!-- Catalog -->
-
 		<navigation-case>
 			<from-outcome>offerTemplates</from-outcome>
 			<to-view-id>/pages/catalog/offerTemplates/offerTemplates.xhtml</to-view-id>
@@ -418,7 +407,6 @@
 			<to-view-id>/pages/catalog/offerTemplates/offerTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>usagePricePlanItems</from-outcome>
 			<to-view-id>/pages/catalog/usagePricePlanItem/usagePricePlanItems.xhtml</to-view-id>
@@ -429,7 +417,6 @@
 			<to-view-id>/pages/catalog/usagePricePlanItem/usagePricePlanItemDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>usageDiscountPlanItems</from-outcome>
 			<to-view-id>/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItems.xhtml</to-view-id>
@@ -440,7 +427,6 @@
 			<to-view-id>/pages/catalog/usageDiscountPlanItem/usageDiscountPlanItemDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>priceCodes</from-outcome>
 			<to-view-id>/pages/catalog/priceCode/priceCodes.xhtml</to-view-id>
@@ -451,10 +437,19 @@
 			<to-view-id>/pages/catalog/priceCode/priceCodeDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>serviceTemplates</from-outcome>
 			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceUsageChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceUsageChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/serviceUsageChargeTemplates/serviceUsageChargeTemplates.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
@@ -462,7 +457,7 @@
 			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
+		
 		<navigation-case>
 			<from-outcome>serviceParameterTemplates</from-outcome>
 			<to-view-id>/pages/catalog/serviceParameterTemplates/serviceParameterTemplates.xhtml</to-view-id>
@@ -473,7 +468,6 @@
 			<to-view-id>/pages/catalog/serviceParameterTemplates/serviceParameterTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>oneShotChargeTemplates</from-outcome>
 			<to-view-id>/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplates.xhtml</to-view-id>
@@ -484,7 +478,6 @@
 			<to-view-id>/pages/catalog/oneShotChargeTemplates/oneShotChargeTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>recurringChargeTemplates</from-outcome>
 			<to-view-id>/pages/catalog/recurringChargeTemplates/recurringChargeTemplates.xhtml</to-view-id>
@@ -495,7 +488,6 @@
 			<to-view-id>/pages/catalog/recurringChargeTemplates/recurringChargeTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>calendars</from-outcome>
 			<to-view-id>/pages/catalog/calendars/calendars.xhtml</to-view-id>
@@ -506,7 +498,6 @@
 			<to-view-id>/pages/catalog/calendars/calendarDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>pricePlanMatrixes</from-outcome>
 			<to-view-id>/pages/catalog/pricePlanMatrixes/pricePlanMatrixes.xhtml</to-view-id>
@@ -517,7 +508,6 @@
 			<to-view-id>/pages/catalog/pricePlanMatrixes/pricePlanMatrixDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>discountPlanMatrixes</from-outcome>
 			<to-view-id>/pages/catalog/discountPlanMatrixes/discountPlanMatrixes.xhtml</to-view-id>
@@ -528,7 +518,6 @@
 			<to-view-id>/pages/catalog/discountPlanMatrixes/discountPlanMatrixDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>invoiceCategories</from-outcome>
 			<to-view-id>/pages/catalog/invoiceCategories/invoiceCategories.xhtml</to-view-id>
@@ -539,7 +528,6 @@
 			<to-view-id>/pages/catalog/invoiceCategories/invoiceCategoryDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>invoiceSubCategories</from-outcome>
 			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategories.xhtml</to-view-id>
@@ -550,9 +538,28 @@
 			<to-view-id>/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
+		<navigation-case>
+			<from-outcome>usageChargeTemplates</from-outcome>
+			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>usageChargeTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>counterTemplates</from-outcome>
+			<to-view-id>/pages/catalog/counterTemplates/counterTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>counterTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/counterTemplates/counterTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 		<!-- CRM -->
-
 		<navigation-case>
 			<from-outcome>customers</from-outcome>
 			<to-view-id>/pages/crm/customers/customers.xhtml</to-view-id>
@@ -565,6 +572,24 @@
 		</navigation-case>
 
 		<navigation-case>
+			<from-outcome>addCustomerAccount</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>customerDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>customerId</name> -->
+				<!-- <value>#{customerBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>customerSearch</from-outcome>
 			<to-view-id>/pages/crm/customers/customerSearch.xhtml</to-view-id>
 			<redirect />
@@ -574,12 +599,56 @@
 			<to-view-id>/pages/payments/customerAccounts/customerAccounts.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>customerAccountDetail</from-outcome>
 			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>addBillingAccount</from-outcome>
+			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>customerAccountDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>customerAccountId</name> -->
+				<!-- <value>#{customerAccountBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>addNewOperation</from-outcome>
+			<to-view-id>/pages/payments/accountOperations/selectOCCTemplate.xhtml</to-view-id>
+			<redirect include-view-params="true"></redirect>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>addNewUserAccountAction</from-outcome>
+			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>billingAccountDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>billingAccountId</name> -->
+				<!-- <value>#{billingAccountBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
+		</navigation-case>
+
 		<navigation-case>
 			<from-outcome>transferAccount</from-outcome>
 			<to-view-id>/pages/payments/customerAccounts/transferAccount.xhtml</to-view-id>
@@ -590,7 +659,6 @@
 			<to-view-id>/pages/payments/dunning/dunningPlans.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>dunningPlanDetail</from-outcome>
 			<to-view-id>/pages/payments/dunning/dunningPlanDetail.xhtml</to-view-id>
@@ -606,7 +674,6 @@
 			<to-view-id>/pages/payments/dunning/dunningPlanTransitionDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>actionPlanItems</from-outcome>
 			<to-view-id>/pages/payments/dunning/actionPlanItems.xhtml</to-view-id>
@@ -617,7 +684,6 @@
 			<to-view-id>/pages/payments/dunning/actionPlanItemDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>matchingCodes</from-outcome>
 			<to-view-id>/pages/payments/matchingCode/matchingCodes.xhtml</to-view-id>
@@ -628,7 +694,6 @@
 			<to-view-id>/pages/payments/matchingCode/matchingCodeDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>ddrequestLots</from-outcome>
 			<to-view-id>/pages/payments/ddrequestLot/ddrequestLots.xhtml</to-view-id>
@@ -649,7 +714,6 @@
 			<to-view-id>/pages/payments/ddrequestLot/launchDDRequestProcess.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>accountOperations</from-outcome>
 			<to-view-id>/pages/payments/accountOperations/accountOperations.xhtml</to-view-id>
@@ -684,7 +748,6 @@
 			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>userAccounts</from-outcome>
 			<to-view-id>/pages/billing/userAccounts/userAccounts.xhtml</to-view-id>
@@ -697,6 +760,30 @@
 		</navigation-case>
 
 		<navigation-case>
+			<from-outcome>addNewSubscription</from-outcome>
+			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+				<view-param>
+					<name>backView</name>
+					<value>userAccountDetail</value>
+				</view-param>
+				<!-- <view-param> -->
+				<!-- <name>userAccountId</name> -->
+				<!-- <value>#{userAccountBean.entity.id}</value> -->
+				<!-- </view-param> -->
+			</redirect>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>customerCategorys</from-outcome>
+			<to-view-id>/pages/crm/customerCategories/customerCategories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>customerCategories</from-outcome>
 			<to-view-id>/pages/crm/customerCategories/customerCategories.xhtml</to-view-id>
 			<redirect />
@@ -706,7 +793,6 @@
 			<to-view-id>/pages/crm/customerCategories/customerCategoryDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>customerBrands</from-outcome>
 			<to-view-id>/pages/crm/customerBrands/customerBrands.xhtml</to-view-id>
@@ -717,7 +803,6 @@
 			<to-view-id>/pages/crm/customerBrands/customerBrandDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>serviceInstances</from-outcome>
 			<to-view-id>/pages/resource/serviceInstances/serviceInstances.xhtml</to-view-id>
@@ -728,7 +813,6 @@
 			<to-view-id>/pages/resource/serviceInstances/serviceInstanceDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>serviceParameterInstances</from-outcome>
 			<to-view-id>/pages/resource/serviceParameterInstances/serviceParameterInstances.xhtml</to-view-id>
@@ -739,7 +823,6 @@
 			<to-view-id>/pages/resource/serviceParameterInstances/serviceParameterInstanceDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>usageTypes</from-outcome>
 			<to-view-id>/pages/rating/usageTypes/usageTypes.xhtml</to-view-id>
@@ -750,7 +833,6 @@
 			<to-view-id>/pages/rating/usageTypes/usageTypeDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>matrixes</from-outcome>
 			<to-view-id>/pages/rating/matrixes/matrixes.xhtml</to-view-id>
@@ -761,7 +843,6 @@
 			<to-view-id>/pages/rating/matrixes/matrixDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>matrixEntries</from-outcome>
 			<to-view-id>/pages/rating/matrixEntries/matrixEntries.xhtml</to-view-id>
@@ -791,10 +872,7 @@
 			<to-view-id>/pages/crm/syntheseClients/billingAccounts.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<!-- Reporting -->
-
-
 		<navigation-case>
 			<from-outcome>jobs</from-outcome>
 			<to-view-id>/pages/reporting/jobs/jobs.xhtml</to-view-id>
@@ -810,7 +888,6 @@
 			<to-view-id>/pages/reporting/jobHistory/jobHistory.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>reports</from-outcome>
 			<to-view-id>/pages/reporting/reports/reports.xhtml</to-view-id>
@@ -826,10 +903,7 @@
 			<to-view-id>/pages/reporting/reports/bordereauRemiseCheque.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
-
 		<!-- Resource -->
-
 		<navigation-case>
 			<from-outcome>offerInstances</from-outcome>
 			<to-view-id>/pages/resource/offerInstances/offerInstances.xhtml</to-view-id>
@@ -840,61 +914,51 @@
 			<to-view-id>/pages/resource/offerInstances/offerInstanceDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>recurringInvoicing</from-outcome>
 			<to-view-id>/pages/billing/invoicing/recurringInvoicing.xhtml?edit=true</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>exceptionelInvoicing</from-outcome>
 			<to-view-id>/pages/billing/invoicing/exceptionelInvoicing.xhtml?edit=true</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>preInvoicingReports</from-outcome>
 			<to-view-id>/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>postInvoicingReports</from-outcome>
 			<to-view-id>/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>billingRuns</from-outcome>
 			<to-view-id>/pages/billing/invoicing/billingRuns.xhtml?edit=false</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>accesss</from-outcome>
 			<to-view-id>/pages/medina/access/access.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>zonningPlans</from-outcome>
 			<to-view-id>/pages/medina/zoningPlan/zoningPlan.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>timePlans</from-outcome>
 			<to-view-id>/pages/medina/timePlan/timePlan.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>numberingPlans</from-outcome>
 			<to-view-id>/pages/medina/numberingPlan/numberingPlan.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 		<navigation-case>
 			<from-outcome>eDRRatingPlans</from-outcome>
 			<to-view-id>/pages/medina/edrRatingPlan/edrRatingPlan.xhtml</to-view-id>
@@ -912,8 +976,125 @@
 			<to-view-id>/pages/billing/paymentTerms/paymentTerms.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
 	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>customerDetail</from-outcome>
+			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerAccounts</from-outcome>
+			<if>#{customerAccountBean.customerId!=null}</if>
+			<to-view-id>/pages/crm/customers/customerDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>customerAccountDetail</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>billingAccounts</from-outcome>
+			<if>#{billingAccountBean.customerAccountId!=null}</if>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/pages/payments/accountOperations/accountOperationDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>customerAccountDetail</from-outcome>
+			<to-view-id>/pages/payments/customerAccounts/customerAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+				<view-param>
+					<name>tab</name>
+					<value>ops</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>	
+
+	<navigation-rule>
+		<from-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>billingAccountDetail</from-outcome>
+			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>userAccounts</from-outcome>
+			<if>#{userAccountBean.billingAccountId!=null}</if>
+			<to-view-id>/pages/billing/billingAccounts/billingAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>userAccountDetail</from-outcome>
+			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>subscriptions</from-outcome>
+			<if>#{subscriptionBean.userAccountId!=null}</if>
+			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
+			<redirect include-view-params="true">
+				<view-param>
+					<name>edit</name>
+					<value>false</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+
 
 	<!-- Exception handling -->
 	<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->

@@ -37,8 +37,8 @@
 			<a:outputPanel id="searchTimersResults" rendered="#{timersDataModel!=null}">
 				<h:form id="resultTimerForm" rendered="#{timersDataModel.rowCount!=0}">
 					
-					<hftl:dataList backingBean="#{timersAction}" 
-							resultsId="timersAction_results" checkMany="false">
+					<hftl:dataList backingBean="#{timersBean}" 
+							resultsId="timersBean_results" checkMany="false">
 						<p:column>
 							<f:facet name="header">
 								<h:outputText value="#{messages['timer.jobName']}" />
