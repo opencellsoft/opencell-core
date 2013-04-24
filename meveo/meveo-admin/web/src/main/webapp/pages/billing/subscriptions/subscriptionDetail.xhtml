@@ -207,19 +207,19 @@
 										<hftl:column label="#{messages['serviceInstance.quantity']}"
 											field="quantity" showSortLinks="false" />
 										<hftl:column label="#{messages['serviceInstance.statusDate']}"
-											field="statusDate" showSortLinks="false" />
+											field="statusDate" showSortLinks="false" isDate="true" />
 										<hftl:column
 											label="#{messages['serviceInstance.description']}"
 											field="description" showSortLinks="false" />
 										<hftl:column
 											label="#{messages['serviceInstance.subscriptionDate']}"
-											field="subscriptionDate" showSortLinks="false" />
+											field="subscriptionDate" showSortLinks="false" isDate="true" />
 										<hftl:column
 											label="#{messages['serviceInstance.endAgrementDate']}"
-											field="endAgrementDate" showSortLinks="false" />
+											field="endAgrementDate" showSortLinks="false" isDate="true" />
 										<hftl:actionsColumn
 											editView="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
-											showSortLinks="false" />
+											showSortLinks="false" renderDeleteLink="false" />
 									</p:dataTable>
 								</h:form>
 								<p:outputPanel id="serviceInstOperations">
@@ -662,7 +662,7 @@
 												field="code" />
 											<hftl:column
 												label="#{messages['chargeInstance.description']}"
-												field="description" isMessage="true" />
+												field="description" isMessage="false" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
 												field="amountWithoutTax" />
