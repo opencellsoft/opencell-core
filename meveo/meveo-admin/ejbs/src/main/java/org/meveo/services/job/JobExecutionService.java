@@ -63,6 +63,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     		 initConversationContext();
              JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(job.getClass().getSimpleName(), result);
              if(!entity.isDone() || (entity.getNbItemsCorrectlyProcessed()+entity.getNbItemsProcessedWithError()+entity.getNbItemsProcessedWithWarning())>0){
+            	
                  create(entity,null,null);
                  log.info("persistResult entity.isDone()="+entity.isDone());
                  if(!entity.isDone()){
