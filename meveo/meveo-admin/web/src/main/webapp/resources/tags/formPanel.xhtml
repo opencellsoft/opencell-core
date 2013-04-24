@@ -30,9 +30,11 @@
 
 	<h:form id="#{cc.attrs.formId}">
 		<p:panelGrid columns="1" styleClass="form-panel">
-			<f:facet name="header">
-				<h:outputText value="#{cc.attrs.label}" />
-			</f:facet>
+			<c:if test="#{not empty(cc.attrs.label)}">
+				<f:facet name="header">
+					<h:outputText value="#{cc.attrs.label}" />
+				</f:facet>
+			</c:if>
 			<p:messages id="messages" />
 			<p:panelGrid columns="#{cc.attrs.columns}"
 				styleClass="form-panel-fields">
