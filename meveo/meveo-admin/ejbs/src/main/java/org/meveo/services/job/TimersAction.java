@@ -19,14 +19,16 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.logging.Logger;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.service.base.local.IPersistenceService;
 
 @ConversationScoped
 @Named
-public class TimersAction implements Serializable {
+public class TimersAction extends BaseBean<TimerEntity> {
 
     /**
      * 
@@ -179,6 +181,14 @@ public class TimersAction implements Serializable {
             return null;
         }
     }
+
+	@Override
+	protected IPersistenceService<TimerEntity> getPersistenceService() {
+		// TODO Auto-generated method stub
+		return timerEntityservice;
+	}
+	
+	
     
 
 }
