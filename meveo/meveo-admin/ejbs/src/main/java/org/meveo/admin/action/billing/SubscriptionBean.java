@@ -84,7 +84,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
     private OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
 
-    private RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance();
+    private RecurringChargeInstance recurringChargeInstance;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -249,6 +249,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     public void editRecurringChargeIns(RecurringChargeInstance recurringChargeIns) {
         this.recurringChargeInstance = recurringChargeIns;
         recurringChargeServiceInstanceQuantity = recurringChargeIns.getServiceInstance().getQuantity();
+        System.out.println("AKK setting recurringChargeIns "+recurringChargeIns);
     }
 
     public void saveRecurringChargeIns() {
@@ -317,6 +318,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     }
 
     public RecurringChargeInstance getRecurringChargeInstance() {
+        System.out.println("AKK getRecurringChargeInstance "+recurringChargeInstance);
         return recurringChargeInstance;
     }
 
@@ -344,8 +346,10 @@ public class SubscriptionBean extends BaseBean<Subscription> {
     public List<WalletOperation> getRecurringWalletOperations() {
         log.info("getRecurringWalletOperations");
         if (this.recurringChargeInstance == null || this.recurringChargeInstance.getId() == null) {
+            System.out.println("AKK recurringChargeInstance is null");
             return null;
         }
+        System.out.println("AKK recurringChargeInstance is "+recurringChargeInstance.getId());
         List<WalletOperation> results = new ArrayList<WalletOperation>(recurringChargeInstance.getWalletOperations());
         Collections.sort(results, new Comparator<WalletOperation>() {
             public int compare(WalletOperation c0, WalletOperation c1) {
