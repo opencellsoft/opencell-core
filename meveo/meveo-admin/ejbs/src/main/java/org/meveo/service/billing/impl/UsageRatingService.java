@@ -112,8 +112,7 @@ public class UsageRatingService {
 		TradingCurrency currency=edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
         walletOperation.setChargeInstance(chargeInstance); 
-        Long sellerId= edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
-        
+        walletOperation.setSeller(edr.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         //FIXME: get the wallet from the ServiceUsageChargeTemplate
         walletOperation.setWallet(edr.getSubscription().getUserAccount().getWallet());
         walletOperation.setCode(chargeInstance.getCode());
@@ -122,7 +121,7 @@ public class UsageRatingService {
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
-		ratingService.rateBareWalletOperation(walletOperation, null, null, countryId,currency,sellerId, provider);
+		ratingService.rateBareWalletOperation(walletOperation, null, null, countryId,currency, provider);
 		return walletOperation;
     }
     

@@ -38,6 +38,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ChargeTemplate;
 
 @Entity
@@ -87,6 +88,10 @@ public class ChargeInstance extends BusinessEntity {
 
     @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SELLER_ID")
+    private Seller seller;
     
     
     @Column(name = "PR_DESCRIPTION", length = 100)
@@ -192,4 +197,14 @@ public class ChargeInstance extends BusinessEntity {
 		this.amountWithTax = amountWithTax;
 	}
 
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
+	
+	
 }
