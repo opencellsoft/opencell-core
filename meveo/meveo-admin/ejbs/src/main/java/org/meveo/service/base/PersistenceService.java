@@ -319,7 +319,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		 * em.getDelegate(); session.refresh(entity);
 		 */
 		//em.getEntityManagerFactory().getCache().evict(entity.getClass(), entity.getId());
-		em.refresh(entity);
+		if(em.contains(entity)){
+			em.refresh(entity);
+		}
 	}
 
 	/**
