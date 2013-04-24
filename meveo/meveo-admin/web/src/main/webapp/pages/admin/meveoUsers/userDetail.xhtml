@@ -29,8 +29,9 @@
 					rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
 					<hftl:panelGroup columns="2">
 						<p:outputLabel for="password" value="#{messages['user.password']}"></p:outputLabel>
-						<p:password autocomplete="off" id="password"
-							value="#{userBean.password}" required="true">
+						<p:password autocomplete="off" id="password" feedback="true"
+							value="#{userBean.password}" required="true"
+							match="repeatedPassword">
 						</p:password>
 						<p:outputLabel for="repeatedPassword"
 							value="#{messages['user.repeatedPassword']}">

@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags" xmlns:a="http://richfaces.org/a4j">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:a="http://richfaces.org/a4j">
 
 <ui:composition>
 
@@ -17,33 +22,47 @@
 	<c:if test="${empty eventBackingBean}">
 		<c:set var="eventBackingBean" value="#{backingBean}" />
 	</c:if>
-	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true">
+	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
+		dynamic="true" modal="true">
 		<h:form id="#{id}popupForm">
 			<p:panelGrid id="#{id}searchFormPanel" columns="2">
 				<c:if test="#{not empty searchField1}">
-					<hf:searchField label="#{searchField1Label}" backingBean="#{backingBean}" field="#{searchField1}" />
+					<hf:searchField label="#{searchField1Label}"
+						backingBean="#{backingBean}" field="#{searchField1}" />
 				</c:if>
 				<c:if test="#{not empty searchField2}">
-					<hf:searchField label="#{searchField2Label}" backingBean="#{backingBean}" field="#{searchField2}" />
+					<hf:searchField label="#{searchField2Label}"
+						backingBean="#{backingBean}" field="#{searchField2}" />
 				</c:if>
 				<c:if test="#{not empty searchField3}">
-					<hf:searchField label="#{searchField3Label}" backingBean="#{backingBean}" field="#{searchField3}" />
+					<hf:searchField label="#{searchField3Label}"
+						backingBean="#{backingBean}" field="#{searchField3}" />
 				</c:if>
 			</p:panelGrid>
 			<p:panelGrid columns="2">
-				<p:commandButton id="buttonSearch" value="#{messages['commons.search']}" update="#{id}popupForm" />
-				<p:commandButton id="buttonClear" action="#{backingBean.clean}" value="#{messages['commons.clean']}" update="#{id}popupForm" />
+				<p:commandButton id="buttonSearch"
+					value="#{messages['commons.search']}" update="#{id}popupForm" />
+				<p:commandButton id="buttonClear" action="#{backingBean.clean}"
+					value="#{messages['commons.clean']}" update="#{id}popupForm" />
 			</p:panelGrid>
-			<p:dataTable id="datatable" var="e" paginator="true" value="#{backingBean.lazyDataModel}" rows="10" selection="#{selection}" selectionMode="single"
-				lazy="true" rowSelectListener="#{rowSelectListener}">
-				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"  oncomplete="dlg_#{id}.hide()" update="#{updateField}"/>
+			<p:dataTable id="datatable" var="e" paginator="true"
+				value="#{backingBean.lazyDataModel}" rows="10"
+				selection="#{selection}" selectionMode="single" lazy="true"
+				rowSelectListener="#{rowSelectListener}">
+				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"
+					oncomplete="dlg_#{id}.hide()" update="#{updateField}" />
 
 				<c:if test="#{not empty column1}">
 					<p:column>
 						<f:facet name="header">
 							<h:outputText value="#{column1Label}" />
 						</f:facet>
-						<h:outputText value="#{e[column1]}" />
+						<c:if test="#{not empty column1Child}">
+							<h:outputText value="#{e[column1][column1Child]}" />
+						</c:if>
+						<c:if test="#{empty column1Child}">
+							<h:outputText value="#{e[column1]}" />
+						</c:if>
 					</p:column>
 				</c:if>
 				<c:if test="#{not empty column2}">
@@ -51,7 +70,12 @@
 						<f:facet name="header">
 							<h:outputText value="#{column2Label}" />
 						</f:facet>
-						<h:outputText value="#{e[column2]}" />
+						<c:if test="#{not empty column2Child}">
+							<h:outputText value="#{e[column2][column2Child]}" />
+						</c:if>
+						<c:if test="#{empty column2Child}">
+							<h:outputText value="#{e[column2]}" />
+						</c:if>
 					</p:column>
 				</c:if>
 				<c:if test="#{not empty column3}">
@@ -59,7 +83,12 @@
 						<f:facet name="header">
 							<h:outputText value="#{column3Label}" />
 						</f:facet>
-						<h:outputText value="#{e[column3]}" />
+						<c:if test="#{not empty column3Child}">
+							<h:outputText value="#{e[column3][column3Child]}" />
+						</c:if>
+						<c:if test="#{empty column3Child}">
+							<h:outputText value="#{e[column3]}" />
+						</c:if>
 					</p:column>
 				</c:if>
 			</p:dataTable>
