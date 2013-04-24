@@ -50,7 +50,8 @@ import org.meveo.util.MeveoJpa;
  * @author Ignas
  * @created 2009.09.04
  */
-public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
+public abstract class PersistenceService<E extends IEntity> extends BaseService implements
+		IPersistenceService<E> {
 	protected final Class<E> entityClass;
 
 	@Inject
@@ -139,7 +140,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			log.debug("refreshing loaded entity");
 			em.refresh(e);
 		}
-		log.debug("end of find {0} by id (id={1}). Result found={2}.", getEntityClass().getSimpleName(), id, e != null);
+		log.debug("end of find {0} by id (id={1}). Result found={2}.", getEntityClass()
+				.getSimpleName(), id, e != null);
 		return e;
 	}
 
@@ -167,7 +169,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			log.debug("refreshing loaded entity");
 			em.refresh(e);
 		}
-		log.debug("end of find {0} by id (id={1}). Result found={2}.", getEntityClass().getSimpleName(), id, e != null);
+		log.debug("end of find {0} by id (id={1}). Result found={2}.", getEntityClass()
+				.getSimpleName(), id, e != null);
 		return e;
 	}
 
@@ -187,7 +190,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 	public void remove(E e) {
 		checkProvider(e);
-		log.debug("start of remove {0} entity (id={1}) ..", getEntityClass().getSimpleName(), e.getId());
+		log.debug("start of remove {0} entity (id={1}) ..", getEntityClass().getSimpleName(),
+				e.getId());
 		em.remove(e);
 		em.flush();
 		log.debug("end of remove {0} entity (id={1}).", getEntityClass().getSimpleName(), e.getId());
@@ -200,7 +204,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		Query query = em.createQuery("delete from " + getEntityClass().getName()
 				+ " where id in (:ids) and provider.id = :providerId");
 		query.setParameter("ids", ids);
-		query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider().getId() : null);
+		query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider()
+				.getId() : null);
 		query.executeUpdate();
 	}
 
@@ -313,6 +318,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		 * TODO: Hibernate. org.hibernate.Session session = (Session)
 		 * em.getDelegate(); session.refresh(entity);
 		 */
+		//em.getEntityManagerFactory().getCache().evict(entity.getClass(), entity.getId());
+		if(em.contains(entity)){
+			em.refresh(entity);
+		}
 	}
 
 	/**
@@ -327,7 +336,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 		final Class<? extends E> entityClass = getEntityClass();
 
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), getCurrentProvider());
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(),
+				getCurrentProvider());
 
 		Map<String, Object> filters = config.getFilters();
 		if (filters != null) {
@@ -340,27 +350,31 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 							String parsedKey = key.substring(10);
 							if (filter instanceof Double) {
 								BigDecimal rationalNumber = new BigDecimal((Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber, true);
+								queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber,
+										true);
 							} else if (filter instanceof Number) {
 								queryBuilder.addCriterion("a." + parsedKey, " >= ", filter, true);
 							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + parsedKey, (Date) filter);
+								queryBuilder.addCriterionDateRangeFromTruncatedToDay("a."
+										+ parsedKey, (Date) filter);
 							}
 						} else if (key.contains("toRange-")) {
 							String parsedKey = key.substring(8);
 							if (filter instanceof Double) {
 								BigDecimal rationalNumber = new BigDecimal((Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber, true);
+								queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber,
+										true);
 							} else if (filter instanceof Number) {
 								queryBuilder.addCriterion("a." + parsedKey, " <= ", filter, true);
 							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filter);
+								queryBuilder.addCriterionDateRangeToTruncatedToDay(
+										"a." + parsedKey, (Date) filter);
 							}
 						} else if (key.contains("list-")) {
 							// if searching elements from list
 							String parsedKey = key.substring(5);
-							queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")",
-									parsedKey, filter);
+							queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a."
+									+ parsedKey + ")", parsedKey, filter);
 						}
 						// if not ranged search
 						else {
@@ -369,14 +383,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 								String filterString = (String) filter;
 								queryBuilder.addCriterionWildcard("a." + key, filterString, true);
 							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateTruncatedToDay("a." + key, (Date) filter);
+								queryBuilder.addCriterionDateTruncatedToDay("a." + key,
+										(Date) filter);
 							} else if (filter instanceof Number) {
 								queryBuilder.addCriterion("a." + key, " = ", filter, true);
 							} else if (filter instanceof Boolean) {
 								queryBuilder.addCriterion("a." + key, " is ", filter, true);
 							} else if (filter instanceof Enum) {
 								if (filter instanceof IdentifiableEnum) {
-									String enumIdKey = new StringBuilder(key).append("Id").toString();
+									String enumIdKey = new StringBuilder(key).append("Id")
+											.toString();
 									queryBuilder.addCriterion("a." + enumIdKey, " = ",
 											((IdentifiableEnum) filter).getId(), true);
 								} else {
@@ -409,10 +425,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		if (getCurrentProvider() != null) {
 			if (e instanceof BaseEntity) {
 				Provider provider = ((BaseEntity) e).getProvider();
-				boolean notSameProvider = !(provider != null && provider.getId().equals(getCurrentProvider().getId()));
-				log.debug("checkProvider  getCurrentProvider() id={0} code={1}, entityprovider id={2} code={3}",
+				boolean notSameProvider = !(provider != null && provider.getId().equals(
+						getCurrentProvider().getId()));
+				log.debug(
+						"checkProvider  getCurrentProvider() id={0} code={1}, entityprovider id={2} code={3}",
 						getCurrentProvider().getId(), getCurrentProvider().getCode(),
-						provider != null ? provider.getId() : null, provider != null ? provider.getCode() : null);
+						provider != null ? provider.getId() : null,
+						provider != null ? provider.getCode() : null);
 				if (notSameProvider) {
 					throw new ProviderNotAllowedException();
 				}

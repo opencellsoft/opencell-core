@@ -50,8 +50,7 @@
 				<ui:insert />
 			</e:sortableDataTable>
 
-			<p:panelGrid columns="2" rendered="#{checkMany}">
-				<p:commandButton id="#{formId}deleteEntitieslink"
+				<p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
 					value="#{messages['commons.deleteMultiple']}"
 					action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
 					onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"
@@ -62,7 +61,6 @@
 					<p:dataExporter type="xls" target="datatable" fileName="data"
 						pageOnly="false" />
 				</p:commandButton>
-			</p:panelGrid>
 
 			<p:panel>
 				<ui:insert name="add-on-buttons" />

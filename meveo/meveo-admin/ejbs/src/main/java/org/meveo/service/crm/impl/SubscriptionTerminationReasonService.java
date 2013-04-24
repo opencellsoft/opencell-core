@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -29,6 +30,7 @@ import org.meveo.service.base.PersistenceService;
  * Service SubscriptionTerminationReason implementation.
  * 
  */
+@Named
 @Stateless @LocalBean
 public class SubscriptionTerminationReasonService extends
 		PersistenceService<SubscriptionTerminationReason> {

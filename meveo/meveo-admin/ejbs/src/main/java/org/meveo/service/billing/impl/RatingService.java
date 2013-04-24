@@ -36,33 +36,30 @@ public class RatingService {
 
     @Inject
     protected Logger log;
-    
-    static HashMap<String,HashMap<String,List<PricePlanMatrix>>> allPricePlan;
 
-	private static final String WILCARD = "*";
+    static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
+
+    private static final String WILCARD = "*";
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
-	//used to rate a oneshot or recurring charge
-	public WalletOperation rateChargeApplication(String code, Subscription subscription,
-            ChargeInstance chargeInstance,
-            ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
-            BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
-            BigDecimal discountPercent, Date nextApplicationDate,
-            InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2,
-            String criteria3, Date startdate, Date endDate,ChargeApplicationModeEnum mode){
-		WalletOperation result = new WalletOperation();
-		if (subscription != null) {
-			result.setSubscriptionDate(subscription.getSubscriptionDate());
+    // used to rate a oneshot or recurring charge
+    public WalletOperation rateChargeApplication(String code, Subscription subscription, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
+            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
+            BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
+            Date endDate, ChargeApplicationModeEnum mode) {
+        WalletOperation result = new WalletOperation();
+        if (subscription != null) {
+            result.setSubscriptionDate(subscription.getSubscriptionDate());
         }
-		result.setOperationDate(applicationDate);
-		result.setParameter1(criteria1);
-		result.setParameter2(criteria2);
-		result.setParameter3(criteria3);
-		
+        result.setOperationDate(applicationDate);
+        result.setParameter1(criteria1);
+        result.setParameter2(criteria2);
+        result.setParameter3(criteria3);
+
         Provider provider = chargeInstance.getProvider();
         result.setProvider(provider);
         result.setChargeInstance(chargeInstance);
-        
+
         result.setWallet(subscription.getUserAccount().getWallet());
         result.setCode(code);
         result.setQuantity(quantity);
@@ -71,61 +68,61 @@ public class RatingService {
         result.setStartDate(startdate);
         result.setEndDate(endDate);
         result.setStatus(WalletOperationStatusEnum.OPEN);
-		
+
         BigDecimal unitPriceWithoutTax = amountWithoutTax;
         BigDecimal unitPriceWithTax = null;
         if (unitPriceWithoutTax != null) {
-        	unitPriceWithTax = amountWithTax;
-        } 
-        
-        Long sellerId =  subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
-        rateBareWalletOperation(result,unitPriceWithoutTax,unitPriceWithTax,countryId,tCurrency,sellerId,provider);
-        return result;
-		
-	}
-	
-	//used to rate or rerate a bareWalletOperation 
-	public void rateBareWalletOperation(WalletOperation bareWalletOperation,BigDecimal unitPriceWithoutTax,BigDecimal unitPriceWithTax,Long countryId,TradingCurrency tcurrency, Long sellerId,Provider provider){
+            unitPriceWithTax = amountWithTax;
+        }
 
-		PricePlanMatrix ratePrice=null;
-		String providerCode=provider.getCode();
+        Long sellerId = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
+        rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, sellerId, provider);
+        return result;
+
+    }
+
+    // used to rate or rerate a bareWalletOperation
+    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId,
+            TradingCurrency tcurrency, Long sellerId, Provider provider) {
+
+        PricePlanMatrix ratePrice = null;
+        String providerCode = provider.getCode();
 
         if (unitPriceWithoutTax == null) {
-        	if(allPricePlan==null){
-    			loadPricePlan();
-    		}
-        	if(!allPricePlan.containsKey(providerCode)){
-    			throw new RuntimeException("no price plan for provider "+providerCode);
-    		}
-    		if(!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())){
-    			throw new RuntimeException("no price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
-    		}
-        	ratePrice=ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()),bareWalletOperation,countryId,tcurrency,sellerId);
-            if (ratePrice == null ||  ratePrice.getAmountWithoutTax()==null) {
-            	throw new RuntimeException("invalid price plan for provider "+providerCode+" and charge code "+bareWalletOperation.getCode());
+            if (allPricePlan == null) {
+                loadPricePlan();
+            }
+            if (!allPricePlan.containsKey(providerCode)) {
+                throw new RuntimeException("no price plan for provider " + providerCode);
+            }
+            if (!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())) {
+                throw new RuntimeException("no price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
+            }
+            ratePrice = ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()), bareWalletOperation, countryId, tcurrency, sellerId);
+            if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
+                throw new RuntimeException("invalid price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
             } else {
-                log.info("found ratePrice:" + ratePrice.getId() + " priceHT=" + ratePrice.getAmountWithoutTax()
-                        + " priceTTC=" + ratePrice.getAmountWithTax());
+                log.info("found ratePrice:" + ratePrice.getId() + " priceHT=" + ratePrice.getAmountWithoutTax() + " priceTTC=" + ratePrice.getAmountWithTax());
                 unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
                 unitPriceWithTax = ratePrice.getAmountWithTax();
             }
         }
-       
+
         BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
         BigDecimal priceWithTax = null;
         BigDecimal amountTax = BigDecimal.ZERO;
         if (bareWalletOperation.getTaxPercent() != null) {
             amountTax = priceWithoutTax.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
         }
-        if(unitPriceWithTax==null){
-        	priceWithTax = priceWithoutTax.add(amountTax);
+        if (unitPriceWithTax == null) {
+            priceWithTax = priceWithoutTax.add(amountTax);
         } else {
-        	priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
+            priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
         }
-        
+
         if (provider.getRounding() != null && provider.getRounding() > 0) {
-        	priceWithoutTax = NumberUtils.round(priceWithoutTax, provider.getRounding());
-        	priceWithTax = NumberUtils.round(priceWithTax, provider.getRounding());
+            priceWithoutTax = NumberUtils.round(priceWithoutTax, provider.getRounding());
+            priceWithTax = NumberUtils.round(priceWithTax, provider.getRounding());
         }
 
         bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
@@ -134,99 +131,103 @@ public class RatingService {
         bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
         bareWalletOperation.setAmountWithTax(priceWithTax);
         bareWalletOperation.setAmountTax(amountTax);
-		
-	}
-	
-	
-	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency,Long sellerId) {
-		// FIXME: the price plan properties could be null !
-		for (PricePlanMatrix pricePlan : listPricePlan) {
-			boolean sellerAreEqual = pricePlan.getSeller()==null || sellerId==pricePlan.getSeller().getId();
-			if(sellerAreEqual){
-			    boolean countryAreEqual = pricePlan.getTradingCountry()==null || countryId==pricePlan.getTradingCountry().getId();
-			    if(countryAreEqual){
-			    	boolean currencyAreEqual = pricePlan.getTradingCurrency().getId()==null || (tcurrency!=null && tcurrency.getId()==pricePlan.getTradingCurrency().getId());
-				if(currencyAreEqual){
-			    	boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null
-				|| ((pricePlan.getStartSubscriptionDate() == null || bareOperation.getSubscriptionDate().after(pricePlan.getStartSubscriptionDate()) || bareOperation.getSubscriptionDate()
-						.equals(pricePlan.getStartSubscriptionDate())) && (pricePlan.getEndSubscriptionDate() == null || bareOperation.getSubscriptionDate().before(pricePlan
-								.getEndSubscriptionDate())));
-				if(subscriptionDateInPricePlanPeriod){
-					int subscriptionAge = 0;
-					if (bareOperation.getSubscriptionDate()!=null && bareOperation.getOperationDate() != null) {
-						//logger.info("subscriptionDate=" + bareOperation.getSubscriptionDate() + "->" + DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
-						subscriptionAge = DateUtils.monthsBetween(bareOperation.getOperationDate(), DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
-					}
-					log.debug("subscriptionAge=" + subscriptionAge);
-					boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-					log.debug("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" + subscriptionMinAgeOK);
-					if(subscriptionMinAgeOK){
-						boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
-						log.debug("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
 
-						if(subscriptionMaxAgeOK){
-						  boolean applicationDateInPricePlanPeriod = (pricePlan.getStartRatingDate() == null || bareOperation.getOperationDate().after(pricePlan.getStartRatingDate()) || bareOperation.getOperationDate()
-								.equals(pricePlan.getStartRatingDate())) && (pricePlan.getEndRatingDate() == null || bareOperation.getOperationDate().before(pricePlan.getEndRatingDate()));
-						  log.debug("applicationDateInPricePlanPeriod(" + pricePlan.getStartRatingDate() + " - " + pricePlan.getEndRatingDate() + ")="
-								+ applicationDateInPricePlanPeriod);
-						  if(applicationDateInPricePlanPeriod){
-							boolean criteria1SameInPricePlan = WILCARD.equals(pricePlan.getCriteria1Value())
-									|| (pricePlan.getCriteria1Value()!=null && pricePlan.getCriteria1Value().equals(bareOperation.getParameter1()))
-								|| ((pricePlan.getCriteria1Value() == null || "".equals(pricePlan
-													.getCriteria1Value())) && ("".equals(bareOperation.getParameter1()) || bareOperation.getParameter1() == null));
-							log.debug("criteria1SameInPricePlan("
-									+ pricePlan.getCriteria1Value() + ")="
-									+ criteria1SameInPricePlan);
-							if (criteria1SameInPricePlan) {
-								boolean criteria2SameInPricePlan = WILCARD.equals(pricePlan.getCriteria2Value())
-										|| (pricePlan.getCriteria2Value()!=null && pricePlan.getCriteria2Value().equals(bareOperation.getParameter2()))
-									|| ((pricePlan.getCriteria2Value() == null || "".equals(pricePlan
-														.getCriteria2Value())) && ("".equals(bareOperation.getParameter2()) || bareOperation.getParameter2() == null));
-								log.debug("criteria2SameInPricePlan("
-										+ pricePlan.getCriteria2Value() + ")="
-										+ criteria2SameInPricePlan);
-								if (criteria2SameInPricePlan) {
-									boolean criteria3SameInPricePlan = WILCARD.equals(pricePlan.getCriteria3Value())
-											|| (pricePlan.getCriteria3Value()!=null && pricePlan.getCriteria3Value().equals(bareOperation.getParameter3()))
-									|| ((pricePlan.getCriteria3Value() == null || "".equals(pricePlan
-															.getCriteria3Value())) && ("".equals(bareOperation.getParameter3()) || bareOperation.getParameter3() == null));
-									log.debug("criteria3SameInPricePlan("
-											+ pricePlan.getCriteria3Value()
-											+ ")=" + criteria3SameInPricePlan);
-									if (criteria3SameInPricePlan) {
-										return pricePlan;
-									}
-								}
-							}
-						  }
-						}
-					}
-				}
-				}
-			    }
-			    }
-			}
-		return null;
-	}
+    }
 
-	//FIXME : call this method when priceplan is edited (or more precisely add a button to reload the priceplan)
-    @SuppressWarnings("unchecked")
-	protected void loadPricePlan() {
-    	HashMap<String,HashMap<String,List<PricePlanMatrix>>> result = new HashMap<String,HashMap<String, List<PricePlanMatrix>>>();
-        List<PricePlanMatrix> allPricePlans =  (List<PricePlanMatrix>) em.createQuery("from PricePlanMatrix").getResultList();
-        if(allPricePlans!=null & allPricePlans.size()>0){
-        	for(PricePlanMatrix pricePlan : allPricePlans){
-            	if(!result.containsKey(pricePlan.getProvider().getCode())){
-            		result.put(pricePlan.getProvider().getCode(), new HashMap<String,List<PricePlanMatrix>>());
-            	}
-            	HashMap<String,List<PricePlanMatrix>> providerPricePlans = result.get(pricePlan.getProvider().getCode());
-            	if(!providerPricePlans.containsKey(pricePlan.getEventCode())){
-            		providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
-             		log.debug("Added pricePlan for provider="+pricePlan.getProvider().getCode()+" chargeCode="+pricePlan.getEventCode());
-            	}
-            	providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
-        	}
+    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId) {
+        // FIXME: the price plan properties could be null !
+        for (PricePlanMatrix pricePlan : listPricePlan) {
+            boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
+            if (!sellerAreEqual) {
+                continue;
+            }
+            boolean countryAreEqual = pricePlan.getTradingCountry() == null || pricePlan.getTradingCountry().getId().equals(countryId);
+            if (!countryAreEqual) {
+                continue;
+            }
+            boolean currencyAreEqual = pricePlan.getTradingCurrency() == null || (tcurrency != null && tcurrency.getId().equals(pricePlan.getTradingCurrency().getId()));
+            if (!currencyAreEqual) {
+                continue;
+            }
+            boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null
+                    || ((pricePlan.getStartSubscriptionDate() == null || bareOperation.getSubscriptionDate().after(pricePlan.getStartSubscriptionDate()) || bareOperation
+                        .getSubscriptionDate().equals(pricePlan.getStartSubscriptionDate())) && (pricePlan.getEndSubscriptionDate() == null || bareOperation.getSubscriptionDate()
+                        .before(pricePlan.getEndSubscriptionDate())));
+            if (!subscriptionDateInPricePlanPeriod) {
+                continue;
+            }
+
+            int subscriptionAge = 0;
+            if (bareOperation.getSubscriptionDate() != null && bareOperation.getOperationDate() != null) {
+                // logger.info("subscriptionDate=" + bareOperation.getSubscriptionDate() + "->" + DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
+                subscriptionAge = DateUtils.monthsBetween(bareOperation.getOperationDate(), DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
+            }
+            log.debug("subscriptionAge=" + subscriptionAge);
+            boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
+            log.debug("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" + subscriptionMinAgeOK);
+            if (!subscriptionMinAgeOK) {
+                continue;
+            }
+
+            boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
+            log.debug("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
+            if (!subscriptionMaxAgeOK) {
+                continue;
+            }
+
+            boolean applicationDateInPricePlanPeriod = (pricePlan.getStartRatingDate() == null || bareOperation.getOperationDate().after(pricePlan.getStartRatingDate()) || bareOperation
+                .getOperationDate().equals(pricePlan.getStartRatingDate()))
+                    && (pricePlan.getEndRatingDate() == null || bareOperation.getOperationDate().before(pricePlan.getEndRatingDate()));
+            log.error("applicationDateInPricePlanPeriod(" + pricePlan.getStartRatingDate() + " - " + pricePlan.getEndRatingDate() + ")=" + applicationDateInPricePlanPeriod);
+            if (!applicationDateInPricePlanPeriod) {
+                continue;
+            }
+            boolean criteria1SameInPricePlan = WILCARD.equals(pricePlan.getCriteria1Value())
+                    || (pricePlan.getCriteria1Value() != null && pricePlan.getCriteria1Value().equals(bareOperation.getParameter1()))
+                    || ((pricePlan.getCriteria1Value() == null || "".equals(pricePlan.getCriteria1Value())) && ("".equals(bareOperation.getParameter1()) || bareOperation
+                        .getParameter1() == null));
+            log.debug("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
+            if (!criteria1SameInPricePlan) {
+                continue;
+            }
+            boolean criteria2SameInPricePlan = WILCARD.equals(pricePlan.getCriteria2Value())
+                    || (pricePlan.getCriteria2Value() != null && pricePlan.getCriteria2Value().equals(bareOperation.getParameter2()))
+                    || ((pricePlan.getCriteria2Value() == null || "".equals(pricePlan.getCriteria2Value())) && ("".equals(bareOperation.getParameter2()) || bareOperation
+                        .getParameter2() == null));
+            log.debug("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
+            if (!criteria2SameInPricePlan) {
+                continue;
+            }
+            boolean criteria3SameInPricePlan = WILCARD.equals(pricePlan.getCriteria3Value())
+                    || (pricePlan.getCriteria3Value() != null && pricePlan.getCriteria3Value().equals(bareOperation.getParameter3()))
+                    || ((pricePlan.getCriteria3Value() == null || "".equals(pricePlan.getCriteria3Value())) && ("".equals(bareOperation.getParameter3()) || bareOperation
+                        .getParameter3() == null));
+            log.debug("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
+            if (criteria3SameInPricePlan) {
+                return pricePlan;
+            }
         }
-        allPricePlan=result;
+        return null;
+    }
+
+    // FIXME : call this method when priceplan is edited (or more precisely add a button to reload the priceplan)
+    @SuppressWarnings("unchecked")
+    protected void loadPricePlan() {
+        HashMap<String, HashMap<String, List<PricePlanMatrix>>> result = new HashMap<String, HashMap<String, List<PricePlanMatrix>>>();
+        List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery("from PricePlanMatrix").getResultList();
+        if (allPricePlans != null & allPricePlans.size() > 0) {
+            for (PricePlanMatrix pricePlan : allPricePlans) {
+                if (!result.containsKey(pricePlan.getProvider().getCode())) {
+                    result.put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
+                }
+                HashMap<String, List<PricePlanMatrix>> providerPricePlans = result.get(pricePlan.getProvider().getCode());
+                if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
+                    providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
+                    log.error("Added pricePlan for provider=" + pricePlan.getProvider().getCode() + " chargeCode=" + pricePlan.getEventCode());
+                }
+                providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
+            }
+        }
+        allPricePlan = result;
     }
 }
