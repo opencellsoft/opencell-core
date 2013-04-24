@@ -34,7 +34,7 @@
 			searchField1Label="#{messages['customer.code']}" searchField1="code"
 			column1Label="#{messages['customer.code']}" column1="code"
 			selection="#{customerAccountBean.entity.customer}"
-			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId:customerSelectId_text">
+			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:customerSelectId:customerSelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="customerAccCurrencyPopup"
@@ -47,7 +47,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{customerAccountBean.entity.tradingCurrency}"
-			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId:currencySelectId_text">
+			updateField=":parentTab:formCustomerAccountPanel:formCustomerAccount:childTab:currencySelectId:currencySelectId">
 		</hftl:entityPopup>
 
 		<p:panelGrid styleClass="col2-set">
