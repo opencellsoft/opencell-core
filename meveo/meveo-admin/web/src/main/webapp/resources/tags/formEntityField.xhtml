@@ -45,6 +45,7 @@
 </cc:interface>
 
 <cc:implementation>
+
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<p:panelGrid columns="2" rendered="#{cc.attrs.popup}">
 			<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}" />
@@ -62,6 +63,7 @@
 			</p:panelGrid>
 		</p:panelGrid>
 
+
 		<ui:fragment rendered="#{not cc.attrs.popup}">
 
 			<!-- if service is set, then load list of all entities from db and show as drop down list -->
@@ -74,10 +76,10 @@
 						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 						required="#{cc.attrs.required}">
 
-						<c:if test="#{empty cc.attrs.listElements}">
+						<c:if test="#{cc.attrs.listElements==null}">
 							<c:set var="elements" value="#{cc.attrs.listBean.listAll()}" />
 						</c:if>
-						<c:if test="#{!empty cc.attrs.listElements}">
+						<c:if test="#{cc.attrs.listElements!=null}">
 							<c:set var="elements" value="#{cc.attrs.listElements}" />
 						</c:if>
 						<f:selectItem itemLabel="" itemValue="" />
@@ -94,7 +96,6 @@
 			<!-- if service is not set, then just render fields for embedded entity -->
 			<ui:fragment
 				rendered="#{cc.attrs.listBean==null and cc.attrs.listElements==null}">
-
 				<hf:formField backingBean="#{cc.backingBeanFromParentOrCurrent}"
 					disabled="#{cc.attrs.disabled}" label="#{cc.attrs.label}"
 					entity="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
@@ -102,6 +103,7 @@
 					cols="#{cc.attrs.cols}" rows="#{cc.attrs.rows}"
 					maxlength="#{cc.attrs.maxlength}" time="#{cc.attrs.time}"
 					required="#{cc.attrs.required}"
+					edit="#{cc.attrs.edit}"
 					useConverter="#{cc.attrs.useConverter}"
 					validateUnique="#{cc.attrs.validateUnique}"
 					validateRib="#{cc.attrs.validateRib}"

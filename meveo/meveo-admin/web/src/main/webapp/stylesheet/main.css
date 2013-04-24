@@ -437,10 +437,16 @@ input[type="submit"],
 }
 .ui-button:hover .ui-button-icon-left
 {
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-1.png) !Important;
+}
+.ui-datatable  button.ui-state-hover .ui-icon,
+.body button.ui-state-hover .ui-icon-search
+{
   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
 }
 input[type="submit"]:hover,
-.ui-button:hover
+.ui-button:hover,
+.ui-datatable table .ui-button:hover
 {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
@@ -471,6 +477,7 @@ input[type="submit"]:hover
    font-family : helvetica;
    font-weight :bold;
 }
+
 /* UI WIDGET */
 .ui-widget
 {
@@ -482,7 +489,6 @@ input[type="submit"]:hover
   text-align : left;
   font-size : 14px;
   width : 100%;
-  height : 35px;
 }
 
 .search-panel .ui-widget-header td[role="columnheader"]
@@ -917,6 +923,18 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
   width : 99% !important;
   display : inline-block;
 }
+.col1-set >tbody > tr > td
+{
+  
+  width : 99% !Important;
+  display : inline-block;
+}
+.form-panel-fields > tbody >tr > td
+{
+  
+  width : 99% !Important;
+  display : inline-block;
+}
 .form-panel-fields .ui-tabs-panel > table >tbody > tr fieldset
 {
   width : 99%;
@@ -942,3 +960,10 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
 }
 
 .tab-view-container .ui-panel-titlebar { border: 0px; margin: 0px; padding: 10px 0px 0px 0px !important; vertical-align: middle !important; height: 28px; }
+.col1-set .ui-widget-header .ui-panelgrid-header, .tab-view-container .ui-panelgrid-header { border: none; margin: 0 0 10px 0; padding: 0px; }
+
+/**
+ * JSF Overrides
+ **************************************************************************/
+ .ui-tabs-panel { padding: 10px !important; }
+ .ui-tabs-panel .form-panel { margin: 0px !important; padding: 0px !important; }

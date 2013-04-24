@@ -21,20 +21,23 @@
 			<hf:formField label="#{messages['user.userName']}" field="userName"
 				required="true" validateUnique="true" useConverter="false" />
 			<p:commandLink value="#{messages['menutop.changePassword']}"
-				action="#{userBean.change()}" reRender="passwordPanel"
-				rendered="#{!(userBean.entity.id==null) and userBean.edit}" style="text-align:right;" />
+				action="#{userBean.change()}" update="passwordPanel"
+				rendered="#{!(userBean.entity.id==null) and userBean.edit}"
+				style="text-align:right;" />
 			<p:outputPanel id="passwordPanel">
 				<p:panelGrid id="panel" columns="2"
 					rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
-					<p:outputLabel for="password" value="#{messages['user.password']}"></p:outputLabel>
-					<p:password autocomplete="off" id="password"
-						value="#{userBean.password}" required="true">
-					</p:password>
-					<p:outputLabel for="repeatedPassword"
-						value="#{messages['user.repeatedPassword']}">
-					</p:outputLabel>
-					<p:password id="repeatedPassword"
-						value="#{userBean.repeatedPassword}" autocomplete="off"></p:password>
+					<hftl:panelGroup columns="2">
+						<p:outputLabel for="password" value="#{messages['user.password']}"></p:outputLabel>
+						<p:password autocomplete="off" id="password"
+							value="#{userBean.password}" required="true">
+						</p:password>
+						<p:outputLabel for="repeatedPassword"
+							value="#{messages['user.repeatedPassword']}">
+						</p:outputLabel>
+						<p:password id="repeatedPassword"
+							value="#{userBean.repeatedPassword}" autocomplete="off"></p:password>
+					</hftl:panelGroup>
 				</p:panelGrid>
 			</p:outputPanel>
 			<hf:formField label="#{messages['user.roles']}" field="roles"

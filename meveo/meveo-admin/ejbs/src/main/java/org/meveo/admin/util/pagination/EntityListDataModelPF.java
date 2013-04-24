@@ -68,14 +68,6 @@ public class EntityListDataModelPF<T extends IEntity> extends ListDataModel<T> i
     }
 
     public T[] getSelectedItems() {
-        System.out.println("AKK selectedItems is " + selectedItems);
-        if (selectedItems != null) {
-            System.out.println("AKK selectedItems length is " + selectedItems.length);
-            for (int i = 0; i < selectedItems.length; i++) {
-                T item = selectedItems[i];
-                System.out.println("AKK item selected is " + item.getClass().toString());
-            }
-        }
         return selectedItems;
     }
 

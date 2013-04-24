@@ -129,41 +129,25 @@
 			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
-		<p:dialog id="serviceTerminationPopup"
-			header="#{messages['serviceTerminationPopup.title']}"
-			widgetVar="dlg_serviceTerminationPopup" dynamic="true">
-			<a:outputPanel id="terminationPanel">
-				<hf:formPanel edit="true"
-					label="#{messages['serviceTerminationPopup.title']}"
-					backingBean="#{subscriptionBean}"
-					entity="#{subscriptionBean.selectedServiceInstance}"
-					styleClass="formPanel" formId="subscTermFrm"
-					showFormButtons="false" killConversationOnSave="false"
-					killConversationOnBack="false" useCustomIdParam="true">
-					<hftl:panelGroup columns="2">
-						<hf:formField label="#{messages['serviceInstance.code']}"
-							field="code" size="50" edit="false" />
-					</hftl:panelGroup>
-					<hftl:panelGroup columns="2">
-						<hf:formField
-							label="#{messages['serviceInstance.terminationDate']}"
-							field="terminationDate" required="true" />
-					</hftl:panelGroup>
-					<hftl:panelGroup columns="2">
-						<hf:formEntityField label="Motif "
-							field="subscriptionTerminationReason" childField="description"
-							required="true" popup="false"
+		<p:dialog id="serviceTerminationPopup" header="#{messages['serviceTerminationPopup.title']}" widgetVar="dlg_serviceTerminationPopup" dynamic="false" width="400">
+			<p:outputPanel id="terminationPanel">
+				<hf:formPanel edit="true" label="#{messages['serviceTerminationPopup.title']}" backingBean="#{subscriptionBean}"
+					entity="#{subscriptionBean.selectedServiceInstance}" styleClass="formPanel" formId="subscTermFrm" showFormButtons="false"
+					killConversationOnSave="false" killConversationOnBack="false" useCustomIdParam="true">
+					<p:panelGrid columns="1">
+						<hf:formField label="#{messages['serviceInstance.code']}" field="code" size="50" edit="false" />
+						<hf:formField label="#{messages['serviceInstance.terminationDate']}" field="terminationDate" required="true" edit="true" />
+						<hf:formEntityField label="Motifs " field="subscriptionTerminationReason" childField="description" required="true" popup="false" edit="true"
 							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
 
-					</hftl:panelGroup>
-					<h:commandButton action="#{subscriptionBean.terminateService()}"
-						value="#{messages['button.terminateButton']}"
-						onclick="dlg_serviceTerminationPopup.hide()" />
-					<p:commandButton action="#{subscriptionBean.getQuantity()}"
-						immediate="true" ajax="true" onclick="dlg_serviceTerminationPopup.hide()"
-						value="#{messages['management.close']}" />
+						<p:panel>
+							<p:commandButton action="#{subscriptionBean.terminateService()}" value="#{messages['button.terminateButton']}"
+								onclick="dlg_serviceTerminationPopup.hide()" update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages" />
+							<p:commandButton immediate="true" onclick="dlg_serviceTerminationPopup.hide()" value="#{messages['management.close']}" />
+						</p:panel>
+					</p:panelGrid>
 				</hf:formPanel>
-			</a:outputPanel>
+			</p:outputPanel>
 		</p:dialog>
 
 		<p:panelGrid styleClass="col2-set">
@@ -181,7 +165,7 @@
 						<p:tabView id="subscriptionTab">
 							<p:tab id="serviceTab" title="#{messages['subscription.tab.services']}"
 								rendered="#{!subscriptionBean.edit}">
-								<hf:formPanel formId="headerInfo1"
+								<hf:formPanel id="headerInfo1Form" formId="headerInfo1"
 									backingBean="#{subscriptionBean}" showFormButtons="false"
 									styleClass="formPanel">
 									<hftl:panelGroup columns="3">
@@ -223,38 +207,40 @@
 										<hftl:column label="#{messages['serviceInstance.quantity']}"
 											field="quantity" showSortLinks="false" />
 										<hftl:column label="#{messages['serviceInstance.statusDate']}"
-											field="statusDate" showSortLinks="false" />
+											field="statusDate" showSortLinks="false" isDate="true" />
 										<hftl:column
 											label="#{messages['serviceInstance.description']}"
 											field="description" showSortLinks="false" />
 										<hftl:column
 											label="#{messages['serviceInstance.subscriptionDate']}"
-											field="subscriptionDate" showSortLinks="false" />
+											field="subscriptionDate" showSortLinks="false" isDate="true" />
 										<hftl:column
 											label="#{messages['serviceInstance.endAgrementDate']}"
-											field="endAgrementDate" showSortLinks="false" />
+											field="endAgrementDate" showSortLinks="false" isDate="true" />
 										<hftl:actionsColumn
 											editView="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
-											showSortLinks="false" />
+											showSortLinks="false" renderDeleteLink="false" />
 									</p:dataTable>
 								</h:form>
 								<p:outputPanel id="serviceInstOperations">
 									<h:form id="operationFrm">
 										<p:commandButton action="#{subscriptionBean.activateService}"
-											value="#{messages['button.activateButton']}"
+											value="#{messages['button.activateButton']}" ajax="true"
 											onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
+											update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages"
 											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />
 										<p:commandButton value="#{messages['button.terminateButton']}"
 											oncomplete="dlg_serviceTerminationPopup.show()"
 											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
-										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}"
-											value="#{messages['button.cancelButton']}"
-											onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
-										<p:commandButton ajax="false" action="#{subscriptionBean.suspendService}"
-											value="#{messages['button.suspendButton']}"
-											onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"
-											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
+<!-- 										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}" -->
+<!-- 											value="#{messages['button.cancelButton']}" -->
+<!-- 											onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}" -->
+<!-- 											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" /> -->
+<!-- 										<p:commandButton ajax="true" action="#{subscriptionBean.suspendService}" -->
+<!-- 											value="#{messages['button.suspendButton']}" -->
+<!-- 											onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}" -->
+<!-- 											update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages" -->
+<!-- 											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED' || subscriptionBean.selectedServiceInstance.status=='SUSPENDED'}" /> -->
 									</h:form>
 								</p:outputPanel>
 
@@ -676,7 +662,7 @@
 												field="code" />
 											<hftl:column
 												label="#{messages['chargeInstance.description']}"
-												field="description" isMessage="true" />
+												field="description" isMessage="false" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
 												field="amountWithoutTax" />
