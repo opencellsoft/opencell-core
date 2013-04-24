@@ -115,8 +115,8 @@
 									<hftl:panelGroup columns="1">
 										<hf:formField
 											label="#{messages['businessEntity.description']}"
-											field="description" id="description" showOnlyOnNew="true" useConverter="false"
-											size="70" maxlength="100" />
+											field="description" id="description" showOnlyOnNew="true"
+											useConverter="false" size="70" maxlength="100" />
 									</hftl:panelGroup>
 									<!-- <hftl:panelGroup columns="2">
 										<hf:formField
@@ -157,8 +157,7 @@
 									</hftl:panelGroup>
 
 									<h:panelGroup id="userNamePanel">
-										<h:panelGrid columns="2"
-											columnClasses="twoColGrid">
+										<h:panelGrid columns="2" columnClasses="twoColGrid">
 											<hf:formEntityField label="#{messages['name.lastName']}"
 												field="name" childField="lastName" popup="false"
 												maxlength="50" />
@@ -232,19 +231,19 @@
 						<p:commandButton action="#{userAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}"
 							onclick="if(confirm('#{messages['confirmationMessage.confirmTermination']}')){return true;}else{return false;}"
-							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-		<p:commandButton action="#{userAccountBean.cancelAccount()}"
+							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+						<p:commandButton action="#{userAccountBean.cancelAccount()}"
 							value="#{messages['button.cancelButton']}"
 							onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-		<p:commandButton action="#{userAccountBean.reactivateAccount()}"
+							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+						<p:commandButton action="#{userAccountBean.reactivateAccount()}"
 							value="#{messages['button.reactivateButton']}"
 							onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
-							disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />&nbsp;&nbsp;
-   	 	<p:commandButton
+							disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />
+						<p:commandButton type="button"
 							value="#{messages['walletOperationPopup.button']}"
-							onclick="dlg_walletOperationPopup.show());" />&nbsp;&nbsp;
-		<p:commandButton
+							onclick="dlg_walletOperationPopup.show();" />
+						<p:commandButton type="button"
 							value="#{messages['ratedTransactionInvoiced.button']}"
 							onclick="dlg_ratedTransactionsInvoicedPopup.show();" />
 						<!-- 							</custom:listPanel> -->
