@@ -657,9 +657,6 @@ INSERT INTO adm_messages VALUES (309, 0, false, '2013-04-17 16:02:54.632', NULL,
 INSERT INTO adm_messages VALUES (311, 0, false, '2013-04-17 16:04:43.499', NULL, 'Consommation Data (Turque)', 'TUR', 'InvoiceSubCategory_310', 1, 1, NULL);
 INSERT INTO adm_messages VALUES (312, 0, false, '2013-04-17 16:04:43.501', NULL, 'Consommation Data (Arabe)', 'ARA', 'InvoiceSubCategory_310', 1, 1, NULL);
 INSERT INTO adm_messages VALUES (313, 0, false, '2013-04-17 16:04:43.503', NULL, 'Consommation Data (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_310', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (332, 3, false, '2013-04-17 16:55:29.218', '2013-04-17 17:49:26.249', 'Exchange 2010 - souscription blackberry (Arabe)', 'ARA', 'ChargeTemplate_330', 1, 1, 1);
-INSERT INTO adm_messages VALUES (331, 3, false, '2013-04-17 16:55:29.217', '2013-04-17 17:49:26.26', 'Exchange 2010 - souscription blackberry (Turque)', 'TUR', 'ChargeTemplate_330', 1, 1, 1);
-INSERT INTO adm_messages VALUES (333, 3, false, '2013-04-17 16:55:29.22', '2013-04-17 17:49:26.266', 'Exchange 2010 - souscription blackberry (FranÃÂÃÂÃÂÃÂ§ais)', 'FRA', 'ChargeTemplate_330', 1, 1, 1);
 INSERT INTO adm_messages VALUES (357, 1, false, '2013-04-17 17:30:03.303', '2013-04-17 17:51:22.858', 'License d''accÃÂ©s Microsoft (Arabe)', 'ARA', 'ChargeTemplate_355', 1, 1, 1);
 INSERT INTO adm_messages VALUES (356, 1, false, '2013-04-17 17:30:03.301', '2013-04-17 17:51:22.869', 'License d''accÃÂ©s Microsoft (Turque)', 'TUR', 'ChargeTemplate_355', 1, 1, 1);
 INSERT INTO adm_messages VALUES (358, 1, false, '2013-04-17 17:30:03.304', '2013-04-17 17:51:22.875', 'License d''accÃÂ©s Microsoft (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_355', 1, 1, 1);
@@ -669,17 +666,17 @@ INSERT INTO adm_messages VALUES (340, 5, false, '2013-04-17 16:59:37.534', '2013
 INSERT INTO adm_messages VALUES (335, 2, false, '2013-04-17 16:57:37.13', '2013-04-17 17:50:27.068', 'Exchange 2010 Business', 'TUR', 'ChargeTemplate_334', 1, 1, 1);
 INSERT INTO adm_messages VALUES (336, 2, false, '2013-04-17 16:57:37.131', '2013-04-17 17:50:27.079', 'Exchange 2010 Business', 'ARA', 'ChargeTemplate_334', 1, 1, 1);
 INSERT INTO adm_messages VALUES (337, 2, false, '2013-04-17 16:57:37.133', '2013-04-17 17:50:27.085', 'Exchange 2010 Business', 'FRA', 'ChargeTemplate_334', 1, 1, 1);
-INSERT INTO adm_messages VALUES (343, 2, false, '2013-04-17 17:00:17.826', '2013-04-17 17:50:00.953', 'Exchange 2010 Premium', 'TUR', 'ChargeTemplate_342', 1, 1, 1);
-INSERT INTO adm_messages VALUES (344, 2, false, '2013-04-17 17:00:17.827', '2013-04-17 17:50:00.963', 'Exchange 2010 Premium', 'ARA', 'ChargeTemplate_342', 1, 1, 1);
 INSERT INTO adm_messages VALUES (347, 4, false, '2013-04-17 17:02:59.86', '2013-04-17 17:56:29.507', ' Option 3Go supplÃÂ©mentaire (Turque)', 'TUR', 'ChargeTemplate_346', 1, 1, 1);
 INSERT INTO adm_messages VALUES (348, 4, false, '2013-04-17 17:02:59.862', '2013-04-17 17:56:29.517', 'Option 3Go supplÃÂ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_346', 1, 1, 1);
-INSERT INTO adm_messages VALUES (345, 2, false, '2013-04-17 17:00:17.829', '2013-04-17 17:50:00.969', 'Exchange 2010 Premium', 'FRA', 'ChargeTemplate_342', 1, 1, 1);
 INSERT INTO adm_messages VALUES (339, 5, false, '2013-04-17 16:59:37.532', '2013-04-17 17:52:27.75', 'Option 1Go incluse (Turque)', 'TUR', 'ChargeTemplate_338', 1, 1, 1);
 INSERT INTO adm_messages VALUES (363, 0, false, '2013-04-17 17:41:03.568', NULL, 'Souscription Data (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_360', 1, 1, NULL);
 INSERT INTO adm_messages VALUES (381, 1, false, '2013-04-17 18:23:32.616', '2013-04-17 18:31:24.266', 'Microsoft Project 2013 (Turque)', 'TUR', 'ChargeTemplate_380', 1, 1, 1);
 INSERT INTO adm_messages VALUES (383, 1, false, '2013-04-17 18:23:32.62', '2013-04-17 18:31:24.272', 'Microsoft Project 2013 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_380', 1, 1, 1);
 INSERT INTO adm_messages VALUES (386, 1, false, '2013-04-17 18:25:07.046', '2013-04-17 18:31:45.272', 'Microsoft Visio 2013', 'ARA', 'ChargeTemplate_384', 1, 1, 1);
 INSERT INTO adm_messages VALUES (385, 1, false, '2013-04-17 18:25:07.044', '2013-04-17 18:31:45.282', 'Microsoft Visio 2013', 'TUR', 'ChargeTemplate_384', 1, 1, 1);
+INSERT INTO adm_messages VALUES (344, 3, false, '2013-04-17 17:00:17.827', '2013-04-23 23:12:41.124', 'Exchange 2010 Premium', 'ARA', 'ChargeTemplate_342', 1, 1, 1);
+INSERT INTO adm_messages VALUES (343, 3, false, '2013-04-17 17:00:17.826', '2013-04-23 23:12:41.141', 'Exchange 2010 Premium', 'TUR', 'ChargeTemplate_342', 1, 1, 1);
+INSERT INTO adm_messages VALUES (345, 3, false, '2013-04-17 17:00:17.829', '2013-04-23 23:12:41.163', 'Exchange 2010 Premium', 'FRA', 'ChargeTemplate_342', 1, 1, 1);
 INSERT INTO adm_messages VALUES (341, 5, false, '2013-04-17 16:59:37.536', '2013-04-17 17:52:27.756', 'Option 1Go incluse (FranÃ§ais)', 'FRA', 'ChargeTemplate_338', 1, 1, 1);
 INSERT INTO adm_messages VALUES (365, 2, false, '2013-04-17 17:46:34.024', '2013-04-17 17:53:21.456', 'Option 1Go supplÃ©mentaire (turque)', 'TUR', 'ChargeTemplate_364', 1, 1, 1);
 INSERT INTO adm_messages VALUES (366, 2, false, '2013-04-17 17:46:34.026', '2013-04-17 17:53:21.467', 'Option 1Go supplÃ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_364', 1, 1, 1);
@@ -708,6 +705,11 @@ INSERT INTO adm_messages VALUES (399, 1, false, '2013-04-17 18:28:56.874', '2013
 INSERT INTO adm_messages VALUES (401, 0, false, '2013-04-17 18:34:33.249', NULL, 'Option 1GB supplÃ©mentaire (Turque)', 'TUR', 'ChargeTemplate_400', 1, 1, NULL);
 INSERT INTO adm_messages VALUES (402, 0, false, '2013-04-17 18:34:33.252', NULL, 'Option 1GB supplÃ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_400', 1, 1, NULL);
 INSERT INTO adm_messages VALUES (403, 0, false, '2013-04-17 18:34:33.254', NULL, 'Option 1GB supplÃ©mentaire (FranÃ§ais)', 'FRA', 'ChargeTemplate_400', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (331, 4, false, '2013-04-17 16:55:29.217', '2013-04-23 23:11:57.842', 'Exchange 2010 - souscription blackberry (Turque)', 'TUR', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (332, 4, false, '2013-04-17 16:55:29.218', '2013-04-23 23:11:57.867', 'Exchange 2010 - souscription blackberry (Arabe)', 'ARA', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1054, 0, false, '2013-04-23 23:11:57.887', NULL, NULL, 'DEU', 'ChargeTemplate_330', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (333, 4, false, '2013-04-17 16:55:29.22', '2013-04-23 23:11:57.916', 'Exchange 2010 - souscription blackberry (FranÃÂÃÂÃÂÃÂ§ais)', 'FRA', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1055, 0, false, '2013-04-23 23:12:41.151', NULL, NULL, 'DEU', 'ChargeTemplate_342', 1, 1, NULL);
 
 
 --
@@ -1063,6 +1065,7 @@ SELECT pg_catalog.setval('bi_report_seq', 1, false);
 
 INSERT INTO cat_calendar VALUES (318, 1, false, '2013-04-17 16:14:22.094', '2013-04-17 17:09:51.689', 'Monthly subscription calendar', 'CAL_SUB_MT', 'DURATION_TERM', 1, 1, 1);
 INSERT INTO cat_calendar VALUES (1041, 0, false, '2013-04-23 20:31:30.257', NULL, 'Monthly invoicing calendar', 'CAL_INV_MT', 'BILLING', 1, 1, NULL);
+INSERT INTO cat_calendar VALUES (1053, 0, false, '2013-04-23 23:11:26.363', NULL, 'Monthly valorisation calendar', 'CAL_VAL_MT', 'CHARGE_IMPUTATION', 1, 1, NULL);
 
 
 --
@@ -1135,21 +1138,22 @@ INSERT INTO cat_charge_template VALUES (384, 2, false, '2013-04-17 18:25:07.04',
 INSERT INTO cat_charge_template VALUES (388, 2, false, '2013-04-17 18:26:14.521', '2013-04-17 18:32:09.255', 'MSH2010_SOFT', 'Microsoft Sharepoint 2010', false, 0, 1, 1, 1, 302);
 INSERT INTO cat_charge_template VALUES (392, 2, false, '2013-04-17 18:27:28.164', '2013-04-17 18:32:25.173', 'MLYNC2010_SOFT', 'Microsoft Lync 2010', false, 0, 1, 1, 1, 302);
 INSERT INTO cat_charge_template VALUES (396, 2, false, '2013-04-17 18:28:56.867', '2013-04-17 18:32:40.75', 'MDYCRM2011_SOFT', 'Microsoft Dynamics CRM 2011', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (330, 6, false, '2013-04-17 16:55:29.213', '2013-04-17 17:49:26.267', 'EXCH20102_SOFT_BLACK', 'Exchange 2010 - Blackberry subscription', false, 0, 1, 1, 1, 302);
 INSERT INTO cat_charge_template VALUES (400, 0, false, '2013-04-17 18:34:33.246', NULL, 'MSOFT_DATA', '1GB Additional Storage Option', false, 0, 1, 1, NULL, 360);
-INSERT INTO cat_charge_template VALUES (342, 4, false, '2013-04-17 17:00:17.822', '2013-04-17 17:50:00.97', 'EXCH20102_SOFT', 'Exchange 2010 Premium', false, 0, 1, 1, 1, 302);
 INSERT INTO cat_charge_template VALUES (334, 4, false, '2013-04-17 16:57:37.126', '2013-04-17 17:50:27.085', 'EXCH20101_SOFT', 'Exchange 2010 Business', false, 0, 1, 1, 1, 302);
 INSERT INTO cat_charge_template VALUES (355, 2, false, '2013-04-17 17:30:03.298', '2013-04-17 17:51:22.876', 'MALIC_SOFT', 'Microsoft Access License', false, 0, 1, 1, 1, 302);
 INSERT INTO cat_charge_template VALUES (338, 10, false, '2013-04-17 16:59:37.528', '2013-04-17 17:52:27.756', 'EXCH20101_DATA_1G', '1Go  comp. Option', false, 0, 1, 1, 1, 360);
 INSERT INTO cat_charge_template VALUES (364, 4, false, '2013-04-17 17:46:34.02', '2013-04-17 17:53:21.473', 'EXCH20101_DATA_1G+', '1Go Additional Storage Option', false, 0, 1, 1, 1, 360);
 INSERT INTO cat_charge_template VALUES (346, 10, false, '2013-04-17 17:02:59.858', '2013-04-17 17:56:29.523', 'EXCH20102_DATA_3G+', '3Go Additional Storage Option', false, 0, 1, 1, 1, 360);
 INSERT INTO cat_charge_template VALUES (368, 5, false, '2013-04-17 17:57:34.058', '2013-04-17 17:58:59.219', 'EXCH20102_DATA_2G', '2Go comp. Option', false, 0, 1, 1, 1, 360);
+INSERT INTO cat_charge_template VALUES (330, 8, false, '2013-04-17 16:55:29.213', '2013-04-23 23:11:57.917', 'EXCH20102_SOFT_BLACK', 'Exchange 2010 - Blackberry subscription', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (342, 6, false, '2013-04-17 17:00:17.822', '2013-04-23 23:12:41.164', 'EXCH20102_SOFT', 'Exchange 2010 Premium', false, 0, 1, 1, 1, 302);
 
 
 --
 -- Data for Name: billing_charge_instance; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_charge_instance VALUES (1052, 0, false, '2013-04-23 23:08:36.893', NULL, 'EXCH20102_SOFT_BLACK', 'Exchange 2010 - Blackberry subscription', NULL, NULL, '2013-04-23', NULL, NULL, NULL, NULL, 'INACTIVE', '2013-04-23 23:08:36.893', NULL, 1, 1, NULL, 330);
 
 
 --
@@ -1302,6 +1306,7 @@ SELECT pg_catalog.setval('billing_invoice_seq', 1, false);
 --
 
 INSERT INTO billing_invoice_sub_cat_country VALUES (314, 0, false, '2013-04-17 16:05:39.423', NULL, NULL, 1, 1, NULL, 298, 282, 156);
+INSERT INTO billing_invoice_sub_cat_country VALUES (1056, 0, false, '2013-04-23 23:17:04.361', NULL, NULL, 1, 1, NULL, 302, 286, 157);
 
 
 --
@@ -1352,13 +1357,13 @@ INSERT INTO cat_offer_template VALUES (329, 0, false, '2013-04-17 16:44:03.371',
 INSERT INTO cat_offer_template VALUES (325, 2, false, '2013-04-17 16:34:53.862', '2013-04-17 18:03:43.692', 'SH2010', 'Microsoft Sharepoint 2010', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (321, 2, false, '2013-04-17 16:22:36.363', '2013-04-17 18:04:00.844', 'MO20131', 'Microsoft Office 2013 Standard', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (322, 2, false, '2013-04-17 16:23:15.217', '2013-04-17 18:04:30.066', 'MO20132', 'Microsoft Office 2013 Professional', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (327, 1, false, '2013-04-17 16:41:35.892', '2013-04-17 18:05:01.011', 'DYCRM2011', 'Microsoft Dynamics CRM 2011', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (324, 2, false, '2013-04-17 16:33:09.26', '2013-04-17 18:05:13.584', 'PR20131', 'Microsoft Project 2013', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (320, 2, false, '2013-04-17 16:21:34.911', '2013-04-17 18:05:30.146', 'EXCH20102', 'Exchange 2010 Premium', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (319, 2, false, '2013-04-17 16:19:19.305', '2013-04-17 18:05:52.963', 'EXCH20101', 'Exchange 2010 Business', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (326, 1, false, '2013-04-17 16:40:44.701', '2013-04-17 18:06:05.506', 'LYNC2010', 'Microsoft Lync 2010', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (323, 2, false, '2013-04-17 16:32:17.864', '2013-04-17 18:06:17.937', 'VI20131', 'Microsoft Visio 2013', 1, 1, 1);
 INSERT INTO cat_offer_template VALUES (328, 1, false, '2013-04-17 16:43:03.925', '2013-04-17 18:06:36.368', 'FASTVIEWER', 'Fastviewer', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (327, 2, false, '2013-04-17 16:41:35.892', '2013-04-23 23:07:15.796', 'DYCRM2011', 'Microsoft Dynamics CRM 2011', 1, 1, 1);
 
 
 --
@@ -1382,6 +1387,7 @@ INSERT INTO cat_service_template VALUES (359, 1, false, '2013-04-17 17:32:56.416
 -- Data for Name: billing_service_instance; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_service_instance VALUES (1051, 0, false, '2013-04-23 23:08:36.827', NULL, 'SOFT_EXCH_2010_2_BLACK', 'Exchange 2010 Premium - Blackberry option', NULL, 1, 'INACTIVE', '2013-04-23 23:08:36.827', '2013-04-23 00:00:36.76', NULL, 1, 1, NULL, 354, 1049, NULL);
 
 
 --
@@ -1439,10 +1445,8 @@ SELECT pg_catalog.setval('billing_rated_transaction_seq', 1, false);
 -- Data for Name: cat_recurring_charge_templ; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 330, NULL);
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 334, NULL);
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 338, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 342, NULL);
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 346, NULL);
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 355, NULL);
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 364, NULL);
@@ -1455,12 +1459,15 @@ INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 392, NULL);
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 396, NULL);
 INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 400, NULL);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 330, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 342, 1053);
 
 
 --
 -- Data for Name: billing_recurring_charge_inst; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_recurring_charge_inst VALUES (NULL, '2013-04-23 00:00:36.76', 1052, 330, 1051, 1049);
 
 
 --
@@ -1938,6 +1945,8 @@ INSERT INTO cat_calendar_days VALUES (1041, 801);
 INSERT INTO cat_calendar_days VALUES (1041, 901);
 INSERT INTO cat_calendar_days VALUES (1041, 1001);
 INSERT INTO cat_calendar_days VALUES (1041, 1101);
+INSERT INTO cat_calendar_days VALUES (1053, 1);
+INSERT INTO cat_calendar_days VALUES (1053, 101);
 
 
 --
@@ -1985,6 +1994,7 @@ SELECT pg_catalog.setval('cat_discount_plan_matrix_seq', 1, false);
 -- Data for Name: cat_offer_serv_templates; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO cat_offer_serv_templates VALUES (327, 354);
 
 
 --
@@ -2010,6 +2020,7 @@ SELECT pg_catalog.setval('cat_offer_template_seq', 6, true);
 -- Data for Name: cat_price_plan_matrix; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO cat_price_plan_matrix VALUES (1057, 3, false, '2013-04-23 23:19:23.773', '2013-04-24 07:19:47.174', 12.000000000000, 10.000000000000, NULL, '*', '*', '*', NULL, '2013-08-31 00:00:00', 'EXCH20102_SOFT', 0, 0, '2013-04-01 00:00:00', '2013-04-01 00:00:00', 1, 1, 1, 1043, 157, 145);
 
 
 --
@@ -2285,7 +2296,7 @@ SELECT pg_catalog.setval('dwh_sales_seq', 1, false);
 -- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('hibernate_sequence', 1049, true);
+SELECT pg_catalog.setval('hibernate_sequence', 1057, true);
 
 
 --
