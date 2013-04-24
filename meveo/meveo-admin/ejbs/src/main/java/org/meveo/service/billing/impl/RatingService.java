@@ -17,6 +17,7 @@ import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
@@ -37,19 +38,25 @@ public class RatingService {
     @Inject
     protected Logger log;
 
-    static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
+    private static boolean isPricePlanDirty;
+    private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
 
     private static final String WILCARD = "*";
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
+    public static void setPricePlanDirty(){
+    	isPricePlanDirty=true;
+    }
+    
     // used to rate a oneshot or recurring charge
     public WalletOperation rateChargeApplication(String code, Subscription subscription, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
             BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
             BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
             Date endDate, ChargeApplicationModeEnum mode) {
         WalletOperation result = new WalletOperation();
-        if (subscription != null) {
-            result.setSubscriptionDate(subscription.getSubscriptionDate());
+        if (chargeInstance instanceof RecurringChargeInstance) {
+            result.setSubscriptionDate(((RecurringChargeInstance)chargeInstance).getServiceInstance()
+					.getSubscriptionDate());
         }
         result.setOperationDate(applicationDate);
         result.setParameter1(criteria1);
@@ -91,6 +98,8 @@ public class RatingService {
         if (unitPriceWithoutTax == null) {
             if (allPricePlan == null) {
                 loadPricePlan();
+            } else if(isPricePlanDirty){
+            	reloadPricePlan();
             }
             if (!allPricePlan.containsKey(providerCode)) {
                 throw new RuntimeException("no price plan for provider " + providerCode);
@@ -208,6 +217,16 @@ public class RatingService {
             }
         }
         return null;
+    }
+    
+
+    //synchronized to avoid different threads to reload the priceplan concurrently
+    protected synchronized void reloadPricePlan() {
+    		if(isPricePlanDirty){
+    			log.info("Reload priceplan");
+        		loadPricePlan();
+        		isPricePlanDirty=false;
+        	}
     }
 
     // FIXME : call this method when priceplan is edited (or more precisely add a button to reload the priceplan)
