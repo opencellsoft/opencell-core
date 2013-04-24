@@ -365,12 +365,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 					chargeInstance.getCriteria3(), applicationDate, DateUtils.addDaysToDate(
 							nextapplicationDate, -1),null);
-			// one customer want the charge subrscription date to be the date
-			// the charge
-			// was
-			// activated
-			chargeApplication.setSubscriptionDate(chargeInstance.getServiceInstance()
-					.getSubscriptionDate());
 
 			create(chargeApplication, creator, chargeInstance.getProvider());
 
