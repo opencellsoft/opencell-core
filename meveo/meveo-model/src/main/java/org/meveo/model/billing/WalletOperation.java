@@ -37,6 +37,7 @@ import javax.persistence.TemporalType;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
 //import org.meveo.model.rating.EDR;
+import org.meveo.model.admin.Seller;
 
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
@@ -125,6 +126,10 @@ public class WalletOperation extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
     private WalletOperationStatusEnum status;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SELLER_ID")
+    private Seller seller;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -301,5 +306,15 @@ public class WalletOperation extends BusinessEntity {
 	public void setSubscriptionDate(Date subscriptionDate) {
 		this.subscriptionDate = subscriptionDate;
 	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+	
+	
     
 }

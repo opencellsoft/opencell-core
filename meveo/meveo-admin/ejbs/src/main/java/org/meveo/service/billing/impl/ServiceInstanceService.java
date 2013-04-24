@@ -207,6 +207,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             recurringChargeInstanceService.recurringChargeApplication(recurringChargeInstance, creator);
             recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
             recurringChargeInstance.setStatusDate(new Date());
+            recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
             recurringChargeInstanceService.update(recurringChargeInstance);
             if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
                 if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {

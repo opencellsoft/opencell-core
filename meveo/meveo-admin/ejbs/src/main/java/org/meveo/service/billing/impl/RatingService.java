@@ -75,22 +75,21 @@ public class RatingService {
         result.setStartDate(startdate);
         result.setEndDate(endDate);
         result.setStatus(WalletOperationStatusEnum.OPEN);
-
+        result.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         BigDecimal unitPriceWithoutTax = amountWithoutTax;
         BigDecimal unitPriceWithTax = null;
         if (unitPriceWithoutTax != null) {
             unitPriceWithTax = amountWithTax;
         }
 
-        Long sellerId = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller().getId();
-        rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency, sellerId, provider);
+        rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency,  provider);
         return result;
 
     }
 
     // used to rate or rerate a bareWalletOperation
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId,
-            TradingCurrency tcurrency, Long sellerId, Provider provider) {
+            TradingCurrency tcurrency,Provider provider) {
 
         PricePlanMatrix ratePrice = null;
         String providerCode = provider.getCode();
@@ -107,7 +106,7 @@ public class RatingService {
             if (!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())) {
                 throw new RuntimeException("no price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
             }
-            ratePrice = ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()), bareWalletOperation, countryId, tcurrency, sellerId);
+            ratePrice = ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()), bareWalletOperation, countryId, tcurrency, bareWalletOperation.getSeller()!=null?bareWalletOperation.getSeller().getId():null);
             if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
                 throw new RuntimeException("invalid price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
             } else {
