@@ -40,109 +40,107 @@ import org.slf4j.Logger;
 @Model
 public class ChangePasswordAction implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    protected Logger log;
+	protected Logger log;
 
-    @Inject
-    private Identity identity;
+	@Inject
+	private Identity identity;
 
-    @Inject
-    private UserService userService;
+	@Inject
+	private UserService userService;
 
-    @Inject
-    protected Messages messages;
+	@Inject
+	protected Messages messages;
 
-    private String username;
+	private String username;
 
-    private String currentPassword;
+	private String currentPassword;
 
-    private String newPassword;
+	private String newPassword;
 
-    private String newPasswordConfirmation;
+	private String newPasswordConfirmation;
 
-    public String update() {
+	public String update() {
 
-        User currentUser = null;
-        if (identity.isLoggedIn()) {
-            currentUser = userService.findById(((MeveoUser) identity.getUser()).getUser().getId());
+		User currentUser = null;
+		if (identity.isLoggedIn()) {
+			currentUser = userService.findById(((MeveoUser) identity.getUser()).getUser().getId());
 
-        } else {
-            try {
-                currentUser = userService.loginChecks(username, currentPassword, true);
+		} else {
+			try {
+				currentUser = userService.loginChecks(username, currentPassword, true);
 
-            } catch (LoginException e) {
-                messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
-                return null;
-            }
-        }
+			} catch (LoginException e) {
+				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
+				return null;
+			}
+		}
 
-        if (validate(currentUser)) {
-            try {
-                userService.changePassword(currentUser, newPassword);
+		if (validate(currentUser)) {
+			try {
+				userService.changePassword(currentUser, newPassword);
 
-            } catch (BusinessException e) {
-                log.error("Error when update the password of #{currentUser.username} with password=" + currentPassword);
-                messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
-                return null;
-            }
-            messages.info(new BundleKey("messages", "changePassword.msg.passwordChanged"));
-            return "/home.xhtml?faces-redirect=true";
+			} catch (BusinessException e) {
+				log.error("Error when update the password of #{currentUser.username} with password="
+						+ currentPassword);
+				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
+				return null;
+			}
+			messages.info(new BundleKey("messages", "changePassword.msg.passwordChanged"));
+			return "/home.xhtml?faces-redirect=true";
+		}
+		return null;
+	}
 
-        } else {
-            return null;
-        }
+	private boolean validate(User currentUser) {
+		if (!Sha1Encrypt.encodePassword(currentPassword).equals(currentUser.getPassword())) {
+			messages.error(new BundleKey("messages", "changePassword.err.currentPasswordIncorrect"));
+			return false;
+		}
 
-    }
+		if (Sha1Encrypt.encodePassword(newPassword).equals(currentUser.getPassword())) {
+			messages.error(new BundleKey("messages", "changePassword.err.passwordMustBeDifferent"));
+			return false;
+		}
 
-    private boolean validate(User currentUser) {
-        if (!Sha1Encrypt.encodePassword(currentPassword).equals(currentUser.getPassword())) {
-            messages.error(new BundleKey("messages", "changePassword.err.currentPasswordIncorrect"));
-            return false;
-        }
+		if (!StringUtils.equals(newPassword, newPasswordConfirmation)) {
+			messages.error(new BundleKey("messages", "changePassword.err.confirmationFailed"));
+			return false;
+		}
 
-        if (Sha1Encrypt.encodePassword(newPassword).equals(currentUser.getPassword())) {
-            messages.error(new BundleKey("messages", "changePassword.err.passwordMustBeDifferent"));
-            return false;
-        }
+		return true;
+	}
 
-        if (!StringUtils.equals(newPassword, newPasswordConfirmation)) {
-            messages.error(new BundleKey("messages", "changePassword.err.confirmationFailed"));
-            return false;
-        }
+	public String getCurrentPassword() {
+		return currentPassword;
+	}
 
-        return true;
-    }
+	public void setCurrentPassword(String currentPassword) {
+		this.currentPassword = currentPassword;
+	}
 
-    public String getCurrentPassword() {
-        return currentPassword;
-    }
+	public String getNewPassword() {
+		return newPassword;
+	}
 
-    public void setCurrentPassword(String currentPassword) {
-        this.currentPassword = currentPassword;
-    }
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
 
-    public String getNewPassword() {
-        return newPassword;
-    }
+	public String getNewPasswordConfirmation() {
+		return newPasswordConfirmation;
+	}
 
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
+	public void setNewPasswordConfirmation(String newPasswordConfirmation) {
+		this.newPasswordConfirmation = newPasswordConfirmation;
+	}
 
-    public String getNewPasswordConfirmation() {
-        return newPasswordConfirmation;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public void setNewPasswordConfirmation(String newPasswordConfirmation) {
-        this.newPasswordConfirmation = newPasswordConfirmation;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 }
