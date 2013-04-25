@@ -19,7 +19,8 @@
 <cc:implementation>
 
 	<p:commandButton value="#{cc.attrs.label}" process="@this"
-		update="@form" action="#{cc.attrs.resetAction}">
+		rendered="#{cc.attrs.edit}" update="@form"
+		action="#{cc.attrs.resetAction}">
 		<f:actionListener
 			type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 		<f:param name="edit" value="true" rendered="#{cc.attrs.edit}" />
