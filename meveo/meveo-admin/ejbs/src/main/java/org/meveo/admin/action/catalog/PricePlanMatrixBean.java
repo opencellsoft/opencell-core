@@ -29,8 +29,10 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.primefaces.event.SelectEvent;
 
 /**
- * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link PricePlanMatrix} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Nov 29, 2010
@@ -40,64 +42,70 @@ import org.primefaces.event.SelectEvent;
 @ConversationScoped
 public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link PricePlanMatrix} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
+	/**
+	 * Injected @{link PricePlanMatrix} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private PricePlanMatrixService pricePlanMatrixService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public PricePlanMatrixBean() {
-        super(PricePlanMatrix.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public PricePlanMatrixBean() {
+		super(PricePlanMatrix.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-   
-    public PricePlanMatrix initEntity() {
-        return super.initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
 
-    /**
-     * Override default list view name. (By default its class name starting lower case + 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "pricePlanMatrixes";
-    }
+	public PricePlanMatrix initEntity() {
+		PricePlanMatrix obj = super.initEntity();
+		obj.setMinSubscriptionAgeInMonth(0L);
+		obj.setMaxSubscriptionAgeInMonth(99L);
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<PricePlanMatrix> getPersistenceService() {
-        return pricePlanMatrixService;
-    }
-    
-    @Override
-    protected String getListViewName() {
-    	 return "pricePlanMatrixes";
-    }
-    
-    public void onRowSelect(SelectEvent event){  
-    	System.out.println("onRowSelect : event.getObject()");
-    	if(event.getObject() instanceof ChargeTemplate){
-    		ChargeTemplate chargeTemplate = (ChargeTemplate)event.getObject();  
-    		System.out.println("onRowSelect chargeTemplate:"+ chargeTemplate.getCode());
-    		if (chargeTemplate != null) {
-    			entity.setEventCode(chargeTemplate.getCode());
-    		}
-    	}
-    	
-    } 
+		return obj;
+	}
+
+	/**
+	 * Override default list view name. (By default its class name starting
+	 * lower case + 's').
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 */
+	protected String getDefaultViewName() {
+		return "pricePlanMatrixes";
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<PricePlanMatrix> getPersistenceService() {
+		return pricePlanMatrixService;
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "pricePlanMatrixes";
+	}
+
+	public void onRowSelect(SelectEvent event) {
+		if (event.getObject() instanceof ChargeTemplate) {
+			ChargeTemplate chargeTemplate = (ChargeTemplate) event.getObject();
+			if (chargeTemplate != null) {
+				entity.setEventCode(chargeTemplate.getCode());
+			}
+		}
+
+	}
 
 }

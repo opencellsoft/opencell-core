@@ -5,78 +5,88 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{customerAccountBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
 	<ui:define name="body">
-		<custom:entityPopup id="customerAccountPopup"
-				header="#{messages['customerAccount.popup.header']}"
-				backingBean="#{customerAccountBean}" dataModel="#{customerAccounts}"
-				searchField1Label="#{messages['customerAccount.code']}"
-				searchField1="code"
-				searchField2Label="#{messages['customerAccount.name']}"
-				searchField2="name"
-				column1Label="#{messages['customerAccount.code']}" column1="code"
-				column2Label="#{messages['customerAccount.name']}" column2="name" 
-				filtersMap="#{customerAccountBean.filters}"	>
+		<hftl:entityPopup id="customerAccountPopup"
+			header="#{messages['customerAccount.popup.header']}"
+			backingBean="#{customerAccountBean}"
+			searchField1Label="#{messages['customerAccount.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['customerAccount.name']}"
+			searchField2="name"
+			column1Label="#{messages['customerAccount.code']}" column1="code"
+			column2Label="#{messages['customerAccount.name']}" column2="name"
+			filtersMap="#{customerAccountBean.filters}">
 			<!-- select link -->
-			<a:commandLink value="#{messages['commons.select']}"
-					reRender="transferAccountForm" 
-					action="#{customerAccountBean.setCustomerAccountTransfer(entity)}"
-					oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
-			</a:commandLink>
-		</custom:entityPopup>
-		<rich:panel>
+			<!-- <a:commandLink value="#{messages['commons.select']}"
+				reRender="transferAccountForm"
+				action="#{customerAccountBean.setCustomerAccountTransfer(entity)}"
+				oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
+			</a:commandLink> -->
+		</hftl:entityPopup>
+
+		<p:panel styleClass="col1-set">
 			<f:facet name="header">
-				<h:outputText value="#{messages['customerAccount.transferAccountTitle']}" />
+				<h:outputText
+					value="#{messages['customerAccount.transferAccountTitle']}" />
 			</f:facet>
-		<a:form id="transferAccountForm" styleClass="mainForm">
-		
-			 <h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;">
-			 <s:decorate template="/layout/edit.xhtml">
-		    		<ui:define name="label">
-		    			<h:outputText value="#{messages['customerAccount.accountTransferFrom']}" />
-		    		</ui:define>
-			    	
-				    	<h:inputText  value="#{customerAccount.code}" disabled="true" size="30" />
-			        
-		       	</s:decorate>	
-				<s:decorate template="/layout/edit.xhtml">
-		    		<ui:define name="label">
-		    			<h:outputText value="#{messages['customerAccount.accountTransferTo']}" />
-		    		</ui:define>
-			    	<h:panelGrid columns="2">
-				    	<h:inputText  value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}" required="true" disabled="true" size="30" />
-				    	<a:commandLink  id="selectLink" onclick="Richfaces.showModalPanel('customerAccountPopup');">
-			                 <h:graphicImage value="/img/search.gif" style="border:0"/>
-			            </a:commandLink>
-						<rich:toolTip for="selectLink" value="#{messages['commons.search']}"/>
-			         
-			            <ui:insert />
-			        </h:panelGrid>
-		       	</s:decorate>	
-				<s:decorate template="/layout/edit.xhtml">
-					<ui:define name="label">
-						<h:outputText value="#{messages['customerAccount.amountToTransfer']}" />
-					</ui:define>
-					<h:inputText  value="#{customerAccountBean.amountToTransfer}" required="true" size="5"  >
-					<f:converter converterId="bigDecimalConverter"/>
-					</h:inputText>
-						
-		     	</s:decorate>			       		     				
-		     </h:panelGrid>
-		     	
-		     	<h:panelGrid columns="4" >	
-				 <h:commandButton value="#{messages['customerAccount.buttonTransfert']}" action="#{customerAccountBean.transferAccount()}"/>
-				 <a:commandButton value="#{messages['action.back']}" onclick="javascript:history.back()"/>
-					</h:panelGrid>	    
-	  	</a:form>				  
-	  	</rich:panel>				
+
+			<h:form id="transferAccountForm">
+
+				<p:panelGrid columns="2" styleClass="form-panel-fields">
+					<p:outputLabel for="accountTransferFrom"
+						value="#{messages['customerAccount.accountTransferFrom']}"></p:outputLabel>
+					<p:inputText id="accountTransferFrom"
+						value="#{customerAccount.code}" disabled="true" size="30"></p:inputText>
+
+					<p:outputLabel for="accountTransferCode"
+						value="#{messages['customerAccount.accountTransferTo']}"></p:outputLabel>
+					<p:panelGrid columns="2">
+						<p:inputText id="accountTransferCode"
+							value="#{customerAccountBean.getCustomerAccountTransfer().getCode()}"
+							required="true" disabled="true" size="30"></p:inputText>
+						<p:commandLink id="selectLink"
+							onclick="dlg_customerAccountPopup.show()">
+							<h:graphicImage value="/img/search.gif" style="border:0" />
+						</p:commandLink>
+						<p:tooltip for="selectLink" value="#{messages['commons.search']}"></p:tooltip>
+						<ui:insert />
+					</p:panelGrid>
+
+					<p:outputLabel for="amountToTransfer"
+						value="#{messages['customerAccount.amountToTransfer']}"></p:outputLabel>
+					<p:inputText id="amountToTransfer"
+						value="#{customerAccountBean.amountToTransfer}" required="true"
+						size="5">
+						<f:converter converterId="bigDecimalConverter" />
+					</p:inputText>
+
+				</p:panelGrid>
+
+				<p:panelGrid columns="2">
+					<p:commandButton
+						value="#{messages['customerAccount.buttonTransfert']}"
+						action="#{customerAccountBean.transferAccount()}" />
+					<p:button outcome="addCustomerAccount"
+						value="#{messages['action.back']}"></p:button>
+				</p:panelGrid>
+			</h:form>
+		</p:panel>
 	</ui:define>
 </ui:composition>

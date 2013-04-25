@@ -27,7 +27,7 @@
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription"
 				selection="#{sellerBean.entity.tradingCountry}"
-				updateField=":sellerFormPanel:sellerFormId:sellerTab:trCountrySelectId:trCountrySelectId_text">
+				updateField=":sellerFormPanel:sellerFormId:sellerTab:trCountrySelectId:trCountrySelectId">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="sellerLanguagePopup"
@@ -40,7 +40,7 @@
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription"
 				selection="#{sellerBean.entity.tradingLanguage}"
-				updateField=":sellerFormPanel:sellerFormId:sellerTab:trLanguageSelectId:trLanguageSelectId_text">
+				updateField=":sellerFormPanel:sellerFormId:sellerTab:trLanguageSelectId:trLanguageSelectId">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="sellerCurrencyPopup"
@@ -53,7 +53,7 @@
 				column2Label="#{messages['businessEntity.description']}"
 				column2="prDescription"
 				selection="#{sellerBean.entity.tradingCurrency}"
-				updateField=":sellerFormPanel:sellerFormId:sellerTab:trCurrencySelectId:trCurrencySelectId_text">
+				updateField=":sellerFormPanel:sellerFormId:sellerTab:trCurrencySelectId:trCurrencySelectId">
 			</hftl:entityPopup>
 
 			<hftl:entityPopup id="sellerParentPopup"
@@ -62,7 +62,7 @@
 				searchField1="code"
 				column1Label="#{messages['BusinessEntity.code']}" column1="code"
 				selection="#{sellerBean.entity.seller}"
-				updateField=":sellerFormPanel:sellerFormId:sellerTab:parentSelectId:parentSelectId_text">
+				updateField=":sellerFormPanel:sellerFormId:sellerTab:parentSelectId:parentSelectId">
 			</hftl:entityPopup>
 		</c:if>
 

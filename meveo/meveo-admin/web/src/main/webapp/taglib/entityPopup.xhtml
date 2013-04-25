@@ -47,8 +47,8 @@
 			</p:panelGrid>
 			<p:dataTable id="datatable" var="e" paginator="true"
 				value="#{backingBean.lazyDataModel}" rows="10"
-				selection="#{selection}" selectionMode="single" lazy="true"
-				rowSelectListener="#{rowSelectListener}">
+				selection="#{selection}" selectionMode="single" lazy="true">
+<!-- 				rowSelectListener="#{rowSelectListener}"> -->
 				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"
 					oncomplete="dlg_#{id}.hide()" update="#{updateField}" />
 

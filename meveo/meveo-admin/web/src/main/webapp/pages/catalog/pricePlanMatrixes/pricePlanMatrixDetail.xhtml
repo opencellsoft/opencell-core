@@ -23,8 +23,8 @@
 			column1Label="#{messages['charge.description']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description"
-			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId:chargeSelectId_text"
-			eventBackingBean="#{pricePlanMatrixBean}">
+			eventBackingBean="#{pricePlanMatrixBean}"
+			updateField=":formPricePlanPanel:formPricePlan:chargeSelectId:textPanel">
 			<!-- 			selection="#{chargeTemplateBean.entity}" -->
 		</hftl:entityPopup>
 
@@ -38,7 +38,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{pricePlanMatrixBean.entity.tradingCurrency}"
-			updateField=":formPricePlanPanel:formPricePlan:customerCurrencySelectId:customerCurrencySelectId_text">
+			updateField=":formPricePlanPanel:formPricePlan:customerCurrencySelectId:customerCurrencySelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="tradingCountryPopup"
@@ -51,7 +51,7 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="prDescription"
 			selection="#{pricePlanMatrixBean.entity.tradingCountry}"
-			updateField=":formPricePlanPanel:formPricePlan:trCountrySelectId:trCountrySelectId_text">
+			updateField=":formPricePlanPanel:formPricePlan:trCountrySelectId:trCountrySelectId">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="sellerParentPopup"
@@ -61,7 +61,7 @@
 			column1="code" selection="#{pricePlanMatrixBean.entity.seller}"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			updateField=":formPricePlanPanel:formPricePlan:parentSelectId:parentSelectId_text">
+			updateField=":formPricePlanPanel:formPricePlan:parentSelectId:parentSelectId">
 		</hftl:entityPopup>
 
 		<hf:formPanel id="formPricePlanPanel"
