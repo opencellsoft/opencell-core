@@ -1,45 +1,214 @@
---
--- PostgreSQL database dump
---
-
-SET statement_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-
-SET search_path = public, pg_catalog;
 
 --
--- Name: access_point_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
+-- Data for Name: adm_currency; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('access_point_seq', 1, false);
+INSERT INTO adm_currency VALUES (1, '2013-04-23 20:25:20.006133', NULL, 1, 'AFA', 'Afghani', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (2, '2013-04-23 20:25:20.006133', NULL, 1, 'ZAR', 'Rand', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (3, '2013-04-23 20:25:20.006133', NULL, 1, 'ALL', 'Lek', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (4, '2013-04-23 20:25:20.006133', NULL, 1, 'DZD', 'Dinar algérien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (5, '2013-04-23 20:25:20.006133', NULL, 1, 'EUR', 'Euro', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (6, '2013-04-23 20:25:20.006133', NULL, 1, 'AOA', 'Kwanza', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (7, '2013-04-23 20:25:20.006133', NULL, 1, 'XCD', 'Dollar des Cara bes de lEst', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (8, '2013-04-23 20:25:20.006133', NULL, 1, 'ANG', 'Florin des Antilles', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (9, '2013-04-23 20:25:20.006133', NULL, 1, 'SAR', 'Riyal saoudien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (10, '2013-04-23 20:25:20.006133', NULL, 1, 'ARS', 'Peso', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (11, '2013-04-23 20:25:20.006133', NULL, 1, 'AMD', 'Dram', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (12, '2013-04-23 20:25:20.006133', NULL, 1, 'AWG', 'Florin d Aruba', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (13, '2013-04-23 20:25:20.006133', NULL, 1, 'AUD', 'Dollar australien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (14, '2013-04-23 20:25:20.006133', NULL, 1, 'AZM', 'Manat azerbaïdjanais', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (15, '2013-04-23 20:25:20.006133', NULL, 1, 'BSD', 'Dollar des Bahamas', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (16, '2013-04-23 20:25:20.006133', NULL, 1, 'BHD', 'Dinar de Bahreïn', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (17, '2013-04-23 20:25:20.006133', NULL, 1, 'BDT', 'Taka', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (18, '2013-04-23 20:25:20.006133', NULL, 1, 'BBD', 'Dollar de Barbade', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (19, '2013-04-23 20:25:20.006133', NULL, 1, 'BZD', 'Dollar de Belize', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (20, '2013-04-23 20:25:20.006133', NULL, 1, 'XOF', 'Franc CFA - BCEAO', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (21, '2013-04-23 20:25:20.006133', NULL, 1, 'BMD', 'Dollar des Bermudes', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (22, '2013-04-23 20:25:20.006133', NULL, 1, 'BTN', 'Ngultrum', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (23, '2013-04-23 20:25:20.006133', NULL, 1, 'BYR', 'Rouble biãlorussie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (24, '2013-04-23 20:25:20.006133', NULL, 1, 'BOB', 'Boliviano', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (25, '2013-04-23 20:25:20.006133', NULL, 1, 'BAM', 'Mark bosniaque convertible', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (26, '2013-04-23 20:25:20.006133', NULL, 1, 'BWP', 'Pula', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (27, '2013-04-23 20:25:20.006133', NULL, 1, 'BRL', 'Real', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (28, '2013-04-23 20:25:20.006133', NULL, 1, 'BND', 'Dollar de Brunéi', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (29, '2013-04-23 20:25:20.006133', NULL, 1, 'BGN', 'Lev', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (30, '2013-04-23 20:25:20.006133', NULL, 1, 'BIF', 'Franc du Burundi', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (31, '2013-04-23 20:25:20.006133', NULL, 1, 'NOK', 'Couronne norvégienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (32, '2013-04-23 20:25:20.006133', NULL, 1, 'KYD', 'Dollar des îles Caïmanes', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (33, '2013-04-23 20:25:20.006133', NULL, 1, 'KHR', 'Riel', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (34, '2013-04-23 20:25:20.006133', NULL, 1, 'XAF', 'Franc CFA - BEAC', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (35, '2013-04-23 20:25:20.006133', NULL, 1, 'CAD', 'Dollar canadien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (36, '2013-04-23 20:25:20.006133', NULL, 1, 'CVE', 'Escudo du Cap-Vert', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (37, '2013-04-23 20:25:20.006133', NULL, 1, 'CFA', 'FRANC CFA-BEAC', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (38, '2013-04-23 20:25:20.006133', NULL, 1, 'CLP', 'Peso chilien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (39, '2013-04-23 20:25:20.006133', NULL, 1, 'CNY', 'Yuan Ren-Min-Bi', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (40, '2013-04-23 20:25:20.006133', NULL, 1, 'CYP', 'Livre chypriote', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (41, '2013-04-23 20:25:20.006133', NULL, 1, 'COP', 'Peso colombien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (42, '2013-04-23 20:25:20.006133', NULL, 1, 'KMF', 'Franc des Comores', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (43, '2013-04-23 20:25:20.006133', NULL, 1, 'CDF', 'FRANC DU CONGO DEMOCRATIQUE', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (44, '2013-04-23 20:25:20.006133', NULL, 1, 'KRW', 'Won', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (45, '2013-04-23 20:25:20.006133', NULL, 1, 'KPW', 'Won de la Corée du Nord', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (46, '2013-04-23 20:25:20.006133', NULL, 1, 'CRC', 'Colon de Costa Rica', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (47, '2013-04-23 20:25:20.006133', NULL, 1, 'HRK', 'Kuna', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (48, '2013-04-23 20:25:20.006133', NULL, 1, 'CUP', 'Peso cubain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (49, '2013-04-23 20:25:20.006133', NULL, 1, 'USD', 'Dollar des Etats-unis', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (50, '2013-04-23 20:25:20.006133', NULL, 1, 'DKK', 'Couronne danoise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (51, '2013-04-23 20:25:20.006133', NULL, 1, 'DJF', 'Franc de Djibouti', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (52, '2013-04-23 20:25:20.006133', NULL, 1, 'DOP', 'Peso dominicain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (53, '2013-04-23 20:25:20.006133', NULL, 1, 'EGP', 'Livre égyptienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (54, '2013-04-23 20:25:20.006133', NULL, 1, 'AED', 'Dirham des émirats arabes unis', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (55, '2013-04-23 20:25:20.006133', NULL, 1, 'ERN', 'Nafka', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (56, '2013-04-23 20:25:20.006133', NULL, 1, 'EEK', 'Couronne d Estonie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (57, '2013-04-23 20:25:20.006133', NULL, 1, 'ETB', 'Birr éthiopien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (58, '2013-04-23 20:25:20.006133', NULL, 1, 'FKP', 'Livre de Falkland', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (59, '2013-04-23 20:25:20.006133', NULL, 1, 'FJD', 'Dollar des Fidji', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (60, '2013-04-23 20:25:20.006133', NULL, 1, 'GMD', 'Dalasie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (61, '2013-04-23 20:25:20.006133', NULL, 1, 'GEL', 'Lari', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (62, '2013-04-23 20:25:20.006133', NULL, 1, 'GHC', 'Cedi ghanéen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (63, '2013-04-23 20:25:20.006133', NULL, 1, 'GIP', 'Livre de Gibraltar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (64, '2013-04-23 20:25:20.006133', NULL, 1, 'GTQ', 'Quetzal', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (65, '2013-04-23 20:25:20.006133', NULL, 1, 'GBP', 'Livre sterling', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (66, '2013-04-23 20:25:20.006133', NULL, 1, 'GNF', 'Franc guinéen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (67, '2013-04-23 20:25:20.006133', NULL, 1, 'GYD', 'Dollar de Guyane', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (68, '2013-04-23 20:25:20.006133', NULL, 1, 'HTG', 'Gourde', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (69, '2013-04-23 20:25:20.006133', NULL, 1, 'HNL', 'Lempira', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (70, '2013-04-23 20:25:20.006133', NULL, 1, 'HKD', 'Dollar de Hong-Kong', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (71, '2013-04-23 20:25:20.006133', NULL, 1, 'HUF', 'Forint', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (72, '2013-04-23 20:25:20.006133', NULL, 1, 'NZD', 'Dollar néo-zélandais', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (73, '2013-04-23 20:25:20.006133', NULL, 1, 'INR', 'Roupie indienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (74, '2013-04-23 20:25:20.006133', NULL, 1, 'IDR', 'Rupiah', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (75, '2013-04-23 20:25:20.006133', NULL, 1, 'IRR', 'Rial iranien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (76, '2013-04-23 20:25:20.006133', NULL, 1, 'IQD', 'Dinar iraquien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (77, '2013-04-23 20:25:20.006133', NULL, 1, 'ISK', 'Couronne islandaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (78, '2013-04-23 20:25:20.006133', NULL, 1, 'ILS', 'Sheqel', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (79, '2013-04-23 20:25:20.006133', NULL, 1, 'JMD', 'Dollar jamaïcain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (80, '2013-04-23 20:25:20.006133', NULL, 1, 'JPY', 'Yen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (81, '2013-04-23 20:25:20.006133', NULL, 1, 'JOD', 'Dinar jordanien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (82, '2013-04-23 20:25:20.006133', NULL, 1, 'KZT', 'Tenge', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (83, '2013-04-23 20:25:20.006133', NULL, 1, 'KES', 'Shilling du Kenya', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (84, '2013-04-23 20:25:20.006133', NULL, 1, 'KGS', 'Som', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (85, '2013-04-23 20:25:20.006133', NULL, 1, 'KWD', 'Dinar koweïtien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (86, '2013-04-23 20:25:20.006133', NULL, 1, 'LAK', 'Kip', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (87, '2013-04-23 20:25:20.006133', NULL, 1, 'LSL', 'Loti', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (88, '2013-04-23 20:25:20.006133', NULL, 1, 'LVL', 'Lats letton', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (89, '2013-04-23 20:25:20.006133', NULL, 1, 'LBP', 'Livre libanaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (90, '2013-04-23 20:25:20.006133', NULL, 1, 'LRD', 'Dollar libérien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (91, '2013-04-23 20:25:20.006133', NULL, 1, 'LYD', 'Dinar libyen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (92, '2013-04-23 20:25:20.006133', NULL, 1, 'CHF', 'Franc suisse', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (93, '2013-04-23 20:25:20.006133', NULL, 1, 'LTL', 'Litas lituanien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (94, '2013-04-23 20:25:20.006133', NULL, 1, 'MOP', 'Pataca', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (95, '2013-04-23 20:25:20.006133', NULL, 1, 'MKD', 'Denar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (96, '2013-04-23 20:25:20.006133', NULL, 1, 'MGA', 'Ariary malgache', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (97, '2013-04-23 20:25:20.006133', NULL, 1, 'MGF', 'Franc malgache', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (98, '2013-04-23 20:25:20.006133', NULL, 1, 'MYR', 'Ringgit de Malaisie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (99, '2013-04-23 20:25:20.006133', NULL, 1, 'MWK', 'Kwacha', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (100, '2013-04-23 20:25:20.006133', NULL, 1, 'MVR', 'Rufiyaa', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (101, '2013-04-23 20:25:20.006133', NULL, 1, 'MTL', 'Livre maltaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (102, '2013-04-23 20:25:20.006133', NULL, 1, 'MAD', 'Dirham marocain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (103, '2013-04-23 20:25:20.006133', NULL, 1, 'MUR', 'Roupie mauricienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (104, '2013-04-23 20:25:20.006133', NULL, 1, 'MRO', 'Ouguija', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (105, '2013-04-23 20:25:20.006133', NULL, 1, 'MXN', 'Peso mexicain', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (106, '2013-04-23 20:25:20.006133', NULL, 1, 'MDL', 'Leu de Moldave', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (107, '2013-04-23 20:25:20.006133', NULL, 1, 'MNT', 'Tugrik', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (108, '2013-04-23 20:25:20.006133', NULL, 1, 'MZM', 'Metical', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (109, '2013-04-23 20:25:20.006133', NULL, 1, 'MMK', 'Kyat', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (110, '2013-04-23 20:25:20.006133', NULL, 1, 'NAD', 'Dollar namibien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (111, '2013-04-23 20:25:20.006133', NULL, 1, 'NPR', 'Roupie Népalaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (112, '2013-04-23 20:25:20.006133', NULL, 1, 'NIO', 'Cordoba oro', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (113, '2013-04-23 20:25:20.006133', NULL, 1, 'NGN', 'Naira', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (114, '2013-04-23 20:25:20.006133', NULL, 1, 'XPF', 'Franc CFP', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (115, '2013-04-23 20:25:20.006133', NULL, 1, 'OMR', 'Rial Omani', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (116, '2013-04-23 20:25:20.006133', NULL, 1, 'XAU', 'Opérations sur or', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (117, '2013-04-23 20:25:20.006133', NULL, 1, 'UGX', 'Shilling ougandais', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (118, '2013-04-23 20:25:20.006133', NULL, 1, 'UZS', 'Soum ouzbek', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (119, '2013-04-23 20:25:20.006133', NULL, 1, 'PKR', 'Roupie pakistanaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (120, '2013-04-23 20:25:20.006133', NULL, 1, 'PAB', 'Balboa', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (121, '2013-04-23 20:25:20.006133', NULL, 1, 'PGK', 'Kina', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (122, '2013-04-23 20:25:20.006133', NULL, 1, 'PYG', 'Guarani', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (123, '2013-04-23 20:25:20.006133', NULL, 1, 'PEN', 'Nouveau sol', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (124, '2013-04-23 20:25:20.006133', NULL, 1, 'PHP', 'Peso philippin', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (125, '2013-04-23 20:25:20.006133', NULL, 1, 'PLN', 'Zloty', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (126, '2013-04-23 20:25:20.006133', NULL, 1, 'QAR', 'Riyal du Qatar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (127, '2013-04-23 20:25:20.006133', NULL, 1, 'RON', 'LEI (Nouveau Leu)', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (128, '2013-04-23 20:25:20.006133', NULL, 1, 'ROL', 'Leu', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (129, '2013-04-23 20:25:20.006133', NULL, 1, 'RUB', 'Rouble russe (nouveau)', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (130, '2013-04-23 20:25:20.006133', NULL, 1, 'RWF', 'Franc du Rwanda', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (131, '2013-04-23 20:25:20.006133', NULL, 1, 'SBD', 'Dollar des îles Salomon', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (132, '2013-04-23 20:25:20.006133', NULL, 1, 'SVC', 'Colon salvadorien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (133, '2013-04-23 20:25:20.006133', NULL, 1, 'WST', 'Tala', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (134, '2013-04-23 20:25:20.006133', NULL, 1, 'STD', 'Dobra', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (135, '2013-04-23 20:25:20.006133', NULL, 1, 'CSD', 'Dinar Serbe', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (136, '2013-04-23 20:25:20.006133', NULL, 1, 'SCR', 'Roupie des Seychelles', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (137, '2013-04-23 20:25:20.006133', NULL, 1, 'SLL', 'Leone', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (138, '2013-04-23 20:25:20.006133', NULL, 1, 'SGD', 'Dollar de Singapour', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (139, '2013-04-23 20:25:20.006133', NULL, 1, 'SKK', 'Couronne slovaque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (140, '2013-04-23 20:25:20.006133', NULL, 1, 'SIT', 'Tolar', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (141, '2013-04-23 20:25:20.006133', NULL, 1, 'SOS', 'Shilling Somalien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (142, '2013-04-23 20:25:20.006133', NULL, 1, 'SDG', 'Livre soudanaise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (143, '2013-04-23 20:25:20.006133', NULL, 1, 'LKR', 'Roupie de Sri Lanka', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (144, '2013-04-23 20:25:20.006133', NULL, 1, 'SHP', 'Livre de Sainte-Hélène', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (145, '2013-04-23 20:25:20.006133', NULL, 1, 'SEK', 'Couronne suédoise', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (146, '2013-04-23 20:25:20.006133', NULL, 1, 'SRD', 'Florin du suriname', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (147, '2013-04-23 20:25:20.006133', NULL, 1, 'SZL', 'Lilangeni', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (148, '2013-04-23 20:25:20.006133', NULL, 1, 'SYP', 'Livre syrienne', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (149, '2013-04-23 20:25:20.006133', NULL, 1, 'TJS', 'Somoni', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (150, '2013-04-23 20:25:20.006133', NULL, 1, 'TWD', 'Nouveau dollar de Taïwan', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (151, '2013-04-23 20:25:20.006133', NULL, 1, 'TZS', 'Shilling tanzanien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (152, '2013-04-23 20:25:20.006133', NULL, 1, 'CZK', 'Couronne tchèque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (153, '2013-04-23 20:25:20.006133', NULL, 1, 'THB', 'Baht', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (154, '2013-04-23 20:25:20.006133', NULL, 1, 'TOP', 'Pa anga', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (155, '2013-04-23 20:25:20.006133', NULL, 1, 'TTD', 'Dollar de Trinité et de Tobago', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (156, '2013-04-23 20:25:20.006133', NULL, 1, 'TND', 'Dinar tunisien', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (157, '2013-04-23 20:25:20.006133', NULL, 1, 'TMM', 'Manat turkmène', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (158, '2013-04-23 20:25:20.006133', NULL, 1, 'TRY', 'Nouvelle Livre turque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (159, '2013-04-23 20:25:20.006133', NULL, 1, 'TRL', 'Livre turque', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (160, '2013-04-23 20:25:20.006133', NULL, 1, 'UAH', 'HRYVNIA', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (161, '2013-04-23 20:25:20.006133', NULL, 1, 'UYU', 'Nouveau Peso uruguayen', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (162, '2013-04-23 20:25:20.006133', NULL, 1, 'VUV', 'Vatu', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (163, '2013-04-23 20:25:20.006133', NULL, 1, 'VEF', 'Bolivar Fuerte', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (164, '2013-04-23 20:25:20.006133', NULL, 1, 'VND', 'Dong', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (165, '2013-04-23 20:25:20.006133', NULL, 1, 'YER', 'Riyal yéménite', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (166, '2013-04-23 20:25:20.006133', NULL, 1, 'ZMK', 'Kwacha de Zambie', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (167, '2013-04-23 20:25:20.006133', NULL, 1, 'ZWD', 'Dollar du Zimbabwe', true, NULL, NULL);
+INSERT INTO adm_currency VALUES (168, '2013-04-23 20:25:20.006133', NULL, 1, 'GHS', 'Cedi ghanéen', true, NULL, NULL);
 
 
 --
--- Name: access_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
+-- Data for Name: adm_language; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('access_seq', 1, false);
-
-
---
--- Data for Name: account_entity; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO account_entity VALUES (125, 2, false, '2013-04-12 10:51:37.077', '2013-04-17 12:15:47.741', '55', 'hfbf', '', '', '', '', 'Australie', NULL, '', true, '52', '', 'ben', 'gbvdv', NULL, 1, 1, 1, 1, NULL);
-INSERT INTO account_entity VALUES (1044, 0, false, '2013-04-23 20:34:31.578', NULL, 'CUST_TEST', 'Customer test', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', NULL, NULL, NULL, 1, 1, NULL, NULL, NULL);
-INSERT INTO account_entity VALUES (1045, 0, false, '2013-04-23 20:35:10.083', NULL, 'CUST_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', '', 'Name', NULL, 1, 1, NULL, NULL, NULL);
-INSERT INTO account_entity VALUES (1046, 0, false, '2013-04-23 20:36:04.818', NULL, 'BIL_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', '', '', NULL, 1, 1, NULL, NULL, NULL);
-INSERT INTO account_entity VALUES (1047, 2, false, '2013-04-23 20:36:26.117', '2013-04-23 20:37:12.853', 'USR_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, NULL, NULL, '', '', NULL, 1, 1, 1, NULL, NULL);
-
-
---
--- Name: account_entity_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('account_entity_seq', 1, false);
+INSERT INTO adm_language VALUES (1, '2013-04-23 20:25:20.006133', NULL, 1, 'allemand', 'DEU', NULL, NULL);
+INSERT INTO adm_language VALUES (2, '2013-04-23 20:25:20.006133', NULL, 1, 'anglais', 'ENG', NULL, NULL);
+INSERT INTO adm_language VALUES (3, '2013-04-23 20:25:20.006133', NULL, 1, 'arabe', 'ARA', NULL, NULL);
+INSERT INTO adm_language VALUES (4, '2013-04-23 20:25:20.006133', NULL, 1, 'bulgare', 'BUL', NULL, NULL);
+INSERT INTO adm_language VALUES (5, '2013-04-23 20:25:20.006133', NULL, 1, 'catalan', 'CAT', NULL, NULL);
+INSERT INTO adm_language VALUES (6, '2013-04-23 20:25:20.006133', NULL, 1, 'chinois', 'ZHO', NULL, NULL);
+INSERT INTO adm_language VALUES (7, '2013-04-23 20:25:20.006133', NULL, 1, 'danois', 'DAN', NULL, NULL);
+INSERT INTO adm_language VALUES (8, '2013-04-23 20:25:20.006133', NULL, 1, 'espagnol', 'ESL', NULL, NULL);
+INSERT INTO adm_language VALUES (9, '2013-04-23 20:25:20.006133', NULL, 1, 'estonien', 'EST', NULL, NULL);
+INSERT INTO adm_language VALUES (10, '2013-04-23 20:25:20.006133', NULL, 1, 'féroïen', 'FAO', NULL, NULL);
+INSERT INTO adm_language VALUES (11, '2013-04-23 20:25:20.006133', NULL, 1, 'finlandais', 'FIN', NULL, NULL);
+INSERT INTO adm_language VALUES (12, '2013-04-23 20:25:20.006133', NULL, 1, 'français', 'FRA', NULL, NULL);
+INSERT INTO adm_language VALUES (13, '2013-04-23 20:25:20.006133', NULL, 1, 'grec', 'ELL', NULL, NULL);
+INSERT INTO adm_language VALUES (14, '2013-04-23 20:25:20.006133', NULL, 1, 'hindi', 'HIN', NULL, NULL);
+INSERT INTO adm_language VALUES (15, '2013-04-23 20:25:20.006133', NULL, 1, 'hongrois', 'HUN', NULL, NULL);
+INSERT INTO adm_language VALUES (16, '2013-04-23 20:25:20.006133', NULL, 1, 'islandais', 'ISL', NULL, NULL);
+INSERT INTO adm_language VALUES (17, '2013-04-23 20:25:20.006133', NULL, 1, 'italien', 'ITA', NULL, NULL);
+INSERT INTO adm_language VALUES (18, '2013-04-23 20:25:20.006133', NULL, 1, 'japonais', 'JPN', NULL, NULL);
+INSERT INTO adm_language VALUES (19, '2013-04-23 20:25:20.006133', NULL, 1, 'letton', 'LAV', NULL, NULL);
+INSERT INTO adm_language VALUES (20, '2013-04-23 20:25:20.006133', NULL, 1, 'lituanien', 'LIT', NULL, NULL);
+INSERT INTO adm_language VALUES (21, '2013-04-23 20:25:20.006133', NULL, 1, 'néerlandais', 'NLD', NULL, NULL);
+INSERT INTO adm_language VALUES (22, '2013-04-23 20:25:20.006133', NULL, 1, 'norvégien', 'NOR', NULL, NULL);
+INSERT INTO adm_language VALUES (23, '2013-04-23 20:25:20.006133', NULL, 1, 'polonais', 'POL', NULL, NULL);
+INSERT INTO adm_language VALUES (24, '2013-04-23 20:25:20.006133', NULL, 1, 'portugais', 'POR', NULL, NULL);
+INSERT INTO adm_language VALUES (25, '2013-04-23 20:25:20.006133', NULL, 1, 'roumain', 'RON', NULL, NULL);
+INSERT INTO adm_language VALUES (26, '2013-04-23 20:25:20.006133', NULL, 1, 'russe', 'RUS', NULL, NULL);
+INSERT INTO adm_language VALUES (27, '2013-04-23 20:25:20.006133', NULL, 1, 'serbe', 'SRP', NULL, NULL);
+INSERT INTO adm_language VALUES (28, '2013-04-23 20:25:20.006133', NULL, 1, 'slovaque', 'SLK', NULL, NULL);
+INSERT INTO adm_language VALUES (29, '2013-04-23 20:25:20.006133', NULL, 1, 'slovène', 'SLV', NULL, NULL);
+INSERT INTO adm_language VALUES (30, '2013-04-23 20:25:20.006133', NULL, 1, 'suédois', 'SVE', NULL, NULL);
+INSERT INTO adm_language VALUES (31, '2013-04-23 20:25:20.006133', NULL, 1, 'tchèque', 'CES', NULL, NULL);
+INSERT INTO adm_language VALUES (32, '2013-04-23 20:25:20.006133', NULL, 1, 'turc', 'TUR', NULL, NULL);
 
 
 --
@@ -285,223 +454,14 @@ INSERT INTO adm_country VALUES (236, '2013-04-23 20:25:20.006133', NULL, 1, 'ZM'
 INSERT INTO adm_country VALUES (237, '2013-04-23 20:25:20.006133', NULL, 1, 'ZW', 'Zimbabwe', NULL, NULL, 167, 2);
 
 
---
--- Data for Name: adm_currency; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_currency VALUES (1, '2013-04-23 20:25:20.006133', NULL, 1, 'AFA', 'Afghani', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (2, '2013-04-23 20:25:20.006133', NULL, 1, 'ZAR', 'Rand', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (3, '2013-04-23 20:25:20.006133', NULL, 1, 'ALL', 'Lek', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (4, '2013-04-23 20:25:20.006133', NULL, 1, 'DZD', 'Dinar algérien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (5, '2013-04-23 20:25:20.006133', NULL, 1, 'EUR', 'Euro', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (6, '2013-04-23 20:25:20.006133', NULL, 1, 'AOA', 'Kwanza', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (7, '2013-04-23 20:25:20.006133', NULL, 1, 'XCD', 'Dollar des Cara bes de lEst', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (8, '2013-04-23 20:25:20.006133', NULL, 1, 'ANG', 'Florin des Antilles', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (9, '2013-04-23 20:25:20.006133', NULL, 1, 'SAR', 'Riyal saoudien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (10, '2013-04-23 20:25:20.006133', NULL, 1, 'ARS', 'Peso', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (11, '2013-04-23 20:25:20.006133', NULL, 1, 'AMD', 'Dram', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (12, '2013-04-23 20:25:20.006133', NULL, 1, 'AWG', 'Florin d Aruba', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (13, '2013-04-23 20:25:20.006133', NULL, 1, 'AUD', 'Dollar australien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (14, '2013-04-23 20:25:20.006133', NULL, 1, 'AZM', 'Manat azerbaïdjanais', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (15, '2013-04-23 20:25:20.006133', NULL, 1, 'BSD', 'Dollar des Bahamas', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (16, '2013-04-23 20:25:20.006133', NULL, 1, 'BHD', 'Dinar de Bahreïn', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (17, '2013-04-23 20:25:20.006133', NULL, 1, 'BDT', 'Taka', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (18, '2013-04-23 20:25:20.006133', NULL, 1, 'BBD', 'Dollar de Barbade', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (19, '2013-04-23 20:25:20.006133', NULL, 1, 'BZD', 'Dollar de Belize', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (20, '2013-04-23 20:25:20.006133', NULL, 1, 'XOF', 'Franc CFA - BCEAO', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (21, '2013-04-23 20:25:20.006133', NULL, 1, 'BMD', 'Dollar des Bermudes', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (22, '2013-04-23 20:25:20.006133', NULL, 1, 'BTN', 'Ngultrum', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (23, '2013-04-23 20:25:20.006133', NULL, 1, 'BYR', 'Rouble biãlorussie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (24, '2013-04-23 20:25:20.006133', NULL, 1, 'BOB', 'Boliviano', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (25, '2013-04-23 20:25:20.006133', NULL, 1, 'BAM', 'Mark bosniaque convertible', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (26, '2013-04-23 20:25:20.006133', NULL, 1, 'BWP', 'Pula', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (27, '2013-04-23 20:25:20.006133', NULL, 1, 'BRL', 'Real', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (28, '2013-04-23 20:25:20.006133', NULL, 1, 'BND', 'Dollar de Brunéi', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (29, '2013-04-23 20:25:20.006133', NULL, 1, 'BGN', 'Lev', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (30, '2013-04-23 20:25:20.006133', NULL, 1, 'BIF', 'Franc du Burundi', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (31, '2013-04-23 20:25:20.006133', NULL, 1, 'NOK', 'Couronne norvégienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (32, '2013-04-23 20:25:20.006133', NULL, 1, 'KYD', 'Dollar des îles Caïmanes', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (33, '2013-04-23 20:25:20.006133', NULL, 1, 'KHR', 'Riel', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (34, '2013-04-23 20:25:20.006133', NULL, 1, 'XAF', 'Franc CFA - BEAC', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (35, '2013-04-23 20:25:20.006133', NULL, 1, 'CAD', 'Dollar canadien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (36, '2013-04-23 20:25:20.006133', NULL, 1, 'CVE', 'Escudo du Cap-Vert', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (37, '2013-04-23 20:25:20.006133', NULL, 1, 'CFA', 'FRANC CFA-BEAC', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (38, '2013-04-23 20:25:20.006133', NULL, 1, 'CLP', 'Peso chilien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (39, '2013-04-23 20:25:20.006133', NULL, 1, 'CNY', 'Yuan Ren-Min-Bi', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (40, '2013-04-23 20:25:20.006133', NULL, 1, 'CYP', 'Livre chypriote', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (41, '2013-04-23 20:25:20.006133', NULL, 1, 'COP', 'Peso colombien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (42, '2013-04-23 20:25:20.006133', NULL, 1, 'KMF', 'Franc des Comores', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (43, '2013-04-23 20:25:20.006133', NULL, 1, 'CDF', 'FRANC DU CONGO DEMOCRATIQUE', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (44, '2013-04-23 20:25:20.006133', NULL, 1, 'KRW', 'Won', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (45, '2013-04-23 20:25:20.006133', NULL, 1, 'KPW', 'Won de la Corée du Nord', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (46, '2013-04-23 20:25:20.006133', NULL, 1, 'CRC', 'Colon de Costa Rica', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (47, '2013-04-23 20:25:20.006133', NULL, 1, 'HRK', 'Kuna', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (48, '2013-04-23 20:25:20.006133', NULL, 1, 'CUP', 'Peso cubain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (49, '2013-04-23 20:25:20.006133', NULL, 1, 'USD', 'Dollar des Etats-unis', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (50, '2013-04-23 20:25:20.006133', NULL, 1, 'DKK', 'Couronne danoise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (51, '2013-04-23 20:25:20.006133', NULL, 1, 'DJF', 'Franc de Djibouti', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (52, '2013-04-23 20:25:20.006133', NULL, 1, 'DOP', 'Peso dominicain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (53, '2013-04-23 20:25:20.006133', NULL, 1, 'EGP', 'Livre égyptienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (54, '2013-04-23 20:25:20.006133', NULL, 1, 'AED', 'Dirham des émirats arabes unis', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (55, '2013-04-23 20:25:20.006133', NULL, 1, 'ERN', 'Nafka', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (56, '2013-04-23 20:25:20.006133', NULL, 1, 'EEK', 'Couronne d Estonie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (57, '2013-04-23 20:25:20.006133', NULL, 1, 'ETB', 'Birr éthiopien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (58, '2013-04-23 20:25:20.006133', NULL, 1, 'FKP', 'Livre de Falkland', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (59, '2013-04-23 20:25:20.006133', NULL, 1, 'FJD', 'Dollar des Fidji', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (60, '2013-04-23 20:25:20.006133', NULL, 1, 'GMD', 'Dalasie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (61, '2013-04-23 20:25:20.006133', NULL, 1, 'GEL', 'Lari', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (62, '2013-04-23 20:25:20.006133', NULL, 1, 'GHC', 'Cedi ghanéen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (63, '2013-04-23 20:25:20.006133', NULL, 1, 'GIP', 'Livre de Gibraltar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (64, '2013-04-23 20:25:20.006133', NULL, 1, 'GTQ', 'Quetzal', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (65, '2013-04-23 20:25:20.006133', NULL, 1, 'GBP', 'Livre sterling', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (66, '2013-04-23 20:25:20.006133', NULL, 1, 'GNF', 'Franc guinéen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (67, '2013-04-23 20:25:20.006133', NULL, 1, 'GYD', 'Dollar de Guyane', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (68, '2013-04-23 20:25:20.006133', NULL, 1, 'HTG', 'Gourde', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (69, '2013-04-23 20:25:20.006133', NULL, 1, 'HNL', 'Lempira', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (70, '2013-04-23 20:25:20.006133', NULL, 1, 'HKD', 'Dollar de Hong-Kong', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (71, '2013-04-23 20:25:20.006133', NULL, 1, 'HUF', 'Forint', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (72, '2013-04-23 20:25:20.006133', NULL, 1, 'NZD', 'Dollar néo-zélandais', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (73, '2013-04-23 20:25:20.006133', NULL, 1, 'INR', 'Roupie indienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (74, '2013-04-23 20:25:20.006133', NULL, 1, 'IDR', 'Rupiah', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (75, '2013-04-23 20:25:20.006133', NULL, 1, 'IRR', 'Rial iranien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (76, '2013-04-23 20:25:20.006133', NULL, 1, 'IQD', 'Dinar iraquien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (77, '2013-04-23 20:25:20.006133', NULL, 1, 'ISK', 'Couronne islandaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (78, '2013-04-23 20:25:20.006133', NULL, 1, 'ILS', 'Sheqel', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (79, '2013-04-23 20:25:20.006133', NULL, 1, 'JMD', 'Dollar jamaïcain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (80, '2013-04-23 20:25:20.006133', NULL, 1, 'JPY', 'Yen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (81, '2013-04-23 20:25:20.006133', NULL, 1, 'JOD', 'Dinar jordanien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (82, '2013-04-23 20:25:20.006133', NULL, 1, 'KZT', 'Tenge', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (83, '2013-04-23 20:25:20.006133', NULL, 1, 'KES', 'Shilling du Kenya', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (84, '2013-04-23 20:25:20.006133', NULL, 1, 'KGS', 'Som', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (85, '2013-04-23 20:25:20.006133', NULL, 1, 'KWD', 'Dinar koweïtien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (86, '2013-04-23 20:25:20.006133', NULL, 1, 'LAK', 'Kip', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (87, '2013-04-23 20:25:20.006133', NULL, 1, 'LSL', 'Loti', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (88, '2013-04-23 20:25:20.006133', NULL, 1, 'LVL', 'Lats letton', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (89, '2013-04-23 20:25:20.006133', NULL, 1, 'LBP', 'Livre libanaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (90, '2013-04-23 20:25:20.006133', NULL, 1, 'LRD', 'Dollar libérien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (91, '2013-04-23 20:25:20.006133', NULL, 1, 'LYD', 'Dinar libyen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (92, '2013-04-23 20:25:20.006133', NULL, 1, 'CHF', 'Franc suisse', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (93, '2013-04-23 20:25:20.006133', NULL, 1, 'LTL', 'Litas lituanien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (94, '2013-04-23 20:25:20.006133', NULL, 1, 'MOP', 'Pataca', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (95, '2013-04-23 20:25:20.006133', NULL, 1, 'MKD', 'Denar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (96, '2013-04-23 20:25:20.006133', NULL, 1, 'MGA', 'Ariary malgache', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (97, '2013-04-23 20:25:20.006133', NULL, 1, 'MGF', 'Franc malgache', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (98, '2013-04-23 20:25:20.006133', NULL, 1, 'MYR', 'Ringgit de Malaisie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (99, '2013-04-23 20:25:20.006133', NULL, 1, 'MWK', 'Kwacha', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (100, '2013-04-23 20:25:20.006133', NULL, 1, 'MVR', 'Rufiyaa', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (101, '2013-04-23 20:25:20.006133', NULL, 1, 'MTL', 'Livre maltaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (102, '2013-04-23 20:25:20.006133', NULL, 1, 'MAD', 'Dirham marocain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (103, '2013-04-23 20:25:20.006133', NULL, 1, 'MUR', 'Roupie mauricienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (104, '2013-04-23 20:25:20.006133', NULL, 1, 'MRO', 'Ouguija', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (105, '2013-04-23 20:25:20.006133', NULL, 1, 'MXN', 'Peso mexicain', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (106, '2013-04-23 20:25:20.006133', NULL, 1, 'MDL', 'Leu de Moldave', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (107, '2013-04-23 20:25:20.006133', NULL, 1, 'MNT', 'Tugrik', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (108, '2013-04-23 20:25:20.006133', NULL, 1, 'MZM', 'Metical', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (109, '2013-04-23 20:25:20.006133', NULL, 1, 'MMK', 'Kyat', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (110, '2013-04-23 20:25:20.006133', NULL, 1, 'NAD', 'Dollar namibien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (111, '2013-04-23 20:25:20.006133', NULL, 1, 'NPR', 'Roupie Népalaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (112, '2013-04-23 20:25:20.006133', NULL, 1, 'NIO', 'Cordoba oro', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (113, '2013-04-23 20:25:20.006133', NULL, 1, 'NGN', 'Naira', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (114, '2013-04-23 20:25:20.006133', NULL, 1, 'XPF', 'Franc CFP', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (115, '2013-04-23 20:25:20.006133', NULL, 1, 'OMR', 'Rial Omani', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (116, '2013-04-23 20:25:20.006133', NULL, 1, 'XAU', 'Opérations sur or', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (117, '2013-04-23 20:25:20.006133', NULL, 1, 'UGX', 'Shilling ougandais', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (118, '2013-04-23 20:25:20.006133', NULL, 1, 'UZS', 'Soum ouzbek', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (119, '2013-04-23 20:25:20.006133', NULL, 1, 'PKR', 'Roupie pakistanaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (120, '2013-04-23 20:25:20.006133', NULL, 1, 'PAB', 'Balboa', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (121, '2013-04-23 20:25:20.006133', NULL, 1, 'PGK', 'Kina', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (122, '2013-04-23 20:25:20.006133', NULL, 1, 'PYG', 'Guarani', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (123, '2013-04-23 20:25:20.006133', NULL, 1, 'PEN', 'Nouveau sol', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (124, '2013-04-23 20:25:20.006133', NULL, 1, 'PHP', 'Peso philippin', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (125, '2013-04-23 20:25:20.006133', NULL, 1, 'PLN', 'Zloty', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (126, '2013-04-23 20:25:20.006133', NULL, 1, 'QAR', 'Riyal du Qatar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (127, '2013-04-23 20:25:20.006133', NULL, 1, 'RON', 'LEI (Nouveau Leu)', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (128, '2013-04-23 20:25:20.006133', NULL, 1, 'ROL', 'Leu', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (129, '2013-04-23 20:25:20.006133', NULL, 1, 'RUB', 'Rouble russe (nouveau)', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (130, '2013-04-23 20:25:20.006133', NULL, 1, 'RWF', 'Franc du Rwanda', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (131, '2013-04-23 20:25:20.006133', NULL, 1, 'SBD', 'Dollar des îles Salomon', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (132, '2013-04-23 20:25:20.006133', NULL, 1, 'SVC', 'Colon salvadorien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (133, '2013-04-23 20:25:20.006133', NULL, 1, 'WST', 'Tala', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (134, '2013-04-23 20:25:20.006133', NULL, 1, 'STD', 'Dobra', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (135, '2013-04-23 20:25:20.006133', NULL, 1, 'CSD', 'Dinar Serbe', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (136, '2013-04-23 20:25:20.006133', NULL, 1, 'SCR', 'Roupie des Seychelles', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (137, '2013-04-23 20:25:20.006133', NULL, 1, 'SLL', 'Leone', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (138, '2013-04-23 20:25:20.006133', NULL, 1, 'SGD', 'Dollar de Singapour', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (139, '2013-04-23 20:25:20.006133', NULL, 1, 'SKK', 'Couronne slovaque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (140, '2013-04-23 20:25:20.006133', NULL, 1, 'SIT', 'Tolar', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (141, '2013-04-23 20:25:20.006133', NULL, 1, 'SOS', 'Shilling Somalien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (142, '2013-04-23 20:25:20.006133', NULL, 1, 'SDG', 'Livre soudanaise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (143, '2013-04-23 20:25:20.006133', NULL, 1, 'LKR', 'Roupie de Sri Lanka', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (144, '2013-04-23 20:25:20.006133', NULL, 1, 'SHP', 'Livre de Sainte-Hélène', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (145, '2013-04-23 20:25:20.006133', NULL, 1, 'SEK', 'Couronne suédoise', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (146, '2013-04-23 20:25:20.006133', NULL, 1, 'SRD', 'Florin du suriname', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (147, '2013-04-23 20:25:20.006133', NULL, 1, 'SZL', 'Lilangeni', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (148, '2013-04-23 20:25:20.006133', NULL, 1, 'SYP', 'Livre syrienne', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (149, '2013-04-23 20:25:20.006133', NULL, 1, 'TJS', 'Somoni', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (150, '2013-04-23 20:25:20.006133', NULL, 1, 'TWD', 'Nouveau dollar de Taïwan', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (151, '2013-04-23 20:25:20.006133', NULL, 1, 'TZS', 'Shilling tanzanien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (152, '2013-04-23 20:25:20.006133', NULL, 1, 'CZK', 'Couronne tchèque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (153, '2013-04-23 20:25:20.006133', NULL, 1, 'THB', 'Baht', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (154, '2013-04-23 20:25:20.006133', NULL, 1, 'TOP', 'Pa anga', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (155, '2013-04-23 20:25:20.006133', NULL, 1, 'TTD', 'Dollar de Trinité et de Tobago', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (156, '2013-04-23 20:25:20.006133', NULL, 1, 'TND', 'Dinar tunisien', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (157, '2013-04-23 20:25:20.006133', NULL, 1, 'TMM', 'Manat turkmène', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (158, '2013-04-23 20:25:20.006133', NULL, 1, 'TRY', 'Nouvelle Livre turque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (159, '2013-04-23 20:25:20.006133', NULL, 1, 'TRL', 'Livre turque', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (160, '2013-04-23 20:25:20.006133', NULL, 1, 'UAH', 'HRYVNIA', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (161, '2013-04-23 20:25:20.006133', NULL, 1, 'UYU', 'Nouveau Peso uruguayen', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (162, '2013-04-23 20:25:20.006133', NULL, 1, 'VUV', 'Vatu', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (163, '2013-04-23 20:25:20.006133', NULL, 1, 'VEF', 'Bolivar Fuerte', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (164, '2013-04-23 20:25:20.006133', NULL, 1, 'VND', 'Dong', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (165, '2013-04-23 20:25:20.006133', NULL, 1, 'YER', 'Riyal yéménite', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (166, '2013-04-23 20:25:20.006133', NULL, 1, 'ZMK', 'Kwacha de Zambie', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (167, '2013-04-23 20:25:20.006133', NULL, 1, 'ZWD', 'Dollar du Zimbabwe', true, NULL, NULL);
-INSERT INTO adm_currency VALUES (168, '2013-04-23 20:25:20.006133', NULL, 1, 'GHS', 'Cedi ghanéen', true, NULL, NULL);
 
 
 --
--- Name: adm_currency_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
+-- Data for Name: crm_provider; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('adm_currency_seq', 1, false);
+INSERT INTO crm_provider VALUES (1, 1, false, '2013-04-23 20:25:20.006133', NULL, 'ASG', NULL, false, false, '33333333333', 'owner', 'SGMB', '11', 'SGMB', '11', '12345', '11', 'PROV1', '1111', '11', NULL, NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 1, NULL);
 
-
---
--- Data for Name: adm_language; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_language VALUES (1, '2013-04-23 20:25:20.006133', NULL, 1, 'allemand', 'DEU', NULL, NULL);
-INSERT INTO adm_language VALUES (2, '2013-04-23 20:25:20.006133', NULL, 1, 'anglais', 'ENG', NULL, NULL);
-INSERT INTO adm_language VALUES (3, '2013-04-23 20:25:20.006133', NULL, 1, 'arabe', 'ARA', NULL, NULL);
-INSERT INTO adm_language VALUES (4, '2013-04-23 20:25:20.006133', NULL, 1, 'bulgare', 'BUL', NULL, NULL);
-INSERT INTO adm_language VALUES (5, '2013-04-23 20:25:20.006133', NULL, 1, 'catalan', 'CAT', NULL, NULL);
-INSERT INTO adm_language VALUES (6, '2013-04-23 20:25:20.006133', NULL, 1, 'chinois', 'ZHO', NULL, NULL);
-INSERT INTO adm_language VALUES (7, '2013-04-23 20:25:20.006133', NULL, 1, 'danois', 'DAN', NULL, NULL);
-INSERT INTO adm_language VALUES (8, '2013-04-23 20:25:20.006133', NULL, 1, 'espagnol', 'ESL', NULL, NULL);
-INSERT INTO adm_language VALUES (9, '2013-04-23 20:25:20.006133', NULL, 1, 'estonien', 'EST', NULL, NULL);
-INSERT INTO adm_language VALUES (10, '2013-04-23 20:25:20.006133', NULL, 1, 'féroïen', 'FAO', NULL, NULL);
-INSERT INTO adm_language VALUES (11, '2013-04-23 20:25:20.006133', NULL, 1, 'finlandais', 'FIN', NULL, NULL);
-INSERT INTO adm_language VALUES (12, '2013-04-23 20:25:20.006133', NULL, 1, 'français', 'FRA', NULL, NULL);
-INSERT INTO adm_language VALUES (13, '2013-04-23 20:25:20.006133', NULL, 1, 'grec', 'ELL', NULL, NULL);
-INSERT INTO adm_language VALUES (14, '2013-04-23 20:25:20.006133', NULL, 1, 'hindi', 'HIN', NULL, NULL);
-INSERT INTO adm_language VALUES (15, '2013-04-23 20:25:20.006133', NULL, 1, 'hongrois', 'HUN', NULL, NULL);
-INSERT INTO adm_language VALUES (16, '2013-04-23 20:25:20.006133', NULL, 1, 'islandais', 'ISL', NULL, NULL);
-INSERT INTO adm_language VALUES (17, '2013-04-23 20:25:20.006133', NULL, 1, 'italien', 'ITA', NULL, NULL);
-INSERT INTO adm_language VALUES (18, '2013-04-23 20:25:20.006133', NULL, 1, 'japonais', 'JPN', NULL, NULL);
-INSERT INTO adm_language VALUES (19, '2013-04-23 20:25:20.006133', NULL, 1, 'letton', 'LAV', NULL, NULL);
-INSERT INTO adm_language VALUES (20, '2013-04-23 20:25:20.006133', NULL, 1, 'lituanien', 'LIT', NULL, NULL);
-INSERT INTO adm_language VALUES (21, '2013-04-23 20:25:20.006133', NULL, 1, 'néerlandais', 'NLD', NULL, NULL);
-INSERT INTO adm_language VALUES (22, '2013-04-23 20:25:20.006133', NULL, 1, 'norvégien', 'NOR', NULL, NULL);
-INSERT INTO adm_language VALUES (23, '2013-04-23 20:25:20.006133', NULL, 1, 'polonais', 'POL', NULL, NULL);
-INSERT INTO adm_language VALUES (24, '2013-04-23 20:25:20.006133', NULL, 1, 'portugais', 'POR', NULL, NULL);
-INSERT INTO adm_language VALUES (25, '2013-04-23 20:25:20.006133', NULL, 1, 'roumain', 'RON', NULL, NULL);
-INSERT INTO adm_language VALUES (26, '2013-04-23 20:25:20.006133', NULL, 1, 'russe', 'RUS', NULL, NULL);
-INSERT INTO adm_language VALUES (27, '2013-04-23 20:25:20.006133', NULL, 1, 'serbe', 'SRP', NULL, NULL);
-INSERT INTO adm_language VALUES (28, '2013-04-23 20:25:20.006133', NULL, 1, 'slovaque', 'SLK', NULL, NULL);
-INSERT INTO adm_language VALUES (29, '2013-04-23 20:25:20.006133', NULL, 1, 'slovène', 'SLV', NULL, NULL);
-INSERT INTO adm_language VALUES (30, '2013-04-23 20:25:20.006133', NULL, 1, 'suédois', 'SVE', NULL, NULL);
-INSERT INTO adm_language VALUES (31, '2013-04-23 20:25:20.006133', NULL, 1, 'tchèque', 'CES', NULL, NULL);
-INSERT INTO adm_language VALUES (32, '2013-04-23 20:25:20.006133', NULL, 1, 'turc', 'TUR', NULL, NULL);
 
 
 --
@@ -545,1005 +505,6 @@ INSERT INTO adm_title VALUES (34, 0, false, '2013-04-23 20:25:20.006133', NULL, 
 INSERT INTO adm_title VALUES (35, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SUCC', true, 1, NULL, NULL);
 INSERT INTO adm_title VALUES (36, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SYNDIC', true, 1, NULL, NULL);
 INSERT INTO adm_title VALUES (37, 0, false, '2013-04-23 20:25:20.006133', NULL, 'SYNDCOP', true, 1, NULL, NULL);
-
-
---
--- Data for Name: adm_user; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_user VALUES (1, 0, false, '2013-04-23 20:25:20.006133', NULL, '2014-04-23', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.ADMIN', 1, 1, NULL, NULL);
-INSERT INTO adm_user VALUES (6, 0, false, '2013-04-23 20:25:20.006133', NULL, '2014-04-23', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.SUPERADMIN', 1, 1, NULL, NULL);
-
-
---
--- Data for Name: ar_customer_account; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO ar_customer_account VALUES ('', NULL, '', '', 'PART_M', '2013-04-12 10:49:14.295', NULL, 'R0', 'OtKqFUph', 'CHECK', 'ACTIVE', 125, NULL, NULL);
-INSERT INTO ar_customer_account VALUES ('', NULL, '', '', 'PART_C', '2013-04-23 20:34:35.327', NULL, 'R0', 'nVyvfXlq', 'TIP', 'ACTIVE', 1045, 1044, 145);
-
-
---
--- Data for Name: billing_billing_account; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_billing_account VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, '', NULL, '2013-04-23 20:36:04.818', 'TIP', 'ACTIVE', '2013-04-23 20:36:04.817', '2013-04-23 20:36:04.818', NULL, 1046, 1042, NULL, 1045, 157, 141);
-
-
---
--- Data for Name: billing_user_account; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_user_account VALUES ('ACTIVE', '2013-04-23 20:36:09.728', '2013-04-23 20:36:09.728', NULL, 1047, 1046, 1048);
-
-
---
--- Data for Name: crm_customer; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO crm_customer VALUES ('', NULL, NULL, NULL, 1044, 317, 315, 1043);
-
-
---
--- Data for Name: crm_provider; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO crm_provider VALUES (1, 1, false, '2013-04-23 20:25:20.006133', NULL, 'ASG', NULL, false, false, '33333333333', 'owner', 'SGMB', '11', 'SGMB', '11', '12345', '11', 'PROV1', '1111', '11', NULL, NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 1, NULL);
-
-
---
--- Data for Name: adm_input_history; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: adm_input_history_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_input_history_seq', 1, false);
-
-
---
--- Data for Name: adm_medina_configuration; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: adm_medina_configuration_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_medina_configuration_seq', 1, false);
-
-
---
--- Data for Name: adm_messages; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_messages VALUES (246, 0, false, '2013-04-17 15:31:26.647', NULL, 'Abonnement logiciel (Turque)', 'TUR', 'InvoiceCategory_245', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (247, 0, false, '2013-04-17 15:31:26.649', NULL, 'Abonnement logiciel (Arabe)', 'ARA', 'InvoiceCategory_245', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (248, 0, false, '2013-04-17 15:31:26.652', NULL, 'Abonnement logiciel (FranÃ§ais)', 'FRA', 'InvoiceCategory_245', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (251, 1, false, '2013-04-17 15:32:43.513', '2013-04-17 15:38:21.558', 'Consommation (Arabe)', 'ARA', 'InvoiceCategory_249', 1, 1, 1);
-INSERT INTO adm_messages VALUES (250, 1, false, '2013-04-17 15:32:43.51', '2013-04-17 15:38:21.566', 'Consommation (Turque)', 'TUR', 'InvoiceCategory_249', 1, 1, 1);
-INSERT INTO adm_messages VALUES (252, 1, false, '2013-04-17 15:32:43.515', '2013-04-17 15:38:21.572', 'Consommation (FranÃÂ§ais))', 'FRA', 'InvoiceCategory_249', 1, 1, 1);
-INSERT INTO adm_messages VALUES (242, 3, false, '2013-04-17 15:26:59.833', '2013-04-17 15:39:11.169', 'Abonnement (Arabe)', 'ARA', 'InvoiceCategory_240', 1, 1, 1);
-INSERT INTO adm_messages VALUES (241, 3, false, '2013-04-17 15:26:59.83', '2013-04-17 15:39:11.181', 'Abonnement (Turque)', 'TUR', 'InvoiceCategory_240', 1, 1, 1);
-INSERT INTO adm_messages VALUES (243, 3, false, '2013-04-17 15:26:59.834', '2013-04-17 15:39:11.188', 'Abonnement (FranÃÂ§ais)', 'FRA', 'InvoiceCategory_240', 1, 1, 1);
-INSERT INTO adm_messages VALUES (268, 1, false, '2013-04-17 15:49:42.341', '2013-04-17 15:53:07.553', 'Taxe de 10 pourcent (arabe)', 'ARA', 'Tax_266', 1, 1, 1);
-INSERT INTO adm_messages VALUES (267, 1, false, '2013-04-17 15:49:42.339', '2013-04-17 15:53:07.564', 'Taxe de 10 pourcent (turque)', 'TUR', 'Tax_266', 1, 1, 1);
-INSERT INTO adm_messages VALUES (269, 1, false, '2013-04-17 15:49:42.343', '2013-04-17 15:53:07.568', 'Taxe de 10 pourcent (franÃ§ais)', 'FRA', 'Tax_266', 1, 1, 1);
-INSERT INTO adm_messages VALUES (283, 0, false, '2013-04-17 15:53:55.445', NULL, 'Taxe de 150 pourcent (turque)', 'TUR', 'Tax_282', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (284, 0, false, '2013-04-17 15:53:55.447', NULL, 'Taxe de 15 pourcent (arabe)', 'ARA', 'Tax_282', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (285, 0, false, '2013-04-17 15:53:55.449', NULL, 'Taxe de 15 pourcent (franÃ§ais)', 'FRA', 'Tax_282', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (287, 0, false, '2013-04-17 15:54:52.007', NULL, 'Taxe de 19,6 pourcent (turque)', 'TUR', 'Tax_286', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (288, 0, false, '2013-04-17 15:54:52.009', NULL, 'Taxe de 19,6 pourcent (arabe)', 'ARA', 'Tax_286', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (289, 0, false, '2013-04-17 15:54:52.01', NULL, 'Taxe de 19,6 pourcent (franÃ§ais)', 'FRA', 'Tax_286', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (291, 0, false, '2013-04-17 15:56:07.803', NULL, 'Taxe de 7 pourcent (turque)', 'TUR', 'Tax_290', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (292, 0, false, '2013-04-17 15:56:07.805', NULL, 'Taxe de 7 pourcent (arabe)', 'ARA', 'Tax_290', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (293, 0, false, '2013-04-17 15:56:07.808', NULL, 'Taxe de 7 pourcent (franÃ§ais)', 'FRA', 'Tax_290', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (295, 0, false, '2013-04-17 15:58:22.261', NULL, 'SUBSCRIPTION', 'TUR', 'InvoiceSubCategory_294', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (296, 0, false, '2013-04-17 15:58:22.262', NULL, 'SUBSCRIPTION', 'ARA', 'InvoiceSubCategory_294', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (297, 0, false, '2013-04-17 15:58:22.263', NULL, 'SUBSCRIPTION', 'FRA', 'InvoiceSubCategory_294', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (299, 0, false, '2013-04-17 15:59:10', NULL, 'Souscription de  serveur (Turque)', 'TUR', 'InvoiceSubCategory_298', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (300, 0, false, '2013-04-17 15:59:10.002', NULL, 'Souscription de serveur (Arabe)', 'ARA', 'InvoiceSubCategory_298', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (301, 0, false, '2013-04-17 15:59:10.004', NULL, 'Souscription de serveur (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_298', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (303, 0, false, '2013-04-17 16:00:47.072', NULL, 'Souscription de progiciel (Turque)', 'TUR', 'InvoiceSubCategory_302', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (304, 0, false, '2013-04-17 16:00:47.074', NULL, 'Souscription de progiciel (Arabe)', 'ARA', 'InvoiceSubCategory_302', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (305, 0, false, '2013-04-17 16:00:47.076', NULL, 'Souscription de progiciel (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_302', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (307, 0, false, '2013-04-17 16:02:54.629', NULL, 'Souscription de domaine (turque)', 'TUR', 'InvoiceSubCategory_306', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (308, 0, false, '2013-04-17 16:02:54.631', NULL, 'Souscription de domaine (arabe)', 'ARA', 'InvoiceSubCategory_306', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (309, 0, false, '2013-04-17 16:02:54.632', NULL, 'Souscription de domaine (franÃ§ais)', 'FRA', 'InvoiceSubCategory_306', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (311, 0, false, '2013-04-17 16:04:43.499', NULL, 'Consommation Data (Turque)', 'TUR', 'InvoiceSubCategory_310', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (312, 0, false, '2013-04-17 16:04:43.501', NULL, 'Consommation Data (Arabe)', 'ARA', 'InvoiceSubCategory_310', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (313, 0, false, '2013-04-17 16:04:43.503', NULL, 'Consommation Data (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_310', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (357, 1, false, '2013-04-17 17:30:03.303', '2013-04-17 17:51:22.858', 'License d''accÃÂ©s Microsoft (Arabe)', 'ARA', 'ChargeTemplate_355', 1, 1, 1);
-INSERT INTO adm_messages VALUES (356, 1, false, '2013-04-17 17:30:03.301', '2013-04-17 17:51:22.869', 'License d''accÃÂ©s Microsoft (Turque)', 'TUR', 'ChargeTemplate_355', 1, 1, 1);
-INSERT INTO adm_messages VALUES (358, 1, false, '2013-04-17 17:30:03.304', '2013-04-17 17:51:22.875', 'License d''accÃÂ©s Microsoft (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_355', 1, 1, 1);
-INSERT INTO adm_messages VALUES (361, 0, false, '2013-04-17 17:41:03.565', NULL, 'Souscription Data (Turque)', 'TUR', 'InvoiceSubCategory_360', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (362, 0, false, '2013-04-17 17:41:03.566', NULL, 'Souscription Data (Arabe)', 'ARA', 'InvoiceSubCategory_360', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (340, 5, false, '2013-04-17 16:59:37.534', '2013-04-17 17:52:27.739', 'Option 1Go incluse (Arabe)', 'ARA', 'ChargeTemplate_338', 1, 1, 1);
-INSERT INTO adm_messages VALUES (335, 2, false, '2013-04-17 16:57:37.13', '2013-04-17 17:50:27.068', 'Exchange 2010 Business', 'TUR', 'ChargeTemplate_334', 1, 1, 1);
-INSERT INTO adm_messages VALUES (336, 2, false, '2013-04-17 16:57:37.131', '2013-04-17 17:50:27.079', 'Exchange 2010 Business', 'ARA', 'ChargeTemplate_334', 1, 1, 1);
-INSERT INTO adm_messages VALUES (337, 2, false, '2013-04-17 16:57:37.133', '2013-04-17 17:50:27.085', 'Exchange 2010 Business', 'FRA', 'ChargeTemplate_334', 1, 1, 1);
-INSERT INTO adm_messages VALUES (347, 4, false, '2013-04-17 17:02:59.86', '2013-04-17 17:56:29.507', ' Option 3Go supplÃÂ©mentaire (Turque)', 'TUR', 'ChargeTemplate_346', 1, 1, 1);
-INSERT INTO adm_messages VALUES (348, 4, false, '2013-04-17 17:02:59.862', '2013-04-17 17:56:29.517', 'Option 3Go supplÃÂ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_346', 1, 1, 1);
-INSERT INTO adm_messages VALUES (339, 5, false, '2013-04-17 16:59:37.532', '2013-04-17 17:52:27.75', 'Option 1Go incluse (Turque)', 'TUR', 'ChargeTemplate_338', 1, 1, 1);
-INSERT INTO adm_messages VALUES (363, 0, false, '2013-04-17 17:41:03.568', NULL, 'Souscription Data (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_360', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (381, 1, false, '2013-04-17 18:23:32.616', '2013-04-17 18:31:24.266', 'Microsoft Project 2013 (Turque)', 'TUR', 'ChargeTemplate_380', 1, 1, 1);
-INSERT INTO adm_messages VALUES (383, 1, false, '2013-04-17 18:23:32.62', '2013-04-17 18:31:24.272', 'Microsoft Project 2013 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_380', 1, 1, 1);
-INSERT INTO adm_messages VALUES (386, 1, false, '2013-04-17 18:25:07.046', '2013-04-17 18:31:45.272', 'Microsoft Visio 2013', 'ARA', 'ChargeTemplate_384', 1, 1, 1);
-INSERT INTO adm_messages VALUES (385, 1, false, '2013-04-17 18:25:07.044', '2013-04-17 18:31:45.282', 'Microsoft Visio 2013', 'TUR', 'ChargeTemplate_384', 1, 1, 1);
-INSERT INTO adm_messages VALUES (344, 3, false, '2013-04-17 17:00:17.827', '2013-04-23 23:12:41.124', 'Exchange 2010 Premium', 'ARA', 'ChargeTemplate_342', 1, 1, 1);
-INSERT INTO adm_messages VALUES (343, 3, false, '2013-04-17 17:00:17.826', '2013-04-23 23:12:41.141', 'Exchange 2010 Premium', 'TUR', 'ChargeTemplate_342', 1, 1, 1);
-INSERT INTO adm_messages VALUES (345, 3, false, '2013-04-17 17:00:17.829', '2013-04-23 23:12:41.163', 'Exchange 2010 Premium', 'FRA', 'ChargeTemplate_342', 1, 1, 1);
-INSERT INTO adm_messages VALUES (341, 5, false, '2013-04-17 16:59:37.536', '2013-04-17 17:52:27.756', 'Option 1Go incluse (FranÃ§ais)', 'FRA', 'ChargeTemplate_338', 1, 1, 1);
-INSERT INTO adm_messages VALUES (365, 2, false, '2013-04-17 17:46:34.024', '2013-04-17 17:53:21.456', 'Option 1Go supplÃ©mentaire (turque)', 'TUR', 'ChargeTemplate_364', 1, 1, 1);
-INSERT INTO adm_messages VALUES (366, 2, false, '2013-04-17 17:46:34.026', '2013-04-17 17:53:21.467', 'Option 1Go supplÃ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_364', 1, 1, 1);
-INSERT INTO adm_messages VALUES (367, 2, false, '2013-04-17 17:46:34.028', '2013-04-17 17:53:21.472', 'Option 1Go supplÃ©mentaire (FranÃ§ais)', 'FRA', 'ChargeTemplate_364', 1, 1, 1);
-INSERT INTO adm_messages VALUES (387, 1, false, '2013-04-17 18:25:07.047', '2013-04-17 18:31:45.289', 'Microsoft Visio 2013', 'FRA', 'ChargeTemplate_384', 1, 1, 1);
-INSERT INTO adm_messages VALUES (349, 4, false, '2013-04-17 17:02:59.864', '2013-04-17 17:56:29.522', 'Option 3Go supplÃÂ©mentaire (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_346', 1, 1, 1);
-INSERT INTO adm_messages VALUES (390, 1, false, '2013-04-17 18:26:14.525', '2013-04-17 18:32:09.236', 'Microsoft Sharepoint 2010 (Arabe)', 'ARA', 'ChargeTemplate_388', 1, 1, 1);
-INSERT INTO adm_messages VALUES (389, 1, false, '2013-04-17 18:26:14.524', '2013-04-17 18:32:09.249', 'Microsoft Sharepoint 2010 (Turque)', 'TUR', 'ChargeTemplate_388', 1, 1, 1);
-INSERT INTO adm_messages VALUES (391, 1, false, '2013-04-17 18:26:14.527', '2013-04-17 18:32:09.255', 'Microsoft Sharepoint 2010 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_388', 1, 1, 1);
-INSERT INTO adm_messages VALUES (394, 1, false, '2013-04-17 18:27:28.168', '2013-04-17 18:32:25.152', 'Microsoft Lync 2010 (Arabe)', 'ARA', 'ChargeTemplate_392', 1, 1, 1);
-INSERT INTO adm_messages VALUES (393, 1, false, '2013-04-17 18:27:28.167', '2013-04-17 18:32:25.166', 'Microsoft Lync 2010 (Turque)', 'TUR', 'ChargeTemplate_392', 1, 1, 1);
-INSERT INTO adm_messages VALUES (395, 1, false, '2013-04-17 18:27:28.17', '2013-04-17 18:32:25.172', 'Microsoft Lync 2010 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_392', 1, 1, 1);
-INSERT INTO adm_messages VALUES (370, 3, false, '2013-04-17 17:57:34.063', '2013-04-17 17:58:59.199', 'Option 2Go incluse (Arabe)', 'ARA', 'ChargeTemplate_368', 1, 1, 1);
-INSERT INTO adm_messages VALUES (369, 3, false, '2013-04-17 17:57:34.061', '2013-04-17 17:58:59.211', 'Option 2Go incluse (Turque)', 'TUR', 'ChargeTemplate_368', 1, 1, 1);
-INSERT INTO adm_messages VALUES (371, 3, false, '2013-04-17 17:57:34.065', '2013-04-17 17:58:59.218', 'Option 2Go incluse (franÃ§ais)', 'FRA', 'ChargeTemplate_368', 1, 1, 1);
-INSERT INTO adm_messages VALUES (377, 0, false, '2013-04-17 18:09:41.377', NULL, 'Microsoft Office 2013 Standard (Turque)', 'TUR', 'ChargeTemplate_376', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (378, 0, false, '2013-04-17 18:09:41.379', NULL, 'Microsoft Office 2013 Standard (Arabe)', 'ARA', 'ChargeTemplate_376', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (379, 0, false, '2013-04-17 18:09:41.38', NULL, 'Microsoft Office 2013 Standard (FranÃ§ais)', 'FRA', 'ChargeTemplate_376', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (374, 1, false, '2013-04-17 18:08:38.845', '2013-04-17 18:21:39.416', 'Microsoft Office 2013 Professionel (Arabe)', 'ARA', 'ChargeTemplate_372', 1, 1, 1);
-INSERT INTO adm_messages VALUES (373, 1, false, '2013-04-17 18:08:38.844', '2013-04-17 18:21:39.429', 'Microsoft Office 2013 Professionel (turque)', 'TUR', 'ChargeTemplate_372', 1, 1, 1);
-INSERT INTO adm_messages VALUES (375, 1, false, '2013-04-17 18:08:38.847', '2013-04-17 18:21:39.435', 'Microsoft Office 2013 Professionel (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_372', 1, 1, 1);
-INSERT INTO adm_messages VALUES (382, 1, false, '2013-04-17 18:23:32.618', '2013-04-17 18:31:24.254', 'Microsoft Project 2013 (Arabe)', 'ARA', 'ChargeTemplate_380', 1, 1, 1);
-INSERT INTO adm_messages VALUES (398, 1, false, '2013-04-17 18:28:56.872', '2013-04-17 18:32:40.732', 'Microsoft Dynamics CRM 2011 (Arabe)', 'ARA', 'ChargeTemplate_396', 1, 1, 1);
-INSERT INTO adm_messages VALUES (397, 1, false, '2013-04-17 18:28:56.871', '2013-04-17 18:32:40.743', 'Microsoft Dynamics CRM 2011 (Turque)', 'TUR', 'ChargeTemplate_396', 1, 1, 1);
-INSERT INTO adm_messages VALUES (399, 1, false, '2013-04-17 18:28:56.874', '2013-04-17 18:32:40.749', 'Microsoft Dynamics CRM 2011 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_396', 1, 1, 1);
-INSERT INTO adm_messages VALUES (401, 0, false, '2013-04-17 18:34:33.249', NULL, 'Option 1GB supplÃ©mentaire (Turque)', 'TUR', 'ChargeTemplate_400', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (402, 0, false, '2013-04-17 18:34:33.252', NULL, 'Option 1GB supplÃ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_400', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (403, 0, false, '2013-04-17 18:34:33.254', NULL, 'Option 1GB supplÃ©mentaire (FranÃ§ais)', 'FRA', 'ChargeTemplate_400', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (331, 4, false, '2013-04-17 16:55:29.217', '2013-04-23 23:11:57.842', 'Exchange 2010 - souscription blackberry (Turque)', 'TUR', 'ChargeTemplate_330', 1, 1, 1);
-INSERT INTO adm_messages VALUES (332, 4, false, '2013-04-17 16:55:29.218', '2013-04-23 23:11:57.867', 'Exchange 2010 - souscription blackberry (Arabe)', 'ARA', 'ChargeTemplate_330', 1, 1, 1);
-INSERT INTO adm_messages VALUES (1054, 0, false, '2013-04-23 23:11:57.887', NULL, NULL, 'DEU', 'ChargeTemplate_330', 1, 1, NULL);
-INSERT INTO adm_messages VALUES (333, 4, false, '2013-04-17 16:55:29.22', '2013-04-23 23:11:57.916', 'Exchange 2010 - souscription blackberry (FranÃÂÃÂÃÂÃÂ§ais)', 'FRA', 'ChargeTemplate_330', 1, 1, 1);
-INSERT INTO adm_messages VALUES (1055, 0, false, '2013-04-23 23:12:41.151', NULL, NULL, 'DEU', 'ChargeTemplate_342', 1, 1, NULL);
-
-
---
--- Name: adm_messages_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_messages_seq', 38, true);
-
-
---
--- Data for Name: adm_permission; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_permission VALUES (1, 'administrationVisualization', 'administrationVisualization', 'administration');
-INSERT INTO adm_permission VALUES (2, 'administrationManagement', 'administrationManagement', 'administration');
-INSERT INTO adm_permission VALUES (3, 'catalogVisualization', 'catalogVisualization', 'catalog');
-INSERT INTO adm_permission VALUES (4, 'catalogManagement', 'catalogManagement', 'catalog');
-INSERT INTO adm_permission VALUES (5, 'accountVisualization', 'accountVisualization', 'account');
-INSERT INTO adm_permission VALUES (6, 'accountManagement', 'accountManagement', 'account');
-INSERT INTO adm_permission VALUES (7, 'reportingVisualization', 'reportingVisualization', 'reporting');
-INSERT INTO adm_permission VALUES (8, 'reportingManagement', 'reportingManagement', 'reporting');
-INSERT INTO adm_permission VALUES (9, 'customerSummaryVisualization', 'customerSummaryVisualization', 'customerSummary');
-INSERT INTO adm_permission VALUES (10, 'adv', 'billingVisualization', 'billing');
-INSERT INTO adm_permission VALUES (11, 'adv', 'billingManagement', 'billing');
-
-
---
--- Data for Name: adm_role; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_role VALUES (1, NULL, 'Administrateur', 'administrateur', NULL);
-INSERT INTO adm_role VALUES (6, NULL, 'Super Administrateur', 'superAdministrateur', NULL);
-
-
---
--- Data for Name: adm_role_permission; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_role_permission VALUES (1, 1);
-INSERT INTO adm_role_permission VALUES (1, 2);
-INSERT INTO adm_role_permission VALUES (1, 3);
-INSERT INTO adm_role_permission VALUES (1, 4);
-INSERT INTO adm_role_permission VALUES (1, 5);
-INSERT INTO adm_role_permission VALUES (1, 6);
-INSERT INTO adm_role_permission VALUES (1, 7);
-INSERT INTO adm_role_permission VALUES (1, 8);
-INSERT INTO adm_role_permission VALUES (1, 9);
-INSERT INTO adm_role_permission VALUES (1, 10);
-INSERT INTO adm_role_permission VALUES (1, 11);
-
-
---
--- Name: adm_role_permission_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_role_permission_seq', 6, true);
-
-
---
--- Name: adm_role_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_role_seq', 1, false);
-
-
---
--- Name: adm_title_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_title_seq', 1, false);
-
-
---
--- Data for Name: adm_user_log; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: adm_user_log_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_user_log_seq', 1, false);
-
-
---
--- Data for Name: adm_user_provider; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_user_provider VALUES (1, 1);
-INSERT INTO adm_user_provider VALUES (1, 6);
-
-
---
--- Data for Name: adm_user_role; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO adm_user_role VALUES (1, 1);
-INSERT INTO adm_user_role VALUES (1, 6);
-INSERT INTO adm_user_role VALUES (6, 1);
-INSERT INTO adm_user_role VALUES (6, 6);
-
-
---
--- Name: adm_user_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_user_seq', 1, false);
-
-
---
--- Data for Name: adm_vertina_configuration; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: adm_vertina_configuration_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('adm_vertina_configuration_seq', 1, false);
-
-
---
--- Data for Name: ar_ddrequest_lot; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: ar_ddrequest_item; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: ar_account_operation; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: ar_account_operation_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_account_operation_seq', 1, false);
-
-
---
--- Data for Name: ar_dunning_plan; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: ar_action_plan_item; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: bi_job; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: bi_job_history; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: ar_dunning_lot; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: ar_action_dunning; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: ar_action_dunning_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_action_dunning_seq', 1, false);
-
-
---
--- Name: ar_action_plan_item_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_action_plan_item_seq', 1, false);
-
-
---
--- Data for Name: ar_bank_operation; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: ar_bank_operation_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_bank_operation_seq', 1, false);
-
-
---
--- Name: ar_ddrequest_item_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_ddrequest_item_seq', 1, false);
-
-
---
--- Data for Name: ar_ddrequest_lot_op; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: ar_ddrequest_lot_op_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_ddrequest_lot_op_seq', 1, false);
-
-
---
--- Name: ar_ddrequest_lot_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_ddrequest_lot_seq', 1, false);
-
-
---
--- Name: ar_dunning_lot_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_dunning_lot_seq', 1, false);
-
-
---
--- Name: ar_dunning_plan_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_dunning_plan_seq', 1, false);
-
-
---
--- Data for Name: ar_dunning_plan_transition; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: ar_dunning_plan_transition_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_dunning_plan_transition_seq', 1, false);
-
-
---
--- Data for Name: ar_matching_code; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: ar_matching_amount; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: ar_matching_amount_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_matching_amount_seq', 1, false);
-
-
---
--- Name: ar_matching_code_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_matching_code_seq', 1, false);
-
-
---
--- Data for Name: ar_occ_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: ar_occ_template_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('ar_occ_template_seq', 1, false);
-
-
---
--- Name: bi_job_history_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('bi_job_history_seq', 1, false);
-
-
---
--- Name: bi_job_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('bi_job_seq', 1, false);
-
-
---
--- Data for Name: bi_report; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: crm_email; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: bi_report_emails; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: bi_report_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('bi_report_seq', 1, false);
-
-
---
--- Data for Name: billing_access_point; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_calendar; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_calendar VALUES (318, 1, false, '2013-04-17 16:14:22.094', '2013-04-17 17:09:51.689', 'Monthly subscription calendar', 'CAL_SUB_MT', 'DURATION_TERM', 1, 1, 1);
-INSERT INTO cat_calendar VALUES (1041, 0, false, '2013-04-23 20:31:30.257', NULL, 'Monthly invoicing calendar', 'CAL_INV_MT', 'BILLING', 1, 1, NULL);
-INSERT INTO cat_calendar VALUES (1053, 0, false, '2013-04-23 23:11:26.363', NULL, 'Monthly valorisation calendar', 'CAL_VAL_MT', 'CHARGE_IMPUTATION', 1, 1, NULL);
-
-
---
--- Data for Name: billing_cycle; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_cycle VALUES (1042, 0, false, '2013-04-23 20:32:13.081', NULL, 'CYC_INV_MT', 'Monthlly invoice cycle', '1', 4, 2, 1, 1, NULL, 1041);
-
-
---
--- Data for Name: billing_billing_run; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: billing_billing_run_list; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_billing_run_list_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_billing_run_list_seq', 1, false);
-
-
---
--- Name: billing_billing_run_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_billing_run_seq', 1, false);
-
-
---
--- Name: billing_charge_applic_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_charge_applic_seq', 1, false);
-
-
---
--- Data for Name: billing_invoice_cat; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_invoice_cat VALUES (249, 2, false, '2013-04-17 15:32:43.503', '2013-04-17 15:38:21.573', 'CONSUMPTION', 'Consumption', NULL, 1, 1, 1);
-INSERT INTO billing_invoice_cat VALUES (240, 5, false, '2013-04-17 15:26:59.825', '2013-04-17 15:39:11.188', 'SUBSCRIPTION', 'Subscription', NULL, 1, 1, 1);
-
-
---
--- Data for Name: billing_invoice_sub_cat; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_invoice_sub_cat VALUES (298, 0, false, '2013-04-17 15:59:09.996', NULL, 'SUB_SRV', 'Server subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
-INSERT INTO billing_invoice_sub_cat VALUES (302, 0, false, '2013-04-17 16:00:47.068', NULL, 'SUB_SOFT', 'Software subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
-INSERT INTO billing_invoice_sub_cat VALUES (306, 0, false, '2013-04-17 16:02:54.625', NULL, 'SUB_DOM', 'Domain subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
-INSERT INTO billing_invoice_sub_cat VALUES (310, 0, false, '2013-04-17 16:04:43.495', NULL, 'CMP_DATA', 'Data Consumption', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 249);
-INSERT INTO billing_invoice_sub_cat VALUES (360, 0, false, '2013-04-17 17:41:03.561', NULL, 'SUB_DATA', 'Data Subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
-
-
---
--- Data for Name: cat_charge_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_charge_template VALUES (376, 0, false, '2013-04-17 18:09:41.374', NULL, 'MO20131_SOFT', 'Microsoft Office 2013 Standard', false, 0, 1, 1, NULL, 302);
-INSERT INTO cat_charge_template VALUES (372, 2, false, '2013-04-17 18:08:38.84', '2013-04-17 18:21:39.436', 'MO20132_SOFT', 'Microsoft Office 2013 Professional', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (380, 2, false, '2013-04-17 18:23:32.612', '2013-04-17 18:31:24.272', 'MPR2013_SOFT', 'Microsoft Project 2013', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (384, 2, false, '2013-04-17 18:25:07.04', '2013-04-17 18:31:45.289', 'MVI2013_SOFT', 'Microsoft Visio 2013', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (388, 2, false, '2013-04-17 18:26:14.521', '2013-04-17 18:32:09.255', 'MSH2010_SOFT', 'Microsoft Sharepoint 2010', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (392, 2, false, '2013-04-17 18:27:28.164', '2013-04-17 18:32:25.173', 'MLYNC2010_SOFT', 'Microsoft Lync 2010', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (396, 2, false, '2013-04-17 18:28:56.867', '2013-04-17 18:32:40.75', 'MDYCRM2011_SOFT', 'Microsoft Dynamics CRM 2011', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (400, 0, false, '2013-04-17 18:34:33.246', NULL, 'MSOFT_DATA', '1GB Additional Storage Option', false, 0, 1, 1, NULL, 360);
-INSERT INTO cat_charge_template VALUES (334, 4, false, '2013-04-17 16:57:37.126', '2013-04-17 17:50:27.085', 'EXCH20101_SOFT', 'Exchange 2010 Business', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (355, 2, false, '2013-04-17 17:30:03.298', '2013-04-17 17:51:22.876', 'MALIC_SOFT', 'Microsoft Access License', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (338, 10, false, '2013-04-17 16:59:37.528', '2013-04-17 17:52:27.756', 'EXCH20101_DATA_1G', '1Go  comp. Option', false, 0, 1, 1, 1, 360);
-INSERT INTO cat_charge_template VALUES (364, 4, false, '2013-04-17 17:46:34.02', '2013-04-17 17:53:21.473', 'EXCH20101_DATA_1G+', '1Go Additional Storage Option', false, 0, 1, 1, 1, 360);
-INSERT INTO cat_charge_template VALUES (346, 10, false, '2013-04-17 17:02:59.858', '2013-04-17 17:56:29.523', 'EXCH20102_DATA_3G+', '3Go Additional Storage Option', false, 0, 1, 1, 1, 360);
-INSERT INTO cat_charge_template VALUES (368, 5, false, '2013-04-17 17:57:34.058', '2013-04-17 17:58:59.219', 'EXCH20102_DATA_2G', '2Go comp. Option', false, 0, 1, 1, 1, 360);
-INSERT INTO cat_charge_template VALUES (330, 8, false, '2013-04-17 16:55:29.213', '2013-04-23 23:11:57.917', 'EXCH20102_SOFT_BLACK', 'Exchange 2010 - Blackberry subscription', false, 0, 1, 1, 1, 302);
-INSERT INTO cat_charge_template VALUES (342, 6, false, '2013-04-17 17:00:17.822', '2013-04-23 23:12:41.164', 'EXCH20102_SOFT', 'Exchange 2010 Premium', false, 0, 1, 1, 1, 302);
-
-
---
--- Data for Name: billing_charge_instance; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_charge_instance VALUES (1052, 0, false, '2013-04-23 23:08:36.893', NULL, 'EXCH20102_SOFT_BLACK', 'Exchange 2010 - Blackberry subscription', NULL, NULL, '2013-04-23', NULL, NULL, NULL, NULL, 'INACTIVE', '2013-04-23 23:08:36.893', NULL, 1, 1, NULL, 330);
-
-
---
--- Name: billing_charge_instance_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_charge_instance_seq', 1, false);
-
-
---
--- Data for Name: cat_counter_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: billing_counter; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: billing_counter_period; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_country_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_country_seq', 1, false);
-
-
---
--- Name: billing_cycle_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_cycle_seq', 1, true);
-
-
---
--- Data for Name: billing_discountplan_instanciation; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_discountplan_instanciation_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_discountplan_instanciation_seq', 1, false);
-
-
---
--- Name: billing_invoic_sub_country_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_invoic_sub_country_seq', 1, false);
-
-
---
--- Data for Name: billing_trading_country; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_trading_country VALUES (154, 0, false, '2013-04-12 12:20:09.074', NULL, 'United Arab emirats', 1, 1, NULL, 2);
-INSERT INTO billing_trading_country VALUES (155, 0, false, '2013-04-12 12:27:34.972', NULL, 'Turkey', 1, 1, NULL, 211);
-INSERT INTO billing_trading_country VALUES (156, 0, false, '2013-04-12 12:28:10.266', NULL, 'Germany', 1, 1, NULL, 53);
-INSERT INTO billing_trading_country VALUES (157, 0, false, '2013-04-12 12:28:45.833', NULL, 'France', 1, 1, NULL, 70);
-INSERT INTO billing_trading_country VALUES (158, 0, false, '2013-04-12 12:29:51.276', NULL, 'Saoudi Arabia', 1, 1, NULL, 181);
-INSERT INTO billing_trading_country VALUES (159, 0, false, '2013-04-12 12:30:22.05', NULL, 'Qatar', 1, 1, NULL, 176);
-INSERT INTO billing_trading_country VALUES (160, 0, false, '2013-04-12 12:30:48.308', NULL, 'Bahrain', 1, 1, NULL, 22);
-INSERT INTO billing_trading_country VALUES (239, 0, false, '2013-04-17 15:01:46.92', NULL, 'Kuwait', 1, 1, NULL, 114);
-
-
---
--- Data for Name: billing_trading_currency; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_trading_currency VALUES (146, 2, false, '2013-04-12 12:02:59.77', '2013-04-17 14:49:18.052', 0.266600000000, 'Riyal Saoudien', 1, 1, 1, 9);
-INSERT INTO billing_trading_currency VALUES (145, 1, false, '2013-04-12 12:01:16.438', '2013-04-17 14:49:33.718', 1.313600000000, 'Euro', 1, 1, 1, 5);
-INSERT INTO billing_trading_currency VALUES (232, 2, false, '2013-04-16 16:12:50.03', '2013-04-17 14:51:25.339', 0.272300000000, 'Dirham des Ã©mirats unis', 1, 1, 1, 54);
-INSERT INTO billing_trading_currency VALUES (149, 1, false, '2013-04-12 12:09:54.989', '2013-04-17 14:52:29.742', 2.652100000000, 'Bahrein Dinar', 1, 1, 1, 16);
-INSERT INTO billing_trading_currency VALUES (218, 5, false, '2013-04-16 11:39:48.855', '2013-04-17 14:53:50.639', 3.514200000000, 'Dinar Koweitien', 1, 1, 1, 85);
-INSERT INTO billing_trading_currency VALUES (237, 0, false, '2013-04-17 14:54:42.397', NULL, 0.558200000000, 'Livre turque', 1, 1, NULL, 158);
-INSERT INTO billing_trading_currency VALUES (238, 0, false, '2013-04-17 14:56:22.139', NULL, 0.274600000000, 'Riyal du Qatar', 1, 1, NULL, 126);
-
-
---
--- Data for Name: billing_trading_language; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_trading_language VALUES (139, 1, false, '2013-04-12 11:19:50.57', '2013-04-12 11:22:07.895', 'Arabic ', 1, 1, 1, 3);
-INSERT INTO billing_trading_language VALUES (141, 0, false, '2013-04-12 11:25:44.671', NULL, 'French', 1, 1, NULL, 12);
-INSERT INTO billing_trading_language VALUES (138, 1, false, '2013-04-12 11:10:03.388', '2013-04-12 11:29:02.661', 'Turkish ', 1, 1, 1, 32);
-INSERT INTO billing_trading_language VALUES (244, 0, false, '2013-04-17 15:27:34.349', NULL, 'German', 1, 1, NULL, 1);
-
-
---
--- Data for Name: billing_invoice; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: billing_tax; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_tax VALUES (266, 2, false, '2013-04-17 15:49:42.335', '2013-04-17 15:53:07.569', 'TAX_10', '10 Percent Tax', '', 10.0000, 1, 1, 1);
-INSERT INTO billing_tax VALUES (282, 0, false, '2013-04-17 15:53:55.442', NULL, 'TAX_15', '15 Percent Tax', '', 15.0000, 1, 1, NULL);
-INSERT INTO billing_tax VALUES (286, 0, false, '2013-04-17 15:54:52.002', NULL, 'TAX_19.6', '19.6 Percent Tax', '', 19.6000, 1, 1, NULL);
-INSERT INTO billing_tax VALUES (290, 0, false, '2013-04-17 15:56:07.799', NULL, 'TAX_07', '7 Percent Tax', '', 7.0000, 1, 1, NULL);
-
-
---
--- Data for Name: billing_invoice_agregate; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_invoice_agregate_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_invoice_agregate_seq', 1, false);
-
-
---
--- Data for Name: billing_invoice_cat_country; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_invoice_cat_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_invoice_cat_seq', 3, true);
-
-
---
--- Name: billing_invoice_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_invoice_seq', 1, false);
-
-
---
--- Data for Name: billing_invoice_sub_cat_country; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_invoice_sub_cat_country VALUES (314, 0, false, '2013-04-17 16:05:39.423', NULL, NULL, 1, 1, NULL, 298, 282, 156);
-INSERT INTO billing_invoice_sub_cat_country VALUES (1056, 0, false, '2013-04-23 23:17:04.361', NULL, NULL, 1, 1, NULL, 302, 286, 157);
-
-
---
--- Name: billing_invoice_sub_cat_country_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_invoice_sub_cat_country_seq', 49, true);
-
-
---
--- Name: billing_invoice_sub_cat_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_invoice_sub_cat_seq', 12, true);
-
-
---
--- Data for Name: billing_invoice_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_invoice_template_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_invoice_template_seq', 1, false);
-
-
---
--- Name: billing_language_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_language_seq', 1, false);
-
-
---
--- Data for Name: billing_subscrip_termin_reason; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_offer_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_offer_template VALUES (329, 0, false, '2013-04-17 16:44:03.371', NULL, 'DOM_MAIL', 'Mail Domain', 1, 1, NULL);
-INSERT INTO cat_offer_template VALUES (325, 2, false, '2013-04-17 16:34:53.862', '2013-04-17 18:03:43.692', 'SH2010', 'Microsoft Sharepoint 2010', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (321, 2, false, '2013-04-17 16:22:36.363', '2013-04-17 18:04:00.844', 'MO20131', 'Microsoft Office 2013 Standard', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (322, 2, false, '2013-04-17 16:23:15.217', '2013-04-17 18:04:30.066', 'MO20132', 'Microsoft Office 2013 Professional', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (324, 2, false, '2013-04-17 16:33:09.26', '2013-04-17 18:05:13.584', 'PR20131', 'Microsoft Project 2013', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (320, 2, false, '2013-04-17 16:21:34.911', '2013-04-17 18:05:30.146', 'EXCH20102', 'Exchange 2010 Premium', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (319, 2, false, '2013-04-17 16:19:19.305', '2013-04-17 18:05:52.963', 'EXCH20101', 'Exchange 2010 Business', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (326, 1, false, '2013-04-17 16:40:44.701', '2013-04-17 18:06:05.506', 'LYNC2010', 'Microsoft Lync 2010', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (323, 2, false, '2013-04-17 16:32:17.864', '2013-04-17 18:06:17.937', 'VI20131', 'Microsoft Visio 2013', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (328, 1, false, '2013-04-17 16:43:03.925', '2013-04-17 18:06:36.368', 'FASTVIEWER', 'Fastviewer', 1, 1, 1);
-INSERT INTO cat_offer_template VALUES (327, 2, false, '2013-04-17 16:41:35.892', '2013-04-23 23:07:15.796', 'DYCRM2011', 'Microsoft Dynamics CRM 2011', 1, 1, 1);
-
-
---
--- Data for Name: billing_subscription; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_subscription VALUES (1049, 0, false, '2013-04-23 20:36:48.046', NULL, 'SUB_TEST', '', true, NULL, 'CREATED', '2013-04-23 20:36:31.937', '2013-04-23 00:00:00', NULL, 1, 1, NULL, 327, NULL, 1047);
-
-
---
--- Data for Name: cat_service_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_service_template VALUES (354, 0, false, '2013-04-17 17:13:33.324', NULL, 'SOFT_EXCH_2010_2_BLACK', 'Exchange 2010 Premium - Blackberry option', 1, 1, NULL, 318);
-INSERT INTO cat_service_template VALUES (350, 1, false, '2013-04-17 17:11:14.498', '2013-04-17 18:36:21.313', 'EXCH20101', 'Exchange 2010 Business', 1, 1, 1, 318);
-INSERT INTO cat_service_template VALUES (352, 1, false, '2013-04-17 17:12:16.943', '2013-04-17 18:36:44.572', 'EXCH20102', 'Exchange 2010 Premium', 1, 1, 1, 318);
-INSERT INTO cat_service_template VALUES (359, 1, false, '2013-04-17 17:32:56.416', '2013-04-17 18:37:27.47', 'MALIC', 'Microsoft Access License', 1, 1, 1, 318);
-
-
---
--- Data for Name: billing_service_instance; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_service_instance VALUES (1051, 0, false, '2013-04-23 23:08:36.827', NULL, 'SOFT_EXCH_2010_2_BLACK', 'Exchange 2010 Premium - Blackberry option', NULL, 1, 'INACTIVE', '2013-04-23 23:08:36.827', '2013-04-23 00:00:36.76', NULL, 1, 1, NULL, 354, 1049, NULL);
-
-
---
--- Data for Name: billing_one_shot_charge_inst; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: billing_priceplan_instanciation; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_priceplan_instanciation_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_priceplan_instanciation_seq', 1, false);
-
-
---
--- Data for Name: billing_wallet_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: billing_wallet; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_wallet VALUES (1048, 0, false, '2013-04-23 20:36:26.12', NULL, 'PRINCIPAL', NULL, 1, 1, NULL, 1047, NULL);
-
-
---
--- Data for Name: billing_wallet_operation; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: billing_rated_transaction; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_rated_transaction_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_rated_transaction_seq', 1, false);
-
-
---
--- Data for Name: cat_recurring_charge_templ; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 334, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 338, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 346, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 355, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 364, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 368, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 376, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 372, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 380, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 384, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 388, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 392, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 396, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 400, NULL);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 330, 1053);
-INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 342, 1053);
-
-
---
--- Data for Name: billing_recurring_charge_inst; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO billing_recurring_charge_inst VALUES (NULL, '2013-04-23 00:00:36.76', 1052, 330, 1051, 1049);
-
-
---
--- Data for Name: billing_serv_param_inst; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_serv_param_inst_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_serv_param_inst_seq', 1, false);
-
-
---
--- Name: billing_service_instance_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_service_instance_seq', 1, false);
-
-
---
--- Name: billing_subscription_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_subscription_seq', 1, false);
-
-
---
--- Name: billing_tax_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_tax_seq', 4, true);
-
-
---
--- Name: billing_term_reason_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_term_reason_seq', 1, false);
-
-
---
--- Name: billing_trading_country_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_trading_country_seq', 7, true);
-
-
---
--- Name: billing_trading_currency_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_trading_currency_seq', 7, true);
-
-
---
--- Name: billing_trading_language_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_trading_language_seq', 2, true);
-
-
---
--- Data for Name: billing_usage_charge_inst; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: billing_wallet_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('billing_wallet_seq', 1, false);
-
 
 --
 -- Data for Name: cat_day_in_year; Type: TABLE DATA; Schema: public; Owner: meveo
@@ -1918,6 +879,394 @@ INSERT INTO cat_day_in_year VALUES (1131, 1, 31, 'DECEMBER', 1);
 
 
 --
+-- Data for Name: adm_user; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO adm_user VALUES (1, 15, false, '2013-04-23 20:25:20.006133', '2013-04-24 09:49:42.352', '2013-04-24', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.ADMIN', 1, 1, 1, NULL);
+INSERT INTO adm_user VALUES (6, 2, false, '2013-04-23 20:25:20.006133', NULL, '2014-04-23', NULL, NULL, 'fb93a3221422999ba49eb103977a6d736376505b', 'MEVEO.SUPERADMIN', 1, 1, NULL, NULL);
+
+
+
+--
+-- Data for Name: adm_permission; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO adm_permission VALUES (1, 'administrationVisualization', 'administrationVisualization', 'administration');
+INSERT INTO adm_permission VALUES (2, 'administrationManagement', 'administrationManagement', 'administration');
+INSERT INTO adm_permission VALUES (3, 'catalogVisualization', 'catalogVisualization', 'catalog');
+INSERT INTO adm_permission VALUES (4, 'catalogManagement', 'catalogManagement', 'catalog');
+INSERT INTO adm_permission VALUES (5, 'accountVisualization', 'accountVisualization', 'account');
+INSERT INTO adm_permission VALUES (6, 'accountManagement', 'accountManagement', 'account');
+INSERT INTO adm_permission VALUES (7, 'reportingVisualization', 'reportingVisualization', 'reporting');
+INSERT INTO adm_permission VALUES (8, 'reportingManagement', 'reportingManagement', 'reporting');
+INSERT INTO adm_permission VALUES (9, 'customerSummaryVisualization', 'customerSummaryVisualization', 'customerSummary');
+INSERT INTO adm_permission VALUES (10, 'adv', 'billingVisualization', 'billing');
+INSERT INTO adm_permission VALUES (11, 'adv', 'billingManagement', 'billing');
+
+
+--
+-- Data for Name: adm_role; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO adm_role VALUES (1, NULL, 'Administrateur', 'administrateur', NULL);
+INSERT INTO adm_role VALUES (6, NULL, 'Super Administrateur', 'superAdministrateur', NULL);
+
+
+--
+-- Data for Name: adm_role_permission; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO adm_role_permission VALUES (1, 1);
+INSERT INTO adm_role_permission VALUES (1, 2);
+INSERT INTO adm_role_permission VALUES (1, 3);
+INSERT INTO adm_role_permission VALUES (1, 4);
+INSERT INTO adm_role_permission VALUES (1, 5);
+INSERT INTO adm_role_permission VALUES (1, 6);
+INSERT INTO adm_role_permission VALUES (1, 7);
+INSERT INTO adm_role_permission VALUES (1, 8);
+INSERT INTO adm_role_permission VALUES (1, 9);
+INSERT INTO adm_role_permission VALUES (1, 10);
+INSERT INTO adm_role_permission VALUES (1, 11);
+
+
+
+
+--
+-- Data for Name: adm_user_provider; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO adm_user_provider VALUES (1, 6);
+INSERT INTO adm_user_provider VALUES (1, 1);
+
+
+--
+-- Data for Name: adm_user_role; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO adm_user_role VALUES (6, 1);
+INSERT INTO adm_user_role VALUES (6, 6);
+INSERT INTO adm_user_role VALUES (1, 1);
+INSERT INTO adm_user_role VALUES (1, 6);
+
+
+
+
+--
+-- Data for Name: cat_calendar; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_calendar VALUES (318, 1, false, '2013-04-17 16:14:22.094', '2013-04-17 17:09:51.689', 'Monthly subscription calendar', 'CAL_SUB_MT', 'DURATION_TERM', 1, 1, 1);
+INSERT INTO cat_calendar VALUES (1041, 0, false, '2013-04-23 20:31:30.257', NULL, 'Monthly invoicing calendar', 'CAL_INV_MT', 'BILLING', 1, 1, NULL);
+INSERT INTO cat_calendar VALUES (1053, 0, false, '2013-04-23 23:11:26.363', NULL, 'Monthly valorisation calendar', 'CAL_VAL_MT', 'CHARGE_IMPUTATION', 1, 1, NULL);
+INSERT INTO cat_calendar VALUES (1097, 0, false, '2013-04-24 17:23:50.248', NULL, 'Périodicité des compteurs', 'CAL_COUNTER', 'COUNTER', 1, 1, NULL);
+
+
+--
+-- Data for Name: billing_cycle; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_cycle VALUES (1042, 0, false, '2013-04-23 20:32:13.081', NULL, 'CYC_INV_MT', 'Monthlly invoice cycle', '1', 4, 2, 1, 1, NULL, 1041);
+
+
+--
+-- Data for Name: billing_invoice_cat; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_invoice_cat VALUES (249, 3, false, '2013-04-17 15:32:43.503', '2013-04-24 16:22:38.789', 'CONSUMPTION', 'Consumption', NULL, 1, 1, 1);
+INSERT INTO billing_invoice_cat VALUES (240, 13, false, '2013-04-17 15:26:59.825', '2013-04-24 16:25:21.712', 'SUBSCRIPTION', 'Subscription', NULL, 1, 1, 1);
+INSERT INTO billing_invoice_cat VALUES (1091, 0, false, '2013-04-24 16:39:02.564', NULL, 'rub_TEST', '0', NULL, 1, 1, NULL);
+
+
+--
+-- Data for Name: billing_invoice_sub_cat; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_invoice_sub_cat VALUES (298, 0, false, '2013-04-17 15:59:09.996', NULL, 'SUB_SRV', 'Server subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
+INSERT INTO billing_invoice_sub_cat VALUES (302, 0, false, '2013-04-17 16:00:47.068', NULL, 'SUB_SOFT', 'Software subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
+INSERT INTO billing_invoice_sub_cat VALUES (306, 0, false, '2013-04-17 16:02:54.625', NULL, 'SUB_DOM', 'Domain subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
+INSERT INTO billing_invoice_sub_cat VALUES (310, 0, false, '2013-04-17 16:04:43.495', NULL, 'CMP_DATA', 'Data Consumption', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 249);
+INSERT INTO billing_invoice_sub_cat VALUES (360, 0, false, '2013-04-17 17:41:03.561', NULL, 'SUB_DATA', 'Data Subscription', 'PB,CG,CA,DA,ZONE,IC,GP', NULL, 1, 1, NULL, 240);
+
+
+--
+-- Data for Name: billing_trading_country; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_trading_country VALUES (154, 0, false, '2013-04-12 12:20:09.074', NULL, 'United Arab emirats', 1, 1, NULL, 2);
+INSERT INTO billing_trading_country VALUES (155, 0, false, '2013-04-12 12:27:34.972', NULL, 'Turkey', 1, 1, NULL, 211);
+INSERT INTO billing_trading_country VALUES (156, 0, false, '2013-04-12 12:28:10.266', NULL, 'Germany', 1, 1, NULL, 53);
+INSERT INTO billing_trading_country VALUES (157, 0, false, '2013-04-12 12:28:45.833', NULL, 'France', 1, 1, NULL, 70);
+INSERT INTO billing_trading_country VALUES (158, 0, false, '2013-04-12 12:29:51.276', NULL, 'Saoudi Arabia', 1, 1, NULL, 181);
+INSERT INTO billing_trading_country VALUES (159, 0, false, '2013-04-12 12:30:22.05', NULL, 'Qatar', 1, 1, NULL, 176);
+INSERT INTO billing_trading_country VALUES (160, 0, false, '2013-04-12 12:30:48.308', NULL, 'Bahrain', 1, 1, NULL, 22);
+INSERT INTO billing_trading_country VALUES (239, 0, false, '2013-04-17 15:01:46.92', NULL, 'Kuwait', 1, 1, NULL, 114);
+INSERT INTO billing_trading_country VALUES (1105, 0, false, '2013-04-24 19:25:29.026', NULL, 'United States', 1, 1, NULL, 220);
+
+
+--
+-- Data for Name: billing_trading_currency; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_trading_currency VALUES (146, 2, false, '2013-04-12 12:02:59.77', '2013-04-17 14:49:18.052', 0.266600000000, 'Riyal Saoudien', 1, 1, 1, 9);
+INSERT INTO billing_trading_currency VALUES (145, 1, false, '2013-04-12 12:01:16.438', '2013-04-17 14:49:33.718', 1.313600000000, 'Euro', 1, 1, 1, 5);
+INSERT INTO billing_trading_currency VALUES (232, 2, false, '2013-04-16 16:12:50.03', '2013-04-17 14:51:25.339', 0.272300000000, 'Dirham des Ã©mirats unis', 1, 1, 1, 54);
+INSERT INTO billing_trading_currency VALUES (149, 1, false, '2013-04-12 12:09:54.989', '2013-04-17 14:52:29.742', 2.652100000000, 'Bahrein Dinar', 1, 1, 1, 16);
+INSERT INTO billing_trading_currency VALUES (237, 0, false, '2013-04-17 14:54:42.397', NULL, 0.558200000000, 'Livre turque', 1, 1, NULL, 158);
+INSERT INTO billing_trading_currency VALUES (238, 0, false, '2013-04-17 14:56:22.139', NULL, 0.274600000000, 'Riyal du Qatar', 1, 1, NULL, 126);
+INSERT INTO billing_trading_currency VALUES (218, 6, false, '2013-04-16 11:39:48.855', '2013-04-17 14:53:50.639', 3.514200000000, 'Kwanza', 1, 1, 1, 6);
+INSERT INTO billing_trading_currency VALUES (1106, 1, false, '2013-04-24 19:28:05.741', '2013-04-24 19:28:52.388', 1.000000000000, 'Dollar des Etats-unis', 1, 1, 1, 49);
+INSERT INTO billing_trading_currency VALUES (1110, 0, false, '2013-04-24 19:49:09.327', NULL, 0.285800000000, 'Dinar koweïtien', 1, 1, NULL, 85);
+
+
+--
+-- Data for Name: billing_trading_language; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_trading_language VALUES (139, 1, false, '2013-04-12 11:19:50.57', '2013-04-12 11:22:07.895', 'Arabic ', 1, 1, 1, 3);
+INSERT INTO billing_trading_language VALUES (138, 1, false, '2013-04-12 11:10:03.388', '2013-04-12 11:29:02.661', 'Turkish ', 1, 1, 1, 32);
+INSERT INTO billing_trading_language VALUES (244, 0, false, '2013-04-17 15:27:34.349', NULL, 'German', 1, 1, NULL, 1);
+INSERT INTO billing_trading_language VALUES (1078, 0, false, '2013-04-24 15:51:30.59', NULL, 'English', 1, 1, NULL, 2);
+INSERT INTO billing_trading_language VALUES (141, 2, false, '2013-04-12 11:25:44.671', '2013-04-24 15:55:20.482', 'French', 1, 1, 1, 12);
+
+
+--
+-- Data for Name: cat_charge_template; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_charge_template VALUES (330, 10, false, '2013-04-17 16:55:29.213', '2013-04-25 01:26:09.435', 'EXCH20102_SOFT_BLACK', 'Exchange 2010 - Blackberry subscription', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (376, 3, false, '2013-04-17 18:09:41.374', '2013-04-25 01:26:49.96', 'MO20131_SOFT', 'Microsoft Office 2013 Standard', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (380, 5, false, '2013-04-17 18:23:32.612', '2013-04-25 01:27:40.034', 'MPR2013_SOFT', 'Microsoft Project 2013', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (392, 5, false, '2013-04-17 18:27:28.164', '2013-04-25 01:28:10.384', 'MLYNC2010_SOFT', 'Microsoft Lync 2010', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (1058, 0, false, '2013-04-24 07:27:29.69', NULL, 'MO_SUB_Microsoft', 'One shot Subscription charge for Microsoft products', false, NULL, 1, 1, NULL, 302);
+INSERT INTO cat_charge_template VALUES (364, 7, false, '2013-04-17 17:46:34.02', '2013-04-25 01:29:08.255', 'EXCH20101_DATA_1G+', '1Go Additional Storage Option', false, 0, 1, 1, 1, 360);
+INSERT INTO cat_charge_template VALUES (372, 5, false, '2013-04-17 18:08:38.84', '2013-04-25 01:29:32.986', 'MO20132_SOFT', 'Microsoft Office 2013 Professional', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (384, 5, false, '2013-04-17 18:25:07.04', '2013-04-25 01:30:14.146', 'MVI2013_SOFT', 'Microsoft Visio 2013', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (396, 5, false, '2013-04-17 18:28:56.867', '2013-04-25 01:30:38.611', 'MDYCRM2011_SOFT', 'Microsoft Dynamics CRM 2011', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (338, 12, false, '2013-04-17 16:59:37.528', '2013-04-25 01:11:54.609', 'EXCH20101_DATA_1G', '1Go  comp. Option', false, 0, 1, 1, 1, 360);
+INSERT INTO cat_charge_template VALUES (334, 7, false, '2013-04-17 16:57:37.126', '2013-04-25 01:31:17.053', 'EXCH20101_SOFT', 'Exchange 2010 Business', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (346, 13, false, '2013-04-17 17:02:59.858', '2013-04-25 01:31:58.956', 'EXCH20102_DATA_3G+', '3Go Additional Storage Option', false, 0, 1, 1, 1, 360);
+INSERT INTO cat_charge_template VALUES (368, 8, false, '2013-04-17 17:57:34.058', '2013-04-25 01:32:21.571', 'EXCH20102_DATA_2G', '2Go comp. Option', false, 0, 1, 1, 1, 360);
+INSERT INTO cat_charge_template VALUES (1144, 0, false, '2013-04-25 01:43:14.828', NULL, 'CUST_MDYCRM2011_SOFT', 'Microsoft Dynamics CRM 2011 customer', false, NULL, 1, 1, NULL, 302);
+INSERT INTO cat_charge_template VALUES (1150, 0, false, '2013-04-25 01:47:20.532', NULL, 'CUST_FASTVIEWER_1', 'Fastviewer 1 session', false, NULL, 1, 1, NULL, 302);
+INSERT INTO cat_charge_template VALUES (1156, 0, false, '2013-04-25 01:50:12.213', NULL, 'CUST_FASTVIEWER_5', 'Fastviewer 5 sessions', false, NULL, 1, 1, NULL, 302);
+INSERT INTO cat_charge_template VALUES (1162, 0, false, '2013-04-25 01:51:12.284', NULL, 'CUST_FASTVIEWER_10', 'Fastviewer 10 sessions', false, NULL, 1, 1, NULL, 302);
+INSERT INTO cat_charge_template VALUES (342, 7, false, '2013-04-17 17:00:17.822', '2013-04-25 01:24:34.76', 'EXCH20102_SOFT', 'Exchange 2010 Premium', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (355, 5, false, '2013-04-17 17:30:03.298', '2013-04-25 01:25:57.835', 'MALIC_SOFT', 'Microsoft Access License', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (400, 7, false, '2013-04-17 18:34:33.246', '2013-04-25 02:00:18.883', 'MSOFT_DATA', 'Microsoft 1,5 GB Storage option', false, 0, 1, 1, 1, 360);
+INSERT INTO cat_charge_template VALUES (1168, 0, false, '2013-04-25 02:08:07.848', NULL, 'CUST_MDYCRM2011_DATA', 'Microsoft Dynamics CRM 2011 - 1 GB include', false, NULL, 1, 1, NULL, 360);
+INSERT INTO cat_charge_template VALUES (1138, 2, false, '2013-04-25 01:35:29.5', '2013-04-25 02:09:56.179', 'CUST_MLYNC2010_SOFT', 'Microsoft Lync 2010 customer', false, NULL, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (388, 6, false, '2013-04-17 18:26:14.521', '2013-04-25 02:11:11.629', 'CUST_MSH2010_SOFT', 'Microsoft Sharepoint 2010', false, 0, 1, 1, 1, 302);
+INSERT INTO cat_charge_template VALUES (1174, 0, false, '2013-04-25 02:14:03.057', NULL, 'CUST_MSH2010_DATA', 'Microsoft Sharepoint 2010 - 1 GB include', false, NULL, 1, 1, NULL, 360);
+INSERT INTO cat_charge_template VALUES (1183, 0, false, '2013-04-25 04:10:52.822', NULL, 'CM_MSOFT_ADD', 'Microsoft additional file space', false, NULL, 1, 1, NULL, 310);
+INSERT INTO cat_charge_template VALUES (1182, 1, false, '2013-04-25 02:38:07.158', '2013-04-25 04:11:44.608', 'CM_MSOFT_INC', 'Microsoft file space include', false, NULL, 1, 1, 1, 310);
+INSERT INTO cat_charge_template VALUES (1184, 0, false, '2013-04-25 04:17:05.078', NULL, 'CM_MDYCRM2011_INC', 'Microsoft Dynamics CRM 2011 include file space', false, NULL, 1, 1, NULL, 310);
+INSERT INTO cat_charge_template VALUES (1185, 0, false, '2013-04-25 04:18:48.241', NULL, 'CM_MDYCRM2011_ADD', 'Microsoft Dynamics CRM 2011 additional file space', false, NULL, 1, 1, NULL, 310);
+INSERT INTO cat_charge_template VALUES (1186, 0, false, '2013-04-25 04:21:48.83', NULL, 'CM_MSH2010_INC', 'Microsoft Sharepoint 2010 include file space', false, NULL, 1, 1, NULL, 310);
+INSERT INTO cat_charge_template VALUES (1187, 0, false, '2013-04-25 04:23:08.948', NULL, 'CM_MSH2010_ADD', 'Microsoft Sharepoint 2010 additional file space', false, NULL, 1, 1, NULL, 310);
+
+
+--
+-- Data for Name: billing_charge_instance; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_charge_instance VALUES (1074, 0, false, '2013-04-24 10:51:45.543', NULL, 'MO_SUB_Microsoft', 'One shot Subscription charge for Microsoft products', NULL, NULL, '2013-04-24', '', '', '', NULL, 'ACTIVE', NULL, NULL, 1, 1, NULL, 1058, NULL);
+INSERT INTO billing_charge_instance VALUES (1052, 1, false, '2013-04-23 23:08:36.893', '2013-04-24 10:56:46.71', 'EXCH20102_SOFT_BLACK', 'Exchange 2010 - Blackberry subscription', NULL, NULL, '2013-04-23', NULL, NULL, NULL, NULL, 'ACTIVE', '2013-04-24 10:56:46.71', NULL, 1, 1, 1, 330, NULL);
+INSERT INTO billing_charge_instance VALUES (1080, 1, false, '2013-04-24 15:53:21.605', '2013-04-24 15:55:48.512', 'MO20131_SOFT', 'Microsoft Office 2013 Standard', NULL, NULL, '2013-04-24', NULL, NULL, NULL, NULL, 'ACTIVE', '2013-04-24 15:55:48.511', NULL, 1, 1, 1, 376, NULL);
+
+
+--
+-- Name: billing_charge_instance_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
+--
+
+SELECT pg_catalog.setval('billing_charge_instance_seq', 1, false);
+
+
+--
+-- Data for Name: cat_counter_template; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_counter_template VALUES (1180, 0, false, '2013-04-25 02:25:57.337', NULL, 'CT_MDYCRM2011', 'Microsoft Dynamics CRM 2011 counter', 'QUANTITY', 1024.000000000000, 'MByte', 1, 1, NULL, 1097);
+INSERT INTO cat_counter_template VALUES (1098, 7, false, '2013-04-24 17:26:54.051', '2013-04-25 02:31:17.56', 'CT_MSH2010', 'sharepoint 2010 counter', 'QUANTITY', 1024.000000000000, 'MBYte', 1, 1, 1, 1097);
+INSERT INTO cat_counter_template VALUES (1181, 0, false, '2013-04-25 02:32:58.469', NULL, 'CT_MSOFT', 'Microsoft counter', 'QUANTITY', 1024.000000000000, 'MBYTE', 1, 1, NULL, 1097);
+
+
+--
+-- Data for Name: billing_tax; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_tax VALUES (266, 2, false, '2013-04-17 15:49:42.335', '2013-04-17 15:53:07.569', 'TAX_10', '10 Percent Tax', '', 10.0000, 1, 1, 1);
+INSERT INTO billing_tax VALUES (282, 0, false, '2013-04-17 15:53:55.442', NULL, 'TAX_15', '15 Percent Tax', '', 15.0000, 1, 1, NULL);
+INSERT INTO billing_tax VALUES (286, 0, false, '2013-04-17 15:54:52.002', NULL, 'TAX_19.6', '19.6 Percent Tax', '', 19.6000, 1, 1, NULL);
+INSERT INTO billing_tax VALUES (290, 0, false, '2013-04-17 15:56:07.799', NULL, 'TAX_07', '7 Percent Tax', '', 7.0000, 1, 1, NULL);
+
+
+--
+-- Data for Name: billing_invoice_sub_cat_country; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_invoice_sub_cat_country VALUES (314, 0, false, '2013-04-17 16:05:39.423', NULL, NULL, 1, 1, NULL, 298, 282, 156);
+INSERT INTO billing_invoice_sub_cat_country VALUES (1056, 0, false, '2013-04-23 23:17:04.361', NULL, NULL, 1, 1, NULL, 302, 286, 157);
+
+
+--
+-- Data for Name: cat_offer_template; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_offer_template VALUES (329, 0, false, '2013-04-17 16:44:03.371', NULL, 'DOM_MAIL', 'Mail Domain', 1, 1, NULL);
+INSERT INTO cat_offer_template VALUES (325, 2, false, '2013-04-17 16:34:53.862', '2013-04-17 18:03:43.692', 'SH2010', 'Microsoft Sharepoint 2010', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (321, 2, false, '2013-04-17 16:22:36.363', '2013-04-17 18:04:00.844', 'MO20131', 'Microsoft Office 2013 Standard', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (322, 2, false, '2013-04-17 16:23:15.217', '2013-04-17 18:04:30.066', 'MO20132', 'Microsoft Office 2013 Professional', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (324, 2, false, '2013-04-17 16:33:09.26', '2013-04-17 18:05:13.584', 'PR20131', 'Microsoft Project 2013', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (320, 2, false, '2013-04-17 16:21:34.911', '2013-04-17 18:05:30.146', 'EXCH20102', 'Exchange 2010 Premium', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (319, 2, false, '2013-04-17 16:19:19.305', '2013-04-17 18:05:52.963', 'EXCH20101', 'Exchange 2010 Business', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (326, 1, false, '2013-04-17 16:40:44.701', '2013-04-17 18:06:05.506', 'LYNC2010', 'Microsoft Lync 2010', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (323, 2, false, '2013-04-17 16:32:17.864', '2013-04-17 18:06:17.937', 'VI20131', 'Microsoft Visio 2013', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (328, 1, false, '2013-04-17 16:43:03.925', '2013-04-17 18:06:36.368', 'FASTVIEWER', 'Fastviewer', 1, 1, 1);
+INSERT INTO cat_offer_template VALUES (327, 3, false, '2013-04-17 16:41:35.892', '2013-04-24 15:53:03.35', 'DYCRM2011', 'Microsoft Dynamics CRM 2011', 1, 1, 1);
+
+
+
+--
+-- Data for Name: account_entity; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO account_entity VALUES (125, 2, false, '2013-04-12 10:51:37.077', '2013-04-17 12:15:47.741', '55', 'hfbf', '', '', '', '', 'Australie', NULL, '', true, '52', '', 'ben', 'gbvdv', NULL, 1, 1, 1, 1, NULL);
+INSERT INTO account_entity VALUES (1044, 0, false, '2013-04-23 20:34:31.578', NULL, 'CUST_TEST', 'Customer test', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', NULL, NULL, NULL, 1, 1, NULL, NULL, NULL);
+INSERT INTO account_entity VALUES (1045, 0, false, '2013-04-23 20:35:10.083', NULL, 'CUST_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', '', 'Name', NULL, 1, 1, NULL, NULL, NULL);
+INSERT INTO account_entity VALUES (1047, 2, false, '2013-04-23 20:36:26.117', '2013-04-23 20:37:12.853', 'USR_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, NULL, NULL, '', '', NULL, 1, 1, 1, NULL, NULL);
+INSERT INTO account_entity VALUES (1046, 1, false, '2013-04-23 20:36:04.818', '2013-04-24 10:51:45.643', 'BIL_ACC_TEST', '', '', 'Street', '', 'PARIS', 'France', NULL, '00000', true, '', '', '', '', NULL, 1, 1, 1, NULL, NULL);
+
+
+
+--
+-- Data for Name: crm_customer_brand; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO crm_customer_brand VALUES (317, 0, false, '2013-04-17 16:11:16.021', NULL, 'ASG', 'ASG Products and services', 1, 1, NULL);
+
+
+--
+-- Data for Name: crm_customer_category; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO crm_customer_category VALUES (315, 0, false, '2013-04-17 16:09:51.62', NULL, 'Business', 'Company customer type', 1, 1, NULL);
+INSERT INTO crm_customer_category VALUES (316, 0, false, '2013-04-17 16:10:45.292', NULL, 'Residential', 'Individual customer type', 1, 1, NULL);
+
+--
+-- Data for Name: crm_provider_contact; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO crm_provider_contact VALUES (235, 1, false, '2013-04-17 10:46:05.064', '2013-04-17 16:12:17.991', 'ASG ADMIN', 'ASG Administrator', '', '', '', '', 'Australie', NULL, '', 'qdqsdq@gmail.com', NULL, '', 'sdqsdq@gmail.com', '', '', '', 1, 1, 1);
+
+
+
+
+--
+-- Data for Name: crm_seller; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO crm_seller VALUES (1109, 2, false, '2013-04-24 19:43:28.814', '2013-04-24 19:44:01.212', 'MAIN_SELLER', 'ASG Distributor', '', 'Street', '', 'City', 'Allemagne', NULL, 'zipco', 1, 1, 1, NULL, 1105, 1106, 1078);
+INSERT INTO crm_seller VALUES (1043, 10, false, '2013-04-23 20:34:10.437', '2013-04-24 19:44:46.902', 'DISTRIBUTOR_QATAR', 'Main distributor', '', 'Street', '', 'PARIS', 'France', NULL, '00000', 1, 1, 1, 1109, 159, 238, 139);
+INSERT INTO crm_seller VALUES (1108, 3, false, '2013-04-24 19:32:19.341', '2013-04-24 19:44:16.572', 'DISTRIBUTOR_EU', 'European distribuor', '', 'Street', '', 'City', 'Allemagne', NULL, 'zipco', 1, 1, 1, 1109, 156, 145, 1078);
+INSERT INTO crm_seller VALUES (1099, 0, false, '2013-04-24 19:08:20.627', NULL, 'SELLER_SA', 'Saoudi arabia seller', '', 'Street', '', 'CITY', 'Arabie Saoudite', NULL, 'Zip c', 1, 1, NULL, 1043, 158, 146, 139);
+INSERT INTO crm_seller VALUES (1100, 0, false, '2013-04-24 19:10:05.316', NULL, 'SELLER_TR', 'Turkey Seller', '', 'Street', '', 'City', 'Australie', NULL, 'ZIPco', 1, 1, NULL, 1043, 155, 237, 138);
+INSERT INTO crm_seller VALUES (1103, 3, false, '2013-04-24 19:21:25.725', '2013-04-24 19:22:43.908', 'SELLER_BH', 'Bahrein sellor', '', 'Street', '', 'City', 'Brunei', NULL, 'Zipco', 1, 1, 1, 1043, 160, 149, 139);
+INSERT INTO crm_seller VALUES (1104, 0, false, '2013-04-24 19:24:27.126', NULL, 'SELLER_AE', 'United arab emirats seller', '', 'Street', '', 'City', 'Emirats Arabes Unis', NULL, 'zipco', 1, 1, NULL, 1043, 154, 232, 139);
+INSERT INTO crm_seller VALUES (1101, 2, false, '2013-04-24 19:14:12.024', '2013-04-24 19:32:54.134', 'SELLER_DE', 'Germany seller', '', 'Street', '', 'City', 'Allemagne', NULL, 'zipco', 1, 1, 1, 1108, 156, 145, 244);
+INSERT INTO crm_seller VALUES (1102, 2, false, '2013-04-24 19:15:23.48', '2013-04-24 19:33:09.343', 'SELLER_FR', 'french seller', '', 'Street', '', 'city', 'France', NULL, 'Zipco', 1, 1, 1, 1108, 157, 145, 141);
+INSERT INTO crm_seller VALUES (1107, 2, false, '2013-04-24 19:30:32.01', '2013-04-24 19:44:32.058', 'DISTRIBUTOR_USA', 'United states seller', '', 'Street', '', 'city', 'Australie', NULL, 'zipco', 1, 1, 1, 1109, 1105, 1106, 1078);
+INSERT INTO crm_seller VALUES (1111, 0, false, '2013-04-24 19:50:27.882', NULL, 'SELLER_KW', 'Kuwait seller', '', 'Street', '', 'City', 'Emirats Arabes Unis', NULL, 'zipco', 1, 1, NULL, 1043, 239, 1110, 139);
+
+
+
+--
+-- Data for Name: cat_service_template; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_service_template VALUES (354, 0, false, '2013-04-17 17:13:33.324', NULL, 'SOFT_EXCH_2010_2_BLACK', 'Exchange 2010 Premium - Blackberry option', 1, 1, NULL, 318);
+INSERT INTO cat_service_template VALUES (350, 1, false, '2013-04-17 17:11:14.498', '2013-04-17 18:36:21.313', 'EXCH20101', 'Exchange 2010 Business', 1, 1, 1, 318);
+INSERT INTO cat_service_template VALUES (352, 1, false, '2013-04-17 17:12:16.943', '2013-04-17 18:36:44.572', 'EXCH20102', 'Exchange 2010 Premium', 1, 1, 1, 318);
+INSERT INTO cat_service_template VALUES (359, 2, false, '2013-04-17 17:32:56.416', '2013-04-24 15:52:51.709', 'MALIC', 'Microsoft Access License', 1, 1, 1, 318);
+
+
+--
+-- Data for Name: cat_recurring_charge_templ; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 330, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 342, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 355, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 376, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 388, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 338, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 380, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 392, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 400, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 364, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 372, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 384, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 396, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 334, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 346, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 368, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 1138, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 1144, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 1150, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 1156, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 1162, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 1168, 1053);
+INSERT INTO cat_recurring_charge_templ VALUES (true, 0, 'CALENDAR', true, true, 1174, 1053);
+
+
+--
+-- Data for Name: cat_offer_serv_templates; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_offer_serv_templates VALUES (327, 354);
+INSERT INTO cat_offer_serv_templates VALUES (327, 359);
+
+
+--
+-- Data for Name: cat_one_shot_charge_templ; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_one_shot_charge_templ VALUES (true, 'OTHER', 1058);
+
+
+--
+-- Data for Name: cat_price_plan_matrix; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_price_plan_matrix VALUES (1072, 0, false, '2013-04-24 10:48:14.762', NULL, 0.000000000000, 0.000000000000, NULL, '*', '*', '*', NULL, NULL, 'MO_SUB_Microsoft', 99, 0, NULL, NULL, 1, 1, NULL, 1043, 157, 145);
+INSERT INTO cat_price_plan_matrix VALUES (1057, 6, false, '2013-04-23 23:19:23.773', '2013-04-24 10:54:12.311', 12.000000000000, 10.000000000000, NULL, '*', '*', '*', NULL, '2013-08-31 00:00:00', 'EXCH20102_SOFT_BLACK', 99, 0, '2013-04-01 00:00:00', '2013-04-01 00:00:00', 1, 1, 1, 1043, 157, 145);
+INSERT INTO cat_price_plan_matrix VALUES (1077, 0, false, '2013-04-24 15:51:12.057', NULL, 12.000000000000, 10.000000000000, NULL, '*', '*', '*', NULL, '2013-04-30 00:00:00', 'MO20131_SOFT', 99, 0, NULL, '2013-04-01 00:00:00', 1, 1, NULL, 1043, 157, 145);
+
+
+--
+-- Data for Name: cat_serv_reccharge_templates; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_serv_reccharge_templates VALUES (354, 330);
+INSERT INTO cat_serv_reccharge_templates VALUES (350, 334);
+INSERT INTO cat_serv_reccharge_templates VALUES (350, 338);
+INSERT INTO cat_serv_reccharge_templates VALUES (352, 342);
+INSERT INTO cat_serv_reccharge_templates VALUES (352, 368);
+INSERT INTO cat_serv_reccharge_templates VALUES (359, 376);
+
+
+--
+-- Data for Name: cat_usage_charge_template; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO cat_usage_charge_template VALUES ('', '*', '*', '*', '*', 'MByte', 'DECIMAL', 1.00, 2, 1183);
+INSERT INTO cat_usage_charge_template VALUES ('', '*', '*', '*', '*', 'MByte', 'DECIMAL', 1.00, 2, 1182);
+INSERT INTO cat_usage_charge_template VALUES ('', '*', '*', '*', '*', 'MByte', 'DECIMAL', 1.00, 2, 1184);
+INSERT INTO cat_usage_charge_template VALUES ('', '*', '*', '*', '*', 'MByte', 'DECIMAL', 1.00, 2, 1185);
+INSERT INTO cat_usage_charge_template VALUES ('', '*', '*', '*', '*', 'MByte', 'DECIMAL', 1.00, 2, 1186);
+INSERT INTO cat_usage_charge_template VALUES ('', '*', '*', '*', '*', 'MByte', 'DECIMAL', 1.00, 2, 1187);
+
+
+--
 -- Data for Name: cat_calendar_days; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
@@ -1947,493 +1296,271 @@ INSERT INTO cat_calendar_days VALUES (1041, 1001);
 INSERT INTO cat_calendar_days VALUES (1041, 1101);
 INSERT INTO cat_calendar_days VALUES (1053, 1);
 INSERT INTO cat_calendar_days VALUES (1053, 101);
+INSERT INTO cat_calendar_days VALUES (1097, 1);
+INSERT INTO cat_calendar_days VALUES (1097, 101);
+INSERT INTO cat_calendar_days VALUES (1097, 201);
+INSERT INTO cat_calendar_days VALUES (1097, 301);
+INSERT INTO cat_calendar_days VALUES (1097, 401);
+INSERT INTO cat_calendar_days VALUES (1097, 501);
+INSERT INTO cat_calendar_days VALUES (1097, 601);
+INSERT INTO cat_calendar_days VALUES (1097, 701);
+INSERT INTO cat_calendar_days VALUES (1097, 801);
+INSERT INTO cat_calendar_days VALUES (1097, 901);
+INSERT INTO cat_calendar_days VALUES (1097, 1001);
+INSERT INTO cat_calendar_days VALUES (1097, 1101);
 
 
 --
--- Name: cat_calendar_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
+-- Data for Name: crm_customer; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('cat_calendar_seq', 3, true);
+INSERT INTO crm_customer VALUES ('', NULL, NULL, NULL, 1044, 317, 315, 1043);
 
 
---
--- Name: cat_charge_template_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('cat_charge_template_seq', 1, false);
-
-
---
--- Name: cat_day_in_year_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('cat_day_in_year_seq', 1, false);
-
-
---
--- Data for Name: crm_seller; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO crm_seller VALUES (1043, 4, false, '2013-04-23 20:34:10.437', '2013-04-23 20:37:42.586', 'SEL_TEST', 'Seller Test', '', 'Street', '', 'PARIS', 'France', NULL, '00000', 1, 1, 1, NULL, 158, 232, 139);
-
-
---
--- Data for Name: cat_discount_plan_matrix; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: cat_discount_plan_matrix_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('cat_discount_plan_matrix_seq', 1, false);
-
-
---
--- Data for Name: cat_offer_serv_templates; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_offer_serv_templates VALUES (327, 354);
-
-
---
--- Name: cat_offer_template_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('cat_offer_template_seq', 6, true);
-
-
---
--- Data for Name: cat_one_shot_charge_templ; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_price_code; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_price_plan_matrix; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_price_plan_matrix VALUES (1057, 3, false, '2013-04-23 23:19:23.773', '2013-04-24 07:19:47.174', 12.000000000000, 10.000000000000, NULL, '*', '*', '*', NULL, '2013-08-31 00:00:00', 'EXCH20102_SOFT', 0, 0, '2013-04-01 00:00:00', '2013-04-01 00:00:00', 1, 1, 1, 1043, 157, 145);
-
-
---
--- Name: cat_price_plan_matrix_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('cat_price_plan_matrix_seq', 1, false);
-
-
---
--- Data for Name: cat_serv_onecharge_s_templates; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_serv_onecharge_t_templates; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_serv_reccharge_templates; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO cat_serv_reccharge_templates VALUES (354, 330);
-INSERT INTO cat_serv_reccharge_templates VALUES (350, 334);
-INSERT INTO cat_serv_reccharge_templates VALUES (350, 338);
-INSERT INTO cat_serv_reccharge_templates VALUES (352, 342);
-INSERT INTO cat_serv_reccharge_templates VALUES (352, 368);
-INSERT INTO cat_serv_reccharge_templates VALUES (359, 355);
-
-
---
--- Data for Name: cat_usage_charge_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: cat_serv_usage_charge_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: cat_service_template_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('cat_service_template_seq', 1, false);
-
-
---
--- Data for Name: com_campaign; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: com_campaign_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_campaign_seq', 1, false);
-
-
---
--- Data for Name: com_contact; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: com_message; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: com_contact_com_message; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: com_contact_coords; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: com_contact_coords_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_contact_coords_seq', 1, false);
-
-
---
--- Name: com_contact_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_contact_seq', 1, false);
-
-
---
--- Name: com_message_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_message_seq', 1, false);
-
-
---
--- Data for Name: com_message_template; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: com_msg_tmpl_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_msg_tmpl_seq', 1, false);
-
-
---
--- Name: com_msg_tmpl_var_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_msg_tmpl_var_seq', 1, false);
-
-
---
--- Data for Name: com_msg_tmpl_variable; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: com_msg_var_val_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_msg_var_val_seq', 1, false);
-
-
---
--- Data for Name: com_msg_var_value; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: com_prov_pol_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_prov_pol_seq', 1, false);
-
-
---
--- Data for Name: com_provider_policy; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: com_sender_config; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: com_sndr_conf_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('com_sndr_conf_seq', 1, false);
-
-
---
--- Data for Name: crm_customer_brand; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO crm_customer_brand VALUES (317, 0, false, '2013-04-17 16:11:16.021', NULL, 'ASG', 'ASG Products and services', 1, 1, NULL);
-
-
---
--- Name: crm_customer_brand_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('crm_customer_brand_seq', 1, true);
-
-
---
--- Data for Name: crm_customer_category; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO crm_customer_category VALUES (315, 0, false, '2013-04-17 16:09:51.62', NULL, 'Business', 'Company customer type', 1, 1, NULL);
-INSERT INTO crm_customer_category VALUES (316, 0, false, '2013-04-17 16:10:45.292', NULL, 'Residential', 'Individual customer type', 1, 1, NULL);
-
-
---
--- Name: crm_customer_category_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('crm_customer_category_seq', 2, true);
-
-
---
--- Name: crm_email_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('crm_email_seq', 1, false);
-
-
---
--- Data for Name: crm_provider_config; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: crm_provider_config_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('crm_provider_config_seq', 1, false);
-
-
---
--- Data for Name: crm_provider_contact; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-INSERT INTO crm_provider_contact VALUES (235, 1, false, '2013-04-17 10:46:05.064', '2013-04-17 16:12:17.991', 'ASG ADMIN', 'ASG Administrator', '', '', '', '', 'Australie', NULL, '', 'qdqsdq@gmail.com', NULL, '', 'sdqsdq@gmail.com', '', '', '', 1, 1, 1);
-
-
---
--- Name: crm_provider_contact_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('crm_provider_contact_seq', 1, false);
-
-
---
--- Name: crm_provider_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('crm_provider_seq', 1, false);
-
-
---
--- Data for Name: dwh_account_operation; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: dwh_account_operation_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('dwh_account_operation_seq', 1, false);
-
-
---
--- Data for Name: dwh_journal_entries; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: dwh_sales_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('dwh_sales_seq', 1, false);
-
-
---
--- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('hibernate_sequence', 1057, true);
-
-
---
--- Data for Name: job_execution; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: mediation_magic_numbers; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: mediation_magic_numbers_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('mediation_magic_numbers_seq', 1, false);
-
-
---
--- Data for Name: medina_access; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: medina_access_billing_subscription; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: medina_number_plan; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: medina_number_plan_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('medina_number_plan_seq', 1, false);
-
-
---
--- Data for Name: medina_time_plan; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: medina_time_plan_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('medina_time_plan_seq', 1, false);
-
 
 --
--- Data for Name: medina_zonning_plan; Type: TABLE DATA; Schema: public; Owner: meveo
+-- Data for Name: ar_customer_account; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO ar_customer_account VALUES ('', NULL, '', '', 'PART_M', '2013-04-12 10:49:14.295', NULL, 'R0', 'OtKqFUph', 'CHECK', 'ACTIVE', 125, NULL, NULL);
+INSERT INTO ar_customer_account VALUES ('', NULL, '', '', 'PART_C', '2013-04-23 20:34:35.327', NULL, 'R0', 'nVyvfXlq', 'TIP', 'ACTIVE', 1045, 1044, 145);
 
 
 --
--- Name: medina_zonning_plan_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
+-- Data for Name: billing_billing_account; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('medina_zonning_plan_seq', 1, false);
+INSERT INTO billing_billing_account VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, '', NULL, '2013-04-24 00:00:00', 'TIP', 'ACTIVE', '2013-04-23 20:36:04.817', '2013-04-23 20:36:04.818', NULL, 1046, 1042, NULL, 1045, 157, 141);
 
 
 --
--- Data for Name: meveo_timer; Type: TABLE DATA; Schema: public; Owner: meveo
+-- Data for Name: billing_wallet; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO billing_wallet VALUES (1189, 0, false, '2013-04-23 20:36:26.12', NULL, 'PRINCIPAL', NULL, 1, 1, NULL, 1188, NULL);
 
 
 --
--- Name: offer_instance_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('offer_instance_seq', 1, false);
-
-
---
--- Data for Name: provider_titles; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Data for Name: rating_edr; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: rating_matrix_definition_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('rating_matrix_definition_seq', 1, false);
-
-
---
--- Name: rating_matrix_entry_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('rating_matrix_entry_seq', 1, false);
-
-
---
--- Name: rating_usage_type_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('rating_usage_type_seq', 1, false);
-
-
---
--- Data for Name: report_emails; Type: TABLE DATA; Schema: public; Owner: meveo
---
-
-
-
---
--- Name: rm_line_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('rm_line_seq', 1, false);
-
-
---
--- Name: rm_usage_counter_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('rm_usage_counter_seq', 1, false);
-
+-- Data for Name: billing_user_account; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_user_account VALUES ('ACTIVE', '2013-04-23 20:36:09.728', '2013-04-23 20:36:09.728', NULL, 1188, 1046, 1189);
+
+
+--
+-- Data for Name: billing_subscription; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_subscription VALUES (1049, 0, false, '2013-04-23 20:36:48.046', NULL, 'SUB_TEST', '', true, NULL, 'CREATED', '2013-04-23 20:36:31.937', '2013-04-23 00:00:00', NULL, 1, 1, NULL, 327, NULL, 1188);
+
+
+--
+-- Data for Name: adm_messages; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO adm_messages VALUES (246, 0, false, '2013-04-17 15:31:26.647', NULL, 'Abonnement logiciel (Turque)', 'TUR', 'InvoiceCategory_245', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (247, 0, false, '2013-04-17 15:31:26.649', NULL, 'Abonnement logiciel (Arabe)', 'ARA', 'InvoiceCategory_245', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (248, 0, false, '2013-04-17 15:31:26.652', NULL, 'Abonnement logiciel (FranÃ§ais)', 'FRA', 'InvoiceCategory_245', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (268, 1, false, '2013-04-17 15:49:42.341', '2013-04-17 15:53:07.553', 'Taxe de 10 pourcent (arabe)', 'ARA', 'Tax_266', 1, 1, 1);
+INSERT INTO adm_messages VALUES (267, 1, false, '2013-04-17 15:49:42.339', '2013-04-17 15:53:07.564', 'Taxe de 10 pourcent (turque)', 'TUR', 'Tax_266', 1, 1, 1);
+INSERT INTO adm_messages VALUES (269, 1, false, '2013-04-17 15:49:42.343', '2013-04-17 15:53:07.568', 'Taxe de 10 pourcent (franÃ§ais)', 'FRA', 'Tax_266', 1, 1, 1);
+INSERT INTO adm_messages VALUES (283, 0, false, '2013-04-17 15:53:55.445', NULL, 'Taxe de 150 pourcent (turque)', 'TUR', 'Tax_282', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (284, 0, false, '2013-04-17 15:53:55.447', NULL, 'Taxe de 15 pourcent (arabe)', 'ARA', 'Tax_282', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (285, 0, false, '2013-04-17 15:53:55.449', NULL, 'Taxe de 15 pourcent (franÃ§ais)', 'FRA', 'Tax_282', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (287, 0, false, '2013-04-17 15:54:52.007', NULL, 'Taxe de 19,6 pourcent (turque)', 'TUR', 'Tax_286', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (288, 0, false, '2013-04-17 15:54:52.009', NULL, 'Taxe de 19,6 pourcent (arabe)', 'ARA', 'Tax_286', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (289, 0, false, '2013-04-17 15:54:52.01', NULL, 'Taxe de 19,6 pourcent (franÃ§ais)', 'FRA', 'Tax_286', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (291, 0, false, '2013-04-17 15:56:07.803', NULL, 'Taxe de 7 pourcent (turque)', 'TUR', 'Tax_290', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (292, 0, false, '2013-04-17 15:56:07.805', NULL, 'Taxe de 7 pourcent (arabe)', 'ARA', 'Tax_290', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (293, 0, false, '2013-04-17 15:56:07.808', NULL, 'Taxe de 7 pourcent (franÃ§ais)', 'FRA', 'Tax_290', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (295, 0, false, '2013-04-17 15:58:22.261', NULL, 'SUBSCRIPTION', 'TUR', 'InvoiceSubCategory_294', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (296, 0, false, '2013-04-17 15:58:22.262', NULL, 'SUBSCRIPTION', 'ARA', 'InvoiceSubCategory_294', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (297, 0, false, '2013-04-17 15:58:22.263', NULL, 'SUBSCRIPTION', 'FRA', 'InvoiceSubCategory_294', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (299, 0, false, '2013-04-17 15:59:10', NULL, 'Souscription de  serveur (Turque)', 'TUR', 'InvoiceSubCategory_298', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (300, 0, false, '2013-04-17 15:59:10.002', NULL, 'Souscription de serveur (Arabe)', 'ARA', 'InvoiceSubCategory_298', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (301, 0, false, '2013-04-17 15:59:10.004', NULL, 'Souscription de serveur (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_298', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (303, 0, false, '2013-04-17 16:00:47.072', NULL, 'Souscription de progiciel (Turque)', 'TUR', 'InvoiceSubCategory_302', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (304, 0, false, '2013-04-17 16:00:47.074', NULL, 'Souscription de progiciel (Arabe)', 'ARA', 'InvoiceSubCategory_302', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (305, 0, false, '2013-04-17 16:00:47.076', NULL, 'Souscription de progiciel (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_302', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (307, 0, false, '2013-04-17 16:02:54.629', NULL, 'Souscription de domaine (turque)', 'TUR', 'InvoiceSubCategory_306', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (308, 0, false, '2013-04-17 16:02:54.631', NULL, 'Souscription de domaine (arabe)', 'ARA', 'InvoiceSubCategory_306', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (309, 0, false, '2013-04-17 16:02:54.632', NULL, 'Souscription de domaine (franÃ§ais)', 'FRA', 'InvoiceSubCategory_306', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (311, 0, false, '2013-04-17 16:04:43.499', NULL, 'Consommation Data (Turque)', 'TUR', 'InvoiceSubCategory_310', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (312, 0, false, '2013-04-17 16:04:43.501', NULL, 'Consommation Data (Arabe)', 'ARA', 'InvoiceSubCategory_310', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (313, 0, false, '2013-04-17 16:04:43.503', NULL, 'Consommation Data (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_310', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (361, 0, false, '2013-04-17 17:41:03.565', NULL, 'Souscription Data (Turque)', 'TUR', 'InvoiceSubCategory_360', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (362, 0, false, '2013-04-17 17:41:03.566', NULL, 'Souscription Data (Arabe)', 'ARA', 'InvoiceSubCategory_360', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (363, 0, false, '2013-04-17 17:41:03.568', NULL, 'Souscription Data (FranÃ§ais)', 'FRA', 'InvoiceSubCategory_360', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (357, 3, false, '2013-04-17 17:30:03.303', '2013-04-25 01:25:57.803', 'License d''accÃÂ©s Microsoft (Arabe)', 'ARA', 'ChargeTemplate_355', 1, 1, 1);
+INSERT INTO adm_messages VALUES (356, 3, false, '2013-04-17 17:30:03.301', '2013-04-25 01:25:57.812', 'License d''accÃÂ©s Microsoft (Turque)', 'TUR', 'ChargeTemplate_355', 1, 1, 1);
+INSERT INTO adm_messages VALUES (381, 3, false, '2013-04-17 18:23:32.616', '2013-04-25 01:27:40.013', 'Microsoft Project 2013 (Turque)', 'TUR', 'ChargeTemplate_380', 1, 1, 1);
+INSERT INTO adm_messages VALUES (383, 3, false, '2013-04-17 18:23:32.62', '2013-04-25 01:27:40.027', 'Microsoft Project 2013 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_380', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1121, 3, false, '2013-04-25 01:20:50.411', '2013-04-25 02:00:18.882', NULL, 'ENG', 'ChargeTemplate_400', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1122, 1, false, '2013-04-25 01:21:05.377', '2013-04-25 01:29:08.23', 'Option 1Go supplémentaire (Allemand)', 'DEU', 'ChargeTemplate_364', 1, 1, 1);
+INSERT INTO adm_messages VALUES (250, 2, false, '2013-04-17 15:32:43.51', '2013-04-24 16:22:38.682', 'Consommation (Turque)', 'TUR', 'InvoiceCategory_249', 1, 1, 1);
+INSERT INTO adm_messages VALUES (251, 2, false, '2013-04-17 15:32:43.513', '2013-04-24 16:22:38.727', 'Consommation (Arabe)', 'ARA', 'InvoiceCategory_249', 1, 1, 1);
+INSERT INTO adm_messages VALUES (252, 2, false, '2013-04-17 15:32:43.515', '2013-04-24 16:22:38.776', 'Consommation (Français)', 'FRA', 'InvoiceCategory_249', 1, 1, 1);
+INSERT INTO adm_messages VALUES (339, 6, false, '2013-04-17 16:59:37.532', '2013-04-25 01:11:54.553', 'Option 1Go incluse (Turque)', 'TUR', 'ChargeTemplate_338', 1, 1, 1);
+INSERT INTO adm_messages VALUES (340, 6, false, '2013-04-17 16:59:37.534', '2013-04-25 01:11:54.568', 'Option 1Go incluse (Arabe)', 'ARA', 'ChargeTemplate_338', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1123, 1, false, '2013-04-25 01:21:05.395', '2013-04-25 01:29:08.254', NULL, 'ENG', 'ChargeTemplate_364', 1, 1, 1);
+INSERT INTO adm_messages VALUES (242, 7, false, '2013-04-17 15:26:59.833', '2013-04-24 16:25:21.664', 'Abonnement (Arabe)', 'ARA', 'InvoiceCategory_240', 1, 1, 1);
+INSERT INTO adm_messages VALUES (241, 7, false, '2013-04-17 15:26:59.83', '2013-04-24 16:25:21.677', 'Abonnement (Turque)', 'TUR', 'InvoiceCategory_240', 1, 1, 1);
+INSERT INTO adm_messages VALUES (243, 7, false, '2013-04-17 15:26:59.834', '2013-04-24 16:25:21.699', 'Abonnement (FranÃÂ§ais)', 'FRA', 'InvoiceCategory_240', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1124, 1, false, '2013-04-25 01:21:19.261', '2013-04-25 01:29:32.973', 'Microsoft Office 2013 Professionel (Allemand)', 'DEU', 'ChargeTemplate_372', 1, 1, 1);
+INSERT INTO adm_messages VALUES (347, 6, false, '2013-04-17 17:02:59.86', '2013-04-25 01:31:58.926', ' Option 3Go supplÃÂ©mentaire (Turque)', 'TUR', 'ChargeTemplate_346', 1, 1, 1);
+INSERT INTO adm_messages VALUES (348, 6, false, '2013-04-17 17:02:59.862', '2013-04-25 01:31:58.933', 'Option 3Go supplÃÂ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_346', 1, 1, 1);
+INSERT INTO adm_messages VALUES (343, 4, false, '2013-04-17 17:00:17.826', '2013-04-25 01:24:34.72', 'Exchange 2010 Premium (Turque)', 'TUR', 'ChargeTemplate_342', 1, 1, 1);
+INSERT INTO adm_messages VALUES (344, 4, false, '2013-04-17 17:00:17.827', '2013-04-25 01:24:34.73', 'Exchange 2010 Premium (Arabe)', 'ARA', 'ChargeTemplate_342', 1, 1, 1);
+INSERT INTO adm_messages VALUES (345, 4, false, '2013-04-17 17:00:17.829', '2013-04-25 01:24:34.748', 'Exchange 2010 Premium (Français)', 'FRA', 'ChargeTemplate_342', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1125, 1, false, '2013-04-25 01:21:19.278', '2013-04-25 01:29:32.984', NULL, 'ENG', 'ChargeTemplate_372', 1, 1, 1);
+INSERT INTO adm_messages VALUES (335, 4, false, '2013-04-17 16:57:37.13', '2013-04-25 01:31:17.024', 'Exchange 2010 Business (Turque)', 'TUR', 'ChargeTemplate_334', 1, 1, 1);
+INSERT INTO adm_messages VALUES (336, 4, false, '2013-04-17 16:57:37.131', '2013-04-25 01:31:17.031', 'Exchange 2010 Business (Arabe)', 'ARA', 'ChargeTemplate_334', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1059, 0, false, '2013-04-24 07:27:29.713', NULL, NULL, 'TUR', 'ChargeTemplate_1058', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1060, 0, false, '2013-04-24 07:27:29.716', NULL, NULL, 'ARA', 'ChargeTemplate_1058', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1061, 0, false, '2013-04-24 07:27:29.718', NULL, NULL, 'DEU', 'ChargeTemplate_1058', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1062, 0, false, '2013-04-24 07:27:29.72', NULL, NULL, 'FRA', 'ChargeTemplate_1058', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (382, 3, false, '2013-04-17 18:23:32.618', '2013-04-25 01:27:40.005', 'Microsoft Project 2013 (Arabe)', 'ARA', 'ChargeTemplate_380', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1116, 1, false, '2013-04-25 01:20:26.289', '2013-04-25 01:27:40.02', 'Microsoft Project 2013 (Allemand)', 'DEU', 'ChargeTemplate_380', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1117, 1, false, '2013-04-25 01:20:26.308', '2013-04-25 01:27:40.033', NULL, 'ENG', 'ChargeTemplate_380', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1087, 0, false, '2013-04-24 16:22:38.737', NULL, NULL, 'DEU', 'InvoiceCategory_249', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1088, 0, false, '2013-04-24 16:22:38.786', NULL, NULL, 'ENG', 'InvoiceCategory_249', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1089, 3, false, '2013-04-24 16:22:52.635', '2013-04-24 16:25:21.688', NULL, 'DEU', 'InvoiceCategory_240', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1090, 3, false, '2013-04-24 16:22:52.661', '2013-04-24 16:25:21.71', NULL, 'ENG', 'InvoiceCategory_240', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1092, 0, false, '2013-04-24 16:39:02.569', NULL, NULL, 'TUR', 'InvoiceCategory_1091', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1093, 0, false, '2013-04-24 16:39:02.572', NULL, '0', 'ARA', 'InvoiceCategory_1091', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1094, 0, false, '2013-04-24 16:39:02.575', NULL, NULL, 'DEU', 'InvoiceCategory_1091', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1095, 0, false, '2013-04-24 16:39:02.578', NULL, NULL, 'FRA', 'InvoiceCategory_1091', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1096, 0, false, '2013-04-24 16:39:02.58', NULL, NULL, 'ENG', 'InvoiceCategory_1091', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1114, 0, false, '2013-04-25 01:11:54.58', NULL, 'Option 1Go incluse (Allemand)', 'DEU', 'ChargeTemplate_338', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (341, 6, false, '2013-04-17 16:59:37.536', '2013-04-25 01:11:54.593', 'Option 1Go incluse (FranÃ§ais)', 'FRA', 'ChargeTemplate_338', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1115, 0, false, '2013-04-25 01:11:54.604', NULL, NULL, 'ENG', 'ChargeTemplate_338', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (394, 3, false, '2013-04-17 18:27:28.168', '2013-04-25 01:28:10.361', 'Microsoft Lync 2010 (Arabe)', 'ARA', 'ChargeTemplate_392', 1, 1, 1);
+INSERT INTO adm_messages VALUES (401, 4, false, '2013-04-17 18:34:33.249', '2013-04-25 02:00:18.853', 'Option Microsoft 1,5 GB (Turque)', 'TUR', 'ChargeTemplate_400', 1, 1, 1);
+INSERT INTO adm_messages VALUES (402, 4, false, '2013-04-17 18:34:33.252', '2013-04-25 02:00:18.861', 'Option Microsoft 1,5 GB (Arabe)', 'ARA', 'ChargeTemplate_400', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1120, 3, false, '2013-04-25 01:20:50.395', '2013-04-25 02:00:18.868', 'Option Microsoft 1,5 GB (Allemand)', 'DEU', 'ChargeTemplate_400', 1, 1, 1);
+INSERT INTO adm_messages VALUES (365, 4, false, '2013-04-17 17:46:34.024', '2013-04-25 01:29:08.212', 'Option 1Go supplÃ©mentaire (turque)', 'TUR', 'ChargeTemplate_364', 1, 1, 1);
+INSERT INTO adm_messages VALUES (366, 4, false, '2013-04-17 17:46:34.026', '2013-04-25 01:29:08.218', 'Option 1Go supplÃ©mentaire (Arabe)', 'ARA', 'ChargeTemplate_364', 1, 1, 1);
+INSERT INTO adm_messages VALUES (367, 4, false, '2013-04-17 17:46:34.028', '2013-04-25 01:29:08.239', 'Option 1Go supplÃ©mentaire (FranÃ§ais)', 'FRA', 'ChargeTemplate_364', 1, 1, 1);
+INSERT INTO adm_messages VALUES (374, 3, false, '2013-04-17 18:08:38.845', '2013-04-25 01:29:32.96', 'Microsoft Office 2013 Professionel (Arabe)', 'ARA', 'ChargeTemplate_372', 1, 1, 1);
+INSERT INTO adm_messages VALUES (373, 3, false, '2013-04-17 18:08:38.844', '2013-04-25 01:29:32.966', 'Microsoft Office 2013 Professionel (turque)', 'TUR', 'ChargeTemplate_372', 1, 1, 1);
+INSERT INTO adm_messages VALUES (375, 3, false, '2013-04-17 18:08:38.847', '2013-04-25 01:29:32.979', 'Microsoft Office 2013 Professionel (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_372', 1, 1, 1);
+INSERT INTO adm_messages VALUES (387, 3, false, '2013-04-17 18:25:07.047', '2013-04-25 01:30:14.138', 'Microsoft Visio 2013 (Français)', 'FRA', 'ChargeTemplate_384', 1, 1, 1);
+INSERT INTO adm_messages VALUES (398, 3, false, '2013-04-17 18:28:56.872', '2013-04-25 01:30:38.576', 'Microsoft Dynamics CRM 2011 (Arabe)', 'ARA', 'ChargeTemplate_396', 1, 1, 1);
+INSERT INTO adm_messages VALUES (397, 3, false, '2013-04-17 18:28:56.871', '2013-04-25 01:30:38.584', 'Microsoft Dynamics CRM 2011 (Turque)', 'TUR', 'ChargeTemplate_396', 1, 1, 1);
+INSERT INTO adm_messages VALUES (399, 3, false, '2013-04-17 18:28:56.874', '2013-04-25 01:30:38.601', 'Microsoft Dynamics CRM 2011 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_396', 1, 1, 1);
+INSERT INTO adm_messages VALUES (349, 6, false, '2013-04-17 17:02:59.864', '2013-04-25 01:31:58.947', 'Option 3Go supplÃÂ©mentaire (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_346', 1, 1, 1);
+INSERT INTO adm_messages VALUES (370, 5, false, '2013-04-17 17:57:34.063', '2013-04-25 01:32:21.55', 'Option 2Go incluse (Arabe)', 'ARA', 'ChargeTemplate_368', 1, 1, 1);
+INSERT INTO adm_messages VALUES (369, 5, false, '2013-04-17 17:57:34.061', '2013-04-25 01:32:21.555', 'Option 2Go incluse (Turque)', 'TUR', 'ChargeTemplate_368', 1, 1, 1);
+INSERT INTO adm_messages VALUES (371, 5, false, '2013-04-17 17:57:34.065', '2013-04-25 01:32:21.565', 'Option 2Go incluse (franÃ§ais)', 'FRA', 'ChargeTemplate_368', 1, 1, 1);
+INSERT INTO adm_messages VALUES (390, 3, false, '2013-04-17 18:26:14.525', '2013-04-25 02:11:11.604', 'Microsoft Sharepoint 2010 (Arabe)', 'ARA', 'ChargeTemplate_388', 1, 1, 1);
+INSERT INTO adm_messages VALUES (389, 3, false, '2013-04-17 18:26:14.524', '2013-04-25 02:11:11.614', 'Microsoft Sharepoint 2010 (Turque)', 'TUR', 'ChargeTemplate_388', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1112, 1, false, '2013-04-25 01:10:00.704', '2013-04-25 02:11:11.619', 'Microsoft Sharepoint 2010 (Allemand)', 'DEU', 'ChargeTemplate_388', 1, 1, 1);
+INSERT INTO adm_messages VALUES (377, 2, false, '2013-04-17 18:09:41.377', '2013-04-25 01:26:49.934', 'Microsoft Office 2013 Standard (Turque)', 'TUR', 'ChargeTemplate_376', 1, 1, 1);
+INSERT INTO adm_messages VALUES (378, 2, false, '2013-04-17 18:09:41.379', '2013-04-25 01:26:49.941', 'Microsoft Office 2013 Standard (Arabe)', 'ARA', 'ChargeTemplate_376', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1055, 1, false, '2013-04-23 23:12:41.151', '2013-04-25 01:24:34.739', 'Exchange 2010 Premium (Allemand)', 'DEU', 'ChargeTemplate_342', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1082, 1, false, '2013-04-24 15:54:31.494', '2013-04-25 01:25:57.819', 'License d''accés Microsoft (Allemand)', 'DEU', 'ChargeTemplate_355', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1083, 1, false, '2013-04-24 15:54:31.516', '2013-04-25 01:25:57.834', NULL, 'ENG', 'ChargeTemplate_355', 1, 1, 1);
+INSERT INTO adm_messages VALUES (331, 6, false, '2013-04-17 16:55:29.217', '2013-04-25 01:26:09.401', 'Exchange 2010 - souscription blackberry (Turque)', 'TUR', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (332, 6, false, '2013-04-17 16:55:29.218', '2013-04-25 01:26:09.41', 'Exchange 2010 - souscription blackberry (Arabe)', 'ARA', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1084, 1, false, '2013-04-24 15:55:07.865', '2013-04-25 01:26:49.947', 'Microsoft Office 2013 Standard (Allemand)', 'DEU', 'ChargeTemplate_376', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1085, 1, false, '2013-04-24 15:55:07.888', '2013-04-25 01:26:49.958', NULL, 'ENG', 'ChargeTemplate_376', 1, 1, 1);
+INSERT INTO adm_messages VALUES (393, 3, false, '2013-04-17 18:27:28.167', '2013-04-25 01:28:10.367', 'Microsoft Lync 2010 (Turque)', 'TUR', 'ChargeTemplate_392', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1118, 1, false, '2013-04-25 01:20:38.656', '2013-04-25 01:28:10.373', 'Microsoft Lync 2010 (Allemand)', 'DEU', 'ChargeTemplate_392', 1, 1, 1);
+INSERT INTO adm_messages VALUES (395, 3, false, '2013-04-17 18:27:28.17', '2013-04-25 01:28:10.378', 'Microsoft Lync 2010 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_392', 1, 1, 1);
+INSERT INTO adm_messages VALUES (403, 4, false, '2013-04-17 18:34:33.254', '2013-04-25 02:00:18.876', 'Option Microsoft 1,5 GB (Français)', 'FRA', 'ChargeTemplate_400', 1, 1, 1);
+INSERT INTO adm_messages VALUES (391, 3, false, '2013-04-17 18:26:14.527', '2013-04-25 02:11:11.624', 'Microsoft Sharepoint 2010 (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_388', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1137, 0, false, '2013-04-25 01:24:34.757', NULL, NULL, 'ENG', 'ChargeTemplate_342', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (358, 3, false, '2013-04-17 17:30:03.304', '2013-04-25 01:25:57.827', 'License d''accÃÂ©s Microsoft (FranÃÂ§ais)', 'FRA', 'ChargeTemplate_355', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1054, 2, false, '2013-04-23 23:11:57.887', '2013-04-25 01:26:09.418', 'Exchange 2010 - souscription blackberry (Allemand)', 'DEU', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (333, 6, false, '2013-04-17 16:55:29.22', '2013-04-25 01:26:09.426', 'Exchange 2010 - souscription blackberry (Français)', 'FRA', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1136, 1, false, '2013-04-25 01:23:52.515', '2013-04-25 01:26:09.434', NULL, 'ENG', 'ChargeTemplate_330', 1, 1, 1);
+INSERT INTO adm_messages VALUES (379, 2, false, '2013-04-17 18:09:41.38', '2013-04-25 01:26:49.953', 'Microsoft Office 2013 Standard (FranÃ§ais)', 'FRA', 'ChargeTemplate_376', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1119, 1, false, '2013-04-25 01:20:38.681', '2013-04-25 01:28:10.383', NULL, 'ENG', 'ChargeTemplate_392', 1, 1, 1);
+INSERT INTO adm_messages VALUES (386, 3, false, '2013-04-17 18:25:07.046', '2013-04-25 01:30:14.116', 'Microsoft Visio 2013 (Arabe)', 'ARA', 'ChargeTemplate_384', 1, 1, 1);
+INSERT INTO adm_messages VALUES (385, 3, false, '2013-04-17 18:25:07.044', '2013-04-25 01:30:14.124', 'Microsoft Visio 2013 (Turque)', 'TUR', 'ChargeTemplate_384', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1126, 1, false, '2013-04-25 01:21:28.713', '2013-04-25 01:30:14.131', 'Microsoft Visio 2013 (Allemand)', 'DEU', 'ChargeTemplate_384', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1127, 1, false, '2013-04-25 01:21:28.731', '2013-04-25 01:30:14.145', NULL, 'ENG', 'ChargeTemplate_384', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1128, 1, false, '2013-04-25 01:21:38.789', '2013-04-25 01:30:38.593', 'Microsoft Dynamics CRM 2011 (Allemand)', 'DEU', 'ChargeTemplate_396', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1129, 1, false, '2013-04-25 01:21:38.805', '2013-04-25 01:30:38.61', NULL, 'ENG', 'ChargeTemplate_396', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1130, 1, false, '2013-04-25 01:21:47.111', '2013-04-25 01:31:17.037', 'Exchange 2010 Business (Allemand)', 'DEU', 'ChargeTemplate_334', 1, 1, 1);
+INSERT INTO adm_messages VALUES (337, 4, false, '2013-04-17 16:57:37.133', '2013-04-25 01:31:17.044', 'Exchange 2010 Business (Français)', 'FRA', 'ChargeTemplate_334', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1131, 1, false, '2013-04-25 01:21:47.127', '2013-04-25 01:31:17.051', NULL, 'ENG', 'ChargeTemplate_334', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1132, 1, false, '2013-04-25 01:21:56.045', '2013-04-25 01:31:58.94', ' Option 3Go supplémentaire (Allemand)', 'DEU', 'ChargeTemplate_346', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1133, 1, false, '2013-04-25 01:21:56.061', '2013-04-25 01:31:58.953', NULL, 'ENG', 'ChargeTemplate_346', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1134, 1, false, '2013-04-25 01:22:06.119', '2013-04-25 01:32:21.56', 'Option 2Go incluse (Allemand)', 'DEU', 'ChargeTemplate_368', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1135, 1, false, '2013-04-25 01:22:06.134', '2013-04-25 01:32:21.57', NULL, 'ENG', 'ChargeTemplate_368', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1145, 0, false, '2013-04-25 01:43:14.833', NULL, 'Microsoft Dynamics CRM 2011 customer (Turque)', 'TUR', 'ChargeTemplate_1144', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1146, 0, false, '2013-04-25 01:43:14.835', NULL, 'Microsoft Dynamics CRM 2011 customer (Arabe)', 'ARA', 'ChargeTemplate_1144', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1147, 0, false, '2013-04-25 01:43:14.837', NULL, 'Microsoft Dynamics CRM 2011 customer (Allemand)', 'DEU', 'ChargeTemplate_1144', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1148, 0, false, '2013-04-25 01:43:14.84', NULL, 'Microsoft Dynamics CRM 2011 customer (Français)', 'FRA', 'ChargeTemplate_1144', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1149, 0, false, '2013-04-25 01:43:14.842', NULL, NULL, 'ENG', 'ChargeTemplate_1144', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1151, 0, false, '2013-04-25 01:47:20.535', NULL, 'Fastviewer 1 session (Turque)', 'TUR', 'ChargeTemplate_1150', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1152, 0, false, '2013-04-25 01:47:20.537', NULL, 'Fastviewer 1 session (Arabe)', 'ARA', 'ChargeTemplate_1150', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1153, 0, false, '2013-04-25 01:47:20.539', NULL, 'Fastviewer 1 session (Allemand)', 'DEU', 'ChargeTemplate_1150', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1154, 0, false, '2013-04-25 01:47:20.54', NULL, 'Fastviewer 1 session (Français)', 'FRA', 'ChargeTemplate_1150', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1155, 0, false, '2013-04-25 01:47:20.542', NULL, NULL, 'ENG', 'ChargeTemplate_1150', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1157, 0, false, '2013-04-25 01:50:12.216', NULL, 'Fastviewer 5 sessions (Turque)', 'TUR', 'ChargeTemplate_1156', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1158, 0, false, '2013-04-25 01:50:12.218', NULL, 'Fastviewer 5 sessions (Arabe)', 'ARA', 'ChargeTemplate_1156', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1159, 0, false, '2013-04-25 01:50:12.22', NULL, 'Fastviewer 5 sessions (Allemand)', 'DEU', 'ChargeTemplate_1156', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1160, 0, false, '2013-04-25 01:50:12.222', NULL, 'Fastviewer 5 sessions (Français)', 'FRA', 'ChargeTemplate_1156', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1161, 0, false, '2013-04-25 01:50:12.224', NULL, NULL, 'ENG', 'ChargeTemplate_1156', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1163, 0, false, '2013-04-25 01:51:12.288', NULL, 'Fastviewer 10 sessions (Turque)', 'TUR', 'ChargeTemplate_1162', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1164, 0, false, '2013-04-25 01:51:12.291', NULL, 'Fastviewer 10 sessions (Arabe)', 'ARA', 'ChargeTemplate_1162', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1165, 0, false, '2013-04-25 01:51:12.293', NULL, 'Fastviewer 10 sessions (Allemand)', 'DEU', 'ChargeTemplate_1162', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1166, 0, false, '2013-04-25 01:51:12.296', NULL, 'Fastviewer 10 sessions (Français)', 'FRA', 'ChargeTemplate_1162', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1167, 0, false, '2013-04-25 01:51:12.298', NULL, NULL, 'ENG', 'ChargeTemplate_1162', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1169, 0, false, '2013-04-25 02:08:07.851', NULL, 'Microsoft Dynamics CRM 2011 - 1 GB include (Arabe)', 'TUR', 'ChargeTemplate_1168', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1170, 0, false, '2013-04-25 02:08:07.854', NULL, 'Microsoft Dynamics CRM 2011 - 1 GB include (Arabe)', 'ARA', 'ChargeTemplate_1168', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1171, 0, false, '2013-04-25 02:08:07.856', NULL, 'Microsoft Dynamics CRM 2011 - 1 GB include (Arabe)', 'DEU', 'ChargeTemplate_1168', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1172, 0, false, '2013-04-25 02:08:07.858', NULL, 'Microsoft Dynamics CRM 2011 - 1 GB include (Arabe)', 'FRA', 'ChargeTemplate_1168', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1173, 0, false, '2013-04-25 02:08:07.86', NULL, NULL, 'ENG', 'ChargeTemplate_1168', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1140, 1, false, '2013-04-25 01:35:29.505', '2013-04-25 02:09:56.159', 'Microsoft Lync 2010 customer (Arabe)', 'ARA', 'ChargeTemplate_1138', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1139, 1, false, '2013-04-25 01:35:29.503', '2013-04-25 02:09:56.165', 'Microsoft Lync 2010 customer (Turque)', 'TUR', 'ChargeTemplate_1138', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1141, 1, false, '2013-04-25 01:35:29.507', '2013-04-25 02:09:56.169', 'Microsoft Lync 2010 customer (Allemand)', 'DEU', 'ChargeTemplate_1138', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1142, 1, false, '2013-04-25 01:35:29.509', '2013-04-25 02:09:56.174', 'Microsoft Lync 2010 customer (Français)', 'FRA', 'ChargeTemplate_1138', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1143, 1, false, '2013-04-25 01:35:29.511', '2013-04-25 02:09:56.178', NULL, 'ENG', 'ChargeTemplate_1138', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1113, 1, false, '2013-04-25 01:10:00.752', '2013-04-25 02:11:11.629', NULL, 'ENG', 'ChargeTemplate_388', 1, 1, 1);
+INSERT INTO adm_messages VALUES (1175, 0, false, '2013-04-25 02:14:03.06', NULL, 'Microsoft Sharepoint 2010 - 1 GB include (Turque)', 'TUR', 'ChargeTemplate_1174', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1176, 0, false, '2013-04-25 02:14:03.062', NULL, 'Microsoft Sharepoint 2010 - 1 GB include (Arabe)', 'ARA', 'ChargeTemplate_1174', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1177, 0, false, '2013-04-25 02:14:03.064', NULL, 'Microsoft Sharepoint 2010 - 1 GB include (Allemand)', 'DEU', 'ChargeTemplate_1174', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1178, 0, false, '2013-04-25 02:14:03.066', NULL, 'Microsoft Sharepoint 2010 - 1 GB include (Français)', 'FRA', 'ChargeTemplate_1174', 1, 1, NULL);
+INSERT INTO adm_messages VALUES (1179, 0, false, '2013-04-25 02:14:03.067', NULL, NULL, 'ENG', 'ChargeTemplate_1174', 1, 1, NULL);
+
+
+--
+-- Data for Name: billing_service_instance; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_service_instance VALUES (1051, 1, false, '2013-04-23 23:08:36.827', '2013-04-24 10:56:46.718', 'SOFT_EXCH_2010_2_BLACK', 'Exchange 2010 Premium - Blackberry option', NULL, 1, 'ACTIVE', '2013-04-24 10:56:46.718', '2013-04-23 00:00:36.76', NULL, 1, 1, 1, 354, 1049, NULL);
+INSERT INTO billing_service_instance VALUES (1079, 1, false, '2013-04-24 15:53:21.568', '2013-04-24 15:55:48.519', 'MALIC', 'Microsoft Access License', NULL, 1, 'ACTIVE', '2013-04-24 15:55:48.519', '2013-04-24 00:00:21.536', NULL, 1, 1, 1, 359, 1049, NULL);
+
+
+--
+-- Data for Name: billing_one_shot_charge_inst; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_one_shot_charge_inst VALUES (1074, 1049, NULL, NULL);
+
+
+--
+-- Data for Name: billing_recurring_charge_inst; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_recurring_charge_inst VALUES ('2014-01-01 00:00:00', '2013-04-23 00:00:36.76', 1052, 330, 1051, 1049);
+INSERT INTO billing_recurring_charge_inst VALUES ('2014-01-01 00:00:00', '2013-04-24 00:00:21.536', 1080, 376, 1079, 1049);
+
+
+
+
+
+
+--
+-- Data for Name: billing_wallet_operation; Type: TABLE DATA; Schema: public; Owner: meveo
+--
+
+INSERT INTO billing_wallet_operation VALUES (1075, 0, false, '2013-04-24 10:51:45.634', NULL, 'MO_SUB_Microsoft', NULL, 0.00, 0.00, 0.00, NULL, '2013-04-24 00:00:45.543', '', '', '', 1.00, NULL, 'OPEN', '2013-04-23 00:00:00', 19.600000000000, NULL, NULL, 0.00, 0.00, 1, 1, NULL, 1074, NULL, 5, 1109, NULL);
+INSERT INTO billing_wallet_operation VALUES (1076, 0, false, '2013-04-24 10:56:46.696', NULL, 'EXCH20102_SOFT_BLACK', NULL, 1.48, 7.57, 7.57, '2013-12-31 00:00:00', '2013-04-23 00:00:00', NULL, NULL, NULL, 0.76, '2013-04-23 00:00:00', 'OPEN', '2013-04-23 00:00:36.76', 19.600000000000, NULL, NULL, 12.00, 10.00, 1, 1, NULL, 1052, NULL, 5, 1109, NULL);
+INSERT INTO billing_wallet_operation VALUES (1086, 0, false, '2013-04-24 15:55:48.509', NULL, 'MO20131_SOFT', NULL, 1.48, 7.54, 7.54, '2013-12-31 00:00:00', '2013-04-24 00:00:00', NULL, NULL, NULL, 0.75, '2013-04-24 00:00:00', 'OPEN', '2013-04-24 00:00:21.536', 19.600000000000, NULL, NULL, 12.00, 10.00, 1, 1, NULL, 1080, NULL, 5, 1109, NULL);
 
 --
 -- PostgreSQL database dump complete
