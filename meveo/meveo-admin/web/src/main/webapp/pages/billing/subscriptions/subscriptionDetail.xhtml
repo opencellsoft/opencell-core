@@ -508,40 +508,40 @@
 			<p:outputPanel id="recurringChgPanel" rendered="#{subscriptionBean.recurringChargeInstance!=null}">
 				<hf:formPanel id="recurringChgForm1Panel" edit="true" label="#{messages['subscription.tab.recurringShotChg']}" backingBean="#{subscriptionBean}" columns="1"
 					entity="#{subscriptionBean.recurringChargeInstance}" formId="recurringChgForm1" showFormButtons="false" ajaxSubmit="true">
-					<h:panelGrid columns="2">
+					<p:panelGrid columns="2">
 						<hf:formEntityField id="RCchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="chargeTemplate" childField="code"
 							popup="true" popupId="recurringChargeTmpPopup" edit="true" />
 						<hf:formField label="#{messages['businessEntity.description']}" field="description" size="50" maxlength="50" disabled="true" />
 						<hf:formField label="#{messages['recurringChargeInstance.subscriptionDate']}" field="subscriptionDate" edit="true" />
-						<h:panelGrid columns="2">
+						<p:panelGrid columns="2">
 							<p:outputLabel for="RCamountWithoutTax" value="#{messages['recurringChargeInstance.amountWithoutTax']}" />
-							<h:inputText id="RCamountWithoutTax" value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}" size="5"
+							<p:inputText id="RCamountWithoutTax" value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}" size="5"
 								converter="bigDecimalConverter" onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});"
 								disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
-							</h:inputText>
-						</h:panelGrid>
-						<h:panelGrid columns="2">
+							</p:inputText>
+						</p:panelGrid>
+						<p:panelGrid columns="2">
 							<p:outputLabel for="RCamountWithTax" value="#{messages['recurringChargeInstance.amountWithTax']}" />
-							<h:inputText id="RCamountWithTax" value="#{subscriptionBean.recurringChargeInstance.amountWithTax}" size="5" converter="bigDecimalConverter"
+							<p:inputText id="RCamountWithTax" value="#{subscriptionBean.recurringChargeInstance.amountWithTax}" size="5" converter="bigDecimalConverter"
 								onkeyup="validateAmountsRC(#{subscriptionBean.entity.id});"
 								disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
-							</h:inputText>
-						</h:panelGrid>
+							</p:inputText>
+						</p:panelGrid>
 						<hf:formField label="#{messages['recurringChargeInstance.criteria1']}" field="criteria1" edit="true"
 							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
 						<hf:formField label="#{messages['recurringChargeInstance.criteria2']}" field="criteria2" edit="true"
 							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
 						<hf:formField label="#{messages['recurringChargeInstance.criteria3']}" field="criteria3" edit="true"
 							disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}" />
-						<h:panelGrid columns="2">
+						<p:panelGrid columns="2">
 							<p:outputLabel for="quantityRecCH" value="#{messages['serviceInstance.quantity']}" />
 							<p:spinner required="true" id="quantityRecCH" min="1" value="#{subscriptionBean.recurringChargeServiceInstanceQuantity}" />
-						</h:panelGrid>
-					</h:panelGrid>
+						</p:panelGrid>
+					</p:panelGrid>
 					<p:outputPanel id="recurringWalletOperationsPanel">
 						<span style="height: 1px" />
 						<h:outputText value="#{messages['commons.noItems']}" rendered="#{empty subscriptionBean.recurringWalletOperations}" />
-						<h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;"
+						<p:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;"
 							rendered="#{not empty subscriptionBean.recurringWalletOperations}">
 							<h:outputText value="#{subscriptionBean.recurringWalletOperations.size} #{messages['commons.itemsFound']}" />
 							<p:dataTable id="recurringWalletOperationTable" value="#{subscriptionBean.recurringWalletOperations}" var="shotApplication" paginator="true"
@@ -589,7 +589,7 @@
 									<h:outputText value="#{messages[shotApplication.status.label]}" />
 								</p:column>
 							</p:dataTable>
-						</h:panelGrid>
+						</p:panelGrid>
 					</p:outputPanel>
 					<script type="text/javascript">
     //<![CDATA[
