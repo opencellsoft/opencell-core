@@ -138,7 +138,7 @@ a:hover {
 
 
 ...//imgHome {
-	background-image: url(..//img/..//imgAccueil.jpg);
+	background-image: url(../img/home.png);
 	width: 100px;
 	height: 100px;
 	border: 1px solid silver;
@@ -187,7 +187,7 @@ a:hover {
   
   width: 100%;
   margin-top : -15px;
-  background-image : url(http://www.jobellevallega.com/numan/header-bg.png);
+  background-image : url(../img/header-bg.png);
   background-size : 2000px 164px;
 }
 #admin-bar ul
@@ -403,16 +403,16 @@ a:hover {
 }
 .ui-menuitem .ui-state-hover .ui-icon-triangle-1-s
 {
-  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240.png) !Important;
+  background-image : url(../img/ui-icons_616161_256x240.png) !Important;
 }
 .ui-icon-triangle-1-s
 {
-  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+  background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
   background-position : -64px -16px;
 }
 .ui-menuitem .ui-state-hover .ui-icon-triangle-1-e
 {
-  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+  background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
 }
 
 /* BUTTONS */
@@ -437,12 +437,12 @@ input[type="submit"],
 }
 .ui-button:hover .ui-button-icon-left
 {
-  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-1.png) !Important;
+  background-image : url(../img/ui-icons_616161_256x240-1.png) !Important;
 }
 .ui-datatable  button.ui-state-hover .ui-icon,
 .body button.ui-state-hover .ui-icon-search
 {
-  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+  background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
 }
 input[type="submit"]:hover,
 .ui-button:hover,
@@ -811,12 +811,12 @@ select[disabled]
 }
 .ui-spinner .ui-spinner-button  .ui-icon-triangle-1-s
 {
-   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240.png) !Important;
+   background-image : url(../img/ui-icons_616161_256x240.png) !Important;
 }
 .ui-spinner .ui-spinner-button:hover  .ui-icon-triangle-1-s,
 .ui-spinner .ui-spinner-button:hover  .ui-icon-triangle-1-n
 {
-   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
+   background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
 }
 /* UI EDITOR */
 .ui-editor
@@ -834,14 +834,14 @@ select[disabled]
 .tree-user-account-icon,
 .tree-billing-account-icon
 {  
-  background-image: url(http://www.jobellevallega.com/numan/user.png) !important;
+  background-image: url(../img/user.png) !important;
   background-size : 13px 13px !important;
   background-repeat : no-repeat !important;
   background : transparent;
 }
 .tree-customer-account-icon,
 {
-  background-image: url(http://www.jobellevallega.com/numan/folder.png) !important;
+  background-image: url(../img/folder.png) !important;
   background-size : 15px 15px !important;
   background-repeat : no-repeat !important;
   background : transparent;
@@ -1042,7 +1042,7 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
    padding-left : 150px;
    color : white;
    border : none !important;
-   background-image :url(http://www.jobellevallega.com/numan/tooltip-bg2.png);
+   background-image :url(../img/tooltip-bg2.png);
    background-repeat : no-repeat;
    background-size : 1050px 104px
 }
