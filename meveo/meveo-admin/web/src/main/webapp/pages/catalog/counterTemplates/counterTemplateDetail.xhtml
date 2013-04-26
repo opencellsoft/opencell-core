@@ -1,44 +1,48 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-    <ui:define name="navigation">
-        <ui:include src="/layout/navigation.xhtml" />
-    </ui:define>
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
-    <ui:define name="body">
+	<ui:define name="body">
 
 
-        <hf:formPanel id="formPanel" formId="counterTemplatId"
-            label="#{messages['menu.counterTemplates']}"
-            backingBean="#{counterTemplateBean}">
-		
+		<hf:formPanel id="formPanel" formId="counterTemplatId"
+			label="#{messages['menu.counterTemplates']}"
+			backingBean="#{counterTemplateBean}">
 
-            <hf:formField label="#{messages['businessEntity.code']}" field="code"
-                required="true" validateUnique="true" />
-              <hf:formField label="#{messages['businessEntity.description']}" field="description"
-                id="description" required="true" validateUnique="true" />
-                 <hf:formField label="#{messages['usageChargeTemplate.unityDescription']}" field="unityDescription"
-                required="true" validateUnique="true"/>
-               <hf:formField label="#{messages['counterTemplate.counterType']}" field="counterType" childField="label" isMessage="true" /> 
-               <hf:formField label="#{messages['counterTemplate.level']}" field="level"
-                required="true"  />
-            <hf:formField label="#{messages['enableEntity.active']}"
-                field="disabled" isMessage="true" />  
-            <hftl:panelGroup columns="2">	
-					<hf:formEntityField label="#{messages['billingCycle.calendar']}" field="calendar" childField="name" required="true" popup="false"
-										listElements="#{calendarService.listCounterCalendars()}" />
-				</hftl:panelGroup>
 
-           
-        </hf:formPanel>
+			<hf:formField label="#{messages['businessEntity.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hf:formField label="#{messages['businessEntity.description']}"
+				field="description" id="description" required="true"
+				validateUnique="true" />
+			<hf:formField
+				label="#{messages['usageChargeTemplate.unityDescription']}"
+				field="unityDescription" />
+			<hf:formField label="#{messages['counterTemplate.counterType']}"
+				field="counterType" childField="label" isMessage="true" />
+			<hf:formField label="#{messages['counterTemplate.level']}"
+				field="level" required="true" />
+			<hf:formField label="#{messages['enableEntity.active']}"
+				field="disabled" isMessage="true" />
+			<hftl:panelGroup columns="2">
+				<hf:formEntityField label="#{messages['billingCycle.calendar']}"
+					field="calendar" childField="name" required="true" popup="false"
+					listElements="#{calendarService.listCounterCalendars()}" />
+			</hftl:panelGroup>
 
-    </ui:define>
-	</ui:composition>
+
+		</hf:formPanel>
+
+	</ui:define>
+</ui:composition>

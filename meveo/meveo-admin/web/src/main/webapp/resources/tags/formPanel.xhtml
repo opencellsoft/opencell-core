@@ -29,7 +29,7 @@
 <cc:implementation>
 
 	<h:form id="#{cc.attrs.formId}">
-		<p:panelGrid columns="1" styleClass="form-panel">
+		<p:panel styleClass="form-panel">
 			<c:if test="#{not empty(cc.attrs.label)}">
 				<f:facet name="header">
 					<h:outputText value="#{cc.attrs.label}" />
@@ -49,7 +49,7 @@
 				killConversationOnBack="#{cc.attrs.killConversationOnBack}"
 				useCustomIdParam="#{cc.attrs.useCustomIdParam}" />
 
-		</p:panelGrid>
+		</p:panel>
 	</h:form>
 </cc:implementation>
 
