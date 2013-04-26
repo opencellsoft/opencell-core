@@ -59,12 +59,9 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	public UsageChargeTemplateBean() {
 		super(UsageChargeTemplate.class);
 	}
-
 	 
-	@Produces
-	@Named("usageChargeTemplate")
-	public UsageChargeTemplate init() {
-		UsageChargeTemplate usageChargeTemplate = initEntity();
+	public UsageChargeTemplate initEntity() {
+		UsageChargeTemplate usageChargeTemplate = super.initEntity();
 		if (usageChargeTemplate.getId() != null) {
 			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
 					.getSimpleName() + "_" + usageChargeTemplate.getId())) {
