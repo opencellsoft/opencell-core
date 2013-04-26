@@ -24,8 +24,8 @@
 	<c:if test="${columns==4}">
 		<c:set var="columnsStyle" value="fourColGrid" />
 	</c:if>
-	<p:panelGrid columns="#{columns}" width="100%"
-		columnClasses="#{columnsStyle}">
+	<p:panelGrid styleClass="form-panel-group" columns="#{columns}"
+		width="100%" columnClasses="#{columnsStyle}">
 		<ui:insert />
 	</p:panelGrid>
 </ui:composition>
