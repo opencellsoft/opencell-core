@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jstl/core">
 
 <ui:composition>
@@ -23,10 +24,10 @@
 	<c:if test="${columns==4}">
 		<c:set var="columnsStyle" value="fourColGrid" />
 	</c:if>
-	<h:panelGrid columns="#{columns}" width="100%"
+	<p:panelGrid columns="#{columns}" width="100%"
 		columnClasses="#{columnsStyle}">
 		<ui:insert />
-	</h:panelGrid>
+	</p:panelGrid>
 </ui:composition>
 
 </html>
