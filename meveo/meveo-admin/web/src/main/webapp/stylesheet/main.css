@@ -138,7 +138,7 @@ a:hover {
 
 
 ...//imgHome {
-	background-image: url(../img/home.png);
+	background-image: url(..//img/..//imgAccueil.jpg);
 	width: 100px;
 	height: 100px;
 	border: 1px solid silver;
@@ -187,7 +187,7 @@ a:hover {
   
   width: 100%;
   margin-top : -15px;
-  background-image : url(../img/header-bg.png);
+  background-image : url(http://www.jobellevallega.com/numan/header-bg.png);
   background-size : 2000px 164px;
 }
 #admin-bar ul
@@ -403,16 +403,16 @@ a:hover {
 }
 .ui-menuitem .ui-state-hover .ui-icon-triangle-1-s
 {
-  background-image : url(../img/ui-icons_616161_256x240.png) !Important;
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240.png) !Important;
 }
 .ui-icon-triangle-1-s
 {
-  background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
   background-position : -64px -16px;
 }
 .ui-menuitem .ui-state-hover .ui-icon-triangle-1-e
 {
-  background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
 }
 
 /* BUTTONS */
@@ -437,12 +437,12 @@ input[type="submit"],
 }
 .ui-button:hover .ui-button-icon-left
 {
-  background-image : url(../img/ui-icons_616161_256x240-1.png) !Important;
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-1.png) !Important;
 }
 .ui-datatable  button.ui-state-hover .ui-icon,
 .body button.ui-state-hover .ui-icon-search
 {
-  background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
+  background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
 }
 input[type="submit"]:hover,
 .ui-button:hover,
@@ -727,25 +727,26 @@ select[disabled]
   color : #494949 !important;
 }
 /* PANEL GRIDS */
-.ui-panelgrid, .ui-panel
+.ui-panelgrid
 {
   width : 100%;
   padding : 0px;
   margin : 0px;
 }
-.ui-panelgrid, .ui-panel
+.ui-panelgrid 
 {
   -webkit-border-radius: 8px !important;
   border-radius: 8px !important;
   border : 1px solid #d6d6d6 ;
   display : inline-block;
+  margin-top : 10px;
 }
 .ui-panelgrid-header
 {
 	margin-bottom : 10px;
 }
 .ui-panelgrid tr,
-.ui-panelgrid td, .ui-panel
+.ui-panelgrid td
 {
   border : none;
   
@@ -810,12 +811,12 @@ select[disabled]
 }
 .ui-spinner .ui-spinner-button  .ui-icon-triangle-1-s
 {
-   background-image : url(../img/ui-icons_616161_256x240.png) !Important;
+   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240.png) !Important;
 }
 .ui-spinner .ui-spinner-button:hover  .ui-icon-triangle-1-s,
 .ui-spinner .ui-spinner-button:hover  .ui-icon-triangle-1-n
 {
-   background-image : url(../img/ui-icons_616161_256x240-2.png) !Important;
+   background-image : url(http://www.jobellevallega.com/numan/ui-icons_616161_256x240-2.png) !Important;
 }
 /* UI EDITOR */
 .ui-editor
@@ -833,14 +834,14 @@ select[disabled]
 .tree-user-account-icon,
 .tree-billing-account-icon
 {  
-  background-image: url(../img/user.png) !important;
+  background-image: url(http://www.jobellevallega.com/numan/user.png) !important;
   background-size : 13px 13px !important;
   background-repeat : no-repeat !important;
   background : transparent;
 }
 .tree-customer-account-icon,
 {
-  background-image: url(../img/folder.png) !important;
+  background-image: url(http://www.jobellevallega.com/numan/folder.png) !important;
   background-size : 15px 15px !important;
   background-repeat : no-repeat !important;
   background : transparent;
@@ -953,6 +954,7 @@ td[role="gridcell"]>table
 .form-panel > tbody > tr > td > table.form-panel-fields tr
 {
   width : 100% ;
+  display : inline-block;
 }
 table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  td
 {
@@ -1009,6 +1011,9 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
   font-style : normal;
 }
 
+.tab-view-container .ui-panel-titlebar { border: 0px; margin: 0px; padding: 10px 0px 0px 0px !important; vertical-align: middle !important; height: 28px; }
+.col1-set .ui-widget-header .ui-panelgrid-header, .tab-view-container .ui-panelgrid-header { border: none; margin: 0 0 10px 0; padding: 0px; }
+
 /**
  * JSF Overrides
  **************************************************************************/
@@ -1016,7 +1021,6 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
  .ui-tabs-panel .form-panel { margin: 0px !important; padding: 0px !important; }
 .ui-panel-titlebar { border: none !important; }
 
-<<<<<<< HEAD
 
 /* tooltip improvement */
 .ui-tooltip
@@ -1038,12 +1042,7 @@ table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  
    padding-left : 150px;
    color : white;
    border : none !important;
-   background-image :url(../img/tooltip-bg2.png);
+   background-image :url(http://www.jobellevallega.com/numan/tooltip-bg2.png);
    background-repeat : no-repeat;
    background-size : 1050px 104px
 }
-=======
-.tab-view-container .ui-panel-titlebar { border: 0px; margin: 0px; padding: 10px 0px 0px 0px !important; vertical-align: middle !important; height: 28px; }
-.col1-set .ui-widget-header .ui-panelgrid-header, .tab-view-container .ui-panelgrid-header { border: none; margin: 0 0 10px 0; padding: 0px; }
-.form-panel-fields .inner-table tr td { padding-left: 0px; }
->>>>>>> branch 'master' of git@git.assembla.com:meveo.git
