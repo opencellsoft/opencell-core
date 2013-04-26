@@ -89,7 +89,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	public String saveOrUpdate() {
+	public String saveOrUpdate(boolean killConversation) {
 		String back = null;
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {
@@ -105,10 +105,10 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 					catMessagesService.create(catMessages);
 				}
 			}
-			back = saveOrUpdate(entity);
+			back = super.saveOrUpdate(killConversation);
 
 		} else {
-			back = saveOrUpdate(entity);
+			back = super.saveOrUpdate(killConversation);
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
 				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
