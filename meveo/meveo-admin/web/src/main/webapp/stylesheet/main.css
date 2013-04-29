@@ -949,18 +949,14 @@ td[role="gridcell"]>table
 .form-panel > tbody,
 .form-panel > tbody > tr,
 .form-panel > tbody > tr > td,
-.form-panel > tbody > tr > td > table.form-panel-fields,
-.form-panel > tbody > tr > td > table.form-panel-fields tbody,
-.form-panel > tbody > tr > td > table.form-panel-fields tr
+.form-panel-fields,
+.form-panel-fields tbody,
+.form-panel-fields tr,
+.form-panel-fields>tbody>tr.ui-widget-content,
+.form-panel-fields>tbody>tr.ui-widget-content>td
 {
   width : 100% ;
   display : inline-block;
-}
-table.form-panel-fields >tbody > tr> td> table[id^="parentTab"] > tbody > tr >  td
-{
-  width : 100% ;
-  display : inline-block;
-  
 }
 .form-panel-actions td
 {
