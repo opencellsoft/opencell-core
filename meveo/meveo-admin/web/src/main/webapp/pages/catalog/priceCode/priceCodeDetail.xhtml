@@ -49,12 +49,12 @@
 			<hf:formField label="#{messages['priceCode.code']}" field="code" required="true" />
 			<hf:formEntityField id="chargeTemplateInSelectId" label="#{messages['priceCode.chargeTemplateIn']}"
 				field="chargeTemplateIn" childField="code"   popup="true" popupId="chargeTemplateInPopup" />
-			<hf:formField label="#{messages['priceCode.chargeInPrice1']}" field="chargeInPrice1" required="true" converterParam="10digits" />
-			<hf:formField label="#{messages['priceCode.chargeInPrice2']}" field="chargeInPrice2" converterParam="10digits" />
+			<hf:formField label="#{messages['priceCode.chargeInPrice1']}" field="chargeInPrice1" required="true" converterParam="4digits" />
+			<hf:formField label="#{messages['priceCode.chargeInPrice2']}" field="chargeInPrice2" converterParam="4digits" />
     		<hf:formEntityField id="chargeTemplateOutSelectId" label="#{messages['priceCode.chargeTemplateOut']}"
 				field="chargeTemplateOut" childField="code"   popup="true" popupId="chargeTemplateOutPopup" />
-    		<hf:formField label="#{messages['priceCode.chargeOutPrice1']}" field="chargeOutPrice1" required="true"  converterParam="10digits"/>
-    		<hf:formField label="#{messages['priceCode.chargeOutPrice2']}" field="chargeOutPrice2" converterParam="10digits" />
+    		<hf:formField label="#{messages['priceCode.chargeOutPrice1']}" field="chargeOutPrice1" required="true"  converterParam="4digits"/>
+    		<hf:formField label="#{messages['priceCode.chargeOutPrice2']}" field="chargeOutPrice2" converterParam="4digits" />
 		</hf:formPanel>
 
 	</ui:define>
