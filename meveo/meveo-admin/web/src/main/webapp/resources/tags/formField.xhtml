@@ -60,7 +60,7 @@
 	<ui:fragment rendered="#{cc.attrs.show}">
 		<!--  If the value binding is a string, display an inputText field. -->
 		<ui:fragment rendered="#{cc.attrs.popup}">
-			<p:panelGrid id="textPanel_popup" columns="3"
+			<p:panelGrid id="textPanel_popup" columns="2"
 				rendered="#{cc.isText(cc.attrs.field,false)}">
 				<p:outputLabel for="#{cc.attrs.id}_text" value="#{cc.attrs.label}"
 					rendered="#{not empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" />
@@ -88,7 +88,7 @@
 		</ui:fragment>
 
 		<ui:fragment rendered="#{!cc.attrs.popup}">
-			<p:panelGrid id="textPanel" columns="3"
+			<p:panelGrid id="textPanel" columns="2"
 				rendered="#{cc.isText(cc.attrs.field,false)}">
 				<p:outputLabel for="#{cc.attrs.id}_text2" value="#{cc.attrs.label}" />
 				<p:inputText id="#{cc.attrs.id}_text2"
