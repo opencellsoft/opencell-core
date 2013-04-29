@@ -60,6 +60,7 @@ public class UsageRatingJob implements Job {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
         try {
         	 List<EDR> edrs=edrService.getEDRToRate();
+    		log.info("# edr to rate:"+edrs.size());
        		 for(EDR edr:edrs){
        			log.info("rate edr "+edr.getId());
        			try{

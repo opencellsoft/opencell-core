@@ -7,6 +7,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
@@ -37,9 +38,17 @@
 								var="occ" itemLabel="#{occ.description}" />
 						</p:selectOneMenu>
 					</p:panelGrid>
-					<p:commandButton ajax="false"
-						value="#{messages['accountOperation.buttonSelectionType']}"
-						action="#{otherCreditAndChargeBean.loadFromTemplate()}" />
+					<p:panelGrid columns="2">
+						<p:commandButton ajax="false"
+							value="#{messages['accountOperation.buttonSelectionType']}"
+							action="#{otherCreditAndChargeBean.loadFromTemplate()}" />
+						<p:button id="buttonBack" value="#{messages['action.back']}"
+							outcome="customerAccountDetail" includeViewParams="true">
+							<c:if test="#{not cc.attrs.killConversationOnBack}">
+								<f:param name="cid" value="#{conversation.id}" />
+							</c:if>
+						</p:button>
+					</p:panelGrid>
 				</p:panelGrid>
 			</h:form>
 		</p:panel>

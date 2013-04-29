@@ -140,8 +140,7 @@
 											<p:selectOneMenu id="title_select"
 												value="#{userAccountBean.entity.name.title}"
 												rendered="#{userAccountBean.edit}">
-												<f:selectItem itemLabel="#{messages['commons.select']}"
-													itemValue="" />
+												<f:selectItem itemLabel="" itemValue="" />
 												<f:selectItems value="#{titleBean.listAll()}" var="t"
 													itemLabel="#{messages['Title.'.concat(t.code)]}" />
 												<s:objectConverter />
