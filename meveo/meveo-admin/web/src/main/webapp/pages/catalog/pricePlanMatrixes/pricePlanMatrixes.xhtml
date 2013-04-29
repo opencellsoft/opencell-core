@@ -8,7 +8,8 @@
 	template="/layout/template.xhtml">
 
 	<f:metadata>
-		<f:event type="preRenderView" listener="#{pricePlanMatrixBean.preRenderView}" />
+		<f:event type="preRenderView"
+			listener="#{pricePlanMatrixBean.preRenderView}" />
 	</f:metadata>
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -16,22 +17,27 @@
 
 	<ui:define name="body">
 
-	  <hftl:entityPopup id="searchSellerPopup" header="#{messages['seller.search']}" backingBean="#{sellerBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+		<hftl:entityPopup id="searchSellerPopup"
+			header="#{messages['seller.search']}" backingBean="#{sellerBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
 			column2Label="#{messages['BusinessEntity.description']}"
 			column2="description"
-			selection="#{pricePlanMatrixBean.filters['seller']}" updateField=":searchPanel:searchForm:seller:seller_child">
+			selection="#{pricePlanMatrixBean.filters['seller']}"
+			updateField=":searchPanel:searchForm:seller:seller_child">
 		</hftl:entityPopup>
-	
-		<hf:searchPanel id ="searchPanel" label="#{messages['pricePlanMatrix.search']}"
+
+		<hf:searchPanel id="searchPanel"
+			label="#{messages['pricePlanMatrix.search']}"
 			backingBean="#{pricePlanMatrixBean}">
 			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
-				 <hf:searchField id="seller"  
-				label="#{messages['seller.title']}" field="seller" childField="description"
-				  popup="true" popupId="searchSellerPopup" clearButton="true" />
-				  
-				
+			<hf:searchField id="seller" label="#{messages['seller.title']}"
+				field="seller" childField="description" popup="true"
+				popupId="searchSellerPopup" clearButton="true" />
+
+
 			<!-- <hf:searchField label="#{messages['pricePlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
     			<hf:searchField label="#{messages['pricePlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
     			<hf:searchField label="#{messages['pricePlanMatrix.startRatingDate']}" field="startRatingDate" />
@@ -49,19 +55,20 @@
 			backingBean="#{pricePlanMatrixBean}">
 			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
 				field="eventCode" />
-		    <hftl:column label="#{messages['seller.title']}" field="seller" childField="description" />
+			<hftl:column label="#{messages['seller.title']}" field="seller"
+				childField="description" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.startSubscriptionDate']}"
-				field="startSubscriptionDate" />
+				field="startSubscriptionDate" isDate="true" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.endSubscriptionDate']}"
-				field="endSubscriptionDate" />
+				field="endSubscriptionDate" isDate="true" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.startRatingDate']}"
-				field="startRatingDate" wrapHeader="true" />
+				field="startRatingDate" wrapHeader="true" isDate="true" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.endRatingDate']}"
-				field="endRatingDate" wrapHeader="true" />
+				field="endRatingDate" wrapHeader="true" isDate="true" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.minSubscriptionAgeInMonth']}"
 				field="minSubscriptionAgeInMonth" wrapHeader="true" />
@@ -78,10 +85,9 @@
 				label="#{messages['pricePlanMatrix.table.criteria3Value']}"
 				field="criteria3Value" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-				field="amountWithoutTax" converterParam="10digits" wrapHeader="true" />
+				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}"
-				field="amountWithTax" converterParam="10digits"
-				wrapHeader="true" />
+				field="amountWithTax" converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
 			<hftl:actionsColumn
