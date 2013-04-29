@@ -321,16 +321,37 @@
 													<h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;"
 														rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
 														<h:outputText value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
+															<p:dataTable id="oneShotWalletOperationTable" value="#{subscriptionBean.oneShotWalletOperations}" var="oneShotWalletOp" rows="10">
+<!-- 																<hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
+																<p:column >
+																	<f:facet name="header">
+																		<h:outputText value="#{messages['chargeApplication.applicationDate']}" />
+																	</f:facet>
+																	<h:outputText value="#{oneShotWalletOp.operationDate}">
+																		<f:convertDateTime pattern="#{paramBean.getProperty('meveo.dateFormat')}" />
+																	</h:outputText>     , 
+																</p:column>
+																
+																<hftl:column label="#{messages['chargeApplication.description']}" field="description" />
+<!-- 																<hftl:column label="#{messages['chargeApplication.amountWithoutTax']}" showSortLinks="false" field="amountWithoutTax" /> -->
+																<p:column >
+																	<f:facet name="header">
+																		<h:outputText value="#{messages['chargeApplication.amountWithoutTax']}" />
+																	</f:facet>
+																	#{oneShotWalletOp.amountWithoutTax}
+																</p:column>
+																
+<!-- 																<hftl:column label="#{messages['walletOperation.amountWithTax']}" showSortLinks="false" field="amountWithTax" /> -->
+																<p:column >
+																	<f:facet name="header">
+																		<h:outputText value="#{messages['walletOperation.amountWithTax']}" />
+																	</f:facet>
+																	#{oneShotWalletOp.amountWithTax}
+																</p:column>
 
-														<p:dataTable id="oneShotWalletOperationTable" value="#{subscriptionBean.oneShotWalletOperations}" var="shotApplication" rows="10">
-															<hftl:column label="#{messages['chargeApplication.applicationDate']}" field="operationDate" />
-															<hftl:column label="#{messages['chargeApplication.description']}" field="description" />
-															<hftl:column label="#{messages['chargeApplication.amountWithoutTax']}" field="amountWithoutTax" />
-															<hftl:column label="#{messages['walletOperation.amountWithTax']}" field="amountWithTax" />
-															<hftl:column label="#{messages['currency.codeCurrency']}" field="currency" childField="currencyCode" />
-															<hftl:column label="#{messages['chargeApplication.status']}" field="status" />
-
-														</p:dataTable>
+<!-- 																<hftl:column label="#{messages['currency.codeCurrency']}" field="currency" /> -->
+																<hftl:column label="#{messages['chargeApplication.status']}" field="status" />
+															</p:dataTable>
 													</h:panelGrid>
 												</p:outputPanel>
 

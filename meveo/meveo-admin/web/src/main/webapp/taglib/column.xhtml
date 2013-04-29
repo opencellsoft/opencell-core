@@ -94,7 +94,8 @@
 		    	 -->
 				<h:outputText value="#{entity[field]}"
 					rendered="#{!isDate and show}"
-					converter="#{getConverter.forType(entity[field], converterParam)}" />
+					converter="#{getConverter.forType(entity[field], converterParam)}">
+				</h:outputText>
 
 				<h:outputText value="#{entity[field]}" rendered="#{isDate}">
 					<f:convertDateTime pattern="#{datePattern}" />

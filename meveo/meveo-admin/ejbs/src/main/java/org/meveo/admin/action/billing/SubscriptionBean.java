@@ -49,15 +49,8 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.primefaces.event.SelectEvent;
 
-/**
- * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
- */
+
 @Named
 @ViewScoped
 public class SubscriptionBean extends BaseBean<Subscription> {
@@ -173,7 +166,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
      */
     public String saveOrUpdate(boolean killConversation) {
         if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-            UserAccount userAccount = entity.getUserAccount();
+            //UserAccount userAccount = entity.getUserAccount();
             if (subscriptionService.isDuplicationExist(entity)) {
                 entity.setDefaultLevel(false);
                 messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
@@ -186,8 +179,8 @@ public class SubscriptionBean extends BaseBean<Subscription> {
         return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
+   
+ @Override
     protected String saveOrUpdate(Subscription entity) {
         if (entity.isTransient()) {
             subscriptionService.create(entity);
@@ -339,7 +332,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                 return c1.getOperationDate().compareTo(c0.getOperationDate());
             }
         });
-        log.info("retrieve #0 WalletOperations", results != null ? results.size() : 0);
+        log.info("retrieved "+(results != null ? results.size() : 0)+" WalletOperations");
         return results;
     }
 
@@ -357,7 +350,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                 return c1.getOperationDate().compareTo(c0.getOperationDate());
             }
         });
-        log.info("retrieve #0 WalletOperations", results != null ? results.size() : 0);
+        log.info("retrieve "+(results != null ? results.size() : 0)+" WalletOperations");
         return results;
     }
 
