@@ -498,7 +498,7 @@
 								</hf:formPanel>
 								<br />
 								<br />
-								<p:outputPanel id="recurringChargeDataPanel">
+								<p:outputPanel id="recurringChargeDataPanel" autoUpdate="true">
 									<h:form id="OS_recurring_results_form" prependId="false">
 										<p:dataTable value="#{subscriptionBean.recurringChargeInstances}" var="entity">
 											<hftl:column label="#{messages['chargeInstance.code']}" field="code" />
