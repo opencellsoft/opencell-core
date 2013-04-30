@@ -1013,18 +1013,4 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         }*/
     }
 
-	@SuppressWarnings("unchecked")
-	public List<WalletOperation> getWalletOperationsNoInvoiced(UserAccount userAccount) {
-	        if (userAccount == null || userAccount.getWallet() == null) {
-	            return null;
-	        }
-	        return (List<WalletOperation>) em
-	                .createQuery(
-	                        "from "
-	                                + WalletOperation.class.getSimpleName()
-	                                + " where wallet=:wallet and status!=:status order by operationDate desc")
-	                .setParameter("wallet", userAccount.getWallet())
-	                .setParameter("status", WalletOperationStatusEnum.TREATED).getResultList();
-	    }
-
 }

@@ -16,6 +16,7 @@
 package org.meveo.admin.action.billing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.enterprise.inject.Produces;
@@ -32,12 +33,14 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -51,20 +54,21 @@ import org.meveo.service.billing.impl.WalletOperationService;
 public class UserAccountBean extends BaseBean<UserAccount> {
 
     private static final long serialVersionUID = 1L;
-
+    
     /**
      * Injected
      * 
      * @{link UserAccount} service. Extends {@link PersistenceService} .
      */
+    
+    @Inject
+    private WalletOperationBean walletOperationBean;
+    
     @Inject
     private UserAccountService userAccountService;
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-
-    @Inject
-    private WalletOperationService walletOperationService;
 
     private Long billingAccountId;
 
@@ -214,10 +218,22 @@ public class UserAccountBean extends BaseBean<UserAccount> {
         return null;
     }
 
-    @Produces
-    @Named("getWalletOperationsNoInvoiced")
-    public List<WalletOperation> getWalletOperationsNoInvoiced() {
-        return walletOperationService.getWalletOperationsNoInvoiced(entity);
+    public LazyDataModel<WalletOperation> getWalletOperationsNoInvoiced() {
+    	LazyDataModel<WalletOperation> result = null;
+    	HashMap<String, Object> filters = new HashMap<String, Object>();
+    	if(entity==null){
+    		System.out.println("getWalletOperationsNoInvoiced: userAccount is null");
+    		super.initEntity();
+    		System.out.println("entity.id="+entity.getId());
+    	}
+    	if(entity.getWallet()==null){
+    		log.warn("getWalletOperationsNoInvoiced: userAccount "+entity.getId()+ " has no wallet");
+    	} else {
+    		filters.put("wallet", entity.getWallet());
+    		filters.put("status",WalletOperationStatusEnum.OPEN);
+    		result=walletOperationBean.getLazyDataModel(filters);
+    	}
+        return result;
     }
 
     @Produces

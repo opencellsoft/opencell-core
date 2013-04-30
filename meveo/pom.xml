@@ -27,6 +27,7 @@
 		<manaty.hibernateValidator.version>4.3.0.Final</manaty.hibernateValidator.version>
 		<!-- Define the version of JBoss' Java EE 6 APIs and Tools we want to import. -->
 		<jboss.bom.version>1.0.0.Final</jboss.bom.version>
+		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
 	</properties>
 
 	<scm>
@@ -47,14 +48,14 @@
 			<id>primefaces.repo</id>
 			<url>http://repository.primefaces.org</url>
 		</repository>
-		<repository>
-			<id>manaty.repo.releases</id>
-			<url>http://libsmeveocore.manaty.net/releases</url>
-		</repository>
-		<repository>
-			<id>manaty.repo.snapshot</id>
-			<url>http://libsmeveocore.manaty.net/snapshots</url>
-		</repository>
+<!-- 		<repository> -->
+<!-- 			<id>manaty.repo.releases</id> -->
+<!-- 			<url>http://libsmeveocore.manaty.net/releases</url> -->
+<!-- 		</repository> -->
+<!-- 		<repository> -->
+<!-- 			<id>manaty.repo.snapshot</id> -->
+<!-- 			<url>http://libsmeveocore.manaty.net/snapshots</url> -->
+<!-- 		</repository> -->
 	</repositories>
 	<distributionManagement>
 		<downloadUrl>http://libsmeveocore.manaty.net/sites/${project.artifactId}</downloadUrl>

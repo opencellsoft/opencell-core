@@ -22,6 +22,10 @@
 	<c:if test="${empty eventBackingBean}">
 		<c:set var="eventBackingBean" value="#{backingBean}" />
 	</c:if>
+	<c:if test="${empty dataModel}">
+		<c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
+	</c:if>
+	
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
 		dynamic="true" modal="true" styleClass="form-dialog">
 		<h:form id="#{id}popupForm">
@@ -46,7 +50,7 @@
 					value="#{messages['commons.clean']}" update="#{id}popupForm" />
 			</p:panelGrid>
 			<p:dataTable id="datatable" var="e" paginator="true"
-				value="#{backingBean.lazyDataModel}" rows="10"
+				value="#{dataModel}" rows="10"
 				selection="#{selection}" selectionMode="single" lazy="true">
 <!-- 				rowSelectListener="#{rowSelectListener}"> -->
 				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"
@@ -88,6 +92,58 @@
 						</c:if>
 						<c:if test="#{empty column3Child}">
 							<h:outputText value="#{e[column3]}" />
+						</c:if>
+					</p:column>
+				</c:if>
+				<c:if test="#{not empty column4}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{column4Label}" />
+						</f:facet>
+						<c:if test="#{not empty column4Child}">
+							<h:outputText value="#{e[column4][column4Child]}" />
+						</c:if>
+						<c:if test="#{empty column4Child}">
+							<h:outputText value="#{e[column4]}" />
+						</c:if>
+					</p:column>
+				</c:if>
+				<c:if test="#{not empty column5}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{column5Label}" />
+						</f:facet>
+						<c:if test="#{not empty column5Child}">
+							<h:outputText value="#{e[column5][column5Child]}" />
+						</c:if>
+						<c:if test="#{empty column5Child}">
+							<h:outputText value="#{e[column5]}" />
+						</c:if>
+					</p:column>
+				</c:if>
+				<c:if test="#{not empty column6}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{column6Label}" />
+						</f:facet>
+						<c:if test="#{not empty column6Child}">
+							<h:outputText value="#{e[column6][column6Child]}" />
+						</c:if>
+						<c:if test="#{empty column6Child}">
+							<h:outputText value="#{e[column6]}" />
+						</c:if>
+					</p:column>
+				</c:if>
+				<c:if test="#{not empty column7}">
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{column7Label}" />
+						</f:facet>
+						<c:if test="#{not empty column7Child}">
+							<h:outputText value="#{e[column7][column7Child]}" />
+						</c:if>
+						<c:if test="#{empty column7Child}">
+							<h:outputText value="#{e[column7]}" />
 						</c:if>
 					</p:column>
 				</c:if>

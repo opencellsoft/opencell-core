@@ -42,23 +42,25 @@
 			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
-		<!-- dataModel="#{getWalletOperationsNoInvoiced}" -->
-		<hftl:entityPopup id="walletOperationPopup"
-			header="#{messages['ratedTransactionsNoInvoiced.popup.header']}"
-			showSearchButton="false" backingBean="#{walletOperationBean}"
+	
+		<hftl:entityPopup id="walletOperationPopup" dataModel="#{userAccountbean.getWalletOperationsNoInvoiced()}"
+			header="#{messages['ratedTransactionsNoInvoiced.popup.header']} + #{userAccountbean.entity.code}"
+			showSearchButton="false" 
+			backingBean="#{walletOperationBean}"
 			column1Label="#{messages['walletOperation.operationDate']}"
 			column1="operationDate"
-			column2Label="#{messages['chargeInstance.code']}"
-			column2="chargeInstance" column2Child="code"
-			column3Label="#{messages['chargeInstance.description']}"
-			column3="chargeInstance" column3Child="description"
+			column2Label="#{messages['walletOperation.endDate']}"
+			column2="endDate"
+			column3Label="#{messages['chargeInstance.code']}"
+			column3="chargeInstance" column3Child="code"
 			column4Label="#{messages['walletOperation.quantity']}"
 			column4="quantity"
 			column5Label="#{messages['walletOperation.amountWithoutTax']}"
 			column5="amountWithoutTax"
 			column6Label="#{messages['walletOperation.amountWithTax']}"
 			column6="amountWithTax"
-			column7Label="#{messages['walletOperation.status']}" column7="status">
+			column7Label="#{messages['currency.codeCurrency']}"
+			column7="currency" column7Child="code">
 		</hftl:entityPopup>
 
 		<!-- dataModel="#{getRatedTransactionsInvoiced}" -->
@@ -76,7 +78,7 @@
 			column5Label="#{messages['ratedTransaction.amount1WithoutTax']}"
 			column5="amount"
 			column6Label="#{messages['ratedTransaction.amount1WithTax']}"
-			column6="amountWithTax">
+			column6="amountWithTax" >
 		</hftl:entityPopup>
 
 		<p:panelGrid styleClass="col2-set">
