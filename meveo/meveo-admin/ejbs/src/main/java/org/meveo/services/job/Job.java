@@ -25,9 +25,18 @@ public interface Job {
      * Trigger the execution of the job
      * @param parameter a serialized representations of the parameters that the admin could manually put in the GUI
      *  when creating a timer
-     * @return the result of the job execution
+     * @return the result of execute(parameter,false) method
      */
     public JobExecutionResult execute(String parameter);
+    
+    /**
+     * Trigger the execution of the job
+     * @param parameter a serialized representations of the parameters that the admin could manually put in the GUI
+     *  when creating a timer
+     *  @param inSession true if the method is called with an active session context (for instance from the GUI)
+     * @return the result of the job execution
+     */
+	public JobExecutionResult execute(String string, boolean inSession);
 
 	public TimerHandle createTimer(ScheduleExpression scheduleExpression,TimerInfo infos);
 	
@@ -38,6 +47,7 @@ public interface Job {
 	public void trigger(Timer timer);
 	
 	public Collection<Timer> getTimers();
+
 	
     
     /*

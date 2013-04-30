@@ -7,22 +7,16 @@ import java.util.Set;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.Query;
-
-import org.jboss.seam.faces.context.conversation.End;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.logging.Logger;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.local.IPersistenceService;
@@ -85,7 +79,6 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl>{
         return timerEntity;
     }
 
-    @End
     public String create(){//FIXME: throws BusinessException {
     	   log.info("createTimer on job : "+timerEntity.getJobName());
            if(timerEntity.getJobName()==null){
@@ -96,10 +89,14 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl>{
         	   timerEntityService.create(timerEntity);
         	   messages.info(new BundleKey("messages", "save.successful"));
            }
+           try{
+        	   conversation.end();
+           } catch(Exception e){
+        	   e.printStackTrace();
+           }
             return "/administration/job/jobs.xhtml?faces-redirect=true";
     }
 
-    @End
     public String updateTimer() {
 
         try {
@@ -113,18 +110,22 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl>{
         return "/administration/job/jobs.xhtml?faces-redirect=true";
     }
 
-    @End
     public String deleteTimer(){//FIXME: throws BusinessException {
 
     	timerEntityService.remove(timerEntity);
  	   messages.info(new BundleKey("messages", "delete.successful"));
+       try{
+    	   conversation.end();
+       } catch(Exception e){
+    	   e.printStackTrace();
+       }
 
         return "/administration/job/jobs.xhtml?faces-redirect=true";
     }
     
     public String executeTimer(){
         try {
-            timerEntityService.execute(timerEntity);
+            timerEntityService.manualExecute(timerEntity);
             messages.info(new BundleKey("messages", "info.entity.executed"), timerEntity.getJobName());
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.execution"));

@@ -78,7 +78,15 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
             job.execute(entity.getInfo()!=null?entity.getInfo().getParametres():null);
         } 
     }
-    
+
+    public void manualExecute(TimerEntity entity) throws BusinessException{
+        log.info("manual execute "+entity.getJobName());
+        if(jobEntries.containsKey(entity.getJobName())){
+            Job job=jobEntries.get(entity.getJobName());
+            job.execute(entity.getInfo()!=null?entity.getInfo().getParametres():null,true);
+        } 
+    }
+
     @SuppressWarnings("unchecked")
     public TimerEntity findByTimerHandle(TimerHandle timerHandle) {
         String sql = "select distinct t from TimerEntity t";

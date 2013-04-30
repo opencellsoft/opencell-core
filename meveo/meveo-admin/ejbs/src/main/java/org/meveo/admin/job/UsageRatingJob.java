@@ -1,8 +1,8 @@
 package org.meveo.admin.job;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -16,9 +16,6 @@ import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.jboss.solder.logging.Logger;
-import org.jboss.weld.context.bound.BoundConversationContext;
-import org.jboss.weld.context.bound.BoundSessionContext;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -45,19 +42,25 @@ public class UsageRatingJob implements Job {
 	@Inject
 	UsageRatingService usageRatingService;
 	
-    @Inject
-    private Logger log;
-    
+    private Logger log = Logger.getLogger(UsageRatingJob.class.getName());
     
     @PostConstruct
     public void init(){
         TimerEntityService.registerJob(this);
     }
-    
-	@Override
+
+    @Override
     public JobExecutionResult execute(String parameter) {
-        log.info("execute UsageRatingJob");
+    	return execute(parameter,false);
+    }
+
+    @Override
+    public JobExecutionResult execute(String parameter,boolean inSession) {
+        log.info("execute UsageRatingJob.");
         JobExecutionResultImpl result = new JobExecutionResultImpl();
+        if(!inSession){
+        	jobExecutionService.initConversationContext();
+        }
         try {
         	 List<EDR> edrs=edrService.getEDRToRate();
     		log.info("# edr to rate:"+edrs.size());
@@ -75,7 +78,9 @@ public class UsageRatingJob implements Job {
 			 e.printStackTrace();
 		}finally {
             try{
-            jobExecutionService.cleanupConversationContext();
+            	if(!inSession){
+            		jobExecutionService.cleanupConversationContext();
+            	}
             }catch(Exception e1){}
         } 
         result.close("");

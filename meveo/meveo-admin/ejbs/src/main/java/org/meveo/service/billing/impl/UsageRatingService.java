@@ -43,8 +43,8 @@ public class UsageRatingService {
     @Inject
     protected Logger log;
     
-   /* @Resource(lookup="java:jboss/infinispan/container/meveo")
-    private CacheContainer meveoContainer;  */
+    @Resource(lookup="java:jboss/infinispan/container/meveo")
+    private CacheContainer meveoContainer;  
     
 
     private org.infinispan.Cache<Long, List<UsageChargeInstanceCache>> chargeCache;
@@ -67,7 +67,7 @@ public class UsageRatingService {
     
     @PostConstruct
     public void start() {
-     /* this.chargeCache = this.meveoContainer.getCache("usageCharge");
+      this.chargeCache = this.meveoContainer.getCache("usageCharge");
       this.counterCache = this.meveoContainer.getCache("counter");
       log.info("loading usage charge cache");
       @SuppressWarnings("unchecked")
@@ -76,7 +76,7 @@ public class UsageRatingService {
     	  for(UsageChargeInstance usageChargeInstance:usageChargeInstances){
     	      	  UsageChargeInstanceCache.putInCache(usageChargeInstance,chargeCache,counterCache);
     	  }
-      }*/
+      }
     }
     
     

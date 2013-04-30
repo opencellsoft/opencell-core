@@ -41,9 +41,14 @@ public class JobPurge implements Job {
         TimerEntityService.registerJob(this);
     }
     
-    
+
     @Override
     public JobExecutionResult execute(String parameter) {
+    	return execute(parameter,false);
+    }
+
+    @Override
+    public JobExecutionResult execute(String parameter,boolean isSession) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
         jobExecutionService.initConversationContext();
         String jobname = "";

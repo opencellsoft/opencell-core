@@ -39,9 +39,14 @@ public class JobExample implements Job {
         TimerEntityService.registerJob(this);
     }
     
-    
+
     @Override
     public JobExecutionResult execute(String parameter) {
+    	return execute(parameter,false);
+    }
+
+    @Override
+    public JobExecutionResult execute(String parameter,boolean isSession) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
         long nbItemsToProcess = Math.round(Math.random()*1000)+100;
         result.setNbItemsToProcess(nbItemsToProcess); //it might well happen we dont know in advance how many items we have to process, in that case comment this method
