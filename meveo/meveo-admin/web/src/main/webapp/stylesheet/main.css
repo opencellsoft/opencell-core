@@ -1033,7 +1033,7 @@ td[role="gridcell"]>table
    padding-left : 150px;
    color : white;
    border : none !important;
-   background-image :url(../img/tooltip-bg2.png);
+   background-image :url(../img/tooltip-bg.png);
    background-repeat : no-repeat;
    background-size : 1050px 104px
 }
