@@ -31,7 +31,6 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 

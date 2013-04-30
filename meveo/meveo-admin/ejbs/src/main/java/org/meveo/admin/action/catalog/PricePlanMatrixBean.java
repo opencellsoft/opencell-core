@@ -15,12 +15,13 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.math.BigDecimal;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.billing.Country;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
@@ -108,4 +109,12 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	}
 
+	@Override
+	public String saveOrUpdate(boolean killConversation) {
+		if (entity.getAmountWithoutTax() == null)
+			entity.setAmountWithoutTax(new BigDecimal(0));
+		if (entity.getAmountWithTax() == null)
+			entity.setAmountWithTax(new BigDecimal(0));
+		return super.saveOrUpdate(killConversation);
+	}
 }

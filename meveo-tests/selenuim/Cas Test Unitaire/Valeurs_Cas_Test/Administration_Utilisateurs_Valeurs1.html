@@ -17,19 +17,29 @@
 	<td>role</td>
 </tr>
 <tr>
-	<td>doubleClick</td>
-	<td>css=li.ui-picklist-item.ui-corner-all</td>
-	<td></td>
-</tr>
-<tr>
 	<td>storeText</td>
 	<td>//td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/ul/li</td>
 	<td>societe</td>
 </tr>
 <tr>
 	<td>doubleClickAt</td>
+	<td>//table/tbody/tr/td/ul/li</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//table/tbody/tr/td[3]/ul/li</td>
+	<td>${role}</td>
+</tr>
+<tr>
+	<td>doubleClickAt</td>
 	<td>//td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/ul/li</td>
 	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//td[2]/table/tbody/tr/td[2]/table/tbody/tr/td[3]/ul/li</td>
+	<td>${societe}</td>
 </tr>
 <tr>
 	<td>type</td>
@@ -55,16 +65,6 @@
 	<td>typeKeys</td>
 	<td>//tr[2]/td[2]/input</td>
 	<td>0000</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//table/tbody/tr/td[3]/ul/li</td>
-	<td>${role}</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//td[2]/table/tbody/tr/td[2]/table/tbody/tr/td/ul/li</td>
-	<td>${societe}</td>
 </tr>
 </tbody></table>
 </body>

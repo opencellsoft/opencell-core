@@ -140,8 +140,7 @@
 													<p:selectOneMenu id="title_text"
 														value="#{customerAccountBean.entity.name.title}"
 														required="false" rendered="#{customerAccountBean.edit}">
-														<f:selectItem itemLabel="#{messages['commons.select']}"
-															itemValue="" />
+														<f:selectItem itemLabel="" itemValue="" />
 														<f:selectItems value="#{titleBean.listAll()}" var="t"
 															itemLabel="#{messages['Title.'.concat(t.code)]}" />
 														<s:objectConverter />
@@ -368,6 +367,13 @@
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
 							</hftl:dataList>
+							<h:form>
+								<hf:formButtons columns="3" backingBean="#{customerAccountBean}"
+									edit="#{customerAccountBean.edit}" ajaxSubmit="false"
+									killConversationOnSave="false" killConversationOnBack="false"
+									useCustomIdParam="true">
+								</hf:formButtons>
+							</h:form>
 						</p:tab>
 					</p:tabView>
 

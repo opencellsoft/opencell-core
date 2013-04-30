@@ -260,11 +260,16 @@
 												<f:facet name="header">
 													<h:outputText value="#{messages['commons.actions']}" />
 												</f:facet>
-
-												<p:commandLink id="editOneShotChgInsLink" render="oneShotChgSdiv" update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
+												<p:commandButton id="editOneShotChgInsLink"
+													action="#{subscriptionBean.editOneShotChargeIns(entity)}"
+													onclick="document.getElementById('oneShotChgDiv').style.display='';"
+													update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
+													icon="ui-icon-document">
+												</p:commandButton>
+												<!-- <p:commandLink id="editOneShotChgInsLink" render="oneShotChgSdiv" update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
 													onclick="document.getElementById('oneShotChgDiv').style.display='';" action="#{subscriptionBean.editOneShotChargeIns(entity)}">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
-												</p:commandLink>
+												</p:commandLink> -->
 												<p:tooltip for="editOneShotChgInsLink" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
 											</p:column>
 										</p:dataTable>
@@ -493,7 +498,7 @@
 								</hf:formPanel>
 								<br />
 								<br />
-								<p:outputPanel id="recurringChargeDataPanel">
+								<p:outputPanel id="recurringChargeDataPanel" autoUpdate="true">
 									<h:form id="OS_recurring_results_form" prependId="false">
 										<p:dataTable value="#{subscriptionBean.recurringChargeInstances}" var="entity">
 											<hftl:column label="#{messages['chargeInstance.code']}" field="code" />

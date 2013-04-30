@@ -135,8 +135,8 @@
 											<hftl:panelGroup columns="1">
 												<hf:formField
 													label="#{messages['businessEntity.description']}"
-													id="description" field="description" useConverter="false" size="70"
-													maxlength="100" />
+													id="description" field="description" useConverter="false"
+													size="70" maxlength="100" />
 											</hftl:panelGroup>
 											<hftl:panelGroup columns="2">
 												<hf:formEntityField id="cycleSelectId"
@@ -219,8 +219,7 @@
 													<p:selectOneMenu id="title_select"
 														value="#{billingAccountBean.entity.name.title}"
 														rendered="#{billingAccountBean.edit}">
-														<f:selectItem itemLabel="#{messages['commons.select']}"
-															itemValue="" />
+														<f:selectItem itemLabel="" itemValue="" />
 														<f:selectItems value="#{titleBean.listAll()}" var="t"
 															itemLabel="#{messages['Title.'.concat(t.code)]}" />
 														<s:objectConverter />
@@ -236,8 +235,7 @@
 											</hftl:panelGroup>
 
 											<h:panelGroup id="userNamePanel">
-												<h:panelGrid columns="2"
-													columnClasses="twoColGrid">
+												<h:panelGrid columns="2" columnClasses="twoColGrid">
 													<hf:formEntityField label="#{messages['name.lastName']}"
 														field="name" childField="lastName" popup="false"
 														maxlength="50" />
@@ -329,8 +327,7 @@
 											<hftl:fieldset name="#{messages['commons.bankCoordinates']}"
 												columns="1">
 												<hftl:panelGroup columns="1">
-													<hf:formField
-														id="paymentMethod"
+													<hf:formField id="paymentMethod"
 														label="#{messages['billingAccount.paymentMethod']}"
 														field="paymentMethod" required="true" />
 												</hftl:panelGroup>

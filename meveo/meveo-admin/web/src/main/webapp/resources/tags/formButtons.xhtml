@@ -33,7 +33,7 @@
 				value="#{cc.attrs.backingBean.objectId}" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
-		<p:commandButton rendered="#{cc.attrs.edit}"
+		<p:commandButton id="saveButton" rendered="#{cc.attrs.edit}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
 			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
@@ -42,11 +42,11 @@
 
 		<cc:insertChildren />
 
-		<hf:clearButton label="#{messages['action.reset']}"
+ 	<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
 			edit="#{cc.attrs.edit}"
 			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
 
-		<p:button id="buttonBack" value="#{messages['action.back']}"
+		<p:button id="backButton" value="#{messages['action.back']}"
 			outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
 			<c:if test="#{not cc.attrs.killConversationOnBack}">
 				<f:param name="cid" value="#{conversation.id}" />
