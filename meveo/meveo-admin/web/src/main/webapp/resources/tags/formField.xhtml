@@ -50,6 +50,7 @@
 	<cc:attribute name="popup" default="false" />
 	<cc:attribute name="popupId" default="popup" />
 	<cc:attribute name="listenerUpdate" default=""></cc:attribute>
+	<cc:attribute name="converter" default="" />
 
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) or ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
@@ -96,6 +97,10 @@
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
 					size="#{cc.attrs.size}" maxlength="#{cc.attrs.maxlength}">
+
+					<c:if test="#{not empty cc.attrs.converter}">
+						<f:converter converterId="#{cc.attrs.converter}" />
+					</c:if>
 
 					<c:if test="#{cc.attrs.useConverter}">
 						<f:converter converterId="stringConverter" />
@@ -248,10 +253,21 @@
 				id="#{cc.attrs.id}_bigDecimal" disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" size="5"
-				maxlength="#{cc.attrs.maxlength}" />
+				maxlength="#{cc.attrs.maxlength}">
+
+				<c:if test="#{not empty cc.attrs.converter}">
+					<f:converter converterId="#{cc.attrs.converter}" />
+				</c:if>
+
+			</p:inputText>
+
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				style="font-weight:bold;">
+				<c:if test="#{not empty cc.attrs.converter}">
+					<f:converter converterId="#{cc.attrs.converter}" />
+				</c:if>
+			</h:outputText>
 			<cc:insertChildren />
 		</p:panelGrid>
 

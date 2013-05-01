@@ -32,7 +32,7 @@
 			<hf:formField label="#{messages['counterTemplate.counterType']}"
 				field="counterType" childField="label" isMessage="true" />
 			<hf:formField label="#{messages['counterTemplate.level']}"
-				field="level" required="true" />
+				field="level" required="true" converter="bigDecimal4DigitsConverter" />
 			<hf:formField label="#{messages['enableEntity.active']}"
 				field="disabled" isMessage="true" />
 			<hftl:panelGroup columns="2">

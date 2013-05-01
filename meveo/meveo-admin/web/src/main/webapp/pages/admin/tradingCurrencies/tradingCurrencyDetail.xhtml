@@ -1,4 +1,5 @@
- <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
@@ -43,9 +44,10 @@
 				required="true" showPopupOnlyOnNew="true" />
 
 			<hf:formField label="#{messages['tradingCurrency.prDescription']}"
-				field="prDescription" maxlength="80" id="prDescription"/>
+				field="prDescription" maxlength="80" id="prDescription" />
 			<hf:formField label="#{messages['tradingCurrency.prCurrencyToThis']}"
-				field="prCurrencyToThis" />
+				field="prCurrencyToThis" converter="bigDecimal4DigitsConverter">
+			</hf:formField>
 			<hf:formField label="#{messages['tradingCurrency.disabled']}"
 				field="disabled" isMessage="true" />
 
