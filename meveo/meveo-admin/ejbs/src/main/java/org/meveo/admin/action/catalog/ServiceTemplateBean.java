@@ -99,10 +99,11 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	}
 
 	public void setTerminationChargesModel(DualListModel<OneShotChargeTemplate> temp) {
-		getEntity().setSubscriptionCharges(temp.getTarget());
+		getEntity().setTerminationCharges(temp.getTarget());
 	}
 
 	public DualListModel<OneShotChargeTemplate> getSubscriptionChargesModel() {
+		System.out.println("getSubscriptionChargesModel "+this+" entity="+getEntity());
 		if (subscriptionCharges == null) {
 			List<OneShotChargeTemplate> source = oneShotChargeTemplateService.getSubscriptionChargeTemplates();
 			List<OneShotChargeTemplate> target = new ArrayList<OneShotChargeTemplate>();
