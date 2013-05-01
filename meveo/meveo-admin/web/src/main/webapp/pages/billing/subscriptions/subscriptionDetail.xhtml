@@ -188,15 +188,15 @@
 									<br />
 									<br />
 									<div style="text-align: center;">
-										<h:panelGrid columns="3">
-											<h:outputText value="#{messages['serviceInstance.quantity']}:"></h:outputText>
-											<h:inputText value="#{subscriptionBean.quantity}" size="5" maxlength="3" />
+										<p:panelGrid columns="3">
+											<p:outputLabel for="quantity" value="#{messages['serviceInstance.quantity']}:"></p:outputLabel>
+											<p:inputText id="quantity" value="#{subscriptionBean.quantity}" size="5" maxlength="3" />
 											<p:commandButton id="cbutton" action="#{subscriptionBean.instanciateManyServices}" value="#{messages['button.instanciateButton']}"
 												ajax="true"
 												update=":subscriptionTab:ST_results2_form :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form" />
 											<!-- 												update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" -->
 
-										</h:panelGrid>
+										</p:panelGrid>
 									</div>
 								</h:form>
 							</p:tab>
