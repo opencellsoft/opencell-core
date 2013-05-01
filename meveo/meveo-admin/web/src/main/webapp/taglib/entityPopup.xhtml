@@ -29,27 +29,28 @@
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
 		dynamic="true" modal="true" styleClass="form-dialog">
 		<h:form id="#{id}popupForm">
-			<p:panelGrid id="#{id}searchFormPanel" columns="2">
-				<c:if test="#{not empty searchField1}">
+			<c:if test="#{not empty searchField1}">
+				<p:panelGrid id="#{id}searchFormPanel" columns="2">
 					<hf:searchField label="#{searchField1Label}"
 						backingBean="#{backingBean}" field="#{searchField1}" />
-				</c:if>
-				<c:if test="#{not empty searchField2}">
-					<hf:searchField label="#{searchField2Label}"
-						backingBean="#{backingBean}" field="#{searchField2}" />
-				</c:if>
-				<c:if test="#{not empty searchField3}">
-					<hf:searchField label="#{searchField3Label}"
-						backingBean="#{backingBean}" field="#{searchField3}" />
-				</c:if>
-			</p:panelGrid>
-			<p:panelGrid columns="2">
-				<p:commandButton id="buttonSearch"
-					value="#{messages['commons.search']}" update="#{id}popupForm" />
-				<p:commandButton id="buttonClear" action="#{backingBean.clean}"
-					value="#{messages['commons.clean']}" update="#{id}popupForm" />
-			</p:panelGrid>
-			<p:dataTable id="datatable" var="e" paginator="true"
+					<c:if test="#{not empty searchField2}">
+						<hf:searchField label="#{searchField2Label}"
+							backingBean="#{backingBean}" field="#{searchField2}" />
+					</c:if>
+					<c:if test="#{not empty searchField3}">
+						<hf:searchField label="#{searchField3Label}"
+							backingBean="#{backingBean}" field="#{searchField3}" />
+					</c:if>
+				</p:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton id="buttonSearch"
+						value="#{messages['commons.search']}" update="#{id}popupForm" />
+					<p:commandButton id="buttonClear" action="#{backingBean.clean}"
+						value="#{messages['commons.clean']}" update="#{id}popupForm" />
+				</p:panelGrid>
+			</c:if>
+				
+			<p:dataTable id="#{id}datatable" var="e" paginator="true"
 				value="#{dataModel}" rows="10"
 				selection="#{selection}" selectionMode="single" lazy="true">
 <!-- 				rowSelectListener="#{rowSelectListener}"> -->

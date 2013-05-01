@@ -489,11 +489,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return LazyDataModel implementation.
      */
     public LazyDataModel<T> getLazyDataModel() {
-    	return getLazyDataModel(filters);
+    	return getLazyDataModel(filters,false);
     }
 
-    public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters) {
-        if (dataModel == null) {
+    public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters,boolean forceReload) {
+        if (dataModel == null || forceReload) {
         	final Map<String, Object>filters = inputFilters;
             dataModel = new LazyDataModel<T>() {
                 private static final long serialVersionUID = 1L;

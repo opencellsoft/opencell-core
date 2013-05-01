@@ -43,8 +43,8 @@
 		</hftl:entityPopup>
 
 	
-		<hftl:entityPopup id="walletOperationPopup" dataModel="#{userAccountbean.getWalletOperationsNoInvoiced()}"
-			header="#{messages['ratedTransactionsNoInvoiced.popup.header']} + #{userAccountbean.entity.code}"
+		<hftl:entityPopup id="walletOperationPopup" dataModel="#{userAccountBean.getWalletOperationsNoInvoiced()}"
+			header="#{messages['ratedTransactionsNoInvoiced.popup.header']}"
 			showSearchButton="false" 
 			backingBean="#{walletOperationBean}"
 			column1Label="#{messages['walletOperation.operationDate']}"
@@ -60,7 +60,7 @@
 			column6Label="#{messages['walletOperation.amountWithTax']}"
 			column6="amountWithTax"
 			column7Label="#{messages['currency.codeCurrency']}"
-			column7="currency" column7Child="code">
+			column7="currency" >
 		</hftl:entityPopup>
 
 		<!-- dataModel="#{getRatedTransactionsInvoiced}" -->

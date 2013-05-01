@@ -46,8 +46,6 @@ import org.primefaces.model.LazyDataModel;
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
  * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
  */
 @Named
 @ViewScoped
@@ -102,6 +100,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     @Override
     public UserAccount initEntity() {
         super.initEntity();
+    	System.out.println("initentity useraccount id="+entity.getId());
         if (entity.getId() == null && billingAccountId != null) {
             BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
             entity.setBillingAccount(billingAccount);
@@ -219,6 +218,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     }
 
     public LazyDataModel<WalletOperation> getWalletOperationsNoInvoiced() {
+		System.out.println("getWalletOperationsNoInvoiced");
     	LazyDataModel<WalletOperation> result = null;
     	HashMap<String, Object> filters = new HashMap<String, Object>();
     	if(entity==null){
@@ -227,11 +227,11 @@ public class UserAccountBean extends BaseBean<UserAccount> {
     		System.out.println("entity.id="+entity.getId());
     	}
     	if(entity.getWallet()==null){
-    		log.warn("getWalletOperationsNoInvoiced: userAccount "+entity.getId()+ " has no wallet");
+    		System.out.println("getWalletOperationsNoInvoiced: userAccount "+entity.getId()+ " has no wallet");
     	} else {
     		filters.put("wallet", entity.getWallet());
     		filters.put("status",WalletOperationStatusEnum.OPEN);
-    		result=walletOperationBean.getLazyDataModel(filters);
+    		result=walletOperationBean.getLazyDataModel(filters,true);
     	}
         return result;
     }
