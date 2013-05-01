@@ -1009,9 +1009,10 @@ td[role="gridcell"]>table
 /**
  * JSF Overrides
  **************************************************************************/
- .ui-tabs-panel { padding: 10px !important; }
- .ui-tabs-panel .form-panel { margin: 0px !important; padding: 0px !important; }
+.ui-tabs-panel { padding: 10px !important; }
+.ui-tabs-panel .form-panel { margin: 0px !important; padding: 0px !important; }
 .ui-panel-titlebar { border: none !important; }
+.ui-datatable-header, .ui-datatable-footer { text-align: left !important; } 
 
 /* tooltip improvement */
 .ui-tooltip

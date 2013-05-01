@@ -15,17 +15,21 @@
  */
 package org.meveo.admin.action.medina;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.admin.action.billing.SubscriptionBean;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.medina.impl.AccessService;
+import org.primefaces.event.SelectEvent;
 
 /**
  * @author MBAREK
@@ -43,6 +47,11 @@ public class AccessBean extends BaseBean<Access> {
 	@Inject
 	private AccessService accessService;
 
+	@Inject
+	private SubscriptionBean subscriptionBean;
+
+	private Subscription selectedSubscription;
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -57,6 +66,35 @@ public class AccessBean extends BaseBean<Access> {
 	@Override
 	protected IPersistenceService<Access> getPersistenceService() {
 		return accessService;
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "access";
+	}
+
+	@Override
+	public String getEditViewName() {
+		return "accessDetail";
+	}
+
+	public Subscription getSelectedSubscription() {
+		return selectedSubscription;
+	}
+
+	public void setSelectedSubscription(Subscription selectedSubscription) {
+		this.selectedSubscription = selectedSubscription;
+	}
+
+	public void onRowSelect(SelectEvent event) {
+		List<Subscription> temp = entity.getSubscriptions() == null ? new ArrayList<Subscription>()
+				: entity.getSubscriptions();
+		for (Subscription s : temp) {
+			if (s.equals(selectedSubscription))
+				return;
+		}
+		temp.add(selectedSubscription);
+		entity.setSubscriptions(temp);
 	}
 
 }

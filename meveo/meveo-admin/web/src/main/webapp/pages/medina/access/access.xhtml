@@ -1,25 +1,71 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:c="http://java.sun.com/jstl/core"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-   
-    	
- 
-    	<custom:listPanel label="#{messages['access.title']}" backingBean="#{accessBean}">
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/layout/template.xhtml">
+	
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{accessBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+	
+		<hftl:entityPopup id="searchSubscriptionPopup"
+			header="#{messages['access.subscription']}"
+			updateField=":searchPanel:searchForm:language:language_child"
+			selection="#{tradingLanguageBean.filters['subscriptions']}"
+			backingBean="#{languageBean}"
+			searchField1Label="#{messages['language.languageCode']}"
+			searchField1="languageCode"
+			column1Label="#{messages['language.languageCode']}"
+			column1="languageCode"
+			column2Label="#{messages['tradingLanguage.prDescription']}"
+			column2="descriptionEn">
+		</hftl:entityPopup>
+
+		<hf:searchPanel columns="2" label="#{messages['access.search']}"
+			backingBean="#{accessBean}">
+
+			<hf:searchField label="#{messages['access.accessUserId']}"
+				field="accessUserId" />
+			<hf:searchField label="#{messages['access.discriminatorCode']}"
+				field="discriminatorCode" />
+			<hf:searchField label="#{messages['access.startDate']}"
+				field="startDate" />
+			<hf:searchField label="#{messages['access.endDate']}" field="endDate" />
+			<hf:searchField label="#{messages['access.subscription']}"
+				field="subscriptions" childField="code" popupId="searchSubscriptionPopup" />
+
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['access.title']}"
+			backingBean="#{accessBean}">
+			<hftl:column label="#{messages['access.accessUserId']}"
+				field="accessUserId" />
+			<hftl:column label="#{messages['access.startDate']}"
+				field="startDate" />
+			<hftl:column label="#{messages['access.endDate']}" field="endDate" />
+			<hftl:column label="#{messages['access.discriminatorCode']}"
+				field="discriminatorCode" />
+
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+		</hftl:dataList>
+
+		<!-- <custom:listPanel label="#{messages['access.title']}" backingBean="#{accessBean}">
     	
     		<custom:searchPanel label="#{messages['access.search']}" newButtonView="/pages/medina/access/accessDetail.xhtml">
 			<custom:searchField label="#{messages['access.accessUserId']}" field="accessUserId"/>
@@ -35,8 +81,8 @@
     			<custom:actionsColumn editView="/pages/medina/access/accessDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('billing','billingManagement')}"/>
 		    </custom:dataList>
 		   
-		</custom:listPanel>
-		
-    </ui:define>
-    
+		</custom:listPanel> -->
+
+	</ui:define>
+
 </ui:composition>

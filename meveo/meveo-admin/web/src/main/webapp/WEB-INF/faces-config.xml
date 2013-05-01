@@ -747,7 +747,7 @@
 			<from-outcome>subscriptionDetail</from-outcome>
 			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
 			<redirect />
-		</navigation-case>
+		</navigation-case>	
 		<navigation-case>
 			<from-outcome>userAccounts</from-outcome>
 			<to-view-id>/pages/billing/userAccounts/userAccounts.xhtml</to-view-id>
@@ -940,9 +940,13 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>accesss</from-outcome>
+			<from-outcome>access</from-outcome>
 			<to-view-id>/pages/medina/access/access.xhtml</to-view-id>
 			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accessDetail</from-outcome>
+			<to-view-id>/pages/medina/access/accessDetail.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>zonningPlans</from-outcome>
