@@ -26,7 +26,7 @@
 		<hf:searchPanel label="#{messages['oneShotChargeTemplate.search']}" backingBean="#{oneShotChargeTemplateBean}">
 			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
 			<hf:searchField label="#{messages['chargeTemplate.description']}" id="description" field="description" />
-			<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" />
+			<!-- <hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" /> -->
 			<hf:searchField label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" />
 			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" />
 
@@ -37,7 +37,7 @@
 			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
 			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
 			<hftl:column label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" isMessage="true" />
-			<hftl:column label="#{messages['invoiceSubCategory.panel']}" field="invoiceSubCategory" childField="code" isMessage="true" />
+			<hftl:column label="#{messages['charge.subCategory']}" field="invoiceSubCategory" childField="code" isMessage="true" />
 			<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
 			<hftl:column label="#{messages['oneShotChargeTemplate.immediateInvoicing']}" field="immediateInvoicing" isMessage="true" />
 
