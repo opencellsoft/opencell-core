@@ -55,17 +55,6 @@
 					value="#{messages['menu.tradingCountries']}" />
 
 			</p:submenu>
-
-			<p:submenu id="job" label="#{messages['menu.job']}"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				
-		    	<p:menuitem id="jobs" outcome="jobTimers"
-					value="#{messages['menu.jobs']}" /> 
-
-				<p:menuitem id="timers" outcome="timers"
-					value="#{messages['menu.activeTimers']}" />
-					
-			</p:submenu>
 	  			
 			<!--
 			<rich:menuItem id="userRoles" rendered="#{identity.hasPermission('administration','roleManagement')}">
@@ -511,6 +500,17 @@
 
 			</p:submenu>
 
+			<p:submenu id="job" label="#{messages['menu.job']}"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+				
+		    	<p:menuitem id="jobs" outcome="jobTimers"
+					value="#{messages['menu.jobs']}" /> 
+
+				<p:menuitem id="timers" outcome="timers"
+					value="#{messages['menu.activeTimers']}" />
+					
+			</p:submenu>
+			
 			<!--
 			<rich:dropDownMenu value="#{messages['menu.payments']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
 				<f:facet name="label">

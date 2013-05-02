@@ -5,6 +5,7 @@ body {
 	position: relative;
 	background : #f1f7f6;
 }
+
 .body
 {
   width : 90% !important;
@@ -912,6 +913,7 @@ table[role="grid"]
 {
   border : none;
 }
+
 td[role="gridcell"]>table
 {
   margin : 5px 0px;
