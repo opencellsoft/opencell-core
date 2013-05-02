@@ -1,49 +1,68 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
-    
-	 <ui:define name="metadata">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{oneShotChargeTemplateBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-	
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
 
-		<hf:searchPanel label="#{messages['oneShotChargeTemplate.search']}" backingBean="#{oneShotChargeTemplateBean}">
-			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
-			<hf:searchField label="#{messages['chargeTemplate.description']}" id="description" field="description" />
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['oneShotChargeTemplate.search']}"
+			backingBean="#{oneShotChargeTemplateBean}">
+			<hf:searchField label="#{messages['chargeTemplate.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['chargeTemplate.description']}"
+				id="description" field="description" />
 			<!-- <hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" /> -->
-			<hf:searchField label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" />
-			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true" />
+			<hf:searchField label="#{messages['chargeTemplate.type']}"
+				field="oneShotChargeTemplateType" childField="label" />
+			<hf:searchField label="#{messages['enableEntity.disabled']}"
+				field="disabled" isMessage="true" />
 
 		</hf:searchPanel>
 
-		<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}" checkMany="false" noClose="false" backingBean="#{oneShotChargeTemplateBean}">
+		<hftl:dataList label="#{messages['oneShotChargeTemplate.title']}"
+			checkMany="false" noClose="false"
+			backingBean="#{oneShotChargeTemplateBean}">
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
-			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
-			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
-			<hftl:column label="#{messages['chargeTemplate.type']}" field="oneShotChargeTemplateType" childField="label" isMessage="true" />
-			<hftl:column label="#{messages['charge.subCategory']}" field="invoiceSubCategory" childField="code" isMessage="true" />
-			<hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
-			<hftl:column label="#{messages['oneShotChargeTemplate.immediateInvoicing']}" field="immediateInvoicing" isMessage="true" />
+			<hftl:column label="#{messages['chargeTemplate.description']}"
+				field="description" />
+			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
+				field="amountEditable" isMessage="true" />
+			<hftl:column label="#{messages['chargeTemplate.type']}"
+				field="oneShotChargeTemplateType" childField="label"
+				isMessage="true" />
+			<hftl:column label="#{messages['charge.subCategory']}"
+				field="invoiceSubCategory" childField="code" isMessage="false"
+				childFieldId="id"
+				entityView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
+				backView="invoiceCategories" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+			<hftl:column
+				label="#{messages['oneShotChargeTemplate.immediateInvoicing']}"
+				field="immediateInvoicing" isMessage="true" />
 
-			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>
-    
+
 </ui:composition>
