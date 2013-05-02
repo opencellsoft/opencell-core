@@ -24,6 +24,8 @@
 	<cc:attribute name="killConversationOnSave" default="true" />
 	<cc:attribute name="killConversationOnBack" default="true" />
 	<cc:attribute name="useCustomIdParam" default="false" />
+	<cc:attribute name="styleClass"
+		default="#{cc.attrs.edit ? 'form-panel-fields' : 'form-panel-fields form-panel-fields-view'}" />
 </cc:interface>
 
 <cc:implementation>
@@ -37,7 +39,7 @@
 			</c:if>
 			<p:messages id="messages" />
 			<p:panelGrid columns="#{cc.attrs.columns}"
-				styleClass="form-panel-fields">
+				styleClass="#{cc.attrs.styleClass}">
 				<cc:insertChildren />
 			</p:panelGrid>
 

@@ -251,7 +251,6 @@ div.body > table > thead,
 .form-panel > tbody > tr > td,
 .form-panel-fields,
 .form-panel-fields tbody,
-.form-panel-fields tr,
 .form-panel-fields>tbody>tr.ui-widget-content,
 .form-panel-fields>tbody>tr.ui-widget-content>td {  width : 100%; display: inline-block; }
 .form-panel-actions td { width : auto !important; float : left; display : inline-block; }
@@ -377,4 +376,4 @@ input[type="submit"],
 .col2-set .col1 { width : 25% !Important; float : left; padding: 0px; }
 .col2-set .col2 { width : 72% !Important; float : right; }
 
-/* td { border: 1px solid red !important; } */
+td { border: 1px solid red !important; }
