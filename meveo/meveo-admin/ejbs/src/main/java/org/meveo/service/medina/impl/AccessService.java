@@ -21,10 +21,6 @@ import javax.ejb.Stateless;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author MBAREK
- * 
- */
 @Stateless @LocalBean
 public class AccessService extends PersistenceService<Access> {
 

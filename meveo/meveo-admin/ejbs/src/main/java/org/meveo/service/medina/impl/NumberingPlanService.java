@@ -21,10 +21,7 @@ import javax.ejb.Stateless;
 import org.meveo.model.mediation.NumberingPlan;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author MBAREK
- * 
- */
+
 @Stateless @LocalBean
 public class NumberingPlanService extends PersistenceService<NumberingPlan> {
 
