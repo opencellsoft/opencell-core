@@ -1,53 +1,69 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
-    
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
 				listener="#{recurringChargeTemplateBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
-	
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}" backingBean="#{recurringChargeTemplateBean}">
-    			<hf:searchField label="#{messages['chargeTemplate.code']}" field="code" />
-    			<hf:searchField label="#{messages['chargeTemplate.description']}" id="description" field="description"/>
-    			<hf:searchField label="#{messages['enableEntity.disabled']}" field="disabled" />
-    			
-    		<!--	<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable"/>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel label="#{messages['recurringChargeTemplate.search']}"
+			backingBean="#{recurringChargeTemplateBean}">
+			<hf:searchField label="#{messages['chargeTemplate.code']}"
+				field="code" />
+			<hf:searchField label="#{messages['chargeTemplate.description']}"
+				id="description" field="description" />
+			<hf:searchField label="#{messages['enableEntity.disabled']}"
+				field="disabled" />
+
+			<!--	<hf:searchField label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable"/>
     			<hf:searchField label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label"/>
     		 	<hf:searchField label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
     			<hf:searchField label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" />
     			<hf:searchField label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" />
     			<hf:searchField label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" /> -->
-    		</hf:searchPanel>	
-    		
-    		<hftl:dataList label="#{messages['recurringChargeTemplate.title']}" checkMany="false" backingBean="#{recurringChargeTemplateBean}">
-    			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
-    			<hftl:column label="#{messages['chargeTemplate.description']}" field="description" />
-    			<hftl:column label="#{messages['chargeTemplate.amountEditable']}" field="amountEditable" isMessage="true" />
-    			<hftl:column label="#{messages['recurringChargeTemplate.durationTermInMonth']}" field="durationTermInMonth" />
-    			<!-- <hftl:column label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label" isMessage="true" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['recurringChargeTemplate.title']}"
+			checkMany="false" backingBean="#{recurringChargeTemplateBean}">
+			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
+			<hftl:column label="#{messages['chargeTemplate.description']}"
+				field="description" />
+			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
+				field="amountEditable" isMessage="true" />
+			<hftl:column
+				label="#{messages['recurringChargeTemplate.durationTermInMonth']}"
+				field="durationTermInMonth" />
+			<!-- <hftl:column label="#{messages['recurringChargeTemplate.recurrenceType']}" field="recurrenceType" childField="label" isMessage="true" />
     			<hftl:column label="#{messages['recurringChargeTemplate.subscriptionProrata']}" field="subscriptionProrata" isMessage="true" />
     			<hftl:column label="#{messages['recurringChargeTemplate.terminationProrata']}" field="terminationProrata" isMessage="true" />
     			 -->
-    			<hftl:column label="#{messages['recurringChargeTemplate.applyInAdvance']}" field="applyInAdvance" isMessage="true" />
-    			<hftl:column label="#{messages['charge.subCategory']}" field="invoiceSubCategory"  childField="code"  />
-    		    <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true"/>
-    			<hftl:actionsColumn permission="#{identity.hasPermission('catalog','catalogManagement')}" />
-		    </hftl:dataList>
-		   		
-    </ui:define>
-    
+			<hftl:column
+				label="#{messages['recurringChargeTemplate.applyInAdvance']}"
+				field="applyInAdvance" isMessage="true" />
+			<hftl:column label="#{messages['charge.subCategory']}"
+				field="invoiceSubCategory" childField="code" childFieldId="id"
+				entityView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
+				backView="invoiceCategories" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>
