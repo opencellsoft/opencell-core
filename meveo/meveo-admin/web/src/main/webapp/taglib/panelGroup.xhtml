@@ -4,11 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <ui:composition>
 	<!-- Default page Width -->
+	<c:if test="${empty rendered}">
+		<c:set var="rendered" value="true" />
+	</c:if>
 	<c:if test="${empty columns}">
 		<c:set var="columns" value="1" />
 	</c:if>
@@ -25,7 +29,7 @@
 		<c:set var="columnsStyle" value="fourColGrid" />
 	</c:if>
 	<p:panelGrid styleClass="form-panel-group" columns="#{columns}"
-		width="100%" columnClasses="#{columnsStyle}">
+		width="100%" columnClasses="#{columnsStyle}" rendered="true">
 		<ui:insert />
 	</p:panelGrid>
 </ui:composition>

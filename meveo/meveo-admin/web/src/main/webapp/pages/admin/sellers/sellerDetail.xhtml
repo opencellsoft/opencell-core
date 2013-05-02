@@ -66,13 +66,13 @@
 			</hftl:entityPopup>
 		</c:if>
 
-		<p:panelGrid styleClass="col1-set" columns="1">
+		<p:panel styleClass="col1-set">
 			<hf:formPanel id="sellerFormPanel" formId="sellerFormId"
 				label="#{messages['seller.title']}" backingBean="#{sellerBean}">
 
 				<p:tabView id="sellerTab">
 					<p:tab title="#{messages['billingAccount.tab.account']}">
-						<hftl:panelGroup columns="2">
+						<hftl:panelGroup>
 							<hf:formField label="#{messages['businessEntity.code']}"
 								field="code" maxlength="35" required="true" />
 
@@ -138,7 +138,7 @@
 				</p:tabView>
 
 			</hf:formPanel>
-		</p:panelGrid>
+		</p:panel>
 
 	</ui:define>
 
