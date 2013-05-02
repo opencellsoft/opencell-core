@@ -367,7 +367,9 @@ input[type="submit"],
 .ui-tabs { width : 99%; }
 .ui-tabs-nav { width : 99%; background : none !important; }
 .ui-state-hover { border-color : #19c6ca !important; }
+.ui-fieldset-content td { padding: 4px; }
 
+.form-panel-fields td { padding: 4px; }
 .tab-view-container .ui-panel-titlebar { border: 0px; margin: 0px; padding: 10px 0px 0px 0px !important; vertical-align: middle !important; height: 28px; }
 .col1-set .ui-widget-header .ui-panelgrid-header, .tab-view-container .ui-panelgrid-header { border: none; margin: 0 0 10px 0; padding: 0px; }
 .col1-set >tbody > tr > td { width : 99% !Important; display : inline-block; }
