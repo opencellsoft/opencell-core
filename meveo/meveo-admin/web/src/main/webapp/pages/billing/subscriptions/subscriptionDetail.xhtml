@@ -122,7 +122,7 @@
 						</f:facet>
 						<p:tabView id="subscriptionTab">
 							<p:tab id="serviceTab" title="#{messages['subscription.tab.services']}" rendered="#{!subscriptionBean.edit}">
-								<hf:formPanel id="headerInfo1Form" formId="headerInfo1" backingBean="#{subscriptionBean}" showFormButtons="false" styleClass="formPanel">
+								<hf:formPanel id="headerInfo1Form" formId="headerInfo1" backingBean="#{subscriptionBean}" showFormButtons="false">
 									<hftl:panelGroup columns="3">
 										<hf:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
 										<hf:formField label="#{messages['serviceInstance.status']}" field="status" />
