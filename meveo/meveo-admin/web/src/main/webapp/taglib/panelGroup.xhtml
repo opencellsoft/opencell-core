@@ -29,7 +29,7 @@
 		<c:set var="columnsStyle" value="fourColGrid" />
 	</c:if>
 	<p:panelGrid styleClass="form-panel-group" columns="#{columns}"
-		width="100%" columnClasses="#{columnsStyle}" rendered="true">
+		width="100%" columnClasses="#{columnsStyle}" rendered="#{rendered}">
 		<ui:insert />
 	</p:panelGrid>
 </ui:composition>
