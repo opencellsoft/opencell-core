@@ -267,9 +267,7 @@
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				styleClass="field-value">
-				<c:if test="#{not empty cc.attrs.converter}">
-					<f:converter converterId="#{cc.attrs.converter}" />
-				</c:if>
+				<f:converter converterId="bigDecimal4DigitsConverter" />
 			</h:outputText>
 			<cc:insertChildren />
 		</p:panelGrid>

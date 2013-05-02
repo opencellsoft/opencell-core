@@ -65,6 +65,9 @@
 		</c:if>
 	</c:if>
 
+	<c:set var="converter"
+		value="#{getConverter.forType(entity[field], converterParam)}"></c:set>
+
 	<p:column exportable="#{exportable}">
 		<c:if test="#{sort}">
 			<f:attribute name="sortBy" value="#{field}" />
@@ -93,8 +96,7 @@
 		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
 		    	 -->
 				<h:outputText value="#{entity[field]}"
-					rendered="#{!isDate and show}"
-					converter="#{getConverter.forType(entity[field], converterParam)}">
+					rendered="#{!isDate and show}" converter="#{converter}">
 				</h:outputText>
 
 				<h:outputText value="#{entity[field]}" rendered="#{isDate}">
