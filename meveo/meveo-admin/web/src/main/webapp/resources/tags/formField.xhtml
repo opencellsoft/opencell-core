@@ -84,6 +84,9 @@
 				<p:commandButton rendered="#{cc.attrs.edit and cc.attrs.popup}"
 					id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
 					icon="ui-icon-search" />
+				<h:outputText rendered="#{!cc.attrs.edit}"
+					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+					styleClass="field-value" />
 				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
 			</p:panelGrid>
 		</ui:fragment>
@@ -146,7 +149,7 @@
 					required="#{cc.attrs.required}"></p:editor>
 				<h:outputText rendered="#{not cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					style="font-weight:bold;" />
+					styleClass="field-value" />
 				<cc:insertChildren />
 			</p:panelGrid>
 		</ui:fragment>
@@ -171,7 +174,7 @@
 			</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 			<cc:insertChildren />
 		</p:panelGrid>
 
@@ -193,7 +196,7 @@
 			</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 			<cc:insertChildren />
 		</p:panelGrid>
 
@@ -215,7 +218,7 @@
 			</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 
 			<cc:insertChildren />
 		</p:panelGrid>
@@ -239,7 +242,7 @@
 			</c:if>
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 
 			<cc:insertChildren />
 		</p:panelGrid>
@@ -263,7 +266,7 @@
 
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;">
+				styleClass="field-value">
 				<c:if test="#{not empty cc.attrs.converter}">
 					<f:converter converterId="#{cc.attrs.converter}" />
 				</c:if>
@@ -280,7 +283,7 @@
 				required="#{cc.attrs.required}" size="5" />
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 			<cc:insertChildren />
 		</p:panelGrid>
 
@@ -294,7 +297,7 @@
 				maxlength="#{cc.attrs.maxlength}" />
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 			<cc:insertChildren />
 		</p:panelGrid>
 
@@ -317,21 +320,21 @@
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" />
 				<h:outputText
 					rendered="#{fieldValue != null and fieldValue.toString() == 'true' and not cc.attrs.edit}"
-					value="#{messages['commons.yes']}" style="font-weight:bold;" />
+					value="#{messages['commons.yes']}" styleClass="field-value" />
 				<h:outputText
 					rendered="#{fieldValue != null and fieldValue.toString() == 'false' and not cc.attrs.edit}"
-					value="#{messages['commons.no']}" style="font-weight:bold;" />
+					value="#{messages['commons.no']}" styleClass="field-value" />
 				<!-- 				toString was some workaround - todo: maybe works without toString  -->
 				<h:outputText
 					rendered="#{fieldValue != null and fieldValue.toString() != 'true' and fieldValue.toString() != 'false' and not cc.attrs.edit}"
 					value="#{messages[cc.entityFromBackingBeanOrAttribute[cc.attrs.field]]}"
-					style="font-weight:bold;" />
+					styleClass="field-value" />
 			</ui:fragment>
 
 			<h:outputText
 				rendered="#{not cc.attrs.edit and not cc.attrs.isMessage}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 
 			<cc:insertChildren />
 		</p:panelGrid>
@@ -345,7 +348,7 @@
 				required="#{cc.attrs.required}" />
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				style="font-weight:bold;">
+				styleClass="field-value">
 				<f:convertDateTime type="date" pattern="#{cc.attrs.datePattern}" />
 			</h:outputText>
 			<cc:insertChildren />
@@ -365,7 +368,7 @@
 			<h:outputText id="#{cc.attrs.id}_enumView"
 				rendered="#{not cc.attrs.edit}"
 				value="#{messages[cc.entityFromBackingBeanOrAttribute[cc.attrs.field].label]}"
-				style="font-weight:bold;" />
+				styleClass="field-value" />
 			<cc:insertChildren />
 		</p:panelGrid>
 
