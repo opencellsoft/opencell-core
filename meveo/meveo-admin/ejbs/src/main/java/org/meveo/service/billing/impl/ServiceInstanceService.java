@@ -204,11 +204,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
         	
             // application of subscription prorata
-            recurringChargeInstanceService.recurringChargeApplication(recurringChargeInstance, creator);
+            recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
+            recurringChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+            recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
             recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
             recurringChargeInstance.setStatusDate(new Date());
-            recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
             recurringChargeInstanceService.update(recurringChargeInstance);
+            recurringChargeInstanceService.recurringChargeApplication(recurringChargeInstance, creator);
             if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
                 if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {
                     agreementMonthTerm = recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth();
