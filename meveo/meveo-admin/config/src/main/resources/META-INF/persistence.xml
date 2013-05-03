@@ -57,7 +57,6 @@
 		<class>org.meveo.model.billing.WalletInstance</class>
 		<class>org.meveo.model.billing.InvoiceSubCategory</class>
 		<class>org.meveo.model.billing.ServiceParameterInstance</class>
-		<class>org.meveo.model.billing.AccessPoint</class>
 		<class>org.meveo.model.billing.BillingAccount</class>
 		<class>org.meveo.model.billing.BillingCycle</class>
 		<class>org.meveo.model.billing.CounterPeriod</class>
