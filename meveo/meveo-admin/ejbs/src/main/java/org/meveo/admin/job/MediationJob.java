@@ -102,7 +102,7 @@ public class MediationJob implements Job {
        	 cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
  		 if(cdrFile!=null){
  			cdrFileName=cdrFile.getCanonicalPath();
- 			cdrParser.init(cdrFile.getName());
+ 			cdrParser.init(cdrFile);
  			report="parse "+cdrFileName;
  			cdrFile = FileUtils.addExtension(cdrFile, ".processing");
  			cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));

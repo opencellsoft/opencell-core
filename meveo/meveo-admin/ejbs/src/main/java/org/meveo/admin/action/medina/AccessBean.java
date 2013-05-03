@@ -31,10 +31,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.event.SelectEvent;
 
-/**
- * @author MBAREK
- * 
- */
 @Named
 @ConversationScoped
 public class AccessBean extends BaseBean<Access> {
@@ -85,16 +81,4 @@ public class AccessBean extends BaseBean<Access> {
 	public void setSelectedSubscription(Subscription selectedSubscription) {
 		this.selectedSubscription = selectedSubscription;
 	}
-
-	public void onRowSelect(SelectEvent event) {
-		List<Subscription> temp = entity.getSubscriptions() == null ? new ArrayList<Subscription>()
-				: entity.getSubscriptions();
-		for (Subscription s : temp) {
-			if (s.equals(selectedSubscription))
-				return;
-		}
-		temp.add(selectedSubscription);
-		entity.setSubscriptions(temp);
-	}
-
 }

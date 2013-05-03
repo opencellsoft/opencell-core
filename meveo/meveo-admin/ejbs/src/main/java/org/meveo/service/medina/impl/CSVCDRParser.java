@@ -15,6 +15,7 @@
  */
 package org.meveo.service.medina.impl;
 
+import java.io.File;
 import java.io.Serializable;
 
 
@@ -27,7 +28,7 @@ import java.io.Serializable;
 public interface CSVCDRParser {
 
 	
-	void init(String CDRFileName);
+	void init(File CDRFile);
 	
 	/**
 	 * 

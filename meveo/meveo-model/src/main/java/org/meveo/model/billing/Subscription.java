@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.mediation.Access;
 
 /**
  * Subscription
@@ -77,6 +78,9 @@ public class Subscription extends BusinessEntity {
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
+
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    private List<Access> accessPoints = new ArrayList<Access>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ACCOUNT_ID", nullable = false)
@@ -183,6 +187,14 @@ public class Subscription extends BusinessEntity {
     public void setRecurringChargeInstances(List<RecurringChargeInstance> recurringChargeInstances) {
         this.recurringChargeInstances = recurringChargeInstances;
     }
+
+	public List<Access> getAccessPoints() {
+		return accessPoints;
+	}
+
+	public void setAccessPoints(List<Access> accessPoints) {
+		this.accessPoints = accessPoints;
+	}
 
 	public Boolean getDefaultLevel() {
 		return defaultLevel;

@@ -1,5 +1,6 @@
 package org.meveo.service.medina.impl;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,8 +29,8 @@ public class CDRParsingService {
 	@Inject
 	AccessService accessService;
 
-	public void init(String name) {
-		cdrParser.init(name);
+	public void init(File CDRFile) {
+		cdrParser.init(CDRFile);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -37,8 +38,8 @@ public class CDRParsingService {
 		List<EDR> result= new ArrayList<EDR>();
 		Serializable cdr = cdrParser.getCDR(line);
 		deduplicate(cdr);
-		Access accessPoint=accessPointLookup(cdr);
-		for(Subscription s:accessPoint.getSubscriptions()){
+		List<Access> accessPoints=accessPointLookup(cdr);
+		for(Access accessPoint:accessPoints){
 			EDRDAO edrDAO = cdrParser.getEDR(cdr);
 			EDR edr = new EDR();
 			edr.setCreated(new Date());
@@ -49,10 +50,10 @@ public class CDRParsingService {
 			edr.setParameter2(edrDAO.getParameter2());
 			edr.setParameter3(edrDAO.getParameter3());
 			edr.setParameter4(edrDAO.getParameter4());
-			edr.setProvider(s.getProvider());
+			edr.setProvider(accessPoint.getProvider());
 			edr.setQuantity(edrDAO.getQuantity());
 			edr.setStatus(EDRStatusEnum.OPEN);
-			edr.setSubscription(s);
+			edr.setSubscription(accessPoint.getSubscription());
 			result.add(edr);
 		}		
 		return result;
@@ -65,18 +66,13 @@ public class CDRParsingService {
 		}
 	}
 
-	private Access accessPointLookup(Serializable cdr) throws InvalidAccessException,MultipleAccessException {
-		Access result=null;
+	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException,MultipleAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
 		List<Access> accesses = accessService.findByUserID(userId);
 		if(accesses.size()==0){
 			throw new InvalidAccessException();
-		} else if(accesses.size()>0){
-			throw new MultipleAccessException();
-		} else {
-			result=accesses.get(0);
 		}
-		return result;
+		return accesses;
 	}
 
 }

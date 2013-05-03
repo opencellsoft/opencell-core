@@ -1,6 +1,9 @@
 package org.meveo.admin.job;
 
+import java.io.File;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.inject.Named;
@@ -13,9 +16,12 @@ import org.meveo.service.medina.impl.InvalidFormatException;
 @Named
 public class ASGCdrParser implements CSVCDRParser{
 
+	static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	
 	class CDR implements Serializable{
 		private static final long serialVersionUID = -536798105625877375L;
-		public long quantity;
+		public BigDecimal quantity;
 		public String user_id;
 		public String service_id;
 		public String id_type;
@@ -24,10 +30,12 @@ public class ASGCdrParser implements CSVCDRParser{
 	}
 	
 	String batchName;
+	long fileDate;
 
 	@Override
-	public void init(String CDRFileName){
-		batchName="ASG_"+CDRFileName;
+	public void init(File CDRFile){
+		batchName="ASG_"+CDRFile.getName();
+		fileDate=CDRFile.lastModified();
 	}
 	
 	@Override
@@ -38,7 +46,43 @@ public class ASGCdrParser implements CSVCDRParser{
 	@Override
 	public Serializable getCDR(String line) throws InvalidFormatException {
 		CDR cdr=new CDR();
-		
+		try{
+			String[] fields = line.split("\t");
+			if(fields.length==0){
+				throw new InvalidFormatException("record empty");
+			} else if(fields.length<3){
+				throw new InvalidFormatException("only "+fields.length+" in the record");
+			} else {
+				cdr.quantity=new BigDecimal(fields[0]);
+				cdr.user_id=fields[1];
+				if(cdr.user_id==null){
+					throw new InvalidAccessException("userId is empty");
+				}
+				cdr.service_id=fields[2];
+				if(fields.length<=3){
+					cdr.id_type="ID";
+				} else {
+					cdr.id_type=fields[3];
+				}
+				if(fields.length<=4){
+					cdr.unit="BYTE";
+				} else {
+					cdr.unit=fields[4];
+				}
+				if(fields.length<=5){
+					cdr.timestamp=fileDate;
+				} else {
+					try {
+						cdr.timestamp=sdf1.parse(fields[5]).getTime();
+					} catch(Exception e1){
+						cdr.timestamp=sdf2.parse(fields[5]).getTime();						
+					}
+				}
+				
+			}
+		} catch(Exception e){
+			throw new InvalidFormatException(e.getMessage());
+		}
 		return cdr;
 	}
 
@@ -66,6 +110,13 @@ public class ASGCdrParser implements CSVCDRParser{
 		CDR cdr=(CDR)object;
 		EDRDAO result =  new EDRDAO();
 		result.setEventDate(new Date(cdr.timestamp));
+		result.setOriginBatch(getOriginBatch());
+		result.setOriginRecord(getOriginRecord(object));
+		result.setQuantity(cdr.quantity);
+		result.setParameter1(cdr.service_id);
+		result.setParameter2(cdr.user_id);
+		result.setParameter3(cdr.id_type);
+		result.setParameter4(cdr.unit);
 		return result;
 	}
 	

@@ -21,7 +21,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -54,8 +54,8 @@ public class Access extends EnableEntity {
 	@Column(name = "ACCES_USER_ID")
 	private String accessUserId;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	private List<Subscription> subscriptions;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Subscription subscription;
 
 	public Date getStartDate() {
 		return startDate;
@@ -73,14 +73,6 @@ public class Access extends EnableEntity {
 		this.endDate = endDate;
 	}
 
-	public String getDiscriminatorCode() {
-		return discriminatorCode;
-	}
-
-	public void setDiscriminatorCode(String discriminatorCode) {
-		this.discriminatorCode = discriminatorCode;
-	}
-
 	public String getAccessUserId() {
 		return accessUserId;
 	}
@@ -89,12 +81,12 @@ public class Access extends EnableEntity {
 		this.accessUserId = accessUserId;
 	}
 
-	public List<Subscription> getSubscriptions() {
-		return subscriptions;
+	public Subscription getSubscription() {
+		return subscription;
 	}
 
-	public void setSubscriptions(List<Subscription> subscriptions) {
-		this.subscriptions = subscriptions;
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 
 }
