@@ -18,12 +18,14 @@ package org.meveo.admin.action.catalog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -119,4 +121,11 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 		getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
 	}
 
+	public List<OfferTemplate> listActive() {
+		Map<String, Object> filters = getFilters();
+		filters.put("disabled", false);
+		PaginationConfiguration config = new PaginationConfiguration(filters);
+
+		return offerTemplateService.list(config);
+	}
 }

@@ -25,7 +25,10 @@
 	<c:if test="${empty dataModel}">
 		<c:set var="dataModel" value="#{backingBean.lazyDataModel}" />
 	</c:if>
-	
+	<c:if test="${empty lazy}">
+		<c:set var="lazy" value="true"></c:set>
+	</c:if>
+
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
 		dynamic="true" modal="true" styleClass="form-dialog">
 		<h:form id="#{id}popupForm">
@@ -49,11 +52,11 @@
 						value="#{messages['commons.clean']}" update="#{id}popupForm" />
 				</p:panelGrid>
 			</c:if>
-				
+
 			<p:dataTable id="#{id}datatable" var="e" paginator="true"
-				value="#{dataModel}" rows="10"
-				selection="#{selection}" selectionMode="single" lazy="true">
-<!-- 				rowSelectListener="#{rowSelectListener}"> -->
+				value="#{dataModel}" rows="10" selection="#{selection}"
+				selectionMode="single" rowKey="#{e.id}" lazy="#{lazy}">
+				<!-- rowSelectListener="#{rowSelectListener}"> -->
 				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"
 					oncomplete="dlg_#{id}.hide()" update="#{updateField}" />
 
