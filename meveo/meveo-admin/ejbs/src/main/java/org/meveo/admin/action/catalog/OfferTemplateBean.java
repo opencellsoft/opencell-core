@@ -18,15 +18,14 @@ package org.meveo.admin.action.catalog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
-import org.meveo.model.catalog.DayInYear;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -36,8 +35,10 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Dec 7, 2010
@@ -47,23 +48,25 @@ import org.primefaces.model.DualListModel;
 @ConversationScoped
 public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private OfferTemplateService offerTemplateService;
-    
-    @Inject
-    private ServiceTemplateService serviceTemplateService;
-    
-    private DualListModel<ServiceTemplate> perks;
+	/**
+	 * Injected @{link OfferTemplate} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private OfferTemplateService offerTemplateService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    
+	@Inject
+	private ServiceTemplateService serviceTemplateService;
+
+	private DualListModel<ServiceTemplate> perks;
+
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+
 	public DualListModel<ServiceTemplate> getDualListModel() {
 		if (perks == null) {
 			List<ServiceTemplate> perksSource = serviceTemplateService.list();
@@ -76,52 +79,53 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 		}
 		return perks;
 	}
-    
-    
-    
-    public OfferTemplateBean() {
-        super(OfferTemplate.class);
-    }
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("offerTemplate")
-    public OfferTemplate init() {
-        return initEntity();
+	public OfferTemplateBean() {
+		super(OfferTemplate.class);
+	}
 
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	public OfferTemplate initEntity() {
+		return super.initEntity();
+	}
 
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<OfferTemplate> getPersistenceService() {
+		return offerTemplateService;
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<OfferTemplate> getPersistenceService() {
-        return offerTemplateService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
+	 */
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("serviceTemplates");
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-     */
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("serviceTemplates");
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
+	 */
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("serviceTemplates");
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-     */
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("serviceTemplates");
-    }
-    
-    @SuppressWarnings("unchecked")
 	public void setDualListModel(DualListModel<ServiceTemplate> perks) {
 		getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
 	}
 
+	public List<OfferTemplate> listActive() {
+		Map<String, Object> filters = getFilters();
+		filters.put("disabled", false);
+		PaginationConfiguration config = new PaginationConfiguration(filters);
+
+		return offerTemplateService.list(config);
+	}
 }
