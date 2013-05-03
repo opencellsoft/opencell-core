@@ -1,6 +1,9 @@
 package org.meveo.admin.job;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,6 +85,7 @@ public class MediationJob implements Job {
         if(!inSession){
         	jobExecutionService.initConversationContext();
         }
+   	    BufferedReader cdrReader =null;
         try {
 
        	 ParamBean parambean=ParamBean.getInstance("meveo-admin.properties");
@@ -95,29 +99,31 @@ public class MediationJob implements Job {
        	 delimiter=parambean.getProperty("mediation.delimiter","\t");
        	 useQuotes= Boolean.parseBoolean(parambean.getProperty("mediation.useQuotes","false"));
     	 report="";
-       	 
        	 cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
  		 if(cdrFile!=null){
- 			cdrFileName=cdrFile.getName();
+ 			cdrFileName=cdrFile.getCanonicalPath();
+ 			cdrParser.init(cdrFile.getName());
  			report="parse "+cdrFileName;
  			cdrFile = FileUtils.addExtension(cdrFile, ".processing");
- 			CsvReader cdrReader = new CsvReader(cdrFile.getAbsolutePath(), delimiter, useQuotes);
+ 			cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
  			String line=null;
  			int processed=0;
- 			while((line=cdrReader.getCurrentLine())!=null){
+ 			while((line=cdrReader.readLine())!=null){
  				processed++;
  				try{
  					List<EDR> edrs=cdrParser.parse(line);
+ 					if(edrs!=null && edrs.size()>0){
  					for(EDR edr:edrs){
  						edrService.create(edr);
+ 					}
  					}
  					outputCDR(line);
  					result.registerSucces();
  				} catch (CDRParsingException e){
- 					result.registerError("line "+cdrReader.getCurrentLine()+" :"+e.getRejectionCause().name());
+ 					result.registerError("line "+processed+" :"+e.getRejectionCause().name());
  					rejectCDR(line,e.getRejectionCause());
  				} catch (Exception e){
- 					result.registerError("line "+cdrReader.getCurrentLine()+" :"+e.getMessage());
+ 					result.registerError("line "+processed+" :"+e.getMessage());
  					rejectCDR(line,CDRRejectionCauseEnum.TECH_ERR);
  				}
  			}
@@ -125,7 +131,10 @@ public class MediationJob implements Job {
  			if(FileUtils.getFileForParsing(inputDir, cdrExtensions)!=null){
  				result.setDone(false);
  			}
- 			if(!cdrFile.delete()){
+ 			if(processed==0){
+ 				FileUtils.replaceFileExtendion(cdrFile,".csv.processed");
+ 				report+="\r\n file is empty ";
+ 			} else if(!cdrFile.delete()){
  				report+="\r\n cannot delete "+cdrFile.getAbsolutePath();
  			}
  			result.setReport(report);
@@ -148,6 +157,11 @@ public class MediationJob implements Job {
             		outputFileWriter.close();
             	}
             }catch(Exception e){}
+            try {
+            	if(cdrReader!=null){
+            		cdrReader.close();
+            	}
+            }catch(Exception e){}
         } 
         result.close("");
         return result;
@@ -159,7 +173,8 @@ public class MediationJob implements Job {
 	private void outputCDR(String line){
 		try{
 			if(outputFileWriter==null){
-				outputFileWriter = new PrintWriter(FileUtils.addExtension(cdrFile, ".processed"));
+				File outputFile = new File(cdrFileName+".processed");
+				outputFileWriter = new PrintWriter(outputFile);
 			}
 			outputFileWriter.println(line);
 		} catch (Exception e){
@@ -170,7 +185,8 @@ public class MediationJob implements Job {
 	private void rejectCDR(String line,CDRRejectionCauseEnum reason){
 		try{
 			if(rejectFileWriter==null){
-				rejectFileWriter = new PrintWriter(FileUtils.addExtension(cdrFile, ".rejected"));
+				File rejectFile = new File(cdrFileName+".rejected");
+				rejectFileWriter = new PrintWriter(rejectFile);
 			}
 			if(useQuotes){
 				line+=delimiter+"\""+reason.name()+"\"";

@@ -15,8 +15,8 @@
  */
 package org.meveo.service.medina.impl;
 
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.rating.EDR;
+import java.io.Serializable;
+
 
 /**
  * This Interface must be implemented to parse CDR and create EDR from it
@@ -24,40 +24,49 @@ import org.meveo.model.rating.EDR;
  * with the javax.ejb.Nammed annotation.
  * 
  */
-public interface CDRParser {
+public interface CSVCDRParser {
+
+	
+	void init(String CDRFileName);
+	
+	/**
+	 * 
+	 * @return a unique identifier from the batch
+	 */	
+	String getOriginBatch();
 	
 	/**
 	 * Verify that the format of the CDR is correct and
 	 *  modify it if needed.
+	 *  The implementation should save locally the CDR as call to other methods do not contain reference to the CDR
 	 * @param line : the input CDR
 	 * @return the modified CDR
 	 * @throws InvalidFormatException 
 	 */
-	String verifyFormat(String line) throws InvalidFormatException;
+	Serializable getCDR(String line) throws InvalidFormatException;
 	
 	/**
 	 * Build and return a unique identifier from the CDR in order
 	 * to avoid importing twice the same CDR in MEVEO
-	 * @param line : CDR
+	 * @param cdr : CDR returned by the getCDR method
 	 * @return CDR's unique key
 	 */
-	String getUniqueKey(String line);
+	String getOriginRecord(Serializable cdr);
 
 	/**
-	 * Return in the form of an AccessDAO object the user id, sercice id and
-	 * and parameters that will allow to lookup the ACCESS.
-	 * @param line : CDR
-	 * @return 
+	 * Return in the form of an AccessDAO object the user id and sercice id 
+	 *  that will allow to lookup the ACCESS.
+	 * @param cdr : CDR returned by the getCDR method
+	 * @return the Access userId
 	 * @throws InvalidAccessException
 	 */
-	AccessDAO getAccessInfo(String line) throws InvalidAccessException;
+	String getAccessUserId(Serializable cdr) throws InvalidAccessException;
 
 	/**
-	 * Construct EDR from the CDR and its associated Subscription
-	 * @param line : CDR
-	 * @param s : Subsctiprion associated to the CDR
-	 * @return
+	 * Construct EDRDAO from the CDR
+	 * @param cdr : CDR returned by the getCDR method
+	 * @return  EDR Data Access Object
 	 * @throws CDRParsingException
 	 */
-	EDR getEDR(String line,Subscription s);
+	EDRDAO getEDR(Serializable cdr);
 }

@@ -51,9 +51,6 @@ public class Access extends EnableEntity {
 	@Column(name = "END_DATE")
 	private Date endDate;
 
-	@Column(name = "DISCRIMINATOR_CODE")
-	private String discriminatorCode;
-
 	@Column(name = "ACCES_USER_ID")
 	private String accessUserId;
 

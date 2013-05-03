@@ -15,13 +15,28 @@
  */
 package org.meveo.service.medina.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless @LocalBean
 public class AccessService extends PersistenceService<Access> {
+
+	@SuppressWarnings("unchecked")
+	public List<Access> findByUserID(String userId) {
+		List<Access> result = new ArrayList<Access>();
+		if(userId!=null && userId.length()>0){
+			Query query=em.createQuery("from Access a where a.accessUserId=:accessUserId")
+					.setParameter("accessUserId", userId);
+			result=query.getResultList();
+		}
+		return result;
+	}
 
 }

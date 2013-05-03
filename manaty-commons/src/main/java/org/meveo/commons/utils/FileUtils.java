@@ -68,6 +68,30 @@ public final class FileUtils {
         return null;
     }
     
+    
+    /**
+     * Replaces file extension with new one.
+     * 
+     * @param file
+     *            Old file.
+     * @param extension
+     *            New extension.
+     * @return New File.
+     */
+    public static File replaceFileExtendion(File file, String extension) {
+        
+        if (!extension.startsWith(".")) {
+            extension = "." + extension;
+        }
+        String newFileName=file.getName()+extension;
+        int indexOfExtension = file.getName().lastIndexOf(".");
+        if (indexOfExtension >=1){
+        	newFileName = file.getName().substring(0, indexOfExtension) + extension;
+        }
+        return renameFile(file,  newFileName);
+    }
+
+    
     /**
      * TODO
      * @param file
@@ -175,7 +199,7 @@ public final class FileUtils {
     }
 
     /**
-     * Replaces file extension with new one.
+     * Replaces filename extension with new one.
      * 
      * @param filename
      *            Old filename.
