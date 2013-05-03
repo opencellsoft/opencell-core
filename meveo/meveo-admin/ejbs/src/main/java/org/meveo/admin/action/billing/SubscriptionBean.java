@@ -143,7 +143,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
                             break;
                         }
                     }
-                    if (!alreadyInstanciated && serviceTemplate.isActive()) {
+                    if (!alreadyInstanciated) {
                         serviceTemplates.add(serviceTemplate);
                     }
 
