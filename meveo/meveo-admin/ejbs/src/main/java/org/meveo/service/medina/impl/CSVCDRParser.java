@@ -70,4 +70,13 @@ public interface CSVCDRParser {
 	 * @throws CDRParsingException
 	 */
 	EDRDAO getEDR(Serializable cdr);
+
+	/**
+	 * Construct a csv record for the rejected CDR with given rejection reason
+	 * @param cdr
+	 * @param reason
+	 * @return
+	 */
+	String getCDRLine(Serializable cdr, String reason);
+
 }

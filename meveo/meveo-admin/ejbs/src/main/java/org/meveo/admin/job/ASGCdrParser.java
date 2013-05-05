@@ -27,6 +27,11 @@ public class ASGCdrParser implements CSVCDRParser{
 		public String id_type;
 		public String unit;
 		public long timestamp; 	
+		
+		public String toString(){
+			return quantity+"\t"+user_id+"\t"+service_id+"\t"+id_type+"\t"+unit+"\t"+timestamp;
+			
+		}
 	}
 	
 	String batchName;
@@ -49,14 +54,14 @@ public class ASGCdrParser implements CSVCDRParser{
 		try{
 			String[] fields = line.split("\t");
 			if(fields.length==0){
-				throw new InvalidFormatException("record empty");
+				throw new InvalidFormatException(line,"record empty");
 			} else if(fields.length<3){
-				throw new InvalidFormatException("only "+fields.length+" in the record");
+				throw new InvalidFormatException(line,"only "+fields.length+" in the record");
 			} else {
 				cdr.quantity=new BigDecimal(fields[0]);
 				cdr.user_id=fields[1];
 				if(cdr.user_id==null){
-					throw new InvalidAccessException("userId is empty");
+					throw new InvalidAccessException(line,"userId is empty");
 				}
 				cdr.service_id=fields[2];
 				if(fields.length<=3){
@@ -81,7 +86,7 @@ public class ASGCdrParser implements CSVCDRParser{
 				
 			}
 		} catch(Exception e){
-			throw new InvalidFormatException(e.getMessage());
+			throw new InvalidFormatException(line,e.getMessage());
 		}
 		return cdr;
 	}
@@ -97,12 +102,12 @@ public class ASGCdrParser implements CSVCDRParser{
 			throws InvalidAccessException {
 		String result=((CDR)cdr).user_id;
 		if(result==null || result.trim().length()==0){
-			throw new InvalidAccessException();
+			throw new InvalidAccessException(cdr);
 		}
 		if(((CDR)cdr).service_id!=null && (((CDR)cdr).service_id.length()>0) ){
 			result+="_"+((CDR)cdr).service_id;
 		}
-		return null;
+		return result;
 	}
 
 	@Override
@@ -118,6 +123,11 @@ public class ASGCdrParser implements CSVCDRParser{
 		result.setParameter3(cdr.id_type);
 		result.setParameter4(cdr.unit);
 		return result;
+	}
+
+	@Override
+	public String getCDRLine(Serializable cdr, String reason) {
+		return ((CDR)cdr).toString()+"\t"+reason;
 	}
 	
 }

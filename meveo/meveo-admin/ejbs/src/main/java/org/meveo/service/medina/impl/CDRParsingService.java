@@ -11,7 +11,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -34,9 +33,9 @@ public class CDRParsingService {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<EDR> parse(String line) throws CDRParsingException {
+	public List<EDR> getEDRList(String line) throws CDRParsingException {
 		List<EDR> result= new ArrayList<EDR>();
-		Serializable cdr = cdrParser.getCDR(line);
+		Serializable cdr=cdrParser.getCDR(line);
 		deduplicate(cdr);
 		List<Access> accessPoints=accessPointLookup(cdr);
 		for(Access accessPoint:accessPoints){
@@ -62,17 +61,21 @@ public class CDRParsingService {
 	private void deduplicate(Serializable cdr) throws DuplicateException{
 		EDR edr=edrService.findByBatchAndRecordId(cdrParser.getOriginBatch(),cdrParser.getOriginRecord(cdr));
 		if(edr!=null){
-			throw new DuplicateException();
+			throw new DuplicateException(cdr);
 		}
 	}
 
-	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException,MultipleAccessException {
+	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
 		List<Access> accesses = accessService.findByUserID(userId);
 		if(accesses.size()==0){
-			throw new InvalidAccessException();
+			throw new InvalidAccessException(cdr);
 		}
 		return accesses;
+	}
+
+	public String getCDRLine(Serializable cdr, String reason) {
+		return cdrParser.getCDRLine(cdr, reason) ;
 	}
 
 }

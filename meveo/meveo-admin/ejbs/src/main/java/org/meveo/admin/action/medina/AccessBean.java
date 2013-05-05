@@ -15,9 +15,6 @@
  */
 package org.meveo.admin.action.medina;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +26,6 @@ import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.medina.impl.AccessService;
-import org.primefaces.event.SelectEvent;
 
 @Named
 @ConversationScoped

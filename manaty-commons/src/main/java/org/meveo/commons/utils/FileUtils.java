@@ -78,7 +78,7 @@ public final class FileUtils {
      *            New extension.
      * @return New File.
      */
-    public static File replaceFileExtendion(File file, String extension) {
+    public static File replaceFileExtension(File file, String extension) {
         
         if (!extension.startsWith(".")) {
             extension = "." + extension;

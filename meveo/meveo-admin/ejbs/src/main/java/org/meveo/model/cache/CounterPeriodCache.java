@@ -9,12 +9,20 @@ import org.meveo.model.catalog.CounterTypeEnum;
 
 public class CounterPeriodCache {
 
+	private Long counterPeriodId;
     private CounterTypeEnum counterType;
 	private Date startDate;
 	private Date endDate;
 	private BigDecimal value;
 	private BigDecimal level;
+	private boolean dbDirty;
 	
+	public Long getCounterPeriodId() {
+		return counterPeriodId;
+	}
+	public void setCounterPeriodId(Long counterPeriodId) {
+		this.counterPeriodId = counterPeriodId;
+	}
 	public CounterTypeEnum getCounterType() {
 		return counterType;
 	}
@@ -45,9 +53,15 @@ public class CounterPeriodCache {
 	public void setLevel(BigDecimal level) {
 		this.level = level;
 	}
-	
+	public boolean isDbDirty() {
+		return dbDirty;
+	}
+	public void setDbDirty(boolean dbDirty) {
+		this.dbDirty = dbDirty;
+	}
 	public static CounterPeriodCache getInstance(CounterPeriod counterPeriod,CounterTemplate template) {
 		CounterPeriodCache cacheValue = new CounterPeriodCache();
+		cacheValue.counterPeriodId=counterPeriod.getId();
 		cacheValue.counterType=template.getCounterType();
 		cacheValue.endDate=counterPeriod.getPeriodEndDate();
 		cacheValue.level=template.getLevel();

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -55,6 +56,7 @@ public class Access extends EnableEntity {
 	private String accessUserId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SUBSCRIPTION_ID")
 	private Subscription subscription;
 
 	public Date getStartDate() {

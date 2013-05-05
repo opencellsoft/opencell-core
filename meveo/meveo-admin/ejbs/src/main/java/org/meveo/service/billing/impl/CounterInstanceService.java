@@ -15,6 +15,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.ejb.EJB;
@@ -80,5 +81,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		counterInstance.getCounterPeriods().add(counterPeriod);
 		update(counterInstance);
 		return counterPeriod;
+	}
+
+	public void updatePeriodValue(Long counterPeriodId, BigDecimal value) {
+		CounterPeriod counterPeriod = counterPeriodService.findById(counterPeriodId);
+		counterPeriod.setValue(value);
+		counterPeriodService.update(counterPeriod);
 	}
 }
