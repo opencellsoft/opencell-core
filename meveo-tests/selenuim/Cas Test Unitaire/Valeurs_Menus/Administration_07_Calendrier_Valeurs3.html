@@ -12,14 +12,19 @@
 <tr><td rowspan="1" colspan="3">Administration_07_Calendrier_Valeurs3</td></tr>
 </thead><tbody>
 <tr>
-	<td>click</td>
-	<td>//tbody[@id='datatable_data']/tr/td/div/div/div[2]</td>
+	<td>waitForText</td>
+	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
+	<td>0</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//tbody[@id='datatable_data']/tr/td[2]/div</td>
-	<td>0</td>
+	<td>click</td>
+	<td>//tbody[@id='datatable_data']/tr/td/div/div/div[2]</td>
+	<td></td>
 </tr>
 </tbody></table>
 </body>

@@ -12,36 +12,40 @@
 <tr><td rowspan="1" colspan="3">Administration_Devises_Valeurs2</td></tr>
 </thead><tbody>
 <tr>
-	<td>storeText</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
-	<td>//div[2]</td>
+	<td>id=searchPanel:searchForm:language:selectLink</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//div[32]/div/ul</td>
+	<td>id=searchLanguagePopuppopupForm</td>
 	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>document.searchLanguagePopuppopupForm.elements[1]</td>
+	<td>ARS</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//li[11]</td>
+	<td>id=searchLanguagePopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>id=j_idt147:searchForm:buttonSearch</td>
+	<td>waitForText</td>
+	<td>css=td &gt; div.ui-dt-c</td>
+	<td>ARS</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td &gt; div.ui-dt-c</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForValue</td>
-	<td></td>
+	<td>//td[2]/table/tbody/tr/td/input</td>
 	<td>ARS</td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

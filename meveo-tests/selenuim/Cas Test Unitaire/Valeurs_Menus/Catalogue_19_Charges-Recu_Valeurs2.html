@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://meveo.asg.env-integration.com/" />
+<title>Catalogue_19_Charges_Valeurs2</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Catalogue_19_Charges_Valeurs2</td></tr>
+</thead><tbody>
+<tr>
+	<td>waitForText</td>
+	<td>css=td &gt; div.ui-dt-c</td>
+	<td>0</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=td &gt; div.ui-dt-c</td>
+	<td></td>
+</tr>
+<!--verification valeur encadre impossible-->
+<tr>
+	<td>click</td>
+	<td>//td[2]/table/tbody/tr/td/table/tbody/tr/td[2]/div/div[2]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[32]/div/ul</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[32]/div/ul/li[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//div/label</td>
+	<td>CAL_VAL_MT</td>
+</tr>
+</tbody></table>
+</body>
+</html>

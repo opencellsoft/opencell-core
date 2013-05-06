@@ -12,13 +12,18 @@
 <tr><td rowspan="1" colspan="3">Administration_15_Vendeurs_Valeurs1</td></tr>
 </thead><tbody>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>//td[2]/input</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>id=sellerFormPanel:sellerFormId:sellerTab:j_idt172:j_idt172_text2</td>
+	<td>//td[2]/input</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=sellerFormPanel:sellerFormId:sellerTab:j_idt172:j_idt172_text2</td>
+	<td>//td[2]/input</td>
 	<td>0</td>
 </tr>
 <tr>
@@ -32,21 +37,30 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='sellerCurrencyPopuppopupForm:sellerCurrencyPopupdatatable_data']/tr/td/div</td>
+	<td>EUR</td>
+</tr>
+<tr>
 	<td>waitForElementPresent</td>
-	<td>id=sellerCurrencyPopuppopupForm:j_idt155:currencyCode_text</td>
+	<td>//tbody[@id='sellerCurrencyPopuppopupForm:sellerCurrencyPopupdatatable_data']/tr/td/div</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=td &gt; div.ui-dt-c</td>
+	<td>//tbody[@id='sellerCurrencyPopuppopupForm:sellerCurrencyPopupdatatable_data']/tr/td/div</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>css=td &gt; div.ui-dt-c</td>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='sellerCurrencyPopuppopupForm:sellerCurrencyPopupdatatable_data']/tr/td/div</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>//tbody[@id='sellerCurrencyPopuppopupForm:sellerCurrencyPopupdatatable_data']/tr/td/div</td>
 	<td>EUR</td>
 </tr>
-
 </tbody></table>
 </body>
 </html>
