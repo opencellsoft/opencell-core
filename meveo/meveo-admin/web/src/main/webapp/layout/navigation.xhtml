@@ -301,11 +301,7 @@
 			<p:menuitem id="subscriptions"
 				rendered="#{identity.hasPermission('account','accountVisualization')}"
 				outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
-				
-			<p:menuitem id="medinaAccess"
-				rendered="#{identity.hasPermission('account','accountVisualization')}"
-				outcome="access" value="#{messages['menu.access']}" />
-
+		
 			<!-- <p:menuitem id="accessPoints"
 				rendered="#{identity.hasPermission('account','accountVisualization')}"
 				outcome="accessPoints" value="#{messages['menu.accessPoints']}" /> -->

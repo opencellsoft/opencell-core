@@ -16,15 +16,18 @@
 package org.meveo.admin.action.medina;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.billing.SubscriptionBean;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 
 @Named
@@ -40,7 +43,11 @@ public class AccessBean extends BaseBean<Access> {
 	private AccessService accessService;
 
 	@Inject
-	private SubscriptionBean subscriptionBean;
+	private SubscriptionService subscriptionService;
+
+	@Inject
+	@RequestParam
+	private Instance<Long> subscriptionId;
 
 	private Subscription selectedSubscription;
 
@@ -76,5 +83,19 @@ public class AccessBean extends BaseBean<Access> {
 
 	public void setSelectedSubscription(Subscription selectedSubscription) {
 		this.selectedSubscription = selectedSubscription;
+	}
+
+	public void saveOrUpdate() {
+		Subscription subscription = subscriptionService.findById(subscriptionId.get());
+		entity.setSubscription(subscription);
+		if (accessService.isDuplicate(entity)) {
+			messages.error(new BundleKey("messages", "access.duplicate"));
+		} else {
+			super.saveOrUpdate(false);
+		}
+	}
+
+	public void resetEntity() {
+		entity = new Access();
 	}
 }

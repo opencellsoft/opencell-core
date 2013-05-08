@@ -229,7 +229,8 @@ div.body > table > thead,
 .tree-customer-icon,
 .ui-icon-folder-open,
 .tree-user-account-icon,
-.tree-billing-account-icon
+.tree-billing-account-icon,
+.tree-access-icon
 {  
   background-image: url(../img/user.png) !important;
   background-size : 13px 13px !important;

@@ -31,7 +31,7 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
-	<ui:define name="body">	
+	<ui:define name="body">
 		<script type="text/javascript">
 		checked=false;
 		function unCheckedAll (id,frm1) {
@@ -179,7 +179,8 @@
 						<f:facet name="header">
 							<h:outputText value="#{messages['subscription.panel']}" />
 						</f:facet>
-						<p:tabView id="subscriptionTab">
+						<p:tabView id="subscriptionTab"
+							activeIndex="#{param['activeIndex'] == null ? 0 : param['activeIndex']}">
 							<p:tab id="serviceTab"
 								title="#{messages['subscription.tab.services']}"
 								rendered="#{!subscriptionBean.edit}">
@@ -749,12 +750,82 @@
 									</h:form>
 								</p:outputPanel>
 							</p:tab>
+							<!-- Access -->
+							<p:tab id="medinaAccessTab"
+								title="#{messages['access.accessPanel']}">
+								<h:form>
+									<p:outputPanel id="medinaAccessPanel">
+										<p:messages id="medinaAccessPanelMessage"></p:messages>
+										<p:dataTable value="#{subscriptionBean.access}" var="entity">
+											<hftl:column label="#{messages['access.startDate']}"
+												field="accessUserId" />
+											<hftl:column label="#{messages['access.startDate']}"
+												field="startDate" isDate="true" />
+											<hftl:column label="#{messages['access.endDate']}"
+												field="endDate" isDate="true" />
+											<p:column styleClass="actions-column">
+												<f:facet name="header">
+													<h:outputText value="#{messages['commons.actions']}" />
+												</f:facet>
+												<p:commandButton id="accessDeletelink"
+													action="#{accessBean.delete(entity.id)}"
+													update=":#{p:component('medinaAccessPanel')}"
+													icon="ui-icon-trash" ajax="true" />
+												<p:tooltip for="accessDeletelink"
+													value="#{messages['commons.delete']}" showEffect="slide"
+													hideEffect="slide" />
+											</p:column>
+										</p:dataTable>
+									</p:outputPanel>
+									<p:panel>
+										<p:commandButton value="#{messages['access.new']}" ajax="true"
+											update=":accessDialog" oncomplete="accessWidget.show()"
+											actionListener="#{accessBean.resetEntity()}"></p:commandButton>
+									</p:panel>
+								</h:form>
+							</p:tab>
 						</p:tabView>
 					</p:panel>
 
 				</p:column>
 			</p:row>
 		</p:panelGrid>
+
+		<p:dialog id="accessDialog" widgetVar="accessWidget" dynamic="true"
+			width="900">
+			<p:messages id="medinaAccessMessage"></p:messages>
+			<hf:formPanel id="formPanel"
+				label="#{messages['access.accessPanel']}"
+				backingBean="#{accessBean}" columns="2" showFormButtons="false">
+				<hf:formField label="#{messages['access.accessUserId']}"
+					required="true" field="accessUserId" edit="true" />
+				<hf:formField label="#{messages['access.startDate']}"
+					field="startDate" edit="true" />
+				<hf:formField label="#{messages['access.endDate']}" field="endDate"
+					edit="true" />
+
+				<p:panel>
+					<p:commandButton id="saveButton" value="#{messages['action.save']}"
+						update=":#{p:component('medinaAccessPanel')} :medinaAccessMessage"
+						icon="ui-icon-check" ajax="true"
+						action="#{accessBean.saveOrUpdate()}"
+						oncomplete="handleDialogSubmit(xhr, status, args)">
+						<f:param name="subscriptionId"
+							value="#{subscriptionBean.entity.id}"></f:param>
+					</p:commandButton>
+				</p:panel>
+			</hf:formPanel>
+		</p:dialog>
+
+		<script type="text/javascript">
+		    function handleDialogSubmit(xhr, status, args) {
+		        if (args.validationFailed) {
+		            accessWidget.show();
+		        } else {
+		        	accessWidget.hide();
+		        }
+		    }
+		</script>
 
 		<p:dialog id="recurringChgPopup"
 			header="#{messages['subscription.tab.recurringShotChg']}"

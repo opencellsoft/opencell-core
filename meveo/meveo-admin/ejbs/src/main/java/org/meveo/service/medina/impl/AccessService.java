@@ -25,18 +25,30 @@ import javax.persistence.Query;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class AccessService extends PersistenceService<Access> {
 
 	@SuppressWarnings("unchecked")
 	public List<Access> findByUserID(String userId) {
 		List<Access> result = new ArrayList<Access>();
-		if(userId!=null && userId.length()>0){
-			Query query=em.createQuery("from Access a where a.accessUserId=:accessUserId")
+		if (userId != null && userId.length() > 0) {
+			Query query = em.createQuery("from Access a where a.accessUserId=:accessUserId")
 					.setParameter("accessUserId", userId);
-			result=query.getResultList();
+			result = query.getResultList();
 		}
 		return result;
+	}
+
+	public boolean isDuplicate(Access access) {
+
+		String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName()
+				+ " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
+		Query query = em.createQuery(stringQuery);
+		query.setParameter("accessUserId", access.getAccessUserId());
+		query.setParameter("subscriptionId", access.getSubscription().getId());
+		query.setHint("org.hibernate.flushMode", "NEVER");
+		return ((Long) query.getSingleResult()).intValue() != 0;
 	}
 
 }

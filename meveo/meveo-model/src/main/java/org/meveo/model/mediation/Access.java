@@ -16,7 +16,6 @@
 package org.meveo.model.mediation;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.meveo.model.EnableEntity;
 import org.meveo.model.billing.Subscription;
@@ -37,7 +37,8 @@ import org.meveo.model.billing.Subscription;
  * 
  */
 @Entity
-@Table(name = "MEDINA_ACCESS")
+@Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
 // @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCESS_SEQ")
 public class Access extends EnableEntity {
 

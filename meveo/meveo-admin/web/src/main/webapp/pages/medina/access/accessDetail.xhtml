@@ -53,14 +53,22 @@
 
 					<p:column headerText="#{messages['subscription.code']}">#{s.code}</p:column>
 					<p:column headerText="#{messages['subscription.description']}">#{s.description}</p:column>
+					<p:column>
+						<p:tooltip for="deletelink" value="#{messages['commons.delete']}"
+							showEffect="slide" hideEffect="slide" />
+						<p:commandButton id="deletelink"
+							action="#{accessBean.delete(accessBean.entity.id)}" icon="ui-icon-trash"
+							ajax="true" />
+					</p:column>
 
 					<!-- <hftl:actionsColumn useCustomIdParam="true"
 						renderDeleteLink="false"
 						permission="#{identity.hasPermission('billing','billingManagement')}" /> -->
 
 					<f:facet name="footer">
-						<p:commandButton value="#{messages['commons.addNew']}" ajax="true" rendered="#{accessBean.edit}"
-							icon="ui-icon-search" oncomplete="dlg_subscription.show()" />
+						<p:commandButton value="#{messages['commons.addNew']}" ajax="true"
+							rendered="#{accessBean.edit}" icon="ui-icon-search"
+							oncomplete="dlg_subscription.show()" />
 					</f:facet>
 
 				</p:dataTable>

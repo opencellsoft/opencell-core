@@ -170,6 +170,19 @@
 <!-- 							value="#{node.code}" /> -->
 						
 					</p:treeNode>
+					
+					<p:treeNode type="access" icon="tree-access-icon"
+						expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed">
+						<h:link id="access_tree_value" value="#{node}"
+							outcome="#{node.view}">
+							<f:param name="subscriptionId" value="#{node.id}"/>
+							<f:param name="cid" value="#{conversation.id}" />		
+							<f:param name="edit" value="false" />
+						</h:link>					
+						<p:tooltip rendered="#{node.code != null}"
+							for="access_tree_value" value="#{node.code}" />
+					</p:treeNode>
 
 				</p:tree>
 
