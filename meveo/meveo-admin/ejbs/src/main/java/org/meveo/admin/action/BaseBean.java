@@ -16,7 +16,6 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
@@ -504,6 +504,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 @Override
                 public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> loadingFilters) {
+                	
+                	if(!StringUtils.isBlank(getDefaultSort())) {
+                		sortField = getDefaultSort();
+                	}
+                	
                     Map<String, Object> copyOfFilters = new HashMap<String, Object>();
                     copyOfFilters.putAll(filters);
                     setRowCount((int) getPersistenceService().count(new PaginationConfiguration(first, pageSize, copyOfFilters, getListFieldsToFetch(), sortField, sortOrder)));
@@ -651,5 +656,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     protected Provider getCurrentProvider() {
         return currentProvider;
+    }
+    
+    protected String getDefaultSort() {
+    	return "";
     }
 }

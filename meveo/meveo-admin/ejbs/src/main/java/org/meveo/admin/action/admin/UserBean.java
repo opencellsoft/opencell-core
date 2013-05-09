@@ -204,4 +204,9 @@ public class UserBean extends BaseBean<User> {
 	public void change() {
 		this.show = !this.show;
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "userName";
+	}
 }

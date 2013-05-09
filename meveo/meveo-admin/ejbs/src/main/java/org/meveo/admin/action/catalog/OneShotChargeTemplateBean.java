@@ -16,7 +16,6 @@
 package org.meveo.admin.action.catalog;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -163,5 +162,10 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 
     public void setDescriptionFr(String descriptionFr) {
         this.descriptionFr = descriptionFr;
+    }
+    
+    @Override
+    protected String getDefaultSort() {
+    	return "code";
     }
 }
