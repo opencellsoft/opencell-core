@@ -66,7 +66,7 @@
 								backingBean="#{customerAccountBean}" showFormButtons="false"
 								useCustomIdParam="true" killConversationOnSave="false"
 								killConversationOnBack="false">
-								<p:panelGrid columns="1">
+								<p:panel>
 									<p:tabView id="childTab">
 										<p:tab id="accountTab"
 											title="#{messages['customerAccount.tab.account']}">
@@ -179,12 +179,10 @@
 											<hftl:panelGroup columns="2">
 												<hf:formField
 													label="#{messages['customerAccount.paymentMethod']}"
-													field="paymentMethod" childField="label"
-													isMessage="true" />
+													field="paymentMethod" childField="label" isMessage="true" />
 												<hf:formField
 													label="#{messages['customerAccount.creditCategory']}"
-													field="creditCategory" childField="label"
-													isMessage="true" />
+													field="creditCategory" childField="label" isMessage="true" />
 											</hftl:panelGroup>
 
 											<hftl:panelGroup columns="1">
@@ -201,7 +199,6 @@
 
 										<p:tab id="informationTab"
 											title="#{messages['customerAccount.tab.information']}">
-
 											<hftl:fieldset name="#{messages['commons.contacts']}"
 												columns="1">
 												<hf:formEntityField
@@ -279,7 +276,7 @@
 											<f:param name="cid" value="#{conversation.id}" />
 										</p:button>
 									</hf:formButtons>
-								</p:panelGrid>
+								</p:panel>
 							</hf:formPanel>
 						</p:tab>
 						<p:tab id="ops" title="#{messages['customerAccount.operations']}">
