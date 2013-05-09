@@ -37,11 +37,12 @@
 			column2="descriptionEn">
 		</hftl:entityPopup>
 
-		<hf:searchPanel label="#{messages['tradingCurrency.search']}"
+		<hf:searchPanel id="searchPanel" label="#{messages['tradingCurrency.search']}"
 			backingBean="#{tradingCurrencyBean}">
 			<hf:searchField id="currency" listBean="#{currencyBean}"
 				label="#{messages['tradingCurrency.trCurrencyCode']}"
-				field="currency" childField="currencyCode" />
+				field="currency" childField="currencyCode" popup="true"
+				popupId="searchCurrencyPopup" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['tradingCurrency.title']}"
