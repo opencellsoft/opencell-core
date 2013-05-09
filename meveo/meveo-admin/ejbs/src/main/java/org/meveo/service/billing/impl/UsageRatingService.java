@@ -32,6 +32,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.cache.CounterInstanceCache;
 import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
@@ -60,6 +61,8 @@ public class UsageRatingService {
    private static HashMap<Long, CounterInstanceCache> counterCache;
     
    private static boolean cacheLoaded=false;
+   
+   
    
     @EJB
     private UsageChargeInstanceService usageChargeInstanceService;
@@ -99,8 +102,10 @@ public class UsageRatingService {
 		if(usageChargeInstance!=null){
 			
 			UsageChargeInstanceCache cachedValue = new UsageChargeInstanceCache();
-			UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
-			
+			ChargeTemplate chargeTemplate = usageChargeInstance.getChargeTemplate();
+			System.out.println(chargeTemplate.getId());
+			//UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
+			UsageChargeTemplate usageChargeTemplate=em.find(UsageChargeTemplate.class, chargeTemplate.getId());
 			Long key = usageChargeInstance.getServiceInstance().getSubscription().getId();
 			log.info("update cache key (subs Id)="+key+ "'for charge"+usageChargeInstance.getId());
 			boolean cacheContainsKey=chargeCache.containsKey(key);
@@ -168,7 +173,7 @@ public class UsageRatingService {
 				log.info("charge added");
 				charges.add(cachedValue);
 			}
-			if(cacheContainsKey){
+			if(!cacheContainsKey){
 				log.info("key added to charge cache");
 				chargeCache.put(key, charges);
 			}
@@ -228,6 +233,7 @@ public class UsageRatingService {
         walletOperation.setTaxPercent(tax.getPercent());
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
+        walletOperation.setCurrency(currency.getCurrency());
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 		ratingService.rateBareWalletOperation(walletOperation, null, null, countryId,currency, provider);
 		return walletOperation;

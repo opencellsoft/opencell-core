@@ -122,10 +122,10 @@ public class RatingService {
         if (bareWalletOperation.getTaxPercent() != null) {
             amountTax = priceWithoutTax.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
         }
-        if (unitPriceWithTax == null) {
+        if (unitPriceWithTax == null || unitPriceWithTax.intValue()==0) {
             priceWithTax = priceWithoutTax.add(amountTax);
         } else {
-            priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
+            priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithTax);
         }
 
         if (provider.getRounding() != null && provider.getRounding() > 0) {
@@ -177,7 +177,7 @@ public class RatingService {
                 continue;
             }
 
-            boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
+            boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null  || pricePlan.getMaxSubscriptionAgeInMonth() == 0  || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
             log.debug("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
                 continue;
@@ -190,26 +190,17 @@ public class RatingService {
             if (!applicationDateInPricePlanPeriod) {
                 continue;
             }
-            boolean criteria1SameInPricePlan = WILCARD.equals(pricePlan.getCriteria1Value())
-                    || (pricePlan.getCriteria1Value() != null && pricePlan.getCriteria1Value().equals(bareOperation.getParameter1()))
-                    || ((pricePlan.getCriteria1Value() == null || "".equals(pricePlan.getCriteria1Value())) && ("".equals(bareOperation.getParameter1()) || bareOperation
-                        .getParameter1() == null));
+            boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null || pricePlan.getCriteria1Value().equals(bareOperation.getParameter1());
             log.debug("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
                 continue;
             }
-            boolean criteria2SameInPricePlan = WILCARD.equals(pricePlan.getCriteria2Value())
-                    || (pricePlan.getCriteria2Value() != null && pricePlan.getCriteria2Value().equals(bareOperation.getParameter2()))
-                    || ((pricePlan.getCriteria2Value() == null || "".equals(pricePlan.getCriteria2Value())) && ("".equals(bareOperation.getParameter2()) || bareOperation
-                        .getParameter2() == null));
+            boolean criteria2SameInPricePlan = pricePlan.getCriteria2Value()==null || pricePlan.getCriteria2Value().equals(bareOperation.getParameter2());
             log.debug("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
                 continue;
             }
-            boolean criteria3SameInPricePlan = WILCARD.equals(pricePlan.getCriteria3Value())
-                    || (pricePlan.getCriteria3Value() != null && pricePlan.getCriteria3Value().equals(bareOperation.getParameter3()))
-                    || ((pricePlan.getCriteria3Value() == null || "".equals(pricePlan.getCriteria3Value())) && ("".equals(bareOperation.getParameter3()) || bareOperation
-                        .getParameter3() == null));
+            boolean criteria3SameInPricePlan = pricePlan.getCriteria3Value()==null || pricePlan.getCriteria3Value().equals(bareOperation.getParameter3());
             log.debug("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (criteria3SameInPricePlan) {
                 return pricePlan;
@@ -240,6 +231,15 @@ public class RatingService {
                 }
                 HashMap<String, List<PricePlanMatrix>> providerPricePlans = result.get(pricePlan.getProvider().getCode());
                 if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
+                	if(pricePlan.getCriteria1Value()!=null && pricePlan.getCriteria1Value().length()==0){
+                		pricePlan.setCriteria1Value(null);
+                	}
+                	if(pricePlan.getCriteria2Value()!=null && pricePlan.getCriteria2Value().length()==0){
+                		pricePlan.setCriteria2Value(null);
+                	}
+                	if(pricePlan.getCriteria3Value()!=null && pricePlan.getCriteria3Value().length()==0){
+                		pricePlan.setCriteria3Value(null);
+                	}
                     providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
                     log.error("Added pricePlan for provider=" + pricePlan.getProvider().getCode() + " chargeCode=" + pricePlan.getEventCode());
                 }
