@@ -1,14 +1,10 @@
 package org.meveo.services.job;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.Timer;
-import javax.ejb.TimerService;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;

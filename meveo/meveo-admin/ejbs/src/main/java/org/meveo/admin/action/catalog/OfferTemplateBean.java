@@ -128,4 +128,9 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
 		return offerTemplateService.list(config);
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }

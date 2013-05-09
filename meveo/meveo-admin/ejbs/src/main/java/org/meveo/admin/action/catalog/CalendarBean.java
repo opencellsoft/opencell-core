@@ -32,8 +32,10 @@ import org.meveo.service.catalog.impl.DayInYearService;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link Calendar} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link Calendar} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  * 
  * @author Ignas
  * @created 2009.10.13
@@ -42,51 +44,55 @@ import org.primefaces.model.DualListModel;
 @ConversationScoped
 public class CalendarBean extends BaseBean<Calendar> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
-    @Inject
-    private CalendarService calendarService;
+	/** Injected @{link Calendar} service. Extends {@link PersistenceService}. */
+	@Inject
+	private CalendarService calendarService;
 
-    @Inject
-    private DayInYearService dayInYearService;
+	@Inject
+	private DayInYearService dayInYearService;
 
-    private DualListModel<DayInYear> perks;
+	private DualListModel<DayInYear> perks;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public CalendarBean() {
-        super(Calendar.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public CalendarBean() {
+		super(Calendar.class);
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<Calendar> getPersistenceService() {
-        return calendarService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<Calendar> getPersistenceService() {
+		return calendarService;
+	}
 
-    /**
-     * Standard method for custom component with listType="pickList".
-     */
-    public DualListModel<DayInYear> getDualListModel() {
-        if (perks == null) {
-            List<DayInYear> perksSource = dayInYearService.list();
-            List<DayInYear> perksTarget = new ArrayList<DayInYear>();
-            if (getEntity().getDays() != null) {
-                perksTarget.addAll(getEntity().getDays());
-            }
-            perksSource.removeAll(perksTarget);
-            perks = new DualListModel<DayInYear>(perksSource, perksTarget);
-        }
-        return perks;
-    }
+	/**
+	 * Standard method for custom component with listType="pickList".
+	 */
+	public DualListModel<DayInYear> getDualListModel() {
+		if (perks == null) {
+			List<DayInYear> perksSource = dayInYearService.list();
+			List<DayInYear> perksTarget = new ArrayList<DayInYear>();
+			if (getEntity().getDays() != null) {
+				perksTarget.addAll(getEntity().getDays());
+			}
+			perksSource.removeAll(perksTarget);
+			perks = new DualListModel<DayInYear>(perksSource, perksTarget);
+		}
+		return perks;
+	}
 
-    @SuppressWarnings("unchecked")
-    public void setDualListModel(DualListModel<DayInYear> perks) {
-        getEntity().setDays((List<DayInYear>) perks.getTarget());
-    }
+	public void setDualListModel(DualListModel<DayInYear> perks) {
+		getEntity().setDays((List<DayInYear>) perks.getTarget());
+	}
 
+	@Override
+	protected String getDefaultSort() {
+		return "name";
+	}
 }

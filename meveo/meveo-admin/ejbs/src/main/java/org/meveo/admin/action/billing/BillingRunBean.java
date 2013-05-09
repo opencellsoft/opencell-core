@@ -103,13 +103,13 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			if (billingRun.getId() == null) {
 				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 			}
-			if (billingRun != null && billingRun.getId() != null
-					&& preReport.get() != null && preReport.get()) {
+			if (billingRun != null && billingRun.getId() != null && preReport.get() != null
+					&& preReport.get()) {
 				PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService
 						.generatePreInvoicingReports(billingRun);
 				billingRun.setPreInvoicingReports(preInvoicingReportsDTO);
-			} else if (billingRun != null && billingRun.getId() != null
-					&& postReport.get() != null && postReport.get()) {
+			} else if (billingRun != null && billingRun.getId() != null && postReport.get() != null
+					&& postReport.get()) {
 				PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService
 						.generatePostInvoicingReports(billingRun);
 				billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
@@ -142,19 +142,14 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	}
 
 	public String lunchRecurringInvoicing() {
-		log.info("lunchInvoicing billingRun BillingCycle=#1", entity
-				.getBillingCycle().getCode());
+		log.info("lunchInvoicing billingRun BillingCycle=#1", entity.getBillingCycle().getCode());
 		try {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-			String allowManyInvoicing = param.getProperty(
-					"billingRun.allowManyInvoicing", "true");
+			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
 			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
-			if (billingRunService
-					.isActiveBillingRunsExist(getCurrentProvider())
-					&& !isAllowed) {
-				messages.error(new BundleKey("messages",
-						"error.invoicing.alreadyLunched"));
+			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
+				messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
 				return null;
 			}
 
@@ -275,13 +270,11 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String excludeBillingAccounts() {
 		try {
-			log.debug("excludeBillingAccounts itemSelector.size()=#0",
-					itemSelector.getSize());
+			log.debug("excludeBillingAccounts itemSelector.size()=#0", itemSelector.getSize());
 			for (Invoice invoice : itemSelector.getList()) {
 				billingRunService.deleteInvoice(invoice);
 			}
-			messages.info(new BundleKey("messages",
-					"info.invoicing.billingAccountExcluded"));
+			messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
 
 		} catch (Exception e) {
 			log.error("unexpected exception when excluding BillingAccounts!", e);
@@ -324,8 +317,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		if (entity != null) {
 			itemSelector.check(entity);
 		}
-		log.debug("selectChanged itemSelector.size()=#0",
-				itemSelector.getSize());
+		log.debug("selectChanged itemSelector.size()=#0", itemSelector.getSize());
 	}
 
 	/**
@@ -350,5 +342,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	@Override
 	protected String getListViewName() {
 		return "billingRuns";
+	}
+
+	@Override
+	protected String getDefaultSort() {
+		return "id";
 	}
 }

@@ -26,10 +26,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.billing.Country;
-import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -166,5 +163,10 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	@Override
 	public String getNewViewName() {
 		return "tradingCountryDetail";
+	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "country";
 	}
 }

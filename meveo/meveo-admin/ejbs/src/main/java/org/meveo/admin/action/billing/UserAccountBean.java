@@ -39,229 +39,248 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.primefaces.model.LazyDataModel;
 
 /**
- * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  * 
  */
 @Named
 @ViewScoped
 public class UserAccountBean extends BaseBean<UserAccount> {
 
-    private static final long serialVersionUID = 1L;
-    
-    /**
-     * Injected
-     * 
-     * @{link UserAccount} service. Extends {@link PersistenceService} .
-     */
-    
-    @Inject
-    private WalletOperationBean walletOperationBean;
-    
-    @Inject
-    private UserAccountService userAccountService;
+	private static final long serialVersionUID = 1L;
 
-    @Inject
-    private RatedTransactionService ratedTransactionService;
+	/**
+	 * Injected
+	 * 
+	 * @{link UserAccount} service. Extends {@link PersistenceService} .
+	 */
 
-    private Long billingAccountId;
+	@Inject
+	private WalletOperationBean walletOperationBean;
 
-    @Inject
-    private BillingAccountService billingAccountService;
+	@Inject
+	private UserAccountService userAccountService;
 
-    @Inject
-    private Messages messages;
+	@Inject
+	private RatedTransactionService ratedTransactionService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public UserAccountBean() {
-        super(UserAccount.class);
-    }
+	private Long billingAccountId;
 
-    public Long getBillingAccountId() {
-        return billingAccountId;
-    }
+	@Inject
+	private BillingAccountService billingAccountService;
 
-    public void setBillingAccountId(Long billingAccountId) {
-        this.billingAccountId = billingAccountId;
-    }
+	@Inject
+	private Messages messages;
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Override
-    public UserAccount initEntity() {
-        super.initEntity();
-    	System.out.println("initentity useraccount id="+entity.getId());
-        if (entity.getId() == null && billingAccountId != null) {
-            BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-            entity.setBillingAccount(billingAccount);
-            populateAccounts(billingAccount);
-        }
-        return entity;
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public UserAccountBean() {
+		super(UserAccount.class);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    public String saveOrUpdate(boolean killConversation) {
-        try {
-            if (entity.getDefaultLevel()) {
-                if (userAccountService.isDuplicationExist(entity)) {
-                    entity.setDefaultLevel(false);
-                    throw new DuplicateDefaultAccountException();
-                }
+	public Long getBillingAccountId() {
+		return billingAccountId;
+	}
 
-            }
-            super.saveOrUpdate(killConversation);
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
-        } catch (DuplicateDefaultAccountException e1) {
-            messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(new BundleKey("messages", "javax.el.ELException"));
+	public void setBillingAccountId(Long billingAccountId) {
+		this.billingAccountId = billingAccountId;
+	}
 
-        }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Override
+	public UserAccount initEntity() {
+		super.initEntity();
+		System.out.println("initentity useraccount id=" + entity.getId());
+		if (entity.getId() == null && billingAccountId != null) {
+			BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+			entity.setBillingAccount(billingAccount);
+			populateAccounts(billingAccount);
+		}
+		return entity;
+	}
 
-        return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
+	@Override
+	public String saveOrUpdate(boolean killConversation) {
+		try {
+			if (entity.getDefaultLevel()) {
+				if (userAccountService.isDuplicationExist(entity)) {
+					entity.setDefaultLevel(false);
+					throw new DuplicateDefaultAccountException();
+				}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<UserAccount> getPersistenceService() {
-        return userAccountService;
-    }
+			}
+			super.saveOrUpdate(killConversation);
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId="
+					+ entity.getId() + "&faces-redirect=true&includeViewParams=true";
+		} catch (DuplicateDefaultAccountException e1) {
+			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(new BundleKey("messages", "javax.el.ELException"));
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-     */
-    @Override
-    protected String saveOrUpdate(UserAccount entity) {
-        try {
-            if (entity.isTransient()) {
-                userAccountService.createUserAccount(entity.getBillingAccount().getCode(), entity, getCurrentUser());
-                messages.info(new BundleKey("messages", "save.successful"));
-            } else {
-                userAccountService.updateUserAccount(entity, getCurrentUser());
-                messages.info(new BundleKey("messages", "update.successful"));
-            }
+		}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
+		return null;
+	}
 
-        return back();
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<UserAccount> getPersistenceService() {
+		return userAccountService;
+	}
 
-    public String terminateAccount() {
-        log.info("resiliateAccount userAccountId:" + entity.getId());
-        try {
-            userAccountService.userAccountTermination(entity.getCode(), new Date(), getCurrentUser());
-            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
-        } catch (BusinessException e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+	 */
+	@Override
+	protected String saveOrUpdate(UserAccount entity) {
+		try {
+			if (entity.isTransient()) {
+				userAccountService.createUserAccount(entity.getBillingAccount().getCode(), entity,
+						getCurrentUser());
+				messages.info(new BundleKey("messages", "save.successful"));
+			} else {
+				userAccountService.updateUserAccount(entity, getCurrentUser());
+				messages.info(new BundleKey("messages", "update.successful"));
+			}
 
-    public String cancelAccount() {
-        log.info("cancelAccount userAccountId:" + entity.getId());
-        try {
-            userAccountService.userAccountCancellation(entity.getCode(), new Date(), getCurrentUser());
-            messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
-        } catch (BusinessException e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
 
-    public String reactivateAccount() {
-        log.info("reactivateAccount userAccountId:" + entity.getId());
-        try {
-            userAccountService.userAccountReactivation(entity.getCode(), new Date(), getCurrentUser());
-            messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
-            return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
-        } catch (BusinessException e) {
-            e.printStackTrace(); // TODO WTF printStackTrace??
-            messages.error(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+		return back();
+	}
 
-    public LazyDataModel<WalletOperation> getWalletOperationsNoInvoiced() {
+	public String terminateAccount() {
+		log.info("resiliateAccount userAccountId:" + entity.getId());
+		try {
+			userAccountService.userAccountTermination(entity.getCode(), new Date(),
+					getCurrentUser());
+			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()
+					+ "&edit=false";
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
+
+	public String cancelAccount() {
+		log.info("cancelAccount userAccountId:" + entity.getId());
+		try {
+			userAccountService.userAccountCancellation(entity.getCode(), new Date(),
+					getCurrentUser());
+			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()
+					+ "&edit=false";
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
+
+	public String reactivateAccount() {
+		log.info("reactivateAccount userAccountId:" + entity.getId());
+		try {
+			userAccountService.userAccountReactivation(entity.getCode(), new Date(),
+					getCurrentUser());
+			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()
+					+ "&edit=false";
+		} catch (BusinessException e) {
+			e.printStackTrace(); // TODO WTF printStackTrace??
+			messages.error(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
+
+	public LazyDataModel<WalletOperation> getWalletOperationsNoInvoiced() {
 		System.out.println("getWalletOperationsNoInvoiced");
-    	LazyDataModel<WalletOperation> result = null;
-    	HashMap<String, Object> filters = new HashMap<String, Object>();
-    	if(entity==null){
-    		System.out.println("getWalletOperationsNoInvoiced: userAccount is null");
-    		super.initEntity();
-    		System.out.println("entity.id="+entity.getId());
-    	}
-    	if(entity.getWallet()==null){
-    		System.out.println("getWalletOperationsNoInvoiced: userAccount "+entity.getId()+ " has no wallet");
-    	} else {
-    		filters.put("wallet", entity.getWallet());
-    		filters.put("status",WalletOperationStatusEnum.OPEN);
-    		result=walletOperationBean.getLazyDataModel(filters,true);
-    	}
-        return result;
-    }
+		LazyDataModel<WalletOperation> result = null;
+		HashMap<String, Object> filters = new HashMap<String, Object>();
+		if (entity == null) {
+			System.out.println("getWalletOperationsNoInvoiced: userAccount is null");
+			super.initEntity();
+			System.out.println("entity.id=" + entity.getId());
+		}
+		if (entity.getWallet() == null) {
+			System.out.println("getWalletOperationsNoInvoiced: userAccount " + entity.getId()
+					+ " has no wallet");
+		} else {
+			filters.put("wallet", entity.getWallet());
+			filters.put("status", WalletOperationStatusEnum.OPEN);
+			result = walletOperationBean.getLazyDataModel(filters, true);
+		}
+		return result;
+	}
 
-    @Produces
-    @Named("getRatedTransactionsInvoiced")
-    public List<RatedTransaction> getRatedTransactionsInvoiced() {
-        return ratedTransactionService.getRatedTransactionsInvoiced(entity);
-    }
+	@Produces
+	@Named("getRatedTransactionsInvoiced")
+	public List<RatedTransaction> getRatedTransactionsInvoiced() {
+		return ratedTransactionService.getRatedTransactionsInvoiced(entity);
+	}
 
-    public void populateAccounts(BillingAccount billingAccount) {
+	public void populateAccounts(BillingAccount billingAccount) {
 
-        entity.setBillingAccount(billingAccount);
-        if (userAccountService.isDuplicationExist(entity)) {
-            entity.setDefaultLevel(false);
-        } else {
-            entity.setDefaultLevel(true);
-        }
-        if (billingAccount.getProvider() != null && billingAccount.getProvider().isLevelDuplication()) {
-            entity.setCode(billingAccount.getCode());
-            entity.setDescription(billingAccount.getDescription());
-            entity.setAddress(billingAccount.getAddress());
-            entity.setExternalRef1(billingAccount.getExternalRef1());
-            entity.setExternalRef2(billingAccount.getExternalRef2());
-            entity.setProviderContact(billingAccount.getProviderContact());
-            entity.setName(billingAccount.getName());
-            entity.setProvider(billingAccount.getProvider());
-            entity.setSubscriptionDate(billingAccount.getSubscriptionDate());
-            entity.setPrimaryContact(billingAccount.getPrimaryContact());
-        }
-    }
+		entity.setBillingAccount(billingAccount);
+		if (userAccountService.isDuplicationExist(entity)) {
+			entity.setDefaultLevel(false);
+		} else {
+			entity.setDefaultLevel(true);
+		}
+		if (billingAccount.getProvider() != null
+				&& billingAccount.getProvider().isLevelDuplication()) {
+			entity.setCode(billingAccount.getCode());
+			entity.setDescription(billingAccount.getDescription());
+			entity.setAddress(billingAccount.getAddress());
+			entity.setExternalRef1(billingAccount.getExternalRef1());
+			entity.setExternalRef2(billingAccount.getExternalRef2());
+			entity.setProviderContact(billingAccount.getProviderContact());
+			entity.setName(billingAccount.getName());
+			entity.setProvider(billingAccount.getProvider());
+			entity.setSubscriptionDate(billingAccount.getSubscriptionDate());
+			entity.setPrimaryContact(billingAccount.getPrimaryContact());
+		}
+	}
+
+	@Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 
 }

@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -149,5 +148,10 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 
     public void setDescriptionFr(String descriptionFr) {
         this.descriptionFr = descriptionFr;
+    }
+    
+    @Override
+    protected String getDefaultSort() {
+    	return "code";
     }
 }

@@ -597,4 +597,9 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		}
 		return accessList;
 	}
+
+	@Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }

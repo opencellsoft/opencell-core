@@ -80,5 +80,10 @@ public class SellerBean extends BaseBean<Seller> {
     protected String getListViewName() {
     	 return "sellers";
     }
+    
+    @Override
+    protected String getDefaultSort() {
+    	return "code";
+    }
 
 }

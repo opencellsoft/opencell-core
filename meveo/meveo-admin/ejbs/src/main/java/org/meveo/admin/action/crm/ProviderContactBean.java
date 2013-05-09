@@ -87,4 +87,9 @@ public class ProviderContactBean extends BaseBean<ProviderContact> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("address");
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }

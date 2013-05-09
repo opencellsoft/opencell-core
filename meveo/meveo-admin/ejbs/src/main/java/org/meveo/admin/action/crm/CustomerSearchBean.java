@@ -18,13 +18,11 @@ package org.meveo.admin.action.crm;
 import java.io.IOException;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
@@ -158,6 +156,11 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 			return "userAccountId";
 		}
 		return "customerId";
+	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
 	}
 
 }

@@ -25,59 +25,70 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 
-/** 
+/**
  * MBAREK
  */
 @Named
 @ConversationScoped
 public class CounterTemplateBean extends BaseBean<CounterTemplate> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link PricePlanMatrix} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private CounterTemplateService counterTemplateService;
+	/**
+	 * Injected @{link PricePlanMatrix} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@SuppressWarnings("rawtypes")
+	@Inject
+	private CounterTemplateService counterTemplateService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public CounterTemplateBean() {
-        super(CounterTemplate.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public CounterTemplateBean() {
+		super(CounterTemplate.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-   
-    public CounterTemplate initEntity() {
-        return super.initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
 
-    /**
-     * Override default list view name. (By default its class name starting lower case + 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "counterTemplates";
-    }
+	public CounterTemplate initEntity() {
+		return super.initEntity();
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<CounterTemplate> getPersistenceService() {
-        return counterTemplateService;
-    }
-    
-    @Override
-    protected String getListViewName() {
-    	 return "counterTemplates";
-    }
+	/**
+	 * Override default list view name. (By default its class name starting
+	 * lower case + 's').
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 */
+	protected String getDefaultViewName() {
+		return "counterTemplates";
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected IPersistenceService<CounterTemplate> getPersistenceService() {
+		return counterTemplateService;
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "counterTemplates";
+	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 
 }

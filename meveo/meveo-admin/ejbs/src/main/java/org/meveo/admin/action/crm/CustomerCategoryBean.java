@@ -28,8 +28,10 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 
 /**
- * Standard backing bean for {@link CustomerCategory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link CustomerCategory} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  * 
  * @author Ignas Lelys
  * @created Nov 23, 2010
@@ -39,35 +41,43 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
 @ConversationScoped
 public class CustomerCategoryBean extends BaseBean<CustomerCategory> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link CustomerCategory} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private CustomerCategoryService customerCategoryService;
+	/**
+	 * Injected @{link CustomerCategory} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private CustomerCategoryService customerCategoryService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public CustomerCategoryBean() {
-        super(CustomerCategory.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public CustomerCategoryBean() {
+		super(CustomerCategory.class);
+	}
 
-    /**
-     * Override default list view name. (By default view name is class name starting lower case + ending 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "customerCategories";
-    }
+	/**
+	 * Override default list view name. (By default view name is class name
+	 * starting lower case + ending 's').
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 */
+	protected String getDefaultViewName() {
+		return "customerCategories";
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<CustomerCategory> getPersistenceService() {
-        return customerCategoryService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<CustomerCategory> getPersistenceService() {
+		return customerCategoryService;
+	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }

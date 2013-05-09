@@ -117,4 +117,9 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 			entity.setAmountWithTax(new BigDecimal(0));
 		return super.saveOrUpdate(killConversation);
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "eventCode";
+	}
 }

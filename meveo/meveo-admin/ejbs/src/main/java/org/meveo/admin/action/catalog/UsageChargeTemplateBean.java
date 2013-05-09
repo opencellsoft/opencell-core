@@ -15,26 +15,21 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.catalog.ChargeTemplate; 
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
 
 /**
-
+ * 
  * 
  * @author MBAREK
  * 
@@ -43,7 +38,7 @@ import org.primefaces.component.datatable.DataTable;
 @ConversationScoped
 public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	private static final long serialVersionUID = 1L;
- 
+
 	@Inject
 	private UsageChargeTemplateService usageChargeTemplateService;
 
@@ -59,7 +54,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	public UsageChargeTemplateBean() {
 		super(UsageChargeTemplate.class);
 	}
-	 
+
 	public UsageChargeTemplate initEntity() {
 		UsageChargeTemplate usageChargeTemplate = super.initEntity();
 		if (usageChargeTemplate.getId() != null) {
@@ -71,14 +66,14 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 		return usageChargeTemplate;
 	}
 
-    @Override
-    public DataTable search() {
-        getFilters();
-        if (!filters.containsKey("disabled")) {
-            filters.put("disabled", false);
-        }
-        return super.search();
-    }
+	@Override
+	public DataTable search() {
+		getFilters();
+		if (!filters.containsKey("disabled")) {
+			filters.put("disabled", false);
+		}
+		return super.search();
+	}
 
 	/**
 	 * Conversation is ended and user is redirected from edit to his previous
@@ -130,5 +125,10 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	public void setDescriptionFr(String descriptionFr) {
 		this.descriptionFr = descriptionFr;
+	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
 	}
 }

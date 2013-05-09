@@ -36,7 +36,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.utils.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -200,10 +199,11 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String terminateAccount() {
 		log.info("terminateAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity.getCode(), new Date(), getCurrentUser());
+			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),
+					getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
+					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -217,10 +217,11 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountCancellation(entity.getCode(), new Date(), getCurrentUser());
+			billingAccountService.billingAccountCancellation(entity.getCode(), new Date(),
+					getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
+					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -236,8 +237,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		try {
 			billingAccountService.closeBillingAccount(entity.getCode(), getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
+			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
+					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -265,7 +266,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		} else {
 			invoiceFilename = "unvalidated-invoice.pdf";
 		}
-		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
+				.getResponse();
 		response.setContentType("application/pdf"); // fill in
 		response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
 
@@ -278,7 +280,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 				int n = reader.getNumberOfPages();
 				PdfStamper stamp = new PdfStamper(reader, os);
 				PdfContentByte over = null;
-				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+				BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI,
+						BaseFont.EMBEDDED);
 				PdfGState gs = new PdfGState();
 				gs.setFillOpacity(0.5f);
 				int i = 1;
@@ -290,8 +293,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 					over.setTextMatrix(document.top(), document.bottom());
 					over.setFontAndSize(bf, 150);
 					over.setColorFill(Color.GRAY);
-					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize().getWidth() / 2, document
-							.getPageSize().getHeight() / 2, 45);
+					over.showTextAligned(Element.ALIGN_CENTER, "TEST", document.getPageSize()
+							.getWidth() / 2, document.getPageSize().getHeight() / 2, 45);
 					over.endText();
 					i++;
 				}
@@ -445,6 +448,11 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			entity.setProvider(customerAccount.getProvider());
 			entity.setPrimaryContact(customerAccount.getPrimaryContact());
 		}
+	}
+
+	@Override
+	protected String getDefaultSort() {
+		return "code";
 	}
 
 }

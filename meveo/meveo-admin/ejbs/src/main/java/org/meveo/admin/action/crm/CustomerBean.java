@@ -26,8 +26,10 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
 
 /**
- * Standard backing bean for {@link Customer} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link Customer} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  * 
  * @author Gediminas Ubartas
  * @created 2010.11.15
@@ -36,46 +38,53 @@ import org.meveo.service.crm.impl.CustomerService;
 @ViewScoped
 public class CustomerBean extends BaseBean<Customer> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /** Injected @{link Customer} service. Extends {@link PersistenceService}. */
-    @Inject
-    private CustomerService customerService;
+	/** Injected @{link Customer} service. Extends {@link PersistenceService}. */
+	@Inject
+	private CustomerService customerService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public CustomerBean() {
-        super(Customer.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public CustomerBean() {
+		super(Customer.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    public Customer initEntity() {
-        return super.initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	public Customer initEntity() {
+		return super.initEntity();
+	}
 
-  
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    public String saveOrUpdate(boolean killConversation) {
-        super.saveOrUpdate(killConversation);
-        return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId() + "&faces-redirect=true";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
+	@Override
+	public String saveOrUpdate(boolean killConversation) {
+		super.saveOrUpdate(killConversation);
+		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId()
+				+ "&faces-redirect=true";
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<Customer> getPersistenceService() {
-        return customerService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<Customer> getPersistenceService() {
+		return customerService;
+	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }

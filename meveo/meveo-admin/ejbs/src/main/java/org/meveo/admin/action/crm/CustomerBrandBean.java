@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -71,14 +70,17 @@ public class CustomerBrandBean extends BaseBean<CustomerBrand> {
 		return initEntity();
 	}
 
-	
-
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
 	protected IPersistenceService<CustomerBrand> getPersistenceService() {
 		return customerBrandService;
+	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "code";
 	}
 
 }

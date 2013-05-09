@@ -59,4 +59,9 @@ public class BillingCycleBean extends BaseBean<BillingCycle> {
     protected IPersistenceService<BillingCycle> getPersistenceService() {
         return billingCycleService;
     }
+    
+    @Override
+    protected String getDefaultSort() {
+    	return "code";
+    }
 }

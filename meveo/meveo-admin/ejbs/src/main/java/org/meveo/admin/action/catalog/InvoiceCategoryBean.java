@@ -148,5 +148,10 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("invoiceSubCategories");
     }
+    
+    @Override
+    protected String getDefaultSort() {
+    	return "code";
+    }
 
 }

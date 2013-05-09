@@ -83,4 +83,9 @@ public class EmailTemplateBean extends BaseBean<EmailTemplate> {
 	public String getNewViewName() {
 		return "emailTemplateDetail";
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "subject";
+	}
 }
