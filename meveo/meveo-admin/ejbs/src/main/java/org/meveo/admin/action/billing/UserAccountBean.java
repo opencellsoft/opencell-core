@@ -24,7 +24,6 @@ import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -73,9 +72,6 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 
 	@Inject
 	private BillingAccountService billingAccountService;
-
-	@Inject
-	private Messages messages;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -235,7 +231,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		HashMap<String, Object> filters = new HashMap<String, Object>();
 		if (entity == null) {
 			System.out.println("getWalletOperationsNoInvoiced: userAccount is null");
-			super.initEntity();
+			initEntity();
 			System.out.println("entity.id=" + entity.getId());
 		}
 		if (entity.getWallet() == null) {
