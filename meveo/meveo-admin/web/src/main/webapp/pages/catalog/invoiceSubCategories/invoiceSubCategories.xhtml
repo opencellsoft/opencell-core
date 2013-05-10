@@ -42,7 +42,7 @@
 			<hf:searchField label="#{messages['invoiceSubCategory.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['invoiceSubCategory.description']}"
-				field="description" id="description"/>
+				field="description" id="description" />
 			<!-- <hf:searchField
 				label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" size="50" /> -->
@@ -51,11 +51,11 @@
 
 		<hftl:dataList label="#{messages['invoiceSubCategory.title']}"
 			backingBean="#{invoiceSubCategoryBean}">
+			<hftl:column label="#{messages['invoiceSubCategory.code']}"
+				field="code" />
 			<hftl:column
 				label="#{messages['invoiceSubCategory.invoiceCategory']}"
 				field="invoiceCategory" childField="code" />
-			<hftl:column label="#{messages['invoiceSubCategory.code']}"
-				field="code" />
 			<hftl:column label="#{messages['invoiceSubCategory.description']}"
 				field="description" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"

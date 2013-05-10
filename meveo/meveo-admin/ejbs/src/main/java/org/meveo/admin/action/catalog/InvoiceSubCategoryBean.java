@@ -241,7 +241,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
 	@Override
 	protected String getDefaultSort() {
-		return "invoiceCategory";
+		return "code";
 	}
 
 }
