@@ -35,8 +35,8 @@
 			<p:selectOneMenu id="#{cc.attrs.field}_boolean" value="#{cc.filters[cc.attrs.field]}" converter="javax.faces.Boolean"
 				disabled="#{cc.attrs.disabled}">
 				<f:selectItem itemValue="#{null}" itemLabel="" />
-				<f:selectItem itemValue="#{true}" itemLabel="#{messages['commons.yes']}" />
 				<f:selectItem itemValue="#{false}" itemLabel="#{messages['commons.no']}" />
+				<f:selectItem itemValue="#{true}" itemLabel="#{messages['commons.yes']}" />
 			</p:selectOneMenu>
 		</p:panelGrid>
 	</ui:fragment>
