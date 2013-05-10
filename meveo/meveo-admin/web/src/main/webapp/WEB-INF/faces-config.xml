@@ -750,13 +750,7 @@
 		</navigation-case>	
 		<navigation-case>
 			<from-outcome>access</from-outcome>
-			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
-			<redirect include-view-params="true">
-				<view-param>
-					<name>activeIndex</name>
-					<value>4</value>
-				</view-param>
-			</redirect>			
+			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>			
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>userAccounts</from-outcome>

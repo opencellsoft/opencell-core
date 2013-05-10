@@ -179,8 +179,7 @@
 						<f:facet name="header">
 							<h:outputText value="#{messages['subscription.panel']}" />
 						</f:facet>
-						<p:tabView id="subscriptionTab"
-							activeIndex="#{param['activeIndex'] == null ? 0 : param['activeIndex']}">
+						<p:tabView id="subscriptionTab">
 							<p:tab id="serviceTab"
 								title="#{messages['subscription.tab.services']}"
 								rendered="#{!subscriptionBean.edit}">
