@@ -18,12 +18,10 @@ package org.meveo.admin.action.admin;
 import java.sql.BatchUpdateException;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -44,10 +42,8 @@ public class LanguageBean extends BaseBean<Language> {
 		super(Language.class);
 	}
 
-	@Produces
-	@Named("language")
-	public Language init() {
-		return initEntity();
+	public Language initEntity() {
+		return super.initEntity();
 	}
 
 	/**
