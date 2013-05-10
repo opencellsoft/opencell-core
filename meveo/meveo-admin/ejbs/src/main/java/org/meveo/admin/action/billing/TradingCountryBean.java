@@ -167,6 +167,6 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	
 	@Override
 	protected String getDefaultSort() {
-		return "country";
+		return "country.countryCode";
 	}
 }

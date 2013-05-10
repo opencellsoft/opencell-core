@@ -84,4 +84,9 @@ public class CurrencyBean extends BaseBean<Currency> {
 	protected IPersistenceService<Currency> getPersistenceService() {
 		return currencyService;
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "currencyCode";
+	}
 }

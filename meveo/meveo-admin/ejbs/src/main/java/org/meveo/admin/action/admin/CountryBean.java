@@ -81,5 +81,10 @@ public class CountryBean extends BaseBean<Country> {
 	protected IPersistenceService<Country> getPersistenceService() {
 		return countryService;
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "countryCode";
+	}
 
 }

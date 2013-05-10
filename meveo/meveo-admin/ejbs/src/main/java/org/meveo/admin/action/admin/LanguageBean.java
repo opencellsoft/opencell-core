@@ -67,5 +67,10 @@ public class LanguageBean extends BaseBean<Language> {
 	public void test() throws BatchUpdateException {
 		throw new BatchUpdateException();
 	}
+	
+	@Override
+	protected String getDefaultSort() {
+		return "languageCode";
+	}
 
 }

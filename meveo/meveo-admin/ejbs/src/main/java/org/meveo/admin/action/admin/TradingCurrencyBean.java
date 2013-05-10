@@ -164,7 +164,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	
 	@Override
 	protected String getDefaultSort() {
-		return "currency";
+		return "currency.currencyCode";
 	}
 
 }

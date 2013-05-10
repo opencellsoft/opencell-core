@@ -160,6 +160,6 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	
 	@Override
 	protected String getDefaultSort() {
-		return "language";
+		return "language.languageCode";
 	}
 }
