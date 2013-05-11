@@ -35,6 +35,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	@EJB
 	private WalletOperationService chargeApplicationService;
 
+	@EJB
+	UsageRatingService usageRatingService;
+	
 	public UsageChargeInstance usageChargeInstanciation(
 			ServiceInstance serviceInstance, UsageChargeTemplate usageChargeTemplate,Date startDate, User creator)
 			throws BusinessException {
@@ -53,17 +56,20 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		update(usageChargeInstance);
+		usageRatingService.updateCache(usageChargeInstance);
 	}
 	
 	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance,Date terminationDate){
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+		usageRatingService.updateCache(usageChargeInstance);
 		update(usageChargeInstance);	
 	}
 
 	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance,Date suspensionDate){
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
+		usageRatingService.updateCache(usageChargeInstance);
 		update(usageChargeInstance);	
 	}
 	
@@ -71,6 +77,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setChargeDate(reactivationDate);
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+		usageRatingService.updateCache(usageChargeInstance);
 		update(usageChargeInstance);	
 	}
 
