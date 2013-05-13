@@ -67,11 +67,7 @@
 
 	<c:set var="converter"
 		value="#{getConverter.forType(entity[field], converterParam)}"></c:set>
-
 	<p:column exportable="#{exportable}">
-		<c:if test="#{sort}">
-			<f:attribute name="sortBy" value="#{field}" />
-		</c:if>
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
 		</f:facet>
@@ -80,6 +76,9 @@
         	if so use standard yes and no messages. If its not boolean just translate fieldValue message. 
         	Also if childField is not set then it basically means it can't be isList=true even if it is set, so we don't check isList here.-->
 		<c:if test="#{empty childField}">
+			<c:if test="#{sort}">
+				<f:attribute name="sortBy" value="#{field}" />
+			</c:if>
 			<c:if test="#{isMessage}">
 				<h:outputText
 					rendered="#{entity[field] != null and entity[field].toString() == 'true'}"
@@ -108,6 +107,9 @@
 
 		<!-- If childField parameter is provided that means fieldValue is entity, enum or list. -->
 		<c:if test="#{not empty childField}">
+			<c:if test="#{sort}">
+				<f:attribute name="sortBy" value="#{field}.#{childField}" />
+			</c:if>
 			<!-- If field is not list, then it means it is either another entity or enum. -->
 			<c:if test="#{not isList}">
 				<!-- If childField ID is not provided then we dont need link to entity page. -->
