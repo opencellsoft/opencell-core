@@ -751,7 +751,8 @@
 							</p:tab>
 							<!-- Access -->
 							<p:tab id="medinaAccessTab"
-								title="#{messages['access.accessPanel']}">
+								title="#{messages['access.accessPanel']}"
+								rendered="#{!subscriptionBean.edit}">
 								<h:form>
 									<p:outputPanel id="medinaAccessPanel">
 										<p:messages id="medinaAccessPanelMessage"></p:messages>
