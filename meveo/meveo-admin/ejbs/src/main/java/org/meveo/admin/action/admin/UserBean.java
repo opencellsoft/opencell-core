@@ -107,9 +107,18 @@ public class UserBean extends BaseBean<User> {
 			messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
 			return null;
 		} else {
-			if (userService.isUsernameExists(entity.getUserName())) {
-				messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
-				return null;
+			if (getObjectId() != null) {
+				if (userService.isUsernameExists(entity.getUserName(), entity.getId())) {
+					messages.error(new BundleKey("messages",
+							"exception.UsernameAlreadyExistsException"));
+					return null;
+				}
+			} else {
+				if (userService.isUsernameExists(entity.getUserName())) {
+					messages.error(new BundleKey("messages",
+							"exception.UsernameAlreadyExistsException"));
+					return null;
+				}
 			}
 			entity.setLastPasswordModification(new Date());
 			entity.setNewPassword(password);
@@ -204,7 +213,7 @@ public class UserBean extends BaseBean<User> {
 	public void change() {
 		this.show = !this.show;
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "userName";

@@ -24,9 +24,9 @@
 				action="#{userBean.change()}" update="passwordPanel"
 				rendered="#{!(userBean.entity.id==null) and userBean.edit}"
 				style="text-align:right;" />
-			
+
 			<h:outputLabel value="" rendered="#{!(userBean.entity.id==null)}"></h:outputLabel>
-			
+
 			<p:outputPanel id="passwordPanel">
 				<hftl:panelGroup columns="2" id="passwordPanel"
 					rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}">
