@@ -409,6 +409,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Clean search fields in datatable.
      */
     public void clean() {
+    	dataModel = null;
         filters = new HashMap<String, Object>();
     }
 
