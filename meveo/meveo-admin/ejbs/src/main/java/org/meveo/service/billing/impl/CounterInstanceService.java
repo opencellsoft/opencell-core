@@ -59,6 +59,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			create(result, creator,userAccount.getProvider());	
 			userAccount.getCounters().put(counterTemplate.getCode(), result);
 			userAccountService.update(userAccount);
+		} else {
+			result=userAccount.getCounters().get(counterTemplate.getCode());
 		}
 		return result;
 	}
@@ -74,6 +76,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		counterPeriod.setValue(counterInstance.getCounterTemplate().getLevel());
 		counterPeriod.setCode(counterInstance.getCode());
 		counterPeriod.setDescription(counterInstance.getDescription());
+		counterPeriod.setLevel(counterInstance.getCounterTemplate().getLevel());
+		counterPeriod.setCounterType(counterInstance.getCounterTemplate().getCounterType());
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		counterPeriod.setAuditable(auditable);
@@ -86,6 +90,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	public void updatePeriodValue(Long counterPeriodId, BigDecimal value) {
 		CounterPeriod counterPeriod = counterPeriodService.findById(counterPeriodId);
 		counterPeriod.setValue(value);
+		counterPeriod.getAuditable().setUpdated(new Date());
 		counterPeriodService.update(counterPeriod);
 	}
 }

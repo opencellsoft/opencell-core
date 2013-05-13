@@ -29,7 +29,7 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_CHARGE_TEMPLATE_SEQ")
 public class UsageChargeTemplate extends ChargeTemplate {
 
-	static String WILCARD = "*";
+	static String WILCARD = "";
 	
 	/**
 	 * 
@@ -64,6 +64,10 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	
 	@Column(name = "FILTER_EXPRESSION", length = 255)
 	private String filterExpression=null;
+	
+	@Column(name = "PRIORITY", columnDefinition = "int default 1")
+	private int priority=1;
+	
 	
 	
 	public BigDecimal getUnityMultiplicator() {
@@ -120,9 +124,11 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	public void setFilterExpression(String filterExpression) {
 		this.filterExpression = filterExpression;
 	}
-	
-	
-	
-	
+	public int getPriority() {
+		return priority;
+	}
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
 	
 }

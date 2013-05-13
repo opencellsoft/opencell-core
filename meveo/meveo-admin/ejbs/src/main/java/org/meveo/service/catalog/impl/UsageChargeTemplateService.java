@@ -15,11 +15,15 @@
  */
 package org.meveo.service.catalog.impl;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.billing.impl.UsageRatingService;
 
 /**
  * Charge Template service implementation.
@@ -27,5 +31,36 @@ import org.meveo.model.catalog.UsageChargeTemplate;
  */
 @Stateless @LocalBean
 public class UsageChargeTemplateService extends ChargeTemplateService<UsageChargeTemplate> {
+
+	@EJB
+	UsageRatingService usageRatingService;
+	
+	public void create(UsageChargeTemplate e) {
+		super.create(e);
+		usageRatingService.updateTemplateCache(e);
+	}
+	
+	
+	public void create(UsageChargeTemplate e,User creator) {
+		super.create(e, creator);
+		usageRatingService.updateTemplateCache(e);
+	}
+
+	
+	public void create(UsageChargeTemplate e,User creator,Provider provider) {
+		super.create(e, creator, provider);
+		usageRatingService.updateTemplateCache(e);
+	}
+
+	public void update(UsageChargeTemplate e) {
+		super.update(e);
+		usageRatingService.updateTemplateCache(e);
+	}
+	
+	public void update(UsageChargeTemplate e,User updater) {
+		super.update(e,updater);
+		usageRatingService.updateTemplateCache(e);
+	}
+	
 
 }

@@ -84,9 +84,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @EJB
     private UsageChargeInstanceService usageChargeInstanceService;
-    
-    @EJB
-    private CounterInstanceService counterInstanceService;
 
     @EJB
     private WalletOperationService chargeApplicationService;
@@ -166,10 +163,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
         
         for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()){        	
-        	usageChargeInstanceService.usageChargeInstanciation(serviceInstance, serviceUsageChargeTemplate.getChargeTemplate(),serviceInstance.getSubscriptionDate(),  creator);
-        	if(serviceUsageChargeTemplate.getCounterTemplate()!=null){
-        		counterInstanceService.counterInstanciation(subscription.getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
-        	}
+        	usageChargeInstanceService.usageChargeInstanciation(serviceInstance, serviceUsageChargeTemplate,serviceInstance.getSubscriptionDate(),  creator);
         }
     }
 

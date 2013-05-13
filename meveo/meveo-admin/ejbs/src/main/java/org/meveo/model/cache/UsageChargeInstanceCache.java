@@ -11,7 +11,7 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 
-public class UsageChargeInstanceCache {
+public class UsageChargeInstanceCache implements Comparable<UsageChargeInstanceCache>{
 
     private static Logger log=Logger.getLogger(UsageChargeInstanceCache.class.getName());
 	
@@ -21,14 +21,10 @@ public class UsageChargeInstanceCache {
 	private Date lastUpdate;
 	private BigDecimal unityMultiplicator = BigDecimal.ONE;
 	private int unityNbDecimal = 2;
-	private String filterExpression;
 	private CounterInstanceCache counter;
 	private Date chargeDate;
 	private Date terminationDate;
-	private String filter1;
-	private String filter2;
-	private String filter3;
-	private String filter4;
+	private UsageChargeTemplateCache templateCache;
 	
 	public Long getChargeInstanceId() {
 		return chargeInstanceId;
@@ -61,12 +57,6 @@ public class UsageChargeInstanceCache {
 	public void setUnityNbDecimal(int unityNbDecimal) {
 		this.unityNbDecimal = unityNbDecimal;
 	}
-	public String getFilterExpression() {
-		return filterExpression;
-	}
-	public void setFilterExpression(String filterExpression) {
-		this.filterExpression = filterExpression;
-	}
 	public CounterInstanceCache getCounter() {
 		return counter;
 	}
@@ -85,38 +75,22 @@ public class UsageChargeInstanceCache {
 	public void setTerminationDate(Date terminationDate) {
 		this.terminationDate = terminationDate;
 	}
-	
-	public String getFilter1() {
-		return filter1;
-	}
-	public void setFilter1(String filter1) {
-		this.filter1 = filter1;
-	}
-	public String getFilter2() {
-		return filter2;
-	}
-	public void setFilter2(String filter2) {
-		this.filter2 = filter2;
-	}
-	public String getFilter3() {
-		return filter3;
-	}
-	public void setFilter3(String filter3) {
-		this.filter3 = filter3;
-	}
-	public String getFilter4() {
-		return filter4;
-	}
-	public void setFilter4(String filter4) {
-		this.filter4 = filter4;
-	}
-
 	public void setCurrencyId(Long currencyId) {
 		this.currencyId = currencyId;
 	}
 	public Long getCurrencyId() {
 		return currencyId;
 	}
-    
+	public UsageChargeTemplateCache getTemplateCache() {
+		return templateCache;
+	}
+	public void setTemplateCache(UsageChargeTemplateCache templateCache) {
+		this.templateCache = templateCache;
+	}
+	
+	@Override
+	public int compareTo(UsageChargeInstanceCache o) {
+		return this.getTemplateCache().getPriority()-o.getTemplateCache().getPriority();
+	}
 	
 }

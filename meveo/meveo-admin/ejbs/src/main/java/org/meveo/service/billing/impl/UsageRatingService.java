@@ -3,16 +3,17 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -32,6 +33,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.cache.CounterInstanceCache;
 import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
+import org.meveo.model.cache.UsageChargeTemplateCache;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
@@ -57,7 +59,8 @@ public class UsageRatingService {
 
     //private org.infinispan.Cache<Long, List<UsageChargeInstanceCache>> chargeCache;
     //private org.infinispan.Cache<Long, CounterInstanceCache> counterCache;
-   private static HashMap<Long, List<UsageChargeInstanceCache>> chargeCache;
+    private static HashMap<String, UsageChargeTemplateCache> chargeTemplateCache;
+    private static HashMap<Long, List<UsageChargeInstanceCache>> chargeCache;
    private static HashMap<Long, CounterInstanceCache> counterCache;
     
    private static boolean cacheLoaded=false;
@@ -82,10 +85,11 @@ public class UsageRatingService {
     @PostConstruct
     public synchronized void updateCacheFromDB() {
      if(!cacheLoaded){
+      chargeTemplateCache = new HashMap<String, UsageChargeTemplateCache>();
       //this.chargeCache = this.meveoContainer.getCache("usageCharge");
-      chargeCache =new HashMap<>();
+      chargeCache =new HashMap<Long, List<UsageChargeInstanceCache>>();
       //this.counterCache = this.meveoContainer.getCache("counter");
-      counterCache=new HashMap<>();
+      counterCache=new HashMap<Long, CounterInstanceCache>();
       log.info("loading usage charge cache");
       @SuppressWarnings("unchecked")
 	  List<UsageChargeInstance> usageChargeInstances = em.createQuery("From UsageChargeInstance u").getResultList();
@@ -96,6 +100,52 @@ public class UsageRatingService {
       }
       cacheLoaded=true;
      }
+    }
+    
+    public UsageChargeTemplateCache updateTemplateCache(UsageChargeTemplate usageChargeTemplate) {
+    	UsageChargeTemplateCache cachedValue=null;
+    	if(usageChargeTemplate!=null){
+    		if(chargeTemplateCache.containsKey(usageChargeTemplate.getCode())){
+    			cachedValue=chargeTemplateCache.get(usageChargeTemplate.getCode());
+    		} else {
+    			cachedValue= new UsageChargeTemplateCache();
+    		}
+			if(usageChargeTemplate.getFilterParam1()==null || usageChargeTemplate.getFilterParam1().equals("")){
+				cachedValue.setFilter1(null);
+			} else {
+				cachedValue.setFilter1(usageChargeTemplate.getFilterParam1());	
+			}
+			if(usageChargeTemplate.getFilterParam2()==null || usageChargeTemplate.getFilterParam2().equals("")){
+				cachedValue.setFilter2(null);
+			} else {
+				cachedValue.setFilter2(usageChargeTemplate.getFilterParam2());	
+			}
+			if(usageChargeTemplate.getFilterParam3()==null || usageChargeTemplate.getFilterParam3().equals("")){
+				cachedValue.setFilter3(null);
+			} else {
+				cachedValue.setFilter3(usageChargeTemplate.getFilterParam3());	
+			}
+			if(usageChargeTemplate.getFilterParam4()==null || usageChargeTemplate.getFilterParam4().equals("")){
+				cachedValue.setFilter4(null);
+			} else {
+				cachedValue.setFilter4(usageChargeTemplate.getFilterParam4());	
+			}  	
+			if(cachedValue.getPriority()!=usageChargeTemplate.getPriority()){
+				cachedValue.setPriority(usageChargeTemplate.getPriority());
+				//TODO reorder all cacheInstance associated to this template
+				for(Long subscriptionId:cachedValue.getSubscriptionIds()){
+					reorderChargeCache(subscriptionId);
+				}
+			}
+			cachedValue.setFilterExpression(usageChargeTemplate.getFilterExpression());
+			
+    	}
+    	return cachedValue;
+    }
+    	
+    private void reorderChargeCache(Long id){
+    	List<UsageChargeInstanceCache> charges =chargeCache.get(id);
+    	Collections.sort(charges);
     }
     
     public void updateCache(UsageChargeInstance usageChargeInstance) {
@@ -160,12 +210,10 @@ public class UsageRatingService {
 				}
 				cachedValue.setCounter(counterCacheValue);
 			}
-			cachedValue.setFilter1(usageChargeTemplate.getFilterParam1());
-			cachedValue.setFilter2(usageChargeTemplate.getFilterParam2());
-			cachedValue.setFilter3(usageChargeTemplate.getFilterParam3());
-			cachedValue.setFilter4(usageChargeTemplate.getFilterParam4());
 			cachedValue.setTerminationDate(usageChargeInstance.getTerminationDate());
-			cachedValue.setFilterExpression(usageChargeTemplate.getFilterExpression());
+			UsageChargeTemplateCache templateCache =updateTemplateCache(usageChargeTemplate);
+			cachedValue.setTemplateCache(templateCache);
+			templateCache.getSubscriptionIds().add(key);
 			cachedValue.setUnityMultiplicator(usageChargeTemplate.getUnityMultiplicator());
 			cachedValue.setUnityNbDecimal(usageChargeTemplate.getUnityNbDecimal());
 			cachedValue.setLastUpdate(new Date());
@@ -177,17 +225,25 @@ public class UsageRatingService {
 				log.info("key added to charge cache");
 				chargeCache.put(key, charges);
 			}
+			reorderChargeCache(key);
 		}
 	}
     
-    @PreDestroy
+    //@PreDestroy
+    //accessing Entity manager in predestroy is bugged in jboss7.1.3
     void saveCounters(){
     	for(Long key:counterCache.keySet()){
     	CounterInstanceCache counterInstanceCache= counterCache.get(key);
 		if(counterInstanceCache.getCounterPeriods()!=null){
 			for(CounterPeriodCache itemPeriodCache:counterInstanceCache.getCounterPeriods()){
 				if(itemPeriodCache.isDbDirty()){
-					counterInstanceService.updatePeriodValue(itemPeriodCache.getCounterPeriodId(),itemPeriodCache.getValue());
+					CounterPeriod counterPeriod=em.find(CounterPeriod.class, itemPeriodCache.getCounterPeriodId());
+					counterPeriod.setValue(itemPeriodCache.getValue());
+					counterPeriod.getAuditable().setUpdated(new Date());
+					em.merge(counterPeriod);
+					System.out.println("save counter"+itemPeriodCache.getCounterPeriodId()+" new value="+itemPeriodCache.getValue());
+					//calling ejb in this predestroy method just fail...
+					//	counterInstanceService.updatePeriodValue(itemPeriodCache.getCounterPeriodId(),itemPeriodCache.getValue());
 				}
 			}
 		}
@@ -234,7 +290,11 @@ public class UsageRatingService {
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
         walletOperation.setCurrency(currency.getCurrency());
+        if(chargeInstance.getCounter()!=null){
+        	walletOperation.setCounter(chargeInstance.getCounter());
+        }
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
+        log.info("provider code:"+provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, null, null, countryId,currency, provider);
 		return walletOperation;
     }
@@ -263,7 +323,7 @@ public class UsageRatingService {
 			counterInstance=counterInstanceService.findById(counterInstanceCache.getKey());
 			CounterPeriod counterPeriod=counterInstanceService.createPeriod(counterInstance,edr.getEventDate());
 			periodCache = CounterPeriodCache.getInstance(counterPeriod,counterInstance.getCounterTemplate());
-			
+			counterInstanceCache.getCounterPeriods().add(periodCache);
 		}
 		synchronized (periodCache) {
 			BigDecimal countedValue = edr.getQuantity().multiply(charge.getUnityMultiplicator());
@@ -279,7 +339,8 @@ public class UsageRatingService {
 					periodCache.setValue(periodCache.getValue().subtract(countedValue));
 				}
 				//set the cache element to dirty so it is saved to DB when shutdown the server
-				periodCache.setDbDirty(true);
+				//periodCache.setDbDirty(true);
+				counterInstanceService.updatePeriodValue(periodCache.getCounterPeriodId(),periodCache.getValue());
 			} 
 			//put back the deduced quantity in charge unit
 			deducedQuantity = deducedQuantity.divide(charge.getUnityMultiplicator());
@@ -305,7 +366,7 @@ public class UsageRatingService {
     		deducedQuantity=deduceCounter(edr, charge);
     		if(edr.getQuantity().equals(deducedQuantity)){
     			stopEDRRating=true;
-    		}
+    		} 
     	} else {
     		stopEDRRating=true;
     	}
@@ -313,6 +374,10 @@ public class UsageRatingService {
 			Provider provider=charge.getProvider();
 			UsageChargeInstance chargeInstance =usageChargeInstanceService.findById(charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr, charge,chargeInstance, provider);
+			if(deducedQuantity!=null){
+				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
+				walletOperation.setQuantity(deducedQuantity);
+			}
 			walletOperationService.create(walletOperation, null,provider);
 		}
 		return stopEDRRating;
@@ -323,21 +388,25 @@ public class UsageRatingService {
      * @param edr
      */
     //TODO: this is only for postpaid wallets, for prepaid we dont need to check counters
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void ratePostpaidUsage(EDR edr){
+    	BigDecimal originalQuantity = edr.getQuantity();
     	if(edr.getSubscription()==null){
     		edr.setStatus(EDRStatusEnum.REJECTED);
     		edr.setRejectReason("subscription null");
     	} else {
     		boolean edrIsRated = false;
+    		try{
     		if(chargeCache.containsKey(edr.getSubscription().getId())){
     			//TODO:order charges by priority and id
         		List<UsageChargeInstanceCache> charges = chargeCache.get(edr.getSubscription().getId());
     			for(UsageChargeInstanceCache charge: charges){
-    				if(charge.getFilter1()==null || charge.getFilter1().equals(edr.getParameter1())) {
-    					if(charge.getFilter2()==null || charge.getFilter1().equals(edr.getParameter1())) {
-    						if(charge.getFilter3()==null || charge.getFilter1().equals(edr.getParameter1())) {
-    							if(charge.getFilter4()==null || charge.getFilter1().equals(edr.getParameter1())) {
-    								if(charge.getFilterExpression()!=null) {
+    				UsageChargeTemplateCache templateCache = charge.getTemplateCache();
+    				if(templateCache.getFilter1()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
+    					if(templateCache.getFilter2()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
+    						if(templateCache.getFilter3()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
+    							if(templateCache.getFilter4()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
+    								if(templateCache.getFilterExpression()!=null) {
     									//TODO: implement EL expression 
     									//javax.el.ELContext elContext = javax.faces.context.FacesContext.getCurrentInstance().getELContext();
     									//javax.el.ExpressionFactory expressionFactory = 
@@ -361,6 +430,14 @@ public class UsageRatingService {
         		edr.setStatus(EDRStatusEnum.REJECTED);
         		edr.setRejectReason("subscription has no usage charge");    			
     		}
+    		} catch (Exception e){
+        		edr.setStatus(EDRStatusEnum.REJECTED);
+        		edr.setRejectReason(e.getMessage());    	
+        		e.printStackTrace();
+    		}
     	}
+    	//put back the original quantity in edr (could have been decrease by counters)
+    	edr.setQuantity(originalQuantity);
+    	edr.setLastUpdate(new Date());
     }    
 }

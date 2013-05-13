@@ -17,6 +17,7 @@ import org.jboss.solder.logging.Logger;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.local.IPersistenceService;
@@ -125,8 +126,18 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl>{
     
     public String executeTimer(){
         try {
-            timerEntityService.manualExecute(timerEntity);
+            JobExecutionResult result=timerEntityService.manualExecute(timerEntity);
             messages.info(new BundleKey("messages", "info.entity.executed"), timerEntity.getJobName());
+            if(result.getErrors()!=null){
+            	for(String error:result.getErrors()){
+            		messages.error("error:"+error);
+            	}
+            }
+            if(result.getWarnings()!=null){
+            	for(String warning:result.getWarnings()){
+            		messages.warn("warn:"+warning);
+            	}
+            }
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.execution"));
             return null;

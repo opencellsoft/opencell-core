@@ -20,6 +20,7 @@ import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
 import org.meveo.services.job.Job;
@@ -69,7 +70,11 @@ public class UsageRatingJob implements Job {
        			try{
        				usageRatingService.ratePostpaidUsage(edr);
        				edrService.update(edr);
-     		 	    result.registerSucces();
+       				if(edr.getStatus()==EDRStatusEnum.RATED){
+       					result.registerSucces();
+       				} else {
+       					result.registerError(edr.getRejectReason());
+       				}
     			} catch (Exception e) {
     				result.registerError(e.getMessage());
     			}		

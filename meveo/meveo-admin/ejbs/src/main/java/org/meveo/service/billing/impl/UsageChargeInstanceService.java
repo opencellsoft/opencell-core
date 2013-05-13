@@ -23,9 +23,11 @@ import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UsageChargeInstance;
+import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -37,19 +39,27 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
 	@EJB
 	UsageRatingService usageRatingService;
+
+    @EJB
+    private CounterInstanceService counterInstanceService;
 	
 	public UsageChargeInstance usageChargeInstanciation(
-			ServiceInstance serviceInstance, UsageChargeTemplate usageChargeTemplate,Date startDate, User creator)
+			ServiceInstance serviceInstance, ServiceUsageChargeTemplate serviceUsageChargeTemplate,Date startDate, User creator)
 			throws BusinessException {
 
 		UsageChargeInstance usageChargeInstance = new UsageChargeInstance();
-		usageChargeInstance.setChargeTemplate(usageChargeTemplate);
+		usageChargeInstance.setChargeTemplate(serviceUsageChargeTemplate.getChargeTemplate());
 		usageChargeInstance.setChargeDate(startDate);
 		usageChargeInstance.setAmountWithoutTax(null);
 		usageChargeInstance.setAmountWithTax(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
-		create(usageChargeInstance, creator, usageChargeTemplate.getProvider());
+		create(usageChargeInstance, creator, serviceInstance.getProvider());
+		if(serviceUsageChargeTemplate.getCounterTemplate()!=null){
+    		CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);
+    		usageChargeInstance.setCounter(counterInstance);
+    		update(usageChargeInstance,creator);
+		}
 		return usageChargeInstance;
 	}
 
