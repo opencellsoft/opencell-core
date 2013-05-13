@@ -57,5 +57,10 @@ public class SubscriptionListBean extends BaseBean<Subscription> {
     protected IPersistenceService<Subscription> getPersistenceService() {
         return subscriptionService;
     }
+    
+    @Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 
 }

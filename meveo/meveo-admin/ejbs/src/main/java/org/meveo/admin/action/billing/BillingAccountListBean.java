@@ -61,4 +61,9 @@ public class BillingAccountListBean extends BaseBean<BillingAccount> {
     protected IPersistenceService<BillingAccount> getPersistenceService() {
         return billingAccountService;
     }
+    
+    @Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }

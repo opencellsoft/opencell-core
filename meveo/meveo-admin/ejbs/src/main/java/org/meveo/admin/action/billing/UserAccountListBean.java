@@ -60,4 +60,9 @@ public class UserAccountListBean extends BaseBean<UserAccount> {
     protected IPersistenceService<UserAccount> getPersistenceService() {
         return userAccountService;
     }
+    
+    @Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }

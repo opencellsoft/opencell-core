@@ -58,4 +58,9 @@ public class CustomerAccountListBean extends BaseBean<CustomerAccount> {
     protected IPersistenceService<CustomerAccount> getPersistenceService() {
         return customerAccountService;
     }
+    
+    @Override
+	protected String getDefaultSort() {
+		return "code";
+	}
 }
