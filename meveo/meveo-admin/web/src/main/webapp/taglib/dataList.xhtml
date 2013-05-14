@@ -50,11 +50,11 @@
 				<ui:insert />
 			</e:sortableDataTable>
 
-				<p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
+				<!-- <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
 					value="#{messages['commons.deleteMultiple']}"
 					action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
 					onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"
-					ajax="false" />
+					ajax="false" /> -->
 
 				<p:commandButton id="#{formId}buttonExport"
 					value="#{messages['commons.exportExcel']}" ajax="false">
