@@ -1,9 +1,23 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml"
-                xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="serviceInstanceId"
+				value="#{serviceInstanceBean.objectId}"></f:viewParam>
+			<f:viewParam name="subscriptionId"
+				value="#{subscriptionBean.objectId}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -11,47 +25,80 @@
 
 	<ui:define name="body">
 
-		<hftl:entityPopup id="serviceTemplatePopup" header="#{messages['serviceTemplate.popup.header']}" backingBean="#{serviceTemplateBean}"
-			searchField1Label="#{messages['serviceTemplate.code']}" searchField1="code" searchField2Label="#{messages['serviceTemplate.description']}"
-			searchField2="description" column1Label="#{messages['serviceTemplate.code']}" column1="code"
-			column2Label="#{messages['serviceTemplate.description']}" column2="description" selection="#{serviceInstanceDetail.entity.serviceTemplate}">
+		<hftl:entityPopup id="serviceTemplatePopup"
+			header="#{messages['serviceTemplate.popup.header']}"
+			backingBean="#{serviceTemplateBean}"
+			searchField1Label="#{messages['serviceTemplate.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['serviceTemplate.description']}"
+			searchField2="description"
+			column1Label="#{messages['serviceTemplate.code']}" column1="code"
+			column2Label="#{messages['serviceTemplate.description']}"
+			column2="description"
+			selection="#{serviceInstanceDetail.entity.serviceTemplate}">
 		</hftl:entityPopup>
 
 
-		<hftl:entityPopup id="subscriptionPopup" header="#{messages['subscription.popup.header']}" backingBean="#{subscriptionBean}"
-			searchField1Label="#{messages['subscription.code']}" searchField1="code" searchField2Label="#{messages['subscription.description']}"
-			searchField2="description" column1Label="#{messages['subscription.code']}" column1="code" column2Label="#{messages['subscription.description']}"
-			column2="description" selection="#{serviceInstanceDetail.entity.subscription}">
+		<hftl:entityPopup id="subscriptionPopup"
+			header="#{messages['subscription.popup.header']}"
+			backingBean="#{subscriptionBean}"
+			searchField1Label="#{messages['subscription.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['subscription.description']}"
+			searchField2="description"
+			column1Label="#{messages['subscription.code']}" column1="code"
+			column2Label="#{messages['subscription.description']}"
+			column2="description"
+			selection="#{serviceInstanceDetail.entity.subscription}">
 		</hftl:entityPopup>
 
-		<hf:formPanel label="#{messages['serviceInstance.panel']}" backingBean="#{serviceInstanceBean}" columns="2">
+		<hf:formPanel label="#{messages['serviceInstance.panel']}"
+			backingBean="#{serviceInstanceBean}" columns="2"
+			killConversationOnBack="#{param['serviceInstanceId'] == null}">
 
-			<hf:formEntityField id="serviceSelectedId" label="#{messages['serviceInstance.code']}" field="serviceTemplate" childField="code" required="true"
-				popup="true" popupId="serviceTemplatePopup" />
+			<hf:formEntityField id="serviceSelectedId"
+				label="#{messages['serviceInstance.code']}" field="serviceTemplate"
+				childField="code" required="true" popup="true"
+				popupId="serviceTemplatePopup" />
 
-			<hf:formEntityField id="subscriptionSelectedId" label="#{messages['serviceInstance.subscription']}" field="subscription" childField="code"
-				required="true" popup="true" popupId="subscriptionPopup" showOnlyOnConsult="true" />
+			<hf:formEntityField id="subscriptionSelectedId"
+				label="#{messages['serviceInstance.subscription']}"
+				field="subscription" childField="code" required="true" popup="true"
+				popupId="subscriptionPopup" showOnlyOnConsult="true" />
 
-			<hf:formField label="#{messages['serviceInstance.description']}" field="description" size="50" maxlength="50" showOnlyOnConsult="true" />
-			<hf:formField label="#{messages['serviceInstance.status']}" field="status" show="#{!serviceInstanceBean.edit}" />
-			<hf:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" show="#{!serviceInstanceBean.edit}" />
-			<hf:formField label="#{messages['serviceInstance.subscriptionDate']}" field="subscriptionDate" />
-			<hf:formField label="#{messages['serviceInstance.endAgrementDate']}" field="endAgrementDate" />
-			<hf:formField label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
+			<hf:formField label="#{messages['serviceInstance.description']}"
+				field="description" size="50" maxlength="50"
+				showOnlyOnConsult="true" />
+			<hf:formField label="#{messages['serviceInstance.status']}"
+				field="status" show="#{!serviceInstanceBean.edit}" />
+			<hf:formField label="#{messages['serviceInstance.statusDate']}"
+				field="statusDate" show="#{!serviceInstanceBean.edit}" />
+			<hf:formField label="#{messages['serviceInstance.subscriptionDate']}"
+				field="subscriptionDate" />
+			<hf:formField label="#{messages['serviceInstance.endAgrementDate']}"
+				field="endAgrementDate" />
+			<hf:formField
+				label="#{messages[serviceInstanceBean.entity.status=='SUSPENDED'?'serviceInstance.suspensionDate':'serviceInstance.terminationDate']}"
 				field="terminationDate" show="#{!serviceInstanceBean.edit}" />
-			<hf:formField label="#{messages['serviceInstance.quantity']}" field="quantity" showOnlyOnNew="true" />
-			<hf:formEntityField label="#{messages['serviceInstance.terminationReason']}" field="subscriptionTerminationReason" childField="description"
+			<hf:formField label="#{messages['serviceInstance.quantity']}"
+				field="quantity" showOnlyOnNew="true" />
+			<hf:formEntityField
+				label="#{messages['serviceInstance.terminationReason']}"
+				field="subscriptionTerminationReason" childField="description"
 				show="#{!serviceInstanceBean.edit and serviceInstanceBean.entity.subscriptionTerminationReason!=null}" />
 		</hf:formPanel>
 
 		<h:form id="operationsForm" rendered="#{!serviceInstanceBean.edit}">
-			<p:commandButton action="#{serviceInstanceBean.activateService}" value="#{messages['button.activateButton']}" ajax="false"
+			<p:commandButton action="#{serviceInstanceBean.activateService}"
+				value="#{messages['button.activateButton']}" ajax="false"
 				onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
 				disabled="#{serviceInstanceBean.entity.status.toString() == 'ACTIVE' or serviceInstanceBean.entity.status.toString() == 'TERMINATED'}" />
-			<p:commandButton action="#{serviceInstanceBean.cancelService}" value="#{messages['button.cancelButton']}" ajax="false"
+			<p:commandButton action="#{serviceInstanceBean.cancelService}"
+				value="#{messages['button.cancelButton']}" ajax="false"
 				onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
 				disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
-			<p:commandButton action="#{serviceInstanceBean.suspendService}" value="#{messages['button.suspendButton']}" ajax="false"
+			<p:commandButton action="#{serviceInstanceBean.suspendService}"
+				value="#{messages['button.suspendButton']}" ajax="false"
 				onclick="if(confirm('#{messages['confirmationMessage.confirmSuspension']}')){return true;}else{return false;}"
 				disabled="#{serviceInstanceBean.entity.status.toString() != 'ACTIVE'}" />
 		</h:form>

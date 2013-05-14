@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This file is not required if you don't need any extra configuration. -->
-<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
@@ -86,7 +87,7 @@
 			<to-view-id>/pages/admin/tradingLanguages/tradingLanguagesDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-				<navigation-case>
+		<navigation-case>
 			<from-outcome>sellers</from-outcome>
 			<to-view-id>/pages/admin/sellers/sellers.xhtml</to-view-id>
 			<redirect />
@@ -96,7 +97,7 @@
 			<to-view-id>/pages/admin/sellers/sellerDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>jobTimers</from-outcome>
 			<to-view-id>/pages/admin/job/timers.xhtml</to-view-id>
@@ -107,13 +108,13 @@
 			<to-view-id>/pages/admin/job/timer.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>timers</from-outcome>
 			<to-view-id>/pages/admin/job/ejbTimers.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>users</from-outcome>
 			<to-view-id>/pages/admin/meveoUsers/users.xhtml</to-view-id>
@@ -457,7 +458,7 @@
 			<to-view-id>/pages/catalog/serviceTemplates/serviceTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>serviceParameterTemplates</from-outcome>
 			<to-view-id>/pages/catalog/serviceParameterTemplates/serviceParameterTemplates.xhtml</to-view-id>
@@ -548,7 +549,7 @@
 			<to-view-id>/pages/catalog/usageChargeTemplates/usageChargeTemplateDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>counterTemplates</from-outcome>
 			<to-view-id>/pages/catalog/counterTemplates/counterTemplates.xhtml</to-view-id>
@@ -747,10 +748,10 @@
 			<from-outcome>subscriptionDetail</from-outcome>
 			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
 			<redirect />
-		</navigation-case>	
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>access</from-outcome>
-			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>			
+			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>userAccounts</from-outcome>
@@ -815,7 +816,12 @@
 		<navigation-case>
 			<from-outcome>serviceInstanceDetail</from-outcome>
 			<to-view-id>/pages/resource/serviceInstances/serviceInstanceDetail.xhtml</to-view-id>
-			<redirect />
+			<redirect include-view-params="true">
+				<view-param>
+					<name>backView</name>
+					<value>subscriptionDetail</value>
+				</view-param>
+			</redirect>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>serviceParameterInstances</from-outcome>
@@ -1025,7 +1031,7 @@
 			</redirect>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<from-view-id>/pages/payments/accountOperations/accountOperationDetail.xhtml</from-view-id>
 		<navigation-case>
@@ -1042,7 +1048,7 @@
 				</view-param>
 			</redirect>
 		</navigation-case>
-	</navigation-rule>	
+	</navigation-rule>
 
 	<navigation-rule>
 		<from-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</from-view-id>
@@ -1155,7 +1161,8 @@
 	<!-- </redirect> -->
 	<!-- </exception> -->
 
-	<!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace"> -->
+	<!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" 
+		log-level="trace"> -->
 	<!-- <http-error error-code="503"/> -->
 	<!-- </exception> -->
 

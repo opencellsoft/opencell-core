@@ -238,9 +238,8 @@
 										<hftl:column
 											label="#{messages['serviceInstance.endAgrementDate']}"
 											field="endAgrementDate" showSortLinks="false" isDate="true" />
-										<hftl:actionsColumn
-											editView="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
-											showSortLinks="false" renderDeleteLink="false" />
+										<hftl:actionsColumn editView="serviceInstanceDetail"
+											showSortLinks="false" renderDeleteLink="false" objectIdParamName="serviceInstanceId" />
 									</p:dataTable>
 								</h:form>
 								<p:outputPanel id="serviceInstOperations">
