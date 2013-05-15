@@ -85,14 +85,16 @@ public class AccessBean extends BaseBean<Access> {
 		this.selectedSubscription = selectedSubscription;
 	}
 
-	public void saveOrUpdate() {
+	public String saveOrUpdate() {
 		Subscription subscription = subscriptionService.findById(subscriptionId.get());
 		entity.setSubscription(subscription);
 		if (accessService.isDuplicate(entity)) {
 			messages.error(new BundleKey("messages", "access.duplicate"));
 		} else {
-			super.saveOrUpdate(false);
+			return super.saveOrUpdate(false);
 		}
+		
+		return "";
 	}
 
 	public void resetEntity() {

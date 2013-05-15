@@ -10,7 +10,7 @@
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/layout/template.xhtml">
-	
+
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView" listener="#{accessBean.preRenderView}" />
@@ -22,33 +22,29 @@
 	</ui:define>
 
 	<ui:define name="body">
-	
+
 		<hftl:entityPopup id="searchSubscriptionPopup"
 			header="#{messages['access.subscription']}"
-			updateField=":searchPanel:searchForm:language:language_child"
-			selection="#{tradingLanguageBean.filters['subscriptions']}"
-			backingBean="#{languageBean}"
-			searchField1Label="#{messages['language.languageCode']}"
-			searchField1="languageCode"
-			column1Label="#{messages['language.languageCode']}"
-			column1="languageCode"
-			column2Label="#{messages['tradingLanguage.prDescription']}"
-			column2="descriptionEn">
+			updateField=":searchPanel:searchForm:subscription:subscription_child"
+			selection="#{accessBean.filters['subscription']}"
+			backingBean="#{subscriptionBean}"
+			searchField1Label="#{messages['subscription.code']}"
+			searchField1="code" column1Label="#{messages['subscription.code']}"
+			column1="code" column2Label="#{messages['subscription.description']}"
+			column2="description">
 		</hftl:entityPopup>
 
-		<hf:searchPanel columns="2" label="#{messages['access.search']}"
-			backingBean="#{accessBean}">
+		<hf:searchPanel id="searchPanel" columns="2"
+			label="#{messages['access.search']}" backingBean="#{accessBean}">
 
 			<hf:searchField label="#{messages['access.accessUserId']}"
 				field="accessUserId" />
-			<hf:searchField label="#{messages['access.discriminatorCode']}"
-				field="discriminatorCode" />
 			<hf:searchField label="#{messages['access.startDate']}"
 				field="startDate" />
 			<hf:searchField label="#{messages['access.endDate']}" field="endDate" />
-			<hf:searchField label="#{messages['access.subscription']}"
-				field="subscriptions" childField="code" popupId="searchSubscriptionPopup" />
-
+			<hf:searchField id="subscription"
+				label="#{messages['access.subscription']}" field="subscription"
+				childField="code" popup="true" popupId="searchSubscriptionPopup" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['access.title']}"
@@ -56,13 +52,14 @@
 			<hftl:column label="#{messages['access.accessUserId']}"
 				field="accessUserId" />
 			<hftl:column label="#{messages['access.startDate']}"
-				field="startDate" />
-			<hftl:column label="#{messages['access.endDate']}" field="endDate" />
-			<hftl:column label="#{messages['access.discriminatorCode']}"
-				field="discriminatorCode" />
+				field="startDate" isDate="true" />
+			<hftl:column label="#{messages['access.endDate']}" field="endDate"
+				isDate="true" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
 
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 
 		<!-- <custom:listPanel label="#{messages['access.title']}" backingBean="#{accessBean}">
