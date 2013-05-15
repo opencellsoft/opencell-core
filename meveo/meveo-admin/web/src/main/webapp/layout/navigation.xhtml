@@ -9,7 +9,7 @@
 	<a:queue />
 
 	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
-    <p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
+	<p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
 	<p:tooltip for="tradingCurrencies">#{help['menu.tradingCurrencies']}</p:tooltip>
 	<p:tooltip for="tradingCountries">#{help['menu.tradingCountries']}</p:tooltip>
 	<p:tooltip for="calendars">#{help['menu.calendars']}</p:tooltip>
@@ -35,12 +35,13 @@
 	<p:tooltip for="billingAccounts">#{help['menu.billingAccounts']}</p:tooltip>
 	<p:tooltip for="userAccounts">#{help['menu.userAccounts']}</p:tooltip>
 	<p:tooltip for="subscriptions">#{help['menu.subscriptions']}</p:tooltip>
-	
+
 	<p:menubar rendered="#{identity.loggedIn}">
 		<p:submenu id="admin" label="#{messages['menu.admin']}"
 			rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
 
-			<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users"
+			<p:menuitem id="users" value="#{messages['menu.users']}"
+				outcome="users"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}" />
 
 			<p:submenu id="trading" label="#{messages['menu.trading']}"
@@ -55,7 +56,7 @@
 					value="#{messages['menu.tradingCountries']}" />
 
 			</p:submenu>
-	  			
+
 			<!--
 			<rich:menuItem id="userRoles" rendered="#{identity.hasPermission('administration','roleManagement')}">
 				<h:link outcome="userRoles">
@@ -67,8 +68,9 @@
 			<p:submenu id="categories" label="#{messages['menu.invoicing']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
 				<p:menuitem
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="calendars" id="calendars" value="#{messages['menu.calendars']}" />
+					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+					outcome="calendars" id="calendars"
+					value="#{messages['menu.calendars']}" />
 
 				<p:menuitem id="taxes"
 					rendered="#{identity.hasPermission('administration','administrationVisualization')}"
@@ -116,8 +118,8 @@
 
 				<p:menuitem id="customerCategories" outcome="customerCategories"
 					value="#{messages['menu.customerCategories']}" />
-				
-				<p:menuitem id="sellers" outcome="sellers" 
+
+				<p:menuitem id="sellers" outcome="sellers"
 					value="#{messages['menu.sellers']}" />
 
 			</p:submenu>
@@ -241,7 +243,7 @@
 
 			<p:menuitem id="serviceTemplates" outcome="serviceTemplates"
 				value="#{messages['menu.serviceTemplates']}" />
-				
+
 
 			<p:submenu id="charges" label="#{messages['menu.charges']}">
 
@@ -254,14 +256,14 @@
 					value="#{messages['menu.oneShotChargeTemplates']}" />
 
 				<p:menuitem id="usageChargeTemplates" outcome="usageChargeTemplates"
-					value="#{messages['menu.usageChargeTemplates']}" /> 
+					value="#{messages['menu.usageChargeTemplates']}" />
 
 			</p:submenu>
 
 			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes"
 				value="#{messages['menu.pricePlanMatrixes']}" />
-				
-           <p:menuitem id="counterTemplates" outcome="counterTemplates"
+
+			<p:menuitem id="counterTemplates" outcome="counterTemplates"
 				value="#{messages['menu.counterTemplates']}" />
 
 			<!--<p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
@@ -301,10 +303,10 @@
 			<p:menuitem id="subscriptions"
 				rendered="#{identity.hasPermission('account','accountVisualization')}"
 				outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
-		
-			<!-- <p:menuitem id="accessPoints"
+
+			<p:menuitem id="accessPoints"
 				rendered="#{identity.hasPermission('account','accountVisualization')}"
-				outcome="accessPoints" value="#{messages['menu.accessPoints']}" /> -->
+				outcome="access" value="#{messages['menu.accessPoints']}" />
 
 			<!--
 			<rich:menuItem id="syntheseClient"
@@ -443,21 +445,21 @@
 			</rich:menuItem>
 			-->
 
-			<p:submenu id="rating" label="#{messages['menu.rating']}"
+			<!-- <p:submenu id="rating" label="#{messages['menu.rating']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
-				<!-- <p:menuitem id="recurringRating" outcome="recurringRating"
-					value="#{messages['menu.globalExecution']}" /> -->
+				<p:menuitem id="recurringRating" outcome="recurringRating"
+					value="#{messages['menu.globalExecution']}" />
 
-				<!-- <p:menuitem id="exceptionalRating" outcome="exceptionalRating"
-					value="#{messages['menu.exceptionalExecution']}" /> -->
+				<p:menuitem id="exceptionalRating" outcome="exceptionalRating"
+					value="#{messages['menu.exceptionalExecution']}" />
 
-				<!-- <p:menuitem id="ratingRuns" outcome="ratingRuns"
-					value="#{messages['menu.history']}" /> -->
+				<p:menuitem id="ratingRuns" outcome="ratingRuns"
+					value="#{messages['menu.history']}" />
 
-			</p:submenu>
+			</p:submenu> -->
 
-			<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
+			<!-- <p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
 				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
@@ -474,39 +476,30 @@
 			<p:submenu id="reports" label="#{messages['menu.reports']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
-				<!-- <p:menuitem id="reportsExecution"
+				<p:menuitem id="reportsExecution"
 					rendered="#{identity.hasPermission('reporting','reportingVisualization')}"
 					outcome="reports" value="#{messages['menu.reportsExecution']}" />
 
 				<p:menuitem id="reportsHistory"
 					rendered="#{identity.hasPermission('billing','billingVisualization')}"
-					outcome="reportsHistory" value="#{messages['menu.history']}" /> -->
-
-				<!--
-				<rich:menuItem id="bordereauRemiseCheque" rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
-					<h:link outcome="bordereauRemiseCheque">
-						<h:outputText value="#{messages['menu.bordereauRemiseCheque']}" />
-					</h:link>
-				</rich:menuItem>
-				-->
+					outcome="reportsHistory" value="#{messages['menu.history']}" />
 
 				<p:menuitem id="documents"
 					rendered="#{identity.hasPermission('reporting','reportingVisualization')}"
 					outcome="documents" value="#{messages['menu.documents']}" />
 
-			</p:submenu>
+			</p:submenu> -->
 
-			<p:submenu id="job" label="#{messages['menu.job']}"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				
-		    	<p:menuitem id="jobs" outcome="jobTimers"
-					value="#{messages['menu.jobs']}" /> 
 
-				<p:menuitem id="timers" outcome="timers"
-					value="#{messages['menu.activeTimers']}" />
-					
-			</p:submenu>
-			
+			<p:menuitem id="jobs" outcome="jobTimers"
+				value="#{messages['menu.jobs']}" />
+
+			<p:menuitem id="jobHistory" outcome="jobTimers"
+				value="#{messages['menu.jobHistory']}" />
+
+			<p:menuitem id="timers" outcome="timers"
+				value="#{messages['menu.activeTimers']}" />
+
 			<!--
 			<rich:dropDownMenu value="#{messages['menu.payments']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
 				<f:facet name="label">

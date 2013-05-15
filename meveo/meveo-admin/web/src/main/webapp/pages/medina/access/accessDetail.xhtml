@@ -17,63 +17,28 @@
 
 	<ui:define name="body">
 
-		<!-- updateField=":formPanel:formId:subscriptionTable" -->
-		<hftl:entityPopup id="subscription"
-			header="#{messages['subscription.popup.header']}"
-			backingBean="#{subscriptionBean}" eventBackingBean="#{accessBean}"
-			updateField=":#{p:component('subscriptionOutputPanel')}"
-			selection="#{accessBean.selectedSubscription}"
+		<hftl:entityPopup id="searchSubscriptionPopup"
+			header="#{messages['access.subscription']}"
+			updateField=":formPanel:formId:subscriptionId:subscriptionId"
+			selection="#{accessBean.entity.subscription}"
+			backingBean="#{subscriptionBean}"
 			searchField1Label="#{messages['subscription.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['subscription.description']}"
-			searchField2="description"
-			column1Label="#{messages['subscription.code']}" column1="code"
-			column2Label="#{messages['subscription.description']}"
-			column2="description" filtersMap="#{subscriptionBean.filters}">
+			searchField1="code" column1Label="#{messages['subscription.code']}"
+			column1="code" column2Label="#{messages['subscription.description']}"
+			column2="description">
 		</hftl:entityPopup>
 
-
 		<hf:formPanel id="formPanel" label="#{messages['access.accessPanel']}"
-			backingBean="#{accessBean}" columns="1">
+			backingBean="#{accessBean}" columns="2">
 			<hf:formField label="#{messages['access.accessUserId']}"
 				field="accessUserId" />
-			<hf:formField label="#{messages['access.discriminatorCode']}"
-				field="discriminatorCode" />
+			<hf:formEntityField id="subscriptionId"
+				label="#{messages['access.subscription']}" field="subscription"
+				childField="code" popup="true" popupId="searchSubscriptionPopup" />
 			<hf:formField label="#{messages['access.startDate']}"
 				field="startDate" />
 			<hf:formField label="#{messages['access.endDate']}" field="endDate" />
 		</hf:formPanel>
-
-		<h:form>
-			<p:outputPanel id="subscriptionOutputPanel">
-				<p:dataTable id="subscriptionTable" var="s"
-					value="#{accessBean.entity.subscriptions}" rowKey="#{entity.id}">
-
-					<f:facet name="header">#{messages['subscription.title']}</f:facet>
-
-					<p:column headerText="#{messages['subscription.code']}">#{s.code}</p:column>
-					<p:column headerText="#{messages['subscription.description']}">#{s.description}</p:column>
-					<p:column>
-						<p:tooltip for="deletelink" value="#{messages['commons.delete']}"
-							showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="deletelink"
-							action="#{accessBean.delete(accessBean.entity.id)}" icon="ui-icon-trash"
-							ajax="true" />
-					</p:column>
-
-					<!-- <hftl:actionsColumn useCustomIdParam="true"
-						renderDeleteLink="false"
-						permission="#{identity.hasPermission('billing','billingManagement')}" /> -->
-
-					<f:facet name="footer">
-						<p:commandButton value="#{messages['commons.addNew']}" ajax="true"
-							rendered="#{accessBean.edit}" icon="ui-icon-search"
-							oncomplete="dlg_subscription.show()" />
-					</f:facet>
-
-				</p:dataTable>
-			</p:outputPanel>
-		</h:form>
 
 	</ui:define>
 
