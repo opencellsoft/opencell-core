@@ -445,21 +445,21 @@
 			</rich:menuItem>
 			-->
 
-			<p:submenu id="rating" label="#{messages['menu.rating']}"
+			<!-- <p:submenu id="rating" label="#{messages['menu.rating']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
-				<!-- <p:menuitem id="recurringRating" outcome="recurringRating"
-					value="#{messages['menu.globalExecution']}" /> -->
+				<p:menuitem id="recurringRating" outcome="recurringRating"
+					value="#{messages['menu.globalExecution']}" />
 
-				<!-- <p:menuitem id="exceptionalRating" outcome="exceptionalRating"
-					value="#{messages['menu.exceptionalExecution']}" /> -->
+				<p:menuitem id="exceptionalRating" outcome="exceptionalRating"
+					value="#{messages['menu.exceptionalExecution']}" />
 
-				<!-- <p:menuitem id="ratingRuns" outcome="ratingRuns"
-					value="#{messages['menu.history']}" /> -->
+				<p:menuitem id="ratingRuns" outcome="ratingRuns"
+					value="#{messages['menu.history']}" />
 
-			</p:submenu>
+			</p:submenu> -->
 
-			<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
+			<!-- <p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
 				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
@@ -476,38 +476,29 @@
 			<p:submenu id="reports" label="#{messages['menu.reports']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
-				<!-- <p:menuitem id="reportsExecution"
+				<p:menuitem id="reportsExecution"
 					rendered="#{identity.hasPermission('reporting','reportingVisualization')}"
 					outcome="reports" value="#{messages['menu.reportsExecution']}" />
 
 				<p:menuitem id="reportsHistory"
 					rendered="#{identity.hasPermission('billing','billingVisualization')}"
-					outcome="reportsHistory" value="#{messages['menu.history']}" /> -->
-
-				<!--
-				<rich:menuItem id="bordereauRemiseCheque" rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
-					<h:link outcome="bordereauRemiseCheque">
-						<h:outputText value="#{messages['menu.bordereauRemiseCheque']}" />
-					</h:link>
-				</rich:menuItem>
-				-->
+					outcome="reportsHistory" value="#{messages['menu.history']}" />
 
 				<p:menuitem id="documents"
 					rendered="#{identity.hasPermission('reporting','reportingVisualization')}"
 					outcome="documents" value="#{messages['menu.documents']}" />
 
-			</p:submenu>
+			</p:submenu> -->
 
-			<p:submenu id="job" label="#{messages['menu.job']}"
-				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
 
-				<p:menuitem id="jobs" outcome="jobTimers"
-					value="#{messages['menu.jobs']}" />
+			<p:menuitem id="jobs" outcome="jobTimers"
+				value="#{messages['menu.jobs']}" />
 
-				<p:menuitem id="timers" outcome="timers"
-					value="#{messages['menu.activeTimers']}" />
+			<p:menuitem id="jobHistory" outcome="jobTimers"
+				value="#{messages['menu.jobHistory']}" />
 
-			</p:submenu>
+			<p:menuitem id="timers" outcome="timers"
+				value="#{messages['menu.activeTimers']}" />
 
 			<!--
 			<rich:dropDownMenu value="#{messages['menu.payments']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
