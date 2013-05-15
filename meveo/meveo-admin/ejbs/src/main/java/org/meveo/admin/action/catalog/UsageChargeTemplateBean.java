@@ -19,12 +19,15 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
 
@@ -41,6 +44,12 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	@Inject
 	private UsageChargeTemplateService usageChargeTemplateService;
+
+	@Inject
+	private RecurringChargeTemplateService recurringChargeTemplateService;
+
+	@Inject
+	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
 	@Inject
 	private CatMessagesService catMessagesService;
@@ -83,6 +92,14 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	 */
 	public String saveOrUpdate(boolean killConversation) {
 		String back = null;
+
+		// check for unicity
+		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
+				|| recurringChargeTemplateService.findByCode(entity.getCode()) != null) {
+			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
+			return null;
+		}
+
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
@@ -126,7 +143,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	public void setDescriptionFr(String descriptionFr) {
 		this.descriptionFr = descriptionFr;
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
