@@ -48,7 +48,8 @@
 
 		<p:button id="backButton" value="#{messages['action.back']}"
 			outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
-			<c:if test="#{not cc.attrs.killConversationOnBack}">
+			
+			<c:if test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">
 				<f:param name="cid" value="#{conversation.id}" />
 			</c:if>
 		</p:button>
