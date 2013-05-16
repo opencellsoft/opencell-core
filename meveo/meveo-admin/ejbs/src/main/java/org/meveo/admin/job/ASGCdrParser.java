@@ -29,7 +29,7 @@ public class ASGCdrParser implements CSVCDRParser{
 		public long timestamp; 	
 		
 		public String toString(){
-			return quantity+"\t"+user_id+"\t"+service_id+"\t"+id_type+"\t"+unit+"\t"+timestamp;
+			return quantity+"\t"+user_id+"\t"+service_id+"\t"+id_type+"\t"+unit+"\t"+sdf1.format(new Date(timestamp));
 			
 		}
 	}
@@ -104,9 +104,9 @@ public class ASGCdrParser implements CSVCDRParser{
 		if(result==null || result.trim().length()==0){
 			throw new InvalidAccessException(cdr);
 		}
-		if(((CDR)cdr).service_id!=null && (((CDR)cdr).service_id.length()>0) ){
+		/*if(((CDR)cdr).service_id!=null && (((CDR)cdr).service_id.length()>0) ){
 			result+="_"+((CDR)cdr).service_id;
-		}
+		}*/
 		return result;
 	}
 
