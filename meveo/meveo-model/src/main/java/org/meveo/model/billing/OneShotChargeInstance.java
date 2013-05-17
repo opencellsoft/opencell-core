@@ -24,6 +24,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 
 /**
@@ -53,13 +54,14 @@ public class OneShotChargeInstance extends ChargeInstance {
 
 
     public OneShotChargeInstance(String code, String description, Date chargeDate, BigDecimal amountWithoutTax,
-            BigDecimal amount2, Subscription subscription, OneShotChargeTemplate oneShotChargeTemplate) {
+            BigDecimal amount2, Subscription subscription, OneShotChargeTemplate oneShotChargeTemplate, Seller seller) {
         this.code = code;
         this.description = description;
         setChargeDate(chargeDate);
         setAmountWithoutTax(amountWithoutTax);
         setAmountWithTax(amount2);
         this.subscription = subscription;
+        this.setSeller(seller);
         this.chargeTemplate = oneShotChargeTemplate;
         this.status = InstanceStatusEnum.ACTIVE;
     }

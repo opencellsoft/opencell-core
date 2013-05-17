@@ -24,6 +24,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -78,7 +79,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 	}
 
 	public void recurringChargeInstanciation(ServiceInstance serviceInst, String chargeCode,
-			Date subscriptionDate, User creator) throws BusinessException {
+			Date subscriptionDate, Seller seller, User creator) throws BusinessException {
 
 		if (serviceInst == null) {
 			throw new BusinessException("service instance does not exist.");
@@ -107,6 +108,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		chargeInstance.setChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setServiceInstance(serviceInst);
+		chargeInstance.setSeller(seller);
 		recurringChargeInstanceService.create(chargeInstance, creator,recurringChargeTemplate.getProvider());
 
 	}

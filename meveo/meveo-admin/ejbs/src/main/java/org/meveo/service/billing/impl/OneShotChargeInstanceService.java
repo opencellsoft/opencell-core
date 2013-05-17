@@ -26,6 +26,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -66,7 +67,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 	public OneShotChargeInstance oneShotChargeInstanciation(Subscription subscription,
 			ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, Date effetDate,
-			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity, User creator)
+			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity, Seller seller, User creator)
 			throws BusinessException {
 
 		if (quantity == null) {
@@ -74,7 +75,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		}
 		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(
 				chargeTemplate.getCode(), chargeTemplate.getDescription(), effetDate,
-				amoutWithoutTax, amoutWithoutTx2, subscription, chargeTemplate);
+				amoutWithoutTax, amoutWithoutTx2, subscription, chargeTemplate,seller);
 		oneShotChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
 			oneShotChargeInstance.setTerminationServiceInstance(serviceInstance);
@@ -82,6 +83,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			oneShotChargeInstance.setSubscriptionServiceInstance(serviceInstance);
 		}
 		oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+		
 		create(oneShotChargeInstance, creator, chargeTemplate.getProvider());
 		return oneShotChargeInstance;
 	}
@@ -89,7 +91,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	public Long oneShotChargeApplication(Subscription subscription,
 			OneShotChargeTemplate chargetemplate, Date effetDate, BigDecimal amoutWithoutTax,
 			BigDecimal amoutWithoutTx2, Integer quantity, String criteria1, String criteria2,
-			String criteria3, User creator) throws BusinessException {
+			String criteria3, Seller seller, User creator) throws BusinessException {
 
 		if (quantity == null) {
 			quantity = 1;
@@ -106,7 +108,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(
 				chargetemplate.getCode(), chargetemplate.getDescription(), effetDate,
-				amoutWithoutTax, amoutWithoutTx2, subscription, chargetemplate);
+				amoutWithoutTax, amoutWithoutTx2, subscription, chargetemplate,seller);
 		oneShotChargeInstance.setCriteria1(criteria1);
 		oneShotChargeInstance.setCriteria2(criteria2);
 		oneShotChargeInstance.setCriteria3(criteria3);

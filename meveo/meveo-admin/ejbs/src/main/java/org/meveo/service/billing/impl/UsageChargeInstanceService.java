@@ -22,6 +22,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -44,7 +45,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     private CounterInstanceService counterInstanceService;
 	
 	public UsageChargeInstance usageChargeInstanciation(
-			ServiceInstance serviceInstance, ServiceUsageChargeTemplate serviceUsageChargeTemplate,Date startDate, User creator)
+			ServiceInstance serviceInstance, ServiceUsageChargeTemplate serviceUsageChargeTemplate,Date startDate, Seller seller, User creator)
 			throws BusinessException {
 
 		UsageChargeInstance usageChargeInstance = new UsageChargeInstance();
@@ -54,6 +55,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setAmountWithTax(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
+		usageChargeInstance.setSeller(seller);
 		create(usageChargeInstance, creator, serviceInstance.getProvider());
 		if(serviceUsageChargeTemplate.getCounterTemplate()!=null){
     		CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance.getSubscription().getUserAccount(), serviceUsageChargeTemplate.getCounterTemplate(), creator);

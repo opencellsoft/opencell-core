@@ -16,9 +16,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -30,16 +28,13 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.ApplicationChgStatusEnum;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -49,11 +44,9 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.ServiceUsageChargeTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -137,6 +130,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("service instance already created. service Code="
                     + serviceInstance.getCode() + ",subscription Code" + subscription.getCode());
         }
+        Seller seller = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
 
         if (serviceInstance.getSubscriptionDate()==null){
             serviceInstance.setSubscriptionDate(new Date());
@@ -149,21 +143,21 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
         for (RecurringChargeTemplate recurringChargeTemplate : serviceTemplate.getRecurringCharges()) {
             chargeInstanceService.recurringChargeInstanciation(serviceInstance, recurringChargeTemplate.getCode(),
-                    serviceInstance.getSubscriptionDate(), creator);
+                    serviceInstance.getSubscriptionDate(),seller, creator);
         }
 
         for (OneShotChargeTemplate subscriptionChargeTemplate : serviceTemplate.getSubscriptionCharges()) {
             oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-                    subscriptionChargeTemplate, serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, creator);
+                    subscriptionChargeTemplate, serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1,seller, creator);
         }
 
         for (OneShotChargeTemplate terminationChargeTemplate : serviceTemplate.getTerminationCharges()) {
             oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-                    terminationChargeTemplate, serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, creator);
+                    terminationChargeTemplate, serviceInstance.getSubscriptionDate(), terminationAmount, null, 1,seller, creator);
         }
         
         for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()){        	
-        	usageChargeInstanceService.usageChargeInstanciation(serviceInstance, serviceUsageChargeTemplate,serviceInstance.getSubscriptionDate(),  creator);
+        	usageChargeInstanceService.usageChargeInstanciation(serviceInstance, serviceUsageChargeTemplate,serviceInstance.getSubscriptionDate(),seller,  creator);
         }
     }
 

@@ -223,13 +223,15 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				}
 
 				oneShotChargeInstance.setSubscription(entity);
+				oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 				Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity,
 						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
 						oneShotChargeInstance.getChargeDate(),
 						oneShotChargeInstance.getAmountWithoutTax(),
 						oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
 						oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(),
-						oneShotChargeInstance.getCriteria3(), getCurrentUser());
+						oneShotChargeInstance.getCriteria3(),
+						oneShotChargeInstance.getSeller(),getCurrentUser());
 				oneShotChargeInstance.setId(id);
 				oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate()
 						.getProvider());

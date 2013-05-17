@@ -17,8 +17,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.infinispan.Cache;
-import org.infinispan.manager.CacheContainer;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;

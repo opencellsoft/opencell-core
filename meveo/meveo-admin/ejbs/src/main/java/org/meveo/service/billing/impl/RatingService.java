@@ -41,7 +41,6 @@ public class RatingService {
     private static boolean isPricePlanDirty;
     private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
 
-    private static final String WILCARD = "*";
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
     public static void setPricePlanDirty(){
