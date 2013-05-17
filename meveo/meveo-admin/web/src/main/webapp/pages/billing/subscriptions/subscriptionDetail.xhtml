@@ -239,7 +239,8 @@
 											label="#{messages['serviceInstance.endAgrementDate']}"
 											field="endAgrementDate" showSortLinks="false" isDate="true" />
 										<hftl:actionsColumn editView="serviceInstanceDetail"
-											showSortLinks="false" renderDeleteLink="false" objectIdParamName="serviceInstanceId" />
+											showSortLinks="false" renderDeleteLink="false"
+											objectIdParamName="serviceInstanceId" />
 									</p:dataTable>
 								</h:form>
 								<p:outputPanel id="serviceInstOperations">
@@ -269,17 +270,20 @@
 
 								<h:outputText
 									value="#{messages['subscription.subscribableServices']}:" />
+
 								<h:form id="ST_results2_form" prependId="false">
-									<p:dataTable value="#{subscriptionBean.serviceTemplates}"
-										var="entity"
-										selection="#{subscriptionBean.serviceTemplates.selectedItems}">
-										<p:column selectionMode="multiple" />
-										<hftl:column label="#{messages['serviceTemplate.code']}"
-											field="code" />
-										<hftl:column
-											label="#{messages['serviceTemplate.description']}"
-											field="description" />
-									</p:dataTable>
+									<p:outputPanel id="ST_results2_formPanel">
+										<p:dataTable value="#{subscriptionBean.serviceTemplates}"
+											var="entity" rowKey="#{entity.id}"
+											selection="#{subscriptionBean.serviceTemplates.selectedItems}">
+											<p:column selectionMode="multiple" />
+											<hftl:column label="#{messages['serviceTemplate.code']}"
+												field="code" />
+											<hftl:column
+												label="#{messages['serviceTemplate.description']}"
+												field="description" />
+										</p:dataTable>
+									</p:outputPanel>
 									<br />
 									<br />
 									<div style="text-align: center;">
@@ -291,9 +295,8 @@
 											<p:commandButton id="cbutton"
 												action="#{subscriptionBean.instanciateManyServices}"
 												value="#{messages['button.instanciateButton']}" ajax="true"
-												update=":subscriptionTab:ST_results2_form :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form" />
-											<!-- 												update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" -->
-
+												update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form" />
+											<!-- update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" -->
 										</p:panelGrid>
 									</div>
 								</h:form>

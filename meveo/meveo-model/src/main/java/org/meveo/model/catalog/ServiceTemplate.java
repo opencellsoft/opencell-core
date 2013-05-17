@@ -28,7 +28,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.ServiceInstance;
 
 /**
@@ -54,10 +53,9 @@ public class ServiceTemplate extends BusinessEntity {
 	@JoinTable(name = "CAT_SERV_ONECHARGE_T_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
 	private List<OneShotChargeTemplate> terminationCharges = new ArrayList<OneShotChargeTemplate>();
 
-	 @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
-	 private List<ServiceUsageChargeTemplate> serviceUsageCharges=new ArrayList<ServiceUsageChargeTemplate>();
-	    
-	
+	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
+	private List<ServiceUsageChargeTemplate> serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplate>();
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DURATION_TERM_CALENDAR")
 	private Calendar durationTermCalendar;
@@ -101,8 +99,7 @@ public class ServiceTemplate extends BusinessEntity {
 		return serviceUsageCharges;
 	}
 
-	public void setServiceUsageCharges(
-			List<ServiceUsageChargeTemplate> serviceUsageCharges) {
+	public void setServiceUsageCharges(List<ServiceUsageChargeTemplate> serviceUsageCharges) {
 		this.serviceUsageCharges = serviceUsageCharges;
 	}
 
@@ -112,6 +109,21 @@ public class ServiceTemplate extends BusinessEntity {
 
 	public void setDurationTermCalendar(Calendar durationTermCalendar) {
 		this.durationTermCalendar = durationTermCalendar;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		BusinessEntity other = (BusinessEntity) obj;
+		if (code == null) {
+			if (other.getCode() != null)
+				return false;
+		} else if (!code.equals(other.getCode()))
+			return false;
+		return true;
 	}
 
 }

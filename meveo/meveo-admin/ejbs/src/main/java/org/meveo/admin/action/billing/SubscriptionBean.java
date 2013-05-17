@@ -161,7 +161,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		log.info("serviceInstances=" + serviceInstances.getSize());
 		log.info("servicetemplates=" + serviceTemplates.getSize());
 		return entity;
-
 	}
 
 	/*
