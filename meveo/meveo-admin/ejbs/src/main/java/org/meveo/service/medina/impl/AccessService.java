@@ -31,6 +31,7 @@ public class AccessService extends PersistenceService<Access> {
 
 	@SuppressWarnings("unchecked")
 	public List<Access> findByUserID(String userId) {
+		log.info("findByUserID '"+userId+"'");
 		List<Access> result = new ArrayList<Access>();
 		if (userId != null && userId.length() > 0) {
 			Query query = em.createQuery("from Access a where a.accessUserId=:accessUserId")
