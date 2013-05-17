@@ -213,6 +213,14 @@ public class PricePlanMatrix extends AuditableEntity {
 		this.tradingCountry = tradingCountry;
 	}
 
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
 	public Seller getSeller() {
 		return seller;
 	}
