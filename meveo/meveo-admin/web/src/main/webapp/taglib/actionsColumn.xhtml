@@ -57,10 +57,19 @@
 		</p:button>
 		<p:tooltip for="#{resultsId}deletelink"
 			value="#{messages['commons.delete']}" showEffect="slide"
-			hideEffect="slide" rendered="#{renderDeleteLink}"/>
-		<p:commandButton id="#{resultsId}deletelink"
-			action="#{backingBean.delete(entity.id)}" icon="ui-icon-trash"
-			rendered="#{renderDeleteLink}" ajax="false" />
+			hideEffect="slide" rendered="#{renderDeleteLink}" />
+		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
+			rendered="#{renderDeleteLink}" ajax="false"
+			onclick="confirmDeleteWidget.show()" type="button" />
+		<p:confirmDialog id="confirmDialog"
+			message="#{messages['commons.confirmDelete']}" header=""
+			severity="alert" widgetVar="confirmDeleteWidget">
+			<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
+				oncomplete="confirmDeleteWidget.hide()" ajax="false"
+				action="#{backingBean.delete(entity.id)}" />
+			<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
+				onclick="confirmDeleteWidget.hide()" type="button" />
+		</p:confirmDialog>
 	</p:column>
 </ui:composition>
 
