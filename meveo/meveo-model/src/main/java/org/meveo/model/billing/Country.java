@@ -106,7 +106,8 @@ public class Country  extends ProviderlessEntity{
 	}
 
 
-	 
-
+	public String toString(){
+		return countryCode;
+	}
 
 }

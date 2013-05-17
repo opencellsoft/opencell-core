@@ -101,7 +101,9 @@ public class TradingCountry  extends AuditableEntity{
 	}
 
  
-
+	public String toString(){
+		return ""+country;
+	}
 	 
 
 

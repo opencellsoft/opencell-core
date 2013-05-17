@@ -84,7 +84,7 @@ public class Currency extends ProviderlessEntity {
 	}
 
 	public String toString() {
-		return descriptionEn;
+		return currencyCode;
 	}
 
 	public boolean isTransient() {

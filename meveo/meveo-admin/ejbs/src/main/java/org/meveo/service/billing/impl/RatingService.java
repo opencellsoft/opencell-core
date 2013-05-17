@@ -143,19 +143,26 @@ public class RatingService {
 
     private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId) {
         // FIXME: the price plan properties could be null !
+
+    	log.debug("rate "+bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
+        	log.debug("try pricePlan"+pricePlan);
             boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
             if (!sellerAreEqual) {
                 continue;
             }
+        	log.debug("sellerAreEqual");
+            
             boolean countryAreEqual = pricePlan.getTradingCountry() == null || pricePlan.getTradingCountry().getId().equals(countryId);
             if (!countryAreEqual) {
                 continue;
             }
+        	log.debug("countryAreEqual");
             boolean currencyAreEqual = pricePlan.getTradingCurrency() == null || (tcurrency != null && tcurrency.getId().equals(pricePlan.getTradingCurrency().getId()));
             if (!currencyAreEqual) {
                 continue;
             }
+        	log.debug("currencyAreEqual");
             boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null
                     || ((pricePlan.getStartSubscriptionDate() == null || bareOperation.getSubscriptionDate().after(pricePlan.getStartSubscriptionDate()) || bareOperation
                         .getSubscriptionDate().equals(pricePlan.getStartSubscriptionDate())) && (pricePlan.getEndSubscriptionDate() == null || bareOperation.getSubscriptionDate()
@@ -163,6 +170,7 @@ public class RatingService {
             if (!subscriptionDateInPricePlanPeriod) {
                 continue;
             }
+        	log.debug("subscriptionDateInPricePlanPeriod");
 
             int subscriptionAge = 0;
             if (bareOperation.getSubscriptionDate() != null && bareOperation.getOperationDate() != null) {
@@ -175,12 +183,14 @@ public class RatingService {
             if (!subscriptionMinAgeOK) {
                 continue;
             }
+        	log.debug("subscriptionMinAgeOK");
 
             boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null  || pricePlan.getMaxSubscriptionAgeInMonth() == 0  || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
             log.debug("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
                 continue;
             }
+        	log.debug("subscriptionMaxAgeOK");
 
             boolean applicationDateInPricePlanPeriod = (pricePlan.getStartRatingDate() == null || bareOperation.getOperationDate().after(pricePlan.getStartRatingDate()) || bareOperation
                 .getOperationDate().equals(pricePlan.getStartRatingDate()))
@@ -189,19 +199,23 @@ public class RatingService {
             if (!applicationDateInPricePlanPeriod) {
                 continue;
             }
+        	log.debug("applicationDateInPricePlanPeriod");
             boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null || pricePlan.getCriteria1Value().equals(bareOperation.getParameter1());
             log.debug("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
                 continue;
             }
+        	log.debug("criteria1SameInPricePlan");
             boolean criteria2SameInPricePlan = pricePlan.getCriteria2Value()==null || pricePlan.getCriteria2Value().equals(bareOperation.getParameter2());
             log.debug("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
                 continue;
             }
+        	log.debug("criteria2SameInPricePlan");
             boolean criteria3SameInPricePlan = pricePlan.getCriteria3Value()==null || pricePlan.getCriteria3Value().equals(bareOperation.getParameter3());
             log.debug("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (criteria3SameInPricePlan) {
+            	log.debug("criteria3SameInPricePlan");
                 return pricePlan;
             }
         }
@@ -222,7 +236,7 @@ public class RatingService {
     @SuppressWarnings("unchecked")
     protected void loadPricePlan() {
         HashMap<String, HashMap<String, List<PricePlanMatrix>>> result = new HashMap<String, HashMap<String, List<PricePlanMatrix>>>();
-        List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery("from PricePlanMatrix").getResultList();
+        List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery("from PricePlanMatrix order by priority ASC").getResultList();
         if (allPricePlans != null & allPricePlans.size() > 0) {
             for (PricePlanMatrix pricePlan : allPricePlans) {
                 if (!result.containsKey(pricePlan.getProvider().getCode())) {
@@ -240,7 +254,7 @@ public class RatingService {
                 		pricePlan.setCriteria3Value(null);
                 	}
                     providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
-                    log.error("Added pricePlan for provider=" + pricePlan.getProvider().getCode() + " chargeCode=" + pricePlan.getEventCode());
+                    log.error("Added pricePlan for provider=" + pricePlan.getProvider().getCode() + " priceplan=" + pricePlan);
                 }
                 providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
             }
