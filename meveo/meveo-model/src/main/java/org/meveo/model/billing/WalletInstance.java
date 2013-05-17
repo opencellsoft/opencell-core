@@ -66,7 +66,7 @@ public class WalletInstance extends BusinessEntity {
 	}
 
 	public String toString() {
-        return walletTemplate.getCode();
+        return walletTemplate==null?null:walletTemplate.getCode();
     }
 
     public UserAccount getUserAccount() {

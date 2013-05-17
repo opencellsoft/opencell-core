@@ -236,7 +236,7 @@ public class RatingService {
     @SuppressWarnings("unchecked")
     protected void loadPricePlan() {
         HashMap<String, HashMap<String, List<PricePlanMatrix>>> result = new HashMap<String, HashMap<String, List<PricePlanMatrix>>>();
-        List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery("from PricePlanMatrix order by priority ASC").getResultList();
+        List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery("from PricePlanMatrix where disabled=false order by priority ASC").getResultList();
         if (allPricePlans != null & allPricePlans.size() > 0) {
             for (PricePlanMatrix pricePlan : allPricePlans) {
                 if (!result.containsKey(pricePlan.getProvider().getCode())) {
