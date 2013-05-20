@@ -144,25 +144,25 @@ public class RatingService {
     private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId) {
         // FIXME: the price plan properties could be null !
 
-    	log.debug("rate "+bareOperation);
+    	log.info("rate "+bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
-        	log.debug("try pricePlan"+pricePlan);
+        	log.info("try pricePlan"+pricePlan);
             boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
             if (!sellerAreEqual) {
                 continue;
             }
-        	log.debug("sellerAreEqual");
+        	log.info("sellerAreEqual");
             
             boolean countryAreEqual = pricePlan.getTradingCountry() == null || pricePlan.getTradingCountry().getId().equals(countryId);
             if (!countryAreEqual) {
                 continue;
             }
-        	log.debug("countryAreEqual");
+        	log.info("countryAreEqual");
             boolean currencyAreEqual = pricePlan.getTradingCurrency() == null || (tcurrency != null && tcurrency.getId().equals(pricePlan.getTradingCurrency().getId()));
             if (!currencyAreEqual) {
                 continue;
             }
-        	log.debug("currencyAreEqual");
+        	log.info("currencyAreEqual");
             boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null
                     || ((pricePlan.getStartSubscriptionDate() == null || bareOperation.getSubscriptionDate().after(pricePlan.getStartSubscriptionDate()) || bareOperation
                         .getSubscriptionDate().equals(pricePlan.getStartSubscriptionDate())) && (pricePlan.getEndSubscriptionDate() == null || bareOperation.getSubscriptionDate()
@@ -170,27 +170,27 @@ public class RatingService {
             if (!subscriptionDateInPricePlanPeriod) {
                 continue;
             }
-        	log.debug("subscriptionDateInPricePlanPeriod");
+        	log.info("subscriptionDateInPricePlanPeriod");
 
             int subscriptionAge = 0;
             if (bareOperation.getSubscriptionDate() != null && bareOperation.getOperationDate() != null) {
                 // logger.info("subscriptionDate=" + bareOperation.getSubscriptionDate() + "->" + DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
                 subscriptionAge = DateUtils.monthsBetween(bareOperation.getOperationDate(), DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
             }
-            log.debug("subscriptionAge=" + subscriptionAge);
+            log.info("subscriptionAge=" + subscriptionAge);
             boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-            log.debug("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" + subscriptionMinAgeOK);
+            log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" + subscriptionMinAgeOK);
             if (!subscriptionMinAgeOK) {
                 continue;
             }
-        	log.debug("subscriptionMinAgeOK");
+        	log.info("subscriptionMinAgeOK");
 
             boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null  || pricePlan.getMaxSubscriptionAgeInMonth() == 0  || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
-            log.debug("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
+            log.info("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
                 continue;
             }
-        	log.debug("subscriptionMaxAgeOK");
+        	log.info("subscriptionMaxAgeOK");
 
             boolean applicationDateInPricePlanPeriod = (pricePlan.getStartRatingDate() == null || bareOperation.getOperationDate().after(pricePlan.getStartRatingDate()) || bareOperation
                 .getOperationDate().equals(pricePlan.getStartRatingDate()))
@@ -199,23 +199,23 @@ public class RatingService {
             if (!applicationDateInPricePlanPeriod) {
                 continue;
             }
-        	log.debug("applicationDateInPricePlanPeriod");
+        	log.info("applicationDateInPricePlanPeriod");
             boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null || pricePlan.getCriteria1Value().equals(bareOperation.getParameter1());
-            log.debug("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
+            log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
                 continue;
             }
-        	log.debug("criteria1SameInPricePlan");
+        	log.info("criteria1SameInPricePlan");
             boolean criteria2SameInPricePlan = pricePlan.getCriteria2Value()==null || pricePlan.getCriteria2Value().equals(bareOperation.getParameter2());
-            log.debug("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
+            log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
                 continue;
             }
-        	log.debug("criteria2SameInPricePlan");
+        	log.info("criteria2SameInPricePlan");
             boolean criteria3SameInPricePlan = pricePlan.getCriteria3Value()==null || pricePlan.getCriteria3Value().equals(bareOperation.getParameter3());
-            log.debug("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
+            log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (criteria3SameInPricePlan) {
-            	log.debug("criteria3SameInPricePlan");
+            	log.info("criteria3SameInPricePlan");
                 return pricePlan;
             }
         }
