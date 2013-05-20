@@ -129,6 +129,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		if (userAccountId != null) {
 			UserAccount userAccount = userAccountService.findById(getUserAccountId());
 			populateAccounts(userAccount);
+
+			// check if has default
+			if (!userAccount.getDefaultLevel()) {
+				entity.setDefaultLevel(true);
+			}
 		}
 		if (entity.getId() == null) {
 			Calendar calendar = Calendar.getInstance();
@@ -223,15 +228,16 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				}
 
 				oneShotChargeInstance.setSubscription(entity);
-				oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+				oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount()
+						.getCustomerAccount().getCustomer().getSeller());
 				Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity,
 						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
 						oneShotChargeInstance.getChargeDate(),
 						oneShotChargeInstance.getAmountWithoutTax(),
 						oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
 						oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(),
-						oneShotChargeInstance.getCriteria3(),
-						oneShotChargeInstance.getSeller(),getCurrentUser());
+						oneShotChargeInstance.getCriteria3(), oneShotChargeInstance.getSeller(),
+						getCurrentUser());
 				oneShotChargeInstance.setId(id);
 				oneShotChargeInstance.setProvider(oneShotChargeInstance.getChargeTemplate()
 						.getProvider());

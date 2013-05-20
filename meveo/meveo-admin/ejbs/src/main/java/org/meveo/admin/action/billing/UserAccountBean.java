@@ -104,6 +104,11 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 			BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 			entity.setBillingAccount(billingAccount);
 			populateAccounts(billingAccount);
+
+			// check if has default
+			if (!billingAccount.getDefaultLevel()) {
+				entity.setDefaultLevel(true);
+			}
 		}
 		return entity;
 	}

@@ -105,6 +105,11 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 		if (entity.getId() == null && getCustomerId() != null) {
 			Customer customer = customerService.findById(getCustomerId());
 			populateAccounts(customer);
+
+			// check if has default
+			if (!customer.getDefaultLevel()) {
+				entity.setDefaultLevel(true);
+			}
 		}
 		if (getTab() != null) {
 			selectedTab = getTab();
