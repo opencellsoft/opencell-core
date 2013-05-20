@@ -61,14 +61,16 @@
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
 			rendered="#{renderDeleteLink}" ajax="false"
 			onclick="confirmDeleteWidget.show()" type="button" />
-		<p:confirmDialog id="confirmDialog"
+		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header=""
 			severity="alert" widgetVar="confirmDeleteWidget">
-			<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-				oncomplete="confirmDeleteWidget.hide()" ajax="false"
-				action="#{backingBean.delete(entity.id)}" />
-			<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
-				onclick="confirmDeleteWidget.hide()" type="button" />
+			<p:panel styleClass="confirm-dialog-content">
+				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
+					oncomplete="confirmDeleteWidget.hide()" ajax="false"
+					action="#{backingBean.delete(entity.id)}" />
+				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
+					onclick="confirmDeleteWidget.hide()" type="button" />
+			</p:panel>
 		</p:confirmDialog>
 	</p:column>
 </ui:composition>

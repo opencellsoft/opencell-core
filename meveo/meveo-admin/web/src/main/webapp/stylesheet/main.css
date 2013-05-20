@@ -377,5 +377,7 @@ input[type="submit"],
 .form-panel-fields .inner-table tr td { padding-left: 0px; }
 .col2-set .col1 { width : 25% !Important; float : left; padding: 0px; }
 .col2-set .col2 { width : 72% !Important; float : right; }
+.confirm-dialog .ui-dialog-content p span.ui-confirm-dialog-severity { position: relative; top: -4px; }
+.confirm-dialog .ui-dialog-buttonpane { text-align: center; }
 
 /* td { border: 1px solid red !important; } */
