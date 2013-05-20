@@ -1,21 +1,11 @@
 package org.meveo.model.cache;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-
-import org.infinispan.Cache;
-import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.crm.Provider;
 
 public class UsageChargeTemplateCache {
 
-    private static Logger log=Logger.getLogger(UsageChargeTemplateCache.class.getName());
 	
 	private Date lastUpdate;
 	private int priority;
@@ -75,5 +65,8 @@ public class UsageChargeTemplateCache {
 		this.subscriptionIds = subscriptionIds;
 	}
 
+	public String toString(){
+		return 	lastUpdate+","+priority+","+filterExpression+","+filter1+","+filter2+","+filter3+","+filter4;
+	}
 	
 }

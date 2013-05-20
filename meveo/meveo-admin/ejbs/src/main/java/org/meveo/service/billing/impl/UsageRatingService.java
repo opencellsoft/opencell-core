@@ -103,35 +103,48 @@ public class UsageRatingService {
     public UsageChargeTemplateCache updateTemplateCache(UsageChargeTemplate usageChargeTemplate) {
     	UsageChargeTemplateCache cachedValue=null;
     	if(usageChargeTemplate!=null){
+        	log.info("updateTemplateCache "+usageChargeTemplate.getCode());
     		if(chargeTemplateCache.containsKey(usageChargeTemplate.getCode())){
+            	log.info("cache already contains the code");
     			cachedValue=chargeTemplateCache.get(usageChargeTemplate.getCode());
     		} else {
+            	log.info("cache does not contain the code");
     			cachedValue= new UsageChargeTemplateCache();
     		}
 			if(usageChargeTemplate.getFilterParam1()==null || usageChargeTemplate.getFilterParam1().equals("")){
+            	log.info("set filter1 to null");
 				cachedValue.setFilter1(null);
 			} else {
+            	log.info("set filter1 to "+usageChargeTemplate.getFilterParam1());
 				cachedValue.setFilter1(usageChargeTemplate.getFilterParam1());	
 			}
 			if(usageChargeTemplate.getFilterParam2()==null || usageChargeTemplate.getFilterParam2().equals("")){
+            	log.info("set filter2 to null");
 				cachedValue.setFilter2(null);
 			} else {
+            	log.info("set filter2 to "+usageChargeTemplate.getFilterParam2());
 				cachedValue.setFilter2(usageChargeTemplate.getFilterParam2());	
 			}
 			if(usageChargeTemplate.getFilterParam3()==null || usageChargeTemplate.getFilterParam3().equals("")){
+            	log.info("set filter3 to null");
 				cachedValue.setFilter3(null);
 			} else {
+            	log.info("set filter3 to "+usageChargeTemplate.getFilterParam3());
 				cachedValue.setFilter3(usageChargeTemplate.getFilterParam3());	
 			}
 			if(usageChargeTemplate.getFilterParam4()==null || usageChargeTemplate.getFilterParam4().equals("")){
+            	log.info("set filter4 to null");
 				cachedValue.setFilter4(null);
 			} else {
+            	log.info("set filter4 to "+usageChargeTemplate.getFilterParam4());
 				cachedValue.setFilter4(usageChargeTemplate.getFilterParam4());	
 			}  	
 			if(cachedValue.getPriority()!=usageChargeTemplate.getPriority()){
+	           	log.info("set priority to "+usageChargeTemplate.getPriority());
 				cachedValue.setPriority(usageChargeTemplate.getPriority());
 				//TODO reorder all cacheInstance associated to this template
 				for(Long subscriptionId:cachedValue.getSubscriptionIds()){
+		           	log.info("reorder charge cache for subscription "+subscriptionId);
 					reorderChargeCache(subscriptionId);
 				}
 			}
@@ -144,6 +157,7 @@ public class UsageRatingService {
     private void reorderChargeCache(Long id){
     	List<UsageChargeInstanceCache> charges =chargeCache.get(id);
     	Collections.sort(charges);
+    	log.info("sorted "+charges.size()+" charges");
     }
     
     public void updateCache(UsageChargeInstance usageChargeInstance) {
@@ -400,10 +414,15 @@ public class UsageRatingService {
         		List<UsageChargeInstanceCache> charges = chargeCache.get(edr.getSubscription().getId());
     			for(UsageChargeInstanceCache charge: charges){
     				UsageChargeTemplateCache templateCache = charge.getTemplateCache();
+    				log.info("try templateCache="+templateCache.toString());
     				if(templateCache.getFilter1()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
-    					if(templateCache.getFilter2()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
-    						if(templateCache.getFilter3()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
-    							if(templateCache.getFilter4()==null || templateCache.getFilter1().equals(edr.getParameter1())) {
+        				log.info("filter1 ok");
+    					if(templateCache.getFilter2()==null || templateCache.getFilter1().equals(edr.getParameter2())) {
+            				log.info("filter2 ok");
+    						if(templateCache.getFilter3()==null || templateCache.getFilter1().equals(edr.getParameter3())) {
+    	        				log.info("filter3 ok");
+    							if(templateCache.getFilter4()==null || templateCache.getFilter1().equals(edr.getParameter4())) {
+    		        				log.info("filter4 ok");
     								if(templateCache.getFilterExpression()!=null) {
     									//TODO: implement EL expression 
     									//javax.el.ELContext elContext = javax.faces.context.FacesContext.getCurrentInstance().getELContext();
