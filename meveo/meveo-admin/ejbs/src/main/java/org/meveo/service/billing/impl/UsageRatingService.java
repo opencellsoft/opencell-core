@@ -329,6 +329,8 @@ public class UsageRatingService {
 					break;
 				}
 			}
+		} else {
+			counterInstanceCache.setCounterPeriods(new ArrayList<CounterPeriodCache>());
 		}
 		CounterInstance counterInstance=null;
 		if(periodCache==null){
