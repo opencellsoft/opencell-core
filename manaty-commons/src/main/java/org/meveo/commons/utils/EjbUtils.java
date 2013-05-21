@@ -21,7 +21,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Util class for remote ejb lookups.
@@ -32,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class EjbUtils {
     
-    private static final Logger logger = Logger.getLogger(ReflectionUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(EjbUtils.class);
 
     private static final String LOCALHOST = "127.0.0.1";
     

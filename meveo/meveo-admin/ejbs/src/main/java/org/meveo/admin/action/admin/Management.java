@@ -28,7 +28,6 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.log4j.spi.LoggingEvent;
 import org.meveo.commons.utils.ParamBean;
 import org.slf4j.Logger;
 
@@ -48,7 +47,7 @@ public class Management implements Serializable {
 
 	@Inject
 	private ParamBean paramBean;
-	
+
 	/**
 	 * Application name for daemon to know what application info to send back.
 	 */
@@ -84,10 +83,10 @@ public class Management implements Serializable {
 	 * Connects to socket server.
 	 */
 	public void connect() {
-	    
-	    String connectionUrl= paramBean.getProperty("connectionUrl");
-	    int connectionPort = paramBean.getPropertyAsInt("connectionPort");
-	    	    
+
+		String connectionUrl = paramBean.getProperty("connectionUrl");
+		int connectionPort = paramBean.getPropertyAsInt("connectionPort");
+
 		connectionEstablished = false;
 		// open a socket connection
 		try {
@@ -186,16 +185,35 @@ public class Management implements Serializable {
 	 * @param tempLogList
 	 *            Logging Events List.
 	 */
-	public void convertLogs(List<LoggingEvent> tempLogList) {
+	/*public void convertLogs(List<LoggingEvent> tempLogList) {
 
 		for (Object o : tempLogList) {
 			if (o instanceof LoggingEvent) {
 				final LoggingEvent logEvent = (LoggingEvent) o;
-				logs.add("[" + logEvent.getLevel() + "] "
-						+ logEvent.getRenderedMessage());
+				logs.add("[" + logEvent.getLevel() + "] " + logEvent.getRenderedMessage());
 			}
 		}
-	}
+	}*/
+
+	/**
+	 * Get logs from application (what it does at the time).
+	 */
+	/*@SuppressWarnings("unchecked")
+	public List<String> getLogs() {
+		connect();
+		try {
+			oos.writeObject("log");
+			logs.clear();
+			List<LoggingEvent> tempLogList = (List<LoggingEvent>) ois.readObject();
+			convertLogs(tempLogList);
+			close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return logs;
+	}*/
 
 	/**
 	 * Sends application kill signal to socket server.
@@ -237,27 +255,6 @@ public class Management implements Serializable {
 		} catch (Exception e) {
 			log.error("IOException", e);
 		}
-	}
-
-	/**
-	 * Get logs from application (what it does at the time).
-	 */
-	@SuppressWarnings("unchecked")
-	public List<String> getLogs() {
-		connect();
-		try {
-			oos.writeObject("log");
-			logs.clear();
-			List<LoggingEvent> tempLogList = (List<LoggingEvent>) ois
-					.readObject();
-			convertLogs(tempLogList);
-			close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		return logs;
 	}
 
 	public String getApplication() {

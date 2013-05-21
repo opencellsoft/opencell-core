@@ -21,14 +21,15 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author anasseh
  */
 public class ParamBean {
 
-	private static final Logger log = Logger.getLogger(ParamBean.class);
+	private static final Logger log = LoggerFactory.getLogger(ParamBean.class);
 
 	private String _propertyFile;
 

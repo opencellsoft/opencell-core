@@ -37,6 +37,8 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.model.DualListModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Standard backing bean for {@link User} (extends {@link BaseBean} that
@@ -65,6 +67,8 @@ public class UserBean extends BaseBean<User> {
 
 	@Inject
 	private Messages messages;
+	
+	private static final Logger log = LoggerFactory.getLogger(UserBean.class);
 
 	private DualListModel<Role> perks;
 
@@ -102,6 +106,7 @@ public class UserBean extends BaseBean<User> {
 	 */
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
+		log.debug("saving new user={}", entity.getUserName());
 		boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
 		if (passwordsDoNotMatch) {
 			messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));

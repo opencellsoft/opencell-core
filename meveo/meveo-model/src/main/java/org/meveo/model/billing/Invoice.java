@@ -32,7 +32,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -44,8 +43,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 @Table(name = "BILLING_INVOICE")
 //@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
 public class Invoice extends AuditableEntity {
-
-    private static final Logger logger = Logger.getLogger(Invoice.class);
 
     private static final long serialVersionUID = 1L;
 

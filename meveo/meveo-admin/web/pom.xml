@@ -58,16 +58,19 @@
 			<version>1.4.1</version>
 		</dependency>
 		<dependency>
-          <groupId>com.ocpsoft</groupId>
-          <artifactId>prettyfaces-jsf2</artifactId>
-        </dependency>
-        
-        <!-- <dependency>  
-    		<groupId>org.primefaces.themes</groupId>  
-    		<artifactId>south-street</artifactId>  
-    		<version>1.0.9</version>  
-		</dependency> -->
-        
+			<groupId>com.ocpsoft</groupId>
+			<artifactId>prettyfaces-jsf2</artifactId>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.primefaces.themes</groupId> <artifactId>south-street</artifactId> 
+			<version>1.0.9</version> </dependency> -->
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+
 	</dependencies>
 	<profiles>
 		<profile>

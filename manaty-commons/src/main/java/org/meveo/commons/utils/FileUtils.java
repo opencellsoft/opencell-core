@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File utilities class.
@@ -39,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public final class FileUtils {
 
-    private static final Logger logger = Logger.getLogger(FileUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     /**
      * No need to create instance.

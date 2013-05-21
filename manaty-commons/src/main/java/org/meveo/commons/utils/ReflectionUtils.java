@@ -17,7 +17,8 @@ package org.meveo.commons.utils;
 
 import java.lang.reflect.Field;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utils class for java reflection api.
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class ReflectionUtils {
 
-    private static final Logger logger = Logger.getLogger(ReflectionUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
     /**
      * Creates instance from class name.

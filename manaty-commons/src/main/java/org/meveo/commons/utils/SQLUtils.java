@@ -21,7 +21,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //TODO test
 /**
@@ -39,7 +40,7 @@ public final class SQLUtils {
 
     }
 
-    private static final Logger logger = Logger.getLogger(SQLUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SQLUtils.class);
 
     /**
      * Get String value from ResultSet and close it.
