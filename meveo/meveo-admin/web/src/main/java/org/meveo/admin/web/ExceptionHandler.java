@@ -15,9 +15,6 @@ import org.jboss.solder.servlet.http.ContextPath;
 @HandlesExceptions
 public class ExceptionHandler {
 
-    @Inject
-    private FacesContext facesContext;
-
     // @Inject
     // private Instance<HttpConversationContext> contextInstance;
 
@@ -30,7 +27,7 @@ public class ExceptionHandler {
         evt.handled();
 
         try {
-            facesContext.getExternalContext().redirect("/errors/403.xhtml");
+			FacesContext.getCurrentInstance().getExternalContext().redirect("/errors/403.xhtml");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,7 +39,7 @@ public class ExceptionHandler {
         evt.handled();
 
         try {
-            facesContext.getExternalContext().redirect("/errors/sessionExpired.jsf");
+        	FacesContext.getCurrentInstance().getExternalContext().redirect("/errors/sessionExpired.jsf");
             // facesContext.getExternalContext().redirect(contextPath + "/errors/sessionExpired.jsf");
 
         } catch (IOException e) {
@@ -55,8 +52,8 @@ public class ExceptionHandler {
         evt.handled();
 
         try {
-            facesContext.getExternalContext().redirect("/errors/sessionExpired.jsf");
-            facesContext.getExternalContext().redirect(contextPath + "/errors/sessionExpired.jsf");
+        	FacesContext.getCurrentInstance().getExternalContext().redirect("/errors/sessionExpired.jsf");
+			//FacesContext.getCurrentInstance().getExternalContext().redirect(contextPath + "/errors/sessionExpired.jsf");
         } catch (IOException e) {
             e.printStackTrace();
         }

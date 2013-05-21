@@ -27,7 +27,10 @@ public class LocaleSelector implements Serializable {
 	}
 
 	public Locale getCurrentLocale() {
-		return currentLocale;
+		if (currentLocale != null)
+			return currentLocale;
+		else
+			return new Locale("en");
 	}
 
 	public void setCurrentLocale(Locale currentLocale) {

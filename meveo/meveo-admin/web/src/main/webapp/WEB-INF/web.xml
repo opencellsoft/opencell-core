@@ -99,15 +99,10 @@
 	  </context-param>
 	      
 	  <session-config>
-		    <session-timeout>2</session-timeout>
+		    <session-timeout>1</session-timeout>
 	  </session-config>
 	  
 	  <!-- Error page -->
-	  <error-page>
-		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
-		<location>/login.xhtml</location>
-	</error-page>
-	
 	  <error-page>
 		    <error-code>500</error-code>
 		    <location>/applicationerror.jsp</location>
