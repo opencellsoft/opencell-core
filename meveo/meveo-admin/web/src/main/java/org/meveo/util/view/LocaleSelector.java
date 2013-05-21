@@ -11,16 +11,28 @@ import javax.inject.Named;
 @SessionScoped
 public class LocaleSelector implements Serializable {
 
-    private static final long serialVersionUID = -4072480474117257543L;
+	private static final long serialVersionUID = -4072480474117257543L;
 
-    /**
-     * Change user locale
-     * 
-     * @param localeCode Language/country code
-     * @return
-     */
-    public void setLocale(String localeCode) {
+	private Locale currentLocale;
 
-        FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(localeCode));
-    }
+	/**
+	 * Change user locale
+	 * 
+	 * @param localeCode
+	 *            Language/country code
+	 * @return
+	 */
+	public void setLocale(String localeCode) {
+		setCurrentLocale(new Locale(localeCode));
+	}
+
+	public Locale getCurrentLocale() {
+		return currentLocale;
+	}
+
+	public void setCurrentLocale(Locale currentLocale) {
+		FacesContext.getCurrentInstance().getViewRoot().setLocale(currentLocale);
+		this.currentLocale = currentLocale;
+	}
+
 }

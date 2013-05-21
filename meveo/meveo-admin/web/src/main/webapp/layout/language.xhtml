@@ -1,21 +1,30 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
 
 	<h:form>
 		<div id="languagePanel">
 			<ul>
-				<li><a:commandButton action="#{localeSelector.setLocale('fr')}" image="/img/imgFrenchFlag.png" style="height:16px; width:25px;"
-						render="loginPanel" limitRender="true" execute="@this">
-					</a:commandButton></li>
-				<li><a:commandButton action="#{localeSelector.setLocale('en')}" image="/img/imgEnglishFlag.png" style="height:16px; width:25px;"
-						render="loginPanel" limitRender="true" execute="@this">
-					</a:commandButton></li>
-				<li><a:commandButton action="#{localeSelector.setLocale('pt')}" image="/img/imgBrazilFlag.png" style="height:16px; width:25px;"
-						render="loginPanel" limitRender="true" execute="@this">
-					</a:commandButton></li>
+				<li><p:commandLink action="#{localeSelector.setLocale('fr')}"
+						update=":loginForm:loginPanel" execute="@this">
+						<h:graphicImage style="height:16px; width:25px;" library="img"
+							name="imgFrenchFlag.png" />
+					</p:commandLink></li>
+				<li><p:commandLink action="#{localeSelector.setLocale('en')}"
+						update=":loginForm:loginPanel" execute="@this">
+						<h:graphicImage style="height:16px; width:25px;" library="img"
+							name="imgEnglishFlag.png" />
+					</p:commandLink></li>
+				<li><p:commandLink action="#{localeSelector.setLocale('pt')}"
+						update=":loginForm:loginPanel" execute="@this">
+						<h:graphicImage style="height:16px; width:25px;" library="img"
+							name="imgBrazilFlag.png" />
+					</p:commandLink></li>
 			</ul>
 		</div>
 	</h:form>
