@@ -755,6 +755,32 @@
 							<p:tab id="medinaAccessTab"
 								title="#{messages['access.accessPanel']}"
 								rendered="#{!subscriptionBean.edit}">
+								
+								<hf:formPanel formId="form4" backingBean="#{subscriptionBean}"
+									showFormButtons="false">
+									<hftl:panelGroup columns="3">
+										<hf:formField label="#{messages['businessEntity.code']}"
+											field="code" />
+										<hf:formField label="#{messages['serviceInstance.status']}"
+											field="status" />
+										<hf:formField
+											label="#{messages['serviceInstance.statusDate']}"
+											field="statusDate" />
+									</hftl:panelGroup>
+									<hftl:panelGroup columns="3">
+										<hf:formEntityField id="offerSelectId"
+											label="#{messages['subscription.offer']}" field="offer"
+											childField="code" popup="false" />
+										<hf:formField
+											label="#{messages['billingAccount.subscriptionDate']}"
+											field="subscriptionDate" />
+										<hf:formField
+											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
+											field="terminationDate" />
+									</hftl:panelGroup>
+								</hf:formPanel>
+								<br />
+								<br />
 								<h:form>
 									<p:outputPanel id="medinaAccessPanel">
 										<p:messages id="medinaAccessPanelMessage"></p:messages>
