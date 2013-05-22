@@ -409,10 +409,7 @@ public class UsageRatingService {
     	if(edr.getSubscription()==null){
     		edr.setStatus(EDRStatusEnum.REJECTED);
     		edr.setRejectReason("subscription null");
-    	} else if(edr.getSubscription().getStatus()!=SubscriptionStatusEnum.ACTIVE){
-    		edr.setStatus(EDRStatusEnum.REJECTED);
-    		edr.setRejectReason("subscription not active");
-    	} else {
+    	}  else {
     		boolean edrIsRated = false;
     		try{
     		if(chargeCache.containsKey(edr.getSubscription().getId())){
