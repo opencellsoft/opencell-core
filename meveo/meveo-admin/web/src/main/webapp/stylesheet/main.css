@@ -100,6 +100,7 @@ select[disabled] { color : #000; }
 	font-size : 11px;
 	margin : 30px 10px;
 }
+
 #languagePanel ul { list-style-type: none; }
 #languagePanel ul li 
 { 
@@ -117,6 +118,7 @@ select[disabled] { color : #000; }
   background-image : url(../img/header-bg.png);
   background-size : 2000px 164px;
 }
+
 #admin-bar ul
 {
   padding-top: 15px;
@@ -124,23 +126,28 @@ select[disabled] { color : #000; }
   margin-right: 5%;
   float : right;
 }
+
 #admin-bar ul li:first-child
 {
    border-left : none;
 }
+
 #admin-bar ul li:last-child
 {
    border-right : none;
 }
+
 #admin-bar ul li:nth-child(3)
 {
    border-right : none;
 }
+
 #admin-bar ul li:nth-child(4)
 {
    border-left : none;
    margin-right : 50px;
 }
+
 #admin-bar ul li
 {
 	display: inline-block;
@@ -151,12 +158,14 @@ select[disabled] { color : #000; }
 	border-right: 1px solid #03554d;
 	float: left;
 }
+
 #admin-bar ul li.right-part
 {
 	float : left;
 	margin-left : 0px;
 	margin-right : 0px;
 }
+
 #admin-bar ul li,
 #admin-bar ul li a
 {
@@ -168,10 +177,12 @@ select[disabled] { color : #000; }
    text-shadow: -1px -1px 0px black;
    filter: dropshadow(color=#000, offx=-1, offy=-1);
 }
+
 #admin-bar ul li a:hover
 {
   color: #00ffeb;
 }
+
 #admin-bar ul li .top-bar-home,
 #admin-bar ul li .top-bar-user
 {
@@ -182,6 +193,7 @@ select[disabled] { color : #000; }
    margin-right : 10px;
    margin-top: -8px;
 }
+
 #admin-bar ul li .top-bar-home
 {
    background-image: url(..//img/home-top-bar.png) ;
@@ -191,6 +203,7 @@ select[disabled] { color : #000; }
    background-position: center;
    
 }
+
 #admin-bar ul li .top-bar-user
 {
    width: 25px;
@@ -202,6 +215,7 @@ select[disabled] { color : #000; }
    display: inline-block;
    background-position: center;
 }
+
 input[type="submit"],
 input[type="submit"]:hover
 {
@@ -210,6 +224,7 @@ input[type="submit"]:hover
    font-family : helvetica;
    font-weight :bold;
 }
+
 .search-panel .ui-widget-header td[role="columnheader"]
 {
   border-bottom : 1px solid #e8eded;
@@ -237,6 +252,7 @@ div.body > table > thead,
   background-repeat : no-repeat !important;
   background : transparent;
 }
+
 .tree-customer-account-icon,
 {
   background-image: url(../img/folder.png) !important;
