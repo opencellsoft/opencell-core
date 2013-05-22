@@ -38,10 +38,12 @@ public class CDRParsingService {
 		Serializable cdr=cdrParser.getCDR(line);
 		deduplicate(cdr);
 		List<Access> accessPoints=accessPointLookup(cdr);
+		boolean foundMatchingAccess=false;
 		for(Access accessPoint:accessPoints){
 			EDRDAO edrDAO = cdrParser.getEDR(cdr);
 			if((accessPoint.getStartDate()==null ||accessPoint.getStartDate().getTime()<=edrDAO.getEventDate().getTime())
 				&& (accessPoint.getEndDate()==null || accessPoint.getEndDate().getTime()>edrDAO.getEventDate().getTime())	){
+				foundMatchingAccess=true;
 				EDR edr = new EDR();
 				edr.setCreated(new Date());
 				edr.setEventDate(edrDAO.getEventDate());
@@ -57,7 +59,10 @@ public class CDRParsingService {
 				edr.setSubscription(accessPoint.getSubscription());
 				result.add(edr);
 			}
-		}		
+		}
+		if(!foundMatchingAccess){
+			throw new InvalidAccessException(cdr);
+		}
 		return result;
 	}
 	

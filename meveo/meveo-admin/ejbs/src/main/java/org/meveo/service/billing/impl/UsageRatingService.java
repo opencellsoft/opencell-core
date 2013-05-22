@@ -22,6 +22,7 @@ import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
@@ -408,6 +409,9 @@ public class UsageRatingService {
     	if(edr.getSubscription()==null){
     		edr.setStatus(EDRStatusEnum.REJECTED);
     		edr.setRejectReason("subscription null");
+    	} else if(edr.getSubscription().getStatus()!=SubscriptionStatusEnum.ACTIVE){
+    		edr.setStatus(EDRStatusEnum.REJECTED);
+    		edr.setRejectReason("subscription not active");
     	} else {
     		boolean edrIsRated = false;
     		try{
