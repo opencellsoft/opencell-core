@@ -319,6 +319,7 @@ public class UsageRatingService {
      * @return if edr quantity fits partially in the counter, returns the remaining quantity
      */
     BigDecimal deduceCounter(EDR edr,UsageChargeInstanceCache charge){
+    	log.info("deduce counter for key "+charge.getCounter().getKey());
     	BigDecimal deducedQuantity=BigDecimal.ZERO;
     	CounterInstanceCache counterInstanceCache= counterCache.get(charge.getCounter().getKey());
 		CounterPeriodCache periodCache = null;
@@ -327,6 +328,7 @@ public class UsageRatingService {
 				if((itemPeriodCache.getStartDate().before(edr.getEventDate()) || itemPeriodCache.getStartDate().equals(edr.getEventDate())) 
 						&& itemPeriodCache.getEndDate().after(edr.getEventDate())){
 					periodCache=itemPeriodCache;
+			    	log.info("found counter period in cache:"+periodCache);
 					break;
 				}
 			}
@@ -339,10 +341,12 @@ public class UsageRatingService {
 			CounterPeriod counterPeriod=counterInstanceService.createPeriod(counterInstance,edr.getEventDate());
 			periodCache = CounterPeriodCache.getInstance(counterPeriod,counterInstance.getCounterTemplate());
 			counterInstanceCache.getCounterPeriods().add(periodCache);
+	    	log.info("created counter period in cache:"+periodCache);
 		}
 		synchronized (periodCache) {
 			BigDecimal countedValue = edr.getQuantity().multiply(charge.getUnityMultiplicator());
-    		if(charge.getUnityNbDecimal()>0){
+	    	log.info("value to deduce "+edr.getQuantity()+"*"+charge.getUnityMultiplicator()+"="+countedValue);
+	    	if(charge.getUnityNbDecimal()>0){
     				countedValue=countedValue.setScale(charge.getUnityNbDecimal(), RoundingMode.HALF_UP);
     		}
 			if(periodCache.getValue().compareTo(BigDecimal.ZERO)>0){

@@ -69,5 +69,13 @@ public class CounterPeriodCache {
 		cacheValue.value=counterPeriod.getValue();
 		return cacheValue;
 	}
-	
+	public String toString(){
+		return "counterPeriodId="+counterPeriodId
+	    +",counterType="+counterType
+		+",startDate="+startDate
+		+",endDate="+endDate
+		+",value="+value
+		+",level="+level
+		+",dbDirty="+dbDirty;
+	}
 }
