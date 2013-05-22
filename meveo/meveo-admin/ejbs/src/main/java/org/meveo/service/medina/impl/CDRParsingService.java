@@ -40,20 +40,23 @@ public class CDRParsingService {
 		List<Access> accessPoints=accessPointLookup(cdr);
 		for(Access accessPoint:accessPoints){
 			EDRDAO edrDAO = cdrParser.getEDR(cdr);
-			EDR edr = new EDR();
-			edr.setCreated(new Date());
-			edr.setEventDate(edrDAO.getEventDate());
-			edr.setOriginBatch(edrDAO.getOriginBatch());
-			edr.setOriginRecord(edrDAO.getOriginRecord());
-			edr.setParameter1(edrDAO.getParameter1());
-			edr.setParameter2(edrDAO.getParameter2());
-			edr.setParameter3(edrDAO.getParameter3());
-			edr.setParameter4(edrDAO.getParameter4());
-			edr.setProvider(accessPoint.getProvider());
-			edr.setQuantity(edrDAO.getQuantity());
-			edr.setStatus(EDRStatusEnum.OPEN);
-			edr.setSubscription(accessPoint.getSubscription());
-			result.add(edr);
+			if((accessPoint.getStartDate()==null ||accessPoint.getStartDate().getTime()<=edrDAO.getEventDate().getTime())
+				&& (accessPoint.getEndDate()==null || accessPoint.getEndDate().getTime()>edrDAO.getEventDate().getTime())	){
+				EDR edr = new EDR();
+				edr.setCreated(new Date());
+				edr.setEventDate(edrDAO.getEventDate());
+				edr.setOriginBatch(edrDAO.getOriginBatch());
+				edr.setOriginRecord(edrDAO.getOriginRecord());
+				edr.setParameter1(edrDAO.getParameter1());
+				edr.setParameter2(edrDAO.getParameter2());
+				edr.setParameter3(edrDAO.getParameter3());
+				edr.setParameter4(edrDAO.getParameter4());
+				edr.setProvider(accessPoint.getProvider());
+				edr.setQuantity(edrDAO.getQuantity());
+				edr.setStatus(EDRStatusEnum.OPEN);
+				edr.setSubscription(accessPoint.getSubscription());
+				result.add(edr);
+			}
 		}		
 		return result;
 	}

@@ -92,12 +92,12 @@ public class MediationJob implements Job {
        	 String cdrExtension=parambean.getProperty("mediation.extensions","csv");
        	 ArrayList<String > cdrExtensions=new ArrayList<String>();
        	 cdrExtensions.add(cdrExtension);
-       	 outputDir=parambean.getProperty("mediation.outputDirectory","/tmp/meveo/metering/input");
-       	 rejectDir=parambean.getProperty("mediation.rejectDirectory","/tmp/meveo/metering/input");
+       	 outputDir=parambean.getProperty("mediation.outputDirectory","/tmp/meveo/metering/output");
+       	 rejectDir=parambean.getProperty("mediation.rejectDirectory","/tmp/meveo/metering/output");
     	 report="";
        	 cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
  		 if(cdrFile!=null){
- 			cdrFileName=cdrFile.getCanonicalPath();
+ 			cdrFileName=cdrFile.getName();
  			cdrParser.init(cdrFile);
  			report="parse "+cdrFileName;
  			cdrFile = FileUtils.addExtension(cdrFile, ".processing");
@@ -179,7 +179,7 @@ public class MediationJob implements Job {
 	private void outputCDR(String line){
 		try{
 			if(outputFileWriter==null){
-				File outputFile = new File(cdrFileName+".processed");
+				File outputFile = new File(outputDir+File.separator+cdrFileName+".processed");
 				outputFileWriter = new PrintWriter(outputFile);
 			}
 			outputFileWriter.println(line);
@@ -191,7 +191,7 @@ public class MediationJob implements Job {
 	private void rejectCDR(Serializable cdr,CDRRejectionCauseEnum reason){
 		try{
 			if(rejectFileWriter==null){
-				File rejectFile = new File(cdrFileName+".rejected");
+				File rejectFile = new File(rejectDir+File.separator+cdrFileName+".rejected");
 				rejectFileWriter = new PrintWriter(rejectFile);
 			}
 			if(cdr instanceof String){
