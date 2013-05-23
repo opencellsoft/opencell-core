@@ -31,7 +31,7 @@ public class AccessService extends PersistenceService<Access> {
 
 	@SuppressWarnings("unchecked")
 	public List<Access> findByUserID(String userId) {
-		log.info("findByUserID '"+userId+"'");
+		log.info("findByUserID '" + userId + "'");
 		List<Access> result = new ArrayList<Access>();
 		if (userId != null && userId.length() > 0) {
 			Query query = em.createQuery("from Access a where a.accessUserId=:accessUserId")
@@ -42,7 +42,6 @@ public class AccessService extends PersistenceService<Access> {
 	}
 
 	public boolean isDuplicate(Access access) {
-
 		String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName()
 				+ " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
 		Query query = em.createQuery(stringQuery);
