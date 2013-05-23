@@ -30,21 +30,24 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "BILLING_USAGE_CHARGE_INST")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USAGE_CHARGE_INST_SEQ")
-public class UsageChargeInstance extends ChargeInstance{
+public class UsageChargeInstance extends ChargeInstance {
 
-	
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICE_INSTANCE_ID")
+	@JoinColumn(name = "SUBSCRIPTION_ID")
+	private Subscription subscription;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SERVICE_INSTANCE_ID")
 	private ServiceInstance serviceInstance;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COUNTER_ID")
+	@JoinColumn(name = "COUNTER_ID")
 	private CounterInstance counter;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="LAST_UPDATE")
+	@Column(name = "LAST_UPDATE")
 	private Date lastUpdate;
 
 	public ServiceInstance getServiceInstance() {
@@ -53,9 +56,9 @@ public class UsageChargeInstance extends ChargeInstance{
 
 	public void setServiceInstance(ServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
-        if (serviceInstance != null) {
-            serviceInstance.getUsageChargeInstances().add(this);
-        }
+		if (serviceInstance != null) {
+			serviceInstance.getUsageChargeInstances().add(this);
+		}
 	}
 
 	public CounterInstance getCounter() {
@@ -73,7 +76,13 @@ public class UsageChargeInstance extends ChargeInstance{
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
-	
-	
-	
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
 }

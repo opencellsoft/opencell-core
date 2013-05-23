@@ -36,6 +36,7 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -48,6 +49,7 @@ import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 
@@ -87,6 +89,9 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
+
+	@Inject
+	private UsageChargeInstanceService usageChargeInstanceService;
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
@@ -387,6 +392,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	public List<RecurringChargeInstance> getRecurringChargeInstances() {
 		return (entity == null || entity.getId() == null) ? null : recurringChargeInstanceService
 				.findRecurringChargeInstanceBySubscriptionId(entity.getId());
+	}
+
+	public List<UsageChargeInstance> getUsageChargeInstances() {
+		return (entity == null || entity.getId() == null) ? null : usageChargeInstanceService
+				.findUsageChargeInstanceBySubscriptionId(entity.getId());
 	}
 
 	public void instanciateManyServices() {
