@@ -307,20 +307,11 @@
 													<hf:formEntityField label="#{messages['address.city']}"
 														field="address" childField="city" popup="false"
 														required="true" maxlength="50" />
-
-													<p:panelGrid id="countryPanel" columns="2">
-														<p:outputLabel for="country_select"
-															value="#{messages['address.country']}" />
-														<p:selectOneMenu id="country_select" required="true"
-															rendered="#{billingAccountBean.edit}"
-															value="#{billingAccountBean.entity.address.country}">
-															<f:selectItems
-																value="#{messages['address.countrys'].split(',')}"
-																var="country" itemLabel="#{country}" />
-														</p:selectOneMenu>
-														<h:outputText rendered="#{!billingAccountBean.edit}"
-															value="#{billingAccountBean.entity.address.country}" />
-													</p:panelGrid>
+													<hf:formEntityField id="countryPanel"
+														label="#{messages['address.country']}" embedded="true"
+														field="address" childField="country"
+														labelField="descriptionEn" valueField="countryCode"
+														listBean="#{countryBean}"></hf:formEntityField>
 
 												</hftl:panelGroup>
 											</hftl:fieldset>

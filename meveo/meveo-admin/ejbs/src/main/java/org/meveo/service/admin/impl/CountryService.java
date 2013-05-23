@@ -17,18 +17,29 @@ package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.Query;
 
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * Country service implementation.
- * 
- * @author Ignas
- * @created 2009.09.16
- */
 @Stateless
 @Named
 public class CountryService extends PersistenceService<Country> {
+	public Country findByCode(String countryCode) {
+		log.debug("start of find {} by code (code={}) ..", getEntityClass().getSimpleName(),
+				countryCode);
+		StringBuilder queryString = new StringBuilder("from " + Country.class.getName() + " a");
+		queryString.append(" where a.countryCode = :countryCode");
+		Query query = em.createQuery(queryString.toString());
+		query.setParameter("countryCode", countryCode);
+		if (query.getResultList().size() == 0) {
+			return null;
+		}
+		Country e = (Country) query.getSingleResult();
 
+		log.debug("end of find {} by code (code={}). Result found={}.", getEntityClass()
+				.getSimpleName(), countryCode, e != null);
+
+		return e;
+	}
 }

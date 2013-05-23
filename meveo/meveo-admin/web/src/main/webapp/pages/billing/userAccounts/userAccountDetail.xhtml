@@ -42,16 +42,15 @@
 			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
-	
-		<hftl:entityPopup id="walletOperationPopup" dataModel="#{userAccountBean.getWalletOperationsNoInvoiced()}"
+
+		<hftl:entityPopup id="walletOperationPopup"
+			dataModel="#{userAccountBean.getWalletOperationsNoInvoiced()}"
 			header="#{messages['ratedTransactionsNoInvoiced.popup.header']}"
-			showSearchButton="false" 
-			backingBean="#{walletOperationBean}"
+			showSearchButton="false" backingBean="#{walletOperationBean}"
 			column1Label="#{messages['walletOperation.operationDate']}"
 			column1="operationDate"
 			column2Label="#{messages['walletOperation.endDate']}"
-			column2="endDate"
-			column3Label="#{messages['chargeInstance.code']}"
+			column2="endDate" column3Label="#{messages['chargeInstance.code']}"
 			column3="chargeInstance" column3Child="code"
 			column4Label="#{messages['walletOperation.quantity']}"
 			column4="quantity"
@@ -60,7 +59,7 @@
 			column6Label="#{messages['walletOperation.amountWithTax']}"
 			column6="amountWithTax"
 			column7Label="#{messages['currency.codeCurrency']}"
-			column7="currency" >
+			column7="currency">
 		</hftl:entityPopup>
 
 		<!-- dataModel="#{getRatedTransactionsInvoiced}" -->
@@ -78,7 +77,7 @@
 			column5Label="#{messages['ratedTransaction.amount1WithoutTax']}"
 			column5="amount"
 			column6Label="#{messages['ratedTransaction.amount1WithTax']}"
-			column6="amountWithTax" >
+			column6="amountWithTax">
 		</hftl:entityPopup>
 
 		<p:panelGrid styleClass="col2-set">
@@ -198,20 +197,11 @@
 										<hf:formEntityField label="#{messages['address.city']}"
 											field="address" childField="city" popup="false"
 											required="true" maxlength="50" />
-
-										<p:panelGrid id="countryPanel" columns="2">
-											<p:outputLabel for="country_select"
-												value="#{messages['address.country']}" />
-											<p:selectOneMenu id="country_select" required="true"
-												rendered="#{userAccountBean.edit}"
-												value="#{userAccountBean.entity.address.country}">
-												<f:selectItems
-													value="#{messages['address.countrys'].split(',')}"
-													var="country" itemLabel="#{country}" />
-											</p:selectOneMenu>
-											<h:outputText rendered="#{!userAccountBean.edit}"
-												value="#{userAccountBean.entity.address.country}" />
-										</p:panelGrid>
+										<hf:formEntityField id="countryPanel"
+											label="#{messages['address.country']}" embedded="true"
+											field="address" childField="country"
+											labelField="descriptionEn" valueField="countryCode"
+											listBean="#{countryBean}"></hf:formEntityField>
 
 									</hftl:panelGroup>
 								</hftl:fieldset>

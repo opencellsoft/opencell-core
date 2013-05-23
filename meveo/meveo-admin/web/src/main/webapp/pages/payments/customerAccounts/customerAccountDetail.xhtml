@@ -239,20 +239,11 @@
 														required="true" id="city" field="address"
 														childField="city" popup="false" maxlength="50" />
 												</hftl:panelGroup>
-												<p:panelGrid columns="2" id="countryPanel">
-													<p:outputLabel for="country_select"
-														value="#{messages['address.country']}" />
-													<p:selectOneMenu id="country_select" required="true"
-														rendered="#{customerAccountBean.edit}"
-														value="#{customerAccountBean.entity.address.country}">
-														<f:selectItems
-															value="#{messages['address.countrys'].split(',')}"
-															var="country" itemLabel="#{country}" />
-													</p:selectOneMenu>
-													<h:outputText rendered="#{!customerAccountBean.edit}"
-														value="#{customerAccountBean.entity.address.country}" />
-												</p:panelGrid>
-
+												<hf:formEntityField id="countryPanel"
+													label="#{messages['address.country']}" embedded="true"
+													field="address" childField="country"
+													labelField="descriptionEn" valueField="countryCode"
+													listBean="#{countryBean}"></hf:formEntityField>
 											</hftl:fieldset>
 										</p:tab>
 									</p:tabView>
