@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.jboss.solder.logging.Logger;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -72,17 +73,9 @@ public class MediationJob implements Job {
     }
 
     @Override
-    public JobExecutionResult execute(String parameter) {
-    	return execute(parameter,false);
-    }
-
-    @Override
-    public JobExecutionResult execute(String parameter,boolean inSession) {
+    public JobExecutionResult execute(String parameter,Provider provider) {
         log.info("execute ASGMediationJob.");
         JobExecutionResultImpl result = new JobExecutionResultImpl();
-        if(!inSession){
-        	jobExecutionService.initConversationContext();
-        }
    	    BufferedReader cdrReader =null;
         try {
 
@@ -151,11 +144,6 @@ public class MediationJob implements Job {
 			 e.printStackTrace();
 		}finally {
             try{
-            	if(!inSession){
-            		jobExecutionService.cleanupConversationContext();
-            	}
-            }catch(Exception e){}
-            try{
             	if(rejectFileWriter!=null){
             		rejectFileWriter.close();
             		rejectFileWriter=null;
@@ -219,8 +207,8 @@ public class MediationJob implements Job {
         if(!running && info.isActive()){
             try{
                 running=true;
-                JobExecutionResult result=execute(info.getParametres());
-                jobExecutionService.persistResult(this, result,info.getParametres());
+                JobExecutionResult result=execute(info.getParametres(),info.getProvider());
+                jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
             } catch(Exception e){
                 e.printStackTrace();
             } finally{

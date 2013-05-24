@@ -10,7 +10,7 @@ import org.jboss.solder.core.ExtensionManaged;
 public class Resources {
 
      @ExtensionManaged
-     @ConversationScoped
+     //@ConversationScoped
      @Produces
      @PersistenceUnit(unitName="MeveoAdmin")
      @MeveoJpa
@@ -21,7 +21,7 @@ public class Resources {
 //    private EntityManager em;
 
      @ExtensionManaged
-     @ConversationScoped
+     //@ConversationScoped
      @Produces
      @PersistenceUnit(unitName="MeveoDWH")
      @MeveoDWHJpa

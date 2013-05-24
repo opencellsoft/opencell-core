@@ -15,7 +15,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerEntity;
-import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.base.PersistenceService;
 
 
@@ -76,7 +75,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
         log.info("execute "+entity.getJobName());
         if(entity.getInfo().isActive() && jobEntries.containsKey(entity.getJobName())){
             Job job=jobEntries.get(entity.getJobName());
-            job.execute(entity.getInfo()!=null?entity.getInfo().getParametres():null);
+            job.execute(entity.getInfo()!=null?entity.getInfo().getParametres():null,entity.getInfo()!=null?entity.getInfo().getProvider():null);
         } 
     }
 
@@ -85,7 +84,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
     	log.info("manual execute "+entity.getJobName());
         if(jobEntries.containsKey(entity.getJobName())){
             Job job=jobEntries.get(entity.getJobName());
-            result = job.execute(entity.getInfo()!=null?entity.getInfo().getParametres():null,true);
+            result = job.execute(entity.getInfo()!=null?entity.getInfo().getParametres():null,entity.getInfo()!=null?entity.getInfo().getProvider():null);
         } 
         return result;
     }

@@ -63,6 +63,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@MeveoDWHJpa
 	protected EntityManager dwhEntityManager;
 
+	private Provider provider;
+
 	/**
 	 * Constructor.
 	 */
@@ -440,7 +442,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	}
 
-	protected Provider getCurrentProvider() {
-		return getCurrentUser().getProvider();
+	public Provider getCurrentProvider() {
+		Provider result=provider;
+		if(result==null && getCurrentUser()!=null) {
+			result=getCurrentUser().getProvider();
+		}
+		return result;
+	}
+	
+	public void setProvider(Provider provider){
+		this.provider = provider;
 	}
 }

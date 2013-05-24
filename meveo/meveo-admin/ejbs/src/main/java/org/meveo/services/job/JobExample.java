@@ -16,6 +16,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.jboss.solder.logging.Logger;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -41,12 +42,7 @@ public class JobExample implements Job {
     
 
     @Override
-    public JobExecutionResult execute(String parameter) {
-    	return execute(parameter,false);
-    }
-
-    @Override
-    public JobExecutionResult execute(String parameter,boolean isSession) {
+    public JobExecutionResult execute(String parameter,Provider provider) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
         long nbItemsToProcess = Math.round(Math.random()*1000)+100;
         result.setNbItemsToProcess(nbItemsToProcess); //it might well happen we dont know in advance how many items we have to process, in that case comment this method
@@ -77,8 +73,8 @@ public class JobExample implements Job {
 	public void trigger(Timer timer){
 		TimerInfo info = (TimerInfo) timer.getInfo();
 		if(info.isActive()){
-			JobExecutionResult result=execute(info.getParametres());
-			jobExecutionService.persistResult(this, result,info.getParametres());
+            JobExecutionResult result=execute(info.getParametres(),info.getProvider());
+            jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
 		}
 	}
 	
