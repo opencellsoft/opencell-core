@@ -18,11 +18,18 @@ public class ComponentResources implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private Locale locale = Locale.ENGLISH;
+	
 	@Produces
 	public ResourceBundle getResourceBundle() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", locale);
-		return resourceBundle;
+		ResourceBundle result=null;
+		if(FacesContext.getCurrentInstance()!=null)
+			try{
+				locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			} catch(Exception e){
+		}
+		result = ResourceBundle.getBundle("messages", locale);
+		return result;
 	}
 
 	@Produces
@@ -35,5 +42,9 @@ public class ComponentResources implements Serializable {
 	@Produces
 	public Logger createLogger(InjectionPoint injectionPoint) {
 	    return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+	}
+	
+	public void setLocale(Locale locale){
+		this.locale=locale;
 	}
 }

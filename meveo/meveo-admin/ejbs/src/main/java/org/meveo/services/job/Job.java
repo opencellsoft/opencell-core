@@ -6,6 +6,7 @@ import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerHandle;
 
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerInfo;
 
@@ -25,18 +26,11 @@ public interface Job {
      * Trigger the execution of the job
      * @param parameter a serialized representations of the parameters that the admin could manually put in the GUI
      *  when creating a timer
+     * @param provider the provider for which the job must apply. 
      * @return the result of execute(parameter,false) method
      */
-    public JobExecutionResult execute(String parameter);
+    public JobExecutionResult execute(String parameter,Provider provider);
     
-    /**
-     * Trigger the execution of the job
-     * @param parameter a serialized representations of the parameters that the admin could manually put in the GUI
-     *  when creating a timer
-     *  @param inSession true if the method is called with an active session context (for instance from the GUI)
-     * @return the result of the job execution
-     */
-	public JobExecutionResult execute(String string, boolean inSession);
 
 	public TimerHandle createTimer(ScheduleExpression scheduleExpression,TimerInfo infos);
 	

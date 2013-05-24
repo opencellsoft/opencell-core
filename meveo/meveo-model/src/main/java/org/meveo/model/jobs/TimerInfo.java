@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.inject.Named;
 
+import org.meveo.model.crm.Provider;
+
 @Named
 public class TimerInfo implements Serializable{
 	
@@ -14,6 +16,8 @@ public class TimerInfo implements Serializable{
 	private boolean active=true;
 	private String jobName;
 	private String parametres;
+	private Provider provider;
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -31,6 +35,12 @@ public class TimerInfo implements Serializable{
 	}
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
+	}
+	public Provider getProvider() {
+		return provider;
+	}
+	public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
 	
 	

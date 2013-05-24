@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import org.jboss.solder.logging.Logger;
 import org.meveo.commons.utils.DateUtils;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
@@ -43,14 +44,8 @@ public class JobPurge implements Job {
     
 
     @Override
-    public JobExecutionResult execute(String parameter) {
-    	return execute(parameter,false);
-    }
-
-    @Override
-    public JobExecutionResult execute(String parameter,boolean isSession) {
+    public JobExecutionResult execute(String parameter,Provider provider) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
-        jobExecutionService.initConversationContext();
         String jobname = "";
         int nbDays = 30;
         try { 
@@ -65,7 +60,6 @@ public class JobPurge implements Job {
         result.setNbItemsCorrectlyProcessed(nbSuccess);
         result.setNbItemsProcessedWithError(nbItemsToProcess-nbSuccess);
         result.close(nbSuccess>0?("purged "+jobname):"");
-        jobExecutionService.cleanupConversationContext();
         return result;
     }
 
@@ -81,8 +75,8 @@ public class JobPurge implements Job {
 	public void trigger(Timer timer){
 		TimerInfo info = (TimerInfo) timer.getInfo();
 		if(info.isActive()){
-			JobExecutionResult result=execute(info.getParametres());
-			jobExecutionService.persistResult(this, result,info.getParametres());
+            JobExecutionResult result=execute(info.getParametres(),info.getProvider());
+            jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
 		}
 	}
 	
