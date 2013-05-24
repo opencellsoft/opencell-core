@@ -34,7 +34,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 
-
 @Entity
 @Table(name = "CAT_PRICE_PLAN_MATRIX")
 // @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
@@ -89,17 +88,16 @@ public class PricePlanMatrix extends AuditableEntity {
 	@JoinColumn(name = "TRADING_CURRENCY_ID")
 	private TradingCurrency tradingCurrency;
 
-	 @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "TRADING_COUNTRY_ID")
-	 private TradingCountry tradingCountry; 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	private TradingCountry tradingCountry;
 
-	 @Column(name = "PRIORITY",columnDefinition="DEFAULT '1'")
-	 private int priority=1;
-	
-	 @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "SELLER_ID")
-	 private Seller seller;
-	
+	@Column(name = "PRIORITY", columnDefinition = "int DEFAULT 1")
+	private int priority = 1;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SELLER_ID")
+	private Seller seller;
 
 	public String getEventCode() {
 		return eventCode;
@@ -229,16 +227,15 @@ public class PricePlanMatrix extends AuditableEntity {
 		this.seller = seller;
 	}
 
-	public String toString(){
-		return eventCode+","+startSubscriptionDate+","+endSubscriptionDate
-				+","+startRatingDate+","+endRatingDate+","
-				+minSubscriptionAgeInMonth+","+maxSubscriptionAgeInMonth+","
-				+criteria1Value+","+criteria2Value+","
-				+criteria3Value+","+amountWithoutTax+","
-				+amountWithTax+","+tradingCurrency+","+","
-				+tradingCountry+","+","+priority+","+","+seller;
+	public String toString() {
+		return eventCode + "," + startSubscriptionDate + "," + endSubscriptionDate + ","
+				+ startRatingDate + "," + endRatingDate + "," + minSubscriptionAgeInMonth + ","
+				+ maxSubscriptionAgeInMonth + "," + criteria1Value + "," + criteria2Value + ","
+				+ criteria3Value + "," + amountWithoutTax + "," + amountWithTax + ","
+				+ tradingCurrency + "," + "," + tradingCountry + "," + "," + priority + "," + ","
+				+ seller;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -319,14 +316,14 @@ public class PricePlanMatrix extends AuditableEntity {
 				return false;
 		} else if (!startSubscriptionDate.equals(other.startSubscriptionDate))
 			return false;
-		if(seller == null){
-			if(other.seller !=null){
+		if (seller == null) {
+			if (other.seller != null) {
 				return false;
 			}
-		} else if(seller.getId()!=other.seller.getId()){
+		} else if (seller.getId() != other.seller.getId()) {
 			return false;
 		}
-		if(priority!=other.priority) {
+		if (priority != other.priority) {
 			return false;
 		}
 		return true;

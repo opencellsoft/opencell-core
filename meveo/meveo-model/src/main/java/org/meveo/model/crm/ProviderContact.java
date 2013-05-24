@@ -19,7 +19,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
@@ -27,7 +26,8 @@ import org.meveo.model.shared.Address;
 
 @Entity
 @Table(name = "CRM_PROVIDER_CONTACT")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_CONTACT_SEQ")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "CRM_PROVIDER_CONTACT_SEQ")
 public class ProviderContact extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class ProviderContact extends BusinessEntity {
 	protected String lastName;
 
 	@Column(name = "EMAIL", length = 100)
-	//@Pattern(regexp = ".+@.+\\..{2,4}")
+	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String email;
 
@@ -58,7 +58,7 @@ public class ProviderContact extends BusinessEntity {
 	protected String fax;
 
 	@Column(name = "GENERIC_MAIL", length = 100)
-	//@Pattern(regexp = ".+@.+\\..{2,4}")
+	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String genericMail;
 

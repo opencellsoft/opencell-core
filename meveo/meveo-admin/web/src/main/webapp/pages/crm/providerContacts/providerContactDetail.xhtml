@@ -50,37 +50,29 @@
 			<p:fieldset legend="#{messages['commons.address']}">
 				<p:panelGrid columns="2">
 					<hf:formEntityField label="#{messages['address.address1']}"
-						field="address" id="address1" childField="address1" popup="false" size="80"
-						maxlength="80" />
+						field="address" id="address1" childField="address1" popup="false"
+						size="80" maxlength="80" />
 
 					<hf:formEntityField label="#{messages['address.address2']}"
-						field="address" id="address2" childField="address2" popup="false" size="80"
-						maxlength="80" />
+						field="address" id="address2" childField="address2" popup="false"
+						size="80" maxlength="80" />
 
 					<hf:formEntityField label="#{messages['address.address3']}"
-						field="address" id="address3" childField="address3" popup="false" size="80"
-						maxlength="80" />
+						field="address" id="address3" childField="address3" popup="false"
+						size="80" maxlength="80" />
 
 					<hf:formEntityField label="#{messages['address.zipCode']}" size="5"
-						required="true" id="zipCode" field="address" childField="zipCode" length="3"
-						popup="false" maxlength="5" />
+						required="true" id="zipCode" field="address" childField="zipCode"
+						length="3" popup="false" maxlength="5" />
+
 					<hf:formEntityField label="#{messages['address.city']}"
-						required="true" id="city" field="address" childField="city" popup="false"
-						maxlength="50" />
+						required="true" id="city" field="address" childField="city"
+						popup="false" maxlength="50" />
 
-					<p:panelGrid columns="2">
-						<p:outputLabel for="country"
-							value="#{messages['address.country']}" />
-						<p:selectOneMenu id="country" required="true"
-							rendered="#{providerContactBean.edit}"
-							value="#{providerContactBean.entity.address.country}">
-							<f:selectItems value="#{messages['address.countrys'].split(',')}"
-								var="country" label="#{country}" />
-						</p:selectOneMenu>
-
-						<h:outputText rendered="#{!providerContactBean.edit}"
-							value="#{providerContactBean.entity.address.country}" />
-					</p:panelGrid>
+					<hf:formEntityField label="#{messages['address.country']}"
+						embedded="true" field="address" childField="country"
+						labelField="descriptionEn" valueField="countryCode"
+						listBean="#{countryBean}"></hf:formEntityField>
 				</p:panelGrid>
 			</p:fieldset>
 

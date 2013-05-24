@@ -16,21 +16,19 @@
 package org.meveo.admin.jsf.converter;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
+import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
 
-/**
- * 
- * @author anasseh
- * @created 18.01.2011
- */
 @FacesConverter("bigDecimal10DigitsConverter")
 public class BigDecimal10DigitsConverter extends BigDecimalConverter {
 
-    private DecimalFormat format = new DecimalFormat("#,##0.0000000000");
-
-    @Override
-    protected DecimalFormat getDecimalFormat() {
-        return format;
-    }
+	@Override
+	protected DecimalFormat getDecimalFormat() {
+		DecimalFormatSymbols decimalFormatSymbol = new DecimalFormatSymbols(FacesContext
+				.getCurrentInstance().getViewRoot().getLocale());
+		DecimalFormat format = new DecimalFormat("#,##0.0000000000", decimalFormatSymbol);
+		return format;
+	}
 }

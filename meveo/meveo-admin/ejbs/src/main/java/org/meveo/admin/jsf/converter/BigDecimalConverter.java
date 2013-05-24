@@ -22,7 +22,6 @@ import java.util.ResourceBundle;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
@@ -62,10 +61,10 @@ public class BigDecimalConverter implements Converter {
 		if (str == null || str.equals("")) {
 			return null;
 		}
-		if (!str.matches(paramBean.getProperty("bigDecimal.pattern"))) {
+		/*if (!str.matches(paramBean.getProperty("bigDecimal.pattern"))) {
 			throw new ConverterException(resourceMessages.getString(
 					"javax.faces.converter.BigDecimalConverter.DECIMAL_detail"));
-		}
+		}*/
 		str = str.replace(" ", "");
 		str = str.replace("\u00a0", "");
 		str = str.replace(",", ".");

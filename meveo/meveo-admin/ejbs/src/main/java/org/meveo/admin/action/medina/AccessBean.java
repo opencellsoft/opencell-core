@@ -59,6 +59,18 @@ public class AccessBean extends BaseBean<Access> {
 		super(Access.class);
 	}
 
+	@Override
+	public Access initEntity() {
+		Access access = super.initEntity();
+
+		if (subscriptionId.get() != null) {
+			Subscription subscription = subscriptionService.findById(subscriptionId.get());
+			entity.setSubscription(subscription);
+		}
+
+		return access;
+	}
+
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
@@ -85,15 +97,15 @@ public class AccessBean extends BaseBean<Access> {
 		this.selectedSubscription = selectedSubscription;
 	}
 
-	public String saveOrUpdate() {
-		Subscription subscription = subscriptionService.findById(subscriptionId.get());
+	public String saveOrUpdate(boolean killConversation) {
+		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
 		entity.setSubscription(subscription);
 		if (accessService.isDuplicate(entity)) {
 			messages.error(new BundleKey("messages", "access.duplicate"));
 		} else {
-			return super.saveOrUpdate(false);
+			return super.saveOrUpdate(killConversation);
 		}
-		
+
 		return "";
 	}
 

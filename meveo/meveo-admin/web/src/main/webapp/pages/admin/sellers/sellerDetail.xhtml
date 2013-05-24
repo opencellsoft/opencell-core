@@ -78,7 +78,7 @@
 
 							<hf:formField label="#{messages['businessEntity.description']}"
 								field="description" id="description" maxlength="100" />
-								
+
 							<hf:formEntityField id="trCurrencySelectId"
 								label="#{messages['currency.codeCurrency']}"
 								field="tradingCurrency" childField="currencyCode" popup="true"
@@ -119,19 +119,10 @@
 							<hf:formEntityField label="#{messages['address.city']}"
 								field="address" id="city" childField="city" popup="false"
 								required="true" maxlength="50" />
-							<p:panelGrid id="countryPanel" columns="2">
-								<p:outputLabel for="country_select"
-									value="#{messages['address.country']}" />
-								<p:selectOneMenu id="country_select" required="true"
-									rendered="#{sellerBean.edit}"
-									value="#{sellerBean.entity.address.country}">
-									<f:selectItems
-										value="#{messages['address.countrys'].split(',')}"
-										var="country" itemLabel="#{country}" />
-								</p:selectOneMenu>
-								<h:outputText rendered="#{!sellerBean.edit}"
-									value="#{sellerBean.entity.address.country}" />
-							</p:panelGrid>
+							<hf:formEntityField label="#{messages['address.country']}"
+								embedded="true" field="address" childField="country"
+								labelField="descriptionEn" valueField="countryCode"
+								listBean="#{countryBean}"></hf:formEntityField>
 						</hftl:panelGroup>
 
 					</p:tab>
