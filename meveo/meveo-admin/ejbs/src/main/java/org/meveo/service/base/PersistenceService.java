@@ -45,10 +45,6 @@ import org.meveo.util.MeveoJpa;
 /**
  * Generic implementation that provides the default implementation for
  * persistence methods declared in the {@link IPersistenceService} interface.
- * 
- * 
- * @author Ignas
- * @created 2009.09.04
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements
 		IPersistenceService<E> {
@@ -135,14 +131,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 *      boolean)
 	 */
 	public E findById(Long id, boolean refresh) {
-		log.debug("start of find {0} by id (id={1}) ..", getEntityClass().getSimpleName(), id);
+		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
 		E e = em.find(productClass, id);
 		if (refresh) {
 			log.debug("refreshing loaded entity");
 			em.refresh(e);
 		}
-		log.debug("end of find {0} by id (id={1}). Result found={2}.", getEntityClass()
+		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass()
 				.getSimpleName(), id, e != null);
 		return e;
 	}
@@ -153,7 +149,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 	@SuppressWarnings("unchecked")
 	public E findById(Long id, List<String> fetchFields, boolean refresh) {
-		log.debug("start of find {0} by id (id={1}) ..", getEntityClass().getSimpleName(), id);
+		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
 		if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -171,7 +167,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			log.debug("refreshing loaded entity");
 			em.refresh(e);
 		}
-		log.debug("end of find {0} by id (id={1}). Result found={2}.", getEntityClass()
+		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass()
 				.getSimpleName(), id, e != null);
 		return e;
 	}
@@ -192,11 +188,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 	public void remove(E e) {
 		checkProvider(e);
-		log.debug("start of remove {0} entity (id={1}) ..", getEntityClass().getSimpleName(),
+		log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(),
 				e.getId());
 		em.remove(e);
 		em.flush();
-		log.debug("end of remove {0} entity (id={1}).", getEntityClass().getSimpleName(), e.getId());
+		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
 
 	/**
@@ -217,7 +213,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 */
 	public void update(E e, User updater) {
 
-		log.debug("start of update {0} entity (id={1}) ..", e.getClass().getSimpleName(), e.getId());
+		log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 		if (e instanceof AuditableEntity) {
 			if (updater != null) {
 				((AuditableEntity) e).updateAudit(updater);
@@ -227,7 +223,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 		em.merge(e);
 		checkProvider(e);
-		log.debug("end of update {0} entity (id={1}).", e.getClass().getSimpleName(), e.getId());
+		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
 	}
 
 	/**
@@ -239,7 +235,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	}
 
 	public void create(E e, User creator, Provider provider) {
-		log.debug("start of create {0} entity ..", e.getClass().getSimpleName());
+		log.debug("start of create {} entity ..", e.getClass().getSimpleName());
 		if (e instanceof AuditableEntity) {
 			if (creator != null) {
 				((AuditableEntity) e).updateAudit(creator);
@@ -251,7 +247,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			((BaseEntity) e).setProvider(provider);
 		}
 		em.persist(e);
-		log.debug("end of create {0}. entity id={1}.", e.getClass().getSimpleName(), e.getId());
+		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 	}
 
 	/**
@@ -320,8 +316,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		 * TODO: Hibernate. org.hibernate.Session session = (Session)
 		 * em.getDelegate(); session.refresh(entity);
 		 */
-		//em.getEntityManagerFactory().getCache().evict(entity.getClass(), entity.getId());
-		if(em.contains(entity)){
+		// em.getEntityManagerFactory().getCache().evict(entity.getClass(),
+		// entity.getId());
+		if (em.contains(entity)) {
 			em.refresh(entity);
 		}
 	}
@@ -430,7 +427,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 				boolean notSameProvider = !(provider != null && provider.getId().equals(
 						getCurrentProvider().getId()));
 				log.debug(
-						"checkProvider  getCurrentProvider() id={0} code={1}, entityprovider id={2} code={3}",
+						"checkProvider  getCurrentProvider() id={} code={}, entityprovider id={} code={}",
 						getCurrentProvider().getId(), getCurrentProvider().getCode(),
 						provider != null ? provider.getId() : null,
 						provider != null ? provider.getCode() : null);
@@ -443,14 +440,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	}
 
 	public Provider getCurrentProvider() {
-		Provider result=provider;
-		if(result==null && getCurrentUser()!=null) {
-			result=getCurrentUser().getProvider();
+		Provider result = provider;
+		if (result == null && getCurrentUser() != null) {
+			result = getCurrentUser().getProvider();
 		}
 		return result;
 	}
-	
-	public void setProvider(Provider provider){
+
+	public void setProvider(Provider provider) {
 		this.provider = provider;
 	}
 }
