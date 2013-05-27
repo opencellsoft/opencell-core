@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.meveo.model.billing;
 
-import java.util.Date;
 import java.util.List;
-
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,85 +23,66 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
 
 /**
  * CountryCom entity.
- * 
- * @author Marouane ALAMI
- * @created 2013.03.07
  */
-
 @Entity
 @Table(name = "BILLING_TRADING_COUNTRY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_COUNTRY_SEQ")
-
-public class TradingCountry  extends AuditableEntity{
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "BILLING_TRADING_COUNTRY_SEQ")
+public class TradingCountry extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@OneToMany(mappedBy = "tradingCountry", fetch = FetchType.LAZY)
-    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
-	
- 
+	private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
 
-     @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "COUNTRY_ID")
-	  private Country country; 
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "COUNTRY_ID")
+	private Country country;
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
-	
+
 	@Transient
 	String countryCode;
-	
+
 	public String getPrDescription() {
 		return prDescription;
 	}
-
 
 	public void setPrDescription(String prDescription) {
 		this.prDescription = prDescription;
 	}
 
-
 	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
 		return invoiceSubcategoryCountries;
 	}
-
 
 	public void setInvoiceSubcategoryCountries(
 			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
 		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
 	}
 
-
 	public Country getCountry() {
 		return country;
 	}
-
 
 	public void setCountry(Country country) {
 		this.country = country;
 	}
 
-
 	public String getCountryCode() {
 		return country.getCountryCode();
 	}
 
- 
-	public String toString(){
-		return ""+country;
+	public String toString() {
+		return "" + country;
 	}
-	 
-
 
 }

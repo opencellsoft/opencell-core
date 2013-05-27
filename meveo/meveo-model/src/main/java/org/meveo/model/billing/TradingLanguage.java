@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.meveo.model.billing;
 
 import javax.persistence.Column;
@@ -28,9 +27,6 @@ import org.meveo.model.AuditableEntity;
 
 /**
  * TradingLanguage entity.
- * 
- * @author Marouane ALAMI
- * @created 2013.03.07
  */
 @Entity
 @Table(name = "BILLING_TRADING_LANGUAGE")

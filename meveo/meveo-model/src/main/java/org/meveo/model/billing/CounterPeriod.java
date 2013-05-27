@@ -20,39 +20,35 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.CounterTypeEnum;
 
 @Entity
-@Table(name="BILLING_COUNTER_PERIOD")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_COUNTER_PERIOD_SEQ")
+@Table(name = "BILLING_COUNTER_PERIOD")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "CAT_COUNTER_PERIOD_SEQ")
 public class CounterPeriod extends BusinessEntity {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4924601467998738157L;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "COUNTER_INSTANCE_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "COUNTER_INSTANCE_ID")
 	private CounterInstance counterInstance;
 
 	@Enumerated(EnumType.STRING)
-    @Column(name = "COUNTER_TYPE")
-    private CounterTypeEnum counterType;
+	@Column(name = "COUNTER_TYPE")
+	private CounterTypeEnum counterType;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PERIOD_START_DATE")
-    private Date periodStartDate;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PERIOD_END_DATE")
-    private Date periodEndDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "PERIOD_START_DATE")
+	private Date periodStartDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "PERIOD_END_DATE")
+	private Date periodEndDate;
 
 	@Column(name = "LEVEL", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal level;
-	
+
 	@Column(name = "VALUE", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal value;
-
 
 	public CounterInstance getCounterInstance() {
 		return counterInstance;
@@ -101,6 +97,5 @@ public class CounterPeriod extends BusinessEntity {
 	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
-	
-	
+
 }

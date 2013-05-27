@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
@@ -23,7 +22,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -32,13 +30,11 @@ import org.meveo.model.admin.Currency;
 
 /**
  * TRADING_CURRENCY entity.
- * 
- * @author Marouane ALAMI
- * @created 2013.03.07
  */
 @Entity
 @Table(name = "BILLING_TRADING_CURRENCY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_CURRENCY_SEQ")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "BILLING_TRADING_CURRENCY_SEQ")
 public class TradingCurrency extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 

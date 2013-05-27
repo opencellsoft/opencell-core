@@ -8,45 +8,41 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.CounterTemplate;
 
 @Entity
-@Table(name="BILLING_COUNTER")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_COUNTER_INSTANCE_SEQ")
+@Table(name = "BILLING_COUNTER")
+// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
+// "CAT_COUNTER_INSTANCE_SEQ")
 public class CounterInstance extends BusinessEntity {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4924601467998738157L;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "COUNTER_TEMPLATE_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "COUNTER_TEMPLATE_ID")
 	private CounterTemplate counterTemplate;
-	
-    @ManyToOne
-    @JoinColumn(name = "USER_ACCOUNT_ID")
-    private UserAccount userAccount;
 
-    @OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
-    private List<CounterPeriod> counterPeriods=new ArrayList<CounterPeriod>();
-    
+	@ManyToOne
+	@JoinColumn(name = "USER_ACCOUNT_ID")
+	private UserAccount userAccount;
+
+	@OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
+	private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
+
 	public CounterTemplate getCounterTemplate() {
 		return counterTemplate;
 	}
 
 	public void setCounterTemplate(CounterTemplate counterTemplate) {
 		this.counterTemplate = counterTemplate;
-		if(counterTemplate!=null){
-			this.code=counterTemplate.getCode();
-			this.description=counterTemplate.getDescription();
+		if (counterTemplate != null) {
+			this.code = counterTemplate.getCode();
+			this.description = counterTemplate.getDescription();
 		} else {
-			this.code=null;
-			this.description=null;			
+			this.code = null;
+			this.description = null;
 		}
 	}
 
@@ -65,6 +61,5 @@ public class CounterInstance extends BusinessEntity {
 	public void setCounterPeriods(List<CounterPeriod> counterPeriods) {
 		this.counterPeriods = counterPeriods;
 	}
-	
-	
+
 }
