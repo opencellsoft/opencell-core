@@ -84,7 +84,7 @@ public class CountryBean extends BaseBean<Country> {
 	
 	@Override
 	protected String getDefaultSort() {
-		return "countryCode";
+		return "descriptionEn";
 	}
 
 }

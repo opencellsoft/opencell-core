@@ -15,10 +15,13 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
 
@@ -41,5 +44,13 @@ public class CountryService extends PersistenceService<Country> {
 				.getSimpleName(), countryCode, e != null);
 
 		return e;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Country> list() {
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, getCurrentProvider());
+		queryBuilder.addOrderCriterion("a.descriptionEn", true);
+		Query query = queryBuilder.getQuery(em);
+		return query.getResultList();
 	}
 }
