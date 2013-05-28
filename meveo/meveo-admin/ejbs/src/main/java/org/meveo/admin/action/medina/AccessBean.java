@@ -97,6 +97,15 @@ public class AccessBean extends BaseBean<Access> {
 		this.selectedSubscription = selectedSubscription;
 	}
 
+	public String saveOrUpdate() {
+		if (subscriptionId.get() != null) {
+			Subscription subscription = subscriptionService.findById(subscriptionId.get());
+			entity.setSubscription(subscription);
+		}
+
+		return saveOrUpdate(false);
+	}
+
 	public String saveOrUpdate(boolean killConversation) {
 		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
 		entity.setSubscription(subscription);
