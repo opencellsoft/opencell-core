@@ -34,6 +34,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Subscription;
@@ -98,7 +99,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return userAccount;
 	}
 
-	public void userAccountTermination(String code, Date terminationDate, User updater)
+	public void userAccountTermination(String code, Date terminationDate,SubscriptionTerminationReason terminationReason, User updater)
 			throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
@@ -108,8 +109,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		UserAccount userAccount = findByCode(code);
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.subscriptionTermination(subscription.getCode(), terminationDate,
-					updater);
+			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, updater);
 		}
 		userAccount.setTerminationDate(terminationDate);
 		userAccount.setStatus(AccountStatusEnum.TERMINATED);

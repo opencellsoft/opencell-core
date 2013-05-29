@@ -41,10 +41,6 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.remote.SubscriptionServiceRemote;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Stateless @LocalBean
 public class SubscriptionService extends BusinessService<Subscription>
 		implements SubscriptionServiceRemote {
@@ -106,43 +102,23 @@ public class SubscriptionService extends BusinessService<Subscription>
 		return serviceInstance;
 	}
 
-	public void subscriptionTermination(String subscriptionCode,
-			Date terminationDate, User updater)
-			throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
-		if (terminationDate == null) {
-			terminationDate = new Date();
-		}
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
-		}
-		List<ServiceInstance> serviceInstances = subscription
-				.getServiceInstances();
-		for (ServiceInstance serviceInstance : serviceInstances) {
-			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
-				serviceInstanceService.serviceTermination(serviceInstance,
-						terminationDate, updater);
-			}
-		}
-		subscription.setTerminationDate(terminationDate);
-		subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
-		subscription.setStatusDate(new Date());
-		update(subscription, updater);
-	}
 
 	public void terminateSubscription(String subscriptionCode,
 			Date terminationDate, boolean applyAgreement,
 			boolean applyReimbursment, boolean applyTerminationCharges,
 			User user) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
-		terminateSubscription(subscriptionCode, terminationDate, null,
+		Subscription subscription = findByCode(subscriptionCode);
+		if (subscription == null) {
+			throw new IncorrectSusbcriptionException(
+					"subscription does not exist. code=" + subscriptionCode);
+		}
+		terminateSubscription(subscription, terminationDate, null,
 				applyAgreement, applyReimbursment, applyTerminationCharges,
 				user);
 	}
 
-	public void terminateSubscription(String subscriptionCode,
+	public void terminateSubscription(Subscription subscription,
 			Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User user)
 			throws IncorrectSusbcriptionException,
@@ -150,7 +126,7 @@ public class SubscriptionService extends BusinessService<Subscription>
 		if (terminationReason == null) {
 			throw new BusinessException("terminationReason is null");
 		}
-		terminateSubscription(subscriptionCode, terminationDate,
+		terminateSubscription(subscription, terminationDate,
 				terminationReason, terminationReason.isApplyAgreement(),
 				terminationReason.isApplyReimbursment(),
 				terminationReason.isApplyTerminationCharges(), user);
@@ -286,7 +262,7 @@ public class SubscriptionService extends BusinessService<Subscription>
 		update(subscription, updater);
 	}
 
-	private void terminateSubscription(String subscriptionCode,
+	private void terminateSubscription(Subscription subscription,
 			Date terminationDate,
 			SubscriptionTerminationReason terminationReason,
 			boolean applyAgreement, boolean applyReimbursment,
@@ -296,11 +272,7 @@ public class SubscriptionService extends BusinessService<Subscription>
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
-		}
+		
 		List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {

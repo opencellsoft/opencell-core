@@ -186,7 +186,7 @@ public class ImportSubscriptions extends InputFiles {
 								continue;
 							}
 							try {
-								subscriptionService.terminateSubscription(subscription.getCode(), DateUtils
+								subscriptionService.terminateSubscription(subscription, DateUtils
 										.parseDateWithPattern(subscrip.getStatus().getDate(), param
 												.getProperty("connectorCRM.dateFormat")), subscriptionTerminationType,
 										userJob);

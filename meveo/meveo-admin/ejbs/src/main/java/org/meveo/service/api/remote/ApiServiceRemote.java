@@ -247,7 +247,7 @@ public interface ApiServiceRemote {
      * @param terminationDate Termination date (now if null)
      * @throws BusinessException
      */
-    public void terminateSubscription(String code, Date terminationDate) throws IncorrectSusbcriptionException, BusinessException;
+    public void terminateSubscription(String code, Date terminationDate, boolean applyAgreement,boolean applyReimbursment,boolean applyTerminationCharges) throws IncorrectSusbcriptionException, BusinessException;
 
     /**
      * Reactivate subscription

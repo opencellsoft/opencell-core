@@ -35,13 +35,10 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.AccountService;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Stateless @LocalBean
 public class BillingAccountService extends AccountService<BillingAccount> {
 
@@ -93,7 +90,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return billingAccount;
 	}
 
-	public void billingAccountTermination(String code, Date terminationDate,
+	public void billingAccountTermination(String code, Date terminationDate,SubscriptionTerminationReason terminationReason,
 			User updater) throws BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
@@ -102,7 +99,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		for (UserAccount userAccount : userAccounts) {
 			userAccountService.userAccountTermination(userAccount.getCode(),
-					terminationDate, updater);
+					terminationDate,terminationReason, updater);
 		}
 		billingAccount.setTerminationDate(terminationDate);
 		billingAccount.setStatus(AccountStatusEnum.TERMINATED);

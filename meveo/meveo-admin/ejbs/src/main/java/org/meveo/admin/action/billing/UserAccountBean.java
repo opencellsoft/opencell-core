@@ -30,6 +30,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -176,10 +177,10 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		return back();
 	}
 
-	public String terminateAccount() {
+	public String terminateAccount(SubscriptionTerminationReason terminationReason) {
 		log.info("resiliateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountTermination(entity.getCode(), new Date(),
+			userAccountService.userAccountTermination(entity.getCode(), new Date(),terminationReason,
 					getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()

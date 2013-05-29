@@ -41,6 +41,7 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -201,10 +202,10 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		return back();
 	}
 
-	public String terminateAccount() {
+	public String terminateAccount(SubscriptionTerminationReason terminationReason) {
 		log.info("terminateAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),
+			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),terminationReason,
 					getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="

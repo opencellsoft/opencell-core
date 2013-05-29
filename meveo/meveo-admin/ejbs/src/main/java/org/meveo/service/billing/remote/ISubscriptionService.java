@@ -30,10 +30,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 public interface ISubscriptionService {
 
     public void createSubscription(String userAccountCode, Subscription subscription, User creator)
@@ -48,9 +44,6 @@ public interface ISubscriptionService {
 
     public ServiceInstance SubscriptionServiceDetail(String subscriptionCode, String serviceCode)
             throws IncorrectSusbcriptionException;
-
-    public void subscriptionTermination(String subscriptionCode, Date terminationDate, User updater)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException;
 
     public void subscriptionCancellation(String subscriptionCode, Date terminationDate, User updater)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException;
@@ -68,6 +61,4 @@ public interface ISubscriptionService {
             boolean applyReimbursment, boolean applyTerminationCharges, User user)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException;
     
-    public void terminateSubscription(String subscriptionCode, Date terminationDate, SubscriptionTerminationReason terminationReason, User user)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException;
-}
+ }

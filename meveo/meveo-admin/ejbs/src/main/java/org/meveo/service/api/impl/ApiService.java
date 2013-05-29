@@ -82,7 +82,6 @@ import org.slf4j.Logger;
 /**
  * API service implementation
  * 
- * @author Andrius Karpavicius
  */
 @Stateless @LocalBean
 public class ApiService implements ApiServiceRemote {
@@ -993,7 +992,7 @@ public class ApiService implements ApiServiceRemote {
 	 * .lang.String, java.util.Date)
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void terminateSubscription(String code, Date terminationDate)
+	public void terminateSubscription(String code, Date terminationDate, boolean applyAgreement,boolean applyReimbursment,boolean applyTerminationCharges)
 			throws IncorrectSusbcriptionException, BusinessException {
 
 		// Uppercase code values, as Meveo stores them uppercase
@@ -1002,7 +1001,7 @@ public class ApiService implements ApiServiceRemote {
 		log.debug("[Meveo] [API] Terminate subscription: code {0}, terminationDate {1}", code,
 				terminationDate);
 
-		subscriptionService.subscriptionTermination(code, terminationDate, null);
+		subscriptionService.terminateSubscription(code, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, null);
 
 		entityManager.flush();
 

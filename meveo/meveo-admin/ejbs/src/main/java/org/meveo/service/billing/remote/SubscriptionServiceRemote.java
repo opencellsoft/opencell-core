@@ -17,10 +17,6 @@ package org.meveo.service.billing.remote;
 
 import javax.ejb.Local;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Local
 public interface SubscriptionServiceRemote extends ISubscriptionService {
 
