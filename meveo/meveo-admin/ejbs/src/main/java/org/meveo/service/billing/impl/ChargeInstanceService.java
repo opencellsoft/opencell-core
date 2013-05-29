@@ -36,11 +36,8 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class ChargeInstanceService<P extends ChargeInstance> extends BusinessService<P> {
 
 	@EJB
@@ -57,18 +54,17 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 	@EJB
 	private WalletOperationService chargeApplicationService;
 
-
 	@SuppressWarnings("unchecked")
 	public P findByCodeAndService(String code, Long subscriptionId) {
 		P chargeInstance = null;
 		try {
-			log.debug("start of find {0} by code (code={1}) ..", "OneShotChargeInstance", code);
+			log.debug("start of find {} by code (code={}) ..", "OneShotChargeInstance", code);
 			QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 			chargeInstance = (P) qb.getQuery(em).getSingleResult();
-			log.debug("end of find {0} by code (code={1}). Result found={2}.", "OCCTemplate", code,
-					chargeInstance != null);
+			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
+					"OCCTemplate", code, chargeInstance != null });
 
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndService : aucune charge n'a ete trouvee");
@@ -109,7 +105,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setServiceInstance(serviceInst);
 		chargeInstance.setSeller(seller);
-		recurringChargeInstanceService.create(chargeInstance, creator,recurringChargeTemplate.getProvider());
+		recurringChargeInstanceService.create(chargeInstance, creator,
+				recurringChargeTemplate.getProvider());
 
 	}
 
@@ -126,7 +123,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 
 		recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 
-		//chargeApplicationService.cancelChargeApplications(recurringChargeInstanId, null, updater);
+		// chargeApplicationService.cancelChargeApplications(recurringChargeInstanId,
+		// null, updater);
 
 		recurringChargeInstanceService.update(recurringChargeInstance, updater);
 
@@ -152,7 +150,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		for (RecurringChargeInstance recurringChargeInstance : serviceInst
 				.getRecurringChargeInstances()) {
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-			//recurringChargeInstance.setSubscriptionDate(subscriptionDate);
+			// recurringChargeInstance.setSubscriptionDate(subscriptionDate);
 			recurringChargeInstance.setTerminationDate(null);
 			recurringChargeInstance.setChargeDate(subscriptionDate);
 			recurringChargeInstanceService.update(recurringChargeInstance);

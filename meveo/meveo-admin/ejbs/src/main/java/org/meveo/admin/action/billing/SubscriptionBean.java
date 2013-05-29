@@ -147,7 +147,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			calendar.set(Calendar.MINUTE, 0);
 			entity.setSubscriptionDate(calendar.getTime());
 		} else {
-			log.info("entity.getOffer()=" + entity.getOffer().getCode());
+			log.debug("entity.getOffer()=" + entity.getOffer().getCode());
 			if (entity.getOffer() != null) {
 				List<ServiceInstance> serviceInstances = entity.getServiceInstances();
 				for (ServiceTemplate serviceTemplate : entity.getOffer().getServiceTemplates()) {
@@ -168,8 +168,8 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 		}
 
-		log.info("serviceInstances=" + serviceInstances.getSize());
-		log.info("servicetemplates=" + serviceTemplates.getSize());
+		log.debug("serviceInstances=" + serviceInstances.getSize());
+		log.debug("servicetemplates=" + serviceTemplates.getSize());
 		return entity;
 	}
 
@@ -209,7 +209,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public void newOneShotChargeInstance() {
-		log.info("newOneShotChargeInstance ");
+		log.debug("newOneShotChargeInstance ");
 		this.oneShotChargeInstance = new OneShotChargeInstance();
 	}
 
@@ -218,7 +218,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public void saveOneShotChargeIns() {
-		log.info("saveOneShotChargeIns getObjectId=" + getObjectId());
+		log.debug("saveOneShotChargeIns getObjectId=" + getObjectId());
 
 		try {
 			if (oneShotChargeInstance != null && oneShotChargeInstance.getId() != null) {
@@ -265,21 +265,21 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		this.recurringChargeInstance = recurringChargeIns;
 		recurringChargeServiceInstanceQuantity = recurringChargeIns.getServiceInstance()
 				.getQuantity();
-		System.out.println("AKK setting recurringChargeIns " + recurringChargeIns);
+		log.debug("setting recurringChargeIns " + recurringChargeIns);
 	}
 
 	public void saveRecurringChargeIns() {
-		log.info("saveRecurringChargeIns getObjectId=#0", getObjectId());
+		log.debug("saveRecurringChargeIns getObjectId=#0", getObjectId());
 		try {
 			if (recurringChargeInstance != null) {
 				if (recurringChargeInstance.getId() != null) {
-					log.info("update RecurringChargeIns #0, id:#1", recurringChargeInstance,
+					log.debug("update RecurringChargeIns #0, id:#1", recurringChargeInstance,
 							recurringChargeInstance.getId());
 					recurringChargeInstance.getServiceInstance().setQuantity(
 							recurringChargeServiceInstanceQuantity);
 					recurringChargeInstanceService.update(recurringChargeInstance);
 				} else {
-					log.info("save RecurringChargeIns #0", recurringChargeInstance);
+					log.debug("save RecurringChargeIns #0", recurringChargeInstance);
 
 					recurringChargeInstance.setSubscription(entity);
 					Long id = recurringChargeInstanceService.recurringChargeApplication(entity,
@@ -342,7 +342,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public RecurringChargeInstance getRecurringChargeInstance() {
-		System.out.println("AKK getRecurringChargeInstance " + recurringChargeInstance);
+		log.debug("getRecurringChargeInstance " + recurringChargeInstance);
 		return recurringChargeInstance;
 	}
 
@@ -352,7 +352,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public List<WalletOperation> getOneShotWalletOperations() {
-		log.info("getOneShotWalletOperations");
+		log.debug("getOneShotWalletOperations");
 		if (this.oneShotChargeInstance == null || this.oneShotChargeInstance.getId() == null) {
 			return null;
 		}
@@ -365,17 +365,17 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
-		log.info("retrieved " + (results != null ? results.size() : 0) + " WalletOperations");
+		log.debug("retrieved " + (results != null ? results.size() : 0) + " WalletOperations");
 		return results;
 	}
 
 	public List<WalletOperation> getRecurringWalletOperations() {
-		log.info("getRecurringWalletOperations");
+		log.debug("getRecurringWalletOperations");
 		if (this.recurringChargeInstance == null || this.recurringChargeInstance.getId() == null) {
-			System.out.println("AKK recurringChargeInstance is null");
+			log.debug("recurringChargeInstance is null");
 			return null;
 		}
-		System.out.println("AKK recurringChargeInstance is " + recurringChargeInstance.getId());
+		log.debug("recurringChargeInstance is " + recurringChargeInstance.getId());
 		List<WalletOperation> results = new ArrayList<WalletOperation>(
 				recurringChargeInstance.getWalletOperations());
 		Collections.sort(results, new Comparator<WalletOperation>() {
@@ -384,7 +384,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
-		log.info("retrieve " + (results != null ? results.size() : 0) + " WalletOperations");
+		log.debug("retrieve " + (results != null ? results.size() : 0) + " WalletOperations");
 		return results;
 	}
 
@@ -400,17 +400,16 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public void instanciateManyServices() {
-		log.info("instanciateManyServices");
+		log.debug("instanciateManyServices");
 		try {
 			if (quantity <= 0) {
 				log.warn("instanciateManyServices quantity is negative! set it to 1");
 				quantity = 1;
 			}
 			boolean isChecked = false;
-			System.out.println("AKK serviceTemplates is " + serviceTemplates.getSize());
+			log.debug("serviceTemplates is " + serviceTemplates.getSize());
 
-			System.out.println("AKK serviceTemplates is "
-					+ serviceTemplates.getSelectedItemsAsList());
+			log.debug("serviceTemplates is " + serviceTemplates.getSelectedItemsAsList());
 
 			for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
 				isChecked = true;
@@ -449,9 +448,9 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public void activateService() {
-		log.info("activateService...");
+		log.debug("activateService...");
 		try {
-			log.debug("activateService id=#0 checked", selectedServiceInstance.getId());
+			log.debug("activateService id={} checked", selectedServiceInstance.getId());
 			if (selectedServiceInstance != null) {
 				log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size=#0",
 						selectedServiceInstance.getRecurringChargeInstances().size());
@@ -487,7 +486,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 			SubscriptionTerminationReason newSubscriptionTerminationReason = selectedServiceInstance
 					.getSubscriptionTerminationReason();
-			log.info(
+			log.debug(
 					"selected subscriptionTerminationReason=#0,terminationDate=#1,selectedServiceInstanceId=#2,status=#3",
 					newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason
 							.getId() : null, terminationDate, selectedServiceInstance.getId(),

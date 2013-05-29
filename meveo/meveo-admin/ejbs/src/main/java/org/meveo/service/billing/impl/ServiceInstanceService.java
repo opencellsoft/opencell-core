@@ -202,7 +202,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		int agreementMonthTerm = 0;
 		// activate recurring charges
-		log.debug("serviceActivation:serviceInstance.getRecurrringChargeInstances.size=#0",
+		log.debug("serviceActivation:serviceInstance.getRecurrringChargeInstances.size={}",
 				serviceInstance.getRecurringChargeInstances().size());
 		for (RecurringChargeInstance recurringChargeInstance : serviceInstance
 				.getRecurringChargeInstances()) {
