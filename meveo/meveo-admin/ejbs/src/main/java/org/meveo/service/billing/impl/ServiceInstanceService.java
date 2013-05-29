@@ -325,7 +325,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 						chargeApplicationService.applyReimbursment(recurringChargeInstance, user);
 					}
 
-				} else if (terminationDate.before(nextChargeDate)) {
+				} else if (terminationDate.before(storedNextChargeDate)) {
 					recurringChargeInstance.setTerminationDate(terminationDate);
 					chargeApplicationService.applyReimbursment(recurringChargeInstance, user);
 				}
