@@ -245,14 +245,17 @@
 								</h:form>
 								<p:outputPanel id="serviceInstOperations">
 									<h:form id="operationFrm">
-										<p:commandButton action="#{subscriptionBean.activateService}"
-											value="#{messages['button.activateButton']}" ajax="true"
-											onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
-											update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages"
-											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />
-										<p:commandButton value="#{messages['button.terminateButton']}"
-											oncomplete="dlg_serviceTerminationPopup.show()"
-											disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
+										<p:panel styleClass="action-buttons">
+											<p:commandButton action="#{subscriptionBean.activateService}"
+												value="#{messages['button.activateButton']}" ajax="true"
+												onclick="if(confirm('#{messages['confirmationMessage.confirmActivation']}')){return true;}else{return false;}"
+												update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages"
+												disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}" />
+											<p:commandButton
+												value="#{messages['button.terminateButton']}"
+												oncomplete="dlg_serviceTerminationPopup.show()"
+												disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
+										</p:panel>
 										<!-- 										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}" -->
 										<!-- 											value="#{messages['button.cancelButton']}" -->
 										<!-- 											onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}" -->
