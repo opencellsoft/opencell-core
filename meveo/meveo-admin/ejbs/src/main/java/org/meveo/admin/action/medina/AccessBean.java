@@ -103,7 +103,9 @@ public class AccessBean extends BaseBean<Access> {
 			entity.setSubscription(subscription);
 		}
 
-		return saveOrUpdate(false);
+		saveOrUpdate(false);
+		
+		return "";
 	}
 
 	public String saveOrUpdate(boolean killConversation) {
