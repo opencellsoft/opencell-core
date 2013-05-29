@@ -976,68 +976,6 @@
 								value="#{subscriptionBean.recurringChargeServiceInstanceQuantity}" />
 						</p:panelGrid>
 					</p:panelGrid>
-					<p:outputPanel id="recurringWalletOperationsPanel">
-						<span style="height: 1px" />
-						<h:outputText value="#{messages['commons.noItems']}"
-							rendered="#{empty subscriptionBean.recurringWalletOperations}" />
-						<p:panelGrid width="100%" columns="1" border="0"
-							style="padding:0px; margin:0px;text-align: right;"
-							rendered="#{not empty subscriptionBean.recurringWalletOperations}">
-							<h:outputText
-								value="#{subscriptionBean.recurringWalletOperations.size} #{messages['commons.itemsFound']}" />
-							<p:dataTable id="recurringWalletOperationTable"
-								value="#{subscriptionBean.recurringWalletOperations}"
-								var="shotApplication" paginator="true" rows="10"
-								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-								rowsPerPageTemplate="10,20,30">
-								<p:column>
-									<f:facet name="header">
-										<h:outputText
-											value="#{messages['walletOperation.operationDate']}" />
-									</f:facet>
-									<h:outputText value="#{shotApplication.operationDate}">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</h:outputText>
-								</p:column>
-								<p:column>
-									<f:facet name="header">
-										<h:outputText
-											value="#{messages['walletOperation.description']}" />
-									</f:facet>
-									<h:outputText value="#{shotApplication.description}">
-									</h:outputText>
-								</p:column>
-								<p:column>
-									<f:facet name="header">
-										<h:outputText
-											value="#{messages['walletOperation.parameter2']}" />
-									</f:facet>
-									<h:outputText value="#{shotApplication.parameter2}">
-									</h:outputText>
-								</p:column>
-								<p:column>
-									<f:facet name="header">
-										<h:outputText
-											value="#{messages['walletOperation.amountWithoutTax']}" />
-									</f:facet>
-									<h:outputText value="#{shotApplication.amountWithoutTax}" />
-								</p:column>
-								<p:column>
-									<f:facet name="header">
-										<h:outputText
-											value="#{messages['walletOperation.amountWithTax']}" />
-									</f:facet>
-									<h:outputText value="#{shotApplication.amountWithTax}" />
-								</p:column>
-								<p:column>
-									<f:facet name="header">
-										<h:outputText value="#{messages['walletOperation.status']}" />
-									</f:facet>
-									<h:outputText value="#{messages[shotApplication.status.label]}" />
-								</p:column>
-							</p:dataTable>
-						</p:panelGrid>
-					</p:outputPanel>
 					<script type="text/javascript">
     //<![CDATA[
 
@@ -1155,6 +1093,66 @@
 							onclick="dlg_recurringChgPopup.hide();return false;" />
 					</p:panelGrid>
 				</hf:formPanel>
+				<p:outputPanel id="recurringWalletOperationsPanel">
+					<span style="height: 1px" />
+					<h:outputText value="#{messages['commons.noItems']}"
+						rendered="#{empty subscriptionBean.recurringWalletOperations}" />
+					<p:panelGrid width="100%" columns="1"
+						rendered="#{not empty subscriptionBean.recurringWalletOperations}">
+						<h:outputText
+							value="#{subscriptionBean.recurringWalletOperations.size} #{messages['commons.itemsFound']}" />
+						<p:dataTable id="recurringWalletOperationTable"
+							value="#{subscriptionBean.recurringWalletOperations}"
+							var="shotApplication" paginator="true" rows="10"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="10,20,30" styleClass="custom-grid">
+							<p:column>
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['walletOperation.operationDate']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.operationDate}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['walletOperation.description']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.description}">
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="#{messages['walletOperation.parameter2']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.parameter2}">
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['walletOperation.amountWithoutTax']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.amountWithoutTax}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['walletOperation.amountWithTax']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.amountWithTax}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="#{messages['walletOperation.status']}" />
+								</f:facet>
+								<h:outputText value="#{messages[shotApplication.status.label]}" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</p:outputPanel>
 			</p:outputPanel>
 		</p:dialog>
 	</ui:define>
