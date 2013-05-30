@@ -19,21 +19,15 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-/**
- * @author Ignas Lelys
- * @created Oct 31, 2010
- * 
- */
 @Embeddable
 public class ContactInformation implements Serializable, Cloneable {
-
+	
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "EMAIL", length = 100)
-	//@Pattern(regexp = ".+@.+\\..{2,4}")
+	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String email;
 
@@ -53,12 +47,11 @@ public class ContactInformation implements Serializable, Cloneable {
 	}
 
 	public ContactInformation(ContactInformation contactInformation) {
-		this(contactInformation.email, contactInformation.phone,
-				contactInformation.mobile, contactInformation.fax);
+		this(contactInformation.email, contactInformation.phone, contactInformation.mobile,
+				contactInformation.fax);
 	}
 
-	public ContactInformation(String email, String phone, String mobile,
-			String fax) {
+	public ContactInformation(String email, String phone, String mobile, String fax) {
 		super();
 		this.email = email;
 		this.phone = phone;

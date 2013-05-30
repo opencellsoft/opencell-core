@@ -16,11 +16,7 @@
 package org.meveo.model.payments;
 
 /**
- * Payment Enum for Customer Account
- * 
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 12, 2010 2:57:12 AM
- * 
+ * Payment Enum for Customer Account.
  */
 public enum PaymentMethodEnum {
 

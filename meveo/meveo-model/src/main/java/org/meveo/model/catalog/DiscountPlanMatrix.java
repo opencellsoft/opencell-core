@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,18 +34,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.admin.Seller; 
+import org.meveo.model.admin.Seller;
 
-/**
- * @author Ignas Lelys
- * @created Nov 28, 2010
- * 
- */
 @Entity
 @Table(name = "CAT_DISCOUNT_PLAN_MATRIX", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"EVENT_CODE", "START_SUBSCRIPTION_DATE", "END_SUBSCRIPTION_DATE", "PROVIDER_ID" }) })
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "CAT_DISCOUNT_PLAN_MATRIX_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DISCOUNT_PLAN_MATRIX_SEQ")
 public class DiscountPlanMatrix extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -52,7 +47,7 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	private Integer businessIntermediaryId;
 
 	@Column(name = "EVENT_CODE", length = 20, nullable = false)
-	@Size(max = 20, min = 1) 
+	@Size(max = 20, min = 1)
 	private String eventCode;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -70,11 +65,10 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	@Digits(integer = 19, fraction = 8)
 	@Min(0)
 	private BigDecimal percent;
-	
-	 @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "SELLER_ID")
-	 private Seller seller;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SELLER_ID")
+	private Seller seller;
 
 	public String getEventCode() {
 		return eventCode;

@@ -18,10 +18,6 @@
  */
 package org.meveo.model.payments;
 
-/**
- * @author anasseh
- * 
- */
 public enum DDRequestOpStatusEnum {
 
     WAIT(1, "DDRequestOpStatusEnum.WAIT"),

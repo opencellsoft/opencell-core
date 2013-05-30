@@ -21,8 +21,7 @@ import org.meveo.model.catalog.CounterTypeEnum;
 
 @Entity
 @Table(name = "BILLING_COUNTER_PERIOD")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "CAT_COUNTER_PERIOD_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTER_PERIOD_SEQ")
 public class CounterPeriod extends BusinessEntity {
 	private static final long serialVersionUID = -4924601467998738157L;
 

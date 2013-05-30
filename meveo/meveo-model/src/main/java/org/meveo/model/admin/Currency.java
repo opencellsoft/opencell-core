@@ -17,19 +17,17 @@ package org.meveo.model.admin;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.ProviderlessEntity;
 
 /**
  * Currency entity.
- * 
- * @author Ignas Lelys
- * @created 2009.09.03
  */
 @Entity
 @Table(name = "ADM_CURRENCY")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_CURRENCY_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_CURRENCY_SEQ")
 public class Currency extends ProviderlessEntity {
 
 	private static final long serialVersionUID = 1L;

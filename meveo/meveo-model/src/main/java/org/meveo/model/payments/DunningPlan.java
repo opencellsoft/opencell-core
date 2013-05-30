@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -32,8 +33,7 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "AR_DUNNING_PLAN", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"CREDIT_CATEGORY", "PAYMENT_METHOD", "PROVIDER_ID" }))
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "AR_DUNNING_PLAN_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_PLAN_SEQ")
 public class DunningPlan extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

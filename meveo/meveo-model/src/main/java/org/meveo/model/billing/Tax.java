@@ -19,17 +19,14 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @Table(name = "BILLING_TAX")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
 public class Tax extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 

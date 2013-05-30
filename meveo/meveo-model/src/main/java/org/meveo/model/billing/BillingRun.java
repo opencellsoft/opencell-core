@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
@@ -31,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,282 +40,275 @@ import javax.persistence.Transient;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @Table(name = "BILLING_BILLING_RUN")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
 public class BillingRun extends AuditableEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PROCESS_DATE")
-    private Date processDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "PROCESS_DATE")
+	private Date processDate;
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "STATUS")
-    private BillingRunStatusEnum status;
+	@Enumerated(value = EnumType.STRING)
+	@Column(name = "STATUS")
+	private BillingRunStatusEnum status;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "STATUS_DATE")
-    private Date statusDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "STATUS_DATE")
+	private Date statusDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_CYCLE_ID")
-    private BillingCycle billingCycle;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BILLING_CYCLE_ID")
+	private BillingCycle billingCycle;
 
-    @Column(name = "NB_BILLING_ACCOUNT")
-    private Integer billingAccountNumber;
+	@Column(name = "NB_BILLING_ACCOUNT")
+	private Integer billingAccountNumber;
 
-    @Column(name = "NB_BILLABLE_BILLING_ACCOUNT")
-    private Integer billableBillingAcountNumber;
+	@Column(name = "NB_BILLABLE_BILLING_ACCOUNT")
+	private Integer billableBillingAcountNumber;
 
-    @Column(name = "NB_PRODUCIBLE_INVOICE")
-    private Integer producibleInvoiceNumber;
+	@Column(name = "NB_PRODUCIBLE_INVOICE")
+	private Integer producibleInvoiceNumber;
 
-    @Column(name = "PRODUCIBLE_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal producibleAmountWithoutTax;
+	@Column(name = "PRODUCIBLE_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	private BigDecimal producibleAmountWithoutTax;
 
-    @Column(name = "PRODUCIBLE_AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal producibleAmountTax;
+	@Column(name = "PRODUCIBLE_AMOUNT_TAX", precision = 23, scale = 12)
+	private BigDecimal producibleAmountTax;
 
-    @Column(name = "NB_INVOICE")
-    private Integer InvoiceNumber;
+	@Column(name = "NB_INVOICE")
+	private Integer InvoiceNumber;
 
-    @Column(name = "PRODUCIBLE_AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal producibleAmountWithTax;
+	@Column(name = "PRODUCIBLE_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	private BigDecimal producibleAmountWithTax;
 
-    @Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountWithoutTax;
+	@Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	private BigDecimal prAmountWithoutTax;
 
-    @Column(name = "PR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountWithTax;
+	@Column(name = "PR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	private BigDecimal prAmountWithTax;
 
-    @Column(name = "PR_AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal prAmountTax;
+	@Column(name = "PR_AMOUNT_TAX", precision = 23, scale = 12)
+	private BigDecimal prAmountTax;
 
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Invoice> invoices = new ArrayList<Invoice>();
+	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Invoice> invoices = new ArrayList<Invoice>();
 
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
+	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
 
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BillingAccount> selectedBillingAccount = new ArrayList<BillingAccount>();
+	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<BillingAccount> selectedBillingAccount = new ArrayList<BillingAccount>();
 
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
+	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "PROCESS_TYPE")
-    private BillingProcessTypesEnum processType;
+	@Enumerated(value = EnumType.STRING)
+	@Column(name = "PROCESS_TYPE")
+	private BillingProcessTypesEnum processType;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DATE")
-    private Date startDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "START_DATE")
+	private Date startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_DATE")
-    private Date endDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "END_DATE")
+	private Date endDate;
 
-    @Column(name = "REJECTION_REASON")
-    private String rejectionReason;
+	@Column(name = "REJECTION_REASON")
+	private String rejectionReason;
 
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PR_CURRENCY_ID")
-    private Currency currency ;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PR_COUNTRY_ID")
-    private Country country; 
-    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PR_CURRENCY_ID")
+	private Currency currency;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "PR_LANGUAGE_ID")
-   private Language language;
-    
- 
-    @Transient
-    PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PR_COUNTRY_ID")
+	private Country country;
 
-    @Transient
-    PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PR_LANGUAGE_ID")
+	private Language language;
 
-    public Date getProcessDate() {
-        return processDate;
-    }
+	@Transient
+	PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
 
-    public void setProcessDate(Date processDate) {
-        this.processDate = processDate;
-    }
+	@Transient
+	PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
 
-    public BillingRunStatusEnum getStatus() {
-        return status;
-    }
+	public Date getProcessDate() {
+		return processDate;
+	}
 
-    public void setStatus(BillingRunStatusEnum status) {
-        this.status = status;
-    }
+	public void setProcessDate(Date processDate) {
+		this.processDate = processDate;
+	}
 
-    public Date getStatusDate() {
-        return statusDate;
-    }
+	public BillingRunStatusEnum getStatus() {
+		return status;
+	}
 
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
+	public void setStatus(BillingRunStatusEnum status) {
+		this.status = status;
+	}
 
-    public BillingCycle getBillingCycle() {
-        return billingCycle;
-    }
+	public Date getStatusDate() {
+		return statusDate;
+	}
 
-    public void setBillingCycle(BillingCycle billingCycle) {
-        this.billingCycle = billingCycle;
-    }
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
 
-    public Integer getBillingAccountNumber() {
-        return billingAccountNumber;
-    }
+	public BillingCycle getBillingCycle() {
+		return billingCycle;
+	}
 
-    public void setBillingAccountNumber(Integer billingAccountNumber) {
-        this.billingAccountNumber = billingAccountNumber;
-    }
+	public void setBillingCycle(BillingCycle billingCycle) {
+		this.billingCycle = billingCycle;
+	}
 
-    public Integer getBillableBillingAcountNumber() {
-        return billableBillingAcountNumber;
-    }
+	public Integer getBillingAccountNumber() {
+		return billingAccountNumber;
+	}
 
-    public void setBillableBillingAcountNumber(Integer billableBillingAcountNumber) {
-        this.billableBillingAcountNumber = billableBillingAcountNumber;
-    }
+	public void setBillingAccountNumber(Integer billingAccountNumber) {
+		this.billingAccountNumber = billingAccountNumber;
+	}
 
-    public Integer getProducibleInvoiceNumber() {
-        return producibleInvoiceNumber;
-    }
+	public Integer getBillableBillingAcountNumber() {
+		return billableBillingAcountNumber;
+	}
 
-    public void setProducibleInvoiceNumber(Integer producibleInvoiceNumber) {
-        this.producibleInvoiceNumber = producibleInvoiceNumber;
-    }
+	public void setBillableBillingAcountNumber(Integer billableBillingAcountNumber) {
+		this.billableBillingAcountNumber = billableBillingAcountNumber;
+	}
 
-    public BigDecimal getProducibleAmountWithoutTax() {
-        return producibleAmountWithoutTax;
-    }
+	public Integer getProducibleInvoiceNumber() {
+		return producibleInvoiceNumber;
+	}
 
-    public void setProducibleAmountWithoutTax(BigDecimal producibleAmountWithoutTax) {
-        this.producibleAmountWithoutTax = producibleAmountWithoutTax;
-    }
+	public void setProducibleInvoiceNumber(Integer producibleInvoiceNumber) {
+		this.producibleInvoiceNumber = producibleInvoiceNumber;
+	}
 
-    public BigDecimal getProducibleAmountTax() {
-        return producibleAmountTax;
-    }
+	public BigDecimal getProducibleAmountWithoutTax() {
+		return producibleAmountWithoutTax;
+	}
 
-    public void setProducibleAmountTax(BigDecimal producibleAmountTax) {
-        this.producibleAmountTax = producibleAmountTax;
-    }
+	public void setProducibleAmountWithoutTax(BigDecimal producibleAmountWithoutTax) {
+		this.producibleAmountWithoutTax = producibleAmountWithoutTax;
+	}
 
-    public Integer getInvoiceNumber() {
-        return InvoiceNumber;
-    }
+	public BigDecimal getProducibleAmountTax() {
+		return producibleAmountTax;
+	}
 
-    public void setInvoiceNumber(Integer invoiceNumber) {
-        InvoiceNumber = invoiceNumber;
-    }
+	public void setProducibleAmountTax(BigDecimal producibleAmountTax) {
+		this.producibleAmountTax = producibleAmountTax;
+	}
 
-    public BigDecimal getProducibleAmountWithTax() {
-        return producibleAmountWithTax;
-    }
+	public Integer getInvoiceNumber() {
+		return InvoiceNumber;
+	}
 
-    public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
-        this.producibleAmountWithTax = producibleAmountWithTax;
-    }
- 
-    public void setPrAmountTax(BigDecimal prAmountTax) {
+	public void setInvoiceNumber(Integer invoiceNumber) {
+		InvoiceNumber = invoiceNumber;
+	}
+
+	public BigDecimal getProducibleAmountWithTax() {
+		return producibleAmountWithTax;
+	}
+
+	public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
+		this.producibleAmountWithTax = producibleAmountWithTax;
+	}
+
+	public void setPrAmountTax(BigDecimal prAmountTax) {
 		this.prAmountTax = prAmountTax;
 	}
 
 	public List<Invoice> getInvoices() {
-        return invoices;
-    }
+		return invoices;
+	}
 
-    public void setInvoices(List<Invoice> invoices) {
-        this.invoices = invoices;
-    }
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
 
-    public Set<BillingRunList> getBillingRunLists() {
-        return billingRunLists;
-    }
+	public Set<BillingRunList> getBillingRunLists() {
+		return billingRunLists;
+	}
 
-    public void setBillingRunLists(Set<BillingRunList> billingRunLists) {
-        this.billingRunLists = billingRunLists;
-    }
+	public void setBillingRunLists(Set<BillingRunList> billingRunLists) {
+		this.billingRunLists = billingRunLists;
+	}
 
-    public BillingProcessTypesEnum getProcessType() {
-        return processType;
-    }
+	public BillingProcessTypesEnum getProcessType() {
+		return processType;
+	}
 
-    public void setProcessType(BillingProcessTypesEnum processType) {
-        this.processType = processType;
-    }
+	public void setProcessType(BillingProcessTypesEnum processType) {
+		this.processType = processType;
+	}
 
-    public Date getStartDate() {
-        return startDate;
-    }
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 
-    public Date getEndDate() {
-        return endDate;
-    }
+	public Date getEndDate() {
+		return endDate;
+	}
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 
-    public PreInvoicingReportsDTO getPreInvoicingReports() {
-        return preInvoicingReports;
-    }
+	public PreInvoicingReportsDTO getPreInvoicingReports() {
+		return preInvoicingReports;
+	}
 
-    public void setPreInvoicingReports(PreInvoicingReportsDTO preInvoicingReports) {
-        this.preInvoicingReports = preInvoicingReports;
-    }
+	public void setPreInvoicingReports(PreInvoicingReportsDTO preInvoicingReports) {
+		this.preInvoicingReports = preInvoicingReports;
+	}
 
-    public PostInvoicingReportsDTO getPostInvoicingReports() {
-        return postInvoicingReports;
-    }
+	public PostInvoicingReportsDTO getPostInvoicingReports() {
+		return postInvoicingReports;
+	}
 
-    public void setPostInvoicingReports(PostInvoicingReportsDTO postInvoicingReports) {
-        this.postInvoicingReports = postInvoicingReports;
-    }
+	public void setPostInvoicingReports(PostInvoicingReportsDTO postInvoicingReports) {
+		this.postInvoicingReports = postInvoicingReports;
+	}
 
-    public List<BillingAccount> getSelectedBillingAccount() {
-        return selectedBillingAccount;
-    }
+	public List<BillingAccount> getSelectedBillingAccount() {
+		return selectedBillingAccount;
+	}
 
-    public void setSelectedBillingAccount(List<BillingAccount> selectedBillingAccount) {
-        this.selectedBillingAccount = selectedBillingAccount;
-    }
+	public void setSelectedBillingAccount(List<BillingAccount> selectedBillingAccount) {
+		this.selectedBillingAccount = selectedBillingAccount;
+	}
 
-    public Set<RatedTransaction> getRatedTransactions() {
-        return ratedTransactions;
-    }
+	public Set<RatedTransaction> getRatedTransactions() {
+		return ratedTransactions;
+	}
 
-    public void setRatedTransactions(Set<RatedTransaction> ratedTransactions) {
-        this.ratedTransactions = ratedTransactions;
-    }
+	public void setRatedTransactions(Set<RatedTransaction> ratedTransactions) {
+		this.ratedTransactions = ratedTransactions;
+	}
 
-    public String getRejectionReason() {
-        return rejectionReason;
-    }
+	public String getRejectionReason() {
+		return rejectionReason;
+	}
 
-    public void setRejectionReason(String rejectionReason) {
-        this.rejectionReason = rejectionReason;
-    }
+	public void setRejectionReason(String rejectionReason) {
+		this.rejectionReason = rejectionReason;
+	}
 
 	public BigDecimal getPrAmountWithoutTax() {
 		return prAmountWithoutTax;
@@ -359,7 +353,5 @@ public class BillingRun extends AuditableEntity {
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
-    
-    
 
 }

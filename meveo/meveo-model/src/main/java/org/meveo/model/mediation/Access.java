@@ -22,6 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,14 +33,11 @@ import org.meveo.model.billing.Subscription;
 
 /**
  * Access linked to Subscription and Zone.
- * 
- * @author seb
- * 
  */
 @Entity
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCESS_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
 public class Access extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;

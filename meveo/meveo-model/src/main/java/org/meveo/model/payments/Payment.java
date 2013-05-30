@@ -21,11 +21,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- * 
- * @created Nov 12, 2010 3:27:10 AM
- */
 @Entity
 @DiscriminatorValue(value = "P")
 public class Payment extends AccountOperation {

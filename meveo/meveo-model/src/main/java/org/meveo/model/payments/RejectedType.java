@@ -15,10 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 16, 2010 10:57:45 AM
- */
 public enum RejectedType {
 
     A(1, "RejectedType.a"),

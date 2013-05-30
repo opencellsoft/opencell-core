@@ -16,7 +16,9 @@
 package org.meveo.model.communication;
 
 public enum PriorityEnum {
-	SLOW(5), NORMAL(3), URGENT(1);
+	SLOW(5), 
+	NORMAL(3), 
+	URGENT(1);
 
 	private Integer mailValue;
 

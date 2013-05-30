@@ -15,9 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- */
 public enum DunningActionTypeEnum {
 
     FILE(1, "DunningActionTypeEnum.file"),

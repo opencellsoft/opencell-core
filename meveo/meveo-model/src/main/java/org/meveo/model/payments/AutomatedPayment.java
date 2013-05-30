@@ -23,12 +23,6 @@ import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/**
- * 
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 12, 2010 3:41:59 AM
- * 
- */
 @Entity
 @DiscriminatorValue(value = "AP")
 public class AutomatedPayment extends Payment {

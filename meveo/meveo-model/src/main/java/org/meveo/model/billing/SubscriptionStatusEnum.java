@@ -15,11 +15,6 @@
 */
 package org.meveo.model.billing;
 
-
-/**
- * @author R.AITYAAZZA
- * 
- */
 public enum SubscriptionStatusEnum  {
 
     CREATED(1, "AccountStatusEnum.created"),

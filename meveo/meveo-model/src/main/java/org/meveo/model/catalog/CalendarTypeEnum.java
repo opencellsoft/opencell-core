@@ -15,11 +15,6 @@
 */
 package org.meveo.model.catalog;
 
-/**
- * @author Ignas Lelys
- * @created Dec 3, 2010
- * 
- */
 public enum CalendarTypeEnum {
 
     CHARGE_IMPUTATION(1, "calendarTypeEnum.chargeImputation"),

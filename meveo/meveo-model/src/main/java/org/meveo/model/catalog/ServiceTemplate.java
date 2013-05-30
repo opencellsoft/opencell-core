@@ -25,20 +25,17 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.ServiceInstance;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @Table(name = "CAT_SERVICE_TEMPLATE")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "CAT_SERVICE_TEMPLATE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
 public class ServiceTemplate extends BusinessEntity {
+	
 	private static final long serialVersionUID = 1L;
 
 	@ManyToMany(fetch = FetchType.LAZY)

@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.IEntity;
@@ -26,10 +28,13 @@ import org.meveo.model.IEntity;
  */
 @Entity
 @Table(name = "ADM_PERMISSION")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_PERMISSION_SEQ")
 public class Permission implements IEntity, Serializable {
 	private static final long serialVersionUID = 2884657784984355718L;
 
 	@Id
+	@GeneratedValue(generator = "ID_GENERATOR")
+	@Column(name = "ID")
 	private Long id;
 
 	@Column(name = "RESOURCE", nullable = false)

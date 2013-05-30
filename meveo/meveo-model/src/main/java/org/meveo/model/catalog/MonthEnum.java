@@ -15,11 +15,6 @@
 */
 package org.meveo.model.catalog;
 
-/**
- * @author Ignas Lelys
- * @created Dec 6, 2010
- * 
- */
 public enum MonthEnum {
     
     JANUARY(1, "MonthEnum.january"),

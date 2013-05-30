@@ -30,23 +30,18 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Pattern;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @Table(name = "BILLING_BILLING_ACCOUNT")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_BILLING_ACCOUNT_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_ACCOUNT_SEQ")
 public class BillingAccount extends AccountEntity {
 
 	public static final String ACCOUNT_TYPE = "billingAccount.type";
@@ -65,7 +60,7 @@ public class BillingAccount extends AccountEntity {
 	private BankCoordinates bankCoordinates = new BankCoordinates();
 
 	@Column(name = "EMAIL")
-	//@Pattern(regexp = ".+@.+\\..{2,4}")
+	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	private String email;
 
 	@Column(name = "ELECTRONIC_BILLING")

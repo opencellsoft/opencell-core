@@ -19,46 +19,44 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BaseEntity;
-import org.meveo.model.billing.InvoiceSubcategoryCountry;
 
 @Entity
 @Table(name = "CAT_SERV_USAGE_CHARGE_TEMPLATE")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_USAGE_CHARGE_TEMPLATE_SEQ")
 public class ServiceUsageChargeTemplate extends BaseEntity {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -6881449392209666474L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICE_TEMPLATE_ID")
+	@JoinColumn(name = "SERVICE_TEMPLATE_ID")
 	private ServiceTemplate serviceTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CHARGE_TEMPLATE_ID")
+	@JoinColumn(name = "CHARGE_TEMPLATE_ID")
 	private UsageChargeTemplate chargeTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COUNTER_TEMPLATE_ID")
+	@JoinColumn(name = "COUNTER_TEMPLATE_ID")
 	private CounterTemplate counterTemplate;
 
-
-	//TODO do we need that ?
+	// TODO do we need that ?
 	/*
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WALLET_TEMPLATE_ID")
-	private WalletTemplate walletTemplate;	
-	
-    @Enumerated(EnumType.STRING)
-    @Column(name = "CREDIT_DEBIT_FLAG")
-    private OperationTypeEnum type;
-    
-    @Column(name = "UNITY_COUNTER_MULTIPLICATOR")
-	private BigDecimal unityCounterMultiplicator = BigDecimal.ONE;
-	*/
-
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name = "WALLET_TEMPLATE_ID") private WalletTemplate
+	 * walletTemplate;
+	 * 
+	 * @Enumerated(EnumType.STRING)
+	 * 
+	 * @Column(name = "CREDIT_DEBIT_FLAG") private OperationTypeEnum type;
+	 * 
+	 * @Column(name = "UNITY_COUNTER_MULTIPLICATOR") private BigDecimal
+	 * unityCounterMultiplicator = BigDecimal.ONE;
+	 */
 
 	public ServiceTemplate getServiceTemplate() {
 		return serviceTemplate;
@@ -84,16 +82,13 @@ public class ServiceUsageChargeTemplate extends BaseEntity {
 		this.counterTemplate = counterTemplate;
 	}
 
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((getId() == null) ? 0 : getId().hashCode());
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -111,6 +106,5 @@ public class ServiceUsageChargeTemplate extends BaseEntity {
 			return false;
 		return true;
 	}
-
 
 }

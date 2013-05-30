@@ -1,24 +1,25 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.mediation;
 
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,177 +28,178 @@ import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "MEDINA_CDR_FILE")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_CDR_FILE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_CDR_FILE_SEQ")
 public class CDRFile extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "FILENAME")
-    private String filename;
+	@Column(name = "FILENAME")
+	private String filename;
 
-    @Column(name = "START_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date analysisStartDate;
+	// input
+	@Column(name = "START_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date analysisStartDate;
 
-    @Column(name = "END_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date analysisEndDate;
-    
-    @Column(name = "UNIQ_STEP_TOTAL_DURATION")
-    private Long uniquenessStepTotalDuration;
-    
-    @Column(name = "UNIQ_STEP_EXECUTION_COUNT")
-    private Long uniquenessStepExecutionCount;
-    
-    @Column(name = "UNIQ_STEP_AVERAGE_DURATION", columnDefinition = "float")
-    private double uniquenessStepAverageDuration;
-    
-    @Column(name = "ACCESS_STEP_TOTAL_DURATION")
-    private Long accessStepTotalDuration;
-    
-    @Column(name = "ACCESS_STEP_EXECUTION_COUNT")
-    private Long accessStepExecutionCount;
-    
-    @Column(name = "ACCESS_STEP_AVERAGE_DURATION", columnDefinition = "float")
-    private Double accessStepAverageDuration;
-    
-    @Column(name = "ZONNING_STEP_TOTAL_DURATION")
-    private Long zonningStepTotalDuration;
-    
-    @Column(name = "ZONNING_STEP_EXECUTION_COUNT")
-    private Long zonningStepExecutionCount;
-    
-    @Column(name = "ZONNING_STEP_AVERAGE_DURATION", columnDefinition = "float")
-    private Double zonningStepAverageDuration;
-    
-    @Column(name = "PROV_STEP_TOTAL_DURATION")
-    private Long provissioningStepTotalDuration;
-    
-    @Column(name = "PROV_STEP_EXECUTION_COUNT")
-    private Long provissioningStepExecutionCount;
-    
-    @Column(name = "PROV_STEP_AVERAGE_DURATION", columnDefinition = "float")
-    private Double provissioningStepAverageDuration;
-    
-    @Column(name = "PROCESS_DURATION")
-    private Long processDuration;
-    
-    @Column(name = "COMMIT_DURATION")
-    private Long commitDuration;
-    
-    @Column(name = "TOTAL_DURATION")
-    private Long totalDuration;
+	@Column(name = "END_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date analysisEndDate;
 
-    @Column(name = "ERROR_FILENAME")
-    private String errorFilename;
-    
-    @Column(name = "IGNORED_FILENAME")
-    private String ignoredFilename;
+	@Column(name = "UNIQ_STEP_TOTAL_DURATION")
+	private Long uniquenessStepTotalDuration;
 
-    @Column(name = "PARSED_CDR")
-    private Long parsedCDRs;
+	@Column(name = "UNIQ_STEP_EXECUTION_COUNT")
+	private Long uniquenessStepExecutionCount;
 
-    @Column(name = "SUCCESSED_CDR")
-    private Long successedCDRs;
+	@Column(name = "UNIQ_STEP_AVERAGE_DURATION", columnDefinition = "float")
+	private double uniquenessStepAverageDuration;
 
-    @Column(name = "REJECTED_CDR")
-    private Long rejectedCDRs;
+	@Column(name = "ACCESS_STEP_TOTAL_DURATION")
+	private Long accessStepTotalDuration;
 
-    @Column(name = "IGNORED_CDR")
-    private Long ignoredCDRs;
-    
-    @Column(name = "USAGE_DATA_VOLUME")
-    private Long usageDATAVolume;
-    
-    @Column(name = "USAGE_VOICE_VOLUME")
-    private Long usageVOICEVolume;
-    
-    @Column(name = "USAGE_SMS_VOLUME")
-    private Long usageSMSVolume;
+	@Column(name = "ACCESS_STEP_EXECUTION_COUNT")
+	private Long accessStepExecutionCount;
 
-    @Column(name = "REJECTED_DATA_VOLUME")
-    private Long rejectedDATAVolume;
-    
-    @Column(name = "REJECTED_VOICE_VOLUME")
-    private Long rejectedVOICEVolume;
-    
-    @Column(name = "REJECTED_SMS_VOLUME")
-    private Long rejectedSMSVolume;
-    
-    @Column(name = "FILE_DATE")
-    private Date fileDate;
+	@Column(name = "ACCESS_STEP_AVERAGE_DURATION", columnDefinition = "float")
+	private Double accessStepAverageDuration;
 
-    public String getFilename() {
-        return filename;
-    }
+	@Column(name = "ZONNING_STEP_TOTAL_DURATION")
+	private Long zonningStepTotalDuration;
 
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
+	@Column(name = "ZONNING_STEP_EXECUTION_COUNT")
+	private Long zonningStepExecutionCount;
 
-    public Date getAnalysisStartDate() {
-        return analysisStartDate;
-    }
+	@Column(name = "ZONNING_STEP_AVERAGE_DURATION", columnDefinition = "float")
+	private Double zonningStepAverageDuration;
 
-    public void setAnalysisStartDate(Date analysisStartDate) {
-        this.analysisStartDate = analysisStartDate;
-    }
+	@Column(name = "PROV_STEP_TOTAL_DURATION")
+	private Long provissioningStepTotalDuration;
 
-    public Date getAnalysisEndDate() {
-        return analysisEndDate;
-    }
+	@Column(name = "PROV_STEP_EXECUTION_COUNT")
+	private Long provissioningStepExecutionCount;
 
-    public void setAnalysisEndDate(Date analysisEndDate) {
-        this.analysisEndDate = analysisEndDate;
-    }
+	@Column(name = "PROV_STEP_AVERAGE_DURATION", columnDefinition = "float")
+	private Double provissioningStepAverageDuration;
 
-    public String getErrorFilename() {
-        return errorFilename;
-    }
+	@Column(name = "PROCESS_DURATION")
+	private Long processDuration;
 
-    public void setErrorFilename(String errorFilename) {
-        this.errorFilename = errorFilename;
-    }
+	@Column(name = "COMMIT_DURATION")
+	private Long commitDuration;
 
-    public String getIgnoredFilename() {
-        return ignoredFilename;
-    }
+	@Column(name = "TOTAL_DURATION")
+	private Long totalDuration;
 
-    public void setIgnoredFilename(String ignoredFilename) {
-        this.ignoredFilename = ignoredFilename;
-    }
+	@Column(name = "ERROR_FILENAME")
+	private String errorFilename;
 
-    public Long getIgnoredCDRs() {
-        return ignoredCDRs;
-    }
+	@Column(name = "IGNORED_FILENAME")
+	private String ignoredFilename;
 
-    public void setIgnoredCDRs(Long ignoredCDRs) {
-        this.ignoredCDRs = ignoredCDRs;
-    }
+	@Column(name = "PARSED_CDR")
+	private Long parsedCDRs;
 
-    public Long getParsedCDRs() {
-        return parsedCDRs;
-    }
+	@Column(name = "SUCCESSED_CDR")
+	private Long successedCDRs;
 
-    public void setParsedCDRs(Long parsedCDRs) {
-        this.parsedCDRs = parsedCDRs;
-    }
+	@Column(name = "REJECTED_CDR")
+	private Long rejectedCDRs;
 
-    public Long getSuccessedCDRs() {
-        return successedCDRs;
-    }
+	@Column(name = "IGNORED_CDR")
+	private Long ignoredCDRs;
 
-    public void setSuccessedCDRs(Long successedCDRs) {
-        this.successedCDRs = successedCDRs;
-    }
+	@Column(name = "USAGE_DATA_VOLUME")
+	private Long usageDATAVolume;
 
-    public Long getRejectedCDRs() {
-        return rejectedCDRs;
-    }
+	@Column(name = "USAGE_VOICE_VOLUME")
+	private Long usageVOICEVolume;
 
-    public void setRejectedCDRs(Long rejectedCDRs) {
-        this.rejectedCDRs = rejectedCDRs;
-    }
+	@Column(name = "USAGE_SMS_VOLUME")
+	private Long usageSMSVolume;
+
+	@Column(name = "REJECTED_DATA_VOLUME")
+	private Long rejectedDATAVolume;
+
+	@Column(name = "REJECTED_VOICE_VOLUME")
+	private Long rejectedVOICEVolume;
+
+	@Column(name = "REJECTED_SMS_VOLUME")
+	private Long rejectedSMSVolume;
+
+	@Column(name = "FILE_DATE")
+	private Date fileDate;
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public Date getAnalysisStartDate() {
+		return analysisStartDate;
+	}
+
+	public void setAnalysisStartDate(Date analysisStartDate) {
+		this.analysisStartDate = analysisStartDate;
+	}
+
+	public Date getAnalysisEndDate() {
+		return analysisEndDate;
+	}
+
+	public void setAnalysisEndDate(Date analysisEndDate) {
+		this.analysisEndDate = analysisEndDate;
+	}
+
+	public String getErrorFilename() {
+		return errorFilename;
+	}
+
+	public void setErrorFilename(String errorFilename) {
+		this.errorFilename = errorFilename;
+	}
+
+	public String getIgnoredFilename() {
+		return ignoredFilename;
+	}
+
+	public void setIgnoredFilename(String ignoredFilename) {
+		this.ignoredFilename = ignoredFilename;
+	}
+
+	public Long getIgnoredCDRs() {
+		return ignoredCDRs;
+	}
+
+	public void setIgnoredCDRs(Long ignoredCDRs) {
+		this.ignoredCDRs = ignoredCDRs;
+	}
+
+	public Long getParsedCDRs() {
+		return parsedCDRs;
+	}
+
+	public void setParsedCDRs(Long parsedCDRs) {
+		this.parsedCDRs = parsedCDRs;
+	}
+
+	public Long getSuccessedCDRs() {
+		return successedCDRs;
+	}
+
+	public void setSuccessedCDRs(Long successedCDRs) {
+		this.successedCDRs = successedCDRs;
+	}
+
+	public Long getRejectedCDRs() {
+		return rejectedCDRs;
+	}
+
+	public void setRejectedCDRs(Long rejectedCDRs) {
+		this.rejectedCDRs = rejectedCDRs;
+	}
 
 	public Long getUsageDATAVolume() {
 		return usageDATAVolume;
@@ -275,8 +277,7 @@ public class CDRFile extends BaseEntity {
 		return uniquenessStepAverageDuration;
 	}
 
-	public void setUniquenessStepAverageDuration(
-			double uniquenessStepAverageDuration) {
+	public void setUniquenessStepAverageDuration(double uniquenessStepAverageDuration) {
 		this.uniquenessStepAverageDuration = uniquenessStepAverageDuration;
 	}
 
@@ -332,8 +333,7 @@ public class CDRFile extends BaseEntity {
 		return provissioningStepTotalDuration;
 	}
 
-	public void setProvissioningStepTotalDuration(
-			long provissioningStepTotalDuration) {
+	public void setProvissioningStepTotalDuration(long provissioningStepTotalDuration) {
 		this.provissioningStepTotalDuration = provissioningStepTotalDuration;
 	}
 
@@ -341,8 +341,7 @@ public class CDRFile extends BaseEntity {
 		return provissioningStepExecutionCount;
 	}
 
-	public void setProvissioningStepExecutionCount(
-			long provissioningStepExecutionCount) {
+	public void setProvissioningStepExecutionCount(long provissioningStepExecutionCount) {
 		this.provissioningStepExecutionCount = provissioningStepExecutionCount;
 	}
 
@@ -350,8 +349,7 @@ public class CDRFile extends BaseEntity {
 		return provissioningStepAverageDuration;
 	}
 
-	public void setProvissioningStepAverageDuration(
-			double provissioningStepAverageDuration) {
+	public void setProvissioningStepAverageDuration(double provissioningStepAverageDuration) {
 		this.provissioningStepAverageDuration = provissioningStepAverageDuration;
 	}
 
@@ -378,5 +376,5 @@ public class CDRFile extends BaseEntity {
 	public void setTotalDuration(long totalDuration) {
 		this.totalDuration = totalDuration;
 	}
-	
+
 }

@@ -20,7 +20,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,73 +30,71 @@ import org.meveo.model.crm.Provider;
 
 /**
  * Base class for all entity classes.
- * 
- * @author rhallier
- * 
  */
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable, IEntity {
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(generator = "ID_GENERATOR")
+	@Column(name = "ID")
+	private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "ID")
-    private Long id;
+	@Version
+	@Column(name = "VERSION")
+	private Integer version;
 
-    @Version
-    @Column(name = "VERSION")
-    private Integer version;
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PROVIDER_ID")
+	private Provider provider;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "PROVIDER_ID")
-    private Provider provider;
+	public Long getId() {
+		return id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Integer getVersion() {
+		return version;
+	}
 
-    public Integer getVersion() {
-        return version;
-    }
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+	public Provider getProvider() {
+		return provider;
+	}
 
-    public Provider getProvider() {
-        return provider;
-    }
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
 
-    public void setProvider(Provider provider) {
-        this.provider = provider;
-    }
+	public boolean isTransient() {
+		return id == null;
+	}
 
-    public boolean isTransient() {
-        return id == null;
-    }
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+	/**
+	 * Equals method must be overridden in concrete Entity class. Entities
+	 * shouldn't be compared only by ID, because if entity is not persisted its
+	 * ID is null.
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		throw new IllegalStateException("Equals method was not overriden!");
+	}
 
-    /**
-     * Equals method must be overridden in concrete Entity class. Entities shouldn't be compared only by ID, because if entity is not persisted its ID is null.
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        throw new IllegalStateException("Equals method was not overriden!");
-    }
-
-    @Override
-    public String toString() {
-        return "id " + (id == null ? "" : id.toString());
-    }
+	@Override
+	public String toString() {
+		return "id " + (id == null ? "" : id.toString());
+	}
 }

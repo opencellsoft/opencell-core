@@ -1,22 +1,23 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -26,105 +27,106 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
-//import org.meveo.model.rating.EDR;
 import org.meveo.model.admin.Seller;
 
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class WalletOperation extends BusinessEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * The wallet on which the account operation is applied.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WALLET_ID")
-    private WalletInstance wallet;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "OPERATION_DATE")
-    private Date operationDate;
+	/**
+	 * The wallet on which the account operation is applied.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WALLET_ID")
+	private WalletInstance wallet;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "CREDIT_DEBIT_FLAG")
-    private OperationTypeEnum type;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "OPERATION_DATE")
+	private Date operationDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CHARGE_INSTANCE_ID")
-    private ChargeInstance chargeInstance;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "CREDIT_DEBIT_FLAG")
+	private OperationTypeEnum type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CURRENCY_ID")
-    private Currency currency;
-    
-    @Column(name = "TAX_PERCENT", precision = 23, scale = 12)
-    private BigDecimal taxPercent;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CHARGE_INSTANCE_ID")
+	private ChargeInstance chargeInstance;
 
-    @Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal unitAmountWithoutTax;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CURRENCY_ID")
+	private Currency currency;
 
-    @Column(name = "UNIT_AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal unitAmountWithTax;
+	@Column(name = "TAX_PERCENT", precision = 23, scale = 12)
+	private BigDecimal taxPercent;
 
-    @Column(name = "UNIT_AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal unitAmountTax;
-    
-    @Column(name = "QUANTITY", precision = 23, scale = 12)
-    private BigDecimal quantity;
-    
-    @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax;
-    
-    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-    private BigDecimal amountWithTax;
-    
-    @Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
-    private BigDecimal amountTax;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COUNTER_ID")
-    private CounterInstance counter;
-    
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "EDR_ID")
-    //private EDR usageEdr;
+	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX")
+	private BigDecimal unitAmountWithoutTax;
 
-    @Column(name = "PARAMETER_1", length = 50)
-    private String parameter1;
+	@Column(name = "UNIT_AMOUNT_WITH_TAX")
+	private BigDecimal unitAmountWithTax;
 
-    @Column(name = "PARAMETER_2", length = 50)
-    private String parameter2;
+	@Column(name = "UNIT_AMOUNT_TAX")
+	private BigDecimal unitAmountTax;
 
-    @Column(name = "PARAMETER_3", length = 50)
-    private String parameter3;
+	@Column(name = "QUANTITY")
+	private BigDecimal quantity;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DATE")
-    private Date startDate;
+	@Column(name = "AMOUNT_WITHOUT_TAX")
+	private BigDecimal amountWithoutTax;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_DATE")
-    private Date endDate;
+	@Column(name = "AMOUNT_WITH_TAX")
+	private BigDecimal amountWithTax;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "SUBSCRIPTION_DATE")
-    private Date subscriptionDate;
+	@Column(name = "AMOUNT_TAX")
+	private BigDecimal amountTax;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
-    private WalletOperationStatusEnum status;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SELLER_ID")
-    private Seller seller;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "COUNTER_ID")
+	private CounterInstance counter;
+
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "EDR_ID")
+	// private EDR usageEdr;
+
+	@Column(name = "PARAMETER_1", length = 50)
+	private String parameter1;
+
+	@Column(name = "PARAMETER_2", length = 50)
+	private String parameter2;
+
+	@Column(name = "PARAMETER_3", length = 50)
+	private String parameter3;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "START_DATE")
+	private Date startDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "END_DATE")
+	private Date endDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "SUBSCRIPTION_DATE")
+	private Date subscriptionDate;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS")
+	private WalletOperationStatusEnum status;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SELLER_ID")
+	private Seller seller;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -238,13 +240,11 @@ public class WalletOperation extends BusinessEntity {
 		this.counter = counter;
 	}
 
-	/*public EDR getUsageEdr() {
-		return usageEdr;
-	}
-
-	public void setUsageEdr(EDR usageEdr) {
-		this.usageEdr = usageEdr;
-	}*/
+	/*
+	 * public EDR getUsageEdr() { return usageEdr; }
+	 * 
+	 * public void setUsageEdr(EDR usageEdr) { this.usageEdr = usageEdr; }
+	 */
 
 	public String getParameter1() {
 		return parameter1;
@@ -309,15 +309,13 @@ public class WalletOperation extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
-	
-	public String toString(){
-		return wallet+","+operationDate+","
-				+type+","+chargeInstance+","+currency
-				+","+taxPercent+","+unitAmountWithoutTax
-				+","+unitAmountWithTax+","+unitAmountTax+","
-				+counter+","+parameter1+","+parameter2+","+parameter3
-				+","+startDate+","+endDate+","+subscriptionDate
-				+","+status+","+seller;
+
+	public String toString() {
+		return wallet + "," + operationDate + "," + type + "," + chargeInstance + "," + currency
+				+ "," + taxPercent + "," + unitAmountWithoutTax + "," + unitAmountWithTax + ","
+				+ unitAmountTax + "," + counter + "," + parameter1 + "," + parameter2 + ","
+				+ parameter3 + "," + startDate + "," + endDate + "," + subscriptionDate + ","
+				+ status + "," + seller;
 	}
-    
+
 }

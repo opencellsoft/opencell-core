@@ -15,12 +15,6 @@
 */
 package org.meveo.model.bi;
 
-
-/**
- * @author Ignas Lelys
- * @created Oct 31, 2010
- * 
- */
 public enum ExecutionFrequencyEnum {
 
     NO_SCHEDULING(0, "executionTypeEnum.noScheduling"),
@@ -35,7 +29,6 @@ public enum ExecutionFrequencyEnum {
     ExecutionFrequencyEnum(Integer id, String label) {
         this.id = id;
         this.label = label;
-
     }
 
     public Integer getId() {

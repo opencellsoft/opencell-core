@@ -17,6 +17,7 @@ package org.meveo.model.billing;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.ProviderlessEntity;
@@ -26,8 +27,7 @@ import org.meveo.model.ProviderlessEntity;
  */
 @Entity
 @Table(name = "ADM_LANGUAGE")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_LANGUAGE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_LANGUAGE_SEQ")
 public class Language extends ProviderlessEntity {
 	private static final long serialVersionUID = 1L;
 

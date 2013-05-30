@@ -15,13 +15,8 @@
 */
 package org.meveo.model.billing;
 
-
 /**
  * Task status.
- * 
- * @author Sebastien
- * @created Apr 18, 2010
- * 
  */
 public enum TaskStatusEnum {
 

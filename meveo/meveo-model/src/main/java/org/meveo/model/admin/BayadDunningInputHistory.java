@@ -19,11 +19,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * Information about Bayad dunning process received and processed inputs.
- * 
- * @author Ignas Lelys
- * @created Apr 11, 2011
- * 
+ * Information about Bayad dunning process received and processed inputs. 
  */
 @Entity
 @DiscriminatorValue("BAYAD_DUNNING")

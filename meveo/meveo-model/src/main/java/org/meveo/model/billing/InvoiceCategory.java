@@ -21,18 +21,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @Table(name = "BILLING_INVOICE_CAT")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_INVOICE_CAT_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_SEQ")
 public class InvoiceCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

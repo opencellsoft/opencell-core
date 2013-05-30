@@ -20,10 +20,6 @@ import javax.persistence.Entity;
 
 /**
  * Information about Bayad invoicing process received and processed inputs.
- * 
- * @author Ignas Lelys
- * @created Apr 11, 2011
- * 
  */
 @Entity
 @DiscriminatorValue("BAYAD_INVOICING")

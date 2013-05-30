@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
@@ -26,119 +26,118 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BaseEntity;
 
-
 @Entity
 @Table(name = "BILLING_RATED_TRANSACTION")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RATED_TRANSACTION_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RATED_TRANSACTION_SEQ")
 public class RatedTransaction extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WALLET_ID")
-    private WalletInstance wallet;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WALLET_ID")
+	private WalletInstance wallet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WALLET_OPERATION_ID")
-    private WalletOperation walletOperation;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WALLET_OPERATION_ID")
+	private WalletOperation walletOperation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_RUN_ID")
-    private BillingRun billingRun;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BILLING_RUN_ID")
+	private BillingRun billingRun;
 
-    @Column(name = "PR_DESCRIPTION", length = 255)
-    private String prDescription;
-    
-    @Column(name = "USAGE_DESCRIPTION", length = 255)
-    private String usageDescription;
+	@Column(name = "PR_DESCRIPTION", length = 255)
+	private String prDescription;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "USAGE_DATE")
-    private Date usageDate;
+	@Column(name = "USAGE_DESCRIPTION", length = 255)
+	private String usageDescription;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
-    private InvoiceSubCategory invoiceSubCategory;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "USAGE_DATE")
+	private Date usageDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TAX_ID")
-    private Tax tax;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
+	private InvoiceSubCategory invoiceSubCategory;
 
-    @Column(name = "TAX_PERCENT", precision = 23, scale = 12)
-    private BigDecimal taxPercent;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TAX_ID")
+	private Tax tax;
 
-    @Column(name = "UNIT_AMOUNT_WITHOUT_TAX")
-    private BigDecimal unitAmountWithoutTax;
+	@Column(name = "TAX_PERCENT", precision = 23, scale = 12)
+	private BigDecimal taxPercent;
 
-    @Column(name = "UNIT_AMOUNT_WITH_TAX")
-    private BigDecimal unitAmountWithTax;
+	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX")
+	private BigDecimal unitAmountWithoutTax;
 
-    @Column(name = "UNIT_AMOUNT_TAX")
-    private BigDecimal unitAmountTax;
-    
-    @Column(name = "QUANTITY")
-    private BigDecimal quantity;
-    
-    @Column(name = "AMOUNT_WITHOUT_TAX")
-    private BigDecimal amountWithoutTax;
-    
-    @Column(name = "AMOUNT_WITH_TAX")
-    private BigDecimal amountWithTax;
-    
-    @Column(name = "AMOUNT_TAX")
-    private BigDecimal amountTax;
+	@Column(name = "UNIT_AMOUNT_WITH_TAX")
+	private BigDecimal unitAmountWithTax;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
-    private Subscription subscription;
-    
-    @Column(name = "grouping_id")
-    private Integer groupingId;
+	@Column(name = "UNIT_AMOUNT_TAX")
+	private BigDecimal unitAmountTax;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "INVOICE_ID")
-    private Invoice invoice;
+	@Column(name = "QUANTITY")
+	private BigDecimal quantity;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "AGGREGATE_ID_F")
-    private SubCategoryInvoiceAgregate invoiceAgregateF;
+	@Column(name = "AMOUNT_WITHOUT_TAX")
+	private BigDecimal amountWithoutTax;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "AGGREGATE_ID_R")
-    private CategoryInvoiceAgregate invoiceAgregateR;
+	@Column(name = "AMOUNT_WITH_TAX")
+	private BigDecimal amountWithTax;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "AGGREGATE_ID_T")
-    private TaxInvoiceAgregate invoiceAgregateT;
+	@Column(name = "AMOUNT_TAX")
+	private BigDecimal amountTax;
 
-    @Column(name = "USAGE_QUANTITY")
-    private Integer usageQuantity;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SUBSCRIPTION_ID")
+	private Subscription subscription;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
-    private RatedTransactionStatusEnum status;
-    
-    @Column(name = "DO_NOT_TRIGGER_INVOICING")
-    private boolean doNotTriggerInvoicing  = false;
+	@Column(name = "grouping_id")
+	private Integer groupingId;
 
- 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_CURRENCY_ID")
-    private TradingCurrency tradingCurrency ;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_COUNTRY_ID")
-    private TradingCountry tradingCountry;    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "INVOICE_ID")
+	private Invoice invoice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "TRADING_LANGUAGE_ID")
-   private TradingLanguage tradingLanguage;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "AGGREGATE_ID_F")
+	private SubCategoryInvoiceAgregate invoiceAgregateF;
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "AGGREGATE_ID_R")
+	private CategoryInvoiceAgregate invoiceAgregateR;
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "AGGREGATE_ID_T")
+	private TaxInvoiceAgregate invoiceAgregateT;
+
+	@Column(name = "USAGE_QUANTITY")
+	private Integer usageQuantity;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS")
+	private RatedTransactionStatusEnum status;
+
+	@Column(name = "DO_NOT_TRIGGER_INVOICING")
+	private boolean doNotTriggerInvoicing = false;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_CURRENCY_ID")
+	private TradingCurrency tradingCurrency;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	private TradingCountry tradingCountry;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	private TradingLanguage tradingLanguage;
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -363,6 +362,5 @@ public class RatedTransaction extends BaseEntity {
 	public void setTradingLanguage(TradingLanguage tradingLanguage) {
 		this.tradingLanguage = tradingLanguage;
 	}
-        
 
 }
