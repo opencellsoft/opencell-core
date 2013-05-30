@@ -377,7 +377,7 @@
 								</hf:formPanel>
 								<br />
 								<br />
-								<a:outputPanel id="oneShotDataPanel">
+								<p:outputPanel id="oneShotDataPanel">
 									<h:form id="OS_oneShot_results_form" prependId="false">
 										<p:dataTable
 											value="#{subscriptionBean.oneShotChargeInstances}"
@@ -387,12 +387,6 @@
 											<hftl:column
 												label="#{messages['chargeInstance.description']}"
 												field="description" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
-												field="amountWithoutTax" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.amountWithTax']}"
-												field="amountWithTax" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" />
@@ -423,7 +417,7 @@
 											</p:column>
 										</p:dataTable>
 									</h:form>
-								</a:outputPanel>
+								</p:outputPanel>
 								<p:panel>
 									<h:form>
 										<p:commandButton
@@ -722,12 +716,6 @@
 												label="#{messages['chargeInstance.description']}"
 												field="description" isMessage="false" />
 											<hftl:column
-												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
-												field="amountWithoutTax" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.amountWithTax']}"
-												field="amountWithTax" />
-											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" isMessage="true" />
 											<hftl:column
@@ -791,12 +779,6 @@
 											<hftl:column
 												label="#{messages['chargeInstance.description']}"
 												field="description" isMessage="false" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.amountWithoutTax']}"
-												field="amountWithoutTax" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.amountWithTax']}"
-												field="amountWithTax" />
 											<hftl:column
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" isMessage="true" />
