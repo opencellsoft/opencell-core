@@ -23,18 +23,15 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.meveo.model.AuditableEntity;
 
-/**
- * CountryCom entity.
- */
 @Entity
 @Table(name = "BILLING_TRADING_COUNTRY")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_TRADING_COUNTRY_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_COUNTRY_SEQ")
 public class TradingCountry extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;

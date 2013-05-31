@@ -30,6 +30,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
@@ -40,13 +41,13 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.InterBankTitle;
@@ -54,7 +55,7 @@ import org.meveo.model.shared.Title;
 
 @Entity
 @Table(name = "CRM_PROVIDER")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
 public class Provider extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -129,8 +130,8 @@ public class Provider extends BusinessEntity {
 	@Column(name = "CURRENT_INVOICE_NB")
 	private Long currentInvoiceNb;
 
-	@Column(name = "RATING_ROUNDING")
-	private Integer rounding;
+	@Column(name = "RATING_ROUNDING", columnDefinition = "int DEFAULT 2")
+	private Integer rounding = 2;
 
 	@Embedded
 	private BankCoordinates bankCoordinates = new BankCoordinates();
@@ -419,16 +420,15 @@ public class Provider extends BusinessEntity {
 		tradingLanguages.add(tradingLanguage);
 	}
 
-
 	public void addTradingCountry(TradingCountry tradingCountry) {
 		if (tradingCountries == null) {
 			tradingCountries = new ArrayList<TradingCountry>();
 		}
 		tradingCountries.add(tradingCountry);
 	}
-	
-	public void setPrepaidWalletTemplates(List<WalletTemplate> prepaidWalletTemplates){
-		this.prepaidWalletTemplates=prepaidWalletTemplates;
+
+	public void setPrepaidWalletTemplates(List<WalletTemplate> prepaidWalletTemplates) {
+		this.prepaidWalletTemplates = prepaidWalletTemplates;
 	}
 
 	public List<WalletTemplate> getPrepaidWalletTemplates() {

@@ -17,6 +17,7 @@ package org.meveo.model.billing;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.Auditable;
@@ -24,7 +25,7 @@ import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "ADM_MESSAGES")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_MESSAGES_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_MESSAGES_SEQ")
 public class CatMessages extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 

@@ -15,11 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 16, 2010 10:28:59 AM
- * 
- */
 public enum CustomerAccountStatusEnum {
 
     ACTIVE(1, "customerAccountStatus.active"),

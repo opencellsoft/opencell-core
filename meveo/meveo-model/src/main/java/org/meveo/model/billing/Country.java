@@ -20,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.ProviderlessEntity;
@@ -27,8 +28,7 @@ import org.meveo.model.admin.Currency;
 
 @Entity
 @Table(name = "ADM_COUNTRY")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_COUNTRY_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_COUNTRY_SEQ")
 public class Country extends ProviderlessEntity {
 	private static final long serialVersionUID = 1L;
 

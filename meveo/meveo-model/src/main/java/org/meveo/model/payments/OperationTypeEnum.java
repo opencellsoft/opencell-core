@@ -15,10 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 13, 2010 11:43:49 AM
- */
 public enum OperationTypeEnum {
 
     P(1, "OperationTypeEnum.p"),

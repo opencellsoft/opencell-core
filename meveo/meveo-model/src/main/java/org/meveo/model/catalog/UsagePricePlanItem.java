@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.catalog;
 
 import java.util.Date;
@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,90 +36,90 @@ import org.meveo.model.payments.CustomerAccount;
 
 @Entity
 @Table(name = "CAT_USAGE_PRICE_PLAN_ITEM")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_PRICE_PLAN_ITEM_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_PRICE_PLAN_ITEM_SEQ")
 public class UsagePricePlanItem extends AuditableEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinColumn(name="servicetemplate_id")
-    private ServiceTemplate serviceTemplate;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "servicetemplate_id")
+	private ServiceTemplate serviceTemplate;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinColumn(name="customeraccount_id")
-    private CustomerAccount customerAccount;
-	
-    @Temporal(TemporalType.TIMESTAMP)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "customeraccount_id")
+	private CustomerAccount customerAccount;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "START_DATE")
 	private Date startDate;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "END_DATE")
 	private Date endDate;
 
-    @Column(name = "PRIORITY")
-    private Integer priority;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TYPE")
-    private RatingUsageTypeEnum type;
+	@Column(name = "PRIORITY")
+	private Integer priority;
 
-    @Column(name = "NUMBER_PARAM_1_MIN")
-    private Long numberParam1Min;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TYPE")
+	private RatingUsageTypeEnum type;
 
-    @Column(name = "NUMBER_PARAM_2_MIN")
-    private Long numberParam2Min;
+	@Column(name = "NUMBER_PARAM_1_MIN")
+	private Long numberParam1Min;
 
-    @Column(name = "NUMBER_PARAM_3_MIN")
-    private Long numberParam3Min;
+	@Column(name = "NUMBER_PARAM_2_MIN")
+	private Long numberParam2Min;
 
-    @Column(name = "NUMBER_PARAM_1_MAX")
-    private Long numberParam1Max;
+	@Column(name = "NUMBER_PARAM_3_MIN")
+	private Long numberParam3Min;
 
-    @Column(name = "NUMBER_PARAM_2_MAX")
-    private Long numberParam2Max;
+	@Column(name = "NUMBER_PARAM_1_MAX")
+	private Long numberParam1Max;
 
-    @Column(name = "NUMBER_PARAM_3_MAX")
-    private Long numberParam3Max;
+	@Column(name = "NUMBER_PARAM_2_MAX")
+	private Long numberParam2Max;
 
-    @Column(name = "STRING_PARAM_1")
-    private String stringParam1;
+	@Column(name = "NUMBER_PARAM_3_MAX")
+	private Long numberParam3Max;
 
-    @Column(name = "STRING_PARAM_2")
-    private String stringParam2;
+	@Column(name = "STRING_PARAM_1")
+	private String stringParam1;
 
-    @Column(name = "STRING_PARAM_3")
-    private String stringParam3;
+	@Column(name = "STRING_PARAM_2")
+	private String stringParam2;
 
-    @Column(name = "STRING_PARAM_4")
-    private String stringParam4;
+	@Column(name = "STRING_PARAM_3")
+	private String stringParam3;
 
-    @Column(name = "STRING_PARAM_5")
-    private String stringParam5;
+	@Column(name = "STRING_PARAM_4")
+	private String stringParam4;
 
-    @Column(name = "STRING_PARAM_6")
-    private String stringParam6;
+	@Column(name = "STRING_PARAM_5")
+	private String stringParam5;
 
-    @Column(name = "STRING_PARAM_7")
-    private String stringParam7;
+	@Column(name = "STRING_PARAM_6")
+	private String stringParam6;
 
-    @Column(name = "STRING_PARAM_8")
-    private String stringParam8;
-    
-    @Column(name = "STRING_PARAM_9")
-    private String stringParam9;
-    
-    @Column(name = "STRING_PARAM_10")
-    private String stringParam10;
+	@Column(name = "STRING_PARAM_7")
+	private String stringParam7;
 
-    @Column(name = "BOOLEAN_PARAM_1")
-    private Boolean booleanParam1;
-    
-    @Column(name = "BOOLEAN_PARAM_2")
-    private Boolean booleanParam2;
+	@Column(name = "STRING_PARAM_8")
+	private String stringParam8;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private PriceCode priceCode;
+	@Column(name = "STRING_PARAM_9")
+	private String stringParam9;
+
+	@Column(name = "STRING_PARAM_10")
+	private String stringParam10;
+
+	@Column(name = "BOOLEAN_PARAM_1")
+	private Boolean booleanParam1;
+
+	@Column(name = "BOOLEAN_PARAM_2")
+	private Boolean booleanParam2;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private PriceCode priceCode;
 
 	public ServiceTemplate getServiceTemplate() {
 		return serviceTemplate;
@@ -279,7 +280,7 @@ public class UsagePricePlanItem extends AuditableEntity {
 	public void setStringParam8(String stringParam8) {
 		this.stringParam8 = stringParam8;
 	}
-	
+
 	public String getStringParam9() {
 		return stringParam9;
 	}
@@ -320,5 +321,4 @@ public class UsagePricePlanItem extends AuditableEntity {
 		this.priceCode = priceCode;
 	}
 
-    
 }

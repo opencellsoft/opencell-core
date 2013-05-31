@@ -26,10 +26,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Entity
 @DiscriminatorValue("R")
 public class CategoryInvoiceAgregate extends InvoiceAgregate {

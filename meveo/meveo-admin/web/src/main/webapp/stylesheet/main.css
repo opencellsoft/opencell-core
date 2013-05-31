@@ -367,6 +367,7 @@ input[type="submit"],
 .ui-tabs-nav { width : 99%; background : none !important; }
 .ui-state-hover { border-color : #19c6ca !important; }
 .ui-fieldset-content td { padding: 4px; }
+.ui-panel-title, .ui-tabs a { font-size: 9pt; }
 
 .form-panel-fields td { padding: 4px; }
 .form-panel-fields .field-value { font-weight: bold; }
@@ -379,5 +380,6 @@ input[type="submit"],
 .confirm-dialog .ui-dialog-content p span.ui-confirm-dialog-severity { position: relative; top: -4px; }
 .confirm-dialog .ui-dialog-buttonpane { text-align: center; }
 .action-buttons button { margin-right: 5px; }
+.custom-grid tbody { display: table-row-group; }
 
 /* td { border: 1px solid red !important; } */

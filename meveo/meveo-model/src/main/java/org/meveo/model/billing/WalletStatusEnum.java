@@ -19,9 +19,6 @@ import org.meveo.model.IdentifiableEnum;
 
 /**
  * Wallet status.
- * 
- * @author Ignas Lelys
- * @created 2009.08.31
  */
 public enum WalletStatusEnum implements IdentifiableEnum {
 

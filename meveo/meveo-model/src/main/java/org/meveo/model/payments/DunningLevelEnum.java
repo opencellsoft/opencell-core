@@ -15,11 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Ignas Lelys
- * @created Dec 3, 2010
- * 
- */
 public enum DunningLevelEnum {
 
     R0(1, "DunningLevelEnum.R0"),

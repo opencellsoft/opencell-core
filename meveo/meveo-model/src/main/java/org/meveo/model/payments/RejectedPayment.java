@@ -25,10 +25,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 12, 2010 3:46:37 AM
- */
 @Entity
 @DiscriminatorValue(value = "R")
 public class RejectedPayment extends AccountOperation {

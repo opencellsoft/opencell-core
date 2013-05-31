@@ -28,6 +28,20 @@
 	<c:if test="${empty lazy}">
 		<c:set var="lazy" value="true"></c:set>
 	</c:if>
+	<c:set var="converter1"
+		value="#{getConverter.forParam(column1Converter)}"></c:set>
+	<c:set var="converter2"
+		value="#{getConverter.forParam(column2Converter)}"></c:set>
+	<c:set var="converter3"
+		value="#{getConverter.forParam(column3Converter)}"></c:set>
+	<c:set var="converter4"
+		value="#{getConverter.forParam(column4Converter)}"></c:set>
+	<c:set var="converter5"
+		value="#{getConverter.forParam(column5Converter)}"></c:set>
+	<c:set var="converter6"
+		value="#{getConverter.forParam(column6Converter)}"></c:set>
+	<c:set var="converter7"
+		value="#{getConverter.forParam(column7Converter)}"></c:set>
 
 	<p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}"
 		dynamic="true" modal="true" styleClass="form-dialog">
@@ -66,10 +80,11 @@
 							<h:outputText value="#{column1Label}" />
 						</f:facet>
 						<c:if test="#{not empty column1Child}">
-							<h:outputText value="#{e[column1][column1Child]}" />
+							<h:outputText value="#{e[column1][column1Child]}"
+								converter="#{converter1}" />
 						</c:if>
 						<c:if test="#{empty column1Child}">
-							<h:outputText value="#{e[column1]}" />
+							<h:outputText value="#{e[column1]}" converter="#{converter1}" />
 						</c:if>
 					</p:column>
 				</c:if>
@@ -79,10 +94,11 @@
 							<h:outputText value="#{column2Label}" />
 						</f:facet>
 						<c:if test="#{not empty column2Child}">
-							<h:outputText value="#{e[column2][column2Child]}" />
+							<h:outputText value="#{e[column2][column2Child]}"
+								converter="#{converter2}" />
 						</c:if>
 						<c:if test="#{empty column2Child}">
-							<h:outputText value="#{e[column2]}" />
+							<h:outputText value="#{e[column2]}" converter="#{converter2}" />
 						</c:if>
 					</p:column>
 				</c:if>
@@ -92,10 +108,11 @@
 							<h:outputText value="#{column3Label}" />
 						</f:facet>
 						<c:if test="#{not empty column3Child}">
-							<h:outputText value="#{e[column3][column3Child]}" />
+							<h:outputText value="#{e[column3][column3Child]}"
+								converter="#{converter3}" />
 						</c:if>
 						<c:if test="#{empty column3Child}">
-							<h:outputText value="#{e[column3]}" />
+							<h:outputText value="#{e[column3]}" converter="#{converter3}" />
 						</c:if>
 					</p:column>
 				</c:if>
@@ -105,10 +122,11 @@
 							<h:outputText value="#{column4Label}" />
 						</f:facet>
 						<c:if test="#{not empty column4Child}">
-							<h:outputText value="#{e[column4][column4Child]}" />
+							<h:outputText value="#{e[column4][column4Child]}"
+								converter="#{converter4}" />
 						</c:if>
 						<c:if test="#{empty column4Child}">
-							<h:outputText value="#{e[column4]}" />
+							<h:outputText value="#{e[column4]}" converter="#{converter4}" />
 						</c:if>
 					</p:column>
 				</c:if>
@@ -118,10 +136,11 @@
 							<h:outputText value="#{column5Label}" />
 						</f:facet>
 						<c:if test="#{not empty column5Child}">
-							<h:outputText value="#{e[column5][column5Child]}" />
+							<h:outputText value="#{e[column5][column5Child]}"
+								converter="#{converter5}" />
 						</c:if>
 						<c:if test="#{empty column5Child}">
-							<h:outputText value="#{e[column5]}" />
+							<h:outputText value="#{e[column5]}" converter="#{converter5}" />
 						</c:if>
 					</p:column>
 				</c:if>
@@ -131,10 +150,11 @@
 							<h:outputText value="#{column6Label}" />
 						</f:facet>
 						<c:if test="#{not empty column6Child}">
-							<h:outputText value="#{e[column6][column6Child]}" />
+							<h:outputText value="#{e[column6][column6Child]}"
+								converter="#{converter6}" />
 						</c:if>
 						<c:if test="#{empty column6Child}">
-							<h:outputText value="#{e[column6]}" />
+							<h:outputText value="#{e[column6]}" converter="#{converter6}" />
 						</c:if>
 					</p:column>
 				</c:if>
@@ -144,10 +164,11 @@
 							<h:outputText value="#{column7Label}" />
 						</f:facet>
 						<c:if test="#{not empty column7Child}">
-							<h:outputText value="#{e[column7][column7Child]}" />
+							<h:outputText value="#{e[column7][column7Child]}"
+								converter="#{converter7}" />
 						</c:if>
 						<c:if test="#{empty column7Child}">
-							<h:outputText value="#{e[column7]}" />
+							<h:outputText value="#{e[column7]}" converter="#{converter7}" />
 						</c:if>
 					</p:column>
 				</c:if>

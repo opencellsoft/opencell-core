@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -26,11 +27,9 @@ import org.meveo.model.AuditableEntity;
 /**
  * Discount entity.
  */
-
 @Entity
 @Table(name = "BILLING_DISCOUNT")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_DISCOUNT_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNT_SEQ")
 public class Discount extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 

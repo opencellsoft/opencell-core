@@ -21,11 +21,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
-/**
- * @author Ignas Lelys
- * @created Dec 3, 2010
- * 
- */
 @Entity
 @Table(name = "CAT_ONE_SHOT_CHARGE_TEMPL")
 public class OneShotChargeTemplate extends ChargeTemplate {

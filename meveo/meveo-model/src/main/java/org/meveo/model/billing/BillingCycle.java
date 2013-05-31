@@ -25,6 +25,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -34,13 +35,10 @@ import org.meveo.model.catalog.Calendar;
 
 /**
  * Billing cycle.
- * 
- * @author R.AITYAAZZA
- * 
  */
 @Entity
 @Table(name = "BILLING_CYCLE")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CYCLE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CYCLE_SEQ")
 public class BillingCycle extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

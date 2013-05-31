@@ -15,10 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 16, 2010 11:07:11 AM
- */
 public enum MatchingTypeEnum {
 
     A(1, "matchingTypeEnum.a"),

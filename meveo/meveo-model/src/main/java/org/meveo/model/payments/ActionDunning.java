@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.payments;
 
 import java.math.BigDecimal;
@@ -25,6 +25,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,138 +34,136 @@ import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "AR_ACTION_DUNNING")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACTION_DUNNING_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACTION_DUNNING_SEQ")
 public class ActionDunning extends AuditableEntity {
-    /**
-	 * 
-	 */
-    private static final long serialVersionUID = 1L;
 
-    @Column(name = "CREATON_DATE")
-    @Temporal(TemporalType.DATE)
-    private Date creationDate;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "ACTION_TYPE")
-    @Enumerated(EnumType.STRING)
-    private DunningActionTypeEnum typeAction;
+	@Column(name = "CREATON_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date creationDate;
 
-    @Column(name = "STATUS")
-    @Enumerated(EnumType.STRING)
-    private DunningActionStatusEnum status;
+	@Column(name = "ACTION_TYPE")
+	@Enumerated(EnumType.STRING)
+	private DunningActionTypeEnum typeAction;
 
-    @Column(name = "STATUS_DATE")
-    @Temporal(TemporalType.DATE)
-    private Date statusDate;
+	@Column(name = "STATUS")
+	@Enumerated(EnumType.STRING)
+	private DunningActionStatusEnum status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
-    private CustomerAccount customerAccount;
+	@Column(name = "STATUS_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date statusDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RECORDED_INVOICE_ID")
-    private RecordedInvoice recordedInvoice;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+	private CustomerAccount customerAccount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DUNNING_LOT_ID")
-    private DunningLOT dunningLOT;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "RECORDED_INVOICE_ID")
+	private RecordedInvoice recordedInvoice;
 
-    @Column(name = "FROM_LEVEL")
-    @Enumerated(EnumType.STRING)
-    private DunningLevelEnum fromLevel;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DUNNING_LOT_ID")
+	private DunningLOT dunningLOT;
 
-    @Column(name = "TO_LEVEL")
-    @Enumerated(EnumType.STRING)
-    private DunningLevelEnum toLevel;
+	@Column(name = "FROM_LEVEL")
+	@Enumerated(EnumType.STRING)
+	private DunningLevelEnum fromLevel;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACTION_PLAN_ITEM_ID")
-    private ActionPlanItem actionPlanItem;
-    
-    @Column(name = "AMOUNT_DUE")
-    private BigDecimal amountDue;
+	@Column(name = "TO_LEVEL")
+	@Enumerated(EnumType.STRING)
+	private DunningLevelEnum toLevel;
 
-    public ActionDunning() {
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ACTION_PLAN_ITEM_ID")
+	private ActionPlanItem actionPlanItem;
 
-    public DunningActionStatusEnum getStatus() {
-        return status;
-    }
+	@Column(name = "AMOUNT_DUE")
+	private BigDecimal amountDue;
 
-    public void setStatus(DunningActionStatusEnum status) {
-        this.status = status;
-    }
+	public ActionDunning() {
+	}
 
-    public Date getStatusDate() {
-        return statusDate;
-    }
+	public DunningActionStatusEnum getStatus() {
+		return status;
+	}
 
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
+	public void setStatus(DunningActionStatusEnum status) {
+		this.status = status;
+	}
 
-    public CustomerAccount getCustomerAccount() {
-        return customerAccount;
-    }
+	public Date getStatusDate() {
+		return statusDate;
+	}
 
-    public void setCustomerAccount(CustomerAccount customerAccount) {
-        this.customerAccount = customerAccount;
-    }
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
 
-    public RecordedInvoice getRecordedInvoice() {
-        return recordedInvoice;
-    }
+	public CustomerAccount getCustomerAccount() {
+		return customerAccount;
+	}
 
-    public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
-        this.recordedInvoice = recordedInvoice;
-    }
+	public void setCustomerAccount(CustomerAccount customerAccount) {
+		this.customerAccount = customerAccount;
+	}
 
-    public void setTypeAction(DunningActionTypeEnum typeAction) {
-        this.typeAction = typeAction;
-    }
+	public RecordedInvoice getRecordedInvoice() {
+		return recordedInvoice;
+	}
 
-    public DunningActionTypeEnum getTypeAction() {
-        return typeAction;
-    }
+	public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
+		this.recordedInvoice = recordedInvoice;
+	}
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
+	public void setTypeAction(DunningActionTypeEnum typeAction) {
+		this.typeAction = typeAction;
+	}
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
+	public DunningActionTypeEnum getTypeAction() {
+		return typeAction;
+	}
 
-    public void setDunningLOT(DunningLOT dunningLOT) {
-        this.dunningLOT = dunningLOT;
-    }
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
 
-    public DunningLOT getDunningLOT() {
-        return dunningLOT;
-    }
+	public Date getCreationDate() {
+		return creationDate;
+	}
 
-    public void setFromLevel(DunningLevelEnum fromLevel) {
-        this.fromLevel = fromLevel;
-    }
+	public void setDunningLOT(DunningLOT dunningLOT) {
+		this.dunningLOT = dunningLOT;
+	}
 
-    public DunningLevelEnum getFromLevel() {
-        return fromLevel;
-    }
+	public DunningLOT getDunningLOT() {
+		return dunningLOT;
+	}
 
-    public void setToLevel(DunningLevelEnum toLevel) {
-        this.toLevel = toLevel;
-    }
+	public void setFromLevel(DunningLevelEnum fromLevel) {
+		this.fromLevel = fromLevel;
+	}
 
-    public DunningLevelEnum getToLevel() {
-        return toLevel;
-    }
+	public DunningLevelEnum getFromLevel() {
+		return fromLevel;
+	}
 
-    public void setActionPlanItem(ActionPlanItem actionPlanItem) {
-        this.actionPlanItem = actionPlanItem;
-    }
+	public void setToLevel(DunningLevelEnum toLevel) {
+		this.toLevel = toLevel;
+	}
 
-    public ActionPlanItem getActionPlanItem() {
-        return actionPlanItem;
-    }
+	public DunningLevelEnum getToLevel() {
+		return toLevel;
+	}
+
+	public void setActionPlanItem(ActionPlanItem actionPlanItem) {
+		this.actionPlanItem = actionPlanItem;
+	}
+
+	public ActionPlanItem getActionPlanItem() {
+		return actionPlanItem;
+	}
 
 	public void setAmountDue(BigDecimal amountDue) {
 		this.amountDue = amountDue;

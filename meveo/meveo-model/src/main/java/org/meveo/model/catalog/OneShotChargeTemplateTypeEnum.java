@@ -15,11 +15,6 @@
 */
 package org.meveo.model.catalog;
 
-/**
- * @author Ignas Lelys
- * @created Nov 22, 2010
- * 
- */
 public enum OneShotChargeTemplateTypeEnum {
 
     SUBSCRIPTION(1, "oneShotChargeTemplateTypeEnum.subscription"),

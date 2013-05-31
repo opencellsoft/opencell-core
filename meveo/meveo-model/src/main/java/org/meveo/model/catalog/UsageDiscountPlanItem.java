@@ -1,18 +1,18 @@
 /*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.model.catalog;
 
 import java.util.Date;
@@ -25,6 +25,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,54 +35,54 @@ import org.meveo.model.payments.CustomerAccount;
 
 @Entity
 @Table(name = "CAT_USAGE_DISCOUNT_PLAN_ITEM")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_DISCOUNT_PLAN_ITEM_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_DISCOUNT_PLAN_ITEM_SEQ")
 public class UsageDiscountPlanItem extends AuditableEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinColumn(name="servicetemplate_id")
-    private ServiceTemplate serviceTemplate;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "servicetemplate_id")
+	private ServiceTemplate serviceTemplate;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @JoinColumn(name="customeraccount_id")
-    private CustomerAccount customerAccount;
-	
-    @Temporal(TemporalType.TIMESTAMP)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "customeraccount_id")
+	private CustomerAccount customerAccount;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "START_DATE")
 	private Date startDate;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "END_DATE")
 	private Date endDate;
 
-    @Column(name = "PRIORITY")
-    private Integer priority;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TYPE")
-    private RatingUsageTypeEnum type;
+	@Column(name = "PRIORITY")
+	private Integer priority;
 
-    @Column(name = "NUMBER_PARAM_1_MIN")
-    private Long numberParam1Min;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TYPE")
+	private RatingUsageTypeEnum type;
 
-    @Column(name = "NUMBER_PARAM_1_MAX")
-    private Long numberParam1Max;
+	@Column(name = "NUMBER_PARAM_1_MIN")
+	private Long numberParam1Min;
 
-    @Column(name = "STRING_PARAM_1")
-    private String stringParam1;
+	@Column(name = "NUMBER_PARAM_1_MAX")
+	private Long numberParam1Max;
 
-    @Column(name = "STRING_PARAM_2")
-    private String stringParam2;
+	@Column(name = "STRING_PARAM_1")
+	private String stringParam1;
 
-    @Column(name = "STRING_PARAM_3")
-    private String stringParam3;
+	@Column(name = "STRING_PARAM_2")
+	private String stringParam2;
 
-    @Column(name = "BOOLEAN_PARAM_1")
-    private Boolean booleanParam1;
-    
-    @Column(name = "PERCENTAGE")
-    private Double percentage;
+	@Column(name = "STRING_PARAM_3")
+	private String stringParam3;
+
+	@Column(name = "BOOLEAN_PARAM_1")
+	private Boolean booleanParam1;
+
+	@Column(name = "PERCENTAGE")
+	private Double percentage;
 
 	public ServiceTemplate getServiceTemplate() {
 		return serviceTemplate;
@@ -147,7 +148,6 @@ public class UsageDiscountPlanItem extends AuditableEntity {
 		this.numberParam1Max = numberParam1Max;
 	}
 
-
 	public String getStringParam1() {
 		return stringParam1;
 	}
@@ -187,5 +187,5 @@ public class UsageDiscountPlanItem extends AuditableEntity {
 	public void setPercentage(Double percentage) {
 		this.percentage = percentage;
 	}
-	
+
 }

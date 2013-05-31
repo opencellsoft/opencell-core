@@ -23,12 +23,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Tax service implementation.
- * 
- * @author Sebastien Michea
- * @created Dec 20, 2010
- * 
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class TaxService extends PersistenceService<Tax> {
 
 }

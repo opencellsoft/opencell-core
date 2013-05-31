@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -15,11 +16,8 @@ import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name="JOB_EXECUTION")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "JOB_EXECUTION_SEQ")
 public class JobExecutionResultImpl extends BaseEntity implements JobExecutionResult {
-    
-    /**
-     * 
-     */
     private static final long serialVersionUID = 430457580612075457L;
 
     @Column(name="JOB_NAME")

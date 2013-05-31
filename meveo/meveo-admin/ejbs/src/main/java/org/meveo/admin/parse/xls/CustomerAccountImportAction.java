@@ -126,7 +126,7 @@ public class CustomerAccountImportAction implements Serializable {
 
 		UploadedFile item = event.getUploadedFile();
 
-		log.debug("#{currentUser.username} > Start processing uploaded XLS file (name='{0}') ..",
+		log.debug("#{currentUser.username} > Start processing uploaded XLS file (name='{}') ..",
 				item);
 
 		// file name validation
@@ -151,7 +151,7 @@ public class CustomerAccountImportAction implements Serializable {
 
 		log.debug("#{currentUser.username} > Uploaded file parsed successfully");
 
-		log.debug("#{currentUser.username} > End processing uploaded XML file (name='{0}')",
+		log.debug("#{currentUser.username} > End processing uploaded XML file (name='{}')",
 				item.getName());
 	}
 

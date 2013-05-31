@@ -18,10 +18,6 @@
  */
 package org.meveo.model.payments;
 
-/**
- * @author anasseh
- * 
- */
 public enum DDRequestOpEnum {
 
     CREATE(1, "DDRequestOpEnum.CREATE"),

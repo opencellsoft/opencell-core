@@ -27,11 +27,6 @@ import javax.inject.Inject;
 
 import org.meveo.commons.utils.ParamBean;
 
-/**
- * 
- * @author anasseh
- * @created 18.01.2011
- */
 @FacesConverter("bigDecimalConverter")
 public class BigDecimalConverter implements Converter {
 

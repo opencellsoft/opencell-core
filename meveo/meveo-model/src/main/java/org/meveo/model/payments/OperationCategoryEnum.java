@@ -15,10 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 12, 2010 3:06:47 AM
- */
 public enum OperationCategoryEnum {
 
     DEBIT(1, "operationTypeEnum.debit"),

@@ -20,7 +20,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
@@ -29,10 +28,6 @@ import org.meveo.model.admin.User;
 
 /**
  * Base class for entities that does not have providers.
- * 
- * @author Ignas Lelys
- * @created Apr 14, 2011
- * 
  */
 @MappedSuperclass
 public abstract class ProviderlessEntity implements Serializable, IEntity, IAuditable {
@@ -40,8 +35,7 @@ public abstract class ProviderlessEntity implements Serializable, IEntity, IAudi
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	// @GeneratedValue(generator = "ID_GENERATOR")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(generator = "ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
 

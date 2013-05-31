@@ -20,10 +20,6 @@ import javax.persistence.Entity;
 
 import org.meveo.model.bi.JobHistory;
 
-/**
- * @author anasseh
- * 
- */
 @Entity
 @DiscriminatorValue(value = "BANK_FILE_IMPORT")
 public class BankFileImportHisto extends JobHistory {

@@ -28,10 +28,6 @@ import org.meveo.model.payments.DunningLOT;
 
 /**
  * Information about batch BAYAD_DUNNING
- * 
- * @author Ignas Lelys
- * @created May 7, 2010
- * 
  */
 @Entity
 @DiscriminatorValue(value = "DUNNING")

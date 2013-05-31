@@ -15,9 +15,6 @@
 */
 package org.meveo.model.payments;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- */
 public enum DunningPlanStatusEnum {
     
     ACTIVE(1, "DunningPlanStatusEnum.active"),

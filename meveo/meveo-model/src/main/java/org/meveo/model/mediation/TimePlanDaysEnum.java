@@ -18,9 +18,6 @@ package org.meveo.model.mediation;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * @author seb
- */
 public enum TimePlanDaysEnum {
 	SUNDAY(1,"timePlanDaysEnum.sunday"),
 	MONDAY (2,"timePlanDaysEnum.monday"),
@@ -71,6 +68,7 @@ public enum TimePlanDaysEnum {
 		 return  values()[(year + year/4 - year/100 + year/400 + t[month-1] + day) % 7]; 
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	boolean isWeekDay(){
 		boolean result=true;
 		switch(this){

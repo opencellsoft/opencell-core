@@ -22,6 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -31,7 +32,7 @@ import org.meveo.model.AuditableEntity;
 
 @Entity
 @Table(name = "CAT_PRICE_CODE")
-//@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_CODE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_CODE_SEQ")
 public class PriceCode extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;

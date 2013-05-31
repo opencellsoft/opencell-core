@@ -16,12 +16,7 @@
 package org.meveo.model.payments;
 
 /**
- * 
  * Credit Category Enum for Customer Account.
- * 
- * @author Tyshan(tyshan@manaty.net)
- * @created Nov 12, 2010 3:00:10 AM
- * 
  */
 public enum CreditCategoryEnum {
 

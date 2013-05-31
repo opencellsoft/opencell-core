@@ -20,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -29,8 +30,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "BILLING_INVOICE_CAT_LANG")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_INVOICE_CAT_LANG_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_LANG_SEQ")
 public class InvoiceCategoryLanguage extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 

@@ -20,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
@@ -29,8 +30,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "BILLING_DISCOUNT_LANGUAGE")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "BILLING_DISCOUNT_LANGUAGE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNT_LANGUAGE_SEQ")
 public class DiscountLanguage extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
