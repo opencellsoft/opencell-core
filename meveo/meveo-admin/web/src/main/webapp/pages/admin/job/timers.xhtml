@@ -12,33 +12,34 @@
 	xmlns:e="http://primefaces.org/extension">
 
 	<f:metadata>
-		<s:viewAction action="#{conversation.begin}" if="#{conversation.transient}" />
+		<s:viewAction action="#{conversation.begin}"
+			if="#{conversation.transient}" />
 	</f:metadata>
-	
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-	
+
 	<ui:define name="body">
- 
-		<p:panelGrid columns="1">
-		<f:facet name="header">
+
+		<p:panel>
+			<f:facet name="header">
 				<h:outputText value="#{messages['timers.page.title']}" />
 			</f:facet>
-			<h:messages/>
-					<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+			<p:messages />
+			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
 			<h:form id="searchCriteria" styleClass="mainForm">
-				<div class="actionButtons">
-					<p:button value="#{messages['action.timers.newTimer']}"  outcome="jobTimerDetail" />
-				</div>
+
 			</h:form>
-		
-						<!-- ===================================== SEARCH USERS RESULTS ===================================== -->
-			<a:outputPanel id="searchTimersResults" rendered="#{timersDataModel!=null}">
-				<h:form id="resultTimerForm" rendered="#{timersDataModel.rowCount!=0}">
-					
-					<hftl:dataList backingBean="#{timersBean}" 
-							resultsId="timersBean_results" checkMany="false">
+
+			<!-- ===================================== SEARCH USERS RESULTS ===================================== -->
+			<p:outputPanel id="searchTimersResults"
+				rendered="#{timersDataModel!=null}">
+				<h:form id="resultTimerForm"
+					rendered="#{timersDataModel.rowCount!=0}">
+
+					<hftl:dataList backingBean="#{timersBean}"
+						resultsId="timersBean_results" checkMany="false">
 						<p:column>
 							<f:facet name="header">
 								<h:outputText value="#{messages['timer.jobName']}" />
@@ -46,12 +47,17 @@
 							<h:link outcome="jobTimerDetail" value="#{entity.jobName}">
 								<f:param name="timerId" value="#{entity.id}" />
 							</h:link>
-						</p:column>	
+						</p:column>
 						<hftl:column label="#{messages['timer.schedule']}"
-						field="timerSchedule" sort="false"/>
+							field="timerSchedule" sort="false" />
 					</hftl:dataList>
+
+					<div class="actionButtons">
+						<p:button value="#{messages['action.timers.newTimer']}"
+							outcome="jobTimerDetail" />
+					</div>
 				</h:form>
-			</a:outputPanel>
-		</p:panelGrid> 
+			</p:outputPanel>
+		</p:panel>
 	</ui:define>
 </ui:composition>
