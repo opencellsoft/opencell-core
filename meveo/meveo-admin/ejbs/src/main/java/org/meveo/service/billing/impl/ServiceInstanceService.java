@@ -86,13 +86,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	public ServiceInstance findByCodeAndSubscription(String code, String subscriptionCode) {
 		ServiceInstance chargeInstance = null;
 		try {
-			log.debug("start of find {0} by code (code={1}) ..", "ServiceInstance", code);
+			log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
 			QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
 			chargeInstance = (ServiceInstance) qb.getQuery(em).getSingleResult();
-			log.debug("end of find {0} by code (code={1}). Result found={2}.", "ServiceInstance",
-					code, chargeInstance != null);
+			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
+					"ServiceInstance", code, chargeInstance != null });
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubscription : aucun service n'a ete trouve");
 		} catch (Exception e) {

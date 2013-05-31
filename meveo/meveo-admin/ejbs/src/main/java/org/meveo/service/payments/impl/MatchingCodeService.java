@@ -155,9 +155,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> implem
 			MatchingTypeEnum matchingTypeEnum, User user) throws BusinessException,
 			NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
 		log.info(
-				"matchOperations   customerAccountId:{0}  customerAccountCode:{1} operationIds:{2} user:{3}",
-				customerAccountId, customerAccountCode, operationIds,
-				user == null ? "null" : user.getName());
+				"matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} user:{}",
+				new Object[] { customerAccountId, customerAccountCode, operationIds,
+						user == null ? "null" : user.getName() });
 		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(
 				customerAccountId, customerAccountCode);
 

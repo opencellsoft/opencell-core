@@ -30,7 +30,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
 
 	@SuppressWarnings("unchecked")
 	public P findByCode(String code) {
-		log.debug("start of find {0} by code (code={1}) ..", getEntityClass().getSimpleName(), code);
+		log.debug("start of find {} by code (code={}) ..", getEntityClass().getSimpleName(), code);
 		final Class<? extends P> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
 		queryString.append(" where a.code = :code");
@@ -40,7 +40,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
 			return null;
 		}
 		P e = (P) query.getResultList().get(0);
-		log.debug("end of find {0} by code (code={1}). Result found={2}.", getEntityClass()
+		log.debug("end of find {} by code (code={}). Result found={}.", getEntityClass()
 				.getSimpleName(), code, e != null);
 
 		return e;
@@ -48,7 +48,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
 
 	@SuppressWarnings("unchecked")
 	public P findByCode(String code, Provider provider) {
-		log.debug("start of find {0} by code (code={1}) ..", getEntityClass().getSimpleName(), code);
+		log.debug("start of find {} by code (code={}) ..", getEntityClass().getSimpleName(), code);
 		final Class<? extends P> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
 		queryString.append(" where a.code = :code and a.provider=:provider");
@@ -59,8 +59,8 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
 			return null;
 		}
 		P e = (P) query.getResultList().get(0);
-		log.debug("end of find {0} by code (code={1}). Result found={2}.", getEntityClass()
-				.getSimpleName(), code, e != null);
+		log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
+				getEntityClass().getSimpleName(), code, e != null });
 
 		return e;
 	}

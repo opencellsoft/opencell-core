@@ -30,30 +30,32 @@ import org.meveo.service.base.PersistenceService;
  * @author Ignas
  * @created 2009.09.04
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
 	public OCCTemplate findByCode(String code, String providerCode) {
-		log.debug("start of find {0} by code (code={1}) ..", "OCCTemplate", code);
+		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
 		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
 		qb.addCriterion("c.code", "=", code, true);
 		qb.addCriterion("c.provider.code", "=", providerCode, true);
 		OCCTemplate occTemplate = (OCCTemplate) qb.getQuery(em).getSingleResult();
-		log.debug("end of find {0} by code (code={1}). Result found={2}.", "OCCTemplate", code,
-				occTemplate != null);
+		log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
+				"OCCTemplate", code, occTemplate != null });
 		return occTemplate;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<OCCTemplate> getListOccSortedByName(String providerCode) {
-		log.debug("start of find list {0} SortedByName for provider (code={1}) ..", "OCCTemplate",
+		log.debug("start of find list {} SortedByName for provider (code={}) ..", "OCCTemplate",
 				providerCode);
 		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
 		qb.addCriterion("c.provider.code", "=", providerCode, true);
 		qb.addOrderCriterion("description", true);
 		List<OCCTemplate> occTemplates = (List<OCCTemplate>) qb.getQuery(em).getResultList();
-		log.debug("start of find list {0} SortedByName for provider (code={1})  result {2}",
-				"OCCTemplate", providerCode, occTemplates == null ? "null" : occTemplates.size());
+		log.debug("start of find list {} SortedByName for provider (code={})  result {}",
+				new Object[] { "OCCTemplate", providerCode,
+						occTemplates == null ? "null" : occTemplates.size() });
 		return occTemplates;
 	}
 }

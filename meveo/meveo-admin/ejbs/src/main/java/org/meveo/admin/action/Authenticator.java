@@ -32,6 +32,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.picketlink.idm.impl.api.PasswordCredential;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Model
 public class Authenticator extends BaseAuthenticator {
@@ -42,8 +43,7 @@ public class Authenticator extends BaseAuthenticator {
 	@Inject
 	private Credentials credentials;
 
-	@Inject
-	protected Logger log;
+	private static final Logger log = LoggerFactory.getLogger(Authenticator.class);
 
 	//
 	// @Produces
@@ -127,7 +127,7 @@ public class Authenticator extends BaseAuthenticator {
 					((PasswordCredential) credentials.getCredential()).getValue());
 
 		} catch (LoginException e) {
-			log.info("Login failed for the user {} for reason {} {}", credentials.getUsername(), e
+			log.debug("Login failed for the user {} for reason {} {}", credentials.getUsername(), e
 					.getClass().getName(), e.getMessage());
 			if (e instanceof InactiveUserException) {
 				inactiveUserError = true;
@@ -149,7 +149,7 @@ public class Authenticator extends BaseAuthenticator {
 
 			} else if (e instanceof UnknownUserException) {
 				noLoginError = true;
-				log.info("login failed with username={} and password={}",
+				log.debug("login failed with username={} and password={}",
 						credentials.getUsername(),
 						((PasswordCredential) credentials.getCredential()).getValue());
 				messages.info(new BundleKey("messages", "user.error.login"));
@@ -165,7 +165,7 @@ public class Authenticator extends BaseAuthenticator {
 			setStatus(AuthenticationStatus.SUCCESS);
 			setUser(new MeveoUser(user));
 
-			log.info("End of authenticating");
+			log.debug("End of authenticating");
 		}
 	}
 

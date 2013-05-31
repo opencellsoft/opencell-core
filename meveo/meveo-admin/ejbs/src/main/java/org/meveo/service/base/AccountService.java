@@ -23,7 +23,7 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 
 	@SuppressWarnings("unchecked")
 	public P findByExternalRef1(String externalRef1) {
-		log.debug("start of find {0} by externalRef1 (externalRef1={1}) ..", getEntityClass()
+		log.debug("start of find {} by externalRef1 (externalRef1={}) ..", getEntityClass()
 				.getSimpleName(), externalRef1);
 		final Class<? extends P> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
@@ -34,8 +34,8 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 			return null;
 		}
 		P e = (P) query.getResultList().get(0);
-		log.debug("end of find {0} by externalRef1 (externalRef1={1}). Result found={2}.",
-				getEntityClass().getSimpleName(), externalRef1, e != null);
+		log.debug("end of find {} by externalRef1 (externalRef1={}). Result found={}.",
+				new Object[] { getEntityClass().getSimpleName(), externalRef1, e != null });
 		return e;
 	}
 

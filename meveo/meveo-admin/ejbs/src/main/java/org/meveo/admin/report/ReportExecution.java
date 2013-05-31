@@ -166,7 +166,7 @@ public class ReportExecution implements Serializable{
 	 */
 	@SuppressWarnings("rawtypes")
     public void executeReport(Report report) {
-		log.info("executeReport({0})", report.getName());
+		log.info("executeReport({})", report.getName());
 		try {
 			Class clazz = Class.forName(report.getProducerClassName());
 			Object obj = clazz.newInstance();

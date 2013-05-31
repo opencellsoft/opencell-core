@@ -40,7 +40,8 @@ import org.meveo.service.base.BusinessService;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> {
 
 	@EJB
@@ -49,14 +50,15 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	public OneShotChargeInstance findByCodeAndSubsription(String code, Long subscriptionId) {
 		OneShotChargeInstance oneShotChargeInstance = null;
 		try {
-			log.debug("start of find {0} by code (code={1}, subscriptionId={2}) ..",
-					"OneShotChargeInstance", code, subscriptionId);
+			log.debug("start of find {} by code (code={}, subscriptionId={}) ..", new Object[] {
+					"OneShotChargeInstance", code, subscriptionId });
 			QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 			oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(em).getSingleResult();
-			log.debug("end of find {0} by code (code={1}, subscriptionId=#2). Result found={3}.",
-					"OneShotChargeInstance", code, subscriptionId, oneShotChargeInstance != null);
+			log.debug("end of find {} by code (code={}, subscriptionId={}). Result found={}.",
+					new Object[] { "OneShotChargeInstance", code, subscriptionId,
+							oneShotChargeInstance != null });
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
 		} catch (Exception e) {
@@ -67,15 +69,15 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 	public OneShotChargeInstance oneShotChargeInstanciation(Subscription subscription,
 			ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, Date effetDate,
-			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity, Seller seller, User creator)
-			throws BusinessException {
+			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, Integer quantity,
+			Seller seller, User creator) throws BusinessException {
 
 		if (quantity == null) {
 			quantity = 1;
 		}
 		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(
 				chargeTemplate.getCode(), chargeTemplate.getDescription(), effetDate,
-				amoutWithoutTax, amoutWithoutTx2, subscription, chargeTemplate,seller);
+				amoutWithoutTax, amoutWithoutTx2, subscription, chargeTemplate, seller);
 		oneShotChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
 			oneShotChargeInstance.setTerminationServiceInstance(serviceInstance);
@@ -83,7 +85,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			oneShotChargeInstance.setSubscriptionServiceInstance(serviceInstance);
 		}
 		oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
-		
+
 		create(oneShotChargeInstance, creator, chargeTemplate.getProvider());
 		return oneShotChargeInstance;
 	}
@@ -108,7 +110,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
 		OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(
 				chargetemplate.getCode(), chargetemplate.getDescription(), effetDate,
-				amoutWithoutTax, amoutWithoutTx2, subscription, chargetemplate,seller);
+				amoutWithoutTax, amoutWithoutTx2, subscription, chargetemplate, seller);
 		oneShotChargeInstance.setCriteria1(criteria1);
 		oneShotChargeInstance.setCriteria2(criteria2);
 		oneShotChargeInstance.setCriteria3(criteria3);

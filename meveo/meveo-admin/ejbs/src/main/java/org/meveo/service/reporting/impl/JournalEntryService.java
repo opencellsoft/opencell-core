@@ -31,14 +31,15 @@ import org.meveo.service.base.PersistenceService;
  * Sales Transformation service implementation.
  * 
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Object> getTaxRecodsBetweenDate(String providerCode, Date startDate, Date endDate) {
 		List<Object> result = null;
-		log.info("getTaxRecodsBetweenDate ( {0}, {1})", startDate, endDate);
+		log.info("getTaxRecodsBetweenDate ( {}, {})", startDate, endDate);
 		Query query = dwhEntityManager
 				.createQuery(
 						"select a.taxCode, a.taxDescription, a.taxPercent, sum(amountWithoutTax) as amountWithoutTax,  sum(amountTax) as amountTax from "
@@ -46,9 +47,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 								+ " a where a.providerCode=:providerCode and a.type='T' and a.invoiceDate>=:startDate and a.invoiceDate <=:endDate group by a.taxCode, a.taxDescription, a.taxPercent")
 				.setParameter("providerCode", providerCode).setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
-		log.debug("getTaxRecodsBetweenDate : query={0}", query);
+		log.debug("getTaxRecodsBetweenDate : query={}", query);
 		result = query.getResultList();
-		log.info("getTaxRecodsBetweenDate : {0} records", result.size());
+		log.info("getTaxRecodsBetweenDate : {} records", result.size());
 		return result;
 	}
 
@@ -56,7 +57,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Object> getJournalRecords(String providerCode, Date startDate, Date endDate) {
 		List<Object> result = null;
-		log.info("getJournalRecords ( {0}, {1})", startDate, endDate);
+		log.info("getJournalRecords ( {}, {})", startDate, endDate);
 		Query query = dwhEntityManager
 				.createQuery(
 						"select a.type, a.invoiceDate, a.invoiceNumber,a.customerAccountCode, a.accountingCode, sum(a.amountWithoutTax),sum(a.amountTax),sum(a.amountWithTax) from "
@@ -67,9 +68,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 								+ " order by a.invoiceNumber,a.accountingCode desc")
 				.setParameter("providerCode", providerCode).setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
-		log.debug("getJournalRecords : query={0}", query);
+		log.debug("getJournalRecords : query={}", query);
 		result = query.getResultList();
-		log.info("getJournalRecords : {0} records", result.size());
+		log.info("getJournalRecords : {} records", result.size());
 		return result;
 	}
 
@@ -77,7 +78,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Object> getSIMPACRecords(String providerCode, Date startDate, Date endDate) {
 		List<Object> result = null;
-		log.info("getSIMPACRecords( {0}, {1})", startDate, endDate);
+		log.info("getSIMPACRecords( {}, {})", startDate, endDate);
 		Query query = dwhEntityManager
 				.createQuery(
 						"select a.type,a.accountingCode, sum(amountWithoutTax) as amountWithoutTax , sum(amountTax) as amountTax, sum(amountWithTax) as amountWithTax  from "
@@ -88,9 +89,9 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 								+ " order by a.accountingCode desc")
 				.setParameter("providerCode", providerCode).setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
-		log.debug("getSIMPACRecords : query={0}", query);
+		log.debug("getSIMPACRecords : query={}", query);
 		result = query.getResultList();
-		log.info("getSIMPACRecords : {0} records", result.size());
+		log.info("getSIMPACRecords : {} records", result.size());
 		return result;
 	}
 }
