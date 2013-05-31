@@ -20,11 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-/**
- * 
- * @author Gediminas Ubartas
- * @created 2010.12.10
- */
 @FacesConverter("stringConverter")
 public class StringConverter implements Converter {
 	@Override

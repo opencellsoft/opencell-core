@@ -25,10 +25,6 @@ import javax.faces.convert.FacesConverter;
  * 
  * (Currently used only in billingAccount email field, because if email is not
  * null validator still validates it as wrong, so it has to be passed as null)
- * 
- * @author Ignas Lelys
- * @created Feb 17, 2011
- * 
  */
 @FacesConverter("nullableStringConverter")
 public class NullableStringConverter implements Converter {

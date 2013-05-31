@@ -25,58 +25,109 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 public class GetConverter {
 
-    @Inject
-    BeanManager beanManager;
+	@Inject
+	BeanManager beanManager;
 
-    /**
-     * Gets converter for type and by parameter.
-     * 
-     * @param obj Obj for which converter is searched.
-     * 
-     * @return Converter.
-     */
-    public Converter forType(Object obj) {
-        return forType(obj, null);
-    }
+	private Logger log = LoggerFactory.getLogger(GetConverter.class);
 
-    /**
-     * Gets converter for type and by parameter.
-     * 
-     * @param obj Obj for which converter is searched.
-     * @param param Parameter that can be used for finding out converter.
-     * 
-     * @return Converter.
-     */
-    @SuppressWarnings("unchecked")
-    public Converter forType(Object obj, String param) {
+	/**
+	 * Gets converter for type and by parameter.
+	 * 
+	 * @param obj
+	 *            Obj for which converter is searched.
+	 * 
+	 * @return Converter.
+	 */
+	public Converter forType(Object obj) {
+		return forType(obj, null);
+	}
 
-        if (obj == null) {
-            return null;
-        }
+	/**
+	 * Gets converter for type and by parameter.
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Converter forParam(String param) {
+		if ("date".equals(param)) {
 
-        if (StringUtils.isBlank(param) && obj.getClass() == BigDecimal.class) {
+			Bean<DateConverter> bean = (Bean<DateConverter>) beanManager
+					.getBeans(DateConverter.class).iterator().next();
+			CreationalContext<DateConverter> ctx = beanManager.createCreationalContext(bean);
+			return (DateConverter) beanManager.getReference(bean, DateConverter.class, ctx);
 
-            Bean<BigDecimalConverter> bean = (Bean<BigDecimalConverter>) beanManager.getBeans(BigDecimalConverter.class).iterator().next();
-            CreationalContext<BigDecimalConverter> ctx = beanManager.createCreationalContext(bean);
-            return (BigDecimalConverter) beanManager.getReference(bean, BigDecimalConverter.class, ctx);
+		} else if ("dateTime".equals(param)) {
 
-        } else if ("4digits".equals(param) && obj.getClass() == BigDecimal.class) {
+			Bean<DateTimeConverter> bean = (Bean<DateTimeConverter>) beanManager
+					.getBeans(DateTimeConverter.class).iterator().next();
+			CreationalContext<DateTimeConverter> ctx = beanManager.createCreationalContext(bean);
+			return (DateTimeConverter) beanManager.getReference(bean, DateTimeConverter.class, ctx);
 
-            Bean<BigDecimal4DigitsConverter> bean = (Bean<BigDecimal4DigitsConverter>) beanManager.getBeans(BigDecimal4DigitsConverter.class).iterator().next();
-            CreationalContext<BigDecimal4DigitsConverter> ctx = beanManager.createCreationalContext(bean);
-            return (BigDecimal4DigitsConverter) beanManager.getReference(bean, BigDecimal4DigitsConverter.class, ctx);
+		}
 
-        } else if ("10digits".equals(param) && obj.getClass() == BigDecimal.class) {
+		return null;
+	}
 
-            Bean<BigDecimal10DigitsConverter> bean = (Bean<BigDecimal10DigitsConverter>) beanManager.getBeans(BigDecimal10DigitsConverter.class).iterator().next();
-            CreationalContext<BigDecimal10DigitsConverter> ctx = beanManager.createCreationalContext(bean);
-            return (BigDecimal10DigitsConverter) beanManager.getReference(bean, BigDecimal10DigitsConverter.class, ctx);
+	/**
+	 * Gets converter for type and by parameter.
+	 * 
+	 * @param obj
+	 *            Obj for which converter is searched.
+	 * @param param
+	 *            Parameter that can be used for finding out converter.
+	 * 
+	 * @return Converter.
+	 */
+	@SuppressWarnings("unchecked")
+	public Converter forType(Object obj, String param) {
 
-        }
-        return null;
-    }
+		if (obj == null) {
+			return null;
+		}
+
+		log.debug("Getting converter={} for class={}", param, obj.getClass());
+
+		if (StringUtils.isBlank(param) && obj.getClass() == BigDecimal.class) {
+
+			Bean<BigDecimalConverter> bean = (Bean<BigDecimalConverter>) beanManager
+					.getBeans(BigDecimalConverter.class).iterator().next();
+			CreationalContext<BigDecimalConverter> ctx = beanManager.createCreationalContext(bean);
+			return (BigDecimalConverter) beanManager.getReference(bean, BigDecimalConverter.class,
+					ctx);
+
+		} else if ("4digits".equals(param) && obj.getClass() == BigDecimal.class) {
+
+			Bean<BigDecimal4DigitsConverter> bean = (Bean<BigDecimal4DigitsConverter>) beanManager
+					.getBeans(BigDecimal4DigitsConverter.class).iterator().next();
+			CreationalContext<BigDecimal4DigitsConverter> ctx = beanManager
+					.createCreationalContext(bean);
+			return (BigDecimal4DigitsConverter) beanManager.getReference(bean,
+					BigDecimal4DigitsConverter.class, ctx);
+
+		} else if ("10digits".equals(param) && obj.getClass() == BigDecimal.class) {
+
+			Bean<BigDecimal10DigitsConverter> bean = (Bean<BigDecimal10DigitsConverter>) beanManager
+					.getBeans(BigDecimal10DigitsConverter.class).iterator().next();
+			CreationalContext<BigDecimal10DigitsConverter> ctx = beanManager
+					.createCreationalContext(bean);
+			return (BigDecimal10DigitsConverter) beanManager.getReference(bean,
+					BigDecimal10DigitsConverter.class, ctx);
+
+		} else if ("date".equals("param")) {
+
+			Bean<DateConverter> bean = (Bean<DateConverter>) beanManager
+					.getBeans(DateConverter.class).iterator().next();
+			CreationalContext<DateConverter> ctx = beanManager.createCreationalContext(bean);
+			return (DateConverter) beanManager.getReference(bean, DateConverter.class, ctx);
+
+		}
+		return null;
+	}
 }
