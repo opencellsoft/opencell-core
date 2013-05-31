@@ -423,8 +423,7 @@
 										<p:commandButton
 											value="#{messages['subscription.oneShotChgButton']}"
 											action="#{subscriptionBean.newOneShotChargeInstance}"
-											onclick="document.getElementById('oneShotChgDiv').style.display='';"
-											render="oneShotChgSdiv" />
+											onclick="document.getElementById('oneShotChgDiv').style.display='';" />
 									</h:form>
 									<br />
 									<br />
@@ -508,8 +507,8 @@
 															value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
 														<p:dataTable id="oneShotWalletOperationTable"
 															value="#{subscriptionBean.oneShotWalletOperations}"
-															var="oneShotWalletOp" rows="10">
-															<!-- 																<hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
+															var="oneShotWalletOp" rows="10" styleClass="custom-grid">
+															<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
 															<p:column>
 																<f:facet name="header">
 																	<h:outputText
@@ -665,7 +664,6 @@
 														update=":subscriptionTab:OS_oneShot_results_form"
 														oncomplete="document.getElementById('oneShotChgDiv').style.display='none';"
 														rendered="#{!currentProvider.amountValidation}" />
-
 
 													<p:commandButton value="#{messages['action.cancel']}"
 														onclick="document.getElementById('oneShotChgDiv').style.display='none';return false;" />

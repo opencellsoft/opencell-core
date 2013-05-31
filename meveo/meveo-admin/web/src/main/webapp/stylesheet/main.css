@@ -379,5 +379,6 @@ input[type="submit"],
 .confirm-dialog .ui-dialog-content p span.ui-confirm-dialog-severity { position: relative; top: -4px; }
 .confirm-dialog .ui-dialog-buttonpane { text-align: center; }
 .action-buttons button { margin-right: 5px; }
+.custom-grid tbody { display: table-row-group; }
 
 /* td { border: 1px solid red !important; } */
