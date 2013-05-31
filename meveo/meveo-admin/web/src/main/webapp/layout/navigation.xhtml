@@ -128,6 +128,10 @@
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="emailTemplates" value="#{messages['menu.emailTemplates']}" />
 
+			<p:menuitem id="terminationReasons"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				outcome="terminationReasons" value="#{messages['menu.terminationReason']}" />
+
 			<!-- <p:menuitem id="titles" 
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="titles" value="#{messages['menu.titles']}" /> -->

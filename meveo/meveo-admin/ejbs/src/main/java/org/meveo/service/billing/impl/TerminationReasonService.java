@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.meveo.service.catalog.impl;
+package org.meveo.service.billing.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * Tax service implementation.
- */
 @Stateless
 @LocalBean
-public class TaxService extends PersistenceService<Tax> {
+public class TerminationReasonService extends PersistenceService<SubscriptionTerminationReason> {
 
 }

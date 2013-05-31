@@ -37,9 +37,6 @@ import org.meveo.service.catalog.impl.TaxService;
  * almost all common methods to handle entities filtering/sorting in datatable,
  * their create, edit, view, delete operations). It works with Manaty custom JSF
  * components.
- * 
- * @author Seb
- * @created Dec 20, 2010
  */
 @Named
 @ConversationScoped
@@ -267,7 +264,7 @@ public class TaxBean extends BaseBean<Tax> {
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList();
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
