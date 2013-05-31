@@ -19,9 +19,6 @@ package org.meveo.model;
  * This interface should be implemented if entity class doesn't extend
  * BaseEntity. 
  * 
- * @author Gediminas Ubartas
- * @created 2011.03.09
- * 
  */
 public interface UniqueEntity {
 

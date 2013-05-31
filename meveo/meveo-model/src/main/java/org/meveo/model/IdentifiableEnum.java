@@ -20,8 +20,6 @@ package org.meveo.model;
  * as integer. Meveo framework then recognized it (for example in search) and 
  * uses id field then for search instead of string.
  * 
- * @author Ignas Lelys
- * @created Oct 31, 2010
  *
  */
 public interface IdentifiableEnum {
