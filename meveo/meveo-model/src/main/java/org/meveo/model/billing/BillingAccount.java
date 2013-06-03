@@ -125,6 +125,10 @@ public class BillingAccount extends AccountEntity {
 
 	@Column(name = "INVOICE_PREFIX")
 	private String invoicePrefix;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
+	private SubscriptionTerminationReason terminationReason;
 
 	public List<UserAccount> getUsersAccounts() {
 		return usersAccounts;
@@ -302,5 +306,13 @@ public class BillingAccount extends AccountEntity {
 
 	public void setTradingLanguage(TradingLanguage tradingLanguage) {
 		this.tradingLanguage = tradingLanguage;
+	}
+
+	public SubscriptionTerminationReason getTerminationReason() {
+		return terminationReason;
+	}
+
+	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+		this.terminationReason = terminationReason;
 	}
 }
