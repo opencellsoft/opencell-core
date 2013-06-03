@@ -89,6 +89,8 @@
 				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}"
 				field="amountWithTax" converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['tradingCountry.tradingCountry']}"
+				field="tradingCountry" childField="countryCode" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
 			<hftl:actionsColumn
