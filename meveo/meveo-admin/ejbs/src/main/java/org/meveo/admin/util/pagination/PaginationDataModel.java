@@ -41,8 +41,6 @@ import org.richfaces.model.ArrangeableState;
  * database using specific filtering and sorting. Concrete implementation of
  * Persistence service is passed through constructor.
  * 
- * @author Ignas
- * @created 2009.09.24
  */
 public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arrangeable, Serializable  {
 
