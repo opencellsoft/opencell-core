@@ -30,7 +30,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -177,14 +176,12 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		return back();
 	}
 
-	public String terminateAccount(SubscriptionTerminationReason terminationReason) {
-		log.info("resiliateAccount userAccountId:" + entity.getId());
+	public void terminateAccount() {
+		log.debug("resiliateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountTermination(entity.getCode(), new Date(),terminationReason,
-					getCurrentUser());
+			userAccountService.userAccountTermination(entity.getCode(),
+					entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -192,7 +189,6 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 			e.printStackTrace();
 			messages.error(e.getMessage());
 		}
-		return null;
 	}
 
 	public String cancelAccount() {

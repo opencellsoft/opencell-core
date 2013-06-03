@@ -121,7 +121,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public BillingAccount initEntity() {
 		super.initEntity();
 		returnToAgency = !(entity.getInvoicePrefix() == null);
-		
+
 		if (entity.getId() == null && customerAccountId != null) {
 			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
 			entity.setCustomerAccount(customerAccountService.findById(customerAccountId));
@@ -132,7 +132,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 				entity.setDefaultLevel(true);
 			}
 		}
-		
+
 		return entity;
 	}
 
@@ -209,10 +209,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			billingAccountService.billingAccountTermination(entity.getCode(),
 					entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-			
-			initEntity();
-			/*return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?billingAccountId="
-					+ entity.getId() + "&edit=false";*/
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -220,8 +216,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			e.printStackTrace();
 			messages.error(e.getMessage());
 		}
-
-		//return "";
 	}
 
 	public String cancelAccount() {

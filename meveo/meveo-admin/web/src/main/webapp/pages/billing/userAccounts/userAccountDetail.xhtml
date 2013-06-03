@@ -48,12 +48,10 @@
 			header="#{messages['ratedTransactionsNoInvoiced.popup.header']}"
 			showSearchButton="false" backingBean="#{walletOperationBean}"
 			column1Label="#{messages['walletOperation.operationDate']}"
-			column1="operationDate"
-			column1Converter="date"
+			column1="operationDate" column1Converter="date"
 			column2Label="#{messages['walletOperation.endDate']}"
 			column2="endDate" column3Label="#{messages['chargeInstance.code']}"
-			column2Converter="date"
-			column3="chargeInstance" column3Child="code"
+			column2Converter="date" column3="chargeInstance" column3Child="code"
 			column4Label="#{messages['walletOperation.quantity']}"
 			column4="quantity"
 			column5Label="#{messages['walletOperation.amountWithoutTax']}"
@@ -215,35 +213,68 @@
 
 					<h:form id="operationsForm" rendered="#{!userAccountBean.edit}">
 						<!-- 							<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
-						<p:button outcome="addNewSubscription"
-							value="#{messages['userAccount.addNewSubscription']}"
-							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
-							<f:param name="cid" value="#{conversation.id}" />
-						</p:button>
-						<p:commandButton action="#{userAccountBean.terminateAccount()}"
-							value="#{messages['button.terminateButton']}"
-							onclick="if(confirm('#{messages['confirmationMessage.confirmTermination']}')){return true;}else{return false;}"
-							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
-						<p:commandButton action="#{userAccountBean.cancelAccount()}"
-							value="#{messages['button.cancelButton']}"
-							onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
-							disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
-						<p:commandButton action="#{userAccountBean.reactivateAccount()}"
-							value="#{messages['button.reactivateButton']}"
-							onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
-							disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />
-						<p:commandButton type="button"
-							value="#{messages['walletOperationPopup.button']}"
-							onclick="dlg_walletOperationPopup.show();" />
-						<!-- <p:commandButton type="button"
+						<div class="action-buttons">
+							<p:button outcome="addNewSubscription"
+								value="#{messages['userAccount.addNewSubscription']}"
+								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
+								<f:param name="cid" value="#{conversation.id}" />
+							</p:button>
+							<p:commandButton value="#{messages['button.terminateButton']}"
+								oncomplete="dlg_userAccountTerminationPopup.show()"
+								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+							<p:commandButton action="#{userAccountBean.cancelAccount()}"
+								value="#{messages['button.cancelButton']}"
+								onclick="if(confirm('#{messages['confirmationMessage.confirmCancellation']}')){return true;}else{return false;}"
+								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}" />
+							<p:commandButton action="#{userAccountBean.reactivateAccount()}"
+								value="#{messages['button.reactivateButton']}"
+								onclick="if(confirm('#{messages['confirmationMessage.confirmReactivation']}')){return true;}else{return false;}"
+								disabled="#{userAccountBean.entity.status.toString() != 'TERMINATED' or userAccountBean.entity.status.toString()!='ACTIVE'}" />
+							<p:commandButton type="button"
+								value="#{messages['walletOperationPopup.button']}"
+								onclick="dlg_walletOperationPopup.show();" />
+							<!-- <p:commandButton type="button"
 							value="#{messages['ratedTransactionInvoiced.button']}"
 							onclick="dlg_ratedTransactionsInvoicedPopup.show();" /> -->
-						<!-- 							</custom:listPanel> -->
+							<!-- 							</custom:listPanel> -->
+						</div>
 					</h:form>
 
 				</p:column>
 			</p:row>
 		</p:panelGrid>
+
+		<p:dialog id="userAccountTerminationPopup"
+			header="#{messages['userAccount.accountTermination']}"
+			widgetVar="dlg_userAccountTerminationPopup" dynamic="false"
+			width="400">
+			<hf:formPanel edit="true" backingBean="#{userAccountBean}"
+				styleClass="formPanel" formId="termFrm" showFormButtons="false"
+				killConversationOnSave="false" killConversationOnBack="false"
+				useCustomIdParam="true">
+				<p:panelGrid columns="1">
+					<hf:formField label="#{messages['serviceInstance.code']}"
+						field="code" size="50" edit="false" />
+					<hf:formField
+						label="#{messages['serviceInstance.terminationDate']}"
+						field="terminationDate" required="true" edit="true" />
+					<hf:formEntityField label="Motifs " field="terminationReason"
+						childField="description" required="true" popup="false" edit="true"
+						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+					<!-- update=":#{p:component('formBillingAccountPanel')}" -->
+					<p:panel styleClass="action-buttons">
+						<p:commandButton action="#{userAccountBean.terminateAccount()}"
+							value="#{messages['button.terminateButton']}" ajax="true"
+							onsuccess="dlg_userAccountTerminationPopup.hide()"
+							update=":#{p:component('operationsForm')} :userAccountFormPanel:formId:messages">
+						</p:commandButton>
+						<p:commandButton immediate="true"
+							onclick="dlg_userAccountTerminationPopup.hide()"
+							value="#{messages['management.close']}" />
+					</p:panel>
+				</p:panelGrid>
+			</hf:formPanel>
+		</p:dialog>
 
 	</ui:define>
 
