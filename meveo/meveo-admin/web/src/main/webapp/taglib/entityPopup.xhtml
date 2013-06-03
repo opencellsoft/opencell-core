@@ -80,10 +80,18 @@
 							<h:outputText value="#{column1Label}" />
 						</f:facet>
 						<c:if test="#{not empty column1Child}">
+							<c:if test="#{not empty column1Converter}">
+								<c:set var="converter1"
+									value="#{getConverter.forType(e[column1][column1Child], column1Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column1][column1Child]}"
 								converter="#{converter1}" />
 						</c:if>
 						<c:if test="#{empty column1Child}">
+							<c:if test="#{not empty column1Converter}">
+								<c:set var="converter1"
+									value="#{getConverter.forType(e[column1], column1Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column1]}" converter="#{converter1}" />
 						</c:if>
 					</p:column>
@@ -94,10 +102,18 @@
 							<h:outputText value="#{column2Label}" />
 						</f:facet>
 						<c:if test="#{not empty column2Child}">
+							<c:if test="#{not empty column2Converter}">
+								<c:set var="converter2"
+									value="#{getConverter.forType(e[column2][column2Child], column2Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column2][column2Child]}"
 								converter="#{converter2}" />
 						</c:if>
 						<c:if test="#{empty column2Child}">
+							<c:if test="#{not empty column2Converter}">
+								<c:set var="converter2"
+									value="#{getConverter.forType(e[column2], column2Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column2]}" converter="#{converter2}" />
 						</c:if>
 					</p:column>
@@ -108,10 +124,18 @@
 							<h:outputText value="#{column3Label}" />
 						</f:facet>
 						<c:if test="#{not empty column3Child}">
+							<c:if test="#{not empty column3Converter}">
+								<c:set var="converter3"
+									value="#{getConverter.forType(e[column3][column3Child], column3Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column3][column3Child]}"
 								converter="#{converter3}" />
 						</c:if>
 						<c:if test="#{empty column3Child}">
+							<c:if test="#{not empty column3Converter}">
+								<c:set var="converter3"
+									value="#{getConverter.forType(e[column3], column3Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column3]}" converter="#{converter3}" />
 						</c:if>
 					</p:column>
@@ -122,10 +146,18 @@
 							<h:outputText value="#{column4Label}" />
 						</f:facet>
 						<c:if test="#{not empty column4Child}">
+							<c:if test="#{not empty column4Converter}">
+								<c:set var="converter4"
+									value="#{getConverter.forType(e[column4][column4Child], column4Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column4][column4Child]}"
 								converter="#{converter4}" />
 						</c:if>
 						<c:if test="#{empty column4Child}">
+							<c:if test="#{not empty column4Converter}">
+								<c:set var="converter4"
+									value="#{getConverter.forType(e[column4], column4Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column4]}" converter="#{converter4}" />
 						</c:if>
 					</p:column>
@@ -136,10 +168,18 @@
 							<h:outputText value="#{column5Label}" />
 						</f:facet>
 						<c:if test="#{not empty column5Child}">
+							<c:if test="#{not empty column5Converter}">
+								<c:set var="converter5"
+									value="#{getConverter.forType(e[column5][column5Child], column5Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column5][column5Child]}"
 								converter="#{converter5}" />
 						</c:if>
 						<c:if test="#{empty column5Child}">
+							<c:if test="#{not empty column5Converter}">
+								<c:set var="converter5"
+									value="#{getConverter.forType(e[column5], column5Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column5]}" converter="#{converter5}" />
 						</c:if>
 					</p:column>
@@ -150,10 +190,18 @@
 							<h:outputText value="#{column6Label}" />
 						</f:facet>
 						<c:if test="#{not empty column6Child}">
+							<c:if test="#{not empty column6Converter}">
+								<c:set var="converter6"
+									value="#{getConverter.forType(e[column6][column6Child], column6Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column6][column6Child]}"
 								converter="#{converter6}" />
 						</c:if>
 						<c:if test="#{empty column6Child}">
+							<c:if test="#{not empty column6Converter}">
+								<c:set var="converter6"
+									value="#{getConverter.forType(e[column6], column6Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column6]}" converter="#{converter6}" />
 						</c:if>
 					</p:column>
@@ -164,10 +212,18 @@
 							<h:outputText value="#{column7Label}" />
 						</f:facet>
 						<c:if test="#{not empty column7Child}">
+							<c:if test="#{not empty column7Converter}">
+								<c:set var="converter7"
+									value="#{getConverter.forType(e[column7][column7Child], column7Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column7][column7Child]}"
 								converter="#{converter7}" />
 						</c:if>
 						<c:if test="#{empty column7Child}">
+							<c:if test="#{not empty column7Converter}">
+								<c:set var="converter7"
+									value="#{getConverter.forType(e[column7], column7Converter)}"></c:set>
+							</c:if>
 							<h:outputText value="#{e[column7]}" converter="#{converter7}" />
 						</c:if>
 					</p:column>

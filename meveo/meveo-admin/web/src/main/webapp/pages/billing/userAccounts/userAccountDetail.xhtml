@@ -54,10 +54,13 @@
 			column2Converter="date" column3="chargeInstance" column3Child="code"
 			column4Label="#{messages['walletOperation.quantity']}"
 			column4="quantity"
+			column4Converter="4digits"
 			column5Label="#{messages['walletOperation.amountWithoutTax']}"
 			column5="amountWithoutTax"
+			column5Converter="4digits"
 			column6Label="#{messages['walletOperation.amountWithTax']}"
 			column6="amountWithTax"
+			column6Converter="4digits"
 			column7Label="#{messages['currency.codeCurrency']}"
 			column7="currency">
 		</hftl:entityPopup>
@@ -261,7 +264,6 @@
 					<hf:formEntityField label="Motifs " field="terminationReason"
 						childField="description" required="true" popup="false" edit="true"
 						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
-					<!-- update=":#{p:component('formBillingAccountPanel')}" -->
 					<p:panel styleClass="action-buttons">
 						<p:commandButton action="#{userAccountBean.terminateAccount()}"
 							value="#{messages['button.terminateButton']}" ajax="true"
