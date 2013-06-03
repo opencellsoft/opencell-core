@@ -44,23 +44,23 @@
 				selection="#{backingBean.selectedEntities}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" lazy="true"
-				binding="#{backingBean.dataTable}">
+				binding="#{backingBean.dataTable}" styleClass="custom-grid">
 				<p:column selectionMode="multiple" style="width:2%"
 					rendered="#{checkMany}" exportable="false" />
 				<ui:insert />
 			</e:sortableDataTable>
 
-				<!-- <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
+			<!-- <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
 					value="#{messages['commons.deleteMultiple']}"
 					action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
 					onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"
 					ajax="false" /> -->
 
-				<p:commandButton id="#{formId}buttonExport"
-					value="#{messages['commons.exportExcel']}" ajax="false">
-					<p:dataExporter type="xls" target="datatable" fileName="data"
-						pageOnly="false" />
-				</p:commandButton>
+			<p:commandButton id="#{formId}buttonExport"
+				value="#{messages['commons.exportExcel']}" ajax="false">
+				<p:dataExporter type="xls" target="datatable" fileName="data"
+					pageOnly="false" />
+			</p:commandButton>
 
 			<p:panel>
 				<ui:insert name="add-on-buttons" />

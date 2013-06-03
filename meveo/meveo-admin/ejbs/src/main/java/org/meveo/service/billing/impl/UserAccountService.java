@@ -16,7 +16,6 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,12 +33,12 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
 /**
@@ -76,15 +75,17 @@ public class UserAccountService extends AccountService<UserAccount> {
 		walletService.create(wallet, creator, billingAccount.getProvider());
 		userAccount.setWallet(wallet);
 
-		List<WalletTemplate> prepaidWalletTemplates = billingAccount.getProvider().getPrepaidWalletTemplates();
-		if(prepaidWalletTemplates!=null && prepaidWalletTemplates.size()>0){
-			HashMap<String,WalletInstance> prepaidWallets = new HashMap<String,WalletInstance>(prepaidWalletTemplates.size());
-			for(WalletTemplate prepaidWalletTemplate:prepaidWalletTemplates){
+		List<WalletTemplate> prepaidWalletTemplates = billingAccount.getProvider()
+				.getPrepaidWalletTemplates();
+		if (prepaidWalletTemplates != null && prepaidWalletTemplates.size() > 0) {
+			HashMap<String, WalletInstance> prepaidWallets = new HashMap<String, WalletInstance>(
+					prepaidWalletTemplates.size());
+			for (WalletTemplate prepaidWalletTemplate : prepaidWalletTemplates) {
 				WalletInstance prepaidWallet = new WalletInstance();
 				wallet.setUserAccount(userAccount);
 				wallet.setWalletTemplate(prepaidWalletTemplate);
 				walletService.create(wallet, creator, billingAccount.getProvider());
-				prepaidWallets.put(prepaidWalletTemplate.getCode(),prepaidWallet);
+				prepaidWallets.put(prepaidWalletTemplate.getCode(), prepaidWallet);
 			}
 			userAccount.setPrepaidWallets(prepaidWallets);
 		}
@@ -99,8 +100,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return userAccount;
 	}
 
-	public void userAccountTermination(String code, Date terminationDate,SubscriptionTerminationReason terminationReason, User updater)
-			throws BusinessException {
+	public void userAccountTermination(String code, Date terminationDate,
+			SubscriptionTerminationReason terminationReason, User updater) throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
 		if (terminationDate == null) {
@@ -109,8 +110,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 		UserAccount userAccount = findByCode(code);
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, updater);
+			subscriptionService.terminateSubscription(subscription, terminationDate,
+					terminationReason, updater);
 		}
+		userAccount.setTerminationReason(terminationReason);
 		userAccount.setTerminationDate(terminationDate);
 		userAccount.setStatus(AccountStatusEnum.TERMINATED);
 		update(userAccount, updater);

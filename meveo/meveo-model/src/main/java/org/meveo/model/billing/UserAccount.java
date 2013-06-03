@@ -92,12 +92,12 @@ public class UserAccount extends AccountEntity {
 	@MapKey(name = "code")
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();// key
-																					// is
-																					// the
-																					// counter
-																					// template
-																					// code
+	// key is the counter template code
+	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
+	private SubscriptionTerminationReason terminationReason;
 
 	public BillingAccount getBillingAccount() {
 		return billingAccount;
@@ -183,6 +183,14 @@ public class UserAccount extends AccountEntity {
 
 	public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
 		this.invoiceAgregates = invoiceAgregates;
+	}
+
+	public SubscriptionTerminationReason getTerminationReason() {
+		return terminationReason;
+	}
+
+	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+		this.terminationReason = terminationReason;
 	}
 
 }

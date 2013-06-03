@@ -4,9 +4,7 @@
 	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:o="http://omnifaces.org/ui"
 	xmlns:c="http://java.sun.com/jstl/core"
@@ -152,8 +150,7 @@
 														<h:selectBooleanCheckbox id="returnToAgency_select"
 															rendered="#{billingAccountBean.edit}"
 															value="#{fieldValueRA}">
-															<a:ajax event="click" render="invoicePrefixPanel"
-																limitRender="true"
+															<p:ajax event="click" update="invoicePrefixPanel"
 																action="#{billingAccountBean.setInvoicePrefix()}" />
 														</h:selectBooleanCheckbox>
 
@@ -406,24 +403,28 @@
 							<h:form id="operationsForm"
 								rendered="#{!billingAccountBean.edit}">
 								<!-- 								<custom:listPanel label="#{messages['customerAccount.operations']}"> -->
-								<p:commandButton
-									action="#{billingAccountBean.terminateAccount()}"
-									value="#{messages['account.buttonResiliateAccount']}"
-									onclick="if(confirm('#{messages['account.confirmResiliateAccount']}')){return true;}else{return false;}"
-									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<p:commandButton action="#{billingAccountBean.cancelAccount()}"
-									value="#{messages['account.buttonCancelAccount']}"
-									onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}"
-									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />&nbsp;&nbsp;
-							<p:commandButton action="#{billingAccountBean.closeAccount()}"
-									value="#{messages['account.buttonCloseAccount']}"
-									onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}"
-									disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString()!='CANCELLED'}" />&nbsp;&nbsp;
-							<p:button outcome="addNewUserAccountAction"
-									value="#{messages['billingAccount.addUserAccount']}"
-									disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
-									<f:param name="cid" value="#{conversation.id}" />
-								</p:button>
+								<div class="action-buttons">
+									<p:commandButton
+										value="#{messages['account.buttonResiliateAccount']}"
+										oncomplete="dlg_billingAccountTerminationPopup.show()"
+										disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
+									<p:commandButton action="#{billingAccountBean.cancelAccount()}"
+										value="#{messages['account.buttonCancelAccount']}"
+										onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}"
+										disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
+									&nbsp;&nbsp;
+									<p:commandButton id="terminateButton"
+										action="#{billingAccountBean.closeAccount()}"
+										value="#{messages['account.buttonCloseAccount']}"
+										onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}"
+										disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString() != 'CANCELLED'}" />
+									&nbsp;&nbsp;
+									<p:button outcome="addNewUserAccountAction"
+										value="#{messages['billingAccount.addUserAccount']}"
+										disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">
+										<f:param name="cid" value="#{conversation.id}" />
+									</p:button>
+								</div>
 								<!-- 								</custom:listPanel> -->
 							</h:form>
 
@@ -496,6 +497,38 @@
 				</p:column>
 			</p:row>
 		</p:panelGrid>
+
+		<p:dialog id="billingAccountTerminationPopup"
+			header="#{messages['billingAccount.accountTermination']}"
+			widgetVar="dlg_billingAccountTerminationPopup" dynamic="false"
+			width="400">
+			<hf:formPanel edit="true" backingBean="#{billingAccountBean}"
+				styleClass="formPanel" formId="termFrm" showFormButtons="false"
+				killConversationOnSave="false" killConversationOnBack="false"
+				useCustomIdParam="true">
+				<p:panelGrid columns="1">
+					<hf:formField label="#{messages['serviceInstance.code']}"
+						field="code" size="50" edit="false" />
+					<hf:formField
+						label="#{messages['serviceInstance.terminationDate']}"
+						field="terminationDate" required="true" edit="true" />
+					<hf:formEntityField label="Motifs " field="terminationReason"
+						childField="description" required="true" popup="false" edit="true"
+						listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+					<!-- update=":#{p:component('formBillingAccountPanel')}" -->
+					<p:panel styleClass="action-buttons">
+						<p:commandButton action="#{billingAccountBean.terminateAccount()}"
+							value="#{messages['button.terminateButton']}" ajax="true"
+							onsuccess="dlg_billingAccountTerminationPopup.hide()"
+							update=":#{p:component('operationsForm')} :#{p:component('childTab')} :parentTab:formBillingAccountPanel:formId:messages">
+						</p:commandButton>
+						<p:commandButton immediate="true"
+							onclick="dlg_billingAccountTerminationPopup.hide()"
+							value="#{messages['management.close']}" />
+					</p:panel>
+				</p:panelGrid>
+			</hf:formPanel>
+		</p:dialog>
 
 	</ui:define>
 </ui:composition>

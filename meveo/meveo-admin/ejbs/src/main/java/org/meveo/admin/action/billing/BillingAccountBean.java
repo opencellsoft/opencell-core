@@ -41,7 +41,6 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -122,6 +121,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public BillingAccount initEntity() {
 		super.initEntity();
 		returnToAgency = !(entity.getInvoicePrefix() == null);
+
 		if (entity.getId() == null && customerAccountId != null) {
 			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
 			entity.setCustomerAccount(customerAccountService.findById(customerAccountId));
@@ -132,6 +132,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 				entity.setDefaultLevel(true);
 			}
 		}
+
 		return entity;
 	}
 
@@ -202,14 +203,12 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		return back();
 	}
 
-	public String terminateAccount(SubscriptionTerminationReason terminationReason) {
-		log.info("terminateAccount billingAccountId:" + entity.getId());
+	public void terminateAccount() {
+		log.debug("terminateAccount billingAccountId: {}", entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity.getCode(), new Date(),terminationReason,
-					getCurrentUser());
+			billingAccountService.billingAccountTermination(entity.getCode(),
+					entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
-					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -217,7 +216,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			e.printStackTrace();
 			messages.error(e.getMessage());
 		}
-		return null;
 	}
 
 	public String cancelAccount() {
