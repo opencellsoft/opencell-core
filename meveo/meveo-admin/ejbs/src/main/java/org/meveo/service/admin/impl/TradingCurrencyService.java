@@ -35,7 +35,7 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
 			log.info("findByTradingCurrencyCode tradingCurrencyCode=#0,provider=#1",
 					tradingCurrencyCode, provider != null ? provider.getCode() : null);
 			Query query = getEntityManager()
-					.createQuery("select b from TradingCurrency b where b.code = :tradingCurrencyCode and b.provider=:provider");
+					.createQuery("select b from TradingCurrency b where b.currency.code = :tradingCurrencyCode and b.provider=:provider");
 			query.setParameter("tradingCurrencyCode", tradingCurrencyCode);
 			query.setParameter("provider", provider);
 			return (TradingCurrency) query.getSingleResult();

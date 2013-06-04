@@ -42,7 +42,7 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
 					tradingLanguageCode, provider != null ? provider.getCode() : null);
 			Query query = getEntityManager()
 					.createQuery(
-							"select b from TradingLanguage b where b.code = :tradingLanguageCode and b.provider=:provider");
+							"select b from TradingLanguage b where b.language.code = :tradingLanguageCode and b.provider=:provider");
 			query.setParameter("tradingLanguageCode", tradingLanguageCode);
 			query.setParameter("provider", provider);
 			return (TradingLanguage) query.getSingleResult();

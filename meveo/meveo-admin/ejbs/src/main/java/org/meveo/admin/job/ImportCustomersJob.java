@@ -152,7 +152,7 @@ public class ImportCustomersJob implements Job {
       	String dirOK=param.getProperty("connectorCRM.importCustomers.outputDir","/tmp/meveo/crm/output")+"/"+provider.getCode();
       	String dirKO=param.getProperty("connectorCRM.importCustomers.rejectDir","/tmp/meveo/crm/output")+"/"+provider.getCode();
       	String prefix=param.getProperty("connectorCRM.importCustomers.prefix","CUSTOMER_");
-      	String ext=param.getProperty("connectorCRM.importCustomers.extension",".csv");
+      	String ext=param.getProperty("connectorCRM.importCustomers.extension",".xml");
    	
       	JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
