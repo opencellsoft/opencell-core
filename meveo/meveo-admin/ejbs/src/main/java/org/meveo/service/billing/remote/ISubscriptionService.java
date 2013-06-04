@@ -28,7 +28,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
 
 public interface ISubscriptionService {
 

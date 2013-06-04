@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -41,6 +42,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.util.MeveoDWHJpa;
 import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * Generic implementation that provides the default implementation for
@@ -52,19 +54,26 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	@Inject
 	@MeveoJpa
-	protected EntityManager em;
+	private EntityManager em;
+
+	@Inject
+	@MeveoJpaForJobs
+	private EntityManager emfForJobs;
 
 	// TODO move to places where it is needed
 	@Inject
 	@MeveoDWHJpa
 	protected EntityManager dwhEntityManager;
 
+	@Inject
+	private Conversation conversation;
+
 	private Provider provider;
 
 	/**
 	 * Constructor.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public PersistenceService() {
 
 		Class clazz = getClass();
@@ -133,10 +142,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public E findById(Long id, boolean refresh) {
 		log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
-		E e = em.find(productClass, id);
+		E e = getEntityManager().find(productClass, id);
 		if (refresh) {
 			log.debug("refreshing loaded entity");
-			em.refresh(e);
+			getEntityManager().refresh(e);
 		}
 		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass()
 				.getSimpleName(), id, e != null);
@@ -158,14 +167,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 			}
 		}
 		queryString.append(" where a.id = :id");
-		Query query = em.createQuery(queryString.toString());
+		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("id", id);
 
 		E e = (E) query.getResultList().get(0);
 
 		if (refresh) {
 			log.debug("refreshing loaded entity");
-			em.refresh(e);
+			getEntityManager().refresh(e);
 		}
 		log.debug("end of find {} by id (id={}). Result found={}.", getEntityClass()
 				.getSimpleName(), id, e != null);
@@ -190,8 +199,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		checkProvider(e);
 		log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(),
 				e.getId());
-		em.remove(e);
-		em.flush();
+		getEntityManager().remove(e);
+		getEntityManager().flush();
 		log.debug("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
 	}
 
@@ -199,8 +208,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.util.Set)
 	 */
 	public void remove(Set<Long> ids) {
-		Query query = em.createQuery("delete from " + getEntityClass().getName()
-				+ " where id in (:ids) and provider.id = :providerId");
+		Query query = getEntityManager().createQuery(
+				"delete from " + getEntityClass().getName()
+						+ " where id in (:ids) and provider.id = :providerId");
 		query.setParameter("ids", ids);
 		query.setParameter("providerId", getCurrentProvider() != null ? getCurrentProvider()
 				.getId() : null);
@@ -221,7 +231,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 				((AuditableEntity) e).updateAudit(getCurrentUser());
 			}
 		}
-		em.merge(e);
+		getEntityManager().merge(e);
 		checkProvider(e);
 		log.debug("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
 	}
@@ -246,7 +256,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
 			((BaseEntity) e).setProvider(provider);
 		}
-		em.persist(e);
+		getEntityManager().persist(e);
 		log.debug("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
 	}
 
@@ -257,7 +267,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public List<E> list() {
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, getCurrentProvider());
-		Query query = queryBuilder.getQuery(em);
+		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
@@ -268,7 +278,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	@SuppressWarnings({ "unchecked" })
 	public List<E> list(PaginationConfiguration config) {
 		QueryBuilder queryBuilder = getQuery(config);
-		Query query = queryBuilder.getQuery(em);
+		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
@@ -282,7 +292,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		config.setFetchFields(null);
 		QueryBuilder queryBuilder = getQuery(config);
 		config.setFetchFields(fetchFields);
-		return queryBuilder.count(em);
+		return queryBuilder.count(getEntityManager());
 	}
 
 	/**
@@ -292,7 +302,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	public long count() {
 		final Class<? extends E> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
-		return queryBuilder.count(em);
+		return queryBuilder.count(getEntityManager());
 	}
 
 	/**
@@ -301,7 +311,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	public void detach(Object entity) {
 		// TODO: Hibernate. org.hibernate.Session session = (Session)
-		// em.getDelegate();
+		// getEntityManager().getDelegate();
 		// session.evict(entity);
 	}
 
@@ -314,12 +324,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		// entity (ejb spec requires this).
 		/*
 		 * TODO: Hibernate. org.hibernate.Session session = (Session)
-		 * em.getDelegate(); session.refresh(entity);
+		 * getEntityManager().getDelegate(); session.refresh(entity);
 		 */
-		// em.getEntityManagerFactory().getCache().evict(entity.getClass(),
+		// getEntityManager().getEntityManagerFactory().getCache().evict(entity.getClass(),
 		// entity.getId());
-		if (em.contains(entity)) {
-			em.refresh(entity);
+		if (getEntityManager().contains(entity)) {
+			getEntityManager().refresh(entity);
 		}
 	}
 
@@ -331,6 +341,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 *            PaginationConfiguration data holding object
 	 * @return query to filter entities according pagination configuration data.
 	 */
+	@SuppressWarnings("rawtypes")
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends E> entityClass = getEntityClass();
@@ -409,8 +420,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 		}
 		queryBuilder.addPaginationConfiguration(config, "a");
 
-		// System.out.println("AKK query is "+queryBuilder.toString());
-
 		return queryBuilder;
 	}
 
@@ -449,5 +458,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
 	public void setProvider(Provider provider) {
 		this.provider = provider;
+	}
+
+	protected EntityManager getEntityManager() {
+		return (conversation.isTransient()) ? emfForJobs : em;
 	}
 }

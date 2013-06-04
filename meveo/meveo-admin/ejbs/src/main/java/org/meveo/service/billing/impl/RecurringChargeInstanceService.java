@@ -31,10 +31,6 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Stateless
 @LocalBean
 public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> {
@@ -55,7 +51,7 @@ public class RecurringChargeInstanceService extends ChargeInstanceService<Recurr
 			QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
 			qb.addCriterion("c.status", "=", status, true);
 			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
-			recurringChargeInstances = qb.getQuery(em).getResultList();
+			recurringChargeInstances = qb.getQuery(getEntityManager()).getResultList();
 			log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] {
 					"RecurringChargeInstance", status,
 					recurringChargeInstances != null ? recurringChargeInstances.size() : 0 });
@@ -98,7 +94,7 @@ public class RecurringChargeInstanceService extends ChargeInstanceService<Recurr
 			Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-		return qb.getQuery(em).getResultList();
+		return qb.getQuery(getEntityManager()).getResultList();
 	}
 
 }

@@ -34,17 +34,15 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Job history service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2011.04.14
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class JobExecutionHistoryService extends PersistenceService<JobExecutionHisto> {
 	@Override
 	public long count(PaginationConfiguration config) {
 
 		QueryBuilder queryBuilder = getQuery(config);
-		return queryBuilder.count(em);
+		return queryBuilder.count(getEntityManager());
 	}
 
 	/**
@@ -54,7 +52,7 @@ public class JobExecutionHistoryService extends PersistenceService<JobExecutionH
 	@SuppressWarnings({ "unchecked" })
 	public List<JobExecutionHisto> list(PaginationConfiguration config) {
 		QueryBuilder queryBuilder = getQuery(config);
-		Query query = queryBuilder.getQuery(em);
+		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
@@ -64,10 +62,12 @@ public class JobExecutionHistoryService extends PersistenceService<JobExecutionH
 	 * 
 	 * @see org.meveo.service.base.PersistenceService#getQuery(org.meveo.admin.util.pagination.PaginationConfiguration)
 	 */
+	@SuppressWarnings("rawtypes")
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends JobExecutionHisto> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), null);
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(),
+				null);
 		Map<String, Object> filters = config.getFilters();
 		if (filters != null) {
 			if (!filters.isEmpty()) {

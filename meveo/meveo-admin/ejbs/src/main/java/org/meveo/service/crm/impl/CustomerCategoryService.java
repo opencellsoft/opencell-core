@@ -24,18 +24,16 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Service Template service implementation.
- * 
  */
-@Stateless @LocalBean
-public class CustomerCategoryService extends
-		PersistenceService<CustomerCategory> {
+@Stateless
+@LocalBean
+public class CustomerCategoryService extends PersistenceService<CustomerCategory> {
 
 	public CustomerCategory findByCode(String code) {
 		try {
-			return (CustomerCategory) em
+			return (CustomerCategory) getEntityManager()
 					.createQuery(
-							"from " + CustomerCategory.class.getSimpleName()
-									+ " where code=:code")
+							"from " + CustomerCategory.class.getSimpleName() + " where code=:code")
 					.setParameter("code", code).getSingleResult();
 		} catch (NoResultException e) {
 			return null;

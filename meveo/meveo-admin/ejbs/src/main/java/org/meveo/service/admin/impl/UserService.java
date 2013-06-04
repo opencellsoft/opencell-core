@@ -49,9 +49,6 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * User service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2010.05.31
  */
 @Stateless
 @LocalBean
@@ -81,7 +78,7 @@ public class UserService extends PersistenceService<User> {
 	@UserUpdate
 	public void update(User user) throws UsernameAlreadyExistsException {
 		if (isUsernameExists(user.getUserName(), user.getId())) {
-			em.refresh(user);
+			getEntityManager().refresh(user);
 			throw new UsernameAlreadyExistsException(user.getUserName());
 		}
 
@@ -110,7 +107,7 @@ public class UserService extends PersistenceService<User> {
 	@SuppressWarnings("unchecked")
 	public List<User> findUsersByRoles(String... roles) {
 		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles)";
-		Query query = em.createQuery(queryString);
+		Query query = getEntityManager().createQuery(queryString);
 		query.setParameter("roles", Arrays.asList(roles));
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return query.getResultList();
@@ -118,7 +115,7 @@ public class UserService extends PersistenceService<User> {
 
 	public boolean isUsernameExists(String username, Long id) {
 		String stringQuery = "select count(*) from User u where u.userName = :userName and u.id <> :id";
-		Query query = em.createQuery(stringQuery);
+		Query query = getEntityManager().createQuery(stringQuery);
 		query.setParameter("userName", username.toUpperCase());
 		query.setParameter("id", id);
 		query.setHint("org.hibernate.flushMode", "NEVER");
@@ -127,7 +124,7 @@ public class UserService extends PersistenceService<User> {
 
 	public boolean isUsernameExists(String username) {
 		String stringQuery = "select count(*) from User u where u.userName = :userName";
-		Query query = em.createQuery(stringQuery);
+		Query query = getEntityManager().createQuery(stringQuery);
 		query.setParameter("userName", username.toUpperCase());
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return ((Long) query.getSingleResult()).intValue() != 0;
@@ -136,7 +133,7 @@ public class UserService extends PersistenceService<User> {
 	public User findByUsernameAndPassword(String username, String password) {
 		try {
 			password = Sha1Encrypt.encodePassword(password);
-			return (User) em
+			return (User) getEntityManager()
 					.createQuery(
 							"from User as u where u.userName=:userName and u.password=:password")
 					.setParameter("userName", username.toUpperCase())
@@ -148,7 +145,7 @@ public class UserService extends PersistenceService<User> {
 
 	public User findByUsername(String username) {
 		try {
-			return (User) em.createQuery("from User where userName = :userName")
+			return (User) getEntityManager().createQuery("from User where userName = :userName")
 					.setParameter("userName", username.toUpperCase()).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
@@ -157,7 +154,7 @@ public class UserService extends PersistenceService<User> {
 
 	public User findByEmail(String email) {
 		try {
-			return (User) em.createQuery("from User where email = :email")
+			return (User) getEntityManager().createQuery("from User where email = :email")
 					.setParameter("email", email).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
@@ -165,7 +162,7 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User changePassword(User user, String newPassword) throws BusinessException {
-		em.refresh(user);
+		getEntityManager().refresh(user);
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
 		super.update(user);
@@ -174,12 +171,13 @@ public class UserService extends PersistenceService<User> {
 
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRolesExcept(String rolename1, String rolename2) {
-		return em.createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
+		return getEntityManager()
+				.createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
 				.setParameter("name1", rolename1).setParameter("name2", rolename2).getResultList();
 	}
 
 	public Role getRoleByName(String name) {
-		return (Role) em.createQuery("from MeveoRole as r where r.name=:name")
+		return (Role) getEntityManager().createQuery("from MeveoRole as r where r.name=:name")
 				.setParameter("name", name).getSingleResult();
 	}
 
@@ -282,7 +280,7 @@ public class UserService extends PersistenceService<User> {
 
 			String stringQuery = "INSERT INTO ADM_USER_LOG (USER_NAME, USER_ID, DATE_EXECUTED, ACTION, URL, OBJECT_ID) VALUES ( ?, ?, ?, ?, ?, ?)";
 
-			Query query = em.createNativeQuery(stringQuery);
+			Query query = getEntityManager().createNativeQuery(stringQuery);
 			query.setParameter(1, user.getUserName());
 			query.setParameter(2, user.getId());
 			query.setParameter(3, new Date());

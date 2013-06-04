@@ -27,7 +27,6 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
 /**
  * Charge Template service implementation.
- * 
  */
 @Stateless
 @LocalBean
@@ -41,7 +40,7 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 
 		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null, getCurrentProvider())
 				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.TERMINATION).getQuery(em);
+						OneShotChargeTemplateTypeEnum.TERMINATION).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
@@ -53,7 +52,7 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 
 		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null, getCurrentProvider())
 				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.SUBSCRIPTION).getQuery(em);
+						OneShotChargeTemplateTypeEnum.SUBSCRIPTION).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 

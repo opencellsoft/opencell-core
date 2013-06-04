@@ -30,41 +30,35 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * AccountOperation service implementation.
- * 
- * @author Ignas
- * @created 2009.10.15
  */
-@Stateless @LocalBean
-public class AccountOperationService extends
-		PersistenceService<AccountOperation> {
+@Stateless
+@LocalBean
+public class AccountOperationService extends PersistenceService<AccountOperation> {
 
 	@SuppressWarnings("unchecked")
-	public List<AccountOperation> getAccountOperations(Date date,
-			String operationCode, Provider provider) {
-		Query query = em
+	public List<AccountOperation> getAccountOperations(Date date, String operationCode,
+			Provider provider) {
+		Query query = getEntityManager()
 				.createQuery(
 						"from "
 								+ getEntityClass().getSimpleName()
 								+ " a where a.occCode=:operationCode and  a.transactionDate=:date and a.provider=:providerId")
-				.setParameter("date", date)
-				.setParameter("operationCode", operationCode)
+				.setParameter("date", date).setParameter("operationCode", operationCode)
 				.setParameter("providerId", provider);
 
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public AccountOperation getAccountOperation(BigDecimal amount,
-			CustomerAccount customerAccount, String transactionType,
-			Provider provider) {
+	public AccountOperation getAccountOperation(BigDecimal amount, CustomerAccount customerAccount,
+			String transactionType, Provider provider) {
 
-		Query query = em
+		Query query = getEntityManager()
 				.createQuery(
 						"from "
 								+ getEntityClass().getSimpleName()
 								+ " a where a.amount=:amount and  a.customerAccount=:customerAccount and  a.type=:transactionType and a.provider=:providerId")
-				.setParameter("amount", amount)
-				.setParameter("transactionType", transactionType)
+				.setParameter("amount", amount).setParameter("transactionType", transactionType)
 				.setParameter("customerAccount", customerAccount)
 				.setParameter("providerId", provider);
 		List<AccountOperation> accountOperations = query.getResultList();
