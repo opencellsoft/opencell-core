@@ -26,12 +26,6 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * TradingCountry service implementation.
- * 
- * @author Marouane ALAMI
- * @created 25-03-2013
- */
 @Stateless
 @Named
 @LocalBean

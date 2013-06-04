@@ -20,6 +20,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -31,10 +32,11 @@ import org.meveo.service.base.PersistenceService;
 @Stateless @LocalBean
 public class CustomerService extends PersistenceService<Customer> {
 
-	public Customer findByCode(String code) {
+	public Customer findByCode(String code,Provider provider) {
 		Query query = em.createQuery(
-				"from " + Customer.class.getSimpleName() + " where code=:code")
-				.setParameter("code", code);
+				"from " + Customer.class.getSimpleName() + " where code=:code and provider=:provider")
+				.setParameter("code", code)
+				.setParameter("provider", provider);
 		if (query.getResultList().size() == 0) {
 			return null;
 		}

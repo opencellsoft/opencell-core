@@ -29,18 +29,10 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.remote.InvoiceServiceRemote;
 import org.meveo.service.crm.impl.ProviderService;
 
-/**
- * Invoice service implementation.
- * 
- * @author Gediminas
- * @created 2010.05.14
- */
 @Stateless @LocalBean
-public class InvoiceService extends PersistenceService<Invoice> implements
-		InvoiceServiceRemote {
+public class InvoiceService extends PersistenceService<Invoice> {
 
 	@EJB
 	private ProviderService providerService;

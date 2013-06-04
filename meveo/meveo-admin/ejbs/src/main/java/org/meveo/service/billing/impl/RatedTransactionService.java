@@ -35,10 +35,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author R.AITYAAZZA
- * @created 16 d�c. 10
- */
 @Stateless @LocalBean
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
@@ -60,19 +56,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 
     @SuppressWarnings("unchecked")
-    public ConsumptionDTO getConsumption(String subscriptionCode, String infoType,
+    public ConsumptionDTO getConsumption(Subscription subscription, String infoType,
             Integer billingCycle, boolean sumarizeConsumption)
             throws IncorrectSusbcriptionException {
 
         Date lastBilledDate = null;
-        Subscription subscription = null;
         ConsumptionDTO consumptionDTO = new ConsumptionDTO();
-
-        subscription = subscriptionService.findByCode(subscriptionCode);
-        if (subscription == null) {
-            throw new IncorrectSusbcriptionException("Subscription with code " + subscriptionCode
-                    + " was not found");
-        }
 
         // If billing has been run already, use last billing date plus a day as
         // filtering FROM value

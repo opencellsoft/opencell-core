@@ -58,6 +58,8 @@ public class ErrorCustomer {
 
     @XmlValue
     protected String value;
+    @XmlAttribute(name = "sellerCode")
+    protected String sellerCode;
     @XmlAttribute(name = "code")
     protected String code;
     @XmlAttribute(name = "cause")
@@ -86,6 +88,30 @@ public class ErrorCustomer {
     public void setValue(String value) {
         this.value = value;
     }
+    /**
+     * Gets the value of the sellerCode property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * Sets the value of the customerCode property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSellerCode(String value) {
+        this.sellerCode = value;
+    }
+
 
     /**
      * Gets the value of the code property.

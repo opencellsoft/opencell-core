@@ -20,15 +20,9 @@ import javax.ejb.Stateless;
 
 import org.meveo.model.billing.BillingRunList;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.remote.BillingRunListServiceRemote;
 
-/**
- * @author R.AITYAAZZA
- * @created 29 d�c. 10
- */
 @Stateless
 @LocalBean
-public class BillingRunListService extends PersistenceService<BillingRunList> implements
-		BillingRunListServiceRemote {
+public class BillingRunListService extends PersistenceService<BillingRunList> {
 
 }

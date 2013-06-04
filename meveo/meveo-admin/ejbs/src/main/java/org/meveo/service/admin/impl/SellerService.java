@@ -18,15 +18,26 @@ package org.meveo.service.admin.impl;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.Query;
 
 import org.meveo.model.admin.Seller;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author MBAREK
- */
+
 @Stateless
 @Named
 @LocalBean
 public class SellerService extends PersistenceService<Seller> {
+
+	public org.meveo.model.admin.Seller findByCode(String code,Provider provider) {
+		Query query = em.createQuery(
+				"from " + Seller.class.getSimpleName() + " where code=:code and provider=:provider")
+				.setParameter("code", code)
+				.setParameter("provider", provider);
+		if (query.getResultList().size() == 0) {
+			return null;
+		}
+		return (Seller) query.getResultList().get(0);
+	}
 }

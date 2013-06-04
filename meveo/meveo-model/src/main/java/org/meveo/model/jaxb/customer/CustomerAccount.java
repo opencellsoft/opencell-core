@@ -52,6 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{}tel1"/>
  *         &lt;element ref="{}tel2"/>
  *         &lt;element ref="{}SIRET"/>
+ *         &lt;element ref="{}tradingCurrencyCode"/>
  *       &lt;/sequence>
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="creditCategory" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -74,7 +75,8 @@ import javax.xml.bind.annotation.XmlType;
     "email",
     "tel1",
     "tel2",
-    "siret"
+    "siret",
+    "tradingCurrencyCode"
 })
 @XmlRootElement(name = "customerAccount")
 public class CustomerAccount {
@@ -101,10 +103,13 @@ public class CustomerAccount {
     protected String tel2;
     @XmlElement(name = "SIRET", required = true)
     protected String siret;
+    @XmlElement(required = true)
+    protected String tradingCurrencyCode;
     @XmlAttribute(name = "code")
     protected String code;
     @XmlAttribute(name = "creditCategory")
     protected String creditCategory;
+    
 
     /**
      * Gets the value of the description property.
@@ -370,7 +375,15 @@ public class CustomerAccount {
         this.siret = value;
     }
 
-    /**
+    public String getTradingCurrencyCode() {
+		return tradingCurrencyCode;
+	}
+
+	public void setTradingCurrencyCode(String tradingCurrencyCode) {
+		this.tradingCurrencyCode = tradingCurrencyCode;
+	}
+
+	/**
      * Gets the value of the code property.
      * 
      * @return

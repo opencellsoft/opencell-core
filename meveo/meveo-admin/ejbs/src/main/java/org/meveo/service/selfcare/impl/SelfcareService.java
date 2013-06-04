@@ -254,10 +254,5 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		log.info("successfully send email to #0", email);
 	}
 
-	public String getBillingAccountProviderCode(String code) throws BusinessException {
-		log.info("searching provider code for billing account id #0", code);
-		BillingAccount billingAccount = billingAccountService.findByCode(code);
-		return billingAccount.getProvider().getCode();
-	}
 
 }

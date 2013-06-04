@@ -43,8 +43,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}errors"/>
- *         &lt;element ref="{}warnings"/>
  *         &lt;element ref="{}customer" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -56,66 +54,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "errors",
-    "warnings",
     "customer"
 })
 @XmlRootElement(name = "customers")
 public class Customers {
 
-    @XmlElement(required = true)
-    protected Errors errors;
-    @XmlElement(required = true)
-    protected Warnings warnings;
     protected List<Customer> customer;
 
-    /**
-     * Gets the value of the errors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Errors }
-     *     
-     */
-    public Errors getErrors() {
-        return errors;
-    }
-
-    /**
-     * Sets the value of the errors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Errors }
-     *     
-     */
-    public void setErrors(Errors value) {
-        this.errors = value;
-    }
-
-    /**
-     * Gets the value of the warnings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Warnings }
-     *     
-     */
-    public Warnings getWarnings() {
-        return warnings;
-    }
-
-    /**
-     * Sets the value of the warnings property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Warnings }
-     *     
-     */
-    public void setWarnings(Warnings value) {
-        this.warnings = value;
-    }
 
     /**
      * Gets the value of the customer property.

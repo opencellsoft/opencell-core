@@ -206,7 +206,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public void terminateAccount() {
 		log.debug("terminateAccount billingAccountId: {}", entity.getId());
 		try {
-			billingAccountService.billingAccountTermination(entity.getCode(),
+			billingAccountService.billingAccountTermination(entity,
 					entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
@@ -221,7 +221,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.billingAccountCancellation(entity.getCode(), new Date(),
+			billingAccountService.billingAccountCancellation(entity, new Date(),
 					getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
@@ -239,7 +239,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String closeAccount() {
 		log.info("closeAccount billingAccountId:" + entity.getId());
 		try {
-			billingAccountService.closeBillingAccount(entity.getCode(), getCurrentUser());
+			billingAccountService.closeBillingAccount(entity, getCurrentUser());
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";

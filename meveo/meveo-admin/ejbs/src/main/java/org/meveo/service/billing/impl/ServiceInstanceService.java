@@ -83,13 +83,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	@EJB
 	private RatedTransactionService ratedTransactionService;
 
-	public ServiceInstance findByCodeAndSubscription(String code, String subscriptionCode) {
+	public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
 		ServiceInstance chargeInstance = null;
 		try {
 			log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
 			QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
-			qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+			qb.addCriterion("c.subscription", "=", subscription, true);
 			chargeInstance = (ServiceInstance) qb.getQuery(em).getSingleResult();
 			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
 					"ServiceInstance", code, chargeInstance != null });
@@ -115,17 +115,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		log.debug("serviceInstanciation serviceID=#0", serviceInstance.getId());
 
 		String serviceCode = serviceInstance.getServiceTemplate().getCode();
-		Subscription subscription = subscriptionService.findByCode(serviceInstance
-				.getSubscription().getCode());
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException("subscription does not exist. code="
-					+ serviceInstance.getSubscription().getCode());
-		}
+		Subscription subscription = serviceInstance.getSubscription();
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 			throw new IncorrectSusbcriptionException("subscription is not active");
 		}
-		ServiceInstance serviceInst = findByCodeAndSubscription(serviceCode, subscription.getCode());
+		ServiceInstance serviceInst = findByCodeAndSubscription(serviceCode, subscription);
 		if (serviceInst != null) {
 			throw new IncorrectServiceInstanceException(
 					"service instance already created. service Code=" + serviceInstance.getCode()
@@ -486,7 +481,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					"service Instance does not have subscrption . serviceCode="
 							+ serviceInstance.getCode());
 		}
-		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceCode);
+		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 		if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 			throw new IncorrectServiceInstanceException(
 					"service instance is already active. service Code=" + serviceCode
@@ -503,7 +498,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				.getRecurringChargeInstances()) {
 			if (recurringChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
 				chargeInstanceService.recurringChargeReactivation(serviceInstance,
-						subscription.getCode(), subscriptionDate, updater);
+						subscription, subscriptionDate, updater);
 			}
 		}
 

@@ -112,8 +112,8 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 		String back = null;
 
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode()) != null) {
+		if (oneShotChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null
+				|| usageChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null) {
 			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
 			return null;
 		}

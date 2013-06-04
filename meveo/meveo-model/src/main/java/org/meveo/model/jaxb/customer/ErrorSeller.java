@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlValue;
  * &lt;complexType>
  *   &lt;simpleContent>
  *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="sellerCode" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="customerCode" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="cause" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/extension>
@@ -54,13 +54,11 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "", propOrder = {
     "value"
 })
-@XmlRootElement(name = "warningCustomer")
-public class WarningCustomer {
+@XmlRootElement(name = "errorSeller")
+public class ErrorSeller {
 
     @XmlValue
     protected String value;
-    @XmlAttribute(name = "sellerCode")
-    protected String sellerCode;
     @XmlAttribute(name = "code")
     protected String code;
     @XmlAttribute(name = "cause")
@@ -88,30 +86,6 @@ public class WarningCustomer {
      */
     public void setValue(String value) {
         this.value = value;
-    }
-
-    /**
-     * Gets the value of the sellerCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSellerCode() {
-        return sellerCode;
-    }
-
-    /**
-     * Sets the value of the sellerCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSellerCode(String value) {
-        this.sellerCode = value;
     }
 
 

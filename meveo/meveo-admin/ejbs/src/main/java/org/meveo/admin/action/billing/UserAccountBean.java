@@ -160,7 +160,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	protected String saveOrUpdate(UserAccount entity) {
 		try {
 			if (entity.isTransient()) {
-				userAccountService.createUserAccount(entity.getBillingAccount().getCode(), entity,
+				userAccountService.createUserAccount(entity.getBillingAccount(), entity,
 						getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} else {
@@ -179,7 +179,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	public void terminateAccount() {
 		log.debug("resiliateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountTermination(entity.getCode(),
+			userAccountService.userAccountTermination(entity,
 					entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
@@ -194,7 +194,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	public String cancelAccount() {
 		log.info("cancelAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountCancellation(entity.getCode(), new Date(),
+			userAccountService.userAccountCancellation(entity, new Date(),
 					getCurrentUser());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()
@@ -212,7 +212,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	public String reactivateAccount() {
 		log.info("reactivateAccount userAccountId:" + entity.getId());
 		try {
-			userAccountService.userAccountReactivation(entity.getCode(), new Date(),
+			userAccountService.userAccountReactivation(entity, new Date(),
 					getCurrentUser());
 			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()

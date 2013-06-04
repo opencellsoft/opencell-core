@@ -37,6 +37,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.AccountService;
 
 @Stateless
@@ -45,11 +46,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 	@EJB
 	private UserAccountService userAccountService;
-
-	public List<UserAccount> UserAccountList(String code) throws BusinessException {
-		BillingAccount billingAccount = findByCode(code);
-		return billingAccount.getUsersAccounts();
-	}
 
 	public void createBillingAccount(BillingAccount billingAccount, User creator) {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -69,34 +65,26 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		update(billingAccount, updater);
 	}
 
-	public void updateElectronicBilling(String code, Boolean electronicBilling, User updater)
+	public void updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling, User updater,Provider provider)
 			throws BusinessException {
-		BillingAccount billingAccount = findByCode(code);
 		billingAccount.setElectronicBilling(electronicBilling);
 		update(billingAccount, updater);
 	}
 
-	public void updateBillingAccountDiscount(String code, BigDecimal ratedDiscount, User updater)
+	public void updateBillingAccountDiscount(BillingAccount billingAccount, BigDecimal ratedDiscount, User updater)
 			throws BusinessException {
-		BillingAccount billingAccount = findByCode(code);
 		billingAccount.setDiscountRate(ratedDiscount);
 		update(billingAccount, updater);
 	}
 
-	public BillingAccount billingAccountDetails(String code) throws BusinessException {
-		BillingAccount billingAccount = findByCode(code);
-		return billingAccount;
-	}
-
-	public void billingAccountTermination(String code, Date terminationDate,
+	public void billingAccountTermination(BillingAccount billingAccount, Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User updater) throws BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		BillingAccount billingAccount = findByCode(code);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		for (UserAccount userAccount : userAccounts) {
-			userAccountService.userAccountTermination(userAccount.getCode(), terminationDate,
+			userAccountService.userAccountTermination(userAccount, terminationDate,
 					terminationReason, updater);
 		}
 		billingAccount.setTerminationReason(terminationReason);
@@ -105,15 +93,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		update(billingAccount, updater);
 	}
 
-	public void billingAccountCancellation(String code, Date terminationDate, User updater)
+	public void billingAccountCancellation(BillingAccount billingAccount, Date terminationDate, User updater)
 			throws BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		BillingAccount billingAccount = findByCode(code);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		for (UserAccount userAccount : userAccounts) {
-			userAccountService.userAccountCancellation(userAccount.getCode(), terminationDate,
+			userAccountService.userAccountCancellation(userAccount, terminationDate,
 					updater);
 		}
 		billingAccount.setTerminationDate(terminationDate);
@@ -121,15 +108,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		update(billingAccount, updater);
 	}
 
-	public void billingAccountReactivation(String code, Date activationDate, User updater)
+	public void billingAccountReactivation(BillingAccount billingAccount, Date activationDate, User updater)
 			throws BusinessException {
 		if (activationDate == null) {
 			activationDate = new Date();
 		}
-		BillingAccount billingAccount = findByCode(code);
 		if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED
 				&& billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
-			throw new ElementNotResiliatedOrCanceledException("billing account", code);
+			throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
 		}
 
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -137,13 +123,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		update(billingAccount, updater);
 	}
 
-	public void closeBillingAccount(String code, User updater) throws UnknownAccountException,
+	public void closeBillingAccount(BillingAccount billingAccount, User updater) throws UnknownAccountException,
 			ElementNotResiliatedOrCanceledException {
-
-		BillingAccount billingAccount = findByCode(code);
-		if (billingAccount == null) {
-			throw new UnknownAccountException(code);
-		}
 
 		/**
 		 * *
@@ -152,17 +133,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		 */
 		if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED
 				&& billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
-			throw new ElementNotResiliatedOrCanceledException("billing account", code);
+			throw new ElementNotResiliatedOrCanceledException("billing account",billingAccount.getCode());
 		}
 		billingAccount.setStatus(AccountStatusEnum.CLOSED);
 		update(billingAccount, updater);
 	}
 
-	public List<Invoice> invoiceList(String code) throws BusinessException {
-		BillingAccount billingAccount = findByCode(code);
-		if (billingAccount == null) {
-			throw new BusinessException("Cannot found BillingAccount by code:" + code);
-		}
+	public List<Invoice> invoiceList(BillingAccount billingAccount) throws BusinessException {
 		List<Invoice> invoices = billingAccount.getInvoices();
 		Collections.sort(invoices, new Comparator<Invoice>() {
 			public int compare(Invoice c0, Invoice c1) {

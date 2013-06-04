@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -42,9 +43,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}warningCustomer" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{}warningSeller" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{}warningCustomerAccount" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{}errors"/>
+ *         &lt;element ref="{}warnings"/>
+ *         &lt;element ref="{}seller" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -55,80 +56,93 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "warningCustomer",
-    "warningSeller",
-    "warningCustomerAccount"
+	    "errors",
+	    "warnings",
+    "seller"
 })
-@XmlRootElement(name = "warnings")
-public class Warnings {
+@XmlRootElement(name = "sellers")
+public class Sellers {
 
-    protected List<WarningCustomer> warningCustomer;
-    protected List<WarningSeller> warningSeller;
-    protected List<WarningCustomerAccount> warningCustomerAccount;
+    @XmlElement(required = true)
+    protected Errors errors;
+    @XmlElement(required = true)
+    protected Warnings warnings;
+    protected List<Seller> seller;
 
     /**
-     * Gets the value of the warningCustomer property.
+     * Gets the value of the errors property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Errors }
+     *     
+     */
+    public Errors getErrors() {
+        return errors;
+    }
+
+    /**
+     * Sets the value of the errors property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Errors }
+     *     
+     */
+    public void setErrors(Errors value) {
+        this.errors = value;
+    }
+
+    /**
+     * Gets the value of the warnings property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Warnings }
+     *     
+     */
+    public Warnings getWarnings() {
+        return warnings;
+    }
+
+    /**
+     * Sets the value of the warnings property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Warnings }
+     *     
+     */
+    public void setWarnings(Warnings value) {
+        this.warnings = value;
+    }
+    /**
+     *  14 caracteres14 caracteres14 caracteres Gets the value of the seller property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the warningCustomer property.
+     * This is why there is not a <CODE>set</CODE> method for the customerAccount property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getWarningCustomer().add(newItem);
+     *    getSeller().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link WarningCustomer }
+     * {@link Seller }
      * 
      * 
      */
-    public List<WarningCustomer> getWarningCustomer() {
-        if (warningCustomer == null) {
-            warningCustomer = new ArrayList<WarningCustomer>();
+    public List<Seller> getSeller() {
+        if (seller == null) {
+            seller = new ArrayList<Seller>();
         }
-        return this.warningCustomer;
-    }
-
-    public List<WarningSeller> getWarningSeller() {
-        if (warningSeller == null) {
-        	warningSeller = new ArrayList<WarningSeller>();
-        }
-        return this.warningSeller;
-    }
-    
-    /**
-     * Gets the value of the warningCustomerAccount property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the warningCustomerAccount property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getWarningCustomerAccount().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link WarningCustomerAccount }
-     * 
-     * 
-     */
-    public List<WarningCustomerAccount> getWarningCustomerAccount() {
-        if (warningCustomerAccount == null) {
-            warningCustomerAccount = new ArrayList<WarningCustomerAccount>();
-        }
-        return this.warningCustomerAccount;
+        return this.seller;
     }
 
 }

@@ -36,23 +36,16 @@ import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.remote.BillingRunServiceRemote;
 import org.meveo.service.crm.impl.ProviderService;
 
-/**
- * @author R.AITYAAZZA
- * @created 29 d�c. 10
- */
 @Stateless
 @LocalBean
-public class BillingRunService extends PersistenceService<BillingRun> implements
-		BillingRunServiceRemote {
+public class BillingRunService extends PersistenceService<BillingRun> {
 
 
 	@EJB

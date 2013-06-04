@@ -25,17 +25,13 @@ import javax.persistence.NoResultException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.remote.InvoiceSubCategoryCountryServiceRemote;
 
-/**
- * @author Marouane ALAMI
- * @created 18-03-2013
- */
 @Stateless
 @Named
 @LocalBean
 public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry>{
 
+	@SuppressWarnings("unchecked")
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,
 			Long countryId) {
 		try {

@@ -130,12 +130,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 
 	}
 
-	public void recurringChargeReactivation(ServiceInstance serviceInst, String subscriptionCode,
+	public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription ,
 			Date subscriptionDate, User creator) throws BusinessException {
-		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new BusinessException("subscription does not exist. code=" + subscriptionCode);
-		}
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 			throw new BusinessException("subscription is " + subscription.getStatus());
@@ -145,7 +141,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 				|| serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
 			throw new BusinessException("service instance is " + subscription.getStatus()
 					+ ". service Code=" + serviceInst.getCode() + ",subscription Code"
-					+ subscriptionCode);
+					+ subscription.getCode());
 		}
 		for (RecurringChargeInstance recurringChargeInstance : serviceInst
 				.getRecurringChargeInstances()) {
