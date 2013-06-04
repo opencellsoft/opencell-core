@@ -34,8 +34,9 @@ public class AccessService extends PersistenceService<Access> {
 		log.info("findByUserID '" + userId + "'");
 		List<Access> result = new ArrayList<Access>();
 		if (userId != null && userId.length() > 0) {
-			Query query = em.createQuery("from Access a where a.accessUserId=:accessUserId")
-					.setParameter("accessUserId", userId);
+			Query query = getEntityManager().createQuery(
+					"from Access a where a.accessUserId=:accessUserId").setParameter(
+					"accessUserId", userId);
 			result = query.getResultList();
 		}
 		return result;
@@ -44,7 +45,7 @@ public class AccessService extends PersistenceService<Access> {
 	public boolean isDuplicate(Access access) {
 		String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName()
 				+ " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
-		Query query = em.createQuery(stringQuery);
+		Query query = getEntityManager().createQuery(stringQuery);
 		query.setParameter("accessUserId", access.getAccessUserId());
 		query.setParameter("subscriptionId", access.getSubscription().getId());
 		query.setHint("org.hibernate.flushMode", "NEVER");

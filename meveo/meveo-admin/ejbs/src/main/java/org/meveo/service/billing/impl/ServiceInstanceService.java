@@ -90,7 +90,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription", "=", subscription, true);
-			chargeInstance = (ServiceInstance) qb.getQuery(em).getSingleResult();
+			chargeInstance = (ServiceInstance) qb.getQuery(getEntityManager()).getSingleResult();
 			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
 					"ServiceInstance", code, chargeInstance != null });
 		} catch (NoResultException nre) {

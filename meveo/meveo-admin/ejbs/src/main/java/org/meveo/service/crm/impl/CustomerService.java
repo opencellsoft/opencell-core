@@ -25,15 +25,13 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Customer service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2010.11.15
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class CustomerService extends PersistenceService<Customer> {
 
 	public Customer findByCode(String code,Provider provider) {
-		Query query = em.createQuery(
+		Query query = getEntityManager().createQuery(
 				"from " + Customer.class.getSimpleName() + " where code=:code and provider=:provider")
 				.setParameter("code", code)
 				.setParameter("provider", provider);

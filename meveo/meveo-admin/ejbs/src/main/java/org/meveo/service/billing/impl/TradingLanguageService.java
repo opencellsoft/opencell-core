@@ -25,7 +25,6 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
-
 @Stateless
 @LocalBean
 public class TradingLanguageService extends PersistenceService<TradingLanguage> {
@@ -41,8 +40,9 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
 		try {
 			log.info("findByTradingLanguageCode tradingLanguageCode=#0,provider=#1",
 					tradingLanguageCode, provider != null ? provider.getCode() : null);
-			Query query = em
-					.createQuery("select b from TradingLanguage b where b.code = :tradingLanguageCode and b.provider=:provider");
+			Query query = getEntityManager()
+					.createQuery(
+							"select b from TradingLanguage b where b.code = :tradingLanguageCode and b.provider=:provider");
 			query.setParameter("tradingLanguageCode", tradingLanguageCode);
 			query.setParameter("provider", provider);
 			return (TradingLanguage) query.getSingleResult();

@@ -25,12 +25,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Title service implementation.
- * 
- * @author Sebastien Michea
- * @created Dec 20, 2010
- * 
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class TitleService extends PersistenceService<Title> {
 
 	public Title findByCode(Provider provider, String code) {
@@ -39,11 +36,10 @@ public class TitleService extends PersistenceService<Title> {
 			return null;
 		}
 		try {
-			title = (Title) em
-					.createQuery(
-							"from Title t where t.code=:code and t.provider=:provider")
-					.setParameter("code", code)
-					.setParameter("provider", provider).getSingleResult();
+			title = (Title) getEntityManager()
+					.createQuery("from Title t where t.code=:code and t.provider=:provider")
+					.setParameter("code", code).setParameter("provider", provider)
+					.getSingleResult();
 		} catch (Exception e) {
 			return null;
 		}

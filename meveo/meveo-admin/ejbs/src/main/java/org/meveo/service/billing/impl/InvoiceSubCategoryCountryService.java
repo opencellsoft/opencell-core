@@ -29,7 +29,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @Named
 @LocalBean
-public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry>{
+public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> {
 
 	@SuppressWarnings("unchecked")
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,
@@ -38,8 +38,9 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
 			QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
 			qb.addCriterionEntity("i.invoiceSubCategory.id", invoiceSubCategoryId);
 			qb.addCriterionEntity("i.tradingCountry.id", countryId);
-			List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb.getQuery(em)
-					.getResultList();
+			@SuppressWarnings("unchecked")
+			List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb.getQuery(
+					getEntityManager()).getResultList();
 			return InvoiceSubcategoryCountries.size() > 0 ? InvoiceSubcategoryCountries.get(0)
 					: null;
 		} catch (NoResultException ex) {

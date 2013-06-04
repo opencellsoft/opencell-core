@@ -24,9 +24,6 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Currency service implementation.
- * 
- * @author Ignas
- * @created 2009.09.16
  */
 @Stateless
 @LocalBean
@@ -35,16 +32,16 @@ public class CurrencyService extends PersistenceService<Currency> {
 	private static final String SYSTEM_CURRENCY_QUERY = "select c from Currency c where c.systemCurrency = true";
 
 	public Currency getSystemCurrency() {
-		return (Currency) em.createQuery(SYSTEM_CURRENCY_QUERY).getSingleResult();
+		return (Currency) getEntityManager().createQuery(SYSTEM_CURRENCY_QUERY).getSingleResult();
 	}
 
 	public void setNewSystemCurrency(Currency currency) {
 		Currency oldSystemCurrency = getSystemCurrency();
 		oldSystemCurrency.setSystemCurrency(false);
-		em.merge(oldSystemCurrency);
+		getEntityManager().merge(oldSystemCurrency);
 		// set new system currency
 		currency.setSystemCurrency(true);
-		em.merge(currency);
+		getEntityManager().merge(currency);
 	}
 
 	/**

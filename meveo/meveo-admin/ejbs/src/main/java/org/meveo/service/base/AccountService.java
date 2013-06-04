@@ -28,7 +28,7 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 		final Class<? extends P> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
 		queryString.append(" where a.externalRef1 = :externalRef1");
-		Query query = em.createQuery(queryString.toString());
+		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("externalRef1", externalRef1);
 		if (query.getResultList().size() == 0) {
 			return null;

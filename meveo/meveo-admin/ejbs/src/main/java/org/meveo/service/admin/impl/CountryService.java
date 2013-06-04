@@ -33,7 +33,7 @@ public class CountryService extends PersistenceService<Country> {
 				countryCode);
 		StringBuilder queryString = new StringBuilder("from " + Country.class.getName() + " a");
 		queryString.append(" where a.countryCode = :countryCode");
-		Query query = em.createQuery(queryString.toString());
+		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("countryCode", countryCode);
 		if (query.getResultList().size() == 0) {
 			return null;
@@ -50,7 +50,7 @@ public class CountryService extends PersistenceService<Country> {
 	public List<Country> list() {
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, getCurrentProvider());
 		queryBuilder.addOrderCriterion("a.descriptionEn", true);
-		Query query = queryBuilder.getQuery(em);
+		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
 }

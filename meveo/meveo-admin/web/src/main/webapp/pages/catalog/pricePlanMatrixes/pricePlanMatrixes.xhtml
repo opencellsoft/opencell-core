@@ -70,7 +70,7 @@
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.endRatingDate']}"
 				field="endRatingDate" wrapHeader="true" isDate="true" />
-			<hftl:column
+			<!-- <hftl:column
 				label="#{messages['pricePlanMatrix.table.minSubscriptionAgeInMonth']}"
 				field="minSubscriptionAgeInMonth" wrapHeader="true" />
 			<hftl:column
@@ -84,11 +84,13 @@
 				field="criteria2Value" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.criteria3Value']}"
-				field="criteria3Value" />
+				field="criteria3Value" /> -->
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}"
 				field="amountWithTax" converterParam="4digits" wrapHeader="true" />
+			<hftl:column label="#{messages['tradingCountry.tradingCountry']}"
+				field="tradingCountry" childField="countryCode" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
 			<hftl:actionsColumn

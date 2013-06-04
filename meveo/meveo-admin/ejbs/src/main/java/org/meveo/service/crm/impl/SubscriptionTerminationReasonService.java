@@ -28,30 +28,28 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Service SubscriptionTerminationReason implementation.
- * 
  */
 @Named
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class SubscriptionTerminationReasonService extends
 		PersistenceService<SubscriptionTerminationReason> {
 
-	public SubscriptionTerminationReason findByCodeReason(String codeReason,
-			String providerCode) throws Exception {
-		return (SubscriptionTerminationReason) em
+	public SubscriptionTerminationReason findByCodeReason(String codeReason, String providerCode)
+			throws Exception {
+		return (SubscriptionTerminationReason) getEntityManager()
 				.createQuery(
-						"from "
-								+ SubscriptionTerminationReason.class
-										.getSimpleName()
+						"from " + SubscriptionTerminationReason.class.getSimpleName()
 								+ " where code=:codeReason and provider.code=:providerCode")
-				.setParameter("codeReason", codeReason)
-				.setParameter("providerCode", providerCode).getSingleResult();
+				.setParameter("codeReason", codeReason).setParameter("providerCode", providerCode)
+				.getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<SubscriptionTerminationReason> listReasons() {
 
-		Query query = new QueryBuilder(SubscriptionTerminationReason.class,
-				"c", null, getCurrentProvider()).getQuery(em);
+		Query query = new QueryBuilder(SubscriptionTerminationReason.class, "c", null,
+				getCurrentProvider()).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 }

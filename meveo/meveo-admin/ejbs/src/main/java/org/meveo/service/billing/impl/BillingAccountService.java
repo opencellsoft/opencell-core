@@ -154,7 +154,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		try {
 			QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
 			qb.addCriterion("i.invoiceNumber", "=", invoiceReference, true);
-			return (Invoice) qb.getQuery(em).getSingleResult();
+			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException ex) {
 			log.debug("invoice search returns no result for reference={}.", invoiceReference);
 		}

@@ -59,7 +59,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun)
 			throws BusinessException {
-		System.out.println("start generatePreInvoicingReports.......");
+		log.debug("start generatePreInvoicingReports.......");
 		PreInvoicingReportsDTO preInvoicingReportsDTO = new PreInvoicingReportsDTO();
 
 		preInvoicingReportsDTO
@@ -303,42 +303,44 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	public void cleanBillingRun(BillingRun billingRun) {
-		Query queryTrans = em
-				.createQuery("update "
-						+ RatedTransaction.class.getName()
-						+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where billingRun=:billingRun");
+		Query queryTrans = getEntityManager()
+				.createQuery(
+						"update "
+								+ RatedTransaction.class.getName()
+								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where billingRun=:billingRun");
 		queryTrans.setParameter("billingRun", billingRun);
 		queryTrans.executeUpdate();
 
-		Query queryAgregate = em.createQuery("delete from " + InvoiceAgregate.class.getName()
-				+ " where billingRun=:billingRun");
+		Query queryAgregate = getEntityManager().createQuery(
+				"delete from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
 		queryAgregate.setParameter("billingRun", billingRun);
 		queryAgregate.executeUpdate();
 
-		Query queryInvoices = em.createQuery("delete from " + Invoice.class.getName()
-				+ " where billingRun=:billingRun");
+		Query queryInvoices = getEntityManager().createQuery(
+				"delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
 		queryInvoices.setParameter("billingRun", billingRun);
 		queryInvoices.executeUpdate();
 	}
 
 	public void deleteInvoice(Invoice invoice) {
-		Query queryTrans = em
-				.createQuery("update "
-						+ RatedTransaction.class.getName()
-						+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
+		Query queryTrans = getEntityManager()
+				.createQuery(
+						"update "
+								+ RatedTransaction.class.getName()
+								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
 		queryTrans.setParameter("invoice", invoice);
 		queryTrans.executeUpdate();
 
-		Query queryAgregate = em.createQuery("delete from " + InvoiceAgregate.class.getName()
-				+ " where invoice=:invoice");
+		Query queryAgregate = getEntityManager().createQuery(
+				"delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
 		queryAgregate.setParameter("invoice", invoice);
 		queryAgregate.executeUpdate();
 
-		Query queryInvoices = em.createQuery("delete from " + Invoice.class.getName()
-				+ " where id=:invoiceId");
+		Query queryInvoices = getEntityManager().createQuery(
+				"delete from " + Invoice.class.getName() + " where id=:invoiceId");
 		queryInvoices.setParameter("invoiceId", invoice.getId());
 		queryInvoices.executeUpdate();
-		em.flush();
+		getEntityManager().flush();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -351,7 +353,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		qb.addCriterionEnum("c.status", BillingRunStatusEnum.WAITING);
 		qb.endOrClause();
 		qb.addCriterionEntity("c.provider", provider);
-		List<BillingRun> billingRuns = qb.getQuery(em).getResultList();
+		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 		return billingRuns != null && billingRuns.size() > 0 ? true : false;
 	}
 

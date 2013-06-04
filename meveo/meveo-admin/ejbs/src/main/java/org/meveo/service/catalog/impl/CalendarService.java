@@ -29,12 +29,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Calendar service implementation.
- * 
- * @author Ignas Lelys
- * @created Nov 22, 2010
- * 
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 @Named
 public class CalendarService extends PersistenceService<Calendar> {
 
@@ -44,8 +41,8 @@ public class CalendarService extends PersistenceService<Calendar> {
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listChargeApplicationCalendars() {
 		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.CHARGE_IMPUTATION)
-				.getQuery(em);
+				.addCriterionEnum("type", CalendarTypeEnum.CHARGE_IMPUTATION).getQuery(
+						getEntityManager());
 		return query.getResultList();
 	}
 
@@ -55,8 +52,8 @@ public class CalendarService extends PersistenceService<Calendar> {
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listDurationTermCalendars() {
 		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.DURATION_TERM)
-				.getQuery(em);
+				.addCriterionEnum("type", CalendarTypeEnum.DURATION_TERM).getQuery(
+						getEntityManager());
 		return query.getResultList();
 	}
 
@@ -66,16 +63,14 @@ public class CalendarService extends PersistenceService<Calendar> {
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listBillingCalendars() {
 		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.BILLING)
-				.getQuery(em);
+				.addCriterionEnum("type", CalendarTypeEnum.BILLING).getQuery(getEntityManager());
 		return query.getResultList();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listCounterCalendars() {
 		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.COUNTER)
-				.getQuery(em);
+				.addCriterionEnum("type", CalendarTypeEnum.COUNTER).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
