@@ -181,10 +181,11 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		return result;
 	}
 
+	//FIXME : must add provider code
 	public List<Invoice> getBillingAccountInvoices(String code) throws BusinessException {
-		log.info("start searching invoices for billing account:#0", code);
-		List<Invoice> invoices = billingAccountService.invoiceList(code);
-		return invoices;
+		//log.info("start searching invoices for billing account:#0", billingAccount.getCode());
+		//List<Invoice> invoices = billingAccountService.invoiceList(billingAccount);
+		return null;//invoices;
 	}
 
 	public List<Invoice> getBillingAccountValidatedInvoices(String code) throws BusinessException {

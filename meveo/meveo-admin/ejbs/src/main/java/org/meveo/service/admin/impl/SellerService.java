@@ -31,7 +31,7 @@ import org.meveo.service.base.PersistenceService;
 public class SellerService extends PersistenceService<Seller> {
 
 	public org.meveo.model.admin.Seller findByCode(String code,Provider provider) {
-		Query query = em.createQuery(
+		Query query = getEntityManager().createQuery(
 				"from " + Seller.class.getSimpleName() + " where code=:code and provider=:provider")
 				.setParameter("code", code)
 				.setParameter("provider", provider);
