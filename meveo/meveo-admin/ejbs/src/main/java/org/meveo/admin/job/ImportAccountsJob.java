@@ -112,6 +112,8 @@ public class ImportAccountsJob implements Job {
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
 
+	String importDir = param.getProperty("connectorCRM.importDir","/tmp/meveo/crm");
+	
     @PostConstruct
     public void init(){
         TimerEntityService.registerJob(this);
@@ -120,12 +122,13 @@ public class ImportAccountsJob implements Job {
     @Override
     public JobExecutionResult execute(String parameter,Provider provider) {
         log.info("execute ImportAccountsJob.");
-        
-        String dirIN=param.getProperty("connectorCRM.importAccounts.inputDir","/tmp/meveo/crm/input");
-      	String dirOK=param.getProperty("connectorCRM.importAccounts.outputDir","/tmp/meveo/crm/output");
-      	String dirKO=param.getProperty("connectorCRM.importAccounts.rejectDir","/tmp/meveo/crm/output");
-      	String prefix=param.getProperty("connectorCRM.importAccounts.prefix","ACCOUNT_");
-      	String ext=param.getProperty("connectorCRM.importAccounts.extension","xml");
+    
+        String dirIN=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"input";
+      	log.info("dirIN="+dirIN);
+        String dirOK=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output";
+      	String dirKO=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"reject";
+      	String prefix=param.getProperty("connectorCRM.importCustomers.prefix","ACCOUNT_");
+      	String ext=param.getProperty("connectorCRM.importCustomers.extension","xml");
    	
       	JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
@@ -195,7 +198,7 @@ public class ImportAccountsJob implements Job {
 		User userJob = userService.findById(new Long(param.getProperty("connectorCRM.userId")));
 		if (file.length() < 83) {
 			createBillingAccountWarning(null, "Fichier vide");
-			generateReport(fileName);
+			generateReport(fileName,provider);
 			createHistory(provider, userJob);
 			return;
 		}
@@ -222,7 +225,7 @@ public class ImportAccountsJob implements Job {
 			org.meveo.model.payments.CustomerAccount customerAccount = null;
 			boolean existBillingAccount = false;
 			try {
-				log.debug("billingAccount founded code:"
+				log.debug("billingAccount found code:"
 						+ billAccount.getCode());
 				try {
 					billingAccount = billingAccountService.findByCode(billAccount
@@ -231,7 +234,7 @@ public class ImportAccountsJob implements Job {
 				}
 				if (billingAccount != null) {
 					log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i
-							+ ", ExternalRef1:" + billAccount.getExternalRef1()
+							+ ", code:" + billAccount.getCode()
 							+ ", status:Ignored");
 					nbBillingAccountsIgnored++;
 					existBillingAccount = true;
@@ -253,7 +256,7 @@ public class ImportAccountsJob implements Job {
 					}
 					try {
 						customerAccount = customerAccountService.findByCode(billAccount
-								.getCode(),provider);
+								.getCustomerAccountId(),provider);
 					} catch (Exception e) {
 					}
 					if (customerAccount == null) {
@@ -439,7 +442,7 @@ public class ImportAccountsJob implements Job {
 				}
 			}
 		}
-		generateReport(fileName);
+		generateReport(fileName,provider);
 		createHistory(provider, userJob);
 		log.info("end import file ");
 	} 
@@ -681,27 +684,30 @@ public class ImportAccountsJob implements Job {
 		return isWarning;
 	}
 
-	private void generateReport(String fileName) throws Exception {
+	private void generateReport(String fileName,Provider provider) throws Exception {
 		if (billingAccountsWarning.getWarnings() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importAccounts.ouputDir.alert"));
+			String warningDir = importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output"+File.separator+"warnings";
+			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
 			JAXBUtils.marshaller(
 					billingAccountsWarning,
-					new File(param.getProperty("connectorCRM.importAccounts.ouputDir.alert")
+					new File(warningDir
 							+ File.separator
-							+ param.getProperty("connectorCRM.importAccounts.alert.prefix")
+							+ "WARN_"
 							+ fileName));
 		}
 		if (billingAccountsError.getErrors() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importAccounts.ouputDir.error"));
+			String errorDir = importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output"+File.separator+"errors";
+			
+			File dir = new File(errorDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
 			JAXBUtils.marshaller(billingAccountsError,
-					new File(param.getProperty("connectorCRM.importAccounts.ouputDir.error")
-							+ File.separator + fileName));
+					new File(errorDir
+							+ File.separator +"ERR_"+ fileName));
 		}
 
 	}
