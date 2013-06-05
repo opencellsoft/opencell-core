@@ -29,44 +29,42 @@ import org.meveo.security.MeveoUser;
 
 /**
  * Class used to set current system provider
- * 
- * 
  */
 @Named
 @SessionScoped
 public class CurrentProviderBean implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 2L;
 
-    private Provider currentProvider;
+	private Provider currentProvider;
 
-    @Inject
-    private Identity identity;
+	@Inject
+	private Identity identity;
 
-    /**
-     * Sets current provider
-     */
-    public String setCurrentProvider(Provider provider) {
-        currentProvider = provider;
+	/**
+	 * Sets current provider
+	 */
+	public String setCurrentProvider(Provider provider) {
+		currentProvider = provider;
 
-        return "/home.xhtml?faces-redirect=true";
-    }
+		return "/home.xhtml?faces-redirect=true";
+	}
 
-    @Produces
-    @Named("currentProvider")
-    @CurrentProvider
-    public Provider getCurrentProvider() {
-        // System.out.println("AKK current provider is "+currentProvider);
-        if (currentProvider == null && identity.isLoggedIn()) {
-            if (((MeveoUser) identity.getUser()).getUser().isOnlyOneProvider()) {
-                currentProvider = ((MeveoUser) identity.getUser()).getUser().getProvider();
-            } else {
-                currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders().iterator().next();
-            }
-            currentProvider.getLanguage().getLanguageCode(); // Lazy loading issue
-            // System.out.println("AKK current provider now is "+currentProvider);
-        }
+	@Produces
+	@Named("currentProvider")
+	@CurrentProvider
+	public Provider getCurrentProvider() {
+		if (currentProvider == null && identity.isLoggedIn()) {
+			if (((MeveoUser) identity.getUser()).getUser().isOnlyOneProvider()) {
+				currentProvider = ((MeveoUser) identity.getUser()).getUser().getProvider();
+			} else {
+				currentProvider = ((MeveoUser) identity.getUser()).getUser().getProviders()
+						.iterator().next();
+			}
+			currentProvider.getLanguage().getLanguageCode(); // Lazy loading
+																// issue
+		}
 
-        return currentProvider;
-    }
+		return currentProvider;
+	}
 }
