@@ -52,12 +52,14 @@
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}"
 			backingBean="#{pricePlanMatrixBean}">
-			<hftl:column label="#{messages['pricePlanMatrix.priority']}"
-				field="priority" />
 			<hftl:column label="#{messages['pricePlanMatrix.table.eventCode']}"
 				field="eventCode" />
 			<hftl:column label="#{messages['seller.title']}" field="seller"
 				childField="description" />
+			<hftl:column label="#{messages['tradingCountry.tradingCountry']}"
+				field="tradingCountry" childField="countryCode" />
+			<hftl:column label="#{messages['currency.codeCurrency']}"
+				field="tradingCurrency" childField="currencyCode" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.startSubscriptionDate']}"
 				field="startSubscriptionDate" isDate="true" />
@@ -85,14 +87,12 @@
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.criteria3Value']}"
 				field="criteria3Value" /> -->
+			<hftl:column label="#{messages['pricePlanMatrix.priority']}"
+				field="priority" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 				field="amountWithoutTax" converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithTax']}"
 				field="amountWithTax" converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['tradingCountry.tradingCountry']}"
-				field="tradingCountry" childField="countryCode" />
-			<hftl:column label="#{messages['currency.codeCurrency']}"
-				field="tradingCurrency" childField="currencyCode" />
 			<hftl:actionsColumn
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
