@@ -119,6 +119,8 @@ public class ImportCustomersJob implements Job {
 
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 
+	String importDir = param.getProperty("connectorCRM.importDir","/tmp/meveo/crm");
+	
 	int nbCustomers;
 	int nbCustomersError;
 	int nbCustomersWarning;
@@ -148,9 +150,10 @@ public class ImportCustomersJob implements Job {
     public JobExecutionResult execute(String parameter,Provider provider) {
         log.info("execute ImportAccountsJob.");
         
-        String dirIN=param.getProperty("connectorCRM.importCustomers.inputDir","/tmp/meveo/crm/input")+File.separator+provider.getCode();
-      	String dirOK=param.getProperty("connectorCRM.importCustomers.outputDir","/tmp/meveo/crm/output")+File.separator+provider.getCode();
-      	String dirKO=param.getProperty("connectorCRM.importCustomers.rejectDir","/tmp/meveo/crm/output")+File.separator+provider.getCode();
+        String dirIN=importDir+File.separator+provider.getCode()+File.separator+"customers"+File.separator+"input";
+      	log.info("dirIN="+dirIN);
+        String dirOK=importDir+File.separator+provider.getCode()+File.separator+"customers"+File.separator+"output";
+      	String dirKO=importDir+File.separator+provider.getCode()+File.separator+"customers"+File.separator+"reject";
       	String prefix=param.getProperty("connectorCRM.importCustomers.prefix","CUSTOMER_");
       	String ext=param.getProperty("connectorCRM.importCustomers.extension","xml");
    	
@@ -232,7 +235,7 @@ public class ImportCustomersJob implements Job {
 			User userJob = userService.findById(new Long(param.getProperty("connectorCRM.userId")));
 			if (file.length() < 83) {
 				createSellerWarning(null, "File empty");
-				generateReport(fileName);
+				generateReport(fileName,provider);
 				createHistory(provider, userJob);
 				return;
 			}
@@ -277,7 +280,7 @@ public class ImportCustomersJob implements Job {
 				}
 
 			}
-			generateReport(fileName);
+			generateReport(fileName,provider);
 			createHistory(provider, userJob);
 			log.info("end import file ");
 
@@ -294,12 +297,19 @@ public class ImportCustomersJob implements Job {
 			} catch (Exception e) {
 			}
 			if (customer != null) {
-				nbCustomersIgnored++;
+				if(!customer.getSeller().getCode().equals(sell.getCode())){
+					createCustomerError(sell,cust, "The customer already exists but is attached to a different seller.");
+					nbCustomersError++;
+					log.info("file:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
+							+ ", status:Error");
+					return;
+				}
 				log.info("file:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Ignored");
+				nbCustomersIgnored++;
 			}
 			if (customerCheckError(sell,cust)) {
 				nbCustomersError++;
-				log.info("file:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode()
+				log.info("file:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode()
 						+ ", status:Error");
 				return;
 			}
@@ -307,6 +317,7 @@ public class ImportCustomersJob implements Job {
 			if(seller == null){
 				seller = new org.meveo.model.admin.Seller();
 				seller.setCode(sell.getCode());
+				seller.setDescription(sell.getDescription());
 				seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(),provider));
 				seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(), provider));
 				seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
@@ -442,24 +453,24 @@ public class ImportCustomersJob implements Job {
 
 	}
 
-	private void generateReport(String fileName) throws Exception {
+	private void generateReport(String fileName,Provider provider) throws Exception {
 		if (sellersWarning.getWarnings() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importCustomers.ouputDir.alert"));
+			String warningDir = importDir+File.separator+provider.getCode()+File.separator+"customers"+File.separator+"output"+File.separator+"warnings";
+			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(sellersWarning, new File(param
-					.getProperty("connectorCRM.importCustomers.ouputDir.alert")
-					+ File.separator + param.getProperty("connectorCRM.importCustomers.alert.prefix") + fileName));
+			JAXBUtils.marshaller(sellersWarning, new File(warningDir
+					+ File.separator + "WARN_"+fileName));
 		}
 		if (sellersError.getErrors() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importCustomers.ouputDir.error"));
+			String errorDir = importDir+File.separator+provider.getCode()+File.separator+"customers"+File.separator+"output"+File.separator+"errors";
+			
+			File dir = new File(errorDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(sellersError, new File(param
-					.getProperty("connectorCRM.importCustomers.ouputDir.error")
-					+ File.separator + fileName));
+			JAXBUtils.marshaller(sellersError, new File(errorDir + File.separator + "ERR_"+ fileName));
 		}
 
 	}

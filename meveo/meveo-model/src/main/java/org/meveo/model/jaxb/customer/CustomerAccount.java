@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{}code"/>
  *         &lt;element ref="{}description"/>
  *         &lt;element ref="{}externalRef1"/>
  *         &lt;element ref="{}externalRef2"/>
@@ -65,6 +66,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
+	"code",
     "description",
     "externalRef1",
     "externalRef2",
@@ -81,6 +83,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "customerAccount")
 public class CustomerAccount {
 
+    @XmlElement(required = true)
+    protected String code;
     @XmlElement(required = true)
     protected String description;
     @XmlElement(required = true)
@@ -105,8 +109,6 @@ public class CustomerAccount {
     protected String siret;
     @XmlElement(required = true)
     protected String tradingCurrencyCode;
-    @XmlAttribute(name = "code")
-    protected String code;
     @XmlAttribute(name = "creditCategory")
     protected String creditCategory;
     

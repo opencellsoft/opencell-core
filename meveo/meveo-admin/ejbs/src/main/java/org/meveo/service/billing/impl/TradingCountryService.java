@@ -44,7 +44,7 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 					tradingCountryCode, provider != null ? provider.getCode() : null);
 			Query query = getEntityManager()
 					.createQuery(
-							"select b from TradingCountry b where b.country.code = :tradingCountryCode and b.provider=:provider");
+							"select b from TradingCountry b where b.country.countryCode = :tradingCountryCode and b.provider=:provider");
 			query.setParameter("tradingCountryCode", tradingCountryCode);
 			query.setParameter("provider", provider);
 			return (TradingCountry) query.getSingleResult();

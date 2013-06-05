@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="tradingCurrencyCode" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="tradingCountryCode" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="tradingLanguageCode" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -56,6 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {  "code",
+		"description",
 		"tradingCurrencyCode",
 		"tradingCountryCode",
 		"tradingLanguageCode",
@@ -65,6 +67,8 @@ public class Seller {
 
     @XmlAttribute(name = "code")
     protected String code;
+    @XmlAttribute(name = "description")
+    protected String description;
     @XmlAttribute(name = "tradingCurrencyCode")
     protected String tradingCurrencyCode;
     @XmlAttribute(name = "tradingCountryCode")
@@ -80,6 +84,14 @@ public class Seller {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getTradingCurrencyCode() {
