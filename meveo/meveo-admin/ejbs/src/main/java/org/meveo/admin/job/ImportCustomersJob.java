@@ -152,7 +152,7 @@ public class ImportCustomersJob implements Job {
       	String dirOK=param.getProperty("connectorCRM.importCustomers.outputDir","/tmp/meveo/crm/output")+File.separator+provider.getCode();
       	String dirKO=param.getProperty("connectorCRM.importCustomers.rejectDir","/tmp/meveo/crm/output")+File.separator+provider.getCode();
       	String prefix=param.getProperty("connectorCRM.importCustomers.prefix","CUSTOMER_");
-      	String ext=param.getProperty("connectorCRM.importCustomers.extension",".xml");
+      	String ext=param.getProperty("connectorCRM.importCustomers.extension","xml");
    	
       	JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
@@ -646,8 +646,9 @@ public class ImportCustomersJob implements Job {
         if(!running && info.isActive()){
             try{
                 running=true;
-                JobExecutionResult result=execute(info.getParametres(),info.getProvider());
-                jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
             } catch(Exception e){
                 e.printStackTrace();
             } finally{
@@ -660,4 +661,6 @@ public class ImportCustomersJob implements Job {
 		// TODO Auto-generated method stub
 		return timerService.getTimers();
 	}
+	
+
 }

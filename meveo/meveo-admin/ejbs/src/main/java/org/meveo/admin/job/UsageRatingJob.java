@@ -24,6 +24,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -34,6 +35,9 @@ public class UsageRatingJob implements Job {
 
 	@Resource
 	TimerService timerService;
+
+	@Inject
+	private ProviderService providerService;
 	
 	@Inject
 	JobExecutionService jobExecutionService;
@@ -97,9 +101,10 @@ public class UsageRatingJob implements Job {
         if(!running && info.isActive()){
             try{
                 running=true;
-                JobExecutionResult result=execute(info.getParametres(),info.getProvider());
-                jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
-            } catch(Exception e){
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
+          } catch(Exception e){
                 e.printStackTrace();
             } finally{
                 running = false;

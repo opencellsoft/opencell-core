@@ -121,11 +121,11 @@ public class ImportAccountsJob implements Job {
     public JobExecutionResult execute(String parameter,Provider provider) {
         log.info("execute ImportAccountsJob.");
         
-        String dirIN=param.getProperty("crmconnector.inputDirectory","/tmp/meveo/crm/input");
-      	String dirOK=param.getProperty("crmconnector.prefix","/tmp/meveo/crm/output");
-      	String dirKO=param.getProperty("crmconnector.rejectDirectory","/tmp/meveo/crm/output");
-      	String prefix=param.getProperty("crmconnector.accountFilePrefix","ACCOUNT_");
-      	String ext=param.getProperty("crmconnector.accountFileExtension",".csv");
+        String dirIN=param.getProperty("connectorCRM.importAccounts.inputDir","/tmp/meveo/crm/input");
+      	String dirOK=param.getProperty("connectorCRM.importAccounts.outputDir","/tmp/meveo/crm/output");
+      	String dirKO=param.getProperty("connectorCRM.importAccounts.rejectDir","/tmp/meveo/crm/output");
+      	String prefix=param.getProperty("connectorCRM.importAccounts.prefix","ACCOUNT_");
+      	String ext=param.getProperty("connectorCRM.importAccounts.extension","xml");
    	
       	JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
@@ -222,11 +222,11 @@ public class ImportAccountsJob implements Job {
 			org.meveo.model.payments.CustomerAccount customerAccount = null;
 			boolean existBillingAccount = false;
 			try {
-				log.debug("billingAccount founded ExternalRef1:"
-						+ billAccount.getExternalRef1());
+				log.debug("billingAccount founded code:"
+						+ billAccount.getCode());
 				try {
-					billingAccount = billingAccountService.findByExternalRef1(billAccount
-							.getExternalRef1());
+					billingAccount = billingAccountService.findByCode(billAccount
+							.getCode(),provider);
 				} catch (Exception e) {
 				}
 				if (billingAccount != null) {
@@ -247,27 +247,27 @@ public class ImportAccountsJob implements Job {
 					if (billingCycle == null) {
 						nbBillingAccountsError++;
 						log.info("file2:" + fileName + ", typeEntity:BillingAccount, index:"
-								+ i + ", ExternalRef1:" + billAccount.getExternalRef1()
+								+ i + ", code:" + billAccount.getCode()
 								+ ", status:Error");
 						continue;
 					}
 					try {
-						customerAccount = customerAccountService.findByExternalRef1(billAccount
-								.getExternalRef1());
+						customerAccount = customerAccountService.findByCode(billAccount
+								.getCode(),provider);
 					} catch (Exception e) {
 					}
 					if (customerAccount == null) {
-						createBillingAccountError(billAccount, "Cannot found CustomerAccount");
+						createBillingAccountError(billAccount, "Cannot find CustomerAccount");
 						nbBillingAccountsError++;
 						log.info("file3:" + fileName + ", typeEntity:BillingAccount, index:"
-								+ i + ", ExternalRef1:" + billAccount.getExternalRef1()
+								+ i + ", code:" + billAccount.getCode()
 								+ ", status:Error");
 						continue;
 					}
 					if (billingAccountCheckError(billAccount)) {
 						nbBillingAccountsError++;
 						log.info("file4:" + fileName + ", typeEntity:BillingAccount, index:"
-								+ i + ", ExternalRef1:" + billAccount.getExternalRef1()
+								+ i + ", code:" + billAccount.getCode()
 								+ ", status:Error");
 						continue;
 					}
@@ -275,7 +275,7 @@ public class ImportAccountsJob implements Job {
 					if (billingAccountCheckWarning(billAccount)) {
 						nbBillingAccountsWarning++;
 						log.info("file5:" + fileName + ", typeEntity:BillingAccount,  index:"
-								+ i + " ExternalRef1:" + billAccount.getExternalRef1()
+								+ i + " code:" + billAccount.getCode()
 								+ ", status:Warning");
 					}
 					billingAccount = new BillingAccount();
@@ -344,7 +344,7 @@ public class ImportAccountsJob implements Job {
 
 					billingAccountService.create(billingAccount, userJob);
 					log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i
-							+ ", ExternalRef1:" + billAccount.getExternalRef1()
+							+ ", code:" + billAccount.getCode()
 							+ ", status:Created");
 					nbBillingAccountsCreated++;
 				}
@@ -353,7 +353,7 @@ public class ImportAccountsJob implements Job {
 						.getMessage());
 				nbBillingAccountsError++;
 				log.info("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i
-						+ ", ExternalRef1:" + billAccount.getExternalRef1() + ", status:Error");
+						+ ", code:" + billAccount.getCode() + ", status:Error");
 				e.printStackTrace();
 			}
 
@@ -362,34 +362,34 @@ public class ImportAccountsJob implements Job {
 				j++;
 				try {
 					UserAccount userAccount = null;
-					log.debug("userAccount founded ExternalRef1:" + uAccount.getExternalRef1());
+					log.debug("userAccount found code:" + uAccount.getCode());
 					try {
-						userAccount = userAccountService.findByExternalRef1(uAccount
-								.getExternalRef1());
+						userAccount = userAccountService.findByCode(uAccount
+								.getCode(),provider);
 					} catch (Exception e) {
 					}
 					if (userAccount != null) {
 						nbUserAccountsIgnored++;
 						log.info("file:" + fileName
 								+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " ExternalRef1:"
-								+ uAccount.getExternalRef1() + ", status:Ignored");
+								+ ", index:" + j + " code:"
+								+ uAccount.getCode() + ", status:Ignored");
 						continue;
 					}
 					if (userAccountCheckError(billAccount, uAccount)) {
 						nbUserAccountsError++;
 						log.info("file:" + fileName
 								+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " ExternalRef1:"
-								+ uAccount.getExternalRef1() + ", status:Error");
+								+ ", index:" + j + " code:"
+								+ uAccount.getCode() + ", status:Error");
 						continue;
 					}
 					if (userAccountCheckWarning(billAccount, uAccount)) {
 						nbUserAccountsWarning++;
 						log.info("file:" + fileName
 								+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " ExternalRef1:"
-								+ uAccount.getExternalRef1() + ", status:Warning");
+								+ ", index:" + j + " code:"
+								+ uAccount.getCode() + ", status:Warning");
 					}
 					userAccount = new UserAccount();
 					userAccount.setBillingAccount(billingAccount);
@@ -424,7 +424,7 @@ public class ImportAccountsJob implements Job {
 							userJob);
 					log.info("file:" + fileName
 							+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-							+ ", index:" + j + " ExternalRef1:" + uAccount.getExternalRef1()
+							+ ", index:" + j + " code:" + uAccount.getCode()
 							+ ", status:Created");
 					nbUserAccountsCreated++;
 				} catch (Exception e) {
@@ -433,7 +433,7 @@ public class ImportAccountsJob implements Job {
 					nbUserAccountsError++;
 					log.info("file:" + fileName
 							+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-							+ ", index:" + j + " ExternalRef1:" + uAccount.getExternalRef1()
+							+ ", index:" + j + " code:" + uAccount.getCode()
 							+ ", status:Error");
 					e.printStackTrace();
 				}
@@ -735,8 +735,9 @@ public class ImportAccountsJob implements Job {
         if(!running && info.isActive()){
             try{
                 running=true;
-                JobExecutionResult result=execute(info.getParametres(),info.getProvider());
-                jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
             } catch(Exception e){
                 e.printStackTrace();
             } finally{

@@ -28,9 +28,11 @@ import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class TimerEntityService extends PersistenceService<TimerEntity> {
@@ -39,6 +41,9 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 
 	@Inject
 	Identity identity;
+	
+	@Inject
+	ProviderService providerService;
 
 	/**
 	 * Used by job instance classes to register themselves to the timer service
@@ -63,6 +68,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		if (jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
 			entity.getInfo().setJobName(entity.getJobName());
+			entity.getInfo().setProviderId(getCurrentProvider().getId());
 			TimerHandle timerHandle = job.createTimer(entity.getScheduleExpression(),
 					entity.getInfo());
 			entity.setTimerHandle(timerHandle);
@@ -94,19 +100,23 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		log.info("execute " + entity.getJobName());
 		if (entity.getInfo().isActive() && jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
+			Provider provider = providerService.findById(entity.getInfo().getProviderId());
 			job.execute(entity.getInfo() != null ? entity.getInfo().getParametres() : null,
-					entity.getInfo() != null ? entity.getInfo().getProvider() : null);
+					provider);
 		}
 	}
 
 	public JobExecutionResult manualExecute(TimerEntity entity) throws BusinessException {
 		JobExecutionResult result = null;
 		log.info("manual execute " + entity.getJobName());
+		if(entity.getInfo() != null && entity.getInfo().getProviderId()!=getCurrentProvider().getId()){
+			throw new BusinessException("not authorized to execute this job");
+		}
 		if (jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
 			result = job.execute(
 					entity.getInfo() != null ? entity.getInfo().getParametres() : null,
-					entity.getInfo() != null ? entity.getInfo().getProvider() : null);
+							getCurrentProvider());
 		}
 		return result;
 	}

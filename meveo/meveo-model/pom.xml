@@ -31,7 +31,7 @@
 					<phase>generate-resources</phase>
 					<configuration>
 						<includes>
-							<include>org/meveo/model/jaxb/customer/Sellers.java</include>
+							<include>src/java/main/org/meveo/model/jaxb/customer/Sellers.java</include>
 						</includes>
 						<outputDirectory>${project.build.directory}/schemas</outputDirectory>
 					</configuration>

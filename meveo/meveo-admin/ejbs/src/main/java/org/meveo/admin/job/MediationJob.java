@@ -33,6 +33,7 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.services.job.Job;
@@ -45,6 +46,9 @@ public class MediationJob implements Job {
 	@Resource
 	TimerService timerService;
 
+	@Inject
+	private ProviderService providerService;
+	
 	@Inject
 	JobExecutionService jobExecutionService;
 
@@ -212,9 +216,9 @@ public class MediationJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				JobExecutionResult result = execute(info.getParametres(), info.getProvider());
-				jobExecutionService.persistResult(this, result, info.getParametres(),
-						info.getProvider());
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

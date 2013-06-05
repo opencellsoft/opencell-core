@@ -55,6 +55,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
@@ -96,6 +97,8 @@ public class ImportSubscriptionsJob implements Job {
 	@Inject
 	SubscriptionImportHistoService subscriptionImportHistoService;
 
+	@Inject
+	private ProviderService providerService;
     
     ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 	Subscriptions subscriptionsError;
@@ -117,11 +120,11 @@ public class ImportSubscriptionsJob implements Job {
     public JobExecutionResult execute(String parameter,Provider provider) {
         log.info("execute ImportAccountsJob.");
         
-        String dirIN=param.getProperty("crmconnector.inputDirectory","/tmp/meveo/crm/input");
-      	String dirOK=param.getProperty("crmconnector.prefix","/tmp/meveo/crm/output");
-      	String dirKO=param.getProperty("crmconnector.rejectDirectory","/tmp/meveo/crm/output");
-      	String prefix=param.getProperty("crmconnector.accountFilePrefix","ACCOUNT_");
-      	String ext=param.getProperty("crmconnector.accountFileExtension",".csv");
+        String dirIN=param.getProperty("connectorCRM.importSubscriptions.inputDir","/tmp/meveo/crm/input");
+      	String dirOK=param.getProperty("connectorCRM.importSubscriptions.outputDir","/tmp/meveo/crm/output");
+      	String dirKO=param.getProperty("connectorCRM.importSubscriptions.rejectDir","/tmp/meveo/crm/output");
+      	String prefix=param.getProperty("connectorCRM.importSubscriptions.prefix","SUB_");
+      	String ext=param.getProperty("connectorCRM.importSubscriptions.extension","xml");
    	
       	JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
@@ -562,8 +565,9 @@ public class ImportSubscriptionsJob implements Job {
         if(!running && info.isActive()){
             try{
                 running=true;
-                JobExecutionResult result=execute(info.getParametres(),info.getProvider());
-                jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
             } catch(Exception e){
                 e.printStackTrace();
             } finally{

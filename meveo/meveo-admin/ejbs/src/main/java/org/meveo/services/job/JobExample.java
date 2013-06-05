@@ -20,6 +20,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Startup
 @Singleton
@@ -28,6 +29,9 @@ public class JobExample implements Job {
 	@Resource
 	TimerService timerService;
 
+	@Inject
+	private ProviderService providerService;
+	
 	@Inject
 	JobExecutionService jobExecutionService;
 
@@ -76,9 +80,9 @@ public class JobExample implements Job {
 	public void trigger(Timer timer) {
 		TimerInfo info = (TimerInfo) timer.getInfo();
 		if (info.isActive()) {
-			JobExecutionResult result = execute(info.getParametres(), info.getProvider());
-			jobExecutionService.persistResult(this, result, info.getParametres(),
-					info.getProvider());
+            Provider provider=providerService.findById(info.getProviderId());
+            JobExecutionResult result=execute(info.getParametres(),provider);
+            jobExecutionService.persistResult(this, result,info.getParametres(),provider);
 		}
 	}
 

@@ -40,6 +40,7 @@ import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -51,6 +52,9 @@ public class ReccuringRatingJob implements Job {
 	@Resource
 	TimerService timerService;
 
+	@Inject
+	private ProviderService providerService;
+	
 	@Inject
 	JobExecutionService jobExecutionService;
 
@@ -219,9 +223,9 @@ public class ReccuringRatingJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				JobExecutionResult result = execute(info.getParametres(), info.getProvider());
-				jobExecutionService.persistResult(this, result, info.getParametres(),
-						info.getProvider());
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
