@@ -148,9 +148,9 @@ public class ImportCustomersJob implements Job {
     public JobExecutionResult execute(String parameter,Provider provider) {
         log.info("execute ImportAccountsJob.");
         
-        String dirIN=param.getProperty("connectorCRM.importCustomers.inputDir","/tmp/meveo/crm/input")+"/"+provider.getCode();
-      	String dirOK=param.getProperty("connectorCRM.importCustomers.outputDir","/tmp/meveo/crm/output")+"/"+provider.getCode();
-      	String dirKO=param.getProperty("connectorCRM.importCustomers.rejectDir","/tmp/meveo/crm/output")+"/"+provider.getCode();
+        String dirIN=param.getProperty("connectorCRM.importCustomers.inputDir","/tmp/meveo/crm/input")+File.separator+provider.getCode();
+      	String dirOK=param.getProperty("connectorCRM.importCustomers.outputDir","/tmp/meveo/crm/output")+File.separator+provider.getCode();
+      	String dirKO=param.getProperty("connectorCRM.importCustomers.rejectDir","/tmp/meveo/crm/output")+File.separator+provider.getCode();
       	String prefix=param.getProperty("connectorCRM.importCustomers.prefix","CUSTOMER_");
       	String ext=param.getProperty("connectorCRM.importCustomers.extension",".xml");
    	

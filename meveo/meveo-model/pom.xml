@@ -17,7 +17,64 @@
 		<developerConnection>scm:svn:https://code.manaty.net/svn/trunk/meveo/meveo-model</developerConnection>
 		<url>https://code.manaty.net/svn/trunk/meveo/meveo-model</url>
 	</scm>
-
+	<build>
+		<plugins>
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>jaxb2-maven-plugin</artifactId>
+			<version>1.3.1</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>schemagen</goal>
+					</goals>
+					<phase>generate-resources</phase>
+					<configuration>
+						<includes>
+							<include>org/meveo/model/jaxb/customer/Sellers.java</include>
+						</includes>
+						<outputDirectory>${project.build.directory}/schemas</outputDirectory>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											jaxb2-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.3.1,)
+										</versionRange>
+										<goals>
+											<goal>schemagen</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>
@@ -29,17 +86,10 @@
 			<artifactId>manaty-commons</artifactId>
 			<version>3.0-SNAPSHOT</version>
 		</dependency>
-		
-		<!-- <dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-nop</artifactId>
-			<version>1.7.2</version>
-		</dependency> -->
+
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-api</artifactId> 
+			<version>1.7.2</version> </dependency> <dependency> <groupId>org.slf4j</groupId> 
+			<artifactId>slf4j-nop</artifactId> <version>1.7.2</version> </dependency> -->
 
 		<!-- TESTING dependencies -->
 		<dependency>
@@ -55,4 +105,5 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
+
 </project>

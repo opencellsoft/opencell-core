@@ -45,6 +45,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element ref="{}errors"/>
  *         &lt;element ref="{}warnings"/>
+ *         &lt;element ref="{}providerCode"/>
  *         &lt;element ref="{}seller" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -58,6 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
 	    "errors",
 	    "warnings",
+	    "providerCode",
     "seller"
 })
 @XmlRootElement(name = "sellers")
@@ -67,6 +69,8 @@ public class Sellers {
     protected Errors errors;
     @XmlElement(required = true)
     protected Warnings warnings;
+    @XmlElement(required = true)
+    protected String providerCode;
     protected List<Seller> seller;
 
     /**
@@ -116,8 +120,18 @@ public class Sellers {
     public void setWarnings(Warnings value) {
         this.warnings = value;
     }
-    /**
-     *  14 caracteres14 caracteres14 caracteres Gets the value of the seller property.
+    
+    
+    public String getProviderCode() {
+		return providerCode;
+	}
+
+	public void setProviderCode(String providerCode) {
+		this.providerCode = providerCode;
+	}
+
+	/**
+     *   Gets the value of the seller property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,

@@ -461,11 +461,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	}
 
 	protected EntityManager getEntityManager() {
-		EntityManager result =em;
-		try{
-			conversation.isTransient();
-		} catch(Exception e){
-			result =emfForJobs;
+		EntityManager result =emfForJobs;
+		if(conversation!=null){
+			try{
+				conversation.isTransient();
+				result =em;
+			} catch(Exception e){}
 		}
 		return result;
 	}
