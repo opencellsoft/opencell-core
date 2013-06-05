@@ -51,6 +51,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{}electronicBilling"/>
  *         &lt;element ref="{}email"/>
  *         &lt;element ref="{}bankCoordinates"/>
+ *         &lt;element ref="{}tradingCountryCode"/>
+ *         &lt;element ref="{}tradingLanguageCode"/>
  *         &lt;element ref="{}userAccounts"/>
  *       &lt;/sequence>
  *       &lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -76,6 +78,8 @@ import javax.xml.bind.annotation.XmlType;
     "electronicBilling",
     "email",
     "bankCoordinates",
+    "tradingCountryCode",
+    "tradingLanguageCode",
     "userAccounts"
 })
 @XmlRootElement(name = "billingAccount")
@@ -101,6 +105,10 @@ public class BillingAccount {
     protected String email;
     @XmlElement(required = true)
     protected BankCoordinates bankCoordinates;
+    @XmlElement(required = true)
+    protected BankCoordinates tradingCountryCode;
+    @XmlElement(required = true)
+    protected BankCoordinates tradingLanguageCode;
     @XmlElement(required = true)
     protected UserAccounts userAccounts;
     @XmlAttribute(name = "code")
@@ -352,7 +360,23 @@ public class BillingAccount {
         this.bankCoordinates = value;
     }
 
-    /**
+    public BankCoordinates getTradingCountryCode() {
+		return tradingCountryCode;
+	}
+
+	public void setTradingCountryCode(BankCoordinates tradingCountryCode) {
+		this.tradingCountryCode = tradingCountryCode;
+	}
+
+	public BankCoordinates getTradingLanguageCode() {
+		return tradingLanguageCode;
+	}
+
+	public void setTradingLanguageCode(BankCoordinates tradingLanguageCode) {
+		this.tradingLanguageCode = tradingLanguageCode;
+	}
+
+	/**
      * Gets the value of the userAccounts property.
      * 
      * @return

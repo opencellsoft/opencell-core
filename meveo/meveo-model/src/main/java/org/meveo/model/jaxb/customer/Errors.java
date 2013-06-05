@@ -43,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}errorCustomer" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{}errorSeller" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{}errorCustomerAccount" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -54,6 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
+	    "errorSeller",
     "errorCustomer",
     "errorCustomerAccount"
 })
@@ -61,6 +63,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Errors {
 
     protected List<ErrorCustomer> errorCustomer;
+    protected List<ErrorSeller> errorSeller;
     protected List<ErrorCustomerAccount> errorCustomerAccount;
 
     /**
@@ -92,6 +95,13 @@ public class Errors {
         return this.errorCustomer;
     }
 
+    public List<ErrorSeller> getErrorSeller() {
+        if (errorSeller == null) {
+        	errorSeller = new ArrayList<ErrorSeller>();
+        }
+        return this.errorSeller;
+    }
+    
     /**
      * Gets the value of the errorCustomerAccount property.
      * 

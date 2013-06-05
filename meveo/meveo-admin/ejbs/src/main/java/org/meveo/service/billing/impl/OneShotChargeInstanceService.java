@@ -36,10 +36,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.BusinessService;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Stateless
 @LocalBean
 public class OneShotChargeInstanceService extends BusinessService<OneShotChargeInstance> {
@@ -55,7 +51,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-			oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(em).getSingleResult();
+			oneShotChargeInstance = (OneShotChargeInstance) qb.getQuery(getEntityManager())
+					.getSingleResult();
 			log.debug("end of find {} by code (code={}, subscriptionId={}). Result found={}.",
 					new Object[] { "OneShotChargeInstance", code, subscriptionId,
 							oneShotChargeInstance != null });
@@ -137,7 +134,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(OneShotChargeInstance.class, "c");
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-		return qb.getQuery(em).getResultList();
+		return qb.getQuery(getEntityManager()).getResultList();
 	}
 
 }

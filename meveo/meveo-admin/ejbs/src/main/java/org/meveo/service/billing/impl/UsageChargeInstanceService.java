@@ -47,9 +47,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	@EJB
 	private CounterInstanceService counterInstanceService;
 
-	public UsageChargeInstance usageChargeInstanciation(Subscription subscription, ServiceInstance serviceInstance,
-			ServiceUsageChargeTemplate serviceUsageChargeTemplate, Date startDate, Seller seller,
-			User creator) throws BusinessException {
+	public UsageChargeInstance usageChargeInstanciation(Subscription subscription,
+			ServiceInstance serviceInstance, ServiceUsageChargeTemplate serviceUsageChargeTemplate,
+			Date startDate, Seller seller, User creator) throws BusinessException {
 
 		UsageChargeInstance usageChargeInstance = new UsageChargeInstance();
 		usageChargeInstance.setSubscription(subscription);
@@ -59,8 +59,8 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setAmountWithTax(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
-		usageChargeInstance.setSeller(seller);		
-		
+		usageChargeInstance.setSeller(seller);
+
 		create(usageChargeInstance, creator, serviceInstance.getProvider());
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
 			CounterInstance counterInstance = counterInstanceService.counterInstanciation(
@@ -107,7 +107,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c");
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-		return qb.getQuery(em).getResultList();
+		return qb.getQuery(getEntityManager()).getResultList();
 	}
 
 }

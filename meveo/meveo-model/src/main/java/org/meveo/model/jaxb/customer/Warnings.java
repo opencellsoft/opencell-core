@@ -43,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}warningCustomer" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{}warningSeller" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{}warningCustomerAccount" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -55,12 +56,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "warningCustomer",
+    "warningSeller",
     "warningCustomerAccount"
 })
 @XmlRootElement(name = "warnings")
 public class Warnings {
 
     protected List<WarningCustomer> warningCustomer;
+    protected List<WarningSeller> warningSeller;
     protected List<WarningCustomerAccount> warningCustomerAccount;
 
     /**
@@ -92,6 +95,13 @@ public class Warnings {
         return this.warningCustomer;
     }
 
+    public List<WarningSeller> getWarningSeller() {
+        if (warningSeller == null) {
+        	warningSeller = new ArrayList<WarningSeller>();
+        }
+        return this.warningSeller;
+    }
+    
     /**
      * Gets the value of the warningCustomerAccount property.
      * 

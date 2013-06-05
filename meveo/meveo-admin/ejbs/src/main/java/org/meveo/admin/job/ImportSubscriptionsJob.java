@@ -1,37 +1,32 @@
-/*
-* (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
-*
-* Licensed under the GNU Public Licence, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.gnu.org/licenses/gpl-2.0.txt
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-package org.meveo.connector.crm;
+package org.meveo.admin.job;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
-import javax.ejb.Asynchronous;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerHandle;
+import javax.ejb.TimerService;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
+import org.jboss.solder.logging.Logger;
 import org.meveo.commons.utils.DateUtils;
+import org.meveo.commons.utils.FileUtils;
+import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.connector.InputFiles;
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -50,6 +45,9 @@ import org.meveo.model.jaxb.subscription.Errors;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
+import org.meveo.model.jobs.JobExecutionResult;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.SubscriptionImportHistoService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -59,16 +57,22 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
-import org.slf4j.Logger;
+import org.meveo.services.job.Job;
+import org.meveo.services.job.JobExecutionService;
+import org.meveo.services.job.TimerEntityService;
 
-/**
- * @author anasseh
- * @created 22.12.2010
- * 
- */
-@Named
-public class ImportSubscriptions extends InputFiles {
+@Startup
+@Singleton
+public class ImportSubscriptionsJob implements Job {
+	@Resource
+	TimerService timerService;
+	
+	@Inject
+	JobExecutionService jobExecutionService;
 
+    @Inject
+    private Logger log;
+    
 	@Inject
 	UserService userService;
 
@@ -95,14 +99,11 @@ public class ImportSubscriptions extends InputFiles {
 
 	@Inject
 	private ProviderService providerService;
-
-	@Inject
-	protected Logger log;
-
+    
+    ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 	Subscriptions subscriptionsError;
 	Subscriptions subscriptionsWarning;
 
-	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 	int nbSubscriptions;
 	int nbSubscriptionsError;
 	int nbSubscriptionsTerminated;
@@ -110,11 +111,52 @@ public class ImportSubscriptions extends InputFiles {
 	int nbSubscriptionsCreated;
 	SubscriptionImportHisto subscriptionImportHisto;
 
-	@Asynchronous
-	public void importFile(File file, String fileName, CountDownLatch latch) throws JAXBException, Exception {
+    @PostConstruct
+    public void init(){
+        TimerEntityService.registerJob(this);
+    }
 
-		try {
-
+    @Override
+    public JobExecutionResult execute(String parameter,Provider provider) {
+        log.info("execute ImportAccountsJob.");
+        
+        String dirIN=param.getProperty("connectorCRM.importSubscriptions.inputDir","/tmp/meveo/crm/input");
+      	String dirOK=param.getProperty("connectorCRM.importSubscriptions.outputDir","/tmp/meveo/crm/output");
+      	String dirKO=param.getProperty("connectorCRM.importSubscriptions.rejectDir","/tmp/meveo/crm/output");
+      	String prefix=param.getProperty("connectorCRM.importSubscriptions.prefix","SUB_");
+      	String ext=param.getProperty("connectorCRM.importSubscriptions.extension","xml");
+   	
+      	JobExecutionResultImpl result = new JobExecutionResultImpl();
+		File dir = new File(dirIN);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		List<File> files = getFilesToProcess(dir, prefix, ext);
+		int numberOfFiles = files.size();
+		log.info("InputFiles job " + numberOfFiles + " to import");
+		result.setNbItemsToProcess(numberOfFiles);
+		for (File file : files) {
+			File currentFile = null;
+			try {				
+				log.info("InputFiles job " + file.getName() + " in progres");
+				currentFile = FileUtils.addExtension(file, ".processing");
+				importFile(currentFile, file.getName(), provider);
+				FileUtils.moveFile(dirOK, currentFile, file.getName());
+				log.info("InputFiles job " + file.getName() + " done");
+				result.registerSucces();
+			} catch (Exception e) {
+				result.registerError(e.getMessage());
+				log.info("InputFiles job " + file.getName() + " failed");
+				FileUtils.moveFile(dirKO, currentFile, file.getName());
+				e.printStackTrace();
+			}
+		}
+       	 
+ 
+        return result;
+    }
+ 
+	public void importFile(File file, String fileName, Provider provider) throws JAXBException, Exception {
 			log.info("start import file :" + fileName);
 			subscriptionsError = new Subscriptions();
 			subscriptionsWarning = new Subscriptions();
@@ -123,15 +165,6 @@ public class ImportSubscriptions extends InputFiles {
 			nbSubscriptionsTerminated = 0;
 			nbSubscriptionsIgnored = 0;
 			nbSubscriptionsCreated = 0;
-
-			String providerCode = getProvider(fileName);
-			if (providerCode == null) {
-				throw new Exception("invalid fileName");
-			}
-			Provider provider = providerService.findByCode(providerCode);
-			if (provider == null) {
-				throw new Exception("Cannot found provider : " + providerCode);
-			}
 
 			subscriptionImportHisto = new SubscriptionImportHisto();
 			subscriptionImportHisto.setExecutionDate(new Date());
@@ -153,7 +186,7 @@ public class ImportSubscriptions extends InputFiles {
 			SubscripFOR: for (org.meveo.model.jaxb.subscription.Subscription subscrip : subscriptions.getSubscription()) {
 				try {
 					i++;
-					CheckSubscription checkSubscription = subscriptionCheckError(subscrip);
+					CheckSubscription checkSubscription = subscriptionCheckError(provider,subscrip);
 					if (checkSubscription == null) {
 						nbSubscriptionsError++;
 						log.info("file:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
@@ -230,7 +263,7 @@ public class ImportSubscriptions extends InputFiles {
 						try {
 							ServiceTemplate serviceTemplate = null;
 							ServiceInstance serviceInstance = new ServiceInstance();
-							serviceTemplate = serviceTemplateService.findByCode(serviceInst.getCode().toUpperCase());
+							serviceTemplate = serviceTemplateService.findByCode(serviceInst.getCode().toUpperCase(),provider);
 							serviceInstance.setCode(serviceTemplate.getCode());
 							serviceInstance.setDescription(serviceTemplate.getDescription());
 							serviceInstance.setServiceTemplate(serviceTemplate);
@@ -335,9 +368,7 @@ public class ImportSubscriptions extends InputFiles {
 			createHistory(provider, userJob);
 			log.info("end import file ");
 
-		} finally {
-			latch.countDown();
-		}
+		
 	}
 
 	private void createHistory(Provider provider, User userJob) throws Exception {
@@ -402,7 +433,7 @@ public class ImportSubscriptions extends InputFiles {
 		subscriptionsWarning.getWarnings().getWarningSubscription().add(warningSubscription);
 	}
 
-	private CheckSubscription subscriptionCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip) {
+	private CheckSubscription subscriptionCheckError(Provider provider,org.meveo.model.jaxb.subscription.Subscription subscrip) {
 		CheckSubscription checkSubscription = new CheckSubscription();
 		if (StringUtils.isBlank(subscrip.getCode())) {
 			createSubscriptionError(subscrip, "code is null");
@@ -427,7 +458,7 @@ public class ImportSubscriptions extends InputFiles {
 		}
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(subscrip.getOfferCode().toUpperCase());
+			offerTemplate = offerTemplateService.findByCode(subscrip.getOfferCode().toUpperCase(),provider);
 		} catch (Exception e) {
 		}
 		if (offerTemplate == null) {
@@ -448,7 +479,7 @@ public class ImportSubscriptions extends InputFiles {
 		checkSubscription.userAccount = userAccount;
 
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(subscrip.getCode());
+			checkSubscription.subscription = subscriptionService.findByCode(subscrip.getCode(),provider);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -500,6 +531,54 @@ public class ImportSubscriptions extends InputFiles {
 			subscriptionsError.setErrors(new Errors());
 		}
 		subscriptionsError.getErrors().getErrorServiceInstance().add(errorServiceInstance);
+	}
+
+	private List<File> getFilesToProcess(File dir,String prefix, String ext){
+		List<File> files = new ArrayList<File>();
+		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
+		File[] listFile = dir.listFiles(filtre);
+		if(listFile == null){
+			return files;			
+		}
+		for(File file : listFile){
+			if(file.isFile()){
+				files.add(file);
+			}
+		}
+		return files;
+	}
+ 
+	
+	
+	@Override
+	public TimerHandle createTimer(ScheduleExpression scheduleExpression,TimerInfo infos) {
+		TimerConfig timerConfig = new TimerConfig();
+		timerConfig.setInfo(infos);
+		Timer timer = timerService.createCalendarTimer(scheduleExpression,timerConfig);
+		return timer.getHandle();
+	}
+
+	boolean running=false;
+    @Timeout
+    public void trigger(Timer timer){
+        TimerInfo info = (TimerInfo) timer.getInfo();
+        if(!running && info.isActive()){
+            try{
+                running=true;
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
+            } catch(Exception e){
+                e.printStackTrace();
+            } finally{
+                running = false;
+            }
+        }
+    }
+	@Override
+	public Collection<Timer> getTimers() {
+		// TODO Auto-generated method stub
+		return timerService.getTimers();
 	}
 }
 

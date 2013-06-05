@@ -20,21 +20,21 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * Customer service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2010.11.15
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class CustomerService extends PersistenceService<Customer> {
 
-	public Customer findByCode(String code) {
-		Query query = em.createQuery(
-				"from " + Customer.class.getSimpleName() + " where code=:code")
-				.setParameter("code", code);
+	public Customer findByCode(String code,Provider provider) {
+		Query query = getEntityManager().createQuery(
+				"from " + Customer.class.getSimpleName() + " where code=:code and provider=:provider")
+				.setParameter("code", code)
+				.setParameter("provider", provider);
 		if (query.getResultList().size() == 0) {
 			return null;
 		}

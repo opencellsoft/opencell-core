@@ -41,10 +41,6 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
-/**
- * @author R.AITYAAZZA
- * 
- */
 @Stateless
 @LocalBean
 public class UserAccountService extends AccountService<UserAccount> {
@@ -55,15 +51,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 	@EJB
 	private WalletService walletService;
 
-	public List<Subscription> subscriptionList(String code) throws BusinessException {
-		UserAccount userAccount = findByCode(code);
-		return userAccount.getSubscriptions();
-	}
 
-	public void createUserAccount(String billingAccountCode, UserAccount userAccount, User creator)
+	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
 			throws AccountAlreadyExistsException {
-		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode);
-		UserAccount existingUserAccount = findByCode(userAccount.getCode());
+		UserAccount existingUserAccount = findByCode(userAccount.getCode(),userAccount.getProvider());
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
 		}
@@ -95,19 +86,13 @@ public class UserAccountService extends AccountService<UserAccount> {
 		update(userAccount, updater);
 	}
 
-	public UserAccount userAccountDetails(String code) throws BusinessException {
-		UserAccount userAccount = findByCode(code);
-		return userAccount;
-	}
-
-	public void userAccountTermination(String code, Date terminationDate,
+	public void userAccountTermination(UserAccount userAccount, Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User updater) throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		UserAccount userAccount = findByCode(code);
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
 			subscriptionService.terminateSubscription(subscription, terminationDate,
@@ -119,7 +104,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		update(userAccount, updater);
 	}
 
-	public void userAccountCancellation(String code, Date terminationDate, User updater)
+	public void userAccountCancellation(UserAccount userAccount, Date terminationDate, User updater)
 			throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
@@ -127,10 +112,9 @@ public class UserAccountService extends AccountService<UserAccount> {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		UserAccount userAccount = findByCode(code);
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.subscriptionCancellation(subscription.getCode(), terminationDate,
+			subscriptionService.subscriptionCancellation(subscription, terminationDate,
 					updater);
 		}
 		userAccount.setTerminationDate(terminationDate);
@@ -138,15 +122,14 @@ public class UserAccountService extends AccountService<UserAccount> {
 		update(userAccount, updater);
 	}
 
-	public void userAccountReactivation(String code, Date activationDate, User updater)
+	public void userAccountReactivation(UserAccount userAccount, Date activationDate, User updater)
 			throws BusinessException {
 		if (activationDate == null) {
 			activationDate = new Date();
 		}
-		UserAccount userAccount = findByCode(code);
 		if (userAccount.getStatus() != AccountStatusEnum.TERMINATED
 				&& userAccount.getStatus() != AccountStatusEnum.CANCELED) {
-			throw new ElementNotResiliatedOrCanceledException("user account", code);
+			throw new ElementNotResiliatedOrCanceledException("user account", userAccount.getCode());
 		}
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -154,17 +137,13 @@ public class UserAccountService extends AccountService<UserAccount> {
 		update(userAccount, updater);
 	}
 
-	public BillingWalletDetailDTO BillingWalletDetail(String code) throws BusinessException {
+	public BillingWalletDetailDTO BillingWalletDetail(UserAccount userAccount) throws BusinessException {
 		BillingWalletDetailDTO BillingWalletDetailDTO = new BillingWalletDetailDTO();
 
 		BigDecimal amount = BigDecimal.valueOf(0);
 		BigDecimal amountWithoutTax = BigDecimal.valueOf(0);
 		BigDecimal amountTax = BigDecimal.valueOf(0);
 
-		UserAccount userAccount = findByCode(code);
-		if (userAccount == null) {
-			throw new IncorrectUserAccountException("user account does not exist. code=" + code);
-		}
 		WalletInstance wallet = userAccount.getWallet();
 		if (wallet == null) {
 			return null;
@@ -184,11 +163,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return BillingWalletDetailDTO;
 	}
 
-	public List<RatedTransaction> BillingRatedTransactionList(String code) throws BusinessException {
-		UserAccount userAccount = findByCode(code);
-		if (userAccount == null) {
-			throw new UnknownAccountException(code);
-		}
+	public List<RatedTransaction> BillingRatedTransactionList(UserAccount userAccount) throws BusinessException {
 		WalletInstance wallet = userAccount.getWallet();
 		return wallet.getRatedTransactions();
 	}

@@ -27,11 +27,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * BillingCycle service implementation.
- * 
- * @author Gediminas
- * @created 2010.05.14
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class BillingCycleService extends PersistenceService<BillingCycle> {
 	/**
 	 * Find BillingCycle by its billing cycle code.
@@ -41,22 +39,20 @@ public class BillingCycleService extends PersistenceService<BillingCycle> {
 	 * @return Billing cycle found or null.
 	 * @throws ElementNotFoundException
 	 */
-	public BillingCycle findByBillingCycleCode(String billingCycleCode,
-			Provider provider) {
+	public BillingCycle findByBillingCycleCode(String billingCycleCode, Provider provider) {
 		try {
-			log.info("findByBillingCycleCode billingCycleCode=#0,provider=#1",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
-			Query query = em
-					.createQuery("select b from BillingCycle b where b.code = :billingCycleCode and b.provider=:provider");
+			log.info("findByBillingCycleCode billingCycleCode=#0,provider=#1", billingCycleCode,
+					provider != null ? provider.getCode() : null);
+			Query query = getEntityManager()
+					.createQuery(
+							"select b from BillingCycle b where b.code = :billingCycleCode and b.provider=:provider");
 			query.setParameter("billingCycleCode", billingCycleCode);
 			query.setParameter("provider", provider);
 			return (BillingCycle) query.getSingleResult();
 		} catch (NoResultException e) {
 			log.warn(
 					"findByBillingCycleCode billing cycle not found : billingCycleCode=#0,provider=#1",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
+					billingCycleCode, provider != null ? provider.getCode() : null);
 			return null;
 		}
 	}

@@ -285,15 +285,6 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 		return selectedTab;
 	}
 
-	public void find() {
-		try {
-			customerAccountService.findByCode("1111");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public void populateAccounts(Customer customer) {
 		entity.setCustomer(customer);
 		if (customerAccountService.isDuplicationExist(entity)) {

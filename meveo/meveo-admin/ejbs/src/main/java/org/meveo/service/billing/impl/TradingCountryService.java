@@ -26,12 +26,6 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * TradingCountry service implementation.
- * 
- * @author Marouane ALAMI
- * @created 25-03-2013
- */
 @Stateless
 @Named
 @LocalBean
@@ -48,8 +42,9 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 		try {
 			log.info("findByTradingCountryCode tradingCountryCode=#0,provider=#1",
 					tradingCountryCode, provider != null ? provider.getCode() : null);
-			Query query = em
-					.createQuery("select b from TradingCountry b where b.code = :tradingCountryCode and b.provider=:provider");
+			Query query = getEntityManager()
+					.createQuery(
+							"select b from TradingCountry b where b.country.countryCode = :tradingCountryCode and b.provider=:provider");
 			query.setParameter("tradingCountryCode", tradingCountryCode);
 			query.setParameter("provider", provider);
 			return (TradingCountry) query.getSingleResult();

@@ -33,11 +33,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Job service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2010.09.23
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class JobService extends PersistenceService<Job> {
 	private static final String SELECT_JOB = "SELECT R_JOB.NAME, R_JOBENTRY_ATTRIBUTE.VALUE_NUM, MODIFIED_DATE, R_JOB.JOB_STATUS, R_JOB.ID_JOB FROM R_JOB INNER JOIN R_JOBENTRY_ATTRIBUTE ON R_JOB.ID_JOB=R_JOBENTRY_ATTRIBUTE.ID_JOB where R_JOBENTRY_ATTRIBUTE.CODE = 'schedulerType' and R_JOB.NAME= :name";
 	private static final String SELECT_JOB_INFO = "SELECT CODE, VALUE_NUM FROM R_JOBENTRY_ATTRIBUTE where ID_JOB=:id";
@@ -53,7 +51,7 @@ public class JobService extends PersistenceService<Job> {
 
 	@SuppressWarnings("unchecked")
 	public List<String> getJobNames() {
-		Query query = em.createQuery("select name from " + Job.class.getName());
+		Query query = getEntityManager().createQuery("select name from " + Job.class.getName());
 		return query.getResultList();
 	}
 
@@ -126,7 +124,7 @@ public class JobService extends PersistenceService<Job> {
 		job.setNextExecutionDate(nextExecutionDate);
 		job.setFrequencyId(jobFrequency);
 		job.setActive(active);
-		em.persist(job);
+		getEntityManager().persist(job);
 
 	}
 

@@ -33,6 +33,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -147,12 +148,12 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
 	}
 
-	public String getCustomerName(String customerAccountCode) {
+	public String getCustomerName(String customerAccountCode,Provider provider) {
 		String result = "";
 		if (customerNames.containsKey(customerAccountCode)) {
 			result = customerNames.get(customerAccountCode);
 		} else {
-			CustomerAccount account = customerAccountService.findByCode(customerAccountCode);
+			CustomerAccount account = customerAccountService.findByCode(customerAccountCode,provider);
 			if (account.getName() != null) {
 				result = account.getName().getTitle().getCode();
 				if (account.getName().getFirstName() != null) {

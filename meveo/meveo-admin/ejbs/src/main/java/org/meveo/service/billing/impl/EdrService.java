@@ -27,22 +27,26 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @LocalBean
-public class EdrService extends PersistenceService<EDR>  {
+public class EdrService extends PersistenceService<EDR> {
 
 	@SuppressWarnings("unchecked")
 	public List<EDR> getEDRToRate() {
-		Query query=em.createQuery("from EDR e where e.status=:status").setParameter("status", EDRStatusEnum.OPEN);
+		Query query = getEntityManager().createQuery("from EDR e where e.status=:status")
+				.setParameter("status", EDRStatusEnum.OPEN);
 		return query.getResultList();
 	}
 
-	public EDR findByBatchAndRecordId(String originBatch,String originRecord) {
-		EDR result=null;
-		try{
-			Query query=em.createQuery("from EDR e where e.originBatch=:originBatch and e.originRecord=:originRecord")
+	public EDR findByBatchAndRecordId(String originBatch, String originRecord) {
+		EDR result = null;
+		try {
+			Query query = getEntityManager()
+					.createQuery(
+							"from EDR e where e.originBatch=:originBatch and e.originRecord=:originRecord")
 					.setParameter("originBatch", originBatch)
 					.setParameter("originRecord", originRecord);
 			result = (EDR) query.getSingleResult();
-		}catch(Exception e){}
+		} catch (Exception e) {
+		}
 		return result;
 	}
 

@@ -27,25 +27,22 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * User Role service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2010.05.31
  */
-
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class RoleService extends PersistenceService<Role> {
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#list()
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Role> list() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
-        Query query = queryBuilder.getQuery(em);
-        return query.getResultList();
-    }
+	/**
+	 * @see org.meveo.service.base.local.IPersistenceService#list()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Role> list() {
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
+		Query query = queryBuilder.getQuery(getEntityManager());
+		return query.getResultList();
+	}
 
-    public List<Role> getAllRoles() {
-        return list();
-    }
+	public List<Role> getAllRoles() {
+		return list();
+	}
 }

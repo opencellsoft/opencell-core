@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.meveo.admin.action;
+package org.meveo.util;
 
-import javax.ejb.Local;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-//TODO import org.jboss.seam.annotations.remoting.WebRemote;
+import javax.inject.Qualifier;
 
-@Local
-public interface JavaScriptActionLocal {
-
-	// TODO: @WebRemote
-	public String calculateOneShotChargeInstanceAmount(String subscriptionId,
-			String chargeTemplateCode, String amountWithoutTaxString);
-
-	// TODO: @WebRemote
-	public String calculateOneShotChargeInstanceAmountWithoutTax(String subscriptionId,
-			String chargeTemplateCode, String amount2String);
-
-	// TODO: @WebRemote
-	public String getFormatedAmountString(String value);
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE })
+public @interface MeveoJpaForJobs {
 
 }

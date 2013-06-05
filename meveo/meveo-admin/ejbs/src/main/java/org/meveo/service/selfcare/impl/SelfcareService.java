@@ -47,7 +47,6 @@ import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
 public class SelfcareService extends PersistenceService<CustomerAccount> implements
 		SelfcareServiceLocal, SelfcareServiceRemote {
 
-
 	@EJB
 	private EmailService emailService;
 
@@ -59,7 +58,7 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 
 	@EJB
 	private CustomerAccountService customerAccountService;
-	
+
 	@Inject
 	private ResourceBundle resourceMessages;
 
@@ -88,7 +87,8 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		log.info("start sendPassword with email:#0", email);
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 		String from = param.getProperty("selfcare.email.from");
-		String sendpasswordSubject = resourceMessages.getString("selfcareemail.sendpassword.subject");// "Your password to log into Seflcare!";
+		String sendpasswordSubject = resourceMessages
+				.getString("selfcareemail.sendpassword.subject");// "Your password to log into Seflcare!";
 		String sendpasswordBody = resourceMessages.getString("selfcareemail.sendpassword.body");// "\n\nyour username:%s\nyour password:%s\n\n";
 
 		log.info("send password for selfcare with email:" + email + ",subject:"
@@ -117,7 +117,8 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 			throw new BusinessException("Error when email is null!");
 		}
 		List<CustomerAccount> result = null;
-		result = this.em
+		result = this
+				.getEntityManager()
 				.createQuery(
 						"from " + CustomerAccount.class.getSimpleName()
 								+ "  where lower(contactInformation.email)=:email")
@@ -171,7 +172,8 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		CustomerAccount customerAccount = getCustomerAccount(username);
 		log.info("start searching billing accounts for user: #0", customerAccount.getCode());
 		List<BillingAccount> result = null;
-		result = this.em
+		result = this
+				.getEntityManager()
 				.createQuery(
 						"from " + BillingAccount.class.getSimpleName()
 								+ "  where customer_account_id=:id")
@@ -179,10 +181,11 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		return result;
 	}
 
+	//FIXME : must add provider code
 	public List<Invoice> getBillingAccountInvoices(String code) throws BusinessException {
-		log.info("start searching invoices for billing account:#0", code);
-		List<Invoice> invoices = billingAccountService.invoiceList(code);
-		return invoices;
+		//log.info("start searching invoices for billing account:#0", billingAccount.getCode());
+		//List<Invoice> invoices = billingAccountService.invoiceList(billingAccount);
+		return null;//invoices;
 	}
 
 	public List<Invoice> getBillingAccountValidatedInvoices(String code) throws BusinessException {
@@ -238,7 +241,8 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		log.info("start sendEmailCreationSpace with email:#0", email);
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 		String from = param.getProperty("selfcare.email.from");
-		String sendpasswordSubject = resourceMessages.getString("selfcareemail.creationSpace.subject");
+		String sendpasswordSubject = resourceMessages
+				.getString("selfcareemail.creationSpace.subject");
 		String sendpasswordBody = resourceMessages.getString("selfcareemail.creationSpace.body");
 		CustomerAccount customerAccount = findCustomerAccoundByEmail(email);
 		sendpasswordBody = String.format(sendpasswordBody, customerAccount.getPassword());
@@ -254,10 +258,5 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 		log.info("successfully send email to #0", email);
 	}
 
-	public String getBillingAccountProviderCode(String code) throws BusinessException {
-		log.info("searching provider code for billing account id #0", code);
-		BillingAccount billingAccount = billingAccountService.findByCode(code);
-		return billingAccount.getProvider().getCode();
-	}
 
 }

@@ -29,10 +29,6 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * CatMessagesService service implementation.
- * 
- * @author MBAREK
- * 
- * 
  */
 @Stateless
 @Named
@@ -44,15 +40,17 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterionWildcard("c.messageCode", messageCode, true);
 		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> catMessages = qb.getQuery(em).getResultList();
+		List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
 		return catMessages.size() > 0 ? catMessages.get(0).getDescription() : null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public CatMessages getCatMessages(String messageCode, String languageCode) {
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterionWildcard("c.messageCode", messageCode, true);
 		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(em).getResultList();
+		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager())
+				.getResultList();
 		return cats != null && cats.size() > 0 ? cats.get(0) : null;
 	}
 
@@ -64,7 +62,8 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		}
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterion("c.messageCode", "=", messageCode, true);
-		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(em).getResultList();
+		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager())
+				.getResultList();
 		return cats;
 	}
 

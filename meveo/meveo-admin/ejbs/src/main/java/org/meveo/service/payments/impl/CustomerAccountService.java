@@ -53,9 +53,6 @@ import org.meveo.service.payments.remote.CustomerAccountServiceRemote;
 
 /**
  * Customer Account service implementation.
- * 
- * @author Ignas
- * @created 2009.09.04
  */
 @Stateless
 @LocalBean
@@ -81,14 +78,16 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#isCustomerAccountWithIdExists(java.lang.Long)
 	 */
 	public boolean isCustomerAccountWithIdExists(Long id) {
-		Query query = em.createQuery("select count(*) from CustomerAccount a where a.id = :id");
+		Query query = getEntityManager().createQuery(
+				"select count(*) from CustomerAccount a where a.id = :id");
 		query.setParameter("id", id);
 		return (Integer) query.getSingleResult() > 0;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<String> getAllBillingKeywords() {
-		Query query = em.createQuery("select distinct(billingKeyword) from CustomerAccount");
+		Query query = getEntityManager().createQuery(
+				"select distinct(billingKeyword) from CustomerAccount");
 		return query.getResultList();
 	}
 
@@ -121,7 +120,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 			}
 			queryBuilder.endOrClause();
 		}
-		Query query = queryBuilder.getQuery(em);
+		Query query = queryBuilder.getQuery(getEntityManager());
 		balance = (BigDecimal) query.getSingleResult();
 		return balance;
 	}
@@ -152,7 +151,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 			}
 			balance = balanceDebit.subtract(balanceCredit);
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-			int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier","1"));
+			int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
 			balance = balance.multiply(new BigDecimal(balanceFlag));
 			log.info(
 					"successfully end customerAccountBalanceExligible with customerAccount code:#0 , balanceExigible:#1 ",
@@ -589,7 +588,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		}
 		CustomerAccount customerAccount = null;
 		try {
-			customerAccount = (CustomerAccount) em
+			customerAccount = (CustomerAccount) getEntityManager()
 					.createQuery("from CustomerAccount where id=:id or code=:code ")
 					.setParameter("id", id).setParameter("code", code).getSingleResult();
 		} catch (Exception e) {
@@ -624,8 +623,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 
 	public boolean isAllServiceInstancesTerminated(CustomerAccount customerAccount) {
 
-		Query billingQuery = em
-				.createQuery("select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");
+		Query billingQuery = getEntityManager()
+				.createQuery(
+						"select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");
 		billingQuery.setParameter("customerAccountId", customerAccount.getId());
 		@SuppressWarnings("unchecked")
 		List<ServiceInstance> services = (List<ServiceInstance>) billingQuery.getResultList();

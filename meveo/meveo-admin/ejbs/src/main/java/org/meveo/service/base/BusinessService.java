@@ -20,31 +20,7 @@ import javax.persistence.Query;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.Provider;
 
-/**
- * @author Ignas Lelys
- * @created Dec 6, 2010
- * 
- * @param <P>
- */
 public abstract class BusinessService<P extends BusinessEntity> extends PersistenceService<P> {
-
-	@SuppressWarnings("unchecked")
-	public P findByCode(String code) {
-		log.debug("start of find {} by code (code={}) ..", getEntityClass().getSimpleName(), code);
-		final Class<? extends P> productClass = getEntityClass();
-		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
-		queryString.append(" where a.code = :code");
-		Query query = em.createQuery(queryString.toString());
-		query.setParameter("code", code);
-		if (query.getResultList().size() == 0) {
-			return null;
-		}
-		P e = (P) query.getResultList().get(0);
-		log.debug("end of find {} by code (code={}). Result found={}.", getEntityClass()
-				.getSimpleName(), code, e != null);
-
-		return e;
-	}
 
 	@SuppressWarnings("unchecked")
 	public P findByCode(String code, Provider provider) {
@@ -52,7 +28,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
 		final Class<? extends P> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
 		queryString.append(" where a.code = :code and a.provider=:provider");
-		Query query = em.createQuery(queryString.toString());
+		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("code", code);
 		query.setParameter("provider", provider);
 		if (query.getResultList().size() == 0) {

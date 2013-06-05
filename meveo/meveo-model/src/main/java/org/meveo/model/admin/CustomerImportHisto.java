@@ -30,6 +30,21 @@ public class CustomerImportHisto extends JobHistory {
 	@Column(name = "FILE_NAME")
 	private String fileName;
 
+	@Column(name = "NB_SELLERS")
+	private Integer nbSellers;
+
+	@Column(name = "NB_SELLERS_ERROR")
+	private Integer nbSellersError;
+
+	@Column(name = "NB_SELLERS_WARNING")
+	private Integer nbSellersWarning;
+
+	@Column(name = "NB_SELLERS_IGNORED")
+	private Integer nbSellersIgnored;
+
+	@Column(name = "NB_SELLERS_CREATED")
+	private Integer nbSellersCreated;
+
 	@Column(name = "NB_CUSTOMERS")
 	private Integer nbCustomers;
 
@@ -152,6 +167,46 @@ public class CustomerImportHisto extends JobHistory {
 	 */
 	public void setNbCustomersCreated(Integer nbCustomersCreated) {
 		this.nbCustomersCreated = nbCustomersCreated;
+	}
+
+	public Integer getNbSellers() {
+		return nbSellers;
+	}
+
+	public void setNbSellers(Integer nbSellers) {
+		this.nbSellers = nbSellers;
+	}
+
+	public Integer getNbSellersError() {
+		return nbSellersError;
+	}
+
+	public void setNbSellersError(Integer nbSellersError) {
+		this.nbSellersError = nbSellersError;
+	}
+
+	public Integer getNbSellersWarning() {
+		return nbSellersWarning;
+	}
+
+	public void setNbSellersWarning(Integer nbSellersWarning) {
+		this.nbSellersWarning = nbSellersWarning;
+	}
+
+	public Integer getNbSellersIgnored() {
+		return nbSellersIgnored;
+	}
+
+	public void setNbSellersIgnored(Integer nbSellersIgnored) {
+		this.nbSellersIgnored = nbSellersIgnored;
+	}
+
+	public Integer getNbSellersCreated() {
+		return nbSellersCreated;
+	}
+
+	public void setNbSellersCreated(Integer nbSellersCreated) {
+		this.nbSellersCreated = nbSellersCreated;
 	}
 
 	/**

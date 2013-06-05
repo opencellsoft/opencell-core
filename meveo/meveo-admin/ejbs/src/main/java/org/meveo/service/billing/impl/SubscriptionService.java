@@ -23,27 +23,23 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementAlreadyExistsException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
-import org.meveo.admin.exception.UnknownAccountException;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.billing.remote.SubscriptionServiceRemote;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
 @Stateless @LocalBean
-public class SubscriptionService extends BusinessService<Subscription>
-		implements SubscriptionServiceRemote {
+public class SubscriptionService extends BusinessService<Subscription>  {
 
 	@EJB
 	private UserAccountService userAccountService;
@@ -54,65 +50,18 @@ public class SubscriptionService extends BusinessService<Subscription>
 	@EJB
 	private OfferTemplateService offerTemplateService;
 
-	public void createSubscription(String userAccountCode,
-			Subscription subscription, User creator)
-			throws ElementAlreadyExistsException, UnknownAccountException {
-		UserAccount userAccount = userAccountService
-				.findByCode(userAccountCode);
-		if (userAccount == null) {
-			throw new UnknownAccountException(userAccountCode);
-		}
-		Subscription existingSubscription = findByCode(subscription.getCode());
-		if (existingSubscription != null) {
-			throw new ElementAlreadyExistsException(subscription.getCode(),
-					"subscription");
-		}
-		subscription.setUserAccount(userAccount);
-		create(subscription, creator, userAccount.getProvider());
-	}
 
 	public void updateSubscription(Subscription subscription, User updater) {
 		update(subscription, updater);
 	}
 
-	public Subscription subscriptionDetails(String subscriptionCode) {
-		Subscription subscription = findByCode(subscriptionCode);
-		return subscription;
-	}
-
-	public List<OneShotChargeInstance> SubscriptionChargeList(
-			String subscriptionCode) throws IncorrectSusbcriptionException {
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
-		}
-		return subscription.getOneShotChargeInstances();
-	}
-
-	public ServiceInstance SubscriptionServiceDetail(String subscriptionCode,
-			String serviceCode) throws IncorrectSusbcriptionException {
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
-		}
-		ServiceInstance serviceInstance = serviceInstanceService
-				.findByCodeAndSubscription(serviceCode, subscription.getCode());
-		return serviceInstance;
-	}
 
 
-	public void terminateSubscription(String subscriptionCode,
+	public void terminateSubscription(Subscription subscription,
 			Date terminationDate, boolean applyAgreement,
 			boolean applyReimbursment, boolean applyTerminationCharges,
 			User user) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
-		}
 		terminateSubscription(subscription, terminationDate, null,
 				applyAgreement, applyReimbursment, applyTerminationCharges,
 				user);
@@ -133,17 +82,12 @@ public class SubscriptionService extends BusinessService<Subscription>
 
 	}
 
-	public void subscriptionCancellation(String subscriptionCode,
+	public void subscriptionCancellation(Subscription subscription,
 			Date terminationDate, User updater)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 		if (terminationDate == null) {
 			terminationDate = new Date();
-		}
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
 		}
 		/*List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
@@ -159,17 +103,12 @@ public class SubscriptionService extends BusinessService<Subscription>
 		update(subscription, updater);
 	}
 
-	public void subscriptionSuspension(String subscriptionCode,
+	public void subscriptionSuspension(Subscription subscription,
 			Date suspensionDate, User updater)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 		if (suspensionDate == null) {
 			suspensionDate = new Date();
-		}
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
 		}
 		List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
@@ -186,7 +125,7 @@ public class SubscriptionService extends BusinessService<Subscription>
 		update(subscription, updater);
 	}
 
-	public void subscriptionReactivation(String subscriptionCode,
+	public void subscriptionReactivation(Subscription subscription,
 			Date activationDate, User updater)
 			throws IncorrectSusbcriptionException,
 			ElementNotResiliatedOrCanceledException,
@@ -196,16 +135,11 @@ public class SubscriptionService extends BusinessService<Subscription>
 			activationDate = new Date();
 		}
 
-		Subscription subscription = findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code=" + subscriptionCode);
-		}
 		if (subscription.getStatus() != SubscriptionStatusEnum.RESILIATED
 				&& subscription.getStatus() != SubscriptionStatusEnum.CANCELED
 				&& subscription.getStatus() != SubscriptionStatusEnum.SUSPENDED) {
 			throw new ElementNotResiliatedOrCanceledException("subscription",
-					subscriptionCode);
+					subscription.getCode());
 		}
 
 		subscription.setTerminationDate(null);
@@ -230,12 +164,12 @@ public class SubscriptionService extends BusinessService<Subscription>
 	}
 
 	public void subscriptionOffer(String subscriptionCode, String offerCode,
-			Date subscriptionDate, User updater)
+			Date subscriptionDate, User updater,Provider provider)
 			throws IncorrectSusbcriptionException, BusinessException {
 		if (subscriptionDate == null) {
 			subscriptionDate = new Date();
 		}
-		Subscription subscription = findByCode(subscriptionCode);
+		Subscription subscription = findByCode(subscriptionCode,provider);
 		if (subscription == null) {
 			throw new IncorrectSusbcriptionException(
 					"subscription does not exist. code=" + subscriptionCode);
@@ -250,7 +184,7 @@ public class SubscriptionService extends BusinessService<Subscription>
 					"subscription has already an offer. code="
 							+ subscriptionCode);
 		}
-		OfferTemplate offer = offerTemplateService.findByCode(offerCode);
+		OfferTemplate offer = offerTemplateService.findByCode(offerCode,provider);
 		if (offer == null) {
 			throw new BusinessException("offer does not exist. code="
 					+ offerCode);

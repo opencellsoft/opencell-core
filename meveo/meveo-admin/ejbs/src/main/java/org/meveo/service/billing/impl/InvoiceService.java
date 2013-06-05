@@ -29,18 +29,10 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.remote.InvoiceServiceRemote;
 import org.meveo.service.crm.impl.ProviderService;
 
-/**
- * Invoice service implementation.
- * 
- * @author Gediminas
- * @created 2010.05.14
- */
 @Stateless @LocalBean
-public class InvoiceService extends PersistenceService<Invoice> implements
-		InvoiceServiceRemote {
+public class InvoiceService extends PersistenceService<Invoice> {
 
 	@EJB
 	private ProviderService providerService;
@@ -48,20 +40,17 @@ public class InvoiceService extends PersistenceService<Invoice> implements
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode)
 			throws BusinessException {
 		try {
-			Query q = em
-					.createQuery("from Invoice where invoiceNumber = :invoiceNumber and provider=:provider");
-			q.setParameter("invoiceNumber", invoiceNumber).setParameter(
-					"provider", providerService.findByCode(providerCode));
+			Query q = getEntityManager().createQuery(
+					"from Invoice where invoiceNumber = :invoiceNumber and provider=:provider");
+			q.setParameter("invoiceNumber", invoiceNumber).setParameter("provider",
+					providerService.findByCode(providerCode));
 			Object invoiceObject = q.getSingleResult();
 			return (Invoice) invoiceObject;
 		} catch (NoResultException e) {
-			log.info(
-					"Invoice with invoice number #0 was not found. Returning null.",
-					invoiceNumber);
+			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
 			return null;
 		} catch (NonUniqueResultException e) {
-			log.info(
-					"Multiple invoices with invoice number #0 was found. Returning null.",
+			log.info("Multiple invoices with invoice number #0 was found. Returning null.",
 					invoiceNumber);
 			return null;
 		} catch (Exception e) {
@@ -69,33 +58,27 @@ public class InvoiceService extends PersistenceService<Invoice> implements
 		}
 	}
 
-	public Invoice getInvoiceByNumber(String invoiceNumber)
-			throws BusinessException {
+	public Invoice getInvoiceByNumber(String invoiceNumber) throws BusinessException {
 		try {
-			Query q = em
-					.createQuery("from Invoice where invoiceNumber = :invoiceNumber");
+			Query q = getEntityManager().createQuery(
+					"from Invoice where invoiceNumber = :invoiceNumber");
 			q.setParameter("invoiceNumber", invoiceNumber);
 			Object invoiceObject = q.getSingleResult();
 			return (Invoice) invoiceObject;
 		} catch (NoResultException e) {
-			log.info(
-					"Invoice with invoice number #0 was not found. Returning null.",
-					invoiceNumber);
+			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
 			return null;
 		} catch (NonUniqueResultException e) {
-			log.info(
-					"Multiple invoices with invoice number #0 was found. Returning null.",
+			log.info("Multiple invoices with invoice number #0 was found. Returning null.",
 					invoiceNumber);
 			return null;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Invoice> getInvoices(BillingRun billingRun)
-			throws BusinessException {
+	public List<Invoice> getInvoices(BillingRun billingRun) throws BusinessException {
 		try {
-			Query q = em
-					.createQuery("from Invoice where billingRun = :billingRun");
+			Query q = getEntityManager().createQuery("from Invoice where billingRun = :billingRun");
 			q.setParameter("billingRun", billingRun);
 			List<Invoice> invoices = q.getResultList();
 			return invoices;
@@ -105,16 +88,16 @@ public class InvoiceService extends PersistenceService<Invoice> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Invoice> getInvoices(BillingAccount billingAccount,
-			String invoiceType) throws BusinessException {
+	public List<Invoice> getInvoices(BillingAccount billingAccount, String invoiceType)
+			throws BusinessException {
 		try {
-			Query q = em
-					.createQuery("from Invoice where billingAccount = :billingAccount and invoiceType=:invoiceType");
+			Query q = getEntityManager()
+					.createQuery(
+							"from Invoice where billingAccount = :billingAccount and invoiceType=:invoiceType");
 			q.setParameter("billingAccount", billingAccount);
 			q.setParameter("invoiceType", invoiceType);
 			List<Invoice> invoices = q.getResultList();
-			log.info(
-					"getInvoices: founds #0 invoices with BA_code=#1 and type=#2 ",
+			log.info("getInvoices: founds #0 invoices with BA_code=#1 and type=#2 ",
 					invoices.size(), billingAccount.getCode(), invoiceType);
 			return invoices;
 		} catch (Exception e) {

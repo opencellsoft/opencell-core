@@ -26,9 +26,6 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * OCCTemplate service implementation.
- * 
- * @author Ignas
- * @created 2009.09.04
  */
 @Stateless
 @LocalBean
@@ -39,7 +36,7 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
 		qb.addCriterion("c.code", "=", code, true);
 		qb.addCriterion("c.provider.code", "=", providerCode, true);
-		OCCTemplate occTemplate = (OCCTemplate) qb.getQuery(em).getSingleResult();
+		OCCTemplate occTemplate = (OCCTemplate) qb.getQuery(getEntityManager()).getSingleResult();
 		log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
 				"OCCTemplate", code, occTemplate != null });
 		return occTemplate;
@@ -52,7 +49,8 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
 		qb.addCriterion("c.provider.code", "=", providerCode, true);
 		qb.addOrderCriterion("description", true);
-		List<OCCTemplate> occTemplates = (List<OCCTemplate>) qb.getQuery(em).getResultList();
+		List<OCCTemplate> occTemplates = (List<OCCTemplate>) qb.getQuery(getEntityManager())
+				.getResultList();
 		log.debug("start of find list {} SortedByName for provider (code={})  result {}",
 				new Object[] { "OCCTemplate", providerCode,
 						occTemplates == null ? "null" : occTemplates.size() });

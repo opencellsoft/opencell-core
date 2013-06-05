@@ -55,5 +55,4 @@ public interface ISelfcareService extends IPersistenceService<CustomerAccount> {
     
     public void sendEmailCreationSpace(String email) throws BusinessException,EmailNotFoundException ;
     
-    public String getBillingAccountProviderCode(String code) throws BusinessException;
 }

@@ -249,10 +249,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		log.debug(
 				"ChargeApplicationService.chargeSubscription subscriptionCode={},chargeCode={},quantity={},"
-						+ "applicationDate={},chargeInstance.getId={}", new Object[] {chargeInstance
-						.getServiceInstance().getSubscription().getCode(),
-				chargeInstance.getCode(), chargeInstance.getServiceInstance().getQuantity(),
-				chargeInstance.getSubscriptionDate(), chargeInstance.getId()});
+						+ "applicationDate={},chargeInstance.getId={}",
+				new Object[] { chargeInstance.getServiceInstance().getSubscription().getCode(),
+						chargeInstance.getCode(),
+						chargeInstance.getServiceInstance().getQuantity(),
+						chargeInstance.getSubscriptionDate(), chargeInstance.getId() });
 
 		Date applicationDate = chargeInstance.getSubscriptionDate();
 		applicationDate = DateUtils.parseDateWithPattern(chargeInstance.getSubscriptionDate(),
@@ -794,8 +795,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					.getSubscriptionDate());
 
 			create(chargeApplication, creator, chargeInstance.getProvider());
-			em.flush();
-			em.refresh(chargeInstance);
+			getEntityManager().flush();
+			getEntityManager().refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
 		}

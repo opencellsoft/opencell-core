@@ -31,9 +31,6 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Provider service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2011.03.01
  */
 @Stateless
 @LocalBean
@@ -43,7 +40,8 @@ public class ProviderService extends PersistenceService<Provider> {
 
 	public Provider findByCode(String code) {
 		try {
-			return (Provider) em.createQuery("from " + Provider.class.getSimpleName() + " where code=:code")
+			return (Provider) getEntityManager()
+					.createQuery("from " + Provider.class.getSimpleName() + " where code=:code")
 					.setParameter("code", code).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
@@ -61,15 +59,15 @@ public class ProviderService extends PersistenceService<Provider> {
 
 	@SuppressWarnings("unchecked")
 	public List<Provider> getProviders() {
-		List<Provider> providers = (List<Provider>) em.createQuery("from " + Provider.class.getSimpleName())
-				.getResultList();
+		List<Provider> providers = (List<Provider>) getEntityManager().createQuery(
+				"from " + Provider.class.getSimpleName()).getResultList();
 		return providers;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Provider> list() {
-		Query query = em.createQuery("FROM " + Provider.class.getName());
+		Query query = getEntityManager().createQuery("FROM " + Provider.class.getName());
 		return (List<Provider>) query.getResultList();
 	}
 }

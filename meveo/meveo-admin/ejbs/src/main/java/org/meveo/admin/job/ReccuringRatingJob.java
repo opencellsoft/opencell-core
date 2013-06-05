@@ -40,6 +40,7 @@ import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -50,41 +51,44 @@ public class ReccuringRatingJob implements Job {
 
 	@Resource
 	TimerService timerService;
+
+	@Inject
+	private ProviderService providerService;
 	
 	@Inject
 	JobExecutionService jobExecutionService;
 
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
-	
+
 	@Inject
 	private WalletOperationService walletOperationService;
-	
+
 	@Inject
 	private RatingService chargeApplicationRatingService;
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
-	
-    private Logger log = Logger.getLogger(ReccuringRatingJob.class.getName());
-    
-    @PostConstruct
-    public void init(){
-        TimerEntityService.registerJob(this);
-    }
 
-    @Override
-    public JobExecutionResult execute(String parameter,Provider provider) {
-        log.info("execute RecurringRatingJob.");
-        JobExecutionResultImpl result = new JobExecutionResultImpl();
-        try {
+	private Logger log = Logger.getLogger(ReccuringRatingJob.class.getName());
+
+	@PostConstruct
+	public void init() {
+		TimerEntityService.registerJob(this);
+	}
+
+	@Override
+	public JobExecutionResult execute(String parameter, Provider provider) {
+		log.info("execute RecurringRatingJob.");
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		try {
 			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
 					.findByStatus(InstanceStatusEnum.ACTIVE, DateUtils.addDaysToDate(new Date(), 1));
 
-    		log.info("# charge to rate:"+activeRecurringChargeInstances.size());
-    		for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
-				try{
-	    			RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
+			log.info("# charge to rate:" + activeRecurringChargeInstances.size());
+			for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
+				try {
+					RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
 							.getRecurringChargeTemplate();
 					if (recurringChargeTemplate.getCalendar() == null) {
 						// FIXME : should not stop the method execution
@@ -98,11 +102,11 @@ public class ReccuringRatingJob implements Job {
 					} else {
 						applicationDate = activeRecurringChargeInstance.getChargeDate();
 					}
-	
+
 					log.fine("nextapplicationDate=" + applicationDate);
-	
+
 					applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
-	
+
 					ServiceTemplate serviceTemplate = activeRecurringChargeInstance
 							.getServiceInstance().getServiceTemplate();
 					Calendar durationTermCalendar = null;
@@ -112,17 +116,19 @@ public class ReccuringRatingJob implements Job {
 						nextDurationDate = durationTermCalendar.nextCalendarDate(applicationDate);
 						log.fine("nextDurationDate=" + nextDurationDate);
 					} catch (Exception e) {
-						log.severe("Cannot find duration term calendar for serviceTemplate.id="+
-								serviceTemplate.getId());
+						log.severe("Cannot find duration term calendar for serviceTemplate.id="
+								+ serviceTemplate.getId());
 					}
 					if (!recurringChargeTemplate.getApplyInAdvance()) {
-						walletOperationService.applyNotAppliedinAdvanceReccuringCharge(
-								activeRecurringChargeInstance, false, recurringChargeTemplate, null);
+						walletOperationService
+								.applyNotAppliedinAdvanceReccuringCharge(
+										activeRecurringChargeInstance, false,
+										recurringChargeTemplate, null);
 					} else if (nextDurationDate != null
 							&& nextDurationDate.getTime() >= applicationDate.getTime()) {
 						walletOperationService.applyReccuringCharge(activeRecurringChargeInstance,
 								false, recurringChargeTemplate, null);
-	
+
 					} else {
 						Date previousapplicationDate = recurringChargeTemplate.getCalendar()
 								.previousCalendarDate(DateUtils.addDaysToDate(applicationDate, -1));
@@ -134,38 +140,46 @@ public class ReccuringRatingJob implements Job {
 												.getUserAccount().getBillingAccount()
 												.getTradingCountry().getId());
 						Tax tax = invoiceSubcategoryCountry.getTax();
-	
-						//FIXME: put currency in charge instance
-						TradingCurrency currency=activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
+
+						// FIXME: put currency in charge instance
+						TradingCurrency currency = activeRecurringChargeInstance.getSubscription()
+								.getUserAccount().getBillingAccount().getCustomerAccount()
+								.getTradingCurrency();
 						if (currency == null) {
 							throw new IncorrectChargeTemplateException(
 									"no currency exists for customerAccount id="
-											+ activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getId());
+											+ activeRecurringChargeInstance.getSubscription()
+													.getUserAccount().getBillingAccount()
+													.getCustomerAccount().getId());
 						}
-						
-						//FIXME: put country in charge instance
-						TradingCountry country=activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getTradingCountry();
+
+						// FIXME: put country in charge instance
+						TradingCountry country = activeRecurringChargeInstance.getSubscription()
+								.getUserAccount().getBillingAccount().getTradingCountry();
 						if (country == null) {
 							throw new IncorrectChargeTemplateException(
 									"no country exists for billingAccount id="
-											+ activeRecurringChargeInstance.getSubscription().getUserAccount().getBillingAccount().getId());
+											+ activeRecurringChargeInstance.getSubscription()
+													.getUserAccount().getBillingAccount().getId());
 						}
 						Long countryId = country.getId();
-						
-						WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(
-								activeRecurringChargeInstance.getCode(),
-								activeRecurringChargeInstance.getServiceInstance().getSubscription(),
-								activeRecurringChargeInstance,
-								ApplicationTypeEnum.RECURRENT,
-								previousapplicationDate,
-								activeRecurringChargeInstance.getAmountWithoutTax(),
-								activeRecurringChargeInstance.getAmountWithTax(),
-								new BigDecimal(activeRecurringChargeInstance.getServiceInstance().getQuantity()),
-								currency,countryId, tax.getPercent(), null, applicationDate, invoiceSubCat,
-								activeRecurringChargeInstance.getCriteria1(),
-								activeRecurringChargeInstance.getCriteria2(),
-								activeRecurringChargeInstance.getCriteria3(), previousapplicationDate,
-								DateUtils.addDaysToDate(applicationDate, -1),null);
+
+						WalletOperation walletOperation = chargeApplicationRatingService
+								.rateChargeApplication(activeRecurringChargeInstance.getCode(),
+										activeRecurringChargeInstance.getServiceInstance()
+												.getSubscription(), activeRecurringChargeInstance,
+										ApplicationTypeEnum.RECURRENT, previousapplicationDate,
+										activeRecurringChargeInstance.getAmountWithoutTax(),
+										activeRecurringChargeInstance.getAmountWithTax(),
+										new BigDecimal(activeRecurringChargeInstance
+												.getServiceInstance().getQuantity()), currency,
+										countryId, tax.getPercent(), null, applicationDate,
+										invoiceSubCat,
+										activeRecurringChargeInstance.getCriteria1(),
+										activeRecurringChargeInstance.getCriteria2(),
+										activeRecurringChargeInstance.getCriteria3(),
+										previousapplicationDate, DateUtils.addDaysToDate(
+												applicationDate, -1), null);
 						log.info("set application date to "
 								+ activeRecurringChargeInstance.getServiceInstance()
 										.getSubscriptionDate());
@@ -174,7 +188,7 @@ public class ReccuringRatingJob implements Job {
 						walletOperationService.create(walletOperation, null,
 								activeRecurringChargeInstance.getRecurringChargeTemplate()
 										.getProvider());
-	
+
 						Date nextApplicationDate = recurringChargeTemplate.getCalendar()
 								.nextCalendarDate(applicationDate);
 						activeRecurringChargeInstance.setChargeDate(applicationDate);
@@ -182,44 +196,44 @@ public class ReccuringRatingJob implements Job {
 						recurringChargeInstanceService.update(activeRecurringChargeInstance);
 						result.registerSucces();
 					}
-    			} catch (Exception e) {
-    				result.registerError(e.getMessage());
-    			}	
-			} 
+				} catch (Exception e) {
+					result.registerError(e.getMessage());
+				}
+			}
 		} catch (Exception e) {
-			 e.printStackTrace();
+			e.printStackTrace();
 		}
-        result.close("");
-        return result;
-    }
-    
-    
-    
-    
+		result.close("");
+		return result;
+	}
+
 	@Override
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression,TimerInfo infos) {
+	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		Timer timer = timerService.createCalendarTimer(scheduleExpression,timerConfig);
+		Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
 		return timer.getHandle();
 	}
 
-	boolean running=false;
-    @Timeout
-    public void trigger(Timer timer){
-        TimerInfo info = (TimerInfo) timer.getInfo();
-        if(!running && info.isActive()){
-            try{
-                running=true;
-                JobExecutionResult result=execute(info.getParametres(),info.getProvider());
-                jobExecutionService.persistResult(this, result,info.getParametres(),info.getProvider());
-                 } catch(Exception e){
-                e.printStackTrace();
-            } finally{
-                running = false;
-            }
-        }
-    }
+	boolean running = false;
+
+	@Timeout
+	public void trigger(Timer timer) {
+		TimerInfo info = (TimerInfo) timer.getInfo();
+		if (!running && info.isActive()) {
+			try {
+				running = true;
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				running = false;
+			}
+		}
+	}
+
 	@Override
 	public Collection<Timer> getTimers() {
 		// TODO Auto-generated method stub
