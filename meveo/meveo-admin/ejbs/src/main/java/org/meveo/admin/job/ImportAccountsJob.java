@@ -48,9 +48,12 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.service.admin.impl.AccountImportHistoService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -94,6 +97,13 @@ public class ImportAccountsJob implements Job {
 
 	@Inject
 	private TitleService titleService;
+	
+
+	@Inject
+	TradingCountryService tradingCountryService;
+	
+	@Inject
+	TradingLanguageService tradingLanguageService;
 
 	BillingAccounts billingAccountsWarning;
 	BillingAccounts billingAccountsError;
@@ -127,8 +137,8 @@ public class ImportAccountsJob implements Job {
       	log.info("dirIN="+dirIN);
         String dirOK=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output";
       	String dirKO=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"reject";
-      	String prefix=param.getProperty("connectorCRM.importCustomers.prefix","ACCOUNT_");
-      	String ext=param.getProperty("connectorCRM.importCustomers.extension","xml");
+      	String prefix=param.getProperty("connectorCRM.importAccounts.prefix","ACCOUNT_");
+      	String ext=param.getProperty("connectorCRM.importAccounts.extension","xml");
    	
       	JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
@@ -343,6 +353,9 @@ public class ImportAccountsJob implements Job {
 								.getTitle().trim()));
 						billingAccount.setName(name);
 					}
+					billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode(), provider));
+					billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billAccount.getTradingLanguageCode(), provider));
+						
 					billingAccount.setProvider(provider);
 
 					billingAccountService.create(billingAccount, userJob);

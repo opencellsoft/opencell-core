@@ -107,9 +107,9 @@ public class BillingAccount {
     @XmlElement(required = true)
     protected BankCoordinates bankCoordinates;
     @XmlElement(required = true)
-    protected BankCoordinates tradingCountryCode;
+    protected String tradingCountryCode;
     @XmlElement(required = true)
-    protected BankCoordinates tradingLanguageCode;
+    protected String tradingLanguageCode;
     @XmlElement(required = true)
     protected UserAccounts userAccounts;
     @XmlAttribute(name = "code")
@@ -361,19 +361,19 @@ public class BillingAccount {
         this.bankCoordinates = value;
     }
 
-    public BankCoordinates getTradingCountryCode() {
+    public String getTradingCountryCode() {
 		return tradingCountryCode;
 	}
 
-	public void setTradingCountryCode(BankCoordinates tradingCountryCode) {
+	public void setTradingCountryCode(String tradingCountryCode) {
 		this.tradingCountryCode = tradingCountryCode;
 	}
 
-	public BankCoordinates getTradingLanguageCode() {
+	public String getTradingLanguageCode() {
 		return tradingLanguageCode;
 	}
 
-	public void setTradingLanguageCode(BankCoordinates tradingLanguageCode) {
+	public void setTradingLanguageCode(String tradingLanguageCode) {
 		this.tradingLanguageCode = tradingLanguageCode;
 	}
 

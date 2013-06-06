@@ -101,6 +101,8 @@ public class ImportSubscriptionsJob implements Job {
 	private ProviderService providerService;
     
     ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+	String importDir = param.getProperty("connectorCRM.importDir","/tmp/meveo/crm");
+
 	Subscriptions subscriptionsError;
 	Subscriptions subscriptionsWarning;
 
@@ -120,9 +122,10 @@ public class ImportSubscriptionsJob implements Job {
     public JobExecutionResult execute(String parameter,Provider provider) {
         log.info("execute ImportAccountsJob.");
         
-        String dirIN=param.getProperty("connectorCRM.importSubscriptions.inputDir","/tmp/meveo/crm/input");
-      	String dirOK=param.getProperty("connectorCRM.importSubscriptions.outputDir","/tmp/meveo/crm/output");
-      	String dirKO=param.getProperty("connectorCRM.importSubscriptions.rejectDir","/tmp/meveo/crm/output");
+        String dirIN=importDir+File.separator+provider.getCode()+File.separator+"subscriptions"+File.separator+"input";
+      	log.info("dirIN="+dirIN);
+        String dirOK=importDir+File.separator+provider.getCode()+File.separator+"subscriptions"+File.separator+"output";
+      	String dirKO=importDir+File.separator+provider.getCode()+File.separator+"subscriptions"+File.separator+"reject";
       	String prefix=param.getProperty("connectorCRM.importSubscriptions.prefix","SUB_");
       	String ext=param.getProperty("connectorCRM.importSubscriptions.extension","xml");
    	
@@ -172,7 +175,7 @@ public class ImportSubscriptionsJob implements Job {
 			User userJob = userService.findById(new Long(param.getProperty("connectorCRM.userId")));
 			if (file.length() < 100) {
 				createSubscriptionWarning(null, "Fichier vide");
-				generateReport(fileName);
+				generateReport(fileName,provider);
 				createHistory(provider, userJob);
 				return;
 			}
@@ -364,7 +367,7 @@ public class ImportSubscriptionsJob implements Job {
 					e.printStackTrace();
 				}
 			}
-			generateReport(fileName);
+			generateReport(fileName,provider);
 			createHistory(provider, userJob);
 			log.info("end import file ");
 
@@ -382,25 +385,25 @@ public class ImportSubscriptionsJob implements Job {
 
 	}
 
-	private void generateReport(String fileName) throws Exception {
+	private void generateReport(String fileName,Provider provider) throws Exception {
 		if (subscriptionsWarning.getWarnings() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importSubscriptions.ouputDir.alert"));
+			String warningDir = importDir+File.separator+provider.getCode()+File.separator+"subscriptions"+File.separator+"output"+File.separator+"warnings";
+			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(subscriptionsWarning, new File(param
-					.getProperty("connectorCRM.importSubscriptions.ouputDir.alert")
-					+ File.separator + param.getProperty("connectorCRM.importSubscriptions.alert.prefix") + fileName));
+			JAXBUtils.marshaller(subscriptionsWarning, new File(warningDir
+					+ File.separator +"WARN_"+ fileName));
 		}
 
 		if (subscriptionsError.getErrors() != null) {
-			File dir = new File(param.getProperty("connectorCRM.importSubscriptions.ouputDir.error"));
+			String errorDir = importDir+File.separator+provider.getCode()+File.separator+"subscriptions"+File.separator+"output"+File.separator+"errors";
+			File dir = new File(errorDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(subscriptionsError, new File(param
-					.getProperty("connectorCRM.importSubscriptions.ouputDir.error")
-					+ File.separator + fileName));
+			JAXBUtils.marshaller(subscriptionsError, new File(errorDir
+					+ File.separator + "ERR_"+fileName));
 		}
 
 	}
@@ -462,18 +465,18 @@ public class ImportSubscriptionsJob implements Job {
 		} catch (Exception e) {
 		}
 		if (offerTemplate == null) {
-			createSubscriptionError(subscrip, "cannot found OfferTemplate entity");
+			createSubscriptionError(subscrip, "cannot find OfferTemplate entity");
 			return null;
 		}
 		checkSubscription.offerTemplate = offerTemplate;
 		UserAccount userAccount = null;
 		try {
-			userAccount = userAccountService.findByExternalRef1(subscrip.getUserAccountId());
+			userAccount = userAccountService.findByCode(subscrip.getUserAccountId(),provider);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		if (userAccount == null) {
-			createSubscriptionError(subscrip, "cannot found UserAccount entity:" + subscrip.getUserAccountId());
+			createSubscriptionError(subscrip, "cannot find UserAccount entity:" + subscrip.getUserAccountId());
 			return null;
 		}
 		checkSubscription.userAccount = userAccount;
@@ -484,7 +487,7 @@ public class ImportSubscriptionsJob implements Job {
 			e.printStackTrace();
 		}
 		if (!"ACTIVE".equals(subscrip.getStatus().getValue()) && checkSubscription.subscription == null) {
-			createSubscriptionError(subscrip, "cannot found souscription code:" + subscrip.getCode());
+			createSubscriptionError(subscrip, "cannot find souscription code:" + subscrip.getCode());
 			return null;
 		}
 		if ("ACTIVE".equals(subscrip.getStatus().getValue())) {
