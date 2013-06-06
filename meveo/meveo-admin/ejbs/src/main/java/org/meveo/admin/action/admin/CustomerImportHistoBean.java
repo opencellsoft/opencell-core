@@ -16,12 +16,10 @@
 package org.meveo.admin.action.admin;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.CustomerImportHisto;
 import org.meveo.service.admin.impl.CustomerImportHistoService;
 import org.meveo.service.base.PersistenceService;
@@ -32,9 +30,6 @@ import org.meveo.service.base.local.IPersistenceService;
  * {@link BaseBean} that provides almost all common methods to handle entities
  * filtering/sorting in datatable, their create, edit, view, delete operations).
  * It works with Manaty custom JSF components.
- * 
- * @author Gediminas Ubartas
- * @created 2011.01.18
  */
 @Named
 @ConversationScoped
@@ -57,20 +52,6 @@ public class CustomerImportHistoBean extends BaseBean<CustomerImportHisto> {
 		super(CustomerImportHisto.class);
 	}
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("customerImportHisto")
-	public CustomerImportHisto init() {
-		return initEntity();
-	}
-
-	
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

@@ -1,44 +1,74 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    template="/layout/template.xhtml">
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['accountImportHisto.title']}" backingBean="#{accountImportHistoBean}">
-    	
-    			<custom:searchPanel label="#{messages['accountImportHisto.search']}" new ="false">
-    		    	<custom:searchField label="#{messages['accountImportHisto.executionDate']}" field="executionDate"/>
-    		</custom:searchPanel>
-    		
-    		<custom:dataList backingBean="#{accountImportHistoBean}" dataModel="#{accountImportHistories}">
-		       		<custom:column label="#{messages['accountImportHisto.executionDate']}" field="executionDate"/>
-		       		<custom:column label="#{messages['accountImportHisto.fileName']}" field="fileName"/>
-					<custom:column label="#{messages['accountImportHisto.nbBillingAccounts']}" field="nbBillingAccounts"/>
-					<custom:column label="#{messages['accountImportHisto.nbBillingAccountsError']}" field="nbBillingAccountsError"/>
-					<custom:column label="#{messages['accountImportHisto.nbBillingAccountsWarning']}" field="nbBillingAccountsWarning"/>
-					<custom:column label="#{messages['accountImportHisto.nbBillingAccountsIgnored']}" field="nbBillingAccountsIgnored"/>		    
-					<custom:column label="#{messages['accountImportHisto.nbBillingAccountsCreated']}" field="nbBillingAccountsCreated"/>		       		
-					<custom:column label="#{messages['accountImportHisto.nbUserAccounts']}" field="nbUserAccounts"/>
-					<custom:column label="#{messages['accountImportHisto.nbUserAccountsError']}" field="nbUserAccountsError"/>
-					<custom:column label="#{messages['accountImportHisto.nbUserAccountsWarning']}" field="nbUserAccountsWarning"/>
-					<custom:column label="#{messages['accountImportHisto.nbUserAccountsIgnored']}" field="nbUserAccountsIgnored"/>
-					<custom:column label="#{messages['accountImportHisto.nbUserAccountsCreated']}" field="nbUserAccountsCreated"/>
-		    </custom:dataList>
-		    
-    	</custom:listPanel>	
-		
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{accountImportHistoBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel columns="1"
+			label="#{messages['accountImportHisto.search']}"
+			backingBean="#{accountImportHistoBean}" renderNewButton="false">
+			<hf:searchField
+				label="#{messages['accountImportHisto.executionDate']}"
+				field="executionDate" />
+		</hf:searchPanel>
+
+		<hftl:dataList backingBean="#{accountImportHistoBean}">
+			<hftl:column
+				label="#{messages['accountImportHisto.executionDate']}"
+				field="executionDate" />
+			<hftl:column label="#{messages['accountImportHisto.fileName']}"
+				field="fileName" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbBillingAccounts']}"
+				field="nbBillingAccounts" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbBillingAccountsError']}"
+				field="nbBillingAccountsError" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbBillingAccountsWarning']}"
+				field="nbBillingAccountsWarning" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbBillingAccountsIgnored']}"
+				field="nbBillingAccountsIgnored" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbBillingAccountsCreated']}"
+				field="nbBillingAccountsCreated" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbUserAccounts']}"
+				field="nbUserAccounts" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbUserAccountsError']}"
+				field="nbUserAccountsError" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbUserAccountsWarning']}"
+				field="nbUserAccountsWarning" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbUserAccountsIgnored']}"
+				field="nbUserAccountsIgnored" />
+			<hftl:column
+				label="#{messages['accountImportHisto.nbUserAccountsCreated']}"
+				field="nbUserAccountsCreated" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>
