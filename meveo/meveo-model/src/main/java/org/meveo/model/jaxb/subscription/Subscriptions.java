@@ -23,14 +23,22 @@
 
 package org.meveo.model.jaxb.subscription;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.SchemaOutputResolver;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
+
+import org.meveo.model.jaxb.account.BillingAccounts;
 
 
 /**
@@ -145,5 +153,27 @@ public class Subscriptions {
         }
         return this.subscription;
     }
+    
+    
+	public static void main(String[] args) {
+		JAXBContext jaxbContext;
+		try {
+			jaxbContext = JAXBContext.newInstance(Subscriptions.class);
 
+			jaxbContext.generateSchema(new SchemaOutputResolver() {
+				@Override
+				public Result createOutput(String namespaceUri,
+						String suggestedFileName) throws IOException {
+					File file = new File("/tmp/import_subscription.xsd");
+					StreamResult result = new StreamResult(file);
+					result.setSystemId(file.toURI().toURL().toString());
+					return result;
+				}
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }

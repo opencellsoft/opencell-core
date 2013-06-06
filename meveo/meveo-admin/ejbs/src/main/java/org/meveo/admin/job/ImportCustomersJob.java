@@ -229,7 +229,6 @@ public class ImportCustomersJob implements Job {
 			
 			customerImportHisto = new CustomerImportHisto();
 
-			CustomerImportHisto customerImportHisto = new CustomerImportHisto();
 			customerImportHisto.setExecutionDate(new Date());
 			customerImportHisto.setFileName(fileName);
 			User userJob = userService.findById(new Long(param.getProperty("connectorCRM.userId")));
