@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<sellers>
+<providerCode>ASG</providerCode>
+<seller code="SELLER_3" description="seller I3" tradingCurrencyCode="EUR" tradingCountryCode="FR" tradingLanguageCode="FRA">
+<customers>
+  <customer code="CUSTO3" customerCategory="PART" customerBrand="ASG">
+    <desCustomer>Customer 3</desCustomer>
+    <customerAccounts>
+      <customerAccount creditCategory="PART_M">
+        <code>TUTU</code>
+	<description>TUTU desc</description>
+	<tradingCurrencyCode>EUR</tradingCurrencyCode>
+        <externalRef1>ORCC2500000103</externalRef1>
+        <name>
+          <title>M</title>
+          <name>Scenario 2</name>
+          <firstname>Andre</firstname>
+        </name>
+        <address>
+          <address1>Porte Gauche</address1>
+          <address2>4  Rue de la Defense de la tour</address2>
+          <zipCode>92806</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+        <paymentMethod>CHECK</paymentMethod>
+        <email>michea1@gmail.com</email>
+        <tel1>01 02 03 04 05</tel1>
+      </customerAccount>
+    </customerAccounts>
+  </customer>
+</customers>
+</seller>
+</sellers>
