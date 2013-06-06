@@ -577,7 +577,7 @@ public class ImportCustomersJob implements Job {
 
 	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell,org.meveo.model.jaxb.customer.Customer cust) {
 
-		if (StringUtils.isBlank(cust.getDesCustomer())) {
+		/*if (StringUtils.isBlank(cust.getDesCustomer())) {
 			createCustomerError(sell,cust, "Description is null");
 			return true;
 		}
@@ -588,7 +588,7 @@ public class ImportCustomersJob implements Job {
 		if (StringUtils.isBlank(cust.getCustomerCategory())) {
 			createCustomerError(sell,cust, "CustomerCategory is null");
 			return true;
-		}
+		}*/
 		if (cust.getCustomerAccounts().getCustomerAccount() == null
 				|| cust.getCustomerAccounts().getCustomerAccount().isEmpty()) {
 			createCustomerError(sell,cust, "No customer account");
@@ -599,7 +599,7 @@ public class ImportCustomersJob implements Job {
 
 	private boolean customerAccountCheckError(org.meveo.model.jaxb.customer.Customer cust,org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
-		if (StringUtils.isBlank(custAcc.getPaymentMethod())
+		/*if (StringUtils.isBlank(custAcc.getPaymentMethod())
 				|| ("DIRECTDEBIT" + "CHECK" + "TIP" + "WIRETRANSFER").indexOf(custAcc.getPaymentMethod()) == -1) {
 			createCustomerAccountError(sell,cust, custAcc,
 					"PaymentMethod is null,or not in {DIRECTDEBIT,CHECK,TIP,WIRETRANSFER}");
@@ -621,7 +621,7 @@ public class ImportCustomersJob implements Job {
 		if (StringUtils.isBlank(custAcc.getExternalRef1())) {
 			createCustomerAccountError(sell,cust, custAcc, "ExternalRef1 is null");
 			return true;
-		}
+		}*/
 		return false;
 	}
 

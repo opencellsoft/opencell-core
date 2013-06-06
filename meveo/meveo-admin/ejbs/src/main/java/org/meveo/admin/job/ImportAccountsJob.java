@@ -530,7 +530,7 @@ public class ImportAccountsJob implements Job {
 	}
 
 	private boolean billingAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount) {
-		if (StringUtils.isBlank(billAccount.getExternalRef1())) {
+		/*if (StringUtils.isBlank(billAccount.getExternalRef1())) {
 			createBillingAccountError(billAccount, "ExternalRef1 is null");
 			return true;
 		}
@@ -552,7 +552,7 @@ public class ImportAccountsJob implements Job {
 			createBillingAccountError(billAccount,
 					"PaymentMethod is null,or not in {DIRECTDEBIT,CHECK,TIP,WIRETRANSFER}");
 			return true;
-		}
+		}*/
 		if ("DIRECTDEBIT".equals(billAccount.getPaymentMethod())) {
 			if (billAccount.getBankCoordinates() == null) {
 				createBillingAccountError(billAccount, "BankCoordinates is null");
@@ -575,7 +575,7 @@ public class ImportAccountsJob implements Job {
 				return true;
 			}
 		}
-		if (billAccount.getAddress() == null
+		/*if (billAccount.getAddress() == null
 				|| StringUtils.isBlank(billAccount.getAddress().getZipCode())) {
 			createBillingAccountError(billAccount, "ZipCode is null");
 			return true;
@@ -589,13 +589,13 @@ public class ImportAccountsJob implements Job {
 				|| StringUtils.isBlank(billAccount.getAddress().getCountry())) {
 			createBillingAccountError(billAccount, "Country is null");
 			return true;
-		}
+		}*/
 		return false;
 	}
 
 	private boolean userAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount) {
-		if (StringUtils.isBlank(uAccount.getExternalRef1())) {
+		/*if (StringUtils.isBlank(uAccount.getExternalRef1())) {
 			createUserAccountError(billAccount, uAccount, "ExternalRef1 is null");
 			return true;
 		}
@@ -621,7 +621,7 @@ public class ImportAccountsJob implements Job {
 				|| StringUtils.isBlank(uAccount.getAddress().getCountry())) {
 			createUserAccountError(billAccount, uAccount, "Country is null");
 			return true;
-		}
+		}*/
 
 		return false;
 	}
