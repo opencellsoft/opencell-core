@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<billingAccounts>
+  <billingAccount customerAccountId="CUST_DE_ACC" code="CUST_DE_BILL" paymentMethod="CHECK" billingCycle="CYC_INV_MT">
+   <subscriptionDate>2013-04-29</subscriptionDate>
+    <externalRef1>ORCC2500000101</externalRef1>
+    <externalRef2></externalRef2>
+    <tradingCountryCode>DE</tradingCountryCode>
+    <name>
+      <title>SA</title>
+      <name>NAME_CUST_DE</name>
+      <firstname></firstname>
+    </name>
+    <address>
+      <address1>Porte Droite</address1>
+      <address2>4  Rue de la Defense</address2>
+      <zipCode>92000</zipCode>
+      <city>La Defense</city>
+      <country>France</country>
+    </address>
+    <electronicBilling>0</electronicBilling>
+    <email></email>
+    <bankCoordinates>
+      <key></key>
+    </bankCoordinates>
+    <userAccounts>
+      <userAccount code="CUST_DE_USER1">
+        <subscriptionDate>2013-04-29</subscriptionDate>
+        <externalRef1>2500000100101-01</externalRef1>
+        <name>
+          <title>M</title>
+          <name>Scenario 1</name>
+          <firstname></firstname>
+        </name>
+        <address>
+          <address1>Porte Droite</address1>
+          <address2>4  Rue de la Defense</address2>
+          <zipCode>92000</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+      </userAccount>
+      <userAccount code="CUST_DE_USER2">
+        <subscriptionDate>2013-04-29</subscriptionDate>
+        <externalRef1>2500000100101-01</externalRef1>
+        <name>
+          <title>M</title>
+          <name>Scenario 2</name>
+          <firstname></firstname>
+        </name>
+        <address>
+          <address1>Porte Droite</address1>
+          <address2>4  Rue de la Defense</address2>
+          <zipCode>92000</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+      </userAccount>
+      <userAccount code="CUST_DE_USER3">
+        <subscriptionDate>2013-04-29</subscriptionDate>
+        <externalRef1>2500000100101-01</externalRef1>
+        <name>
+          <title>M</title>
+          <name>Scenario 3</name>
+          <firstname></firstname>
+        </name>
+        <address>
+          <address1>Porte Droite</address1>
+          <address2>4  Rue de la Defense</address2>
+          <zipCode>92000</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+      </userAccount>
+      <userAccount code="CUST_DE_USER4">
+        <subscriptionDate>2013-04-29</subscriptionDate>
+        <externalRef1>2500000100101-01</externalRef1>
+        <name>
+          <title>M</title>
+          <name>Scenario 4</name>
+          <firstname></firstname>
+        </name>
+        <address>
+          <address1>Porte Droite</address1>
+          <address2>4  Rue de la Defense</address2>
+          <zipCode>92000</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+      </userAccount>
+     <userAccount code="CUST_DE_USER5">
+        <subscriptionDate>2013-04-29</subscriptionDate>
+        <externalRef1>2500000100101-01</externalRef1>
+        <name>
+          <title>M</title>
+          <name>Scenario 5</name>
+          <firstname></firstname>
+        </name>
+        <address>
+          <address1>Porte Droite</address1>
+          <address2>4  Rue de la Defense</address2>
+          <zipCode>92000</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+      </userAccount>
+     <userAccount code="CUST_DE_USER6">
+        <subscriptionDate>2013-04-29</subscriptionDate>
+        <externalRef1>2500000100101-01</externalRef1>
+        <name>
+          <title>M</title>
+          <name>Scenario 6</name>
+          <firstname></firstname>
+        </name>
+        <address>
+          <address1>Porte Droite</address1>
+          <address2>4  Rue de la Defense</address2>
+          <zipCode>92000</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+      </userAccount>
+    </userAccounts>
+  </billingAccount>
+</billingAccounts>
+
