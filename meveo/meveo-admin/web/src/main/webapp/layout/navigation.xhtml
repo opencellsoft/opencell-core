@@ -130,7 +130,8 @@
 
 			<p:menuitem id="terminationReasons"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="terminationReasons" value="#{messages['menu.terminationReason']}" />
+				outcome="terminationReasons"
+				value="#{messages['menu.terminationReason']}" />
 
 			<!-- <p:menuitem id="titles" 
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
@@ -431,6 +432,21 @@
 			rendered="#{identity.hasPermission('billing','billingVisualization')}"
 			label="#{messages['menu.billing']}">
 
+			<p:submenu id="crmConnectors"
+				label="#{messages['menu.crm.connector']}">
+
+				<p:menuitem id="customerImportHisto" outcome="customerImportHisto"
+					value="#{messages['menu.customerImportHisto']}" />
+
+				<p:menuitem id="accountImportHisto" outcome="accountImportHisto"
+					value="#{messages['menu.accountImportHisto']}" />
+
+				<p:menuitem id="subscriptionImportHisto"
+					outcome="subscriptionImportHisto"
+					value="#{messages['menu.subscriptionImportHisto']}" />
+
+			</p:submenu>
+
 			<!--
 			<rich:menuItem id="invoices" rendered="#{identity.hasPermission('billing','billingVisualization')}">
 				<h:link outcome="invoices">
@@ -563,6 +579,5 @@
 			</h:link>
 		</rich:menuItem>
 		-->
-
 	</p:menubar>
 </h:form>

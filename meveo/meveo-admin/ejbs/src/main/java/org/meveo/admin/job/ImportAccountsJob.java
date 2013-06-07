@@ -48,9 +48,12 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.service.admin.impl.AccountImportHistoService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -94,6 +97,13 @@ public class ImportAccountsJob implements Job {
 
 	@Inject
 	private TitleService titleService;
+	
+
+	@Inject
+	TradingCountryService tradingCountryService;
+	
+	@Inject
+	TradingLanguageService tradingLanguageService;
 
 	BillingAccounts billingAccountsWarning;
 	BillingAccounts billingAccountsError;
@@ -127,8 +137,8 @@ public class ImportAccountsJob implements Job {
       	log.info("dirIN="+dirIN);
         String dirOK=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output";
       	String dirKO=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"reject";
-      	String prefix=param.getProperty("connectorCRM.importCustomers.prefix","ACCOUNT_");
-      	String ext=param.getProperty("connectorCRM.importCustomers.extension","xml");
+      	String prefix=param.getProperty("connectorCRM.importAccounts.prefix","ACCOUNT_");
+      	String ext=param.getProperty("connectorCRM.importAccounts.extension","xml");
    	
       	JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
@@ -343,6 +353,9 @@ public class ImportAccountsJob implements Job {
 								.getTitle().trim()));
 						billingAccount.setName(name);
 					}
+					billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode(), provider));
+					billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billAccount.getTradingLanguageCode(), provider));
+						
 					billingAccount.setProvider(provider);
 
 					billingAccountService.create(billingAccount, userJob);
@@ -517,7 +530,7 @@ public class ImportAccountsJob implements Job {
 	}
 
 	private boolean billingAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount) {
-		if (StringUtils.isBlank(billAccount.getExternalRef1())) {
+		/*if (StringUtils.isBlank(billAccount.getExternalRef1())) {
 			createBillingAccountError(billAccount, "ExternalRef1 is null");
 			return true;
 		}
@@ -539,7 +552,7 @@ public class ImportAccountsJob implements Job {
 			createBillingAccountError(billAccount,
 					"PaymentMethod is null,or not in {DIRECTDEBIT,CHECK,TIP,WIRETRANSFER}");
 			return true;
-		}
+		}*/
 		if ("DIRECTDEBIT".equals(billAccount.getPaymentMethod())) {
 			if (billAccount.getBankCoordinates() == null) {
 				createBillingAccountError(billAccount, "BankCoordinates is null");
@@ -562,7 +575,7 @@ public class ImportAccountsJob implements Job {
 				return true;
 			}
 		}
-		if (billAccount.getAddress() == null
+		/*if (billAccount.getAddress() == null
 				|| StringUtils.isBlank(billAccount.getAddress().getZipCode())) {
 			createBillingAccountError(billAccount, "ZipCode is null");
 			return true;
@@ -576,13 +589,13 @@ public class ImportAccountsJob implements Job {
 				|| StringUtils.isBlank(billAccount.getAddress().getCountry())) {
 			createBillingAccountError(billAccount, "Country is null");
 			return true;
-		}
+		}*/
 		return false;
 	}
 
 	private boolean userAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount) {
-		if (StringUtils.isBlank(uAccount.getExternalRef1())) {
+		/*if (StringUtils.isBlank(uAccount.getExternalRef1())) {
 			createUserAccountError(billAccount, uAccount, "ExternalRef1 is null");
 			return true;
 		}
@@ -608,7 +621,7 @@ public class ImportAccountsJob implements Job {
 				|| StringUtils.isBlank(uAccount.getAddress().getCountry())) {
 			createUserAccountError(billAccount, uAccount, "Country is null");
 			return true;
-		}
+		}*/
 
 		return false;
 	}
