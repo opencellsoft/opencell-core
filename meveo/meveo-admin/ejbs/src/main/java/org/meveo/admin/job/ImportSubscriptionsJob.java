@@ -120,7 +120,7 @@ public class ImportSubscriptionsJob implements Job {
 
     @Override
     public JobExecutionResult execute(String parameter,Provider provider) {
-        log.info("execute ImportAccountsJob.");
+        log.info("execute ImportSubscriptionsJob.");
         
         String dirIN=importDir+File.separator+provider.getCode()+File.separator+"subscriptions"+File.separator+"input";
       	log.info("dirIN="+dirIN);
@@ -570,7 +570,7 @@ public class ImportSubscriptionsJob implements Job {
                 running=true;
                 Provider provider=providerService.findById(info.getProviderId());
                 JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info,provider);
             } catch(Exception e){
                 e.printStackTrace();
             } finally{

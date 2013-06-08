@@ -37,7 +37,7 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class TimerEntityService extends PersistenceService<TimerEntity> {
 
-	static HashMap<String, Job> jobEntries = new HashMap<String, Job>();
+	public static HashMap<String, Job> jobEntries = new HashMap<String, Job>();
 
 	@Inject
 	Identity identity;
@@ -69,6 +69,9 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			Job job = jobEntries.get(entity.getJobName());
 			entity.getInfo().setJobName(entity.getJobName());
 			entity.getInfo().setProviderId(getCurrentProvider().getId());
+			if(entity.getFollowingTimer()!=null){
+				entity.getInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+			}
 			TimerHandle timerHandle = job.createTimer(entity.getScheduleExpression(),
 					entity.getInfo());
 			entity.setTimerHandle(timerHandle);
@@ -84,6 +87,9 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			log.info("cancelling existing " + timerHandle.getTimer().getTimeRemaining() / 1000
 					+ " sec");
 			timerHandle.getTimer().cancel();
+			if(entity.getFollowingTimer()!=null){
+				entity.getInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+			}
 			timerHandle = job.createTimer(entity.getScheduleExpression(), entity.getInfo());
 			entity.setTimerHandle(timerHandle);
 			super.update(entity);

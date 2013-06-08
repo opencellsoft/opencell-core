@@ -103,7 +103,7 @@ public class UsageRatingJob implements Job {
                 running=true;
                 Provider provider=providerService.findById(info.getProviderId());
                 JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info,provider);
           } catch(Exception e){
                 e.printStackTrace();
             } finally{

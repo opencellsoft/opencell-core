@@ -43,7 +43,6 @@ public class TimersBean extends BaseBean<TimerEntity> {
 	private int pageSize = 20;
 	private PaginationDataModel<TimerEntity> timersDataModel;
 
-	private PaginationDataModel<Timer> jBossTimersDataModel;
 
 	public int getPageSize() {
 		return pageSize;

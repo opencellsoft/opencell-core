@@ -21,6 +21,9 @@ import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerHandle;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -34,11 +37,18 @@ public class TimerEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
-	@Column(name = "JOB_NAME")
+	@Column(name = "NAME",unique=true,nullable=false)
+	private String name;
+	
+	@Column(name = "JOB_NAME",nullable=false)
 	private String jobName;
 
-	@Column(name = "TIMER_HANDLE")
+	@Column(name = "TIMER_HANDLE",nullable=false)
 	private TimerHandle timerHandle;
+
+	@JoinColumn(name = "FOLLOWING_TIMER_ID")
+	@ManyToOne(fetch=FetchType.LAZY)
+	private TimerEntity followingTimer;
 
 	@Transient
 	private String year = "*";
@@ -70,6 +80,14 @@ public class TimerEntity extends BaseEntity {
 	@Transient
 	private TimerInfo info = new TimerInfo();
 
+	public String getName() {
+		return (name==null)?(getId()==null?null:jobName+"_"+getId()):name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getJobName() {
 		return jobName;
 	}
@@ -85,6 +103,15 @@ public class TimerEntity extends BaseEntity {
 
 	public void setTimerHandle(TimerHandle timerHandle) {
 		this.timerHandle = timerHandle;
+	}
+	
+
+	public TimerEntity getFollowingTimer() {
+		return followingTimer;
+	}
+
+	public void setFollowingTimer(TimerEntity followingTimer) {
+		this.followingTimer = followingTimer;
 	}
 
 	public String getYear() {
@@ -206,6 +233,28 @@ public class TimerEntity extends BaseEntity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object other){
+		if(other!=null && other instanceof TimerEntity){
+			if(this==other){
+				return true;
+			}
+			TimerEntity timer = (TimerEntity) other;
+			if(timerHandle!=null && timerHandle.equals(timer.getTimerHandle())){
+				return true;
+			} 
+		}
+		return false;	
+	}
+	
+	public int hashcode(){
+		int result=super.hashCode();
+		if(timerHandle!=null){
+			return timerHandle.hashCode();
+		} 
 		return result;
 	}
 }

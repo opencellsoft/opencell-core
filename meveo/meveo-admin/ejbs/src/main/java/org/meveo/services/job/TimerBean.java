@@ -15,11 +15,13 @@
  */
 package org.meveo.services.job;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.Timer;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
@@ -159,6 +161,12 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 	public Set<String> getJobNames() {
 		return TimerEntityService.jobEntries.keySet();
 	}
+	
+
+	public List<TimerEntity> getTimerEntityList() {
+		return  timerEntityService.find(null);
+	}
+
 
 	@Override
 	protected IPersistenceService<JobExecutionResultImpl> getPersistenceService() {

@@ -46,6 +46,10 @@
 							<p:ajax event="valueChange" update=":timerForm"></p:ajax>
 						</p:selectOneMenu>
 					</sc:inputContainer>
+					<p:panelGrid columns="2">
+							<p:outputLabel value="#{messages['timer.name']}*" />
+							<p:inputText value="#{timerBean.timerEntity.name}" required="true"/>
+						</p:panelGrid>
 					<h:panelGrid columns="4"
 						rendered="#{timerBean.timerEntity.id!=null or timerBean.timerEntity.jobName!=null}">
 
@@ -96,6 +100,13 @@
 						</p:panelGrid>
 
 					</h:panelGrid>
+					<sc:inputContainer label="#{messages['timer.followingJob']}">
+						<p:selectOneMenu id="timerFollowingJob"
+							value="#{timerBean.timerEntity.followingTimer}" converter="timerEntityConverter">
+							<f:selectItem itemLabel="#{messages['commons.select']}" />
+							<f:selectItems value="#{timerBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.name}" itemValue="#{t_}"/>
+						</p:selectOneMenu>
+					</sc:inputContainer>
 					<h:panelGroup columns="4">
 						<div class="action-buttons">
 							<p:commandButton ajax="false" id="button_create"

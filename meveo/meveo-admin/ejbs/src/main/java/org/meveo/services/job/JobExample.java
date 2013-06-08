@@ -82,7 +82,7 @@ public class JobExample implements Job {
 		if (info.isActive()) {
             Provider provider=providerService.findById(info.getProviderId());
             JobExecutionResult result=execute(info.getParametres(),provider);
-            jobExecutionService.persistResult(this, result,info.getParametres(),provider);
+            jobExecutionService.persistResult(this, result,info,provider);
 		}
 	}
 

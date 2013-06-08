@@ -27,6 +27,7 @@ public class TimerInfo implements Serializable {
 	private String jobName;
 	private String parametres;
 	private Long providerId;
+	private Long followingTimerId;
 
 	public boolean isActive() {
 		return active;
@@ -60,5 +61,12 @@ public class TimerInfo implements Serializable {
 		this.providerId = providerId;
 	}
 
+	public Long getFollowingTimerId() {
+		return followingTimerId;
+	}
+
+	public void setFollowingTimerId(Long followingTimerId) {
+		this.followingTimerId = followingTimerId;
+	}
 
 }

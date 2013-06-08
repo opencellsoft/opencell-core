@@ -42,12 +42,19 @@
 						resultsId="timersBean_results" checkMany="false">
 						<p:column>
 							<f:facet name="header">
-								<h:outputText value="#{messages['timer.jobName']}" />
+								<h:outputText value="#{messages['timer.name']}" />
 							</f:facet>
-							<h:link outcome="jobTimerDetail" value="#{entity.jobName}">
+							<h:link outcome="jobTimerDetail" value="#{entity.name}">
 								<f:param name="timerId" value="#{entity.id}" />
 							</h:link>
 						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{messages['timer.jobName']}" />
+							</f:facet>
+							<h:outputText value="#{entity.jobName}" />
+						</p:column>
+						
 						<hftl:column label="#{messages['timer.schedule']}"
 							field="timerSchedule" sort="false" />
 					</hftl:dataList>

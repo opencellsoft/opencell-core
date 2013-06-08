@@ -21,6 +21,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -28,24 +29,29 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
+	@Inject
+	TimerEntityService timerEntityService;
+	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void executeJob(String jobName, String parameter, Provider provider) {
+	public void executeJob(String jobName, TimerInfo info, Provider provider) {
 		try {
 			Job jobInstance = TimerEntityService.jobEntries.get(jobName);
-			JobExecutionResult result = jobInstance.execute(parameter, provider);
-			persistResult(jobInstance, result, parameter, provider);
+			JobExecutionResult result = jobInstance.execute(info.getParametres(), provider);
+			persistResult(jobInstance, result, info, provider);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void persistResult(Job job, JobExecutionResult result, String parameter,
+	public void persistResult(Job job, JobExecutionResult result, TimerInfo info,
 			Provider provider) {
 		try {
 			log.info("JobExecutionService persistResult...");
@@ -59,7 +65,14 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				create(entity, null, provider);
 				log.info("persistResult entity.isDone()=" + entity.isDone());
 				if (!entity.isDone()) {
-					executeJob(job.getClass().getSimpleName(), parameter, provider);
+					executeJob(job.getClass().getSimpleName(), info, provider);
+				} else if(info.getFollowingTimerId()!=null && info.getFollowingTimerId()>0) {
+					try{
+						TimerEntity timerEntity = timerEntityService.findById(info.getFollowingTimerId());
+						executeJob(timerEntity.getJobName(),(TimerInfo)timerEntity.getTimerHandle().getTimer().getInfo(),provider);
+					} catch(Exception e){
+						log.warn("persistResult cannot excute the following job.=" +info.getFollowingTimerId());
+					}
 				}
 			} else {
 				log.info(job.getClass().getName() + ": nothing to do");
