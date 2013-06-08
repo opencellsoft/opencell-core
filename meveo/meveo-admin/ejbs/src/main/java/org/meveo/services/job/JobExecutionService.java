@@ -76,6 +76,14 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 				}
 			} else {
 				log.info(job.getClass().getName() + ": nothing to do");
+				if(info.getFollowingTimerId()!=null && info.getFollowingTimerId()>0) {
+					try{
+						TimerEntity timerEntity = timerEntityService.findById(info.getFollowingTimerId());
+						executeJob(timerEntity.getJobName(),(TimerInfo)timerEntity.getTimerHandle().getTimer().getInfo(),provider);
+					} catch(Exception e){
+						log.warn("persistResult cannot excute the following job.=" +info.getFollowingTimerId());
+					}
+				}
 			}
 		} catch (Exception e) {// FIXME:BusinessException e) {
 			e.printStackTrace();
