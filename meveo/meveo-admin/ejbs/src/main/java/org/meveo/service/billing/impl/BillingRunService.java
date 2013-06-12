@@ -38,6 +38,7 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -359,8 +360,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public void retateBillingRunTransactions(BillingRun billingRun) {
 		for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
-			ratedTransaction.getWalletOperation().setStatus(WalletOperationStatusEnum.TO_RERATE);
-			walletOperationService.update(ratedTransaction.getWalletOperation());
+			WalletOperation walletOperation =walletOperationService.findById(ratedTransaction.getWalletOperationId());
+			walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
+			walletOperationService.update(walletOperation);
 		}
 	}
 

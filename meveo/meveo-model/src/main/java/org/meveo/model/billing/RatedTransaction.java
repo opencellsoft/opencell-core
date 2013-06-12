@@ -44,9 +44,8 @@ public class RatedTransaction extends BaseEntity {
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WALLET_OPERATION_ID")
-	private WalletOperation walletOperation;
+	@Column(name = "WALLET_OPERATION_ID")
+	private Long walletOperationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
@@ -66,12 +65,7 @@ public class RatedTransaction extends BaseEntity {
 	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TAX_ID")
-	private Tax tax;
-
-	@Column(name = "TAX_PERCENT", precision = 23, scale = 12)
-	private BigDecimal taxPercent;
+  
 
 	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX")
 	private BigDecimal unitAmountWithoutTax;
@@ -94,12 +88,8 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "AMOUNT_TAX")
 	private BigDecimal amountTax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
-	private Subscription subscription;
 
-	@Column(name = "grouping_id")
-	private Integer groupingId;
+ 
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "INVOICE_ID")
@@ -117,8 +107,7 @@ public class RatedTransaction extends BaseEntity {
 	@JoinColumn(name = "AGGREGATE_ID_T")
 	private TaxInvoiceAgregate invoiceAgregateT;
 
-	@Column(name = "USAGE_QUANTITY")
-	private Integer usageQuantity;
+ 
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
@@ -127,17 +116,7 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY_ID")
-	private TradingCurrency tradingCurrency;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
-	private TradingCountry tradingCountry;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
-	private TradingLanguage tradingLanguage;
+	 
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -147,13 +126,7 @@ public class RatedTransaction extends BaseEntity {
 		this.wallet = wallet;
 	}
 
-	public WalletOperation getWalletOperation() {
-		return walletOperation;
-	}
-
-	public void setWalletOperation(WalletOperation walletOperation) {
-		this.walletOperation = walletOperation;
-	}
+	 
 
 	public BillingRun getBillingRun() {
 		return billingRun;
@@ -195,21 +168,7 @@ public class RatedTransaction extends BaseEntity {
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
 
-	public Tax getTax() {
-		return tax;
-	}
-
-	public void setTax(Tax tax) {
-		this.tax = tax;
-	}
-
-	public BigDecimal getTaxPercent() {
-		return taxPercent;
-	}
-
-	public void setTaxPercent(BigDecimal taxPercent) {
-		this.taxPercent = taxPercent;
-	}
+	 
 
 	public BigDecimal getUnitAmountWithoutTax() {
 		return unitAmountWithoutTax;
@@ -267,22 +226,7 @@ public class RatedTransaction extends BaseEntity {
 		this.amountTax = amountTax;
 	}
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
-
-	public Integer getGroupingId() {
-		return groupingId;
-	}
-
-	public void setGroupingId(Integer groupingId) {
-		this.groupingId = groupingId;
-	}
-
+	 
 	public Invoice getInvoice() {
 		return invoice;
 	}
@@ -315,14 +259,6 @@ public class RatedTransaction extends BaseEntity {
 		this.invoiceAgregateT = invoiceAgregateT;
 	}
 
-	public Integer getUsageQuantity() {
-		return usageQuantity;
-	}
-
-	public void setUsageQuantity(Integer usageQuantity) {
-		this.usageQuantity = usageQuantity;
-	}
-
 	public RatedTransactionStatusEnum getStatus() {
 		return status;
 	}
@@ -339,28 +275,16 @@ public class RatedTransaction extends BaseEntity {
 		this.doNotTriggerInvoicing = doNotTriggerInvoicing;
 	}
 
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
+	public Long getWalletOperationId() {
+		return walletOperationId;
 	}
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
+	public void setWalletOperationId(Long walletOperationId) {
+		this.walletOperationId = walletOperationId;
 	}
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
-
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+	 
 
 }
