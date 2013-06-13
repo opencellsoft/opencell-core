@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.crm.Provider;
 
 @Entity
 @Table(name = "BILLING_RATED_TRANSACTION")
@@ -50,12 +51,6 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
 	private BillingRun billingRun;
-
-	@Column(name = "PR_DESCRIPTION", length = 255)
-	private String prDescription;
-
-	@Column(name = "USAGE_DESCRIPTION", length = 255)
-	private String usageDescription;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "USAGE_DATE")
@@ -115,8 +110,30 @@ public class RatedTransaction extends BaseEntity {
 
 	@Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
+	
+	
 
+	
 	 
+
+	public RatedTransaction(Long walletOperationId, Date usageDate,
+			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax,
+			BigDecimal unitAmountTax, BigDecimal quantity,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider) {
+		super();
+		this.walletOperationId = walletOperationId;
+		this.usageDate = usageDate;
+		this.unitAmountWithoutTax = unitAmountWithoutTax;
+		this.unitAmountWithTax = unitAmountWithTax;
+		this.unitAmountTax = unitAmountTax;
+		this.quantity = quantity;
+		this.amountWithoutTax = amountWithoutTax;
+		this.amountWithTax = amountWithTax;
+		this.amountTax = amountTax;
+		this.status = status;
+		setProvider(provider);
+	}
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -136,21 +153,6 @@ public class RatedTransaction extends BaseEntity {
 		this.billingRun = billingRun;
 	}
 
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
-
-	public String getUsageDescription() {
-		return usageDescription;
-	}
-
-	public void setUsageDescription(String usageDescription) {
-		this.usageDescription = usageDescription;
-	}
 
 	public Date getUsageDate() {
 		return usageDate;
