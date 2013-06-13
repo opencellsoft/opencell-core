@@ -6,11 +6,15 @@ import javax.enterprise.context.NonexistentConversationException;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.AuthorizationException;
 import org.jboss.solder.exception.control.CaughtException;
 import org.jboss.solder.exception.control.Handles;
 import org.jboss.solder.exception.control.HandlesExceptions;
 import org.jboss.solder.servlet.http.ContextPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @HandlesExceptions
 public class ExceptionHandler {
@@ -22,6 +26,10 @@ public class ExceptionHandler {
 	@ContextPath
 	private String contextPath;
 
+	private Messages messages;
+
+	private Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
+
 	public void handleAuthorizationException(@Handles CaughtException<AuthorizationException> evt) {
 
 		evt.handled();
@@ -32,7 +40,7 @@ public class ExceptionHandler {
 					.redirect(contextPath + "/errors/403.jsf");
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -47,7 +55,7 @@ public class ExceptionHandler {
 					.redirect(contextPath + "/errors/sessionExpired.jsf");
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -61,7 +69,9 @@ public class ExceptionHandler {
 			FacesContext.getCurrentInstance().getExternalContext()
 					.redirect(contextPath + "/errors/sessionExpired.jsf");
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
+		} catch (Exception e) {
+			messages.error(new BundleKey("messages", "error.sessionExpired"));
 		}
 	}
 

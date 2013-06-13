@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +17,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.IEntity;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Ignas
- * 
- */
 public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
 	private static final String BOOLEAN_TRUE_STRING = "true";
@@ -100,6 +95,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 	/**
 	 * Helper method to get entity instance to query field definitions.
 	 */
+	@SuppressWarnings("rawtypes")
 	public Class getEntityClass() {
 		if (entityClass == null) {
 			entityClass = getBackingBeanFromParentOrCurrent().getClazz();
