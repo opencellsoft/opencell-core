@@ -184,8 +184,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			if (getFormFieldsToFetch() == null) {
 				entity = (T) getPersistenceService().findById(getObjectId());
 			} else {
-				entity = (T) getPersistenceService()
-						.findById(getObjectId(), getFormFieldsToFetch());
+				entity = (T) getPersistenceService().findById(getObjectId(),
+						getFormFieldsToFetch());
 			}
 			// getPersistenceService().detach(entity);
 		} else {
@@ -198,7 +198,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 				// creation time
 			} catch (InstantiationException e) {
 				log.error("Unexpected error!", e);
-				throw new IllegalStateException("could not instantiate a class, abstract class");
+				throw new IllegalStateException(
+						"could not instantiate a class, abstract class");
 			} catch (IllegalAccessException e) {
 				log.error("Unexpected error!", e);
 				throw new IllegalStateException(
@@ -217,6 +218,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public T getEntity() {
 		return entity != null ? entity : initEntity();
+	}
+
+	public void setEntity(T entity) {
+		this.entity = entity;
 	}
 
 	// /**
@@ -361,17 +366,44 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public void delete(Long id) {
 		try {
-			log.info(String.format("Deleting entity %s with id = %s", clazz.getName(), id));
+			log.info(String.format("Deleting entity %s with id = %s",
+					clazz.getName(), id));
 			getPersistenceService().remove(id);
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+				log.info(
+						"delete was unsuccessful because entity is used in the system",
+						t);
+				messages.error(new BundleKey("messages",
+						"error.delete.entityUsed"));
 
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages", "error.delete.unexpected"));
+				messages.error(new BundleKey("messages",
+						"error.delete.unexpected"));
+			}
+		}
+	}
+
+	public void delete() {
+		try {
+			log.info(String.format("Deleting entity %s with id = %s",
+					clazz.getName(), getEntity().getId()));
+			getPersistenceService().remove((Long) getEntity().getId());
+			messages.info(new BundleKey("messages", "delete.successful"));
+		} catch (Throwable t) {
+			if (t.getCause() instanceof EntityExistsException) {
+				log.info(
+						"delete was unsuccessful because entity is used in the system",
+						t);
+				messages.error(new BundleKey("messages",
+						"error.delete.entityUsed"));
+
+			} else {
+				log.info("unexpected exception when deleting!", t);
+				messages.error(new BundleKey("messages",
+						"error.delete.unexpected"));
 			}
 		}
 	}
@@ -389,22 +421,29 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 					idsToDelete.add((Long) entity.getId());
 					idsString.append(entity.getId()).append(" ");
 				}
-				log.info(String.format("Deleting multiple entities %s with ids = %s",
+				log.info(String.format(
+						"Deleting multiple entities %s with ids = %s",
 						clazz.getName(), idsString.toString()));
 
 				getPersistenceService().remove(idsToDelete);
-				messages.info(new BundleKey("messages", "delete.entitities.successful"));
+				messages.info(new BundleKey("messages",
+						"delete.entitities.successful"));
 			} else {
-				messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
+				messages.info(new BundleKey("messages",
+						"delete.entitities.noSelection"));
 			}
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+				log.info(
+						"delete was unsuccessful because entity is used in the system",
+						t);
+				messages.error(new BundleKey("messages",
+						"error.delete.entityUsed"));
 
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages", "error.delete.unexpected"));
+				messages.error(new BundleKey("messages",
+						"error.delete.unexpected"));
 			}
 		}
 	}
@@ -444,7 +483,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public T getInstance() throws InstantiationException, IllegalAccessException {
+	public T getInstance() throws InstantiationException,
+			IllegalAccessException {
 
 		return clazz.newInstance();
 	}
@@ -492,17 +532,22 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public void disable(Long id) {
 		try {
-			log.info(String.format("Disabling entity %s with id = %s", clazz.getName(), id));
+			log.info(String.format("Disabling entity %s with id = %s",
+					clazz.getName(), id));
 			getPersistenceService().disable(id);
 			messages.info(new BundleKey("messages", "disabled.successful"));
 
 		} catch (Throwable t) {
 			if (t.getCause() instanceof EntityExistsException) {
-				log.info("delete was unsuccessful because entity is used in the system", t);
-				messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+				log.info(
+						"delete was unsuccessful because entity is used in the system",
+						t);
+				messages.error(new BundleKey("messages",
+						"error.delete.entityUsed"));
 			} else {
 				log.info("unexpected exception when deleting!", t);
-				messages.error(new BundleKey("messages", "error.delete.unexpected"));
+				messages.error(new BundleKey("messages",
+						"error.delete.unexpected"));
 			}
 		}
 	}
@@ -516,7 +561,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return getLazyDataModel(filters, false);
 	}
 
-	public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters, boolean forceReload) {
+	public LazyDataModel<T> getLazyDataModel(Map<String, Object> inputFilters,
+			boolean forceReload) {
 		if (dataModel == null || forceReload) {
 			final Map<String, Object> filters = inputFilters;
 			dataModel = new LazyDataModel<T>() {
@@ -527,24 +573,27 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 				private Integer rowIndex;
 
 				@Override
-				public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-						Map<String, String> loadingFilters) {
+				public List<T> load(int first, int pageSize, String sortField,
+						SortOrder sortOrder, Map<String, String> loadingFilters) {
 
-					if (!StringUtils.isBlank(getDefaultSort()) && StringUtils.isBlank(sortField)) {
+					if (!StringUtils.isBlank(getDefaultSort())
+							&& StringUtils.isBlank(sortField)) {
 						sortField = getDefaultSort();
 					}
 
 					Map<String, Object> copyOfFilters = new HashMap<String, Object>();
 					copyOfFilters.putAll(filters);
 					setRowCount((int) getPersistenceService().count(
-							new PaginationConfiguration(first, pageSize, copyOfFilters,
-									getListFieldsToFetch(), sortField, sortOrder)));
+							new PaginationConfiguration(first, pageSize,
+									copyOfFilters, getListFieldsToFetch(),
+									sortField, sortOrder)));
 					if (getRowCount() > 0) {
 						copyOfFilters = new HashMap<String, Object>();
 						copyOfFilters.putAll(filters);
 						return getPersistenceService().list(
-								new PaginationConfiguration(first, pageSize, copyOfFilters,
-										getListFieldsToFetch(), sortField, sortOrder));
+								new PaginationConfiguration(first, pageSize,
+										copyOfFilters, getListFieldsToFetch(),
+										sortField, sortOrder));
 					} else {
 						return null; // no need to load then
 					}
@@ -552,7 +601,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 				@Override
 				public T getRowData(String rowKey) {
-					return getPersistenceService().findById(Long.valueOf(rowKey));
+					return getPersistenceService().findById(
+							Long.valueOf(rowKey));
 				}
 
 				@Override
@@ -582,7 +632,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						return false;
 					}
 
-					return rowIndex >= 0 && rowIndex < ((List<T>) getWrappedData()).size();
+					return rowIndex >= 0
+							&& rowIndex < ((List<T>) getWrappedData()).size();
 				}
 
 				@Override
@@ -642,7 +693,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public boolean isEdit() {
-		if (edit != null && edit.get() != null && !edit.get().equals("" + editSaved)) {
+		if (edit != null && edit.get() != null
+				&& !edit.get().equals("" + editSaved)) {
 			editSaved = Boolean.valueOf(edit.get());
 		}
 		return editSaved;
@@ -662,14 +714,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public List<TradingLanguage> getProviderLanguages() {
-		Provider provider = providerService.findById(currentProvider.getId(), true);
+		Provider provider = providerService.findById(currentProvider.getId(),
+				true);
 		return provider.getTradingLanguages();
 	}
 
 	public String getProviderLanguageCode() {
 		if (getCurrentProvider() != null) {
 
-			Provider provider = providerService.findById(currentProvider.getId(), true);
+			Provider provider = providerService.findById(
+					currentProvider.getId(), true);
 			return provider.getLanguage().getLanguageCode();
 		}
 		return "";

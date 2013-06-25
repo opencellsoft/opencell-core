@@ -46,6 +46,7 @@
 			<f:param name="edit" value="false" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
+
 		<p:tooltip for="#{resultsId}editlink"
 			value="#{messages['commons.edit']}" showEffect="slide"
 			hideEffect="slide" />
@@ -55,23 +56,29 @@
 			<f:param name="edit" value="true" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
+
 		<p:tooltip for="#{resultsId}deletelink"
 			value="#{messages['commons.delete']}" showEffect="slide"
 			hideEffect="slide" rendered="#{renderDeleteLink}" />
 		<p:commandButton id="#{resultsId}deletelink" icon="ui-icon-trash"
-			rendered="#{renderDeleteLink}" ajax="false"
-			onclick="confirmDeleteWidget.show()" type="button" />
+			rendered="#{renderDeleteLink}"
+			oncomplete="confirmDeleteWidget.show()">
+			<f:setPropertyActionListener target="#{backingBean.entity}"
+				value="#{entity}"></f:setPropertyActionListener>
+		</p:commandButton>
+
 		<p:confirmDialog id="confirmDialog" styleClass="confirm-dialog"
 			message="#{messages['commons.confirmDelete']}" header=""
 			severity="alert" widgetVar="confirmDeleteWidget">
 			<p:panel styleClass="confirm-dialog-content">
 				<p:commandButton id="deleteOk" value="#{messages['commons.yes']}"
-					oncomplete="confirmDeleteWidget.hide()" ajax="false"
-					action="#{backingBean.delete(entity.id)}" />
+					oncomplete="confirmDeleteWidget.hide()"
+					action="#{backingBean.delete}" update="@all" />
 				<p:commandButton id="deleteKo" value="#{messages['commons.no']}"
 					onclick="confirmDeleteWidget.hide()" type="button" />
 			</p:panel>
 		</p:confirmDialog>
+
 	</p:column>
 </ui:composition>
 
