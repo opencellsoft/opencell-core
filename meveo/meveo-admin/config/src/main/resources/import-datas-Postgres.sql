@@ -1237,10 +1237,10 @@ INSERT INTO cat_one_shot_charge_templ VALUES (true, 'OTHER', 1058);
 -- Data for Name: cat_price_plan_matrix; Type: TABLE DATA; Schema: public; Owner: meveo
 --
 
+INSERT INTO cat_price_plan_matrix VALUES (1072, 0, false, '2013-04-24 10:48:14.762', NULL, 0.000000000000, 0.000000000000, NULL, '*', '*', '*', NULL, NULL, 'MO_SUB_Microsoft', 99, 0, NULL, NULL, 1, 1, NULL, 1043, 157, 145);
+INSERT INTO cat_price_plan_matrix VALUES (1057, 6, false, '2013-04-23 23:19:23.773', '2013-04-24 10:54:12.311', 12.000000000000, 10.000000000000, NULL, '*', '*', '*', NULL, '2013-08-31 00:00:00', 'EXCH20102_SOFT_BLACK', 99, 0, '2013-04-01 00:00:00', '2013-04-01 00:00:00', 1, 1, 1, 1043, 157, 145);
+INSERT INTO cat_price_plan_matrix VALUES (1077, 0, false, '2013-04-24 15:51:12.057', NULL, 12.000000000000, 10.000000000000, NULL, '*', '*', '*', NULL, '2013-04-30 00:00:00', 'MO20131_SOFT', 99, 0, NULL, '2013-04-01 00:00:00', 1, 1, NULL, 1043, 157, 145);
 
-INSERT INTO cat_price_plan_matrix VALUES (1072, 0, false, '2013-04-24 10:48:14.762', NULL, 10.000000000000, 10.000000000000, '*', '*', '*', NULL, NULL, 'MO_SUB_Microsoft', 99, 0,0, NULL, NULL, 1, 1, NULL, 1043, 157, 145);
-INSERT INTO cat_price_plan_matrix VALUES (1057, 6, false, '2013-04-23 23:19:23.773', '2013-04-24 10:54:12.311', 12.000000000000, 10.000000000000,'*', '*', '*', NULL, '2013-08-31 00:00:00', 'EXCH20102_SOFT_BLACK', 99, 0,0, '2013-04-01 00:00:00', '2013-04-01 00:00:00', 1, 1, 1, 1043, 157, 145);
-INSERT INTO cat_price_plan_matrix VALUES (1077, 0, false, '2013-04-24 15:51:12.057', NULL, 12.000000000000, 10.000000000000,'*', '*', '*', NULL, '2013-04-30 00:00:00', 'MO20131_SOFT', 99, 0,0, NULL, '2013-04-01 00:00:00', 1, 1, NULL, 1043, 157, 145);
 
 --
 -- Data for Name: cat_serv_reccharge_templates; Type: TABLE DATA; Schema: public; Owner: meveo
