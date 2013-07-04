@@ -10,8 +10,9 @@
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 <!-- 	<modules> -->
-<!-- 		<module>meveo-model</module> -->
-<!-- 		<module>meveo-admin</module> -->
+<!-- 		<module>meveo-model</module> 	-->
+<!-- 		<module>meveo-admin</module> 	-->
+<!-- 		<module>meveo-api</module> 		-->
 <!-- 	</modules> -->
 
 
@@ -234,5 +235,5 @@
 
 		</profile>
 
-	</profiles>
+	</profiles>	
 </project>
