@@ -580,6 +580,7 @@ INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (8,'reportingMan
 INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (9,'customerSummaryVisualization','customerSummary','customerSummaryVisualization');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (10,'adv','billing','billingVisualization');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (11,'adv','billing','billingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESOURCE,PERMISSION) VALUES (12,'superAdminManagement','superAdmin','superAdminManagement');
 
 DROP SEQUENCE ADM_PERMISSION_SEQ;
 CREATE SEQUENCE ADM_PERMISSION_SEQ start with 12 increment by 1;
@@ -597,6 +598,7 @@ insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 8);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 9);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 10);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 11);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (2, 12);
 
 /*------INSERTS OF TABLE CAT_DAY_IN_YEAR----*/
 
