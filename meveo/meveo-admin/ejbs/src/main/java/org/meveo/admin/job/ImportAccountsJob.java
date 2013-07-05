@@ -48,7 +48,6 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.service.admin.impl.AccountImportHistoService;
-import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -67,13 +66,13 @@ import org.meveo.services.job.TimerEntityService;
 public class ImportAccountsJob implements Job {
 	@Resource
 	TimerService timerService;
-	
+
 	@Inject
 	JobExecutionService jobExecutionService;
 
-    @Inject
-    private Logger log;
-    
+	@Inject
+	private Logger log;
+
 	@Inject
 	private CustomerAccountService customerAccountService;
 
@@ -97,18 +96,17 @@ public class ImportAccountsJob implements Job {
 
 	@Inject
 	private TitleService titleService;
-	
 
 	@Inject
 	TradingCountryService tradingCountryService;
-	
+
 	@Inject
 	TradingLanguageService tradingLanguageService;
 
 	BillingAccounts billingAccountsWarning;
 	BillingAccounts billingAccountsError;
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-	
+
 	int nbBillingAccounts;
 	int nbBillingAccountsError;
 	int nbBillingAccountsWarning;
@@ -122,25 +120,31 @@ public class ImportAccountsJob implements Job {
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
 
-	String importDir = param.getProperty("connectorCRM.importDir","/tmp/meveo/crm");
-	
-    @PostConstruct
-    public void init(){
-        TimerEntityService.registerJob(this);
-    }
+	String importDir = param.getProperty("connectorCRM.importDir",
+			"/tmp/meveo/crm");
 
-    @Override
-    public JobExecutionResult execute(String parameter,Provider provider) {
-        log.info("execute ImportAccountsJob.");
-    
-        String dirIN=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"input";
-      	log.info("dirIN="+dirIN);
-        String dirOK=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output";
-      	String dirKO=importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"reject";
-      	String prefix=param.getProperty("connectorCRM.importAccounts.prefix","ACCOUNT_");
-      	String ext=param.getProperty("connectorCRM.importAccounts.extension","xml");
-   	
-      	JobExecutionResultImpl result = new JobExecutionResultImpl();
+	@PostConstruct
+	public void init() {
+		TimerEntityService.registerJob(this);
+	}
+
+	@Override
+	public JobExecutionResult execute(String parameter, Provider provider) {
+		log.info("execute ImportAccountsJob.");
+
+		String dirIN = importDir + File.separator + provider.getCode()
+				+ File.separator + "accounts" + File.separator + "input";
+		log.info("dirIN=" + dirIN);
+		String dirOK = importDir + File.separator + provider.getCode()
+				+ File.separator + "accounts" + File.separator + "output";
+		String dirKO = importDir + File.separator + provider.getCode()
+				+ File.separator + "accounts" + File.separator + "reject";
+		String prefix = param.getProperty("connectorCRM.importAccounts.prefix",
+				"ACCOUNT_");
+		String ext = param.getProperty("connectorCRM.importAccounts.extension",
+				"xml");
+
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		File dir = new File(dirIN);
 		if (!dir.exists()) {
 			dir.mkdirs();
@@ -151,7 +155,7 @@ public class ImportAccountsJob implements Job {
 		result.setNbItemsToProcess(numberOfFiles);
 		for (File file : files) {
 			File currentFile = null;
-			try {				
+			try {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
 				importFile(currentFile, file.getName(), provider);
@@ -163,30 +167,32 @@ public class ImportAccountsJob implements Job {
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
 				e.printStackTrace();
+			} finally {
+				if (currentFile != null)
+					currentFile.delete();
 			}
 		}
-       	 
- 
-        return result;
-    }
-    
-	private List<File> getFilesToProcess(File dir,String prefix, String ext){
+
+		return result;
+	}
+
+	private List<File> getFilesToProcess(File dir, String prefix, String ext) {
 		List<File> files = new ArrayList<File>();
 		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
 		File[] listFile = dir.listFiles(filtre);
-		if(listFile == null){
-			return files;			
+		if (listFile == null) {
+			return files;
 		}
-		for(File file : listFile){
-			if(file.isFile()){
+		for (File file : listFile) {
+			if (file.isFile()) {
 				files.add(file);
 			}
 		}
 		return files;
 	}
-    
-    public void importFile(File file, String fileName, Provider provider) throws JAXBException,
-		Exception {
+
+	public void importFile(File file, String fileName, Provider provider)
+			throws JAXBException, Exception {
 		log.info("start import file :" + fileName);
 		billingAccountsWarning = new BillingAccounts();
 		billingAccountsError = new BillingAccounts();
@@ -205,15 +211,16 @@ public class ImportAccountsJob implements Job {
 
 		accountImportHisto.setExecutionDate(new Date());
 		accountImportHisto.setFileName(fileName);
-		User userJob = userService.findById(new Long(param.getProperty("connectorCRM.userId")));
+		User userJob = userService.findById(new Long(param
+				.getProperty("connectorCRM.userId")));
 		if (file.length() < 83) {
 			createBillingAccountWarning(null, "Fichier vide");
-			generateReport(fileName,provider);
+			generateReport(fileName, provider);
 			createHistory(provider, userJob);
 			return;
 		}
-		BillingAccounts billingAccounts = (BillingAccounts) JAXBUtils.unmarshaller(
-				BillingAccounts.class, file);
+		BillingAccounts billingAccounts = (BillingAccounts) JAXBUtils
+				.unmarshaller(BillingAccounts.class, file);
 		log.debug("parsing file ok");
 
 		int i = -1;
@@ -224,7 +231,8 @@ public class ImportAccountsJob implements Job {
 		}
 		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts
 				.getBillingAccount()) {
-			nbUserAccounts += billAccount.getUserAccounts().getUserAccount().size();
+			nbUserAccounts += billAccount.getUserAccounts().getUserAccount()
+					.size();
 		}
 
 		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts
@@ -235,15 +243,15 @@ public class ImportAccountsJob implements Job {
 			org.meveo.model.payments.CustomerAccount customerAccount = null;
 			boolean existBillingAccount = false;
 			try {
-				log.debug("billingAccount found code:"
-						+ billAccount.getCode());
+				log.debug("billingAccount found code:" + billAccount.getCode());
 				try {
-					billingAccount = billingAccountService.findByCode(billAccount
-							.getCode(),provider);
+					billingAccount = billingAccountService.findByCode(
+							billAccount.getCode(), provider);
 				} catch (Exception e) {
 				}
 				if (billingAccount != null) {
-					log.info("file1:" + fileName + ", typeEntity:BillingAccount, index:" + i
+					log.info("file1:" + fileName
+							+ ", typeEntity:BillingAccount, index:" + i
 							+ ", code:" + billAccount.getCode()
 							+ ", status:Ignored");
 					nbBillingAccountsIgnored++;
@@ -252,43 +260,49 @@ public class ImportAccountsJob implements Job {
 				if (!existBillingAccount) {
 					BillingCycle billingCycle = null;
 					try {
-						billingCycle = billingCycleService.findByBillingCycleCode(
-								billAccount.getBillingCycle(), provider);
+						billingCycle = billingCycleService
+								.findByBillingCycleCode(
+										billAccount.getBillingCycle(), provider);
 					} catch (Exception e) {
 
 					}
 					if (billingCycle == null) {
 						nbBillingAccountsError++;
-						log.info("file2:" + fileName + ", typeEntity:BillingAccount, index:"
-								+ i + ", code:" + billAccount.getCode()
+						log.info("file2:" + fileName
+								+ ", typeEntity:BillingAccount, index:" + i
+								+ ", code:" + billAccount.getCode()
 								+ ", status:Error");
 						continue;
 					}
 					try {
-						customerAccount = customerAccountService.findByCode(billAccount
-								.getCustomerAccountId(),provider);
+						customerAccount = customerAccountService.findByCode(
+								billAccount.getCustomerAccountId(), provider);
 					} catch (Exception e) {
 					}
 					if (customerAccount == null) {
-						createBillingAccountError(billAccount, "Cannot find CustomerAccount");
+						createBillingAccountError(billAccount,
+								"Cannot find CustomerAccount");
 						nbBillingAccountsError++;
-						log.info("file3:" + fileName + ", typeEntity:BillingAccount, index:"
-								+ i + ", code:" + billAccount.getCode()
+						log.info("file3:" + fileName
+								+ ", typeEntity:BillingAccount, index:" + i
+								+ ", code:" + billAccount.getCode()
 								+ ", status:Error");
 						continue;
 					}
 					if (billingAccountCheckError(billAccount)) {
 						nbBillingAccountsError++;
-						log.info("file4:" + fileName + ", typeEntity:BillingAccount, index:"
-								+ i + ", code:" + billAccount.getCode()
+						log.info("file4:" + fileName
+								+ ", typeEntity:BillingAccount, index:" + i
+								+ ", code:" + billAccount.getCode()
 								+ ", status:Error");
 						continue;
 					}
 
 					if (billingAccountCheckWarning(billAccount)) {
 						nbBillingAccountsWarning++;
-						log.info("file5:" + fileName + ", typeEntity:BillingAccount,  index:"
-								+ i + " code:" + billAccount.getCode()
+						log.info("file5:" + fileName
+								+ ", typeEntity:BillingAccount,  index:" + i
+								+ " code:" + billAccount.getCode()
 								+ ", status:Warning");
 					}
 					billingAccount = new BillingAccount();
@@ -296,80 +310,108 @@ public class ImportAccountsJob implements Job {
 					billingAccount.setBillingCycle(billingCycle);
 					billingAccount.setCustomerAccount(customerAccount);
 					billingAccount.setCode(billAccount.getCode());
-					billingAccount.setSubscriptionDate(DateUtils.parseDateWithPattern(
-							billAccount.getSubscriptionDate(),
-							param.getProperty("connectorCRM.dateFormat")));
+					billingAccount.setSubscriptionDate(DateUtils
+							.parseDateWithPattern(billAccount
+									.getSubscriptionDate(), param
+									.getProperty("connectorCRM.dateFormat")));
 					billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 					billingAccount.setStatusDate(new Date());
 					billingAccount.setDescription(billAccount.getDescription());
-					billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount
-							.getPaymentMethod()));
+					billingAccount.setPaymentMethod(PaymentMethodEnum
+							.valueOf(billAccount.getPaymentMethod()));
 					if (billAccount.getBankCoordinates() != null
-							&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()) || "TIP"
-									.equalsIgnoreCase(billAccount.getPaymentMethod()))) {
+							&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount
+									.getPaymentMethod()) || "TIP"
+									.equalsIgnoreCase(billAccount
+											.getPaymentMethod()))) {
 						BankCoordinates bankCoordinates = new BankCoordinates();
-						bankCoordinates.setAccountNumber(billAccount.getBankCoordinates()
-								.getAccountNumber() == null ? "" : billAccount
-								.getBankCoordinates().getAccountNumber());
-						bankCoordinates.setAccountOwner(billAccount.getBankCoordinates()
-								.getAccountName() == null ? "" : billAccount
-								.getBankCoordinates().getAccountName());
-						bankCoordinates.setBankCode(billAccount.getBankCoordinates()
-								.getBankCode() == null ? "" : billAccount.getBankCoordinates()
-								.getBankCode());
-						bankCoordinates.setBranchCode(billAccount.getBankCoordinates()
-								.getBranchCode() == null ? "" : billAccount
-								.getBankCoordinates().getBranchCode());
 						bankCoordinates
-								.setIban(billAccount.getBankCoordinates().getIBAN() == null ? ""
-										: billAccount.getBankCoordinates().getIBAN());
+								.setAccountNumber(billAccount
+										.getBankCoordinates()
+										.getAccountNumber() == null ? ""
+										: billAccount.getBankCoordinates()
+												.getAccountNumber());
 						bankCoordinates
-								.setKey(billAccount.getBankCoordinates().getKey() == null ? ""
-										: billAccount.getBankCoordinates().getKey());
+								.setAccountOwner(billAccount
+										.getBankCoordinates().getAccountName() == null ? ""
+										: billAccount.getBankCoordinates()
+												.getAccountName());
+						bankCoordinates
+								.setBankCode(billAccount.getBankCoordinates()
+										.getBankCode() == null ? ""
+										: billAccount.getBankCoordinates()
+												.getBankCode());
+						bankCoordinates
+								.setBranchCode(billAccount.getBankCoordinates()
+										.getBranchCode() == null ? ""
+										: billAccount.getBankCoordinates()
+												.getBranchCode());
+						bankCoordinates.setIban(billAccount
+								.getBankCoordinates().getIBAN() == null ? ""
+								: billAccount.getBankCoordinates().getIBAN());
+						bankCoordinates.setKey(billAccount.getBankCoordinates()
+								.getKey() == null ? "" : billAccount
+								.getBankCoordinates().getKey());
 						billingAccount.setBankCoordinates(bankCoordinates);
 					}
 
 					Address address = new Address();
 					if (billAccount.getAddress() != null) {
-						address.setAddress1(billAccount.getAddress().getAddress1());
-						address.setAddress2(billAccount.getAddress().getAddress2());
-						address.setAddress3(billAccount.getAddress().getAddress3());
+						address.setAddress1(billAccount.getAddress()
+								.getAddress1());
+						address.setAddress2(billAccount.getAddress()
+								.getAddress2());
+						address.setAddress3(billAccount.getAddress()
+								.getAddress3());
 						address.setCity(billAccount.getAddress().getCity());
-						address.setCountry(billAccount.getAddress().getCountry());
-						address.setZipCode("" + billAccount.getAddress().getZipCode());
+						address.setCountry(billAccount.getAddress()
+								.getCountry());
+						address.setZipCode(""
+								+ billAccount.getAddress().getZipCode());
 						address.setState(billAccount.getAddress().getState());
 					}
 					billingAccount.setAddress(address);
-					billingAccount.setElectronicBilling("1".equalsIgnoreCase(billAccount
-							.getElectronicBilling()));
+					billingAccount.setElectronicBilling("1"
+							.equalsIgnoreCase(billAccount
+									.getElectronicBilling()));
 					billingAccount.setEmail(billAccount.getEmail());
-					billingAccount.setExternalRef1(billAccount.getExternalRef1());
-					billingAccount.setExternalRef2(billAccount.getExternalRef2());
+					billingAccount.setExternalRef1(billAccount
+							.getExternalRef1());
+					billingAccount.setExternalRef2(billAccount
+							.getExternalRef2());
 					org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 					if (billAccount.getName() != null) {
 						name.setFirstName(billAccount.getName().getFirstname());
 						name.setLastName(billAccount.getName().getName());
-						name.setTitle(titleService.findByCode(provider, billAccount.getName()
-								.getTitle().trim()));
+						name.setTitle(titleService.findByCode(provider,
+								billAccount.getName().getTitle().trim()));
 						billingAccount.setName(name);
 					}
-					billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode(), provider));
-					billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billAccount.getTradingLanguageCode(), provider));
-						
+					billingAccount.setTradingCountry(tradingCountryService
+							.findByTradingCountryCode(
+									billAccount.getTradingCountryCode(),
+									provider));
+					billingAccount.setTradingLanguage(tradingLanguageService
+							.findByTradingLanguageCode(
+									billAccount.getTradingLanguageCode(),
+									provider));
+
 					billingAccount.setProvider(provider);
 
 					billingAccountService.create(billingAccount, userJob);
-					log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i
+					log.info("file6:" + fileName
+							+ ", typeEntity:BillingAccount, index:" + i
 							+ ", code:" + billAccount.getCode()
 							+ ", status:Created");
 					nbBillingAccountsCreated++;
 				}
 			} catch (Exception e) {
-				createBillingAccountError(billAccount, ExceptionUtils.getRootCause(e)
-						.getMessage());
+				createBillingAccountError(billAccount, ExceptionUtils
+						.getRootCause(e).getMessage());
 				nbBillingAccountsError++;
-				log.info("file7:" + fileName + ", typeEntity:BillingAccount, index:" + i
-						+ ", code:" + billAccount.getCode() + ", status:Error");
+				log.info("file7:" + fileName
+						+ ", typeEntity:BillingAccount, index:" + i + ", code:"
+						+ billAccount.getCode() + ", status:Error");
 				e.printStackTrace();
 			}
 
@@ -380,44 +422,52 @@ public class ImportAccountsJob implements Job {
 					UserAccount userAccount = null;
 					log.debug("userAccount found code:" + uAccount.getCode());
 					try {
-						userAccount = userAccountService.findByCode(uAccount
-								.getCode(),provider);
+						userAccount = userAccountService.findByCode(
+								uAccount.getCode(), provider);
 					} catch (Exception e) {
 					}
 					if (userAccount != null) {
 						nbUserAccountsIgnored++;
-						log.info("file:" + fileName
-								+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " code:"
+						log.info("file:"
+								+ fileName
+								+ ", typeEntity:UserAccount,  indexBillingAccount:"
+								+ i + ", index:" + j + " code:"
 								+ uAccount.getCode() + ", status:Ignored");
 						continue;
 					}
 					if (userAccountCheckError(billAccount, uAccount)) {
 						nbUserAccountsError++;
-						log.info("file:" + fileName
-								+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " code:"
+						log.info("file:"
+								+ fileName
+								+ ", typeEntity:UserAccount,  indexBillingAccount:"
+								+ i + ", index:" + j + " code:"
 								+ uAccount.getCode() + ", status:Error");
 						continue;
 					}
 					if (userAccountCheckWarning(billAccount, uAccount)) {
 						nbUserAccountsWarning++;
-						log.info("file:" + fileName
-								+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-								+ ", index:" + j + " code:"
+						log.info("file:"
+								+ fileName
+								+ ", typeEntity:UserAccount,  indexBillingAccount:"
+								+ i + ", index:" + j + " code:"
 								+ uAccount.getCode() + ", status:Warning");
 					}
 					userAccount = new UserAccount();
 					userAccount.setBillingAccount(billingAccount);
 					Address addressUA = new Address();
 					if (uAccount.getAddress() != null) {
-						addressUA.setAddress1(uAccount.getAddress().getAddress1());
-						addressUA.setAddress2(uAccount.getAddress().getAddress2());
-						addressUA.setAddress3(uAccount.getAddress().getAddress3());
+						addressUA.setAddress1(uAccount.getAddress()
+								.getAddress1());
+						addressUA.setAddress2(uAccount.getAddress()
+								.getAddress2());
+						addressUA.setAddress3(uAccount.getAddress()
+								.getAddress3());
 						addressUA.setCity(uAccount.getAddress().getCity());
-						addressUA.setCountry(uAccount.getAddress().getCountry());
+						addressUA
+								.setCountry(uAccount.getAddress().getCountry());
 						addressUA.setState(uAccount.getAddress().getState());
-						addressUA.setZipCode("" + uAccount.getAddress().getZipCode());
+						addressUA.setZipCode(""
+								+ uAccount.getAddress().getZipCode());
 					}
 					userAccount.setAddress(addressUA);
 					userAccount.setCode(uAccount.getCode());
@@ -428,42 +478,43 @@ public class ImportAccountsJob implements Job {
 					if (uAccount.getName() != null) {
 						nameUA.setFirstName(uAccount.getName().getFirstname());
 						nameUA.setLastName(uAccount.getName().getName());
-						nameUA.setTitle(titleService.findByCode(provider, uAccount.getName()
-								.getTitle().trim()));
+						nameUA.setTitle(titleService.findByCode(provider,
+								uAccount.getName().getTitle().trim()));
 						userAccount.setName(nameUA);
 					}
 
 					userAccount.setStatus(AccountStatusEnum.ACTIVE);
 					userAccount.setStatusDate(new Date());
 					userAccount.setProvider(provider);
-					userAccountService.createUserAccount(billingAccount, userAccount,
-							userJob);
+					userAccountService.createUserAccount(billingAccount,
+							userAccount, userJob);
 					log.info("file:" + fileName
-							+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-							+ ", index:" + j + " code:" + uAccount.getCode()
-							+ ", status:Created");
+							+ ", typeEntity:UserAccount,  indexBillingAccount:"
+							+ i + ", index:" + j + " code:"
+							+ uAccount.getCode() + ", status:Created");
 					nbUserAccountsCreated++;
 				} catch (Exception e) {
-					createUserAccountError(billAccount, uAccount, ExceptionUtils
-							.getRootCause(e).getMessage());
+					createUserAccountError(billAccount, uAccount,
+							ExceptionUtils.getRootCause(e).getMessage());
 					nbUserAccountsError++;
 					log.info("file:" + fileName
-							+ ", typeEntity:UserAccount,  indexBillingAccount:" + i
-							+ ", index:" + j + " code:" + uAccount.getCode()
-							+ ", status:Error");
+							+ ", typeEntity:UserAccount,  indexBillingAccount:"
+							+ i + ", index:" + j + " code:"
+							+ uAccount.getCode() + ", status:Error");
 					e.printStackTrace();
 				}
 			}
 		}
-		generateReport(fileName,provider);
+		generateReport(fileName, provider);
 		createHistory(provider, userJob);
 		log.info("end import file ");
-	} 
+	}
 
-    	
-	private void createBillingAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private void createBillingAccountError(
+			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			String cause) {
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject");
+		String generateFullCrmReject = param
+				.getProperty("connectorCRM.generateFullCrmReject");
 		ErrorBillingAccount errorBillingAccount = new ErrorBillingAccount();
 		errorBillingAccount.setCause(cause);
 		errorBillingAccount.setCode(billAccount.getCode());
@@ -474,12 +525,15 @@ public class ImportAccountsJob implements Job {
 		if (billingAccountsError.getErrors() == null) {
 			billingAccountsError.setErrors(new Errors());
 		}
-		billingAccountsError.getErrors().getErrorBillingAccount().add(errorBillingAccount);
+		billingAccountsError.getErrors().getErrorBillingAccount()
+				.add(errorBillingAccount);
 	}
 
-	private void createUserAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private void createUserAccountError(
+			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject");
+		String generateFullCrmReject = param
+				.getProperty("connectorCRM.generateFullCrmReject");
 		ErrorUserAccount errorUserAccount = new ErrorUserAccount();
 		errorUserAccount.setCause(cause);
 		errorUserAccount.setCode(uAccount.getCode());
@@ -492,29 +546,37 @@ public class ImportAccountsJob implements Job {
 			billingAccountsError.getBillingAccount().add(billAccount);
 		}
 
-		billingAccountsError.getErrors().getErrorUserAccount().add(errorUserAccount);
+		billingAccountsError.getErrors().getErrorUserAccount()
+				.add(errorUserAccount);
 	}
 
 	private void createBillingAccountWarning(
-			org.meveo.model.jaxb.account.BillingAccount billAccount, String cause) {
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject");
+			org.meveo.model.jaxb.account.BillingAccount billAccount,
+			String cause) {
+		String generateFullCrmReject = param
+				.getProperty("connectorCRM.generateFullCrmReject");
 		WarningBillingAccount warningBillingAccount = new WarningBillingAccount();
 		warningBillingAccount.setCause(cause);
-		warningBillingAccount.setCode(billAccount == null ? "" : billAccount.getCode());
+		warningBillingAccount.setCode(billAccount == null ? "" : billAccount
+				.getCode());
 		if (!billingAccountsWarning.getBillingAccount().contains(billAccount)
-				&& "true".equalsIgnoreCase(generateFullCrmReject) && billAccount != null) {
+				&& "true".equalsIgnoreCase(generateFullCrmReject)
+				&& billAccount != null) {
 			billingAccountsWarning.getBillingAccount().add(billAccount);
 		}
 		if (billingAccountsWarning.getWarnings() == null) {
 			billingAccountsWarning.setWarnings(new Warnings());
 		}
-		billingAccountsWarning.getWarnings().getWarningBillingAccount().add(warningBillingAccount);
+		billingAccountsWarning.getWarnings().getWarningBillingAccount()
+				.add(warningBillingAccount);
 	}
 
 	@SuppressWarnings("unused")
-	private void createUserAccountWarning(org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private void createUserAccountWarning(
+			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject");
+		String generateFullCrmReject = param
+				.getProperty("connectorCRM.generateFullCrmReject");
 		WarningUserAccount warningUserAccount = new WarningUserAccount();
 		warningUserAccount.setCause(cause);
 		warningUserAccount.setCode(uAccount.getCode());
@@ -526,102 +588,97 @@ public class ImportAccountsJob implements Job {
 		if (billingAccountsWarning.getWarnings() == null) {
 			billingAccountsWarning.setWarnings(new Warnings());
 		}
-		billingAccountsWarning.getWarnings().getWarningUserAccount().add(warningUserAccount);
+		billingAccountsWarning.getWarnings().getWarningUserAccount()
+				.add(warningUserAccount);
 	}
 
-	private boolean billingAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount) {
-		/*if (StringUtils.isBlank(billAccount.getExternalRef1())) {
-			createBillingAccountError(billAccount, "ExternalRef1 is null");
-			return true;
-		}
-		if (StringUtils.isBlank(billAccount.getBillingCycle())) {
-			createBillingAccountError(billAccount, "BillingCycle is null");
-			return true;
-		}
-		if (billAccount.getName() == null) {
-			createBillingAccountError(billAccount, "Name is null");
-			return true;
-		}
-		if (StringUtils.isBlank(billAccount.getName().getTitle())) {
-			createBillingAccountError(billAccount, "Title is null");
-			return true;
-		}
-		if (StringUtils.isBlank(billAccount.getPaymentMethod())
-				|| ("DIRECTDEBIT" + "CHECK" + "TIP" + "WIRETRANSFER").indexOf(billAccount
-						.getPaymentMethod()) == -1) {
-			createBillingAccountError(billAccount,
-					"PaymentMethod is null,or not in {DIRECTDEBIT,CHECK,TIP,WIRETRANSFER}");
-			return true;
-		}*/
+	private boolean billingAccountCheckError(
+			org.meveo.model.jaxb.account.BillingAccount billAccount) {
+		/*
+		 * if (StringUtils.isBlank(billAccount.getExternalRef1())) {
+		 * createBillingAccountError(billAccount, "ExternalRef1 is null");
+		 * return true; } if
+		 * (StringUtils.isBlank(billAccount.getBillingCycle())) {
+		 * createBillingAccountError(billAccount, "BillingCycle is null");
+		 * return true; } if (billAccount.getName() == null) {
+		 * createBillingAccountError(billAccount, "Name is null"); return true;
+		 * } if (StringUtils.isBlank(billAccount.getName().getTitle())) {
+		 * createBillingAccountError(billAccount, "Title is null"); return true;
+		 * } if (StringUtils.isBlank(billAccount.getPaymentMethod()) ||
+		 * ("DIRECTDEBIT" + "CHECK" + "TIP" +
+		 * "WIRETRANSFER").indexOf(billAccount .getPaymentMethod()) == -1) {
+		 * createBillingAccountError(billAccount,
+		 * "PaymentMethod is null,or not in {DIRECTDEBIT,CHECK,TIP,WIRETRANSFER}"
+		 * ); return true; }
+		 */
 		if ("DIRECTDEBIT".equals(billAccount.getPaymentMethod())) {
 			if (billAccount.getBankCoordinates() == null) {
-				createBillingAccountError(billAccount, "BankCoordinates is null");
+				createBillingAccountError(billAccount,
+						"BankCoordinates is null");
 				return true;
 			}
-			if (StringUtils.isBlank(billAccount.getBankCoordinates().getAccountName())) {
-				createBillingAccountError(billAccount, "BankCoordinates.AccountName is null");
+			if (StringUtils.isBlank(billAccount.getBankCoordinates()
+					.getAccountName())) {
+				createBillingAccountError(billAccount,
+						"BankCoordinates.AccountName is null");
 				return true;
 			}
-			if (StringUtils.isBlank(billAccount.getBankCoordinates().getAccountNumber())) {
-				createBillingAccountError(billAccount, "BankCoordinates.AccountNumber is null");
+			if (StringUtils.isBlank(billAccount.getBankCoordinates()
+					.getAccountNumber())) {
+				createBillingAccountError(billAccount,
+						"BankCoordinates.AccountNumber is null");
 				return true;
 			}
-			if (StringUtils.isBlank(billAccount.getBankCoordinates().getBankCode())) {
-				createBillingAccountError(billAccount, "BankCoordinates.BankCode is null");
+			if (StringUtils.isBlank(billAccount.getBankCoordinates()
+					.getBankCode())) {
+				createBillingAccountError(billAccount,
+						"BankCoordinates.BankCode is null");
 				return true;
 			}
-			if (StringUtils.isBlank(billAccount.getBankCoordinates().getBranchCode())) {
-				createBillingAccountError(billAccount, "BankCoordinates.BranchCode is null");
+			if (StringUtils.isBlank(billAccount.getBankCoordinates()
+					.getBranchCode())) {
+				createBillingAccountError(billAccount,
+						"BankCoordinates.BranchCode is null");
 				return true;
 			}
 		}
-		/*if (billAccount.getAddress() == null
-				|| StringUtils.isBlank(billAccount.getAddress().getZipCode())) {
-			createBillingAccountError(billAccount, "ZipCode is null");
-			return true;
-		}
-		if (billAccount.getAddress() == null
-				|| StringUtils.isBlank(billAccount.getAddress().getCity())) {
-			createBillingAccountError(billAccount, "City is null");
-			return true;
-		}
-		if (billAccount.getAddress() == null
-				|| StringUtils.isBlank(billAccount.getAddress().getCountry())) {
-			createBillingAccountError(billAccount, "Country is null");
-			return true;
-		}*/
+		/*
+		 * if (billAccount.getAddress() == null ||
+		 * StringUtils.isBlank(billAccount.getAddress().getZipCode())) {
+		 * createBillingAccountError(billAccount, "ZipCode is null"); return
+		 * true; } if (billAccount.getAddress() == null ||
+		 * StringUtils.isBlank(billAccount.getAddress().getCity())) {
+		 * createBillingAccountError(billAccount, "City is null"); return true;
+		 * } if (billAccount.getAddress() == null ||
+		 * StringUtils.isBlank(billAccount.getAddress().getCountry())) {
+		 * createBillingAccountError(billAccount, "Country is null"); return
+		 * true; }
+		 */
 		return false;
 	}
 
-	private boolean userAccountCheckError(org.meveo.model.jaxb.account.BillingAccount billAccount,
+	private boolean userAccountCheckError(
+			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount) {
-		/*if (StringUtils.isBlank(uAccount.getExternalRef1())) {
-			createUserAccountError(billAccount, uAccount, "ExternalRef1 is null");
-			return true;
-		}
-		if (uAccount.getName() == null) {
-			createUserAccountError(billAccount, uAccount, "Name is null");
-			return true;
-		}
-		if (StringUtils.isBlank(uAccount.getName().getTitle())) {
-			createUserAccountError(billAccount, uAccount, "Title is null");
-			return true;
-		}
-		if (billAccount.getAddress() == null
-				|| StringUtils.isBlank(uAccount.getAddress().getZipCode())) {
-			createUserAccountError(billAccount, uAccount, "ZipCode is null");
-			return true;
-		}
-		if (billAccount.getAddress() == null
-				|| StringUtils.isBlank(uAccount.getAddress().getCity())) {
-			createUserAccountError(billAccount, uAccount, "City is null");
-			return true;
-		}
-		if (billAccount.getAddress() == null
-				|| StringUtils.isBlank(uAccount.getAddress().getCountry())) {
-			createUserAccountError(billAccount, uAccount, "Country is null");
-			return true;
-		}*/
+		/*
+		 * if (StringUtils.isBlank(uAccount.getExternalRef1())) {
+		 * createUserAccountError(billAccount, uAccount,
+		 * "ExternalRef1 is null"); return true; } if (uAccount.getName() ==
+		 * null) { createUserAccountError(billAccount, uAccount,
+		 * "Name is null"); return true; } if
+		 * (StringUtils.isBlank(uAccount.getName().getTitle())) {
+		 * createUserAccountError(billAccount, uAccount, "Title is null");
+		 * return true; } if (billAccount.getAddress() == null ||
+		 * StringUtils.isBlank(uAccount.getAddress().getZipCode())) {
+		 * createUserAccountError(billAccount, uAccount, "ZipCode is null");
+		 * return true; } if (billAccount.getAddress() == null ||
+		 * StringUtils.isBlank(uAccount.getAddress().getCity())) {
+		 * createUserAccountError(billAccount, uAccount, "City is null"); return
+		 * true; } if (billAccount.getAddress() == null ||
+		 * StringUtils.isBlank(uAccount.getAddress().getCountry())) {
+		 * createUserAccountError(billAccount, uAccount, "Country is null");
+		 * return true; }
+		 */
 
 		return false;
 	}
@@ -653,26 +710,34 @@ public class ImportAccountsJob implements Job {
 		}
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates().getBranchCode())) {
-			createBillingAccountWarning(billAccount, "BankCoordinates.BranchCode is null");
+				&& StringUtils.isBlank(billAccount.getBankCoordinates()
+						.getBranchCode())) {
+			createBillingAccountWarning(billAccount,
+					"BankCoordinates.BranchCode is null");
 			isWarning = true;
 		}
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates().getAccountNumber())) {
-			createBillingAccountWarning(billAccount, "BankCoordinates.AccountNumber is null");
+				&& StringUtils.isBlank(billAccount.getBankCoordinates()
+						.getAccountNumber())) {
+			createBillingAccountWarning(billAccount,
+					"BankCoordinates.AccountNumber is null");
 			isWarning = true;
 		}
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates().getBankCode())) {
-			createBillingAccountWarning(billAccount, "BankCoordinates.BankCode is null");
+				&& StringUtils.isBlank(billAccount.getBankCoordinates()
+						.getBankCode())) {
+			createBillingAccountWarning(billAccount,
+					"BankCoordinates.BankCode is null");
 			isWarning = true;
 		}
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
-				&& StringUtils.isBlank(billAccount.getBankCoordinates().getKey())) {
-			createBillingAccountWarning(billAccount, "BankCoordinates.Key is null");
+				&& StringUtils.isBlank(billAccount.getBankCoordinates()
+						.getKey())) {
+			createBillingAccountWarning(billAccount,
+					"BankCoordinates.Key is null");
 			isWarning = true;
 		}
 		return isWarning;
@@ -697,40 +762,44 @@ public class ImportAccountsJob implements Job {
 		return isWarning;
 	}
 
-	private void generateReport(String fileName,Provider provider) throws Exception {
+	private void generateReport(String fileName, Provider provider)
+			throws Exception {
 		if (billingAccountsWarning.getWarnings() != null) {
-			String warningDir = importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output"+File.separator+"warnings";
+			String warningDir = importDir + File.separator + provider.getCode()
+					+ File.separator + "accounts" + File.separator + "output"
+					+ File.separator + "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(
-					billingAccountsWarning,
-					new File(warningDir
-							+ File.separator
-							+ "WARN_"
-							+ fileName));
+			JAXBUtils.marshaller(billingAccountsWarning, new File(warningDir
+					+ File.separator + "WARN_" + fileName));
 		}
 		if (billingAccountsError.getErrors() != null) {
-			String errorDir = importDir+File.separator+provider.getCode()+File.separator+"accounts"+File.separator+"output"+File.separator+"errors";
-			
+			String errorDir = importDir + File.separator + provider.getCode()
+					+ File.separator + "accounts" + File.separator + "output"
+					+ File.separator + "errors";
+
 			File dir = new File(errorDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			JAXBUtils.marshaller(billingAccountsError,
-					new File(errorDir
-							+ File.separator +"ERR_"+ fileName));
+			JAXBUtils.marshaller(billingAccountsError, new File(errorDir
+					+ File.separator + "ERR_" + fileName));
 		}
 
 	}
 
-	private void createHistory(Provider provider, User userJob) throws Exception {
+	private void createHistory(Provider provider, User userJob)
+			throws Exception {
 		accountImportHisto.setNbBillingAccounts(nbBillingAccounts);
-		accountImportHisto.setNbBillingAccountsCreated(nbBillingAccountsCreated);
+		accountImportHisto
+				.setNbBillingAccountsCreated(nbBillingAccountsCreated);
 		accountImportHisto.setNbBillingAccountsError(nbBillingAccountsError);
-		accountImportHisto.setNbBillingAccountsIgnored(nbBillingAccountsIgnored);
-		accountImportHisto.setNbBillingAccountsWarning(nbBillingAccountsWarning);
+		accountImportHisto
+				.setNbBillingAccountsIgnored(nbBillingAccountsIgnored);
+		accountImportHisto
+				.setNbBillingAccountsWarning(nbBillingAccountsWarning);
 		accountImportHisto.setNbUserAccounts(nbUserAccounts);
 		accountImportHisto.setNbUserAccountsCreated(nbUserAccountsCreated);
 		accountImportHisto.setNbUserAccountsError(nbUserAccountsError);
@@ -739,31 +808,38 @@ public class ImportAccountsJob implements Job {
 		accountImportHisto.setProvider(provider);
 		accountImportHistoService.create(accountImportHisto, userJob);
 	}
+
 	@Override
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression,TimerInfo infos) {
+	public TimerHandle createTimer(ScheduleExpression scheduleExpression,
+			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		Timer timer = timerService.createCalendarTimer(scheduleExpression,timerConfig);
+		Timer timer = timerService.createCalendarTimer(scheduleExpression,
+				timerConfig);
 		return timer.getHandle();
 	}
 
-	boolean running=false;
-    @Timeout
-    public void trigger(Timer timer){
-        TimerInfo info = (TimerInfo) timer.getInfo();
-        if(!running && info.isActive()){
-            try{
-                running=true;
-                Provider provider=providerService.findById(info.getProviderId());
-                JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info,provider);
-            } catch(Exception e){
-                e.printStackTrace();
-            } finally{
-                running = false;
-            }
-        }
-    }
+	boolean running = false;
+
+	@Timeout
+	public void trigger(Timer timer) {
+		TimerInfo info = (TimerInfo) timer.getInfo();
+		if (!running && info.isActive()) {
+			try {
+				running = true;
+				Provider provider = providerService.findById(info
+						.getProviderId());
+				JobExecutionResult result = execute(info.getParametres(),
+						provider);
+				jobExecutionService.persistResult(this, result, info, provider);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				running = false;
+			}
+		}
+	}
+
 	@Override
 	public Collection<Timer> getTimers() {
 		// TODO Auto-generated method stub
