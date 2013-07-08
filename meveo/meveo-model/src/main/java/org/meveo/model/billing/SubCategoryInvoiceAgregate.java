@@ -18,6 +18,7 @@ package org.meveo.model.billing;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,7 +40,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "SUB_CATEGORY_TAX")
 	private Tax subCategoryTax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "CATEGORY_INVOICE_AGREGATE")
 	private CategoryInvoiceAgregate categoryInvoiceAgregate;
 

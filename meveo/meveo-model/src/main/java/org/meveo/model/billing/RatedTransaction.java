@@ -90,15 +90,15 @@ public class RatedTransaction extends BaseEntity {
 	@JoinColumn(name = "INVOICE_ID")
 	private Invoice invoice;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_F")
 	private SubCategoryInvoiceAgregate invoiceAgregateF;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_R")
 	private CategoryInvoiceAgregate invoiceAgregateR;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_T")
 	private TaxInvoiceAgregate invoiceAgregateT;
 
@@ -120,7 +120,7 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax,
 			BigDecimal unitAmountTax, BigDecimal quantity,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider) {
+			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider, WalletInstance wallet,InvoiceSubCategory invoiceSubCategory) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -132,6 +132,8 @@ public class RatedTransaction extends BaseEntity {
 		this.amountWithTax = amountWithTax;
 		this.amountTax = amountTax;
 		this.status = status;
+		this.wallet=wallet;
+		this.invoiceSubCategory=invoiceSubCategory;
 		setProvider(provider);
 	}
 
