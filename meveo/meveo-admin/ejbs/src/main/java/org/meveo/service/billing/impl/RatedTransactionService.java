@@ -226,10 +226,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  String ids="";
 		  String sep="";
 		  for(BillingAccount ba: billingAccounts){
-			  ids=sep+ba.getId();
+			  ids=ids+sep+ba.getId();
 			  sep=",";
 		  }
-		  qb.addSql("c.wallet.userAccount.billingAccount.id in ("+ids+")");
+		  qb.addSql("c.billingAccount.id in ("+ids+")");
 		  
 		  List<Object[]> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
 		  Object[]  ratedTrans=ratedTransactions.size()>0?ratedTransactions.get(0):null;
@@ -464,19 +464,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         int itemNumber = invoiceAgregate.getItemNumber() != null ? invoiceAgregate.getItemNumber() + 1 : 1;
         invoiceAgregate.setItemNumber(itemNumber);
     }
-    public void updateRatedTransactions(BillingRun billingRun,List<BillingAccount> billingAccounts,RatedTransactionStatusEnum status){
-    	  /***TODO : à traiter : la clause IN  est limité à N élements (ex : 1000 pr oracle)****/
-		  List<Long> ids=new ArrayList<Long>();
-		  for(BillingAccount ba: billingAccounts){
-			  ids.add(ba.getId());
-		  }
+    public void updateRatedTransactions(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice){
+    	
 		  Query query=getEntityManager().createQuery(
-                  "UPDATE RatedTransaction SET billingRun=:billingRun where invoice is null and status=:status and doNotTriggerInvoicing=:invoicing and amountWithoutTax<>:zeroValue and wallet.userAccount.billingAccount.id IN :ids");
+                  "UPDATE RatedTransaction r SET r.billingRun=:billingRun,invoice=:invoice,status=:newStatus where r.invoice is null and r.status=:status and r.doNotTriggerInvoicing=:invoicing and r.amountWithoutTax<>:zeroValue and r.billingAccount=:billingAccount");
          query.setParameter("billingRun", billingRun);
+         query.setParameter("invoice", invoice);
+         query.setParameter("newStatus", RatedTransactionStatusEnum.BILLED);
          query.setParameter("status", RatedTransactionStatusEnum.OPEN);
          query.setParameter("invoicing", false);
          query.setParameter("zeroValue", BigDecimal.ZERO);
-         query.setParameter("ids", ids);
+         query.setParameter("billingAccount", billingAccount);
+         
         
 		  query.executeUpdate();
 		  

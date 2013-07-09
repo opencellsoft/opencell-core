@@ -97,7 +97,6 @@ public class InvoicingJob implements Job {
 			            billingAccounts = billingRun.getSelectedBillingAccount();
 			        }
 			        ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
-			        ratedTransactionService.updateRatedTransactions(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN);
 			       
 			        billingRun.setBillingAccountNumber(billingAccounts.size());
 			        billingRun.setBillableBillingAcountNumber(billingAccounts.size());
@@ -143,7 +142,9 @@ public class InvoicingJob implements Job {
             invoice.setProvider(billingRun.getProvider());
             invoiceService.create(invoice);
             ratedTransactionService.createInvoiceAndAgregates(billingRun, billingAccount,invoice);
-            
+
+	        ratedTransactionService.updateRatedTransactions(billingRun, billingAccount,invoice);
+	        
             StringBuffer num1 = new StringBuffer("000000000");
             num1.append(invoice.getId() + "");
             String invoiceNumber = num1.substring(num1.length() - 9);
@@ -156,6 +157,9 @@ public class InvoicingJob implements Job {
             
             billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 	        billingRunService.update(billingRun);
+	        
+	        billingAccount.setBillingRun(billingRun);
+	        billingAccountService.update(billingAccount);
                
         }
 		

@@ -44,6 +44,10 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BILLING_ACCOUNT__ID")
+	private BillingAccount billingAccount;
 
 	@Column(name = "WALLET_OPERATION_ID")
 	private Long walletOperationId;
@@ -120,7 +124,7 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax,
 			BigDecimal unitAmountTax, BigDecimal quantity,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider, WalletInstance wallet,InvoiceSubCategory invoiceSubCategory) {
+			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider, WalletInstance wallet,BillingAccount billingAccount,InvoiceSubCategory invoiceSubCategory) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -133,6 +137,7 @@ public class RatedTransaction extends BaseEntity {
 		this.amountTax = amountTax;
 		this.status = status;
 		this.wallet=wallet;
+		this.billingAccount=billingAccount;
 		this.invoiceSubCategory=invoiceSubCategory;
 		setProvider(provider);
 	}
@@ -285,6 +290,14 @@ public class RatedTransaction extends BaseEntity {
 
 	public void setWalletOperationId(Long walletOperationId) {
 		this.walletOperationId = walletOperationId;
+	}
+
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
+	}
+
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
 
 
