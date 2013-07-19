@@ -46,11 +46,12 @@
 			<hf:formField label="#{messages['user.roles']}" field="roles"
 				listType="pickUpList" childField="name" required="true"
 				dualListModel="#{userBean.dualListModel}" />
-			<!-- <c:if test="#{identity.hasPermission('superAdministrateur')}"> -->
-			<hf:formField label="#{messages['user.providers']}" field="providers"
-				listType="pickUpList" childField="code" required="true"
-				dualListModel="#{userBean.providersDualListModel}" />
-			<!-- </c:if> -->
+
+			<hf:formField label="#{messages['user.providers']}"
+				rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}"
+				field="providers" listType="pickUpList" childField="code"
+				required="true" dualListModel="#{userBean.providersDualListModel}" />
+
 		</hf:formPanel>
 	</ui:define>
 
