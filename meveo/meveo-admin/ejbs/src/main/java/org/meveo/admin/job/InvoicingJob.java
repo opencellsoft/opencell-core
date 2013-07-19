@@ -100,6 +100,7 @@ public class InvoicingJob implements Job {
 				        for (BillingAccount billingAccount : billingAccounts) {
 				           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount)){
 					   	        billingAccount.setBillingRun(billingRun);
+					   	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);
 					   	        billingAccountService.update(billingAccount);
 					   	        billableBA++;
 				           }

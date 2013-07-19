@@ -512,7 +512,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  
   }
     @SuppressWarnings("unchecked")
-    public void billingAccountTotalAmounts(BillingRun billingRun,BillingAccount billingAccount,RatedTransactionStatusEnum status,boolean entreprise){
+    public void billingAccountTotalAmounts(BillingAccount billingAccount,boolean entreprise){
     	
     	 QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountWithTax),sum(amountTax) from RatedTransaction c");
 		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
@@ -525,9 +525,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  List<Object[]> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
 		  Object[]  ratedTrans=ratedTransactions.size()>0?ratedTransactions.get(0):null;
 		  if(ratedTrans!=null){
-			  billingRun.setPrAmountWithoutTax((BigDecimal)ratedTrans[0]);
-			  billingRun.setPrAmountWithTax(entreprise?(BigDecimal)ratedTrans[1]:(BigDecimal)ratedTrans[0]);
-			  billingRun.setPrAmountTax((BigDecimal)ratedTrans[2]);
+			  billingAccount.setBrAmountWithoutTax((BigDecimal)ratedTrans[0]);
+			  billingAccount.setBrAmountWithTax(entreprise?(BigDecimal)ratedTrans[1]:(BigDecimal)ratedTrans[0]);
 		  }
 		
 		  
