@@ -26,13 +26,13 @@ public class XMLInvoiceHeaderCategoryDTO {
 	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 	private BigDecimal amountWithTax = BigDecimal.ZERO;
 
-	private Map<String, RatedTransaction> ratedtransactions = new HashMap<String, RatedTransaction>();
+	private Map<Long, RatedTransaction> ratedtransactions = new HashMap<Long, RatedTransaction>();
 
-	public Map<String, RatedTransaction> getRatedtransactions() {
+	public Map<Long, RatedTransaction> getRatedtransactions() {
 		return ratedtransactions;
 	}
 
-	public void setRatedtransactions(Map<String, RatedTransaction> ratedtransactions) {
+	public void setRatedtransactions(Map<Long, RatedTransaction> ratedtransactions) {
 		this.ratedtransactions = ratedtransactions;
 	}
 

@@ -22,6 +22,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
@@ -62,7 +63,7 @@ public class InvoicingJob implements Job {
 	@Inject
 	private BillingAccountService billingAccountService;
 	
-	@EJB
+	@Inject
 	private InvoiceService invoiceService;
 
 
@@ -82,27 +83,43 @@ public class InvoicingJob implements Job {
 			log.info("# billingRuns to process:" + billingRuns.size());
 			for (BillingRun billingRun : billingRuns) {
 				try {
+					if(BillingRunStatusEnum.NEW.equals(billingRun.getStatus())){
+						BillingCycle billingCycle = billingRun.getBillingCycle();
+
+				        boolean entreprise = billingRun.getProvider().isEntreprise();
+
+				        Date startDate = billingRun.getStartDate();
+				        Date endDate = billingRun.getEndDate();
+				        endDate = endDate != null ? endDate : new Date();
+				        List<BillingAccount> billingAccounts = null;
+				        if (billingCycle != null) {
+				            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+				        }
+				        ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
+				        int billableBA=0;
+				        for (BillingAccount billingAccount : billingAccounts) {
+				           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount)){
+					   	        billingAccount.setBillingRun(billingRun);
+					   	        billingAccountService.update(billingAccount);
+					   	        billableBA++;
+				           }
+				        }
+				        billingRun.setBillingAccountNumber(billingAccounts.size());
+				        billingRun.setBillableBillingAcountNumber(billableBA);
+				        billingRun.setProcessDate(new Date());
+				        billingRun.setStatus(BillingRunStatusEnum.WAITING);
+				        billingRunService.update(billingRun);
+				        if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+				                || billingRun.getProvider().isAutomaticInvoicing()) {
+				            createAgregatesAndInvoice(billingRun);
+				        }
+				        
+					}else if(BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())){
+						 createAgregatesAndInvoice(billingRun);
+					}
 					
-					BillingCycle billingCycle = billingRun.getBillingCycle();
-
-			        boolean entreprise = billingRun.getProvider().isEntreprise();
-
-			        Date startDate = billingRun.getStartDate();
-			        Date endDate = billingRun.getEndDate();
-
-			        List<BillingAccount> billingAccounts = null;
-			        if (billingCycle != null) {
-			            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
-			        } else {
-			            billingAccounts = billingRun.getSelectedBillingAccount();
-			        }
-			        ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
 			       
-			        billingRun.setBillingAccountNumber(billingAccounts.size());
-			        billingRun.setBillableBillingAcountNumber(billingAccounts.size());
-			        billingRun.setProcessDate(new Date());
 			       
-			        createAgregatesAndInvoice(billingRun,billingAccounts);
 			        
 			       
 				} catch (Exception e) {
@@ -117,7 +134,8 @@ public class InvoicingJob implements Job {
 	}
 	
 
-	public void createAgregatesAndInvoice(BillingRun billingRun,List<BillingAccount> billingAccounts) throws BusinessException, Exception {
+	public void createAgregatesAndInvoice(BillingRun billingRun) throws BusinessException, Exception {
+		List<BillingAccount> billingAccounts=billingRun.getBillableBillingAccounts();
 		 for (BillingAccount billingAccount : billingAccounts) {
             BillingCycle billingCycle = billingRun.getBillingCycle();
             if (billingCycle == null) {
@@ -158,8 +176,6 @@ public class InvoicingJob implements Job {
             billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 	        billingRunService.update(billingRun);
 	        
-	        billingAccount.setBillingRun(billingRun);
-	        billingAccountService.update(billingAccount);
                
         }
 		

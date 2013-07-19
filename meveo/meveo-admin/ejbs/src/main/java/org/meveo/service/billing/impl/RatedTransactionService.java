@@ -302,6 +302,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  invoiceAgregateF.setProvider(billingRun.getProvider());
                  invoiceAgregateF.setInvoice(invoice);
                  invoiceAgregateF.setBillingRun(billingRun);
+                 invoiceAgregateF.setWallet(wallet);
                  invoiceAgregateF.setAccountingCode(invoiceSubCategory.getAccountingCode());
                  invoiceAgregateF.setSubCategoryTax(tax);
                  fillAgregates(invoiceAgregateF, wallet);
@@ -478,9 +479,57 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
          
         
 		  query.executeUpdate();
+ 
 		  
+    }
+    
+    public Boolean isBillingAccountBillable(BillingRun billingRun,BillingAccount billingAccount){
+    	
+    	  QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
+		  qb.addCriterionEntity("c.billingAccount", billingAccount);
+		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
+		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  qb.addSql("c.invoice is null");
+         
+
+		  List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  return ratedTransactions.size()>0?true:false;
+ 
 		  
+    }
+    public  List<RatedTransaction> getRatedTransactions(WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCategory){
+    	
+  	  QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.BILLED);
+		  qb.addCriterionEntity("c.wallet", wallet);
+		  qb.addCriterionEntity("c.invoice", invoice);
+		  qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
+
+		  List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  return ratedTransactions;
+
 		  
+  }
+    @SuppressWarnings("unchecked")
+    public void billingAccountTotalAmounts(BillingRun billingRun,BillingAccount billingAccount,RatedTransactionStatusEnum status,boolean entreprise){
+    	
+    	 QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountWithTax),sum(amountTax) from RatedTransaction c");
+		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
+		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
+		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  qb.addCriterionEntity("c.billingAccount", billingAccount);
+		  qb.addSql("c.invoice is null");
+		
+		  
+		  List<Object[]> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  Object[]  ratedTrans=ratedTransactions.size()>0?ratedTransactions.get(0):null;
+		  if(ratedTrans!=null){
+			  billingRun.setPrAmountWithoutTax((BigDecimal)ratedTrans[0]);
+			  billingRun.setPrAmountWithTax(entreprise?(BigDecimal)ratedTrans[1]:(BigDecimal)ratedTrans[0]);
+			  billingRun.setPrAmountTax((BigDecimal)ratedTrans[2]);
+		  }
+		
 		  
     }
 }

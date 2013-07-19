@@ -120,6 +120,10 @@ public class RatedTransaction extends BaseEntity {
 	
 	 
 
+	public RatedTransaction() {
+		super();
+	}
+
 	public RatedTransaction(Long walletOperationId, Date usageDate,
 			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax,
 			BigDecimal unitAmountTax, BigDecimal quantity,

@@ -122,6 +122,12 @@ public class BillingAccount extends AccountEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN")
 	private BillingRun billingRun;
+	
+	@Column(name = "BR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	private BigDecimal brAmountWithoutTax;
+
+	@Column(name = "BR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	private BigDecimal brAmountWithTax;
 
 	@Column(name = "INVOICE_PREFIX")
 	private String invoicePrefix;
@@ -315,4 +321,22 @@ public class BillingAccount extends AccountEntity {
 	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
+
+	public BigDecimal getBrAmountWithoutTax() {
+		return brAmountWithoutTax;
+	}
+
+	public void setBrAmountWithoutTax(BigDecimal brAmountWithoutTax) {
+		this.brAmountWithoutTax = brAmountWithoutTax;
+	}
+
+	public BigDecimal getBrAmountWithTax() {
+		return brAmountWithTax;
+	}
+
+	public void setBrAmountWithTax(BigDecimal brAmountWithTax) {
+		this.brAmountWithTax = brAmountWithTax;
+	}
+	
+	
 }

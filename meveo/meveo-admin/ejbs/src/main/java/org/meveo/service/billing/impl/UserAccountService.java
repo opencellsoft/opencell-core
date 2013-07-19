@@ -149,9 +149,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 			return null;
 		}
 		for (RatedTransaction ratedTransaction : wallet.getRatedTransactions()) {
-			if (ratedTransaction.getInvoiceAgregateF() == null
-					&& ratedTransaction.getInvoiceAgregateR() == null
-					&& ratedTransaction.getInvoiceAgregateT() == null) {
+			if (ratedTransaction.getBillingRun()==null) {
 				amount = amount.add(ratedTransaction.getAmountWithTax());
 				amountWithoutTax = amountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
 				amountTax = amountTax.add(ratedTransaction.getAmountTax());

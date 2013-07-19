@@ -17,6 +17,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunList;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -54,6 +56,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	@EJB
 	private ProviderService providerService;
+	
+	@EJB
+	private BillingAccountService  billingAccountService;
 
 	@EJB
 	InvoiceService invoiceService;
@@ -71,10 +76,17 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				.getBillableBillingAcountNumber());
 		preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getPrAmountWithoutTax());
 
-		Set<BillingRunList> billingRunLists = billingRun.getBillingRunLists();
+		BillingCycle billingCycle = billingRun.getBillingCycle();
 
-		List<BillingAccount> billingAccounts = billingRun.getBillingCycle() != null ? billingRun
-				.getBillingCycle().getBillingAccounts() : billingRun.getSelectedBillingAccount();
+        boolean entreprise = billingRun.getProvider().isEntreprise();
+
+        Date startDate = billingRun.getStartDate();
+        Date endDate = billingRun.getEndDate();
+        endDate = endDate != null ? endDate : new Date();
+        List<BillingAccount> billingAccounts = null;
+        if (billingCycle != null) {
+            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+        }
 
 		Integer checkBANumber = 0;
 		Integer directDebitBANumber = 0;
@@ -112,48 +124,32 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			}
 
 		}
+		
 
-		for (BillingRunList billingRunList : billingRunLists) {
-			BillingAccount billingAccount = billingRunList.getBillingAccount();
+		for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
 			switch (billingAccount.getPaymentMethod()) {
 			case CHECK:
 				checkBillableBANumber++;
-				checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingRunList
-						.getRatedAmountWithoutTax());
+				checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount
+						.getBrAmountWithoutTax());
 				break;
 			case DIRECTDEBIT:
 				directDebitBillableBANumber++;
-				directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingRunList
-						.getRatedAmountWithoutTax());
+				directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 				break;
 			case TIP:
 				tipBillableBANumber++;
-				tipBillableBAAmountHT = tipBillableBAAmountHT.add(billingRunList
-						.getRatedAmountWithoutTax());
+				tipBillableBAAmountHT = tipBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 				break;
 			case WIRETRANSFER:
 				wiretransferBillableBANumber++;
-				wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingRunList
-						.getRatedAmountWithoutTax());
+				wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 				break;
 
 			default:
 				break;
 			}
 
-			for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
-				WalletInstance wallet = userAccount.getWallet();
-				List<RatedTransaction> ratedTransactions = wallet.getRatedTransactions();
-
-				for (RatedTransaction ratedTransaction : ratedTransactions) {
-					preInvoicingReportsDTO.getInvoiceSubCategories().add(
-							ratedTransaction.getInvoiceSubCategory());
-					preInvoicingReportsDTO
-							.setSubCategoriesAmountHT(preInvoicingReportsDTO
-									.getSubCategoriesAmountHT().add(
-											ratedTransaction.getAmountWithoutTax()));
-				}
-			}
 		}
 
 		preInvoicingReportsDTO.setCheckBANumber(checkBANumber);
@@ -177,7 +173,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public PostInvoicingReportsDTO generatePostInvoicingReports(BillingRun billingRun)
 			throws BusinessException {
-
+		log.info("generatePostInvoicingReports billingRun="+billingRun.getId());
 		PostInvoicingReportsDTO postInvoicingReportsDTO = new PostInvoicingReportsDTO();
 
 		BigDecimal globalAmountHT = BigDecimal.ZERO;

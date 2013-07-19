@@ -8,6 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
@@ -44,19 +45,21 @@
 				field="processType" />
 			<hftl:column label="#{messages['billingRun.billingCycle']}"
 				field="billingCycle" childField="code" isMessage="true" />
-			<rich:column styleClass="actions-column">
+			<p:column>
 				<f:facet name="header">
 					<h:outputText value="#{messages['commons.actions']}" />
 				</f:facet>
-				<h:commandButton
-					action="#{billingRunBean.preInvoicingRepport(entity.id)}"
-					value="#{messages['button.preInvoicingRepport']}"
-					rendered="#{entity.status.toString() == 'WAITING'}" />
-				<h:commandButton
-					action="#{billingRunBean.postInvoicingRepport(entity.id)}"
-					value="#{messages['button.postInvoicingRepport']}"
-					rendered="#{entity.status.toString() == 'TERMINATED'}" />
-			</rich:column>
+			    <p:button id="preReportLink" outcome="preInvoicingReports"
+					rendered="#{entity.status.toString() == 'WAITING'}" value="#{messages['button.preInvoicingRepport']}">
+					<f:param name="objectId" value="#{entity.id}" />
+					<f:param name="preReport" value="true" />
+				</p:button>	
+				<p:button id="postReportLink" outcome="postInvoicingReports"
+					rendered="#{entity.status.toString() == 'TERMINATED'}" value="#{messages['button.postInvoicingRepport']}">
+					<f:param name="objectId" value="#{entity.id}" />
+					<f:param name="postReport" value="true" />
+				</p:button>	
+			</p:column>
 		</hftl:dataList>
 
 	</ui:define>
