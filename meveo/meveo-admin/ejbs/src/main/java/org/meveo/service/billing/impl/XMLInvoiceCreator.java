@@ -564,9 +564,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
 
                                     Element line = doc.createElement("line");
-                                   
-                                    Element lebel = doc.createElement("label");
                                     WalletOperation walletOperation= getEntityManager().find(WalletOperation.class, ratedTrnsaction.getWalletOperationId());
+                                    
+                                    line.setAttribute("code", walletOperation.getCode() != null ? walletOperation
+                                            .getCode() : "");
+                                    Element lebel = doc.createElement("label");
                                     Text lebelTxt = doc
                                     .createTextNode(walletOperation.getDescription() != null ? walletOperation.getDescription() : "");
                                     
