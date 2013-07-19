@@ -68,7 +68,7 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	private BigDecimal taxPercent;
 
 	@Column(name = "QUANTITY")
-	private Integer quantity = 0;
+	private BigDecimal quantity;
 
 	@Column(name = "AMOUNT", precision = 23, scale = 12)
 	private BigDecimal amount;
@@ -250,16 +250,16 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 		}
 	}
 
-	public Integer getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 
-	public void addQuantity(Integer quantity) {
-		this.quantity = this.quantity + quantity;
+	public void addQuantity(BigDecimal quantity) {
+		this.quantity = this.quantity.add(quantity);
 	}
 
 	public void addAmount(BigDecimal amountToAdd) {

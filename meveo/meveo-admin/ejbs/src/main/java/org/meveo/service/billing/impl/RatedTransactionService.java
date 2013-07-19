@@ -16,30 +16,64 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 @Stateless @LocalBean
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 
 	@EJB
 	private SubscriptionService subscriptionService;
+	
+	@EJB
+	private InvoiceAgregateService invoiceAgregateService;
+	
+	@EJB
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+	
+
+	private Logger logger = Logger.getLogger(RatedTransactionService.class.getName());
 
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> getRatedTransactionsInvoiced(UserAccount userAccount) {
@@ -181,4 +215,321 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		return consumptionDTO;
 
 	}
+    @SuppressWarnings("unchecked")
+    public void sumbillingRunAmounts(BillingRun billingRun,List<BillingAccount> billingAccounts,RatedTransactionStatusEnum status,boolean entreprise){
+    	
+    	 QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountWithTax),sum(amountTax) from RatedTransaction c");
+		  qb.addCriterionEnum("c.status",  status);
+		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
+		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  qb.addSql("c.invoice is null");
+		  String ids="";
+		  String sep="";
+		  for(BillingAccount ba: billingAccounts){
+			  ids=ids+sep+ba.getId();
+			  sep=",";
+		  }
+		  qb.addSql("c.billingAccount.id in ("+ids+")");
+		  
+		  List<Object[]> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  Object[]  ratedTrans=ratedTransactions.size()>0?ratedTransactions.get(0):null;
+		  if(ratedTrans!=null){
+			  billingRun.setPrAmountWithoutTax((BigDecimal)ratedTrans[0]);
+			  billingRun.setPrAmountWithTax(entreprise?(BigDecimal)ratedTrans[1]:(BigDecimal)ratedTrans[0]);
+			  billingRun.setPrAmountTax((BigDecimal)ratedTrans[2]);
+		  }
+		
+		  
+    }
+    @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+    public void createInvoiceAndAgregates(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice){
+    	 boolean entreprise = billingRun.getProvider().isEntreprise();
+
+         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
+        for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
+        	WalletInstance wallet = userAccount.getWallet();
+  
+        
+        
+          CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+          CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+          Root from= cq.from(RatedTransaction.class);
+          Path<Long> invoiceSubCategoryPath = from.get("invoiceSubCategory").get("id");
+      
+	      Expression<BigDecimal> amountWithoutTax = cb.sum(from.get("amountWithoutTax"));
+	      Expression<BigDecimal> amountWithTax = cb.sum(from.get("amountWithTax"));
+	      Expression<BigDecimal> amountTax = cb.sum(from.get("amountTax"));
+	      Expression<BigDecimal> quantity = cb.sum(from.get("quantity"));
+	
+	      CriteriaQuery<Object[]> select = cq.multiselect(invoiceSubCategoryPath,amountWithoutTax,amountWithTax,amountTax,quantity);
+	      //Grouping
+	      cq.groupBy(invoiceSubCategoryPath);
+	      //Restrictions (I don't really understand what you're querying)
+	     Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN);
+	     Predicate pWallet = cb.equal(from.get("wallet"), wallet);
+	     Predicate pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
+	     Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
+	     Predicate pInvoice = cb.isNull(from.get("invoice"));
+	     cq.where(pStatus,pWallet,pAmoutWithoutTax,pdoNotTriggerInvoicing,pInvoice);
+   		 List<InvoiceAgregate> invoiceAgregateFList=new ArrayList<InvoiceAgregate>();
+   		 List<Object[]> invoiceSubCats=getEntityManager().createQuery(cq).getResultList();
+   		
+   		
+   		  
+             Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap = new HashMap<Long, CategoryInvoiceAgregate>();
+             Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
+             
+
+             SubCategoryInvoiceAgregate biggestSubCat = null;
+             BigDecimal biggestAmount = new BigDecimal("-100000000");
+             
+
+             
+   		  for( Object[] object:invoiceSubCats){
+   			  logger.info("amountWithTax="+object[1]+"amountWithoutTax"+object[2]+"amountWithTax"+object[3]);
+   			  Long  invoiceSubCategoryId=(Long) object[0];
+   			  InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findById(invoiceSubCategoryId);
+   			  Tax tax = null;
+                 for(InvoiceSubcategoryCountry invoicesubcatCountry: invoiceSubCategory.getInvoiceSubcategoryCountries()){
+                 	if(invoicesubcatCountry.getTradingCountry().getCountryCode().
+                 			equalsIgnoreCase(invoice.getBillingAccount().getTradingCountry().getCountryCode())){
+                 		tax=invoicesubcatCountry.getTax();
+                 	}
+                 }
+   			  
+   			  SubCategoryInvoiceAgregate invoiceAgregateF = new SubCategoryInvoiceAgregate();
+                 invoiceAgregateF.setAuditable(billingRun.getAuditable());
+                 invoiceAgregateF.setProvider(billingRun.getProvider());
+                 invoiceAgregateF.setInvoice(invoice);
+                 invoiceAgregateF.setBillingRun(billingRun);
+                 invoiceAgregateF.setWallet(wallet);
+                 invoiceAgregateF.setAccountingCode(invoiceSubCategory.getAccountingCode());
+                 invoiceAgregateF.setSubCategoryTax(tax);
+                 fillAgregates(invoiceAgregateF, wallet);
+                 int itemNumber = invoiceAgregateF.getItemNumber() != null ? invoiceAgregateF.getItemNumber() + 1 : 1;
+                 invoiceAgregateF.setItemNumber(itemNumber);
+
+                 invoiceAgregateF.setAmountWithoutTax((BigDecimal)object[1]);
+                 invoiceAgregateF.setAmountWithTax((BigDecimal)object[2]);
+                 invoiceAgregateF.setAmountTax((BigDecimal)object[3]);
+                 invoiceAgregateF.setQuantity((BigDecimal)object[4]);
+                 invoiceAgregateF.setProvider(billingRun.getProvider());
+                 invoiceAgregateFList.add(invoiceAgregateF);
+                 // end agregate F
+                 
+                 if (!entreprise) {
+                     nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add((BigDecimal)object[1]);
+                 }
+
+                 // start agregate T
+                 TaxInvoiceAgregate invoiceAgregateT = null;
+                 Long taxId = tax.getId();
+                 if (taxInvoiceAgregateMap.containsKey(taxId)) {
+                     invoiceAgregateT = taxInvoiceAgregateMap.get(taxId);
+                 } else {
+                     invoiceAgregateT = new TaxInvoiceAgregate();
+                     invoiceAgregateT.setAuditable(billingRun.getAuditable());
+                     invoiceAgregateT.setProvider(billingRun.getProvider());
+                     invoiceAgregateT.setInvoice(invoice);
+                     invoiceAgregateT.setBillingRun(billingRun);
+                     invoiceAgregateT.setTax(tax);
+                     invoiceAgregateT.setAccountingCode(tax.getAccountingCode());
+
+                     taxInvoiceAgregateMap.put(taxId, invoiceAgregateT);
+                 }
+                 if(tax.getPercent().compareTo(BigDecimal.ZERO)==0){
+                 	invoiceAgregateT.addAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax());
+                 	invoiceAgregateT.addAmountWithTax(invoiceAgregateF.getAmountWithTax());
+                 	invoiceAgregateT.addAmountTax(invoiceAgregateF.getAmountTax());
+                 }
+                 fillAgregates(invoiceAgregateT, wallet);
+                 if(invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO)!=0) {
+                 	invoiceAgregateT.setTaxPercent(invoiceAgregateF.getSubCategoryTax().getPercent());
+                 }
+                 invoiceAgregateT.setProvider(billingRun.getProvider());
+                 
+                 if(invoiceAgregateT.getId()==null){
+              	   invoiceAgregateService.create(invoiceAgregateT);
+               }
+                 
+                 invoiceAgregateF.setSubCategoryTax(tax);
+                 invoiceAgregateF.setInvoiceSubCategory(invoiceSubCategory);
+                 
+                // start agregate R
+                 CategoryInvoiceAgregate invoiceAgregateR = null;
+                 Long invoiceCategoryId = invoiceSubCategory.getInvoiceCategory().getId();
+                 if (catInvoiceAgregateMap.containsKey(invoiceCategoryId)) {
+                     invoiceAgregateR = catInvoiceAgregateMap.get(invoiceCategoryId);
+                 } else {
+                     invoiceAgregateR = new CategoryInvoiceAgregate();
+                     invoiceAgregateR.setAuditable(billingRun.getAuditable());
+                     invoiceAgregateR.setProvider(billingRun.getProvider());
+
+                     invoiceAgregateR.setInvoice(invoice);
+                     invoiceAgregateR.setBillingRun(billingRun);
+                     catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateR);
+                 }
+
+                 fillAgregates(invoiceAgregateR, wallet);
+                 if(invoiceAgregateR.getId()==null){
+                	   invoiceAgregateService.create(invoiceAgregateR);
+                 }
+
+                 invoiceAgregateR.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
+                 invoiceAgregateR.setProvider(billingRun.getProvider());
+                 invoiceAgregateF.setCategoryInvoiceAgregate(invoiceAgregateR);
+                 invoiceAgregateF.setTaxInvoiceAgregate(invoiceAgregateT);
+                 // end agregate R
+
+
+                 // round the amount without Tax
+                 // compute the largest subcategory
+
+                     // first we round the amount without tax
+
+                     logger.info("subcat " + invoiceAgregateF.getAccountingCode() + " ht=" + invoiceAgregateF.getAmountWithoutTax() + " ->"
+                             + invoiceAgregateF.getAmountWithoutTax().setScale(2, RoundingMode.HALF_UP));
+                     invoiceAgregateF.setAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax().setScale(2, RoundingMode.HALF_UP));
+                     // add it to taxAggregate and CategoryAggregate
+                     if(invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO)!=0){
+                     	TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(invoiceAgregateF.getSubCategoryTax().getId());
+                     	taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax());
+                     	logger.info("  tax " + invoiceAgregateF.getTaxInvoiceAgregate().getTaxPercent() + " ht ->"
+                             + taxInvoiceAgregate.getAmountWithoutTax());
+                     }
+                     invoiceAgregateF.getCategoryInvoiceAgregate().addAmountWithoutTax(invoiceAgregateF.getAmountWithoutTax());
+                     logger.info("  cat " + invoiceAgregateF.getCategoryInvoiceAgregate().getId() + " ht ->"
+                             + invoiceAgregateF.getCategoryInvoiceAgregate().getAmountWithoutTax());
+                     if (invoiceAgregateF.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
+                         biggestAmount = invoiceAgregateF.getAmountWithoutTax();
+                         biggestSubCat = invoiceAgregateF;
+                     }
+
+                invoiceAgregateService.create(invoiceAgregateF);
+   		  }
+   		  
+   		// compute the tax
+             for (Map.Entry<Long, TaxInvoiceAgregate> taxCatMap : taxInvoiceAgregateMap.entrySet()) {
+                 TaxInvoiceAgregate taxCat = taxCatMap.getValue();
+                 if(taxCat.getTax().getPercent().compareTo(BigDecimal.ZERO)!=0){
+                 	// then compute the tax
+                 	taxCat.setAmountTax(taxCat.getAmountWithoutTax().multiply(taxCat.getTaxPercent()).divide(new BigDecimal("100")));
+                 	// then round the tax
+                 	taxCat.setAmountTax(taxCat.getAmountTax().setScale(2, RoundingMode.HALF_UP));
+
+                 	// and compute amount with tax
+                 	taxCat.setAmountWithTax(taxCat.getAmountWithoutTax().add(taxCat.getAmountTax()).setScale(2, RoundingMode.HALF_UP));
+                 	logger.info("  tax2 ht ->" + taxCat.getAmountWithoutTax());
+                 } else {
+                 	//compute the percent
+                 	taxCat.setTaxPercent(taxCat.getAmountTax().divide(taxCat.getAmount()).multiply(new BigDecimal("100")).setScale(2, RoundingMode.HALF_UP));
+                 }
+
+             }
+   		  
+             for (Map.Entry<Long, TaxInvoiceAgregate> tax : taxInvoiceAgregateMap.entrySet()) {
+                 TaxInvoiceAgregate taxInvoiceAgregate = tax.getValue();
+                 invoice.addAmountTax(taxInvoiceAgregate.getAmountTax().setScale(2, RoundingMode.HALF_UP));
+                 invoice.addAmountWithoutTax(taxInvoiceAgregate.getAmountWithoutTax().setScale(2, RoundingMode.HALF_UP));
+                 invoice.addAmountWithTax(taxInvoiceAgregate.getAmountWithTax().setScale(2, RoundingMode.HALF_UP));
+             }
+             
+             if (!entreprise && biggestSubCat != null) {
+                 // TODO log those steps
+                 BigDecimal delta = nonEnterprisePriceWithTax.subtract(invoice.getAmountWithTax());
+                 logger.info("delta= " + nonEnterprisePriceWithTax + " - " + invoice.getAmountWithTax() + "="
+                         + delta);
+                 biggestSubCat.setAmountWithoutTax(biggestSubCat.getAmountWithoutTax().add(delta).setScale(2, RoundingMode.HALF_UP));
+
+                 TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(biggestSubCat.getSubCategoryTax()
+                         .getId());
+                 logger.info("  tax3 ht ->" + invoiceAgregateT.getAmountWithoutTax());
+                 invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta).setScale(2, RoundingMode.HALF_UP));
+                 logger.info("  tax4 ht ->" + invoiceAgregateT.getAmountWithoutTax());
+                 CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat.getCategoryInvoiceAgregate();
+                 invoiceAgregateR.setAmountWithoutTax(invoiceAgregateR.getAmountWithoutTax().add(delta).setScale(2, RoundingMode.HALF_UP));
+
+                 invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(2, RoundingMode.HALF_UP));
+                 invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(2, RoundingMode.HALF_UP));
+             }
+             
+
+        	
+        }
+          
+		  
+    }
+    private void fillAgregates(InvoiceAgregate invoiceAgregate, WalletInstance wallet) {
+        invoiceAgregate.setBillingAccount(wallet.getUserAccount().getBillingAccount());
+        invoiceAgregate.setUserAccount(wallet.getUserAccount());
+        int itemNumber = invoiceAgregate.getItemNumber() != null ? invoiceAgregate.getItemNumber() + 1 : 1;
+        invoiceAgregate.setItemNumber(itemNumber);
+    }
+    public void updateRatedTransactions(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice){
+    	
+		  Query query=getEntityManager().createQuery(
+                  "UPDATE RatedTransaction r SET r.billingRun=:billingRun,invoice=:invoice,status=:newStatus where r.invoice is null and r.status=:status and r.doNotTriggerInvoicing=:invoicing and r.amountWithoutTax<>:zeroValue and r.billingAccount=:billingAccount");
+         query.setParameter("billingRun", billingRun);
+         query.setParameter("invoice", invoice);
+         query.setParameter("newStatus", RatedTransactionStatusEnum.BILLED);
+         query.setParameter("status", RatedTransactionStatusEnum.OPEN);
+         query.setParameter("invoicing", false);
+         query.setParameter("zeroValue", BigDecimal.ZERO);
+         query.setParameter("billingAccount", billingAccount);
+         
+        
+		  query.executeUpdate();
+ 
+		  
+    }
+    
+    public Boolean isBillingAccountBillable(BillingRun billingRun,BillingAccount billingAccount){
+    	
+    	  QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
+		  qb.addCriterionEntity("c.billingAccount", billingAccount);
+		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
+		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  qb.addSql("c.invoice is null");
+         
+
+		  List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  return ratedTransactions.size()>0?true:false;
+ 
+		  
+    }
+    public  List<RatedTransaction> getRatedTransactions(WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCategory){
+    	
+  	  QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.BILLED);
+		  qb.addCriterionEntity("c.wallet", wallet);
+		  qb.addCriterionEntity("c.invoice", invoice);
+		  qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
+
+		  List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  return ratedTransactions;
+
+		  
+  }
+    @SuppressWarnings("unchecked")
+    public void billingAccountTotalAmounts(BillingRun billingRun,BillingAccount billingAccount,RatedTransactionStatusEnum status,boolean entreprise){
+    	
+    	 QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountWithTax),sum(amountTax) from RatedTransaction c");
+		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
+		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
+		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  qb.addCriterionEntity("c.billingAccount", billingAccount);
+		  qb.addSql("c.invoice is null");
+		
+		  
+		  List<Object[]> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  Object[]  ratedTrans=ratedTransactions.size()>0?ratedTransactions.get(0):null;
+		  if(ratedTrans!=null){
+			  billingRun.setPrAmountWithoutTax((BigDecimal)ratedTrans[0]);
+			  billingRun.setPrAmountWithTax(entreprise?(BigDecimal)ratedTrans[1]:(BigDecimal)ratedTrans[0]);
+			  billingRun.setPrAmountTax((BigDecimal)ratedTrans[2]);
+		  }
+		
+		  
+    }
 }

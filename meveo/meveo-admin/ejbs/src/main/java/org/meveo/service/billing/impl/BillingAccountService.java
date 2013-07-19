@@ -33,6 +33,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -185,6 +186,25 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 		return false;
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
+		try {
+			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b");
+			qb.addCriterionEntity("b.billingCycle",billingCycle);
+			if(startdate!=null){
+				qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+			}
+			if(endDate!=null){
+
+				qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
+			}
+			return (List<BillingAccount>)qb.getQuery(getEntityManager()).getResultList();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 
 }

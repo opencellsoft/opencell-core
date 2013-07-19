@@ -20,22 +20,20 @@
 
 	<ui:define name="body">
 
-		<hftl:entityPopup id="billingCyclePopup"
-			header="#{messages['billingCycle.popup.header']}"
-			backingBean="#{billingCycleBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['businessEntity.description']}"
-			searchField2="description"
-			column1Label="#{messages['businessEntity.code']}" column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description"
-			column3Label="#{messages['billingCycle.nextInvoiceDate']}"
-			column3="nextCalendarDate"
-			selection="#{billingRunBean.entity.billingCycle}"
-			updateField=":formPanel:formId:billingCycleId:billingCycleId">
+	<hftl:entityPopup id="billingCyclePopup"
+				header="#{messages['billingCycle.popup.header']}"
+				backingBean="#{billingCycleBean}"
+				searchField1Label="#{messages['businessEntity.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['businessEntity.description']}"
+				searchField2="description"
+				column1Label="#{messages['businessEntity.code']}" column1="code"
+				column2Label="#{messages['businessEntity.description']}"
+				column2="description"
+				selection="#{billingRunBean.entity.billingCycle}"
+				updateField=":formPanel:formId:billingCycleId:billingCycleId">
 
-		</hftl:entityPopup>
+			</hftl:entityPopup>
 
 		<hf:formPanel id="formPanel" edit="true"
 			label="#{messages['billingRun.panel']}"

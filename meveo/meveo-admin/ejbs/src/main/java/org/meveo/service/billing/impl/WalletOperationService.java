@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
@@ -30,10 +31,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.commons.utils.DateUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -43,6 +46,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -1036,6 +1040,26 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		 * nextapplicationDate.getTime()) { applyReccuringCharge(chargeInstance,
 		 * true, recurringChargeTemplate, creator); } }
 		 */
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status) {
+		List<WalletOperation> walletOperations = null;
+		try {
+			log.debug("start of find #0 by status (status=#1)) ..", "WalletOperation",
+					status);
+			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
+			qb.addCriterion("c.status", "=", status, true);
+			walletOperations = qb.getQuery(getEntityManager()).getResultList();
+			log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] {
+					"WalletOperation", status,
+					walletOperations != null ? walletOperations.size() : 0 });
+
+		} catch (Exception e) {
+			log.error("findByStatus error=#0 ", e.getMessage());
+		}
+		return walletOperations;
 	}
 
 }

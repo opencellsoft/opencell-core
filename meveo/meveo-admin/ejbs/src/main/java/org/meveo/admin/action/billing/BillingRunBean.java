@@ -100,6 +100,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	public BillingRun initEntity() {
 		BillingRun billingRun = super.initEntity();
 		try {
+			log.info("postReport.get()="+postReport.get());
 			if (billingRun.getId() == null) {
 				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 			}

@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.meveo.model.BaseEntity;
+import org.meveo.model.crm.Provider;
 
 @Entity
 @Table(name = "BILLING_RATED_TRANSACTION")
@@ -43,20 +44,17 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WALLET_OPERATION_ID")
-	private WalletOperation walletOperation;
+	@JoinColumn(name = "BILLING_ACCOUNT__ID")
+	private BillingAccount billingAccount;
+
+	@Column(name = "WALLET_OPERATION_ID")
+	private Long walletOperationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
 	private BillingRun billingRun;
-
-	@Column(name = "PR_DESCRIPTION", length = 255)
-	private String prDescription;
-
-	@Column(name = "USAGE_DESCRIPTION", length = 255)
-	private String usageDescription;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "USAGE_DATE")
@@ -66,12 +64,7 @@ public class RatedTransaction extends BaseEntity {
 	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TAX_ID")
-	private Tax tax;
-
-	@Column(name = "TAX_PERCENT", precision = 23, scale = 12)
-	private BigDecimal taxPercent;
+  
 
 	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX")
 	private BigDecimal unitAmountWithoutTax;
@@ -94,31 +87,26 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "AMOUNT_TAX")
 	private BigDecimal amountTax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
-	private Subscription subscription;
 
-	@Column(name = "grouping_id")
-	private Integer groupingId;
+ 
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "INVOICE_ID")
 	private Invoice invoice;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_F")
 	private SubCategoryInvoiceAgregate invoiceAgregateF;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_R")
 	private CategoryInvoiceAgregate invoiceAgregateR;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_T")
 	private TaxInvoiceAgregate invoiceAgregateT;
 
-	@Column(name = "USAGE_QUANTITY")
-	private Integer usageQuantity;
+ 
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
@@ -126,18 +114,37 @@ public class RatedTransaction extends BaseEntity {
 
 	@Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
+	
+	
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY_ID")
-	private TradingCurrency tradingCurrency;
+	
+	 
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
-	private TradingCountry tradingCountry;
+	public RatedTransaction() {
+		super();
+	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
-	private TradingLanguage tradingLanguage;
+	public RatedTransaction(Long walletOperationId, Date usageDate,
+			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax,
+			BigDecimal unitAmountTax, BigDecimal quantity,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider, WalletInstance wallet,BillingAccount billingAccount,InvoiceSubCategory invoiceSubCategory) {
+		super();
+		this.walletOperationId = walletOperationId;
+		this.usageDate = usageDate;
+		this.unitAmountWithoutTax = unitAmountWithoutTax;
+		this.unitAmountWithTax = unitAmountWithTax;
+		this.unitAmountTax = unitAmountTax;
+		this.quantity = quantity;
+		this.amountWithoutTax = amountWithoutTax;
+		this.amountWithTax = amountWithTax;
+		this.amountTax = amountTax;
+		this.status = status;
+		this.wallet=wallet;
+		this.billingAccount=billingAccount;
+		this.invoiceSubCategory=invoiceSubCategory;
+		setProvider(provider);
+	}
 
 	public WalletInstance getWallet() {
 		return wallet;
@@ -147,13 +154,7 @@ public class RatedTransaction extends BaseEntity {
 		this.wallet = wallet;
 	}
 
-	public WalletOperation getWalletOperation() {
-		return walletOperation;
-	}
-
-	public void setWalletOperation(WalletOperation walletOperation) {
-		this.walletOperation = walletOperation;
-	}
+	 
 
 	public BillingRun getBillingRun() {
 		return billingRun;
@@ -163,21 +164,6 @@ public class RatedTransaction extends BaseEntity {
 		this.billingRun = billingRun;
 	}
 
-	public String getPrDescription() {
-		return prDescription;
-	}
-
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
-
-	public String getUsageDescription() {
-		return usageDescription;
-	}
-
-	public void setUsageDescription(String usageDescription) {
-		this.usageDescription = usageDescription;
-	}
 
 	public Date getUsageDate() {
 		return usageDate;
@@ -195,21 +181,7 @@ public class RatedTransaction extends BaseEntity {
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
 
-	public Tax getTax() {
-		return tax;
-	}
-
-	public void setTax(Tax tax) {
-		this.tax = tax;
-	}
-
-	public BigDecimal getTaxPercent() {
-		return taxPercent;
-	}
-
-	public void setTaxPercent(BigDecimal taxPercent) {
-		this.taxPercent = taxPercent;
-	}
+	 
 
 	public BigDecimal getUnitAmountWithoutTax() {
 		return unitAmountWithoutTax;
@@ -267,22 +239,7 @@ public class RatedTransaction extends BaseEntity {
 		this.amountTax = amountTax;
 	}
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
-
-	public Integer getGroupingId() {
-		return groupingId;
-	}
-
-	public void setGroupingId(Integer groupingId) {
-		this.groupingId = groupingId;
-	}
-
+	 
 	public Invoice getInvoice() {
 		return invoice;
 	}
@@ -315,14 +272,6 @@ public class RatedTransaction extends BaseEntity {
 		this.invoiceAgregateT = invoiceAgregateT;
 	}
 
-	public Integer getUsageQuantity() {
-		return usageQuantity;
-	}
-
-	public void setUsageQuantity(Integer usageQuantity) {
-		this.usageQuantity = usageQuantity;
-	}
-
 	public RatedTransactionStatusEnum getStatus() {
 		return status;
 	}
@@ -339,28 +288,24 @@ public class RatedTransaction extends BaseEntity {
 		this.doNotTriggerInvoicing = doNotTriggerInvoicing;
 	}
 
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
+	public Long getWalletOperationId() {
+		return walletOperationId;
 	}
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
+	public void setWalletOperationId(Long walletOperationId) {
+		this.walletOperationId = walletOperationId;
 	}
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
+	public BillingAccount getBillingAccount() {
+		return billingAccount;
 	}
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
 	}
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+
+	 
 
 }

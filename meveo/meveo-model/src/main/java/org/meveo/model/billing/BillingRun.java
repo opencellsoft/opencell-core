@@ -100,7 +100,7 @@ public class BillingRun extends AuditableEntity {
 	private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
 
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<BillingAccount> selectedBillingAccount = new ArrayList<BillingAccount>();
+	private List<BillingAccount> billableBillingAccount = new ArrayList<BillingAccount>();
 
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
@@ -286,12 +286,12 @@ public class BillingRun extends AuditableEntity {
 		this.postInvoicingReports = postInvoicingReports;
 	}
 
-	public List<BillingAccount> getSelectedBillingAccount() {
-		return selectedBillingAccount;
+	public List<BillingAccount> getBillableBillingAccounts() {
+		return billableBillingAccount;
 	}
 
-	public void setSelectedBillingAccount(List<BillingAccount> selectedBillingAccount) {
-		this.selectedBillingAccount = selectedBillingAccount;
+	public void setBillableBillingAccounts(List<BillingAccount> selectedBillingAccount) {
+		this.billableBillingAccount = selectedBillingAccount;
 	}
 
 	public Set<RatedTransaction> getRatedTransactions() {
