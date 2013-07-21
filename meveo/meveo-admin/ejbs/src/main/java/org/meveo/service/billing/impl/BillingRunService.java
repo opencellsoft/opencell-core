@@ -17,6 +17,8 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -78,14 +80,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		BillingCycle billingCycle = billingRun.getBillingCycle();
 
-        boolean entreprise = billingRun.getProvider().isEntreprise();
 
         Date startDate = billingRun.getStartDate();
         Date endDate = billingRun.getEndDate();
         endDate = endDate != null ? endDate : new Date();
-        List<BillingAccount> billingAccounts = null;
+        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
         if (billingCycle != null) {
             billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+        }else{
+        	String[] baIds=billingRun.getSelectedBillingAccounts().split(",");
+        	for(String id:Arrays.asList(baIds)){
+        		Long baId=Long.valueOf(id);
+        		billingAccounts.add(billingAccountService.findById(baId));
+        	}
         }
 
 		Integer checkBANumber = 0;

@@ -36,6 +36,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.utils.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -329,7 +330,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 	public String launchExceptionalInvoicing() {
 		log.info("launchExceptionelInvoicing...");
-		BillingAccount[] selectedEntities = getSelectedEntities();
 		try {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
@@ -344,12 +344,14 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			billingRun.setStatus(BillingRunStatusEnum.NEW);
 			billingRun.setProcessDate(new Date());
 			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
-
-			for (BillingAccount billingAccount : selectedEntities) {
-				log.debug("lunchExceptionelInvoicing id=#0", billingAccount.getId());
-				billingAccount.setBillingRun(billingRun);
-				billingAccountService.update(billingAccount);
+			String selectedBillingAccounts="";
+			String sep="";
+			for (IEntity entity : getSelectedEntities()) {
+				selectedBillingAccounts=selectedBillingAccounts+sep+entity.getId();
+				sep=",";
 			}
+			log.info("selectedBillingAccounts="+selectedBillingAccounts);
+			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
 			billingRunService.create(billingRun);
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {

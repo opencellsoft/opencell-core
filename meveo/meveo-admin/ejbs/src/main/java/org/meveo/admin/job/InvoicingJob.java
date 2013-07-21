@@ -1,5 +1,7 @@
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -91,9 +93,15 @@ public class InvoicingJob implements Job {
 				        Date startDate = billingRun.getStartDate();
 				        Date endDate = billingRun.getEndDate();
 				        endDate = endDate != null ? endDate : new Date();
-				        List<BillingAccount> billingAccounts = null;
+				        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 				        if (billingCycle != null) {
 				            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+				        }else{
+				        	String[] baIds=billingRun.getSelectedBillingAccounts().split(",");
+				        	for(String id:Arrays.asList(baIds)){
+				        		Long baId=Long.valueOf(id);
+				        		billingAccounts.add(billingAccountService.findById(baId));
+				        	}
 				        }
 				        ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
 				        int billableBA=0;
