@@ -86,6 +86,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         List<BillingAccount> billingAccounts = null;
         if (billingCycle != null) {
             billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+        } else {
+        	billingAccounts = billingRun.getBillableBillingAccounts();
         }
 
 		Integer checkBANumber = 0;
