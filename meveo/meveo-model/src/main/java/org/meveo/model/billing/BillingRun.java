@@ -100,7 +100,7 @@ public class BillingRun extends AuditableEntity {
 	private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
 
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<BillingAccount> billableBillingAccount = new ArrayList<BillingAccount>();
+	private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
 
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
@@ -131,6 +131,9 @@ public class BillingRun extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PR_LANGUAGE_ID")
 	private Language language;
+	
+	@Column(name = "SELECTED_BILLING_ACCOUNTS")
+	private String selectedBillingAccounts;
 
 	@Transient
 	PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
@@ -287,11 +290,11 @@ public class BillingRun extends AuditableEntity {
 	}
 
 	public List<BillingAccount> getBillableBillingAccounts() {
-		return billableBillingAccount;
+		return billableBillingAccounts;
 	}
 
-	public void setBillableBillingAccounts(List<BillingAccount> selectedBillingAccount) {
-		this.billableBillingAccount = selectedBillingAccount;
+	public void setBillableBillingAccounts(List<BillingAccount> selectedBillingAccounts) {
+		this.billableBillingAccounts = selectedBillingAccounts;
 	}
 
 	public Set<RatedTransaction> getRatedTransactions() {
@@ -353,5 +356,16 @@ public class BillingRun extends AuditableEntity {
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
+
+
+	public String getSelectedBillingAccounts() {
+		return selectedBillingAccounts;
+	}
+
+	public void setSelectedBillingAccounts(String selectedBillingAccounts) {
+		this.selectedBillingAccounts = selectedBillingAccounts;
+	}
+	
+	
 
 }

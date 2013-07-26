@@ -1,5 +1,7 @@
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -91,29 +93,38 @@ public class InvoicingJob implements Job {
 				        Date startDate = billingRun.getStartDate();
 				        Date endDate = billingRun.getEndDate();
 				        endDate = endDate != null ? endDate : new Date();
-				        List<BillingAccount> billingAccounts = null;
+				        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 				        if (billingCycle != null) {
 				            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+				        }else{
+				        	String[] baIds=billingRun.getSelectedBillingAccounts().split(",");
+				        	for(String id:Arrays.asList(baIds)){
+				        		Long baId=Long.valueOf(id);
+				        		billingAccounts.add(billingAccountService.findById(baId));
+				        	}
 				        }
-				        ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
-				        int billableBA=0;
-				        for (BillingAccount billingAccount : billingAccounts) {
-				           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount)){
-					   	        billingAccount.setBillingRun(billingRun);
-					   	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);
-					   	        billingAccountService.update(billingAccount);
-					   	        billableBA++;
-				           }
+				        if(billingAccounts!=null && billingAccounts.size()>0){
+				        	 ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
+						        int billableBA=0;
+						        for (BillingAccount billingAccount : billingAccounts) {
+						           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount)){
+							   	        billingAccount.setBillingRun(billingRun);
+							   	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);
+							   	        billingAccountService.update(billingAccount);
+							   	        billableBA++;
+						           }
+						        }
+						        billingRun.setBillingAccountNumber(billingAccounts.size());
+						        billingRun.setBillableBillingAcountNumber(billableBA);
+						        billingRun.setProcessDate(new Date());
+						        billingRun.setStatus(BillingRunStatusEnum.WAITING);
+						        billingRunService.update(billingRun);
+						        if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+						                || billingRun.getProvider().isAutomaticInvoicing()) {
+						            createAgregatesAndInvoice(billingRun);
+						        }
 				        }
-				        billingRun.setBillingAccountNumber(billingAccounts.size());
-				        billingRun.setBillableBillingAcountNumber(billableBA);
-				        billingRun.setProcessDate(new Date());
-				        billingRun.setStatus(BillingRunStatusEnum.WAITING);
-				        billingRunService.update(billingRun);
-				        if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
-				                || billingRun.getProvider().isAutomaticInvoicing()) {
-				            createAgregatesAndInvoice(billingRun);
-				        }
+				       
 				        
 					}else if(BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())){
 						 createAgregatesAndInvoice(billingRun);
