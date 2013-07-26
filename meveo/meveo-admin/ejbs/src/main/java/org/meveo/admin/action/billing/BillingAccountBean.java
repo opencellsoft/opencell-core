@@ -66,8 +66,6 @@ import com.lowagie.text.pdf.PdfStamper;
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
  * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
  * 
  */
 @Named
