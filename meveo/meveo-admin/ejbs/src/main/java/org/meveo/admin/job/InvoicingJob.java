@@ -94,32 +94,25 @@ public class InvoicingJob implements Job {
 				        List<BillingAccount> billingAccounts = null;
 				        if (billingCycle != null) {
 				            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
-				        } else {
-				        	billingAccounts = billingRun.getBillableBillingAccounts();
 				        }
+				        ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
 				        int billableBA=0;
-				        if(billingAccounts!=null && billingAccounts.size()>0){
-					        ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
-					        for (BillingAccount billingAccount : billingAccounts) {
-					           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount)){
-						   	        billingAccount.setBillingRun(billingRun);
-						   	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);
-						   	        billingAccountService.update(billingAccount);
-						   	        billableBA++;
-					           }
-					        }
-					        
-					        billingRun.setBillingAccountNumber(billingAccounts==null?0:billingAccounts.size());
-					        billingRun.setBillableBillingAcountNumber(billableBA);
-					        billingRun.setProcessDate(new Date());
-				        	billingRun.setStatus(BillingRunStatusEnum.WAITING);
-				        	billingRunService.update(billingRun);
-					        if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
-					                || billingRun.getProvider().isAutomaticInvoicing()) {
-					            createAgregatesAndInvoice(billingRun);
-					        }
-				        } else {
-				        	log.warning("No billing Account to invoice, did you run the ratedTransaction processs ?");
+				        for (BillingAccount billingAccount : billingAccounts) {
+				           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount)){
+					   	        billingAccount.setBillingRun(billingRun);
+					   	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);
+					   	        billingAccountService.update(billingAccount);
+					   	        billableBA++;
+				           }
+				        }
+				        billingRun.setBillingAccountNumber(billingAccounts.size());
+				        billingRun.setBillableBillingAcountNumber(billableBA);
+				        billingRun.setProcessDate(new Date());
+				        billingRun.setStatus(BillingRunStatusEnum.WAITING);
+				        billingRunService.update(billingRun);
+				        if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+				                || billingRun.getProvider().isAutomaticInvoicing()) {
+				            createAgregatesAndInvoice(billingRun);
 				        }
 				        
 					}else if(BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())){

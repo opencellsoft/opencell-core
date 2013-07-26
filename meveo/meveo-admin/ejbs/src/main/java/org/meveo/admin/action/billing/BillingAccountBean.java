@@ -65,6 +65,9 @@ import com.lowagie.text.pdf.PdfStamper;
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
  * 
+ * @author Ignas Lelys
+ * @created Dec 7, 2010
+ * 
  */
 @Named
 @ViewScoped
@@ -331,7 +334,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-			log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
+			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
 			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
 				messages.info(new BundleKey("messages", "error.invoicing.alreadyLunched"));
 				return null;
@@ -343,9 +346,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 
 			for (BillingAccount billingAccount : selectedEntities) {
-				log.debug("launchExceptionelInvoicing id={}", billingAccount.getId());
+				log.debug("lunchExceptionelInvoicing id=#0", billingAccount.getId());
 				billingAccount.setBillingRun(billingRun);
-				billingRun.getBillableBillingAccounts().add(billingAccount);
 				billingAccountService.update(billingAccount);
 			}
 			billingRunService.create(billingRun);
