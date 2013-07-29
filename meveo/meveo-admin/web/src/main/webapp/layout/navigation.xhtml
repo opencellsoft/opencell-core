@@ -427,7 +427,19 @@
 			</rich:menuItem>
 		</rich:dropDownMenu>
 		-->
+	    <p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
+				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
+				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
+					value="#{messages['menu.globalExecution']}" />
+
+				<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
+					value="#{messages['menu.exceptionalInvoicing']}" />
+
+				<p:menuitem id="billingRuns" outcome="billingRuns"
+					value="#{messages['menu.billingRuns']}" />
+
+			</p:submenu>
 		<p:submenu id="billing"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}"
 			label="#{messages['menu.billing']}">
@@ -479,19 +491,7 @@
 
 			</p:submenu> -->
 
-			<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
-				rendered="#{identity.hasPermission('billing','billingVisualization')}">
-
-				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
-					value="#{messages['menu.globalExecution']}" />
-
-				<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
-					value="#{messages['menu.exceptionalInvoicing']}" />
-
-				<p:menuitem id="billingRuns" outcome="billingRuns"
-					value="#{messages['menu.billingRuns']}" />
-
-			</p:submenu>
+		
 <!--
 			<p:submenu id="reports" label="#{messages['menu.reports']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
