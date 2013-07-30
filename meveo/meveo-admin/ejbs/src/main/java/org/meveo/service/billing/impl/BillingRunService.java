@@ -372,13 +372,24 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@SuppressWarnings("unchecked")
 	public List<BillingRun> getbillingRuns(BillingRunStatusEnum ... status){
 		BillingRunStatusEnum bRStatus;
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c");
+		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c",null,getCurrentProvider());
 		qb.startOrClause();
 		for (int i = 0; i < status.length; i++){
 			bRStatus=status[i];
 			qb.addCriterionEnum("c.status", bRStatus);
 		}
 		qb.endOrClause();
+		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
+		return billingRuns;
+         
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BillingRun> getClosedBillingRuns(){
+		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c",null,getCurrentProvider());
+		qb.addCriterionEnum("c.status", BillingRunStatusEnum.CLOSED);
+		qb.addBooleanCriterion("c.disabled", false);
+		
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 		return billingRuns;
          

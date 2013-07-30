@@ -78,27 +78,20 @@ public class XMLInvoiceGenerationJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute XMLInvoiceGenerationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.VALIDATED);
+		List<BillingRun> billingRuns = billingRunService.getClosedBillingRuns();
 		log.info("# billingRuns to process:" + billingRuns.size());
 		for (BillingRun billingRun : billingRuns) {
 			try {
-
+				
 		        ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-				 String invoicesDir = param.getProperty("invoices.dir");
-			        File billingRundir = new File(invoicesDir + File.separator + billingRun.getId());
+		        String invoicesDir = param.getProperty("invoices.dir","/tmp/meveo/invoices");
+			        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+billingRun.getId());
 			        billingRundir.mkdirs();
 			        for (Invoice invoice : billingRun.getInvoices()) {
-			            setInvoiceNumber(billingRun.getProvider(), invoice);
-
 			            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
-			            
-			            BillingAccount billingAccount = invoice.getBillingAccount();
-			            Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate();
-			            billingAccount.setNextInvoiceDate(nextCalendarDate);
-			            billingAccountService.update(billingAccount);
 			        }
 			        billingRun.setDisabled(true);
-			
+			        billingRunService.update(billingRun);
 			} catch (Exception e) {
 				e.printStackTrace();
 				result.registerError(e.getMessage());
@@ -107,34 +100,7 @@ public class XMLInvoiceGenerationJob implements Job {
 		result.close("");
 		return result;
 	}
-	 public void setInvoiceNumber(Provider provider, Invoice invoice) {
-	        String prefix = provider.getInvoicePrefix();
-	        if (prefix == null) {
-	            prefix = "";
-	        }
-	        long nextInvoiceNb = getNextValue(provider);
-	        StringBuffer num1 = new StringBuffer("000000000");
-	        num1.append(nextInvoiceNb + "");
-	        String invoiceNumber = num1.substring(num1.length() - 9);
-	        int key = 0;
-	        for (int i = 0; i < invoiceNumber.length(); i++) {
-	            key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
-	        }
-	        invoice.setInvoiceNumber(prefix + invoiceNumber + "-" + key % 10);
-	        invoiceService.update(invoice);
-	    }
-	 
 
-	    public synchronized long getNextValue(Provider provider) {
-	        long result = 0;
-	        if (provider != null) {
-	            long currentInvoiceNbre = provider.getCurrentInvoiceNb() != null ? provider.getCurrentInvoiceNb() : 0;
-	            result = 1 + currentInvoiceNbre;
-	            provider.setCurrentInvoiceNb(result);
-	            providerService.update(provider);
-	        }
-	        return result;
-	    }
 
 	@Override
 	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {

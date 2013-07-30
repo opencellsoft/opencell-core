@@ -48,6 +48,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 import com.lowagie.text.Document;
@@ -92,8 +93,13 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 	@Inject
 	private Messages messages;
+	
+	@Inject
+	private RatedTransactionService ratedTransactionService;
 
 	private boolean returnToAgency;
+	
+	
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -334,7 +340,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
 			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
 			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
-				messages.info(new BundleKey("messages", "error.invoicing.alreadyLunched"));
+				messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
 				return null;
 			}
 
@@ -344,9 +350,18 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 			String selectedBillingAccounts="";
 			String sep="";
+			boolean isBillable=false;
 			for (IEntity entity : getSelectedEntities()) {
+				BillingAccount ba=billingAccountService.findById(Long.valueOf(entity.getId()+""));
 				selectedBillingAccounts=selectedBillingAccounts+sep+entity.getId();
 				sep=",";
+				if(!isBillable && ratedTransactionService.isBillingAccountBillable(billingRun, ba)){
+					isBillable=true;
+				}
+			}
+			if(!isBillable){
+				messages.error(new BundleKey("messages", "error.invoicing.noTransactions"));
+				return null;
 			}
 			log.info("selectedBillingAccounts="+selectedBillingAccounts);
 			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);

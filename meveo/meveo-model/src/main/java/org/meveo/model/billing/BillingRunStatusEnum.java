@@ -21,8 +21,10 @@ public enum BillingRunStatusEnum {
 	WAITING(2, "BillingRunStatusEnum.waiting"), 
 	ON_GOING(3, "BillingRunStatusEnum.onGoing"), 
 	CANCELED(4, "BillingRunStatusEnum.canceled"), 
-	VALIDATED(5, "BillingRunStatusEnum.validated"), 
-	TERMINATED(6, "BillingRunStatusEnum.terminated");
+	VALIDATED(5, "BillingRunStatusEnum.validated"),
+	TERMINATED(6, "BillingRunStatusEnum.terminated"),
+	CLOSED(7, "BillingRunStatusEnum.closed");
+	
 
 	private Integer id;
 	private String label;
