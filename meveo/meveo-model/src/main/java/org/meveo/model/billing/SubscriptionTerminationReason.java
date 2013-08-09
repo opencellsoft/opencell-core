@@ -26,7 +26,7 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "BILLING_SUBSCRIP_TERMIN_REASON", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"PROVIDER_ID", "CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIP_TERMIN_REASON_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUB_TERM_REASON_SEQ")
 public class SubscriptionTerminationReason extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 

@@ -34,8 +34,8 @@ import org.meveo.model.AuditableEntity;
  * PriceplanInstanciation entity.
  */
 @Entity
-@Table(name = "BILLING_PRICEPLAN_INSTANCIATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_PRICEPLAN_INSTANCIATION_SEQ")
+@Table(name = "BILLING_PRICEPLAN_INST")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_PRICEPLAN_INST_SEQ")
 public class PriceplanInstanciation extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;

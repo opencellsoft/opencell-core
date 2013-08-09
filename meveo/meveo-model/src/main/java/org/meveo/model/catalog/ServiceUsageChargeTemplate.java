@@ -26,7 +26,7 @@ import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "CAT_SERV_USAGE_CHARGE_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_USAGE_CHARGE_TEMPLATE_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_USAGECHRG_TEMPLT_SEQ")
 public class ServiceUsageChargeTemplate extends BaseEntity {
 
 	private static final long serialVersionUID = -6881449392209666474L;
