@@ -32,8 +32,8 @@ import org.meveo.model.AuditableEntity;
  * DiscountplanInstanciation entity.
  */
 @Entity
-@Table(name = "BILLING_DISCOUNTPLAN_INSTANCIATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNTPLAN_INSTANCIATION_SEQ")
+@Table(name = "BILLING_DISCPLAN_INST")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISC_INST_SEQ")
 public class DiscountplanInstanciation extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
