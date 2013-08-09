@@ -41,7 +41,7 @@ public class CounterPeriod extends BusinessEntity {
 	@Column(name = "PERIOD_END_DATE")
 	private Date periodEndDate;
 
-	@Column(name = "LEVEL", precision = 23, scale = 12)
+	@Column(name = "LEVEL_NUM", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
 	private BigDecimal level;
 

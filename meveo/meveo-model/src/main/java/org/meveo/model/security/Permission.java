@@ -37,7 +37,7 @@ public class Permission implements IEntity, Serializable {
 	@Column(name = "ID")
 	private Long id;
 
-	@Column(name = "RESOURCE", nullable = false)
+	@Column(name = "RESSOURCE", nullable = false)
 	private String resource;
 
 	@Column(name = "PERMISSION", nullable = false)
