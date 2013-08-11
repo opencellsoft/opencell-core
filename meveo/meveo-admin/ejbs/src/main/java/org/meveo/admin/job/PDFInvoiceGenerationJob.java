@@ -1,9 +1,8 @@
 package org.meveo.admin.job;
 
-import java.io.File;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -18,10 +17,6 @@ import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
@@ -39,7 +34,7 @@ import org.meveo.services.job.TimerEntityService;
 
 @Startup
 @Singleton
-public class XMLInvoiceGenerationJob implements Job {
+public class PDFInvoiceGenerationJob implements Job {
 
 	@Resource
 	TimerService timerService;
@@ -65,9 +60,15 @@ public class XMLInvoiceGenerationJob implements Job {
 	
 	@Inject
 	InvoiceService invoiceService;
+	
+	@Inject
+	PDFParametersConstruction pDFParametersConstruction;
+	
+	@Inject
+	PDFFilesOutputProducer pDFFilesOutputProducer;
 
 
-	private Logger log = Logger.getLogger(XMLInvoiceGenerationJob.class.getName());
+	private Logger log = Logger.getLogger(PDFInvoiceGenerationJob.class.getName());
 
 	@PostConstruct
 	public void init() {
@@ -78,20 +79,12 @@ public class XMLInvoiceGenerationJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute XMLInvoiceGenerationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<BillingRun> billingRuns = billingRunService.getValidatedBillingRuns();
-		log.info("# billingRuns to process:" + billingRuns.size());
-		for (BillingRun billingRun : billingRuns) {
+		List<Invoice> invoices=invoiceService.getValidatedInvoicesWithNoPdf(null);
+		for (Invoice invoice : invoices) {
 			try {
-				
-		        ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-		        String invoicesDir = param.getProperty("invoices.dir","/tmp/meveo/invoices");
-			        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+billingRun.getId());
-			        billingRundir.mkdirs();
-			        for (Invoice invoice : billingRun.getInvoices()) {
-			            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
-			        }
-			        billingRun.setDisabled(true);
-			        billingRunService.update(billingRun);
+				 Map<String, Object> parameters=pDFParametersConstruction.constructParameters(invoice);
+				 pDFFilesOutputProducer.producePdf(parameters);
+		       
 			} catch (Exception e) {
 				e.printStackTrace();
 				result.registerError(e.getMessage());

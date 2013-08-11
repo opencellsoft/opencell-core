@@ -216,7 +216,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             amountWithTax.appendChild(amountWithTaxTxt);
             amount.appendChild(amountWithTax);
 
-            BigDecimal balance =computeBalance(invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
+            BigDecimal balance =customerAccountService.customerAccountBalanceDue(null,invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
 
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
@@ -251,7 +251,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(billingRundir + File.separator + invoice.getTemporaryInvoiceNumber()
+            StreamResult result = new StreamResult(billingRundir + File.separator + invoice.getInvoiceNumber()
                     + ".xml");
             log.info("source=" + source.toString());
             trans.transform(source, result);
@@ -469,7 +469,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	        List<CatMessages> catMessages=qb.getQuery(getEntityManager()).getResultList(); 
 	        result= catMessages.size()>0?catMessages.get(0).getDescription():null;
 		
-		return result!=null?result:"";	
+		return result!=null?result:null;	
 	}
 
     public  void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element parent,
@@ -505,6 +505,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
            InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
        
            String invoiceCategoryLabel =invoiceCategory != null ? getMessageDescription(invoiceCategory.getClass().getSimpleName()+"_"+invoiceCategory.getId(),languageCode):"";
+           invoiceCategoryLabel=invoiceCategoryLabel!=null?invoiceCategoryLabel:invoiceCategory.getDescription();
                          Element category = doc.createElement("category");
                     category.setAttribute("label",invoiceCategoryLabel );
                     category.setAttribute("code",
@@ -544,6 +545,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 continue;
                             }
                             String invoiceSubCategoryLabel =invoiceSubCat != null ? getMessageDescription(invoiceSubCat.getClass().getSimpleName()+"_"+invoiceSubCat.getId(),languageCode):"";
+                            invoiceSubCategoryLabel=invoiceSubCategoryLabel!=null?invoiceSubCategoryLabel:invoiceSubCat.getDescription();
                             Element subCategory = doc.createElement("subCategory");
                             subCategories.appendChild(subCategory);
                             subCategory.setAttribute("label", invoiceSubCategoryLabel);
@@ -646,6 +648,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             Long idTax=taxInvoiceAgregate.getTax().getId();
             String languageCode=invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
             String taxDescription=getMessageDescription(taxInvoiceAgregate.getTax().getClass().getSimpleName()+"_"+idTax,languageCode); 
+            taxDescription=taxDescription!=null?taxDescription:taxInvoiceAgregate.getTax().getDescription();
             Element taxName = doc.createElement("name");
             Text taxNameTxt = doc
                     .createTextNode(taxInvoiceAgregate.getTax()!=null?taxDescription:"");
@@ -836,17 +839,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         return amount.toString();
     }
 
-    public BigDecimal computeBalance(String customerAccountCode, Date dueDate) throws BusinessException {
-        try{
-            BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccountCode, dueDate);
-            log.info("computeBalance customerAccountCode=" + customerAccountCode + ",dureDAte=" + dueDate
-                    + ",balance=" + balance);
-            return balance;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
     private boolean isAllServiceInstancesTerminated(List<ServiceInstance> serviceInstances) {
         for (ServiceInstance service : serviceInstances) {
             boolean serviceActive = service.getStatus() == InstanceStatusEnum.ACTIVE;

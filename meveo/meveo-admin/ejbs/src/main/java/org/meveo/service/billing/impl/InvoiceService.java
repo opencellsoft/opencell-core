@@ -15,6 +15,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -25,8 +26,11 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -133,4 +137,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	        }
 	        return result;
 	  }
+	  
+	  @SuppressWarnings("unchecked")
+		public List<Invoice> getValidatedInvoicesWithNoPdf(BillingRun br) {
+			try {
+				QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
+				qb.addCriterionEntity("i.billingRun.status",BillingRunStatusEnum.VALIDATED);
+				qb.addSql("i.pdf is null");
+				if(br!=null){
+					qb.addCriterionEntity("i.billingRun", br);
+				}
+				return (List<Invoice>)qb.getQuery(getEntityManager()).getResultList();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			return null;
+		}
+	  @SuppressWarnings("unchecked")
+		public List<Invoice> getInvoicesWithNoAccountOperation(BillingRun br) {
+			try {
+				QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
+				qb.addCriterionEntity("i.billingRun.status",BillingRunStatusEnum.VALIDATED);
+				qb.addSql("i.recordedInvoice is null");
+				if(br!=null){
+					qb.addCriterionEntity("i.billingRun", br);
+				}
+				return (List<Invoice>)qb.getQuery(getEntityManager()).getResultList();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			return null;
+		}
 }

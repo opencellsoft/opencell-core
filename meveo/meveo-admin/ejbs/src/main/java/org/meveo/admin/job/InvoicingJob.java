@@ -81,7 +81,7 @@ public class InvoicingJob implements Job {
 		log.info("execute RecurringRatingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
-			List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.NEW,BillingRunStatusEnum.ON_GOING,BillingRunStatusEnum.VALIDATED);
+			List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.NEW,BillingRunStatusEnum.ON_GOING,BillingRunStatusEnum.CONFIRMED);
 			log.info("# billingRuns to process:" + billingRuns.size());
 			for (BillingRun billingRun : billingRuns) {
 				try {
@@ -129,7 +129,7 @@ public class InvoicingJob implements Job {
 				        
 					}else if(BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())){
 						 createAgregatesAndInvoice(billingRun);
-					}else if(BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())){
+					}else if(BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())){
 						for (Invoice invoice : billingRun.getInvoices()) {
 				            invoiceService.setInvoiceNumber(billingRun.getProvider(), invoice);
 				            BillingAccount billingAccount = invoice.getBillingAccount();
@@ -137,7 +137,7 @@ public class InvoicingJob implements Job {
 				            billingAccount.setNextInvoiceDate(nextCalendarDate);
 				            billingAccountService.update(billingAccount);
 				        }
-						billingRun.setStatus(BillingRunStatusEnum.CLOSED);
+						billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
 						billingRunService.update(billingRun);
 					}
 					

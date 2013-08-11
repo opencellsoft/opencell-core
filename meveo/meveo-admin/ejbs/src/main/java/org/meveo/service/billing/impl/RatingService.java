@@ -14,9 +14,11 @@ import javax.persistence.EntityManager;
 import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.billing.ApplicationTypeEnum;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
@@ -24,6 +26,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
@@ -37,6 +40,9 @@ public class RatingService {
 
     @Inject
     protected Logger log;
+    
+    @Inject
+    protected CatMessagesService catMessagesService;
 
     private static boolean isPricePlanDirty;
     private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
@@ -68,6 +74,11 @@ public class RatingService {
 
         result.setWallet(subscription.getUserAccount().getWallet());
         result.setCode(code);
+      
+    	String languageCode=subscription.getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+    	CatMessages catMessage= catMessagesService.getCatMessages(chargeInstance.getClass().getSimpleName()+"_"+chargeInstance.getId(),languageCode);
+        String chargeInstnceLabel =catMessage != null ?catMessage.getDescription():null;
+        result.setDescription(chargeInstnceLabel!=null?chargeInstnceLabel:chargeInstance.getDescription());           
         result.setQuantity(quantity);
         result.setTaxPercent(taxPercent);
         result.setCurrency(tCurrency.getCurrency());

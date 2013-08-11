@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -39,6 +40,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
@@ -59,6 +61,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless @LocalBean
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
@@ -71,6 +74,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	@EJB
 	private InvoiceSubCategoryService invoiceSubCategoryService;
+	
+	@EJB
+    private CustomerAccountService customerAccountService;
 	
 
 	private Logger logger = Logger.getLogger(RatedTransactionService.class.getName());
@@ -242,7 +248,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  
     }
     @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-    public void createInvoiceAndAgregates(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice){
+    public void createInvoiceAndAgregates(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice) throws BusinessException{
     	 boolean entreprise = billingRun.getProvider().isEntreprise();
 
          BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
@@ -451,6 +457,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                  invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(2, RoundingMode.HALF_UP));
                  invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(2, RoundingMode.HALF_UP));
+                 BigDecimal balance =customerAccountService.customerAccountBalanceDue(null,invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
+
+
+                 if (balance == null) {
+                     throw new BusinessException("account balance calculation failed");
+                 }
+                 BigDecimal netToPay=BigDecimal.ZERO;
+                 if (entreprise) {
+                     netToPay = invoice.getAmountWithTax();
+                 } else {
+                     netToPay = invoice.getAmountWithTax().add(balance);
+                 }
+                 invoice.setNetToPay(netToPay);
              }
              
 

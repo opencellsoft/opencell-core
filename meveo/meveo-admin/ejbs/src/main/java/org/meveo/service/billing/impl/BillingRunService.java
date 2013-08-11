@@ -385,9 +385,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<BillingRun> getClosedBillingRuns(){
+	public List<BillingRun> getValidatedBillingRuns(){
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c",null,getCurrentProvider());
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.CLOSED);
+		qb.addCriterionEnum("c.status", BillingRunStatusEnum.VALIDATED);
 		qb.addBooleanCriterion("c.disabled", false);
 		
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
