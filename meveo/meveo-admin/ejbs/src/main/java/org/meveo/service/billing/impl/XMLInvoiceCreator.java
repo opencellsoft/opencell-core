@@ -216,7 +216,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             amountWithTax.appendChild(amountWithTaxTxt);
             amount.appendChild(amountWithTax);
 
-            BigDecimal balance =computeBalance(invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
+            BigDecimal balance =customerAccountService.customerAccountBalanceDue(null,invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
 
             if (balance == null) {
                 throw new BusinessException("account balance calculation failed");
@@ -251,7 +251,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(billingRundir + File.separator + invoice.getTemporaryInvoiceNumber()
+            StreamResult result = new StreamResult(billingRundir + File.separator + invoice.getInvoiceNumber()
                     + ".xml");
             log.info("source=" + source.toString());
             trans.transform(source, result);
@@ -836,17 +836,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         return amount.toString();
     }
 
-    public BigDecimal computeBalance(String customerAccountCode, Date dueDate) throws BusinessException {
-        try{
-            BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccountCode, dueDate);
-            log.info("computeBalance customerAccountCode=" + customerAccountCode + ",dureDAte=" + dueDate
-                    + ",balance=" + balance);
-            return balance;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
     private boolean isAllServiceInstancesTerminated(List<ServiceInstance> serviceInstances) {
         for (ServiceInstance service : serviceInstances) {
             boolean serviceActive = service.getStatus() == InstanceStatusEnum.ACTIVE;

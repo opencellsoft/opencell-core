@@ -270,7 +270,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 		byte[] invoicePdf = invoice.getPdf();
 		FacesContext context = FacesContext.getCurrentInstance();
 		String invoiceFilename = null;
-		if (invoice.getBillingRun().getStatus() == BillingRunStatusEnum.VALIDATED) {
+		if (invoice.getBillingRun().getStatus() == BillingRunStatusEnum.CLOSED) {
 			invoiceFilename = invoice.getInvoiceNumber() + ".pdf";
 		} else {
 			invoiceFilename = "unvalidated-invoice.pdf";
