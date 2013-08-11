@@ -78,7 +78,7 @@ public class XMLInvoiceGenerationJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute XMLInvoiceGenerationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<BillingRun> billingRuns = billingRunService.getClosedBillingRuns();
+		List<BillingRun> billingRuns = billingRunService.getValidatedBillingRuns();
 		log.info("# billingRuns to process:" + billingRuns.size());
 		for (BillingRun billingRun : billingRuns) {
 			try {

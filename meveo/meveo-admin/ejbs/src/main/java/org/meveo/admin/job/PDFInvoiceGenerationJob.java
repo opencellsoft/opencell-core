@@ -79,7 +79,7 @@ public class PDFInvoiceGenerationJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute XMLInvoiceGenerationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<Invoice> invoices=invoiceService.getValidatedInvoices(null);
+		List<Invoice> invoices=invoiceService.getValidatedInvoicesWithNoPdf(null);
 		for (Invoice invoice : invoices) {
 			try {
 				 Map<String, Object> parameters=pDFParametersConstruction.constructParameters(invoice);

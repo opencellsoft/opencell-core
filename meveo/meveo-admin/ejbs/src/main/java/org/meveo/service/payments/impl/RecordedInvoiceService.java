@@ -17,9 +17,11 @@ package org.meveo.service.payments.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
@@ -82,5 +84,15 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		update(recordedInvoice, user);
 		log.info("cancelLitigation recordedInvoice.Reference:" + recordedInvoice.getReference()
 				+ " , user:" + user.getName() + " ok");
+	}
+	public boolean isRecordedInvoiceExist(String reference, Provider provider) {
+		RecordedInvoice recordedInvoice = null;
+		try {
+			recordedInvoice = (RecordedInvoice) getEntityManager()
+					.createQuery("from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference and provider=:provider")
+					.setParameter("reference", reference).setParameter("provider", provider).getSingleResult();
+		} catch (Exception e) {
+		}
+		return recordedInvoice != null;
 	}
 }

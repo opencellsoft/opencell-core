@@ -386,6 +386,12 @@ public class QueryBuilder {
 		}
 
 	}
+	
+	public void addGroupCriterion(String groupColumn) {
+		q.append(" GROUP BY " + groupColumn);
+		
+
+	}
 
 	/**
 	 * @param orderColumn

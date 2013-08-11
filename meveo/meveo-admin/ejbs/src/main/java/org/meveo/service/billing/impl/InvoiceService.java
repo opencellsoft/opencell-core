@@ -139,11 +139,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	  }
 	  
 	  @SuppressWarnings("unchecked")
-		public List<Invoice> getValidatedInvoices(BillingRun br) {
+		public List<Invoice> getValidatedInvoicesWithNoPdf(BillingRun br) {
 			try {
 				QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
-				qb.addCriterionEntity("i.billingRun.status",BillingRunStatusEnum.CLOSED);
+				qb.addCriterionEntity("i.billingRun.status",BillingRunStatusEnum.VALIDATED);
 				qb.addSql("i.pdf is null");
+				if(br!=null){
+					qb.addCriterionEntity("i.billingRun", br);
+				}
+				return (List<Invoice>)qb.getQuery(getEntityManager()).getResultList();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			return null;
+		}
+	  @SuppressWarnings("unchecked")
+		public List<Invoice> getInvoicesWithNoAccountOperation(BillingRun br) {
+			try {
+				QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
+				qb.addCriterionEntity("i.billingRun.status",BillingRunStatusEnum.VALIDATED);
+				qb.addSql("i.recordedInvoice is null");
 				if(br!=null){
 					qb.addCriterionEntity("i.billingRun", br);
 				}

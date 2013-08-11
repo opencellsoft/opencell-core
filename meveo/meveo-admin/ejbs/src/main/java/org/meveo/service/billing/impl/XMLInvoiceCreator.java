@@ -469,7 +469,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	        List<CatMessages> catMessages=qb.getQuery(getEntityManager()).getResultList(); 
 	        result= catMessages.size()>0?catMessages.get(0).getDescription():null;
 		
-		return result!=null?result:"";	
+		return result!=null?result:null;	
 	}
 
     public  void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element parent,
@@ -505,6 +505,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
            InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
        
            String invoiceCategoryLabel =invoiceCategory != null ? getMessageDescription(invoiceCategory.getClass().getSimpleName()+"_"+invoiceCategory.getId(),languageCode):"";
+           invoiceCategoryLabel=invoiceCategoryLabel!=null?invoiceCategoryLabel:invoiceCategory.getDescription();
                          Element category = doc.createElement("category");
                     category.setAttribute("label",invoiceCategoryLabel );
                     category.setAttribute("code",
@@ -544,6 +545,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 continue;
                             }
                             String invoiceSubCategoryLabel =invoiceSubCat != null ? getMessageDescription(invoiceSubCat.getClass().getSimpleName()+"_"+invoiceSubCat.getId(),languageCode):"";
+                            invoiceSubCategoryLabel=invoiceSubCategoryLabel!=null?invoiceSubCategoryLabel:invoiceSubCat.getDescription();
                             Element subCategory = doc.createElement("subCategory");
                             subCategories.appendChild(subCategory);
                             subCategory.setAttribute("label", invoiceSubCategoryLabel);
@@ -646,6 +648,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             Long idTax=taxInvoiceAgregate.getTax().getId();
             String languageCode=invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
             String taxDescription=getMessageDescription(taxInvoiceAgregate.getTax().getClass().getSimpleName()+"_"+idTax,languageCode); 
+            taxDescription=taxDescription!=null?taxDescription:taxInvoiceAgregate.getTax().getDescription();
             Element taxName = doc.createElement("name");
             Text taxNameTxt = doc
                     .createTextNode(taxInvoiceAgregate.getTax()!=null?taxDescription:"");

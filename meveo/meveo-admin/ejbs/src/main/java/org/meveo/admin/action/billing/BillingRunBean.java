@@ -184,7 +184,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String validateInvoicing() {
 		try {
-			entity.setStatus(BillingRunStatusEnum.VALIDATED);
+			entity.setStatus(BillingRunStatusEnum.CONFIRMED);
 			billingRunService.update(entity);
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
