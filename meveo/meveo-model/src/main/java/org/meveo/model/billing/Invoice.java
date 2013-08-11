@@ -35,6 +35,7 @@ import javax.persistence.Table;
 
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 
 @Entity
 @Table(name = "BILLING_INVOICE")
@@ -50,6 +51,11 @@ public class Invoice extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
 	private BillingRun billingRun;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "RECORDED_INVOICE_ID")
+	private RecordedInvoice recordedInvoice;
+	
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
@@ -83,6 +89,9 @@ public class Invoice extends AuditableEntity {
 
 	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
 	private BigDecimal amountWithTax;
+	
+	@Column(name = "NET_TO_PAY", precision = 23, scale = 12)
+	private BigDecimal netToPay;
 
 	@Column(name = "PAYMENT_METHOD")
 	@Enumerated(EnumType.STRING)
@@ -331,5 +340,23 @@ public class Invoice extends AuditableEntity {
 	public void setTradingLanguage(TradingLanguage tradingLanguage) {
 		this.tradingLanguage = tradingLanguage;
 	}
+
+	public BigDecimal getNetToPay() {
+		return netToPay;
+	}
+
+	public void setNetToPay(BigDecimal netToPay) {
+		this.netToPay = netToPay;
+	}
+
+	public RecordedInvoice getRecordedInvoice() {
+		return recordedInvoice;
+	}
+
+	public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
+		this.recordedInvoice = recordedInvoice;
+	}
+	
+	
 
 }
