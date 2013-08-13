@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_part_1.0" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1247"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1"/>
+	<subDataset name="Table Dataset 2"/>
+	<subDataset name="Table Dataset 3">
+		<field name="providerContactLastName" class="java.lang.String">
+			<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/lastname]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="logoPath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="messagePath" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="invoiceNumber" class="java.lang.String"/>
+	<queryString language="xPath">
+		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
+	</queryString>
+	<field name="customerID" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/@customerAccountCode]]></fieldDescription>
+	</field>
+	<field name="invoiceDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/invoiceDate]]></fieldDescription>
+	</field>
+	<field name="dueDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/dueDate]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="amountWithTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/amountWithTax]]></fieldDescription>
+	</field>
+	<field name="amountTax" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/taxes/@total]]></fieldDescription>
+	</field>
+	<field name="label" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/@label]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="amountWithTax2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::category/amountWithTax]]></fieldDescription>
+	</field>
+	<field name="label2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::subCategory/@label]]></fieldDescription>
+	</field>
+	<field name="code" class="java.lang.String">
+		<fieldDescription><![CDATA[@code]]></fieldDescription>
+	</field>
+	<field name="taxPercent" class="java.lang.String">
+		<fieldDescription><![CDATA[@taxPercent]]></fieldDescription>
+	</field>
+	<field name="label3" class="java.lang.String">
+		<fieldDescription><![CDATA[label]]></fieldDescription>
+	</field>
+	<field name="quantity" class="java.lang.String">
+		<fieldDescription><![CDATA[quantity]]></fieldDescription>
+	</field>
+	<field name="unitPrice1" class="java.lang.String">
+		<fieldDescription><![CDATA[unitPrice1]]></fieldDescription>
+	</field>
+	<field name="amountWithoutTax3" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+	</field>
+	<field name="amountWithTax3" class="java.lang.String">
+		<fieldDescription><![CDATA[amountWithTax]]></fieldDescription>
+	</field>
+	<field name="bil_quality" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="bil_name" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="bil_firstname" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/name/firstname]]></fieldDescription>
+	</field>
+	<field name="bil_address1" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="bil_address2" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="bil_address3" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="bil_city" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="bil_postalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="bil_email" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/email]]></fieldDescription>
+	</field>
+	<field name="bil_bankCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/bankCode]]></fieldDescription>
+	</field>
+	<field name="bil_branchCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/branchCode]]></fieldDescription>
+	</field>
+	<field name="bil_accountNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/accountNumber]]></fieldDescription>
+	</field>
+	<field name="bil_key" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/key]]></fieldDescription>
+	</field>
+	<field name="bil_IBAN" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/IBAN]]></fieldDescription>
+	</field>
+	<field name="user_name" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/detail/userAccounts/userAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="user_address1" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="user_address2" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="user_address3" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="user_city" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="user_postalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[ancestor::userAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="unitPrice2" class="java.lang.String">
+		<fieldDescription><![CDATA[unitPrice2]]></fieldDescription>
+	</field>
+	<field name="custAccountdesc" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@description]]></fieldDescription>
+	</field>
+	<field name="custAccountContractDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@externalRef2]]></fieldDescription>
+	</field>
+	<field name="custAccountquality" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/quality]]></fieldDescription>
+	</field>
+	<field name="custAccountname" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/name/name]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress1" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address1]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress2" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address2]]></fieldDescription>
+	</field>
+	<field name="custAccountaddress3" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/address3]]></fieldDescription>
+	</field>
+	<field name="custAccountcity" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/city]]></fieldDescription>
+	</field>
+	<field name="custAccountpostalCode" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/address/postalCode]]></fieldDescription>
+	</field>
+	<field name="balance" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/balance]]></fieldDescription>
+	</field>
+	<field name="netToPay" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/amount/netToPay]]></fieldDescription>
+	</field>
+	<field name="accountTerminated" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@accountTerminated]]></fieldDescription>
+	</field>
+	<field name="providerContactFirstName" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/firstName]]></fieldDescription>
+	</field>
+	<field name="providerContactGenericEmail" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/@externalRef1]]></fieldDescription>
+	</field>
+	<field name="providerContactEmail" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/email]]></fieldDescription>
+	</field>
+	<field name="providerContactPhone" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/phone]]></fieldDescription>
+	</field>
+	<field name="providerContactLastName" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/customerAccount/providerContact/lastname]]></fieldDescription>
+	</field>
+	<field name="bil_accountOwner" class="java.lang.String">
+		<fieldDescription><![CDATA[/invoice/header/billingAccount/paymentMethod/bankCoordinates/accountOwner]]></fieldDescription>
+	</field>
+	<group name="Categories">
+		<groupExpression><![CDATA[$F{label}]]></groupExpression>
+		<groupHeader>
+			<band height="24">
+				<textField>
+					<reportElement x="190" y="4" width="280" height="20">
+						<printWhenExpression><![CDATA[$F{accountTerminated}==false]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{label}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="190" y="4" width="280" height="20">
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && $F{accountTerminated}==true]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font isBold="false" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{label}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="477" y="4" width="100" height="20">
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && $F{accountTerminated}==true]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{amountWithoutTax2}+" €"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="subCategories">
+		<groupExpression><![CDATA[$F{label2}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+	</group>
+	<group name="line">
+		<groupExpression><![CDATA[$F{code}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch">
+				<printWhenExpression><![CDATA[$F{accountTerminated}==false]]></printWhenExpression>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band height="842" splitType="Stretch">
+			<rectangle radius="5">
+				<reportElement x="-32" y="-1" width="208" height="841" forecolor="#D0D3D0" backcolor="#D0D3D0">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.0" lineColor="#D0D3D0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="10" y="264" width="161" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Invoice number : "+$P{invoiceNumber}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="99" y="615" width="496" height="1">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="99" y="614" width="1" height="227">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="92" y="658" width="14" height="24">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<line direction="BottomUp">
+				<reportElement x="92" y="658" width="14" height="24">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<ellipse>
+				<reportElement x="90" y="675" width="6" height="8">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+			</ellipse>
+			<ellipse>
+				<reportElement x="102" y="675" width="6" height="8">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+			</ellipse>
+			<textField>
+				<reportElement x="404" y="620" width="183" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Invoice number : "+$P{invoiceNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="110" y="672" width="290" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stub to join to your payment addressed to :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="176" y="620" width="203" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bil_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="176" y="646" width="203" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{bil_address3}==null?"":$F{bil_address3})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="655" width="98" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bil_city}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="655" width="105" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bil_postalCode}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="176" y="629" width="203" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{bil_address1}==null?"":$F{bil_address1})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="374" y="714" width="173" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[128 rue Berbisey]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="449" y="771" width="114" height="22">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AMOUNT IN EUROS TAX INVCLUDED]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="469" y="798" width="118" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{netToPay}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="374" y="703" width="173" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Manaty corporation]]></text>
+			</staticText>
+			<line>
+				<reportElement x="100" y="793" width="494" height="1">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="176" y="638" width="203" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{bil_address2}==null?"":$F{bil_address2})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="16" width="148" height="13" forecolor="#026A67">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[YOUR CONTACTS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="16" y="36" width="151" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{providerContactLastName}+" "+$F{providerContactFirstName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="16" y="47" width="151" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{providerContactEmail}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="16" y="69" width="151" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{providerContactGenericEmail}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="134" width="151" height="13">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dépannage électricité]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="147" width="161" height="36">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Homines enim eruditos et sobrios ut infaustos et inutiles vitant, eo quoque accedente quod.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="183" width="151" height="13">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dépannage gaz]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="195" width="161" height="69">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Homines enim eruditos et sobrios ut infaustos et inutiles vitant, eo quoque accedente quod.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="99" width="151" height="13" forecolor="#026A67">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[www.manaty.net]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="182" y="594" width="408" height="16">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Taxes payed on debit.
+In case of complaint, you can contact Manaty phone number on the top left of your invoice.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="370" width="161" height="171">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Et eodem impetu Domitianum praecipitem per scalas itidem funibus constrinxerunt, eosque coniunctos per ampla spatia civitatis acri raptavere discursu. iamque artuum et membrorum divulsa conpage superscandentes corpora mortuorum ad ultimam truncata deformitatem velut exsaturati mox abiecerunt in flumen.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="615" width="70" height="118">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Manaty corp. invoice.
+Manaty SARL – Head office 128 rue Berbisey 21000 DIJON – Tax reference FR XX XXX XXX XXX
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="404" y="629" width="183" height="9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" Term : "+$F{dueDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="374" y="725" width="173" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[21000 DIJON - FRANCE]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="195" y="522" width="365" height="10">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Bank account RIB"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="571" width="365" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["BIC / IBAN\n" + ($F{netToPay}.startsWith("-")?($F{bil_IBAN}==null?"":$F{bil_IBAN}):"BREDFRPPXXX  / FR76 1010 7001 1800 9160 3026 052")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="16" y="58" width="151" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{providerContactPhone}==null?"":$F{providerContactPhone})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TH" x="296" y="550" width="87" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + ($F{netToPay}.startsWith("-")?($F{bil_accountNumber}==null?"":$F{bil_accountNumber}):"00916030260")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TH" x="211" y="550" width="43" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + ($F{netToPay}.startsWith("-")?($F{bil_bankCode}==null?"":$F{bil_bankCode}):"10107")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table_TH" x="412" y="533" width="133" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Owner]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="table_TH" x="412" y="550" width="133" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + ($F{netToPay}.startsWith("-")?($F{bil_accountOwner}==null?"":$F{bil_accountOwner}):"EDF")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TH" x="254" y="550" width="42" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + ($F{netToPay}.startsWith("-")?($F{bil_branchCode}==null?"":$F{bil_branchCode}):"00118")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table_TH" x="254" y="533" width="42" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Branch code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TH" x="296" y="533" width="87" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Account number]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="table_TH" x="383" y="550" width="29" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + ($F{netToPay}.startsWith("-")?($F{bil_key}==null?"":$F{bil_key}):"52")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table_TH" x="211" y="533" width="43" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Bank code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TH" x="383" y="533" width="29" height="17">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Key]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="404" y="638" width="183" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{custAccountdesc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
+	<title>
+		<band height="241" splitType="Stretch">
+			<image>
+				<reportElement x="178" y="5" width="160" height="50"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{logoPath}+"logo.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="281" y="139" width="282" height="80">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bil_name}+"\n"+($F{bil_address1}==null?"":($F{bil_address1}+"\n"))
++($F{bil_address2}==null?"":$F{bil_address2})+"\n"
++($F{bil_address3}==null?"":$F{bil_address3})+"\n"
++$F{bil_postalCode}+" "+$F{bil_city}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="219" width="173" height="20" forecolor="#000000">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Invoice date "+$F{invoiceDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="364" y="34" width="218" height="72">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["User account address :\n"+$F{user_name}+"\n"+($F{user_address1}==null?"":$F{user_address1})+"\n"+($F{user_address2}==null?"":$F{user_address2})+"\n"+($F{user_address3}==null?"":$F{user_address3})+"\n"+$F{user_postalCode}+" "+$F{user_city}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="185" y="239" width="395" height="1" forecolor="#026A67"/>
+				<graphicElement>
+					<pen lineWidth="3.0"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="364" y="19" width="218" height="10"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{custAccountdesc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="21" splitType="Stretch">
+			<rectangle radius="5">
+				<reportElement x="181" y="1" width="396" height="20" backcolor="#FFFFFF"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="191" y="1" width="182" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[INVOICE DETAIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="524" y="1" width="58" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Amont without tax]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{accountTerminated}==false]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="194" y="0" width="237" height="15">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{label3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="477" y="0" width="94" height="15">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amountWithoutTax3}+" €"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="471" splitType="Stretch">
+			<rectangle radius="5">
+				<reportElement x="181" y="-1" width="397" height="46" backcolor="#CCFFCC">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle radius="5">
+				<reportElement x="181" y="-1" width="397" height="46" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="195" y="1" width="79" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Amount without tax "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="26" width="79" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Amount with tax "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="195" y="14" width="79" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tax amount "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="185" y="49" width="179" height="14">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Payment method : check or wiretransfer.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="185" y="61" width="365" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{netToPay}.startsWith("-")?"This amount will be transfer on your bank account in next days.":("<b>Thank you to sold this invoice by : "+$F{dueDate}+"</b>.")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="274" y="1" width="61" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amountWithoutTax}+" €"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="274" y="14" width="61" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amountTax}+" €"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="274" y="26" width="60" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{amountWithTax}+" €"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="408" y="25" width="102" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{netToPay}.startsWith("-")?"Net to refund ":"Net to pay ")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="185" y="99" width="365" height="21">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[If you pay by check, thank you to send your payment to "Manaty corporation", using the detachable stub below.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="185" y="80" width="365" height="19">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1 && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8" isUnderline="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["If you pay by wiretransfer, thank you to use the RIB below, noting reference invoice '"+$P{invoiceNumber}+"' in the transfer title."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="510" y="25" width="60" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{netToPay}.startsWith("-")?$F{netToPay}.substring(1):$F{netToPay})+" €"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
