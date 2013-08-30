@@ -157,78 +157,77 @@ public class RatingService {
 
     	log.info("rate "+bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
-        	log.info("try pricePlan"+pricePlan);
             boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
             if (!sellerAreEqual) {
+            	log.info("The seller of the customer "+sellerId+" is not the same as pricePlan seller "+pricePlan.getSeller().getId()+" ("+pricePlan.getSeller().getCode()+")");
                 continue;
             }
-        	log.info("sellerAreEqual");
             
             boolean countryAreEqual = pricePlan.getTradingCountry() == null || pricePlan.getTradingCountry().getId().equals(countryId);
             if (!countryAreEqual) {
+            	log.info("The country of the billing account "+countryId+" is not the same as pricePlan country"+pricePlan.getTradingCountry().getId()+" ("+pricePlan.getTradingCountry().getCountry().getCountryCode()+")");
                 continue;
             }
-        	log.info("countryAreEqual");
             boolean currencyAreEqual = pricePlan.getTradingCurrency() == null || (tcurrency != null && tcurrency.getId().equals(pricePlan.getTradingCurrency().getId()));
             if (!currencyAreEqual) {
+            	log.info("The currency of the customer account "+(tcurrency != null ? tcurrency.getCurrencyCode():"null")+" is not the same as pricePlan currency"+pricePlan.getTradingCurrency().getId()+" ("+pricePlan.getTradingCurrency().getCurrencyCode()+")");
                 continue;
             }
-        	log.info("currencyAreEqual");
             boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null
                     || ((pricePlan.getStartSubscriptionDate() == null || bareOperation.getSubscriptionDate().after(pricePlan.getStartSubscriptionDate()) || bareOperation
                         .getSubscriptionDate().equals(pricePlan.getStartSubscriptionDate())) && (pricePlan.getEndSubscriptionDate() == null || bareOperation.getSubscriptionDate()
                         .before(pricePlan.getEndSubscriptionDate())));
             if (!subscriptionDateInPricePlanPeriod) {
+            	log.info("The subscription date "+bareOperation.getSubscriptionDate()+"is not in the priceplan subscription range");
                 continue;
             }
-        	log.info("subscriptionDateInPricePlanPeriod");
 
             int subscriptionAge = 0;
             if (bareOperation.getSubscriptionDate() != null && bareOperation.getOperationDate() != null) {
                 // logger.info("subscriptionDate=" + bareOperation.getSubscriptionDate() + "->" + DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
                 subscriptionAge = DateUtils.monthsBetween(bareOperation.getOperationDate(), DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
             }
-            log.info("subscriptionAge=" + subscriptionAge);
+            //log.info("subscriptionAge=" + subscriptionAge);
             boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-            log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" + subscriptionMinAgeOK);
+            //log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" + subscriptionMinAgeOK);
             if (!subscriptionMinAgeOK) {
+            	log.info("The subscription age "+subscriptionAge+"is less than the priceplan subscription age min :"+pricePlan.getMinSubscriptionAgeInMonth());
                 continue;
             }
-        	log.info("subscriptionMinAgeOK");
-
             boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null  || pricePlan.getMaxSubscriptionAgeInMonth() == 0  || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
             log.info("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
+            	log.info("The subscription age "+subscriptionAge+"is greater than the priceplan subscription age max :"+pricePlan.getMaxSubscriptionAgeInMonth());
                 continue;
             }
-        	log.info("subscriptionMaxAgeOK");
 
             boolean applicationDateInPricePlanPeriod = (pricePlan.getStartRatingDate() == null || bareOperation.getOperationDate().after(pricePlan.getStartRatingDate()) || bareOperation
                 .getOperationDate().equals(pricePlan.getStartRatingDate()))
                     && (pricePlan.getEndRatingDate() == null || bareOperation.getOperationDate().before(pricePlan.getEndRatingDate()));
             log.error("applicationDateInPricePlanPeriod(" + pricePlan.getStartRatingDate() + " - " + pricePlan.getEndRatingDate() + ")=" + applicationDateInPricePlanPeriod);
             if (!applicationDateInPricePlanPeriod) {
+            	log.info("The application date "+bareOperation.getOperationDate()+"is not in the priceplan application range");
                 continue;
             }
-        	log.info("applicationDateInPricePlanPeriod");
-            boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null || pricePlan.getCriteria1Value().equals(bareOperation.getParameter1());
-            log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
+        	boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null || pricePlan.getCriteria1Value().equals(bareOperation.getParameter1());
+            //log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
+            	log.info("The operation param1 "+bareOperation.getParameter1()+" is not compatible with price plan criteria 1: "+pricePlan.getCriteria1Value());
                 continue;
             }
-        	log.info("criteria1SameInPricePlan");
-            boolean criteria2SameInPricePlan = pricePlan.getCriteria2Value()==null || pricePlan.getCriteria2Value().equals(bareOperation.getParameter2());
-            log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
+        	boolean criteria2SameInPricePlan = pricePlan.getCriteria2Value()==null || pricePlan.getCriteria2Value().equals(bareOperation.getParameter2());
+            //log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
+            	log.info("The operation param2 "+bareOperation.getParameter2()+" is not compatible with price plan criteria 2: "+pricePlan.getCriteria2Value());
                 continue;
             }
-        	log.info("criteria2SameInPricePlan");
-            boolean criteria3SameInPricePlan = pricePlan.getCriteria3Value()==null || pricePlan.getCriteria3Value().equals(bareOperation.getParameter3());
-            log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
+        	boolean criteria3SameInPricePlan = pricePlan.getCriteria3Value()==null || pricePlan.getCriteria3Value().equals(bareOperation.getParameter3());
+            //log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (criteria3SameInPricePlan) {
             	log.info("criteria3SameInPricePlan");
                 return pricePlan;
             }
+        	log.info("The operation param3 "+bareOperation.getParameter3()+" is not compatible with price plan criteria 3: "+pricePlan.getCriteria3Value());
         }
         return null;
     }
