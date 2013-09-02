@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_part_1.0" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1247"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="156"/>
+	<property name="ireport.y" value="2936"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -297,7 +297,7 @@
 	<background>
 		<band height="842" splitType="Stretch">
 			<rectangle radius="5">
-				<reportElement x="-32" y="-1" width="208" height="841" forecolor="#D0D3D0" backcolor="#D0D3D0">
+				<reportElement x="-32" y="-1" width="208" height="842" forecolor="#D0D3D0" backcolor="#D0D3D0">
 					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -322,7 +322,7 @@
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement x="99" y="614" width="1" height="227">
+				<reportElement x="99" y="615" width="1" height="226">
 					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1  && !$F{netToPay}.startsWith("-")]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -452,7 +452,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<text><![CDATA[Manaty corporation]]></text>
+				<text><![CDATA[Manaty]]></text>
 			</staticText>
 			<line>
 				<reportElement x="100" y="793" width="494" height="1">
@@ -514,7 +514,7 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Dépannage électricité]]></text>
+				<text><![CDATA[Information panel 1]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="147" width="161" height="36">
@@ -533,7 +533,7 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Dépannage gaz]]></text>
+				<text><![CDATA[Information panel 2]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="195" width="161" height="69">
@@ -579,7 +579,7 @@ In case of complaint, you can contact Manaty phone number on the top left of you
 				<textElement textAlignment="Justified">
 					<font size="8"/>
 				</textElement>
-				<text><![CDATA[Manaty corp. invoice.
+				<text><![CDATA[Manaty invoice.
 Manaty SARL – Head office 128 rue Berbisey 21000 DIJON – Tax reference FR XX XXX XXX XXX
 ]]></text>
 			</staticText>
@@ -743,7 +743,7 @@ Manaty SARL – Head office 128 rue Berbisey 21000 DIJON – Tax reference FR XX
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{bil_name}+"\n"+($F{bil_address1}==null?"":($F{bil_address1}+"\n"))
 +($F{bil_address2}==null?"":$F{bil_address2})+"\n"
 +($F{bil_address3}==null?"":$F{bil_address3})+"\n"
-+$F{bil_postalCode}+" "+$F{bil_city}]]></textFieldExpression>
++($F{bil_postalCode}==null?"":$F{bil_postalCode})+" "+($F{bil_city}==null?"":$F{bil_city})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="397" y="219" width="173" height="20" forecolor="#000000">
@@ -761,7 +761,7 @@ Manaty SARL – Head office 128 rue Berbisey 21000 DIJON – Tax reference FR XX
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["User account address :\n"+$F{user_name}+"\n"+($F{user_address1}==null?"":$F{user_address1})+"\n"+($F{user_address2}==null?"":$F{user_address2})+"\n"+($F{user_address3}==null?"":$F{user_address3})+"\n"+$F{user_postalCode}+" "+$F{user_city}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["User account address :\n"+$F{user_name}+"\n"+($F{user_address1}==null?"":$F{user_address1})+"\n"+($F{user_address2}==null?"":$F{user_address2})+"\n"+($F{user_address3}==null?"":$F{user_address3})+"\n"+($F{user_postalCode}==null?"":$F{user_postalCode})+" "+($F{user_city}==null?"":$F{user_city})]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="185" y="239" width="395" height="1" forecolor="#026A67"/>
@@ -787,7 +787,7 @@ Manaty SARL – Head office 128 rue Berbisey 21000 DIJON – Tax reference FR XX
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="191" y="1" width="182" height="20">
+				<reportElement x="190" y="1" width="182" height="20">
 					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -941,7 +941,7 @@ Manaty SARL – Head office 128 rue Berbisey 21000 DIJON – Tax reference FR XX
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<text><![CDATA[If you pay by check, thank you to send your payment to "Manaty corporation", using the detachable stub below.]]></text>
+				<text><![CDATA[If you pay by check, thank you to send your payment to "Manaty", using the detachable stub below.]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="185" y="80" width="365" height="19">
