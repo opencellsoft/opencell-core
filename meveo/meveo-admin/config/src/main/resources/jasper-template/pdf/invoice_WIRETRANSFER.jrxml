@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice_part_1.0" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="156"/>
-	<property name="ireport.y" value="2936"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1094"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -487,7 +487,7 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{providerContactLastName}+" "+$F{providerContactFirstName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{providerContactLastName}==null?"":$F{providerContactLastName}) +" "+($F{providerContactFirstName}==null?"":$F{providerContactFirstName})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="16" y="47" width="151" height="11">
@@ -496,7 +496,7 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{providerContactEmail}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{providerContactEmail}==null?"":$F{providerContactEmail})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="16" y="69" width="151" height="11">
@@ -505,7 +505,7 @@
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{providerContactGenericEmail}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{providerContactGenericEmail}==null?"":$F{providerContactGenericEmail})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="10" y="134" width="151" height="13">
