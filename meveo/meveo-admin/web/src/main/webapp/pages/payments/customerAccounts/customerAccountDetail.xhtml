@@ -309,24 +309,15 @@
 									value="#{messages['customerAccount.addPaymentCheck']}"
 									action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
 									rendered="#{customerAccountBean.isActiveAccount()}" />
-								<p:commandButton
-									value="#{messages['customerAccount.buttonTransfert']}"
-									action="transferAccount"
-									rendered="#{customerAccountBean.isActiveAccount()}" />
+								<p:button  outcome="transferAccount" value="#{messages['customerAccount.buttonTransfert']}"
+									rendered="#{customerAccountBean.isActiveAccount()}">
+									<f:param name="objectId" value="#{customerAccountBean.entity.id}" />
+									<f:param name="cid" value="#{conversation.id}" />
+								</p:button>
 							</h:form>
 							<hftl:dataList backingBean="#{accountOperationBean}"
 								label="#{messages['accountOperation.title']}" disabled="true"
 								checkMany="true">
-								<ui:define name="buttons">
-									<p:commandButton
-										action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
-										value="#{messages['customerAccount.buttonLettrage']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;
-									<p:commandButton
-										action="#{accountOperationBean.consultMatching()}"
-										value="#{messages['customerAccount.buttonConsultMatching']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;																				
-								</ui:define>
 								<hftl:column label="#{messages['accountOperation.type']}"
 									field="type" />
 								<hftl:column label="#{messages['accountOperation.occCode']}"
@@ -354,6 +345,16 @@
 
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
+										<ui:define name="add-on-buttons">
+										<p:commandButton
+										action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
+										value="#{messages['customerAccount.buttonLettrage']}"
+										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;
+										<p:commandButton
+										action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}"
+										value="#{messages['customerAccount.buttonConsultMatching']}"
+										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;
+									</ui:define>
 							</hftl:dataList>
 							<h:form>
 								<hf:formButtons columns="3" backingBean="#{customerAccountBean}"

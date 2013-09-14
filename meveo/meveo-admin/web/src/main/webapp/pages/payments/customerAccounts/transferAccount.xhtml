@@ -32,7 +32,9 @@
 			searchField2="name"
 			column1Label="#{messages['customerAccount.code']}" column1="code"
 			column2Label="#{messages['customerAccount.name']}" column2="name"
-			filtersMap="#{customerAccountBean.filters}">
+			filtersMap="#{customerAccountBean.filters}"
+			selection="#{customerAccountBean.customerAccountTransfer}"
+			updateField=":transferAccountForm:accountTransferCode">
 			<!-- select link -->
 			<!-- <a:commandLink value="#{messages['commons.select']}"
 				reRender="transferAccountForm"
@@ -40,20 +42,20 @@
 				oncomplete="Richfaces.hideModalPanel('customerAccountPopup')">
 			</a:commandLink> -->
 		</hftl:entityPopup>
+		
 
 		<p:panel styleClass="col1-set">
 			<f:facet name="header">
 				<h:outputText
 					value="#{messages['customerAccount.transferAccountTitle']}" />
 			</f:facet>
-
 			<h:form id="transferAccountForm">
 
 				<p:panelGrid columns="2" styleClass="form-panel-fields">
 					<p:outputLabel for="accountTransferFrom"
 						value="#{messages['customerAccount.accountTransferFrom']}"></p:outputLabel>
 					<p:inputText id="accountTransferFrom"
-						value="#{customerAccount.code}" disabled="true" size="30"></p:inputText>
+						value="#{customerAccountBean.entity.code}" disabled="true" size="30"></p:inputText>
 
 					<p:outputLabel for="accountTransferCode"
 						value="#{messages['customerAccount.accountTransferTo']}"></p:outputLabel>
@@ -83,8 +85,11 @@
 					<p:commandButton
 						value="#{messages['customerAccount.buttonTransfert']}"
 						action="#{customerAccountBean.transferAccount()}" />
-					<p:button outcome="addCustomerAccount"
-						value="#{messages['action.back']}"></p:button>
+						
+					<p:button  outcome="customerAccountDetail" value="#{messages['action.back']}">
+									<f:param name="objectId" value="#{customerAccountBean.entity.id}" />
+									<f:param name="cid" value="#{conversation.id}" />
+					</p:button>	
 				</p:panelGrid>
 			</h:form>
 		</p:panel>

@@ -172,7 +172,12 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ entity.getId() + "&edit=false&tab=ops";
+				+ entity.getId() + "&edit=false&tab=ops&faces-redirect=true";
+	}
+	public String backCA() {
+
+		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+				+ entity.getId() + "&edit=false&tab=ops&faces-redirect=true";
 	}
 
 	/**
