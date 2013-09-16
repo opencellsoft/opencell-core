@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
@@ -153,7 +154,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		    operationIds.add((Long)operation.getId());
 		}
 		log.info("operationIds    " + operationIds);
-		if (getSelectedEntities().length==0) {
+		if (operationIds.isEmpty()) {
 			messages.error(new BundleKey("messages", "customerAccount.matchingUnselectedOperation"));
 			return null;
 		}
@@ -165,17 +166,19 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			} else {
 				setPartialMatchingOps(result.getPartialMatchingOcc());
 				return "/pages/payments/customerAccounts/partialMatching.xhtml?objectId="
-						+ customerAccountId + "";
+						+ customerAccountId + "&faces-redirect=true";
 			}
 
 		} catch (NoAllOperationUnmatchedException ee) {
 			messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
+		} catch (BusinessException ee) {
+			messages.error(new BundleKey("messages", ee.getMessage()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ customerAccountId + "&edit=false&tab=ops";
+				+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
 	}
 
 	// called from page of selection partial operation
@@ -202,7 +205,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId()
-				+ "&edit=false&tab=ops";
+				+ "&edit=false&tab=ops&faces-redirect=true";
 	}
 
 	/**
@@ -212,7 +215,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 *         operation
 	 */
 
-	public String consultMatching() {
+	public String consultMatching(long customerAccountId) {
 		List<Long> operationIds = new ArrayList<Long>();
 		log.debug("getChecked():" + getSelectedEntities());
         for (IEntity operation : getSelectedEntities()) {
@@ -221,21 +224,25 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		log.info(" consultMatching operationIds " + operationIds);
 		if (operationIds.isEmpty() || operationIds.size() > 1) {
 			messages.info(new BundleKey("messages", "consultMatching.noOperationSelected"));
-			return null;
+
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+					+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
 		}
 		AccountOperation accountOperation = accountOperationService.findById(operationIds.get(0));
 		if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L
 				&& accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
 			messages.info(new BundleKey("messages", "consultMatching.operationNotMatched"));
-			return null;
+
+			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
+					+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
 		}
 		matchingAmounts = accountOperation.getMatchingAmounts();
 		if (matchingAmounts.size() == 1) {
 			return "/pages/payments/matchingCode/matchingCodeDetail.xhtml?objectId="
-					+ matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false";
+					+ matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false&faces-redirect=true";
 		}
 		return "/pages/payments/matchingCode/selectMatchingCode.xhtml?objectId="
-				+ accountOperation.getId() + "&edit=false";
+				+ accountOperation.getId() + "&edit=false&faces-redirect=true";
 	}
 
 	public List<MatchingAmount> getMatchingAmounts() {

@@ -177,7 +177,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
      * @return
      */
     public String loadFromTemplatePaymentCheck(Long customerAccountId) {
-        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplatePaymentCheck&occTemplateId=" + occTemplate.getId()
+        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplatePaymentCheck"
                 + "&edit=true&faces-redirect=true&includeViewParams=true";
     }
 
@@ -186,7 +186,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
      * @return
      */
     public String loadFromTemplateRejectPayment(Long customerAccountId) {
-        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplateRejectPayment&occTemplateId=" + occTemplate.getId()
+        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplateRejectPayment"
                 + "&edit=true&faces-redirect=true&includeViewParams=true";
 
     }
@@ -209,7 +209,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
     }
 
     public String loadFromTemplate() {
-        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplate&occTemplateId=" + occTemplate.getId()
+        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplate"
                 + "&edit=true&faces-redirect=true&includeViewParams=true";
     }
 

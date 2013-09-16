@@ -1,20 +1,20 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">	
-	<rich:panel>				
+	<p:panel>				
 				<hf:formPanel  showFormButtons ="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
 					<hftl:panelGroup columns="2">
 						<hf:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate"  />	  
@@ -22,31 +22,31 @@
 						<hf:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit"  />
 						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit"  />																		                  																
 					</hftl:panelGroup>												
-					<a:commandButton value="#{messages['action.back']}"	 action="#{matchingCodeBean.backToCA()}"/>						
-					<a:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
+					<p:commandButton value="#{messages['action.back']}"	 action="#{matchingCodeBean.backToCA()}"/>						
+					<p:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
 				</hf:formPanel>
-				<custom:listPanel label="#{messages['customerAccount.operations']}">
-					<custom:dataList backingBean="#{matchingCodeBean}"
+				<p:panel label="#{messages['customerAccount.operations']}">
+					<hftl:dataList backingBean="#{matchingCodeBean}"
 						dataModel="#{matchingCode.getMatchingAmounts()}"
 						edit="#{false}" checkMany="#{false}">
-						<custom:column label="#{messages['accountOperation.occCode']}"
+						<hftl:column label="#{messages['accountOperation.occCode']}"
 							field="accountOperation" childField="occCode" />					
-						<custom:column
+						<hftl:column
 							label="#{messages['accountOperation.occDescription']}"
 							field="accountOperation" childField="occDescription" />
-						<custom:column label="#{messages['accountOperation.transactionDate']}"
+						<hftl:column label="#{messages['accountOperation.transactionDate']}"
 							field="accountOperation" childField="transactionDate" />						
-						<custom:column label="#{messages['accountOperation.dueDate']}"
+						<hftl:column label="#{messages['accountOperation.dueDate']}"
 							field="accountOperation" childField="dueDate" />
-						<custom:column label="#{messages['accountOperation.credit']}"
+						<hftl:column label="#{messages['accountOperation.credit']}"
 							field="accountOperation" childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" />
-						<custom:column label="#{messages['accountOperation.debit']}"
+						<hftl:column label="#{messages['accountOperation.debit']}"
 							field="accountOperation" childField="amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}" />								- 					
-	                    <custom:column label="#{messages['matchingAmount.amount']}"
+	                    <hftl:column label="#{messages['matchingAmount.amount']}"
 							field="matchingAmount"  />								-							
-					</custom:dataList>
-				</custom:listPanel>
+					</hftl:dataList>
+				</p:panel>
 				
-			</rich:panel>		
+			</p:panel>		
 		</ui:define>
 </ui:composition>

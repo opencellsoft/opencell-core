@@ -72,7 +72,7 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 
 		returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount()
-						.getId() + "&edit=false&tab=ops";
+						.getId() + "&edit=false&tab=ops&faces-redirect=true";
 
 		return returnPage;
 	}

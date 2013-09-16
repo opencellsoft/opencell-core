@@ -61,7 +61,7 @@ public class RatedTransactionsJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, Provider provider) {
-		log.info("execute RecurringRatingJob.");
+		log.info("execute RatedTransactionsJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
 			List<WalletOperation> walletOperations = walletOperationService.findByStatus(WalletOperationStatusEnum.OPEN);
