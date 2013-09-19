@@ -9,11 +9,11 @@
 	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
-<!-- 	<modules> -->
-<!-- 		<module>meveo-model</module> 	-->
-<!-- 		<module>meveo-admin</module> 	-->
+ 	<modules>
+ 		<module>meveo-model</module>
+		<module>meveo-admin</module> 
 <!-- 		<module>meveo-api</module> 		-->
-<!-- 	</modules> -->
+ 	</modules>
 
 
 	<properties>
@@ -31,11 +31,7 @@
 		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
 	</properties>
 
-	<scm>
-		<connection>scm:svn:https://core.manaty.net/svn/trunk/meveo</connection>
-		<developerConnection>scm:svn:https://core.manaty.net/svn/trunk/meveo</developerConnection>
-		<url>https://core.manaty.net/svn/trunk/meveo</url>
-	</scm>
+	
 	<repositories>
 		<repository>
 			<id>jboss-repo</id>
@@ -49,33 +45,7 @@
 			<id>primefaces.repo</id>
 			<url>http://repository.primefaces.org</url>
 		</repository>
-<!-- 		<repository> -->
-<!-- 			<id>manaty.repo.releases</id> -->
-<!-- 			<url>http://libsmeveocore.manaty.net/releases</url> -->
-<!-- 		</repository> -->
-<!-- 		<repository> -->
-<!-- 			<id>manaty.repo.snapshot</id> -->
-<!-- 			<url>http://libsmeveocore.manaty.net/snapshots</url> -->
-<!-- 		</repository> -->
 	</repositories>
-	<distributionManagement>
-		<downloadUrl>http://libsmeveocore.manaty.net/sites/${project.artifactId}</downloadUrl>
-		<repository>
-			<id>manaty-core-sftp</id>
-			<name>Manaty core product repository for released components</name>
-			<url>scp://libsmeveocore.manaty.net/var/www/sites/libsmeveocore/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>manaty-core-sftp</id>
-			<name>Manaty core product repository for snapshot components</name>
-			<url>scp://libsmeveocore.manaty.net/var/www/sites/libsmeveocore/snapshots/</url>
-		</snapshotRepository>
-		<site>
-			<id>manaty-core-sftp</id>
-			<name>Manaty core product documentation site</name>
-			<url>scp://libsmeveocore.manaty.net/var/www/sites/libsmeveocore/sites</url>
-		</site>
-	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
@@ -176,63 +146,6 @@
 					<value>prod</value>
 				</property>
 			</activation>
-		</profile>
-
-		<profile>
-			<id>release</id>
-			<properties>
-				<env>prod</env>
-			</properties>
-			<modules>
-				<module>meveo-model</module>
-				<module>meveo-admin</module>
-			</modules>
-			<build>
-				<plugins>
-					<plugin>
-						<inherited>true</inherited>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.7</version>
-						<configuration>
-							<updateReleaseInfo>true</updateReleaseInfo>
-						</configuration>
-					</plugin>
-					<plugin>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.1.2</version>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-
-			<reporting>
-				<plugins>
-					<plugin>
-						<artifactId>maven-project-info-reports-plugin</artifactId>
-						<version>2.4</version>
-						<reportSets>
-							<reportSet>
-								<reports>
-									<report>summary</report>
-									<report>project-team</report>
-									<report>scm</report>
-									<report>dependencies</report>
-									<report>plugins</report>
-								</reports>
-							</reportSet>
-						</reportSets>
-					</plugin>
-
-				</plugins>
-			</reporting>
-
 		</profile>
 
 	</profiles>	

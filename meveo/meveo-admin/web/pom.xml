@@ -10,8 +10,6 @@
 	<artifactId>meveo-admin-web</artifactId>
 	<name>MEVEO Admin Web Application - Web Module</name>
 	<packaging>war</packaging>
-	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
-
 	<build>
 		<resources>
 			<resource>

@@ -10,7 +10,6 @@
 	<artifactId>meveo-admin-config</artifactId>
 	<packaging>jar</packaging>
 	<name>Meveo Admin Web Application - Configuration Files</name>
-	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 
 	<build>
