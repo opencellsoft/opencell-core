@@ -42,7 +42,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -65,6 +64,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.remote.CustomerAccountServiceRemote;

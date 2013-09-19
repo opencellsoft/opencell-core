@@ -19,16 +19,11 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.BeforeDBTest;
+import org.meveo.model.shared.DateUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/**
- * @author Ignas Lelys
- * @created Dec 6, 2010
- *
- */
 public class CalendarTest {
     
     @Test(groups = { "db" })

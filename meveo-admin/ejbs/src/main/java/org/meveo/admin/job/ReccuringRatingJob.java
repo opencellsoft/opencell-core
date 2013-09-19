@@ -19,7 +19,6 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -36,6 +35,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;

@@ -17,11 +17,11 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.jboss.solder.logging.Logger;
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.ProviderService;
 
 @Startup

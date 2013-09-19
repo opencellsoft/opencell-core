@@ -20,7 +20,6 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
@@ -33,6 +32,7 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;

@@ -27,8 +27,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.model.bi.Job;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 /**

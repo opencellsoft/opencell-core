@@ -27,13 +27,13 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;

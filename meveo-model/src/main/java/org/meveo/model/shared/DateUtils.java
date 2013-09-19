@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.joda.time.*; 
 
 public class DateUtils {
 
@@ -399,6 +400,11 @@ public class DateUtils {
     }
     
     
+    public static double daysBetween(Date start, Date end){
+    	  DateTime dateTimeStart = new DateTime(start.getTime());
+	      DateTime dateTimeEnd = new DateTime(end.getTime());
+	     return Days.daysBetween(dateTimeStart, dateTimeEnd).getDays();
+	  }
 
     public static Date xmlGregorianCalendarToDate(XMLGregorianCalendar value) {
         Calendar cal = value.toGregorianCalendar();

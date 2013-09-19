@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
 import org.jboss.solder.logging.Logger;
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
@@ -48,6 +47,7 @@ import org.meveo.model.jaxb.subscription.Warnings;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SubscriptionImportHistoService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.ServiceInstanceService;

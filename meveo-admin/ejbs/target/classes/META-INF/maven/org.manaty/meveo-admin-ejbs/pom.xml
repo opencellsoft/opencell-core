@@ -70,16 +70,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.manaty</groupId>
-			<artifactId>manaty-commons</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.manaty</groupId>
 			<artifactId>meveo-model</artifactId>
 		</dependency>
 

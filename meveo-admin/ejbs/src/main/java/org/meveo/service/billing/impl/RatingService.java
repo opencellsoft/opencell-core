@@ -11,7 +11,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import org.meveo.commons.utils.DateUtils;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.CatMessages;
@@ -26,6 +25,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
