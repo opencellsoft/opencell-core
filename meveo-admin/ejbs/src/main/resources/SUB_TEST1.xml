@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<subscriptions>
+  <subscription code="SUB 00001" userAccountId="UAcc1" offerCode="OF1">
+    <subscriptionDate>13/11/10</subscriptionDate>
+    <status date="13/11/10">ACTIVE</status>
+    <services>
+      <serviceInstance code="SERV2">
+        <subscriptionDate>13/11/15</subscriptionDate>
+        <status date="13/11/15">ACTIVE</status>
+        <quantity>1</quantity>
+        <oneshotCharges>
+          <C1>param1</C1>
+        </oneshotCharges>
+      </serviceInstance>
+    </services>
+  </subscription>
+</subscriptions>
