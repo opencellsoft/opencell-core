@@ -65,8 +65,8 @@ public class ReportExecution implements Serializable{
 	@Inject
 	private ReportService reportService;
 
-    @Inject
-    private ParamBean paramBean;
+
+    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
     
 	// @In(create=true)
 	// private RecurringChargeCron recurringChargeCron;

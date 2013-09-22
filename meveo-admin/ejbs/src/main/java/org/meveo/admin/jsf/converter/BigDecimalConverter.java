@@ -25,16 +25,12 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
-import org.meveo.commons.utils.ParamBean;
 
 @FacesConverter("bigDecimalConverter")
 public class BigDecimalConverter implements Converter {
 
     @Inject
     private ResourceBundle resourceMessages;
-
-    @Inject
-    private ParamBean paramBean;
     
 	private DecimalFormat format = new DecimalFormat("#,##0.00");
 	

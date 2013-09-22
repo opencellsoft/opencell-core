@@ -30,8 +30,8 @@ import org.meveo.commons.utils.ParamBean;
 @FacesConverter("dateConverter")
 public class DateConverter implements Converter {
 
-	@Inject
-	private ParamBean paramBean;
+
+    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
 
 	@Override
 	public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {

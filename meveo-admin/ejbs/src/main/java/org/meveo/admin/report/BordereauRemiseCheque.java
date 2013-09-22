@@ -67,9 +67,8 @@ public class BordereauRemiseCheque {
 
     @Inject
     private Messages messages;
-    
-    @Inject
-    private ParamBean paramBean;
+
+    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
 	
 	@Inject
 	private AccountOperationService accountOperationService;

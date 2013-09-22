@@ -71,8 +71,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	@Inject
 	private ResourceBundle recourceMessages;
 
-	@Inject
-	private ParamBean paramBean;
+    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
 
 	/**
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#isCustomerAccountWithIdExists(java.lang.Long)

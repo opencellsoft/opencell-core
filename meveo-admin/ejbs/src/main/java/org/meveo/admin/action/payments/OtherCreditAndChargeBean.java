@@ -67,8 +67,8 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
     @Inject
     private OCCTemplateService occTemplateService;
 
-    @Inject
-    ParamBean paramBean;
+
+    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
 
     private CustomerAccount customerAccount;
 

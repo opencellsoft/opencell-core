@@ -56,8 +56,8 @@ public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
 
-	@Inject
-	private ParamBean paramBean;
+
+    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
 
 	@Override
 	@UserCreate
