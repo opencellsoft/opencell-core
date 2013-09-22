@@ -3,7 +3,7 @@
 --
 -- Data for Name: adm_user_log; Type: TABLE DATA; Schema: public; Owner: meveo
 --
-
+/*
 CREATE SEQUENCE ADM_USER_LOG_SEQ start with 1 increment by 1;
 CREATE TABLE ADM_USER_LOG(ID NUMERIC(19,0) NOT NULL DEFAULT nextval('ADM_USER_LOG_SEQ'), USER_NAME VARCHAR(255) NOT NULL,USER_ID NUMERIC(19,0) NOT NULL,DATE_EXECUTED DATE,ACTION VARCHAR(255),URL VARCHAR(255) NOT NULL, OBJECT_ID VARCHAR(50),PRIMARY KEY (ID));
 ALTER SEQUENCE ADM_USER_LOG_SEQ OWNED BY ADM_USER_LOG.ID;
@@ -18,13 +18,7 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-SET search_path = public, pg_catalog;
-
---
--- Name: access_point_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
---
-
-SELECT pg_catalog.setval('access_point_seq', 10000, false);
+SET search_path = public, pg_catalog;*/
 
 
 --
