@@ -7,7 +7,7 @@
 CREATE SEQUENCE ADM_USER_LOG_SEQ start with 1 increment by 1;
 CREATE TABLE ADM_USER_LOG(ID NUMERIC(19,0) NOT NULL DEFAULT nextval('ADM_USER_LOG_SEQ'), USER_NAME VARCHAR(255) NOT NULL,USER_ID NUMERIC(19,0) NOT NULL,DATE_EXECUTED DATE,ACTION VARCHAR(255),URL VARCHAR(255) NOT NULL, OBJECT_ID VARCHAR(50),PRIMARY KEY (ID));
 ALTER SEQUENCE ADM_USER_LOG_SEQ OWNED BY ADM_USER_LOG.ID;
-
+*/
 --
 -- PostgreSQL database dump
 --
@@ -19,14 +19,14 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 SET search_path = public, pg_catalog;
-*/
+
 
 
 --
 -- Name: access_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('access_seq', 10000, false);
+--SELECT pg_catalog.setval('access_seq', 10000, false);
 
 
 --
@@ -1359,7 +1359,7 @@ INSERT INTO adm_role_permission VALUES (1, 11);
 -- Name: adm_role_permission_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('adm_role_permission_seq', 6, false);
+--SELECT pg_catalog.setval('adm_role_permission_seq', 6, false);
 
 
 --
@@ -1663,7 +1663,7 @@ SELECT pg_catalog.setval('billing_billing_run_seq', 20000, false);
 -- Name: billing_charge_applic_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_charge_applic_seq', 10000, false);
+--SELECT pg_catalog.setval('billing_charge_applic_seq', 10000, false);
 
 
 --
@@ -1750,7 +1750,7 @@ SELECT pg_catalog.setval('billing_counter_period_seq', 20000, false);
 -- Name: billing_country_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_country_seq', 10000, false);
+--SELECT pg_catalog.setval('billing_country_seq', 10000, false);
 
 
 --
@@ -1771,7 +1771,7 @@ SELECT pg_catalog.setval('billing_disc_inst_seq', 1, false);
 -- Name: billing_discountplan_instanciation_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_discountplan_instanciation_seq', 20000, false);
+--SELECT pg_catalog.setval('billing_discountplan_instanciation_seq', 20000, false);
 
 
 
@@ -1886,7 +1886,7 @@ SELECT pg_catalog.setval('billing_invsubcat_country_seq', 1, false);
 -- Name: billing_language_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_language_seq', 10000, false);
+--SELECT pg_catalog.setval('billing_language_seq', 10000, false);
 
 
 --
@@ -1929,14 +1929,14 @@ SELECT pg_catalog.setval('billing_operation_seq', 20150, true);
 -- Name: billing_priceplan_inst_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_priceplan_inst_seq', 1, false);
+--SELECT pg_catalog.setval('billing_priceplan_inst_seq', 1, false);
 
 
 --
 -- Name: billing_priceplan_instanciation_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_priceplan_instanciation_seq', 20000, false);
+--SELECT pg_catalog.setval('billing_priceplan_instanciation_seq', 20000, false);
 
 --
 -- Name: billing_rated_transaction_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
@@ -2000,7 +2000,7 @@ SELECT pg_catalog.setval('billing_sub_term_reason_seq', 1, false);
 -- Name: billing_subscrip_termin_reason_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_subscrip_termin_reason_seq', 20000, true);
+--SELECT pg_catalog.setval('billing_subscrip_termin_reason_seq', 20000, true);
 
 
 --
@@ -2021,7 +2021,7 @@ SELECT pg_catalog.setval('billing_tax_seq', 20000, false);
 -- Name: billing_term_reason_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('billing_term_reason_seq', 10000, false);
+--SELECT pg_catalog.setval('billing_term_reason_seq', 10000, false);
 
 
 --
@@ -2677,7 +2677,7 @@ INSERT INTO cat_serv_usage_charge_template VALUES (10036, 0, 1, 1183, NULL, 1003
 -- Name: cat_serv_usage_charge_template_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('cat_serv_usage_charge_template_seq', 20000, false);
+--SELECT pg_catalog.setval('cat_serv_usage_charge_template_seq', 20000, false);
 
 
 --
@@ -2902,14 +2902,14 @@ SELECT pg_catalog.setval('dwh_journal_entries_seq', 20000, false);
 -- Name: dwh_sales_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('dwh_sales_seq', 10000, false);
+--SELECT pg_catalog.setval('dwh_sales_seq', 10000, false);
 
 
 --
 -- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('hibernate_sequence', 10225, true);
+--SELECT pg_catalog.setval('hibernate_sequence', 10225, true);
 
 
 --
@@ -3000,7 +3000,7 @@ SELECT pg_catalog.setval('meveo_timer_seq', 20250, true);
 -- Name: offer_instance_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('offer_instance_seq', 10000, false);
+--SELECT pg_catalog.setval('offer_instance_seq', 10000, false);
 
 
 --
@@ -3026,21 +3026,21 @@ SELECT pg_catalog.setval('rating_edr_seq', 20000, false);
 -- Name: rating_matrix_definition_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('rating_matrix_definition_seq', 10000, false);
+--SELECT pg_catalog.setval('rating_matrix_definition_seq', 10000, false);
 
 
 --
 -- Name: rating_matrix_entry_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('rating_matrix_entry_seq', 10000, false);
+--SELECT pg_catalog.setval('rating_matrix_entry_seq', 10000, false);
 
 
 --
 -- Name: rating_usage_type_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('rating_usage_type_seq', 10000, false);
+--SELECT pg_catalog.setval('rating_usage_type_seq', 10000, false);
 
 
 --
@@ -3053,14 +3053,14 @@ SELECT pg_catalog.setval('rating_usage_type_seq', 10000, false);
 -- Name: rm_line_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('rm_line_seq', 10000, false);
+--SELECT pg_catalog.setval('rm_line_seq', 10000, false);
 
 
 --
 -- Name: rm_usage_counter_seq; Type: SEQUENCE SET; Schema: public; Owner: meveo
 --
 
-SELECT pg_catalog.setval('rm_usage_counter_seq', 10000, false);
+--SELECT pg_catalog.setval('rm_usage_counter_seq', 10000, false);
 
 
 
@@ -3068,4 +3068,3 @@ SELECT pg_catalog.setval('rm_usage_counter_seq', 10000, false);
 --
 -- PostgreSQL database dump complete
 --
-
