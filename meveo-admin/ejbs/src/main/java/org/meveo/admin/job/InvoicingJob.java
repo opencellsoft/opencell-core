@@ -106,7 +106,7 @@ public class InvoicingJob implements Job {
 				        	 ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
 						        int billableBA=0;
 						        for (BillingAccount billingAccount : billingAccounts) {
-						           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount)){
+						           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount.getId())){
 						        	   billingAccount=billingAccountService.findById(billingAccount.getId());//to avoid detached entity exception
 							   	        billingRun.getBillableBillingAccounts().add(billingAccount);
 							   	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);

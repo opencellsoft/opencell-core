@@ -502,11 +502,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  
     }
     
-    public Boolean isBillingAccountBillable(BillingRun billingRun,BillingAccount billingAccount){
+    public Boolean isBillingAccountBillable(BillingRun billingRun,Long billingAccountId){
     	
     	  QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
 		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
-		  qb.addCriterionEntity("c.billingAccount", billingAccount);
+		  qb.addCriterionEntity("c.billingAccount.id", billingAccountId);
 		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
 		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
 		  qb.addSql("c.invoice is null");
