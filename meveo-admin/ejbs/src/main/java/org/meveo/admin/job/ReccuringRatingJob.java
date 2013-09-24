@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -44,6 +43,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
@@ -69,9 +69,10 @@ public class ReccuringRatingJob implements Job {
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
-
-	private Logger log = Logger.getLogger(ReccuringRatingJob.class.getName());
-
+	
+    @Inject
+    protected Logger log;
+    
 	@PostConstruct
 	public void init() {
 		TimerEntityService.registerJob(this);
@@ -103,7 +104,7 @@ public class ReccuringRatingJob implements Job {
 						applicationDate = activeRecurringChargeInstance.getChargeDate();
 					}
 
-					log.fine("nextapplicationDate=" + applicationDate);
+					log.info("nextapplicationDate=" + applicationDate);
 
 					applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
 
@@ -113,10 +114,13 @@ public class ReccuringRatingJob implements Job {
 					Date nextDurationDate = null;
 					try {
 						durationTermCalendar = serviceTemplate.getDurationTermCalendar();
+						if(durationTermCalendar==null){
+							durationTermCalendar = recurringChargeTemplate.getCalendar();
+						}
 						nextDurationDate = durationTermCalendar.nextCalendarDate(applicationDate);
-						log.fine("nextDurationDate=" + nextDurationDate);
+						log.info("nextDurationDate=" + nextDurationDate);
 					} catch (Exception e) {
-						log.severe("Cannot find duration term calendar for serviceTemplate.id="
+						log.error("Cannot find duration term nor recurring charge calendar for serviceTemplate.id="
 								+ serviceTemplate.getId());
 					}
 					if (!recurringChargeTemplate.getApplyInAdvance()) {
