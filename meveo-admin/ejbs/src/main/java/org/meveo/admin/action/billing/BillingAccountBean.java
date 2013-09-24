@@ -351,10 +351,10 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			String selectedBillingAccounts="";
 			String sep="";
 			boolean isBillable=false;
-			for (BillingAccount ba : getSelectedEntities()) {
-				selectedBillingAccounts=selectedBillingAccounts+sep+entity.getId();
+			for (IEntity ba : getSelectedEntities()) {
+				selectedBillingAccounts=selectedBillingAccounts+sep+ba.getId();
 				sep=",";
-				if(!isBillable && ratedTransactionService.isBillingAccountBillable(billingRun, ba)){
+				if(!isBillable && ratedTransactionService.isBillingAccountBillable(billingRun, (Long)ba.getId())){
 					isBillable=true;
 				}
 			}
