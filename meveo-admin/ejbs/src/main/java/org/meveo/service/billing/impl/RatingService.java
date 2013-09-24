@@ -254,18 +254,18 @@ public class RatingService {
                 }
                 HashMap<String, List<PricePlanMatrix>> providerPricePlans = result.get(pricePlan.getProvider().getCode());
                 if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
-                	if(pricePlan.getCriteria1Value()!=null && pricePlan.getCriteria1Value().length()==0){
-                		pricePlan.setCriteria1Value(null);
-                	}
-                	if(pricePlan.getCriteria2Value()!=null && pricePlan.getCriteria2Value().length()==0){
-                		pricePlan.setCriteria2Value(null);
-                	}
-                	if(pricePlan.getCriteria3Value()!=null && pricePlan.getCriteria3Value().length()==0){
-                		pricePlan.setCriteria3Value(null);
-                	}
                     providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
-                    log.error("Added pricePlan for provider=" + pricePlan.getProvider().getCode() + " priceplan=" + pricePlan);
                 }
+            	if(pricePlan.getCriteria1Value()!=null && pricePlan.getCriteria1Value().length()==0){
+            		pricePlan.setCriteria1Value(null);
+            	}
+            	if(pricePlan.getCriteria2Value()!=null && pricePlan.getCriteria2Value().length()==0){
+            		pricePlan.setCriteria2Value(null);
+            	}
+            	if(pricePlan.getCriteria3Value()!=null && pricePlan.getCriteria3Value().length()==0){
+            		pricePlan.setCriteria3Value(null);
+            	}
+                log.info("Add pricePlan for provider=" + pricePlan.getProvider().getCode() + "chargeCode="+pricePlan.getEventCode()+" priceplan=" + pricePlan + " criteria1="+pricePlan.getCriteria1Value()+" criteria2="+pricePlan.getCriteria2Value()+" criteria3="+pricePlan.getCriteria3Value());
                 providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
             }
         }
