@@ -124,7 +124,7 @@ public class Provider extends BusinessEntity {
 	@Basic(fetch = FetchType.LAZY)
 	private Blob logo;
 
-	@Column(name = "INVOICE_PREFIX")
+	@Column(name = "INVOICE_PREFIX",length=50)
 	private String invoicePrefix;
 
 	@Column(name = "CURRENT_INVOICE_NB")

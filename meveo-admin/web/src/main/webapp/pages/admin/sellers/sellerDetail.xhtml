@@ -79,6 +79,12 @@
 							<hf:formField label="#{messages['businessEntity.description']}"
 								field="description" id="description" maxlength="100" />
 
+							<hf:formField label="#{messages['seller.invoicePrefix']}"
+								field="invoicePrefix" id="invoicePrefix" maxlength="50" />
+								
+							<hf:formField label="#{messages['seller.currentInvoiceNb']}"
+								field="currentInvoiceNb" id="currentInvoiceNb"/>
+							
 							<hf:formEntityField id="trCurrencySelectId"
 								label="#{messages['currency.codeCurrency']}"
 								field="tradingCurrency" childField="currencyCode" popup="true"

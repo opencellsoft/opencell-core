@@ -64,6 +64,7 @@ public class RatedTransactionsJob implements Job {
 		log.info("execute RatedTransactionsJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
+			//FIXME: only for postpaid wallets
 			List<WalletOperation> walletOperations = walletOperationService.findByStatus(WalletOperationStatusEnum.OPEN);
 			log.info("# walletOperations to convert into rateTransactions:" + walletOperations.size());
 			for (WalletOperation walletOperation : walletOperations) {

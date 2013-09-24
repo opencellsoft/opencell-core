@@ -1,172 +1,571 @@
-/*----------IMPORT FOR MYSQL-----------*/
+/*----------IMPORT FOR POSTGRES-----------*/
 
-
-INSERT INTO `account_entity` (`ID`,`VERSION`,`DISABLED`,`CREATED`,`UPDATED`,`CODE`,`DESCRIPTION`,`EXTERNAL_REF_1`,`EXTERNAL_REF_2`,`FIRSTNAME`,`LASTNAME`,`ADDRESS_1`,`ADDRESS_2`,`ADDRESS_3`,`ADDRESS_ZIPCODE`,`ADDRESS_CITY`,`ADDRESS_COUNTRY`,`ADDRESS_STATE`,`DEFAULT_LEVEL`,`PROVIDER_CONTACT`,`CREATOR_ID`,`TITLE_ID`,`UPDATER_ID`,`PROVIDER_ID`,`PRIMARY_CONTACT`) VALUES (1,1,False,'2013-03-05 12:00:00','2013-03-05 12:00:00','C1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-
-
-INSERT INTO `billing_user_account` (`ID`,`STATUS`,`STATUS_DATE`,`SUBSCRIPTION_DATE`,`TERMINATION_DATE`,`BILLING_ACCOUNT_ID`,`WALLET_ID`) VALUES (1,'AC','2013-03-05 12:00:00','2013-03-05 12:00:00','2013-03-05 12:00:00',NULL,NULL);
-
-
-INSERT INTO `crm_customer_category` (`ID`,`VERSION`,`DISABLED`,`CREATED`,`UPDATED`,`CODE`,`DESCRIPTION`,`PROVIDER_ID`,`UPDATER_ID`,`CREATOR_ID`) VALUES (1,1,false,'2013-03-05 12:00:00','2013-03-05 12:00:00','1',NULL,NULL,NULL,NULL);
-
-
-INSERT INTO `crm_customer_brand` (`ID`,`VERSION`,`DISABLED`,`CREATED`,`UPDATED`,`CODE`,`DESCRIPTION`,`UPDATER_ID`,`CREATOR_ID`,`PROVIDER_ID`) VALUES (1,1,False ,'2013-03-05 12:00:00','2013-03-05 12:00:00','12',NULL,NULL,NULL,NULL);
-
-
-INSERT INTO `crm_customer` (`ID`,`EMAIL`,`PHONE`,`MOBILE`,`FAX`,`COUNTRY_CODE`,`CURRENCY_CODE`,`LANGUAGE_CODE`,`CUSTOMER_BRAND_ID`,`CUSTOMER_CATEGORY_ID`) VALUES (1,'test@domain.com','65656565','87878787','75757575','FR','EUR','FRA',1,1);
-
-
-INSERT INTO `ar_customer_account` (`ID`,`CURRENCY_CODE`,`STATUS`,`PAYMENT_METHOD`,`CREDIT_CATEGORY`,`DATE_STATUS`,`DATE_DUNNING_LEVEL`,`EMAIL`,`PHONE`,`MOBILE`,`FAX`,`DUNNING_LEVEL`,`PASSWORD`,`CUSTOMER_ID`) VALUES (1,'EUR','AC','CARD','CAT1','2013-03-05 12:00:00','2013-03-05 12:00:00','test@domain.net','232323','212121','2222222',NULL,NULL,1);
-
-INSERT INTO `billing_billing_account` (`ID`,`STATUS`,`STATUS_DATE`,`BANK_CODE`,`BRANCH_CODE`,`ACCOUNT_NUMBER`,`HASH_KEY`,`IBAN`,`BIC`,`ACCOUNT_OWNER`,`BANK_NAME`,`BANK_ID`,`ISSUER_NUMBER`,`ISSUER_NAME`,`EMAIL`,`ELECTRONIC_BILLING`,`NEXT_INVOICE_DATE`,`SUBSCRIPTION_DATE`,`TERMINATION_DATE`,`PAYMENT_METHOD`,`DISCOUNT_RATE`,`INVOICE_PREFIX`,`COUNTRY_CODE`,`LANGUAGE_CODE`,`CUSTOMER_ACCOUNT_ID`,`BILLING_CYCLE`,`BILLING_RUN`) VALUES (1,'AC','2013-03-05 12:00:00','B1','BR1','12EE2222','11','IBAN1','BIC1','OWNER1','BANK1','1','11','IS1','test@domain1.org',NULL,'2013-03-05 12:00:00','2013-03-05 12:00:00','2014-03-05 12:00:00','METH1',10.00000000,'PR1','FR','FRA',1,NULL,NULL);
-
-INSERT INTO CRM_PROVIDER (ID,VERSION,DISABLED,CREATED,UPDATED,CODE,DESCRIPTION,PAYMENT_METHODS,INVOICE_PREFIX,BANK_CODE,BRANCH_CODE,ACCOUNT_NUMBER,HASH_KEY,IBAN,BIC,ACCOUNT_OWNER,BANK_NAME,BANK_ID,ISSUER_NUMBER,ISSUER_NAME,UPDATER_ID,CREATOR_ID,PROVIDER_ID, entreprise, automatic_invoicing,AMOUNT_VALIDATION,LEVEL_DUPLICATION) VALUES (1,1,0,TIMESTAMP '2013-03-05 12:00:00',null,'MYCOMPANY',null,null,null,'SGMB','12345','33333333333','11','11','11','owner','SGMB','11','1111','PROV1',null,null,null,0,0,0,0);
-INSERT INTO CRM_PROVIDER (ID,VERSION,DISABLED,CREATED,UPDATED,CODE,DESCRIPTION,PAYMENT_METHODS,INVOICE_PREFIX,BANK_CODE,BRANCH_CODE,ACCOUNT_NUMBER,HASH_KEY,IBAN,BIC,ACCOUNT_OWNER,BANK_NAME,BANK_ID,ISSUER_NUMBER,ISSUER_NAME,UPDATER_ID,CREATOR_ID,PROVIDER_ID, entreprise, automatic_invoicing,AMOUNT_VALIDATION,LEVEL_DUPLICATION) VALUES (2,1,0,TIMESTAMP '2013-03-05 12:00:00',null,'OTHERCOPANY',null,null,null,'CIC','54321','22222222222','22','22','22','owner2','CIC','12','2222','PROV22',null,null,null,0,0,0,0);
+/*----------TRUNCATE ALL TABLES-----------*/
 
 
 
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'AGCE', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'ASSO', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CAB', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'COLL', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'COM', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (6, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'COPR', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (7, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CSSE', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (8, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'EARL', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (9, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'ETS', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (10, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'EURL', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (11, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'GAEC', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (12, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'HLM', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (13, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'HOPI', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (14, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'INST', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (15, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'LABO', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (16, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'M', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (17, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MLLES', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (18, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MLLE_M', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (19, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MLLE', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (20, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MM', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (21, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MME', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (22, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MME_M', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (23, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MMES', 0, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (24, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MTRE', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (25, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SA', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (26, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SARL', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (27, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SCEA', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (28, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SCI', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (29, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SCM', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (30, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SCP', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (31, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SELARL', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (32, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SNC', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (33, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SNI', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (34, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'STE', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (35, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SUCC', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (36, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SYNDIC', 1, null, null);
-INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (37, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SYNDCOP', 1, null, null);
+/*------INSERTS OF TABLE LANGUAGE----*/
 
-/*DROP SEQUENCE ADM_TITLE_SEQ;
-CREATE SEQUENCE ADM_TITLE_SEQ START WITH 38;
-*/
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (1, 1, now(), NULL, 'DEU', 'allemand', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (2, 1, now(), NULL, 'ENG','anglais', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (3, 1, now(), NULL, 'ARA','arabe', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (4, 1, now(), NULL, 'BUL','bulgare', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (5, 1, now(), NULL, 'CAT','catalan', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (6, 1, now(), NULL, 'ZHO','chinois', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (7, 1, now(), NULL, 'DAN','danois', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (8, 1, now(), NULL, 'ESL','espagnol', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (9, 1, now(), NULL, 'EST','estonien', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (10, 1, now(), NULL, 'FAO','féroïen', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (11, 1, now(), NULL, 'FIN','finlandais', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (12, 1, now(), NULL, 'FRA','français', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (13, 1, now(), NULL, 'ELL','grec', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (14, 1, now(), NULL, 'HIN','hindi', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (15, 1, now(), NULL, 'HUN','hongrois', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (16, 1, now(), NULL, 'ISL','islandais', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (17, 1, now(), NULL, 'ITA','italien', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (18, 1, now(), NULL, 'JPN','japonais', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (19, 1, now(), NULL, 'LAV','letton', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (20, 1, now(), NULL, 'LIT','lituanien', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (21, 1, now(), NULL, 'NLD','néerlandais', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (22, 1, now(), NULL, 'NOR','norvégien', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (23, 1, now(), NULL, 'POL','polonais', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (24, 1, now(), NULL, 'POR','portugais', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (25, 1, now(), NULL, 'RON','roumain', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (26, 1, now(), NULL, 'RUS','russe', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (27, 1, now(), NULL, 'SRP','serbe', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (28, 1, now(), NULL, 'SLK','slovaque', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (29, 1, now(), NULL, 'SLV','slovène', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (30, 1, now(), NULL, 'SVE','suédois', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (31, 1, now(), NULL, 'CES','tchèque', NULL, NULL);
+INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (32, 1, now(), NULL, 'TUR','turc', NULL, NULL);
+
+ update ADM_LANGUAGE_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_LANGUAGE) where next_val=1;
  
-/*Users and roles*/
+/*------INSERTS OF TABLE CURRENCY----*/
+
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (1,1,'AFA','Afghani',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (2,1,'ZAR','Rand',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (3,1,'ALL','Lek',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (4,1,'DZD','Dinar algérien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (5,1,'EUR','Euro',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (6,1,'AOA','Kwanza',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (7,1,'XCD','Dollar des Cara bes de lEst',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (8,1,'ANG','Florin des Antilles',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (9,1,'SAR','Riyal saoudien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (10,1,'ARS','Peso',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (11,1,'AMD','Dram',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (12,1,'AWG','Florin d Aruba',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (13,1,'AUD','Dollar australien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (14,1,'AZM','Manat azerbaïdjanais',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (15,1,'BSD','Dollar des Bahamas',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (16,1,'BHD','Dinar de Bahreïn',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (17,1,'BDT','Taka',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (18,1,'BBD','Dollar de Barbade',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (19,1,'BZD','Dollar de Belize',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (20,1,'XOF','Franc CFA - BCEAO',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (21,1,'BMD','Dollar des Bermudes',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (22,1,'BTN','Ngultrum',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (23,1,'BYR','Rouble biãlorussie',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (24,1,'BOB','Boliviano',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (25,1,'BAM','Mark bosniaque convertible',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (26,1,'BWP','Pula',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (27,1,'BRL','Real',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (28,1,'BND','Dollar de Brunéi',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (29,1,'BGN','Lev',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (30,1,'BIF','Franc du Burundi',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (31,1,'NOK','Couronne norvégienne',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (32,1,'KYD','Dollar des îles Caïmanes',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (33,1,'KHR','Riel',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (34,1,'XAF','Franc CFA - BEAC',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (35,1,'CAD','Dollar canadien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (36,1,'CVE','Escudo du Cap-Vert',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (37,1,'CFA','FRANC CFA-BEAC',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (38,1,'CLP','Peso chilien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (39,1,'CNY','Yuan Ren-Min-Bi',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (40,1,'CYP','Livre chypriote',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (41,1,'COP','Peso colombien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (42,1,'KMF','Franc des Comores',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (43,1,'CDF','FRANC DU CONGO DEMOCRATIQUE',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (44,1,'KRW','Won',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (45,1,'KPW','Won de la Corée du Nord',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (46,1,'CRC','Colon de Costa Rica',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (47,1,'HRK','Kuna',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (48,1,'CUP','Peso cubain',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (49,1,'USD','Dollar des Etats-unis',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (50,1,'DKK','Couronne danoise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (51,1,'DJF','Franc de Djibouti',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (52,1,'DOP','Peso dominicain',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (53,1,'EGP','Livre égyptienne',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (54,1,'AED','Dirham des émirats arabes unis',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (55,1,'ERN','Nafka',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (56,1,'EEK','Couronne d Estonie',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (57,1,'ETB','Birr éthiopien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (58,1,'FKP','Livre de Falkland',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (59,1,'FJD','Dollar des Fidji',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (60,1,'GMD','Dalasie',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (61,1,'GEL','Lari',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (62,1,'GHC','Cedi ghanéen',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (63,1,'GIP','Livre de Gibraltar',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (64,1,'GTQ','Quetzal',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (65,1,'GBP','Livre sterling',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (66,1,'GNF','Franc guinéen',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (67,1,'GYD','Dollar de Guyane',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (68,1,'HTG','Gourde',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (69,1,'HNL','Lempira',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (70,1,'HKD','Dollar de Hong-Kong',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (71,1,'HUF','Forint',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (72,1,'NZD','Dollar néo-zélandais',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (73,1,'INR','Roupie indienne',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (74,1,'IDR','Rupiah',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (75,1,'IRR','Rial iranien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (76,1,'IQD','Dinar iraquien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (77,1,'ISK','Couronne islandaise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (78,1,'ILS','Sheqel',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (79,1,'JMD','Dollar jamaïcain',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (80,1,'JPY','Yen',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (81,1,'JOD','Dinar jordanien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (82,1,'KZT','Tenge',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (83,1,'KES','Shilling du Kenya',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (84,1,'KGS','Som',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (85,1,'KWD','Dinar koweïtien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (86,1,'LAK','Kip',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (87,1,'LSL','Loti',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (88,1,'LVL','Lats letton',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (89,1,'LBP','Livre libanaise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (90,1,'LRD','Dollar libérien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (91,1,'LYD','Dinar libyen',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (92,1,'CHF','Franc suisse',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (93,1,'LTL','Litas lituanien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (94,1,'MOP','Pataca',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (95,1,'MKD','Denar',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (96,1,'MGA','Ariary malgache',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (97,1,'MGF','Franc malgache',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (98,1,'MYR','Ringgit de Malaisie',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (99,1,'MWK','Kwacha',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (100,1,'MVR','Rufiyaa',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (101,1,'MTL','Livre maltaise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (102,1,'MAD','Dirham marocain',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (103,1,'MUR','Roupie mauricienne',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (104,1,'MRO','Ouguija',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (105,1,'MXN','Peso mexicain',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (106,1,'MDL','Leu de Moldave',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (107,1,'MNT','Tugrik',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (108,1,'MZM','Metical',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (109,1,'MMK','Kyat',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (110,1,'NAD','Dollar namibien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (111,1,'NPR','Roupie Népalaise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (112,1,'NIO','Cordoba oro',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (113,1,'NGN','Naira',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (114,1,'XPF','Franc CFP',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (115,1,'OMR','Rial Omani',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (116,1,'XAU','Opérations sur or',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (117,1,'UGX','Shilling ougandais',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (118,1,'UZS','Soum ouzbek',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (119,1,'PKR','Roupie pakistanaise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (120,1,'PAB','Balboa',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (121,1,'PGK','Kina',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (122,1,'PYG','Guarani',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (123,1,'PEN','Nouveau sol',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (124,1,'PHP','Peso philippin',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (125,1,'PLN','Zloty',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (126,1,'QAR','Riyal du Qatar',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (127,1,'RON','LEI (Nouveau Leu)',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (128,1,'ROL','Leu',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (129,1,'RUB','Rouble russe (nouveau)',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (130,1,'RWF','Franc du Rwanda',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (131,1,'SBD','Dollar des îles Salomon',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (132,1,'SVC','Colon salvadorien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (133,1,'WST','Tala',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (134,1,'STD','Dobra',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (135,1,'CSD','Dinar Serbe',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (136,1,'SCR','Roupie des Seychelles',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (137,1,'SLL','Leone',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (138,1,'SGD','Dollar de Singapour',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (139,1,'SKK','Couronne slovaque',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (140,1,'SIT','Tolar',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (141,1,'SOS','Shilling Somalien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (142,1,'SDG','Livre soudanaise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (143,1,'LKR','Roupie de Sri Lanka',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (144,1,'SHP','Livre de Sainte-Hélène',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (145,1,'SEK','Couronne suédoise',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (146,1,'SRD','Florin du suriname',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (147,1,'SZL','Lilangeni',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (148,1,'SYP','Livre syrienne',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (149,1,'TJS','Somoni',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (150,1,'TWD','Nouveau dollar de Taïwan',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (151,1,'TZS','Shilling tanzanien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (152,1,'CZK','Couronne tchèque',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (153,1,'THB','Baht',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (154,1,'TOP','Pa anga',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (155,1,'TTD','Dollar de Trinité et de Tobago',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (156,1,'TND','Dinar tunisien',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (157,1,'TMM','Manat turkmène',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (158,1,'TRY','Nouvelle Livre turque',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (159,1,'TRL','Livre turque',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (160,1,'UAH','HRYVNIA',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (161,1,'UYU','Nouveau Peso uruguayen',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (162,1,'VUV','Vatu',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (163,1,'VEF','Bolivar Fuerte',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (164,1,'VND','Dong',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (165,1,'YER','Riyal yéménite',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (166,1,'ZMK','Kwacha de Zambie',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (167,1,'ZWD','Dollar du Zimbabwe',true,now(),null,null,null);
+INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (168,1,'GHS','Cedi ghanéen',true,now(),null,null,null);
+
+ 
+ update ADM_CURRENCY_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_CURRENCY) where next_val=1;
+/*-------INSERTS OF TABLE COUNTRY------*/
+
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(1,1,now(),null,'AD','Andorra',null,null,8,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(2,1,now(),null,'AE','United Arab Emirates',null,null,3,54);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(3,1,now(),null,'AF','Afghanistan',null,null,2,1);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(4,1,now(),null,'AG','Antigua and Barbuda',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(5,1,now(),null,'AI','Anguilla',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(6,1,now(),null,'AL','Albania',null,null,2,3);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(7,1,now(),null,'AM','Armenia',null,null,2,11);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(8,1,now(),null,'AN','Netherlands Antilles',null,null,21,8);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(9,1,now(),null,'AO','Angola',null,null,2,6);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(10,1,now(),null,'AR','Argentina',null,null,8,10);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(11,1,now(),null,'AS','American Samoa',null,null,1,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(12,1,now(),null,'AT','Austria',null,null,1,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(13,1,now(),null,'AU','Australia',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(14,1,now(),null,'AW','Aruba',null,null,2,12);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(15,1,now(),null,'AZ','Azerbaijan',null,null,2,6);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(16,1,now(),null,'BA','Bosnia and Herzegovina',null,null,2,25);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(17,1,now(),null,'BB','Barbados',null,null,2,18);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(18,1,now(),null,'BD','Bangladesh',null,null,2,17);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(19,1,now(),null,'BE','Belgium',null,null,12,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(20,1,now(),null,'BF','Burkina Faso',null,null,2,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(21,1,now(),null,'BG','Bulgaria',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(22,1,now(),null,'BH','Bahrain',null,null,2,16);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(23,1,now(),null,'BI','Burundi',null,null,2,30);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(24,1,now(),null,'BJ','Benin',null,null,2,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(25,1,now(),null,'BM','Bermuda',null,null,2,21);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(26,1,now(),null,'BN','Brunei Darussalam',null,null,2,28);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(27,1,now(),null,'BO','Bolivia',null,null,2,24);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(28,1,now(),null,'BR','Brazil',null,null,2,27);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(29,1,now(),null,'BS','The Bahamas',null,null,2,15);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(30,1,now(),null,'BT','Bhutan',null,null,2,16);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(31,1,now(),null,'BV','Bouvet Island',null,null,2,31);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(32,1,now(),null,'BW','Botswana',null,null,2,26);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(33,1,now(),null,'BY','Belarus',null,null,2,23);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(34,1,now(),null,'BZ','Belize',null,null,2,19);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(35,1,now(),null,'CA','Canada',null,null,2,35);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(36,1,now(),null,'CC','Cocos (Keeling) Islands',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(37,1,now(),null,'CD','Congo, Democratic Republic of th',null,null,12,43);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(38,1,now(),null,'CF','Central African Republic',null,null,12,34);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(39,1,now(),null,'CG','Congo, Republic of the',null,null,12,34);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(40,1,now(),null,'CH','Switzerland',null,null,2,92);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(41,1,now(),null,'CI','Cote Ivoire',null,null,12,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(42,1,now(),null,'CK','Cook Islands',null,null,2,72);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(43,1,now(),null,'CL','Chile',null,null,2,38);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(44,1,now(),null,'CM','Cameroon',null,null,12,34);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(45,1,now(),null,'CN','China',null,null,6,39);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(46,1,now(),null,'CO','Colombia',null,null,8,41);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(47,1,now(),null,'CR','Costa Rica',null,null,8,46);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(48,1,now(),null,'CU','Cuba',null,null,8,48);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(49,1,now(),null,'CV','Cape Verde',null,null,8,36);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(50,1,now(),null,'CX','Christmas Island',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(51,1,now(),null,'CY','Cyprus',null,null,2,40);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(52,1,now(),null,'CZ','Czech Republic',null,null,2,152);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(53,1,now(),null,'DE','Germany',null,null,1,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(54,1,now(),null,'DJ','Djibouti',null,null,12,51);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(55,1,now(),null,'DK','Denmark',null,null,2,50);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(56,1,now(),null,'DM','Dominica',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(57,1,now(),null,'DO','Dominican Republic',null,null,2,52);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(58,1,now(),null,'DZ','Algeria',null,null,8,4);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(59,1,now(),null,'EC','Ecuador',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(60,1,now(),null,'EE','Estonia',null,null,2,56);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(61,1,now(),null,'EG','Egypt',null,null,8,53);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(62,1,now(),null,'ER','Eritrea',null,null,2,55);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(63,1,now(),null,'ES','Spain',null,null,8,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(64,1,now(),null,'ET','Ethiopia',null,null,2,57);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(65,1,now(),null,'FI','Finland',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(66,1,now(),null,'FJ','Fiji',null,null,2,59);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(67,1,now(),null,'FK','Falkland Islands (Islas Malvinas',null,null,2,58);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(68,1,now(),null,'FM','Micronesia, Federated States of',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(69,1,now(),null,'FO','Faroe Islands',null,null,2,50);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(70,1,now(),null,'FR','France',null,null,12,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(71,1,now(),null,'GA','Gabon',null,null,12,34);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(72,1,now(),null,'GD','Grenada',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(73,1,now(),null,'GE','Georgia',null,null,2,61);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(74,1,now(),null,'GF','French Guiana',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(75,1,now(),null,'GH','Ghana',null,null,2,62);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(76,1,now(),null,'GI','Gibraltar',null,null,2,63);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(77,1,now(),null,'GL','Greenland',null,null,2,50);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(78,1,now(),null,'GM','The Gambia',null,null,2,60);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(79,1,now(),null,'GN','Guinea',null,null,2,66);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(80,1,now(),null,'GP','Guadeloupe',null,null,12,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(81,1,now(),null,'GQ','Equatorial Guinea',null,null,2,34);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(82,1,now(),null,'GR','Greece',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(83,1,now(),null,'GS','South Georgia and the South Sand',null,null,2,65);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(84,1,now(),null,'GT','Guatemala',null,null,2,64);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(85,1,now(),null,'GU','Guam',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(86,1,now(),null,'GW','Guinea-Bissau',null,null,2,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(87,1,now(),null,'GY','Guyana',null,null,2,67);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(88,1,now(),null,'HK','Hong Kong (SAR)',null,null,2,70);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(89,1,now(),null,'HM','Heard Island and McDonald Island',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(90,1,now(),null,'HN','Honduras',null,null,2,69);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(91,1,now(),null,'HR','Croatia',null,null,2,47);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(92,1,now(),null,'HT','Haiti',null,null,2,68);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(93,1,now(),null,'HU','Hungary',null,null,2,71);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(94,1,now(),null,'ID','Indonesia',null,null,2,74);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(95,1,now(),null,'IE','Ireland',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(96,1,now(),null,'IL','Israel',null,null,2,78);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(97,1,now(),null,'IN','India',null,null,2,73);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(98,1,now(),null,'IO','British Indian Ocean Territory',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(99,1,now(),null,'IQ','Iraq',null,null,8,76);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(100,1,now(),null,'IR','Iran',null,null,2,75);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(101,1,now(),null,'IS','Iceland',null,null,2,77);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(102,1,now(),null,'IT','Italy',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(103,1,now(),null,'JM','Jamaica',null,null,2,79);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(104,1,now(),null,'JO','Jordan',null,null,2,81);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(105,1,now(),null,'JP','Japan',null,null,2,80);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(106,1,now(),null,'KE','Kenya',null,null,2,83);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(107,1,now(),null,'KG','Kyrgyzstan',null,null,2,84);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(108,1,now(),null,'KH','Cambodia',null,null,2,33);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(109,1,now(),null,'KI','Kiribati',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(110,1,now(),null,'KM','Comoros',null,null,2,42);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(111,1,now(),null,'KN','Saint Kitts and Nevis',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(112,1,now(),null,'KP','Korea, North',null,null,2,45);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(113,1,now(),null,'KR','Korea, South',null,null,2,44);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(114,1,now(),null,'KW','Kuwait',null,null,2,85);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(115,1,now(),null,'KY','Cayman Islands',null,null,2,32);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(116,1,now(),null,'KZ','Kazakhstan',null,null,2,82);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(117,1,now(),null,'LA','Laos',null,null,2,86);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(118,1,now(),null,'LB','Lebanon',null,null,2,89);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(119,1,now(),null,'LC','Saint Lucia',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(120,1,now(),null,'LI','Liechtenstein',null,null,2,92);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(121,1,now(),null,'LK','Sri Lanka',null,null,2,143);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(122,1,now(),null,'LR','Liberia',null,null,2,90);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(123,1,now(),null,'LS','Lesotho',null,null,2,87);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(124,1,now(),null,'LT','Lithuania',null,null,2,93);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(125,1,now(),null,'LU','Luxembourg',null,null,12,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(126,1,now(),null,'LV','Latvia',null,null,2,88);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(127,1,now(),null,'LY','Libya',null,null,2,91);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(128,1,now(),null,'MA','Morocco',null,null,3,102);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(129,1,now(),null,'MC','Monaco',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(130,1,now(),null,'MD','Moldova',null,null,2,106);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(131,1,now(),null,'MG','Madagascar',null,null,2,97);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(132,1,now(),null,'MH','Marshall Islands',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(133,1,now(),null,'MK','Macedonia, The Former Yugoslav R',null,null,2,95);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(134,1,now(),null,'ML','Mali',null,null,12,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(135,1,now(),null,'MM','Burma',null,null,2,109);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(136,1,now(),null,'MN','Mongolia',null,null,2,107);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(137,1,now(),null,'MO','Macao',null,null,2,94);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(138,1,now(),null,'MP','Northern Mariana Islands',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(139,1,now(),null,'MQ','Martinique',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(140,1,now(),null,'MR','Mauritania',null,null,2,104);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(141,1,now(),null,'MS','Montserrat',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(142,1,now(),null,'MT','Malta',null,null,2,101);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(143,1,now(),null,'MU','Mauritius',null,null,2,103);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(144,1,now(),null,'MV','Maldives',null,null,2,100);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(145,1,now(),null,'MW','Malawi',null,null,2,99);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(146,1,now(),null,'MX','Mexico',null,null,2,105);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(147,1,now(),null,'MY','Malaysia',null,null,2,98);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(148,1,now(),null,'MZ','Mozambique',null,null,2,108);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(149,1,now(),null,'NA','Namibia',null,null,2,110);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(150,1,now(),null,'NC','New Caledonia',null,null,2,114);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(151,1,now(),null,'NE','Niger',null,null,12,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(152,1,now(),null,'NF','Norfolk Island',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(153,1,now(),null,'NG','Nigeria',null,null,2,113);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(154,1,now(),null,'NI','Nicaragua',null,null,8,112);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(155,1,now(),null,'NL','Netherlands',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(156,1,now(),null,'NO','Norway',null,null,2,31);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(157,1,now(),null,'NP','Nepal',null,null,2,111);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(158,1,now(),null,'NR','Nauru',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(159,1,now(),null,'NU','Niue',null,null,2,72);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(160,1,now(),null,'NZ','New Zealand',null,null,2,72);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(161,1,now(),null,'OM','Oman',null,null,2,115);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(162,1,now(),null,'PA','Panama',null,null,8,120);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(163,1,now(),null,'PE','Peru',null,null,8,123);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(164,1,now(),null,'PF','French Polynesia',null,null,12,114);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(165,1,now(),null,'PG','Papua New Guinea',null,null,12,121);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(166,1,now(),null,'PH','Philippines',null,null,2,124);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(167,1,now(),null,'PK','Pakistan',null,null,2,119);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(168,1,now(),null,'PL','Poland',null,null,2,125);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(169,1,now(),null,'PM','Saint Pierre and Miquelon',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(170,1,now(),null,'PN','Pitcairn Islands',null,null,2,72);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(171,1,now(),null,'PR','Puerto Rico',null,null,8,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(172,1,now(),null,'PS','Palestinian Territory, Occupied',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(173,1,now(),null,'PT','Portugal',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(174,1,now(),null,'PW','Palau',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(175,1,now(),null,'PY','Paraguay',null,null,2,122);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(176,1,now(),null,'QA','Qatar',null,null,2,126);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(177,1,now(),null,'RE','RÃ©union',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(178,1,now(),null,'RO','Romania',null,null,2,128);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(179,1,now(),null,'RU','Russia',null,null,2,129);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(180,1,now(),null,'RW','Rwanda',null,null,2,130);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(181,1,now(),null,'SA','Saudi Arabia',null,null,2,9);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(182,1,now(),null,'SB','Solomon Islands',null,null,2,131);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(183,1,now(),null,'SC','Seychelles',null,null,2,136);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(184,1,now(),null,'SD','Sudan',null,null,2,21);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(185,1,now(),null,'SE','Sweden',null,null,2,145);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(186,1,now(),null,'SG','Singapore',null,null,2,138);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(187,1,now(),null,'SH','Saint Helena',null,null,2,144);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(188,1,now(),null,'SI','Slovenia',null,null,2,140);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(189,1,now(),null,'SJ','Svalbard',null,null,2,31);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(190,1,now(),null,'SK','Slovakia',null,null,2,139);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(191,1,now(),null,'SL','Sierra Leone',null,null,2,137);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(192,1,now(),null,'SM','San Marino',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(193,1,now(),null,'SN','Senegal',null,null,2,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(194,1,now(),null,'SO','Somalia',null,null,2,141);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(195,1,now(),null,'SR','Suriname',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(196,1,now(),null,'ST','SÃ£o TomÃ© and PrÃ_ncipe',null,null,2,134);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(197,1,now(),null,'SV','El Salvador',null,null,2,132);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(198,1,now(),null,'SY','Syria',null,null,2,148);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(199,1,now(),null,'SZ','Swaziland',null,null,2,147);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(200,1,now(),null,'TC','Turks and Caicos Islands',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(201,1,now(),null,'TD','Chad',null,null,2,34);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(202,1,now(),null,'TF','French Southern and Antarctic La',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(203,1,now(),null,'TG','Togo',null,null,2,20);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(204,1,now(),null,'TH','Thailand',null,null,2,153);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(205,1,now(),null,'TJ','Tajikistan',null,null,2,149);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(206,1,now(),null,'TK','Tokelau',null,null,2,72);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(207,1,now(),null,'TM','Turkmenistan',null,null,2,157);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(208,1,now(),null,'TN','Tunisia',null,null,2,156);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(209,1,now(),null,'TO','Tonga',null,null,2,154);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(210,1,now(),null,'TL','East timor',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(211,1,now(),null,'TR','Turkey',null,null,2,159);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(212,1,now(),null,'TT','Trinidad and Tobago',null,null,2,155);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(213,1,now(),null,'TV','Tuvalu',null,null,2,13);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(214,1,now(),null,'TW','Taiwan',null,null,2,150);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(215,1,now(),null,'TZ','Tanzania',null,null,2,151);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(216,1,now(),null,'UA','Ukraine',null,null,2,160);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(217,1,now(),null,'UG','Uganda',null,null,2,117);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(218,1,now(),null,'GB','United Kingdom',null,null,2,65);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(219,1,now(),null,'UM','United States Minor Outlying Isl',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(220,1,now(),null,'US','United States',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(221,1,now(),null,'UY','Uruguay',null,null,2,161);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(222,1,now(),null,'UZ','Uzbekistan',null,null,2,118);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(223,1,now(),null,'VA','Holy See Vatican City',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(224,1,now(),null,'VC','Saint Vincent and the Grenadines',null,null,2,7);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(225,1,now(),null,'VE','Venezuela',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(226,1,now(),null,'VG','British Virgin Islands',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(227,1,now(),null,'VI','Virgin Islands',null,null,2,49);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(228,1,now(),null,'VN','Vietnam',null,null,2,164);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(229,1,now(),null,'VU','Vanuatu',null,null,2,162);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(230,1,now(),null,'WF','Wallis and Futuna',null,null,2,114);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(231,1,now(),null,'WS','Samoa',null,null,2,133);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(232,1,now(),null,'YE','Yemen',null,null,2,165);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(233,1,now(),null,'YT','Mayotte',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(234,1,now(),null,'YU','Yugoslavia',null,null,2,5);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(235,1,now(),null,'ZA','South Africa',null,null,2,2);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(236,1,now(),null,'ZM','Zambia',null,null,2,166);
+INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(237,1,now(),null,'ZW','Zimbabwe',null,null,2,167);
+ 
+ update ADM_COUNTRY_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_COUNTRY) where next_val=1;
+
+/*------INSERTS OF TABLE CRM PROVIDER----*/
+
+INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (1, 1, false, now(), NULL, 'ASG', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'PROV1', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1);
+
+ update CRM_PROVIDER_SEQ SET next_val=(SELECT MAX(ID)+1 FROM CRM_PROVIDER) where next_val=1;
+
+
+/*------INSERTS OF TABLE ADM_TITLE----*/
+
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (1, 0, false, now(), 1, null, 'AGCE', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (2, 0, false, now(), 1, null, 'ASSO', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (3, 0, false, now(), 1, null, 'CAB', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (4, 0, false, now(), 1, null, 'COLL', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (5, 0, false, now(), 1, null, 'COM', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (6, 0, false, now(), 1, null, 'COPR', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (7, 0, false, now(), 1, null, 'CSSE', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (8, 0, false, now(), 1, null, 'EARL', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (9, 0, false, now(), 1, null, 'ETS', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (10, 0, false, now(), 1, null, 'EURL', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (11, 0, false, now(), 1, null, 'GAEC', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (12, 0, false, now(), 1, null, 'HLM', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (13, 0, false, now(), 1, null, 'HOPI', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (14, 0, false, now(), 1, null, 'INST', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (15, 0, false, now(), 1, null, 'LABO', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (16, 0, false, now(), 1, null, 'M', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (17, 0, false, now(), 1, null, 'MLLES', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (18, 0, false, now(), 1, null, 'MLLE_M', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (19, 0, false, now(), 1, null, 'MLLE', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (20, 0, false, now(), 1, null, 'MM', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (21, 0, false, now(), 1, null, 'MME', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (22, 0, false, now(), 1, null, 'MME_M', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (23, 0, false, now(), 1, null, 'MMES', false, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (24, 0, false, now(), 1, null, 'MTRE', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (25, 0, false, now(), 1, null, 'SA', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (26, 0, false, now(), 1, null, 'SARL', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (27, 0, false, now(), 1, null, 'SCEA', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (28, 0, false, now(), 1, null, 'SCI', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (29, 0, false, now(), 1, null, 'SCM', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (30, 0, false, now(), 1, null, 'SCP', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (31, 0, false, now(), 1, null, 'SELARL', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (32, 0, false, now(), 1, null, 'SNC', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (33, 0, false, now(), 1, null, 'SNI', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (34, 0, false, now(), 1, null, 'STE', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (35, 0, false, now(), 1, null, 'SUCC', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (36, 0, false, now(), 1, null, 'SYNDIC', true, null, null);
+INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (37, 0, false, now(), 1, null, 'SYNDCOP', true, null, null);
+
+ update ADM_TITLE_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_TITLE) where next_val=1;
+
+/*------INSERTS OF TABLE ADM_USER----*/
+INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('1', 0, false, now(),  'MEVEO.ADMIN', 'fb93a3221422999ba49eb103977a6d736376505b', now(), 1, 1);
+INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('2', 0, false, now(),  'MEVEO.SUPERADMIN', 'fb93a3221422999ba49eb103977a6d736376505b', now() , 1, 1);
+ 
+update ADM_USER_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_USER) where next_val=1;
+
+/*------INSERTS OF TABLE ADM_ROLE----*/
+
 INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (1, 'administrateur', 'Administrateur');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (2, 'adv', 'ADV');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (3, 'visualisationGenerale', 'Visualization générale');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (4, 'visualisationClient', 'Visualization client');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (5, 'encaissement', 'Encaissement');
-INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (6, 'superAdministrateur', 'Super Administrateur');
-/*
-DROP SEQUENCE ADM_ROLE_SEQ;
-CREATE SEQUENCE ADM_ROLE_SEQ START WITH 7;
-*/
-INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('1', 0, 0, TIMESTAMP '2000-01-01 12:00:00',  'ADMIN', 'd033e22ae348aeb5660fc2140aec35850c4da997', TIMESTAMP '2020-03-01 12:00:00', 1, 1);
-INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('2', 0, 0, TIMESTAMP '2000-01-01 12:00:00',  'ADV', 'd8a6ce5665587d81dc56dd95fed707283f14bb15', TIMESTAMP '2020-03-01 12:00:00', 1, 1);
-INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('3', 0, 0, TIMESTAMP '2000-01-01 12:00:00',  'VISUGEN', '74b46635cbed487b607e213499fd483cbb6a7301', TIMESTAMP '2020-03-01 12:00:00', 1, 1);
-INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('4', 0, 0, TIMESTAMP '2000-01-01 12:00:00',  'VISUCLI', '3aa4392447b4343462a210526ec905bf8e26b26d', TIMESTAMP '2020-03-01 12:00:00', 1, 1);
-INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('5', 0, 0, TIMESTAMP '2000-01-01 12:00:00',  'ENCAISSEMENT', '172defec60cd4ba812c326b4e080842f689e2fd9', TIMESTAMP '2020-03-01 12:00:00', 1, 1);
-INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('6', 0, 0,TIMESTAMP '2000-01-01 12:00:00' ,  'MEVEO.ADMIN', 'fb93a3221422999ba49eb103977a6d736376505b', TIMESTAMP '2020-03-01 12:00:00', 1, 1);
-/*
-DROP SEQUENCE ADM_USER_SEQ;
-CREATE SEQUENCE ADM_USER_SEQ START WITH 7;
-*/
+INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (2, 'superAdministrateur', 'Super Administrateur');
+
+  
+ update ADM_ROLE_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_ROLE) where next_val=1;
+
+
+/*------INSERTS OF TABLE ADM_USER_ROLE----*/
+
 INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (1, 1);
+INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (1, 2);
+INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (2, 1);
 INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (2, 2);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (3, 3);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (4, 4);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (5, 5);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 1);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 2);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 3);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 4);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 5);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (6, 6);
 
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 1);
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 2);
-INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 3);
-INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 4);
-INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 5);
-INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 6);
-INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (2, 6);
-
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (1,0,'administrateur','administration','administrationVisualization,administrationManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (2,0,'administrateur','catalog','catalogVisualization,catalogManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (3,0,'administrateur','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (4,0,'administrateur','reporting','reportingVisualization,reportingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (5,0,'administrateur','customerSummary','customerSummaryVisualization', 'role');
-
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (6,0,'adv','administration','administrationVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (7,0,'adv','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (8,0,'adv','account','accountVisualization,accountManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (9,0,'adv','billing','billingVisualization,billingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (10,0,'adv','reporting','reportingVisualization,reportingManagement', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (11,0,'adv','customerSummary','customerSummaryVisualization', 'role');
-
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (12,0,'visualisationGenerale','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (13,0,'visualisationGenerale','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (14,0,'visualisationGenerale','billing','billingVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (15,0,'visualisationGenerale','customerSummary','customerSummaryVisualization', 'role');
-
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (16,0,'visualisationClient','customerSummary','customerSummaryVisualization', 'role');
-
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (17,0,'encaissement','catalog','catalogVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (18,0,'encaissement','account','accountVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (19,0,'encaissement','billing','billingVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (20,0,'encaissement','customerSummary','customerSummaryVisualization', 'role');
-INSERT INTO ADM_ROLE_PERMISSION (ID,VERSION,ROLE,TARGET,ACTION,DISCRIMINATOR) VALUES (21,0,'encaissement','reporting','reportingVisualization', 'role');
 
 
-/*OCC*/
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RG_CHQ', 'Règlement par chèque', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RG_TIP', 'Règlement par TIP', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RG_PLVT', 'Prélèvement', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RG_VIRT', 'Avis de crédit (virement)', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'IP_CHQ', 'Chèque impayé', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (6, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'IP_PLVT', 'Rejet de Prélèvement', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (7, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'IP_TIP', 'Impayé TIP', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (8, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RG_CHQNI', 'Règlement par chèque sur compte NI', '90590,4191,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (9, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RG_VIRTNI', 'Règlement par virement sur compte NI', '90590,4191,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (10, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RB_CHQ', 'Remboursement par chèque', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (11, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RB_PLVT', 'Remboursement par prélèvement', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (12, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_CC_CL', 'Transfert Compte client - Compte de liaison', '90590,41115,00000,000,0000,00000000,00000', '90590,4721,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (13, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_CL_NI', 'Transfert Compte de liaison - Compte  NI', '90590,4191,00000,000,0000,00000000,00000', '90590,4721,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (14, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_NI_CL', 'Transfert Compte NI - Compte de liaison', '90590,4191,00000,000,0000,00000000,00000', '90590,4721,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (15, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_CL_CC', 'Transfert Compte de liaison - Compte client', '90590,41115,00000,000,0000,00000000,00000', '90590,4721,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (16, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_ODD', 'Débit porté directement sur compte client', '90590,41115,00000,000,0000,00000000,00000', '90590,4721,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (17, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_ODC', 'Crédit porté directement sur compte client', '90590,41115,00000,000,0000,00000000,00000', '90590,4721,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (18, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_PERT', 'Perte sur règlement', '90590,41115,00000,000,0000,00000000,00000', '90590,65870,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (19, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_PROF', 'Profit sur règlement', '90590,41115,00000,000,0000,00000000,00000', '90590,75870,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (20, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_ACPT', 'Versement d''un acompte', '90590,4191,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (21, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_EXC', 'Enregistrement de trop perçu', '90590,41115,00000,000,0000,00000000,00000', '90590,4191,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (22, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_IRRE', 'Passage en irrécouvrable', '90590,41115,00000,000,0000,00000000,00000', '90590,416,00000,000,0000,00000000,00000', 'CREDIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (23, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_PREL', 'Pénalité de relance', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (24, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OD_PIMP', 'Pénalité d''impayés', '90590,41115,00000,000,0000,00000000,00000', '90590,51214170,00000,000,0000,00000000,00000', 'DEBIT', null, null);
-INSERT INTO AR_OCC_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNT_CODE, ACCOUNT_CODE_CLIENT_SIDE, OCC_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (25, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'FA_FACT', 'Facture', '90590,41115,00000,000,0000,00000000,00000', null, 'DEBIT', null, null);
-/*
-DROP SEQUENCE AR_OCC_TEMPLATE_SEQ;
-CREATE SEQUENCE AR_OCC_TEMPLATE_SEQ START WITH 26;
-*/
+/*------INSERTS OF TABLE ADM_PERMISSION----*/
 
-/*Cal*/
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (1,'administrationVisualization','administration','administrationVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (2,'administrationManagement','administration','administrationManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (3,'catalogVisualization','catalog','catalogVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (4,'catalogManagement','catalog','catalogManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (5,'accountVisualization','account','accountVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (6,'accountManagement','account','accountManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (7,'reportingVisualization','reporting','reportingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (8,'reportingManagement','reporting','reportingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (9,'customerSummaryVisualization','customerSummary','customerSummaryVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (10,'adv','billing','billingVisualization');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (11,'adv','billing','billingManagement');
+INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (12,'superAdminManagement','superAdmin','superAdminManagement');
+
+  
+ update ADM_PERMISSION_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_PERMISSION) where next_val=1;
+
+/*------INSERTS OF TABLE ADM_ROLE_PERMISSION----*/
+
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 1);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 2);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 3);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 4);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 5);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 6);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 7);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 8);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 9);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 10);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 11);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (2, 12);
+
+/*------INSERTS OF TABLE CAT_DAY_IN_YEAR----*/
+
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1, 1, 'JANUARY', 1, 1);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (2, 1, 'JANUARY', 2, 1);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (3, 1, 'JANUARY', 3, 1);
@@ -533,283 +932,6 @@ INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1128, 
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1129, 1, 'DECEMBER', 29, 1);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1130, 1, 'DECEMBER', 30, 1);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1131, 1, 'DECEMBER', 31, 1);
-/*
-DROP SEQUENCE CAT_DAY_IN_YEAR_SEQ;
-CREATE SEQUENCE CAT_DAY_IN_YEAR_SEQ START WITH 1132;
-*/
-/*Tax*/
-INSERT INTO BILLING_TAX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNTING_CODE, PERCENT, CREATOR_ID, UPDATER_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, '1', 'Taux Réduit 5,5%', '0019D,44571,00000,000,0000,00000000,00000', 5.5, 6, null);
-INSERT INTO BILLING_TAX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNTING_CODE, PERCENT, CREATOR_ID, UPDATER_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, '2', 'Taux Normal 19,6%', '0019D,44571,00000,000,0000,00000000,00000', 19.6, 6, null);
-INSERT INTO BILLING_TAX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, ACCOUNTING_CODE, PERCENT, CREATOR_ID, UPDATER_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, '0', 'Exonération TVA', '0019D,00000,00000,000,0000,00000000,00000', 0, 6, null);
-/*
-DROP SEQUENCE BILLING_TAX_SEQ;
-CREATE SEQUENCE BILLING_TAX_SEQ START WITH 4;
-*/
-/*Invoice Cat*/
-INSERT INTO BILLING_INVOICE_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, DISCOUNT_CODE, UPDATER_ID, CREATOR_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'ABONNEMENT', 'Abonnement', null, null, 6);
-INSERT INTO BILLING_INVOICE_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, DISCOUNT_CODE, UPDATER_ID, CREATOR_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'MIS_EN_SERV', 'Mise en service', null, null, 6);
-INSERT INTO BILLING_INVOICE_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, DISCOUNT_CODE, UPDATER_ID, CREATOR_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RESILIATION', 'Résiliation', null, null, 6);
-INSERT INTO BILLING_INVOICE_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, DISCOUNT_CODE, UPDATER_ID, CREATOR_ID) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'AUTRE_PREST', 'Autres prestations', null, null, 6);
-/*
-DROP SEQUENCE BILLING_INVOICE_CAT_SEQ;
-CREATE SEQUENCE BILLING_INVOICE_CAT_SEQ START WITH 5;
-*/
-/*Cal*/
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'UVM1', 'CHARGE_IMPUTATION', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'PCM1', 'DURATION_TERM', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'PCT1', 'DURATION_TERM', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'PCS1', 'DURATION_TERM', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'PCA1', 'DURATION_TERM', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (6, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'RFS4', 'DURATION_TERM', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (7, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CFM1', 'BILLING', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (8, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CFS1', 'BILLING', 6, null);
-INSERT INTO CAT_CALENDAR (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, NAME, CALENDAR_TYPE, CREATOR_ID, UPDATER_ID) VALUES (9, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CFS4', 'BILLING', 6, null);
-/*
-DROP SEQUENCE CAT_CALENDAR_SEQ;
-CREATE SEQUENCE CAT_CALENDAR_SEQ START WITH 10;
-*/
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 1);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 101);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 201);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 301);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 401);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 501);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 601);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 701);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 801);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 901);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 1001);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (1, 1101);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 1);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 101);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 201);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 301);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 401);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 501);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 601);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 701);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 801);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 901);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 1001);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (2, 1101);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (3, 1);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (3, 301);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (3, 601);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (3, 901);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (4, 1);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (4, 601);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (5, 1);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (6, 301);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (6, 601);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 1);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 101);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 201);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 301);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 401);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 501);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 601);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 701);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 801);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 901);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 1001);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (7, 1101);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (8, 1);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (8, 601);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (9, 301);
-INSERT INTO CAT_CALENDAR_DAYS (CALENDAR_ID, DAY_ID) VALUES (9, 901);
 
 
-/*Billing cyle*/
-INSERT INTO BILLING_CYCLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, BILLING_TEMPLATE_NAME, INVOICE_DATE_DELAY, DUE_DATE_DELAY, UPDATER_ID, CALENDAR, CREATOR_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'PART', 'Particulier', 'A', 20, 15, null, 7, 6);
-INSERT INTO BILLING_CYCLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, BILLING_TEMPLATE_NAME, INVOICE_DATE_DELAY, DUE_DATE_DELAY, UPDATER_ID, CALENDAR, CREATOR_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'TPE', 'Très Petites Entreprises', 'A', 20, 15, null, 8, 6);
-INSERT INTO BILLING_CYCLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, BILLING_TEMPLATE_NAME, INVOICE_DATE_DELAY, DUE_DATE_DELAY, UPDATER_ID, CALENDAR, CREATOR_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'PRO', 'Professionnels', 'A', 1, 5, null, 9, 6);
-INSERT INTO BILLING_CYCLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, BILLING_TEMPLATE_NAME, INVOICE_DATE_DELAY, DUE_DATE_DELAY, UPDATER_ID, CALENDAR, CREATOR_ID) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'GC', 'Grands comptes', 'A', 1, 29, null, 7, 6);
-INSERT INTO BILLING_CYCLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, BILLING_TEMPLATE_NAME, INVOICE_DATE_DELAY, DUE_DATE_DELAY, UPDATER_ID, CALENDAR, CREATOR_ID) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SYND', 'Syndic', 'A', 0, 0, null, 7, 6);
-/*
-DROP SEQUENCE BILLING_CYCLE_SEQ;
-CREATE SEQUENCE BILLING_CYCLE_SEQ START WITH 6;
-*/
-/*Invoice sub cat*/
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory1', 'Sub category 1', '0019D,70618,9741,004,ZONE,00000000,MEVEO', null, null, 1, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory2', 'Sub category 1', '0019D,70618,9741,011,ZONE,00000000,MEVEO', null, null, 2, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory3', 'Sub category 1', '0019D,70618,9741,005,ZONE,00000000,MEVEO', null, null, 1, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory4', 'Sub category 1', '0019D,70618,9741,011,ZONE,00000000,MEVEO', null, null, 2, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory5', 'Sub category 1', '0019D,70618,9741,006,ZONE,00000000,MEVEO', null, null, 1, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (6, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory6', 'Sub category 1', '0019D,70618,9741,011,ZONE,00000000,MEVEO', null, null, 2, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (7, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory7', 'Sub category 1', '0019D,70618,9741,007,ZONE,00000000,MEVEO', null, null, 1, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (8, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory8', 'Sub category 1', '0019D,70618,9741,011,ZONE,00000000,MEVEO', null, null, 2, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (9, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory9', 'Sub category 1', '0019D,70618,9741,002,ZONE,00000000,MEVEO', null, null, 1, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (10, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory10', 'Sub category 1', '0019D,70618,9741,002,ZONE,00000000,MEVEO', null, null, 2, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (11, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory11', 'Sub category 1', '0019D,70618,9741,004,ZONE,00000000,MEVEO', null, null, 1, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (12, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory12', 'Sub category 1', '0019D,70618,9741,012,ZONE,00000000,MEVEO', null, null, 2, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (13, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory13', 'Sub category 1', '0019D,70618,9741,005,ZONE,00000000,MEVEO', null, null, 1, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (14, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory14', 'Sub category 1', '0019D,70618,9741,012,ZONE,00000000,MEVEO', null, null, 2, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (15, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory15', 'Sub category 1', '0019D,70618,9741,001,ZONE,00000000,MEVEO', null, null, 4, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (16, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SubCategory16', 'Sub category 1', '0019D,70618,9741,002,ZONE,00000000,MEVEO', null, null, 4, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (17, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'Frais', 'Frais de depot', '0019D,70618,9741,003,ZONE,00000000,MEVEO', null, null, 4, 6, 1);
-INSERT INTO BILLING_INVOICE_SUB_CAT (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, PR_DESCRIPTION, ACCOUNTING_CODE, DISCOUNT_CODE, UPDATER_ID, INVOICE_CATEGORY_ID, CREATOR_ID, TAX_ID) VALUES (18, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'Remise', 'Remise sur facture', '0019D,70618,9741,099,ZONE,00000000,MEVEO', null, null, 4, 6, 1);
-/*
-DROP SEQUENCE BILLING_INVOICE_SUB_CAT_SEQ;
-CREATE SEQUENCE BILLING_INVOICE_SUB_CAT_SEQ START WITH 19;
-*/
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, INVOICE_SUB_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_1', 'Charge 1', 1, 1, 6, null);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, INVOICE_SUB_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_2', 'Charge 2', 1, 3, 6, null);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, INVOICE_SUB_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_3', 'Charge 3', 1, 5, 6, null);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, INVOICE_SUB_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_4', 'Charge 4', 1, 7, 6, null);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, INVOICE_SUB_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_5', 'Charge 5', 1, 9, 6, null);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, INVOICE_SUB_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (6, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_6', 'Charge 6', 1, 11, 6, null);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, INVOICE_SUB_CATEGORY, CREATOR_ID, UPDATER_ID) VALUES (7, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_7', 'Charge 7', 1, 13, 6, null);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (10, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_8', 'Charge 8', 1, null, 6, 2);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (11, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_9', 'Charge 9', 1, null, 6, 4);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (12, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_10', 'Charge 10', 1, null, 6, 6);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (13, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_11', 'Charge 11', 1, null, 6, 8);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (14, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_12', 'Charge 12', 1, null, 6, 10);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (15, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_13', 'Charge 13', 1, null, 6, 12);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (16, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_14', 'Charge 14', 1, null, 6, 14);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (17, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_F1', 'Frais de remplacement', 1, null, 6, 15);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (18, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_F2', 'Frais de dépot', 0, null, 6, 17);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (19, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_F3', 'Frais de diagnostic', 1, null, 6, 16);
-INSERT INTO CAT_CHARGE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, AMOUNT_EDITABLE, UPDATER_ID, CREATOR_ID, INVOICE_SUB_CATEGORY) VALUES (20, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_R1', 'Remise sur 1 mois', 1, null, 6, 18);
-/*
-DROP SEQUENCE CAT_CHARGE_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ START WITH 21;
-*/
-INSERT INTO CAT_RECURRING_CHARGE_TEMPL (ID, RECURRENCE_TYPE, DURATION_TERM_IN_MONTH, SUBSCRIPTION_PRORATA, TERMINATION_PRORATA, APPLY_IN_ADVANCE, CALENDAR_ID) VALUES (1, 'CALENDAR', 12, 1, 1, 1, 1);
-INSERT INTO CAT_RECURRING_CHARGE_TEMPL (ID, RECURRENCE_TYPE, DURATION_TERM_IN_MONTH, SUBSCRIPTION_PRORATA, TERMINATION_PRORATA, APPLY_IN_ADVANCE, CALENDAR_ID) VALUES (2, 'CALENDAR', 12, 1, 1, 1, 1);
-INSERT INTO CAT_RECURRING_CHARGE_TEMPL (ID, RECURRENCE_TYPE, DURATION_TERM_IN_MONTH, SUBSCRIPTION_PRORATA, TERMINATION_PRORATA, APPLY_IN_ADVANCE, CALENDAR_ID) VALUES (3, 'CALENDAR', null, 1, 1, 1, 1);
-INSERT INTO CAT_RECURRING_CHARGE_TEMPL (ID, RECURRENCE_TYPE, DURATION_TERM_IN_MONTH, SUBSCRIPTION_PRORATA, TERMINATION_PRORATA, APPLY_IN_ADVANCE, CALENDAR_ID) VALUES (4, 'CALENDAR', null, 0, 0, 1, 1);
-INSERT INTO CAT_RECURRING_CHARGE_TEMPL (ID, RECURRENCE_TYPE, DURATION_TERM_IN_MONTH, SUBSCRIPTION_PRORATA, TERMINATION_PRORATA, APPLY_IN_ADVANCE, CALENDAR_ID) VALUES (5, 'CALENDAR', null, 1, 1, 1, 1);
-INSERT INTO CAT_RECURRING_CHARGE_TEMPL (ID, RECURRENCE_TYPE, DURATION_TERM_IN_MONTH, SUBSCRIPTION_PRORATA, TERMINATION_PRORATA, APPLY_IN_ADVANCE, CALENDAR_ID) VALUES (6, 'CALENDAR', null, 1, 1, 1, 1);
-INSERT INTO CAT_RECURRING_CHARGE_TEMPL (ID, RECURRENCE_TYPE, DURATION_TERM_IN_MONTH, SUBSCRIPTION_PRORATA, TERMINATION_PRORATA, APPLY_IN_ADVANCE, CALENDAR_ID) VALUES (7, 'CALENDAR', null, 1, 1, 1, 1);
-
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (10, 'SUBSCRIPTION');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (11, 'SUBSCRIPTION');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (12, 'SUBSCRIPTION');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (13, 'SUBSCRIPTION');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (14, 'SUBSCRIPTION');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (15, 'SUBSCRIPTION');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (16, 'SUBSCRIPTION');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (17, 'OTHER');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (18, 'OTHER');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (19, 'OTHER');
-INSERT INTO CAT_ONE_SHOT_CHARGE_TEMPL (ID, TYPE) VALUES (20, 'SUBSCRIPTION');
-
-INSERT INTO CAT_SERVICE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, UPDATER_ID, CREATOR_ID, DURATION_TERM_CALENDAR) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SERV_TPL1', 'Service 1', null, 6, 3);
-INSERT INTO CAT_SERVICE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, UPDATER_ID, CREATOR_ID, DURATION_TERM_CALENDAR) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SERV_TPL2', 'Service 2', null, 6, 3);
-INSERT INTO CAT_SERVICE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, UPDATER_ID, CREATOR_ID, DURATION_TERM_CALENDAR) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SERV_TPL3', 'Service 3', null, 6, 3);
-INSERT INTO CAT_SERVICE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, UPDATER_ID, CREATOR_ID, DURATION_TERM_CALENDAR) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SERV_TPL4', 'Service 4', null, 6, 3);
-INSERT INTO CAT_SERVICE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, UPDATER_ID, CREATOR_ID, DURATION_TERM_CALENDAR) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SERV_TPL5', 'Service 5', null, 6, 2);
-INSERT INTO CAT_SERVICE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, UPDATER_ID, CREATOR_ID, DURATION_TERM_CALENDAR) VALUES (6, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SERV_TPL6', 'Service 6', null, 6, 2);
-INSERT INTO CAT_SERVICE_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, UPDATER_ID, CREATOR_ID, DURATION_TERM_CALENDAR) VALUES (7, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'SERV_TPL7', 'Service 7', null, 6, 2);
-/*
-DROP SEQUENCE CAT_SERVICE_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_SERVICE_TEMPLATE_SEQ START WITH 8;
-*/
-INSERT INTO CAT_SERV_RECCHARGE_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (1, 1);
-INSERT INTO CAT_SERV_RECCHARGE_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (2, 2);
-INSERT INTO CAT_SERV_RECCHARGE_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (3, 3);
-INSERT INTO CAT_SERV_RECCHARGE_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (4, 4);
-INSERT INTO CAT_SERV_RECCHARGE_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (5, 5);
-INSERT INTO CAT_SERV_RECCHARGE_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (6, 6);
-INSERT INTO CAT_SERV_RECCHARGE_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (7, 7);
-
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (1, 10);
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (2, 11);
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (2, 20);
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (3, 12);
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (4, 13);
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (5, 14);
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (6, 15);
-INSERT INTO CAT_SERV_ONECHARGE_S_TEMPLATES (SERVICE_TEMPLATE_ID, CHARGE_TEMPLATE_ID) VALUES (7, 16);
-
-INSERT INTO CAT_OFFER_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, CREATOR_ID, UPDATER_ID) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OFFER1', 'Offer 1', 6, null);
-INSERT INTO CAT_OFFER_TEMPLATE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, DESCRIPTION, CREATOR_ID, UPDATER_ID) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'OFFER2', 'Offer 2', 6, null);
-/*
-DROP SEQUENCE CAT_OFFER_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_OFFER_TEMPLATE_SEQ START WITH 3;
-*/
-INSERT INTO CAT_OFFER_SERV_TEMPLATES (OFFER_TEMPLATE_ID, SERVICE_TEMPLATE_ID) VALUES (1, 1);
-INSERT INTO CAT_OFFER_SERV_TEMPLATES (OFFER_TEMPLATE_ID, SERVICE_TEMPLATE_ID) VALUES (1, 2);
-INSERT INTO CAT_OFFER_SERV_TEMPLATES (OFFER_TEMPLATE_ID, SERVICE_TEMPLATE_ID) VALUES (1, 3);
-INSERT INTO CAT_OFFER_SERV_TEMPLATES (OFFER_TEMPLATE_ID, SERVICE_TEMPLATE_ID) VALUES (1, 4);
-INSERT INTO CAT_OFFER_SERV_TEMPLATES (OFFER_TEMPLATE_ID, SERVICE_TEMPLATE_ID) VALUES (2, 5);
-INSERT INTO CAT_OFFER_SERV_TEMPLATES (OFFER_TEMPLATE_ID, SERVICE_TEMPLATE_ID) VALUES (2, 6);
-INSERT INTO CAT_OFFER_SERV_TEMPLATES (OFFER_TEMPLATE_ID, SERVICE_TEMPLATE_ID) VALUES (2, 7);
-
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (1, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_1', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 0, 2, null, null, null, 0, 0, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (2, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_1', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 2, null, null, null, null, 1.412, 1.49, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (3, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_2', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_SANSINTER', null, null, 8.53, 9, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (4, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_2', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_AVECINTER', null, null, 27.4885, 29, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (5, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_3', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, null, null, null, 1.41, 1.49, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (6, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_4', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_SANSINTER', null, null, 8.53, 9, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (7, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_4', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_AVECINTER', null, null, 27.488, 29, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (8, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_5', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 0, 2, null, null, null, 0, 0, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (9, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_5', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 2, null, null, null, null, 1.412, 1.49, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (10, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_6', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_SANSINTER', null, null, 8.53, 9, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (11, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_6', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_AVECINTER', null, null, 27.488, 29, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (12, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_7', TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2009-12-31 12:00:00', TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2011-05-31 12:00:00', null, null, null, null, null, 1.41, 1.49, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (13, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_7', TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2009-12-31 12:00:00', TIMESTAMP '2011-06-01 12:00:00', null, null, null, null, null, null, 1.507, 1.59, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (14, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_8', TIMESTAMP '2010-01-01 12:00:00', null, TIMESTAMP '2010-01-01 12:00:00', null, null, null, null, null, null, 1.507, 1.59, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (15, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_9', TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2009-12-31 12:00:00', TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_SANSINTER', null, null, 8.53, 9, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (16, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_9', TIMESTAMP '2000-01-01 12:00:00', TIMESTAMP '2009-12-31 12:00:00', TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_AVECINTER', null, null, 27.488, 29, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (17, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_10', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 0, 2, null, null, null, 0, 0, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (18, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_10', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 2, null, null, null, null, 4.73, 4.99, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (19, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_11', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_SANSINTER', null, null, 8.53, 9, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (20, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_11', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_AVECINTER', null, null, 46.445, 49, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (21, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_12', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, null, null, null, 4.73, 4.99, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (22, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_13', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_SANSINTER', null, null, 8.53, 9, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (23, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_13', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_AVECINTER', null, null, 46.445, 49, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (24, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_14', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 0, 2, null, null, null, 0, 0, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (25, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_14', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, 2, null, null, null, null, 4.73, 4.99, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (26, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_14', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_SANSINTER', null, null, 8.53, 9, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (27, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_14', TIMESTAMP '2000-01-01 12:00:00', null, TIMESTAMP '2000-01-01 12:00:00', null, null, null, 'M_AVECINTER', null, null, 46.445, 49, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (28, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_R1', TIMESTAMP '2000-01-01 12:00:00', null, null, null, null, null, null, null, null, 74.88, 79, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (29, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_F3', TIMESTAMP '2000-01-01 12:00:00', null, null, null, null, null, null, null, null, 93.839, 99, null, 6, 'EUR');
-INSERT INTO CAT_PRICE_PLAN_MATRIX (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, EVENT_CODE, START_SUBSCRIPTION_DATE, END_SUBSCRIPTION_DATE, START_RATING_DATE, END_RATING_DATE, MIN_SUBSCR_AGE, MAX_SUBSCR_AGE, CRITERIA_1, CRITERIA_2, CRITERIA_3, AMOUNT_WITHOUT_TAX, AMOUNT_WITHOUT_TAX2, UPDATER_ID, CREATOR_ID, CURRENCY_CODE) VALUES (30, 0, 0, TIMESTAMP '2013-03-05 12:00:00', 1, null, 'CHARGE_TMPL_F2', TIMESTAMP '2000-01-01 12:00:00', null, null, null, null, null, null, null, null, 46.445, 49, null, 6, 'EUR');
-/*
-DROP SEQUENCE CAT_PRICE_PLAN_MATRIX_SEQ;
-CREATE SEQUENCE CAT_PRICE_PLAN_MATRIX_SEQ START WITH 42;
-*/
-/*Reports*/
-
-/*Code reason subscription termination*/
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES(1,0,'D','Address change',0,1,0,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES(2,0,'P','Offer upgrade',0,1,0,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES(3,0,'M','Offer downgrade',1,1,0,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES(4,0,'L','Cancellation provider',0,1,1,1);
-INSERT INTO BILLING_SUBSCRIP_TERMIN_REASON (ID,VERSION,CODE,DESCRIPTION,APPLY_AGREEMENT,APPLY_REIMBURSMENT,APPLY_TERMINATION_CHARGES,PROVIDER_ID) VALUES(5,0,'C','Cancellation customer',1,1,0,1);
-
-/*Dunning plan*/
-/*
-DROP SEQUENCE AR_DUNNING_PLAN_SEQ;
-CREATE SEQUENCE AR_DUNNING_PLAN_SEQ start with 5 increment by 1;
-*/
-/*
-DROP SEQUENCE AR_DUNNING_PLAN_TRANSITION_SEQ;
-CREATE SEQUENCE AR_DUNNING_PLAN_TRANSITION_SEQ start with 13 increment by 1;
-*/
-/*
-DROP SEQUENCE AR_ACTION_PLAN_ITEM_SEQ;
-CREATE SEQUENCE AR_ACTION_PLAN_ITEM_SEQ start with 13 increment by 1;
-*/
-/*Configuration for Grieg mails*/
-
-INSERT INTO COM_MESSAGE_TEMPLATE (ID,PROVIDER_ID,VERSION,MEDIA,CREATED,DISABLED,CODE,TAG_END,TAG_START,TYPE,HTMLCONTENT,SUBJECT,TEXTCONTENT) VALUES (1,1,0,'EMAIL',TIMESTAMP '2013-03-05 12:00:00',0,'PART_RAPPEL','>','#<','DUNNING','<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>Manaty <br />128 rue Berbisey<br /><br />21000 Dijon<br /><br />Service client  +33 9 51 39 51 51 <br />Du lundi au vendredi de 8h &agrave;18h<br /><br />Adresse internet : www.manaty.net<br /><br /><br />Votre identifiant client : #<CUSTOMER_ACCOUNT_CODE><br /><br /><div align="right" style="width: 70%">#<CUSTOMER_ACCOUNT_NAME><br />#<CUSTOMER_ACCOUNT_ADDRESS_1><br />#<CUSTOMER_ACCOUNT_ADDRESS_2><br />#<CUSTOMER_ACCOUNT_ADDRESS_3><br />#<CUSTOMER_ACCOUNT_ZIP_CITY></div><br /><strong>RAPPEL au #<LETTER_DATE></strong><br /><br />#<CUSTOMER_ACCOUNT_TITLE>,<br /><br />A ce jour et sauf erreur de notre part, vous restez nous devoir la somme de  <strong>#<AMOUNT_EXIGIBLE> &euro;</strong>.<br /><br />Si vous avez effectu&eacute; votre paiement r&eacute;cemment, nous vous prions de ne pas tenir compte de cette relance.<br /><br />S''il s''agit d''un oubli, nous vous invitons &agrave; r&eacute;gler votre facture d&egrave;s aujourd''hui.<strong> A d&eacute;faut de r&egrave;glement dans un d&eacute;lai de 15 jours, une p&eacute;nalit&eacute; de 10,00 &euro; viendra s''ajouter &agrave; votre solde d&ucirc;</strong>.<br /><br />En cas de difficult&eacute; ou pour toute autre raison, n''h&eacute;sitez pas &agrave; contacter rapidement notre service client&egrave;le aux num&eacute;ro et horaires pr&eacute;cis&eacute;s en haut &agrave; gauche de ce courriel.<br /><br />Dans l''attente de votre r&egrave;glement, nous vous prions d''agr&eacute;er,#<CUSTOMER_ACCOUNT_TITLE>, l''expression de nos sentiments d&eacute;vou&eacute;s.<br /><br /><div align="right" style="width: 70%">Le Service Client Manaty </div></body></html>','RAPPEL #<LETTER_DATE>',null);
-INSERT INTO COM_MESSAGE_TEMPLATE (ID,PROVIDER_ID,VERSION,MEDIA,CREATED,DISABLED,CODE,TAG_END,TAG_START,TYPE,HTMLCONTENT,SUBJECT,TEXTCONTENT) VALUES (2,1,0,'EMAIL',TIMESTAMP '2013-03-05 12:00:00',0,'A','>','#<','INVOICE','<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Votre facture Manaty</title></head><body>Manaty<br />128 rue Berbisey<br />21000 DIJON<br /><br />Service client +33 9 51 39 51 51<br />Du lundi au vendredi de 8h &agrave; 18h<br /><br />Adresse internet : www.manaty.net<br /><br /><br /><strong><span style="color: red">Consultez votre facture en ligne</span></strong><br /><br />Votre identifiant client : #<CUSTOMER_ACCOUNT_CODE><br /><br />Bonjour #<CUSTOMER_NAME>,<br /><br />Votre facture Manaty #<INVOICE_NUMBER> du #<INVOICE_DATE> est en ligne.<br /><br />Rendez-vouz dans la rubrique "Mon Compte" de votre <a href="https://www.myselfcare.com/">espace client</a>.<br />Saisissez ou cr&eacute;er votre identifiant ou mot de passe et acc&eacute;dez &agrave; la rubrique "visualiser mes factures".<div align="right" style="width: 70%">Le Service Client Manaty </div></body></html>','Votre facture du #<INVOICE_DATE>',null );
-
-INSERT INTO COM_SENDER_CONFIG (ID,VERSION,CREATED,DISABLED,PROVIDER_ID,CODE,MEDIA,SMTP_HOST,SMTP_PORT,LOGIN,PASSWORD,DELAY_MIN,DEFAULT_FROM_EMAIL,DEFAULT_REPLY_EMAIL) VALUES (1,0,TIMESTAMP '2013-03-05 12:00:00',0,1,'MANATY SMTP','EMAIL','zimbra.manaty.net','25','yourlogin','yourpass',5000,'projetmeveo@manaty.net','projetmeveo@manaty.net');
-
-
-
-/*DROP TABLE ADM_USER_LOG;*/
-CREATE TABLE IF NOT EXISTS ADM_USER_LOG(`ID` bigint(20) NOT NULL AUTO_INCREMENT,USER_NAME VARCHAR(255) ,USER_ID bigint(19) NOT NULL,DATE_EXECUTED DATE,ACTION VARCHAR(255),URL VARCHAR(255) NOT NULL,OBJECT_ID VARCHAR(50),PRIMARY KEY (`ID`));
-/*
-DROP SEQUENCE USER_LOG_SEQ;
-CREATE SEQUENCE USER_LOG_SEQ start with 1 increment by 1;
-*/
-
-
-UPDATE `meveo`.`crm_provider` SET `CUSTOMER_ID`=1, `BILLING_ACCOUNT_ID`=1, `USER_ACCOUNT_ID`=1, `CREATOR_ID`=1, `CUSTOMER_ACCOUNT_ID`=1, `PROVIDER_ID`=1, `UPDATER_ID`=1 WHERE `ID`='1';
-
-UPDATE `meveo`.`crm_provider` SET `CUSTOMER_ID`=1, `BILLING_ACCOUNT_ID`=1, `USER_ACCOUNT_ID`=1, `CREATOR_ID`=1, `CUSTOMER_ACCOUNT_ID`=1, `PROVIDER_ID`=1, `UPDATER_ID`=1 WHERE `ID`='2';
-
+ UPDATE CAT_DAY_IN_YEAR_SEQ SET next_val=(SELECT MAX(ID)+1 FROM CAT_DAY_IN_YEAR);

@@ -15,6 +15,7 @@
  */
 package org.meveo.model.admin;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -47,6 +48,12 @@ public class Seller extends BusinessEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
+	
+	@Column(name = "INVOICE_PREFIX",length=50)
+	private String invoicePrefix;
+
+	@Column(name = "CURRENT_INVOICE_NB")
+	private Long currentInvoiceNb;
 
 	@Embedded
 	private Address address = new Address();
@@ -89,6 +96,22 @@ public class Seller extends BusinessEntity {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public String getInvoicePrefix() {
+		return invoicePrefix;
+	}
+
+	public void setInvoicePrefix(String invoicePrefix) {
+		this.invoicePrefix = invoicePrefix;
+	}
+
+	public Long getCurrentInvoiceNb() {
+		return currentInvoiceNb;
+	}
+
+	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+		this.currentInvoiceNb = currentInvoiceNb;
 	}
 
 	public Seller getSeller() {

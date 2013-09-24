@@ -27,12 +27,14 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 
@@ -41,6 +43,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	@EJB
 	private ProviderService providerService;
+	
+	@EJB
+	private SellerService sellerService;
 
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode)
 			throws BusinessException {
@@ -109,24 +114,40 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return null;
 		}
 	}
-	 public void setInvoiceNumber(Provider provider, Invoice invoice) {
-	        String prefix = provider.getInvoicePrefix();
-	        if (prefix == null) {
-	            prefix = "";
-	        }
-	        long nextInvoiceNb = getNextValue(provider);
-	        StringBuffer num1 = new StringBuffer("000000000");
-	        num1.append(nextInvoiceNb + "");
-	        String invoiceNumber = num1.substring(num1.length() - 9);
-	        int key = 0;
-	        for (int i = 0; i < invoiceNumber.length(); i++) {
-	            key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
-	        }
-	        invoice.setInvoiceNumber(prefix + invoiceNumber + "-" + key % 10);
-	        update(invoice);
-	    }
+	
+	public void setInvoiceNumber(Invoice invoice){
+		Seller seller = invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+		String prefix = seller.getInvoicePrefix();
+		if(prefix==null){
+			prefix=seller.getProvider().getInvoicePrefix();
+		}
+		if(prefix==null){
+			prefix="";
+		}
+        long nextInvoiceNb = getNextValue(seller);
+        StringBuffer num1 = new StringBuffer("000000000");
+        num1.append(nextInvoiceNb + "");
+        String invoiceNumber = num1.substring(num1.length() - 9);
+        invoice.setInvoiceNumber(prefix + invoiceNumber);
+        update(invoice);
+	}
 	 
 
+	  public synchronized long getNextValue(Seller seller) {
+	        long result = 0;
+	        if (seller != null) {
+	        	if(seller.getCurrentInvoiceNb() != null){
+	            long currentInvoiceNbre = seller.getCurrentInvoiceNb();
+	            result = 1 + currentInvoiceNbre;
+	            seller.setCurrentInvoiceNb(result);
+	            sellerService.update(seller);
+	        	} else {
+	        		result=getNextValue(seller.getProvider());
+	        	}
+	        }
+	        return result;
+	  }
+	  
 	  public synchronized long getNextValue(Provider provider) {
 	        long result = 0;
 	        if (provider != null) {

@@ -133,7 +133,7 @@ public class InvoicingJob implements Job {
 						 createAgregatesAndInvoice(billingRun);
 					}else if(BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())){
 						for (Invoice invoice : billingRun.getInvoices()) {
-				            invoiceService.setInvoiceNumber(billingRun.getProvider(), invoice);
+				            invoiceService.setInvoiceNumber(invoice);
 				            BillingAccount billingAccount = invoice.getBillingAccount();
 				            Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate();
 				            billingAccount.setNextInvoiceDate(nextCalendarDate);
