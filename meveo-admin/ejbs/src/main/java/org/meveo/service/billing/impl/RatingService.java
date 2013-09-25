@@ -10,6 +10,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.billing.ApplicationTypeEnum;
@@ -23,7 +24,9 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -51,6 +54,70 @@ public class RatingService {
 
     public static void setPricePlanDirty(){
     	isPricePlanDirty=true;
+    }
+    
+    public int getSharedQuantity(LevelEnum level,Provider provider,String chargeCode,Date chargeDate,RecurringChargeInstance recChargeInstance){
+    	int result=0;
+    	try{
+    	String strQuery="select SUM(r.serviceInstance.quantity) from "
+   			 +RecurringChargeInstance.class.getSimpleName() +" r "
+		 		+ "WHERE r.code=:chargeCode "
+		 		+ "AND r.subscriptionDate<=:chargeDate "
+		 		+ "AND (r.serviceInstance.terminationDate==NULL OR r.serviceInstance.terminationDate>:chargeDate)"
+    			+ "AND r.provider=:provider ";
+    	switch(level){
+		case BILLING_ACCOUNT:
+			strQuery+="AND r.subscription.userAccount.billingAccount=:billingAccount ";
+			break;
+		case CUSTOMER:
+			strQuery+="AND r.subscription.userAccount.billingAccount.customerAccount.customer=:customer ";
+			break;
+		case CUSTOMER_ACCOUNT:
+			strQuery+="AND r.subscription.userAccount.billingAccount.customerAccount=:customerAccount ";
+			break;
+		case PROVIDER:
+			break;
+		case SELLER:
+			strQuery+="AND r.subscription.userAccount.billingAccount.customerAccount.customer.seller=:seller ";
+			break;
+		case USER_ACCOUNT:
+			strQuery+="AND r.subscription.userAccount=:userAccount ";
+			break;
+		default:
+			break;
+    	
+    	}
+    	Query query = em.createQuery(strQuery);
+    	query.setParameter("chargeCode", chargeCode);
+    	query.setParameter("chargeDate", chargeDate);
+    	query.setParameter("provider", provider);switch(level){
+		case BILLING_ACCOUNT:
+			query.setParameter("billingAccount",recChargeInstance.getSubscription().getUserAccount().getBillingAccount());
+			break;
+		case CUSTOMER:
+			query.setParameter("customer",recChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
+			break;
+		case CUSTOMER_ACCOUNT:
+			query.setParameter("customerAccount",recChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount());
+			break;
+		case PROVIDER:
+			break;
+		case SELLER:
+			query.setParameter("seller",recChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+			break;
+		case USER_ACCOUNT:
+			query.setParameter("userAccount",recChargeInstance.getSubscription().getUserAccount());
+			break;
+		default:
+			break;
+    	
+    	}
+    	Number sharedQuantity=(Number) query.getSingleResult();
+    	result=sharedQuantity.intValue();
+    	} catch(Exception e ){
+    		e.printStackTrace();
+    	}
+    	return result;
     }
     
     // used to rate a oneshot or recurring charge
@@ -124,6 +191,22 @@ public class RatingService {
                 unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
                 unitPriceWithTax = ratePrice.getAmountWithTax();
             }
+        }
+        //if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of
+        // shared charges
+        if(bareWalletOperation.getChargeInstance().getChargeTemplate() instanceof RecurringChargeTemplate){
+        	RecurringChargeTemplate recChargeTemplate=(RecurringChargeTemplate)bareWalletOperation.getChargeInstance().getChargeTemplate();
+        	if(recChargeTemplate.getShareLevel()!=null){
+        		RecurringChargeInstance recChargeInstance = (RecurringChargeInstance)bareWalletOperation.getChargeInstance();
+        		int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), provider, recChargeInstance.getCode(), bareWalletOperation.getOperationDate(),recChargeInstance);
+        		if(sharedQuantity>0){
+        			unitPriceWithoutTax=unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity));
+        			if(unitPriceWithTax!=null){
+        				unitPriceWithTax=unitPriceWithTax.divide(new BigDecimal(sharedQuantity));
+        			}
+        			log.info("charge is shared "+sharedQuantity+" times, so unit price is "+unitPriceWithoutTax);
+        		}
+        	}
         }
 
         BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);

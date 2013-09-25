@@ -45,13 +45,6 @@ public class PDFInvoiceGenerationJob implements Job {
 	@Inject
 	JobExecutionService jobExecutionService;
 
-
-	@Inject
-	private BillingRunService billingRunService;
-	
-	@Inject
-	private RatedTransactionService ratedTransactionService;
-	
 	@Inject
 	BillingAccountService billingAccountService;
 	

@@ -50,6 +50,10 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	@Column(name = "APPLY_IN_ADVANCE")
 	private Boolean applyInAdvance;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name= "SHARE_LEVEL",length=20)
+	private LevelEnum shareLevel;
+	
 	public Calendar getCalendar() {
 		return calendar;
 	}
@@ -96,6 +100,14 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 
 	public void setApplyInAdvance(Boolean applyInAdvance) {
 		this.applyInAdvance = applyInAdvance;
+	}
+
+	public LevelEnum getShareLevel() {
+		return shareLevel;
+	}
+
+	public void setShareLevel(LevelEnum shareLevel) {
+		this.shareLevel = shareLevel;
 	}
 
 }
