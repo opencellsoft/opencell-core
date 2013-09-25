@@ -676,16 +676,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Calendar durationTermCalendar = null;
 		Date nextChargeDate = reimbursement ? chargeInstance.getChargeDate() : chargeInstance
 				.getNextChargeDate();
-		try {
-			durationTermCalendar = serviceTemplate.getDurationTermCalendar();
-			log.debug(
-					" applyNotAppliedinAdvanceReccuringCharge nextChargeDate=#1,applicationDate=#2",
-					nextChargeDate, applicationDate);
-		} catch (Exception e) {
-			log.error(
-					" applyNotAppliedinAdvanceReccuringCharge Cannot find duration term calendar for serviceTemplate.id=#0",
-					serviceTemplate.getId());
-		}
+		durationTermCalendar = serviceTemplate.getDurationTermCalendar();
+		
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
 			throw new IncorrectChargeTemplateException(
