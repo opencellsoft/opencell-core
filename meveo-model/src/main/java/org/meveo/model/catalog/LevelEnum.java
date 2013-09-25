@@ -6,7 +6,7 @@ public enum LevelEnum {
     CUSTOMER(3, "levelEnum.customer"),
     CUSTOMER_ACCOUNT(4, "levelEnum.customerAccount"),
     BILLING_ACCOUNT(5, "levelEnum.billingAccount"),
-    USER_ACCOUNT(5, "levelEnum.userAccount");
+    USER_ACCOUNT(6, "levelEnum.userAccount");
 
     private Integer id;
     private String label;
