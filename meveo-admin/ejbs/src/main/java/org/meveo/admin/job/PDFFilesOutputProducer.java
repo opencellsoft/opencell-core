@@ -79,11 +79,14 @@ public class PDFFilesOutputProducer{
 		    	ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
 		    	Invoice invoice=(Invoice)parameters.get(PdfGenratorConstants.INVOICE);
 		        String resDir = paramBean.getProperty("pdfInvoiceGenrationJob.resourcesFilesDirectory");
-		        String pdfDirectory = paramBean.getProperty("pdfInvoiceGenrationJob.pdfFilesDirectory");
+		        String pdfDirectory = paramBean.getProperty("meveo.dir","/tmp/meveo");
+		        pdfDirectory=pdfDirectory + File.separator +invoice.getProvider().getCode()+File.separator+"invoices"+File.separator+"pdf";
+		        (new File(pdfDirectory)).mkdirs();
 		        String INVOICE_TAG_NAME = "invoice";
 		        Provider provider=invoice.getProvider();
-		        String invoicesDir = paramBean.getProperty("invoices.dir","/tmp/meveo/invoices");
-		        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+invoice.getBillingRun().getId());
+
+		        String invoicesDir = paramBean.getProperty("meveo.dir","/tmp/meveo");
+			    File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+invoice.getBillingRun().getId());
 		        String invoiceXmlFileName=billingRundir + File.separator + invoice.getInvoiceNumber()+ ".xml";
 		        File invoiceXmlFile=new File(invoiceXmlFileName);
 		        if(!invoiceXmlFile.exists()){
