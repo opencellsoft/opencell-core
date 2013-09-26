@@ -196,8 +196,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 
 	public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId,
 			String customerAccountCode, Date to) throws BusinessException {
-		log.info("customerAccountBalanceDueWithoutLitigation with id:#0,code:#1,toDate:#2",
-				customerAccountId, customerAccountCode, to);
+		log.info("customerAccountBalanceDueWithoutLitigation with id"+customerAccountId+",code:"+customerAccountCode+",toDate:"+ to);
 		return customerAccountBalanceDueWithoutLitigation(
 				findCustomerAccount(customerAccountId, customerAccountCode), to);
 	}
@@ -216,8 +215,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 */
 	public BigDecimal customerAccountBalanceExigible(Long customerAccountId,
 			String customerAccountCode, Date to) throws BusinessException {
-		log.info("customerAccountBalanceExligible with id:#0,code:#1,toDate:#2", customerAccountId,
-				customerAccountCode, to);
+		log.info("customerAccountBalanceExligible with id:"+customerAccountId+",code:"+customerAccountCode+",toDate:"+to);
 		return customerAccountBalanceExigible(
 				findCustomerAccount(customerAccountId, customerAccountCode), to);
 	}
@@ -228,8 +226,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 */
 	public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode,
 			Date to) throws BusinessException {
-		log.info("start customerAccountBalanceDue with id:#0,code:#1,toDate:#2", customerAccountId,
-				customerAccountCode, to);
+		log.info("start customerAccountBalanceDue with id:"+customerAccountId+",code:"+customerAccountCode+",toDate:"+to);
 		return customerAccountBalanceDue(
 				findCustomerAccount(customerAccountId, customerAccountCode), to);
 	}
@@ -238,13 +235,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 			String address1, String address2, String zipCode, String city, String state,
 			String email, Long customerId, CreditCategoryEnum creditCategory,
 			PaymentMethodEnum paymentMethod, User user) throws BusinessException {
-		log.info("start createCustomerAccount with code:#0,customerId:#1", code, customerId);
+		log.info("start createCustomerAccount with code:"+code+",customerId:"+ customerId);
 		if (code == null || code.trim().equals("") || customerId == null || user == null) {
 			log.warn("Error: requried value(s) is null with code:#0,customerId:#1,creator:#2",
 					code, customerId, user != null ? user.getUserName() : "NULL");
 			throw new BusinessException("Error when required value(s) is required");
 		}
-		log.info("create customer account with code:#0 by creator:#1", code, user.getUserName());
+		log.info("create customer account with code:"+code+" by creator:"+user.getUserName());
 		CustomerAccount customerAccount = null;
 		try {
 			customerAccount = findCustomerAccount(null, code);
@@ -252,7 +249,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		}
 
 		if (customerAccount != null) {
-			log.warn("Error when one customer account existed with code:#0", code);
+			log.warn("Error when one customer account existed with code:"+ code);
 			throw new BusinessException("Error: one customer account existed with code:" + code
 					+ " when create new customer account!");
 		}
@@ -285,14 +282,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 			this.create(customerAccount, user);
 		} catch (Exception e) {
 			log.warn(
-					"Error when create one customer account with code:#0,customerId:#1,creator:#2",
-					code, customerId, user.getUserName());
+					"Error when create one customer account with code:"+code+",customerId:"+customerId+",creator:"+user.getUserName());
 			throw new BusinessException("Error:" + e.getMessage()
 					+ " when create a new customer account with code:" + code + ",customerId:"
 					+ customerId + ",creator:" + user.getUserName());
 		}
-		log.info("successfully create one customer account with code:#0,customerId:#1,creator:#2",
-				code, customerId, user.getUserName());
+		log.info("successfully create one customer account with code:"+code+",customerId:"+customerId+",creator:"+user.getUserName());
 	}
 
 	/**
@@ -339,11 +334,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		try {
 			this.update(customerAccount, user);
 		} catch (Exception e) {
-			log.warn("Error: #0 whne update one customer acount with code:#0", e.getMessage(), code);
+			log.warn("Error: "+e.getMessage()+" whne update one customer acount with code:"+ code);
 			throw new BusinessException("Error: " + e.getMessage()
 					+ " when update one customer account with code:" + code);
 		}
-		log.info("successfully update customer account with code:#0", code);
+		log.info("successfully update customer account with code:"+ code);
 	}
 
 	@Transactional
@@ -480,7 +475,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 */
 	public void updateCreditCategory(Long id, String code, CreditCategoryEnum creditCategory,
 			User updator) throws BusinessException {
-		log.info("start updateCreditCategory with id:#0,code:#1", id, code);
+		log.info("start updateCreditCategory with id:"+id+",code:"+ code);
 		if (creditCategory == null) {
 			log.warn("Error when required creditCategory is null!");
 			throw new BusinessException("Error when required creditCategory is null");
@@ -499,7 +494,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 */
 	public void updateDunningLevel(Long id, String code, DunningLevelEnum dunningLevel, User updator)
 			throws BusinessException {
-		log.info("start updateDunningLevel with id:#0,code:#1", id, code);
+		log.info("start updateDunningLevel with id:"+id+",code:"+ code);
 		if (dunningLevel == null) {
 			log.warn("Error when required dunningLevel is null!");
 			throw new BusinessException("Error when required dunningLevel is null");
@@ -519,7 +514,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 */
 	public void updatePaymentMethod(Long id, String code, PaymentMethodEnum paymentMethod,
 			User updator) throws BusinessException {
-		log.info("start updatePaymentMethod with id:#0,code:#1", id, code);
+		log.info("start updatePaymentMethod with id:"+id+",code:"+ code);
 		if (paymentMethod == null) {
 			log.warn("Error when required paymentMethod is null!");
 			throw new BusinessException("Error when required paymentMethod is null");
@@ -539,11 +534,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 */
 	public List<AccountOperation> consultOperations(Long id, String code, Date from, Date to)
 			throws BusinessException {
-		log.info("start consultOperations with id:#0,code:#1,from:#2,to:#3", id, code, from, to);
+		log.info("start consultOperations with id:"+id+",code:"+ code+"from:"+from+",to:"+ to);
 		CustomerAccount customerAccount = findCustomerAccount(id, code);
 		List<AccountOperation> operations = customerAccount.getAccountOperations();
-		log.info("found accountOperation size:#0 from customerAccount code:#1,id:#2",
-				operations != null ? operations.size() : 0, code, id);
+		log.info("found accountOperation size:"+(operations != null ? operations.size() : 0)+" from customerAccount code:"+code+",id:"+id);
 		if (to == null) {
 			to = new Date();
 		}
@@ -562,25 +556,24 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 				}
 			}
 		}
-		log.info("found effective operations size:#0 from customerAccount code:#1,id:#2",
-				operations != null ? operations.size() : 0, code, id);
+		log.info("found effective operations size:"+(operations != null ? operations.size() : 0)+" from customerAccount code:"+code+",id:"+id);
 		log.info("successfully end consultOperations");
 		return operations;
 	}
 
 	private Customer getCustomerById(Long id) throws BusinessException {
-		log.info("start to find one customer with id:#0", id);
+		log.info("start to find one customer with id:"+ id);
 		Customer result = customerService.findById(id);
 		if (result == null) {
-			log.warn("retrieve a null customer with id:#0", id);
+			log.warn("retrieve a null customer with id:"+ id);
 			throw new BusinessException("Error when find null customer with id:" + id);
 		}
-		log.info("successfully end getCustomerById with id:#0", id);
+		log.info("successfully end getCustomerById with id:"+ id);
 		return result;
 	}
 
 	public CustomerAccount findCustomerAccount(Long id, String code) throws BusinessException {
-		log.info("findCustomerAccount with code:#0,id:#1", code, id);
+		log.info("findCustomerAccount with code:"+code+",id:"+ id);
 		if ((code == null || code.equals("")) && (id == null || id == 0)) {
 			log.warn("Error: require code and id are null!");
 			throw new BusinessException("Error: required code and ID are null!");

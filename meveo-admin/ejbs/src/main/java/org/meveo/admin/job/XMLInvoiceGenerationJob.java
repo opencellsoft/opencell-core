@@ -2,7 +2,6 @@ package org.meveo.admin.job;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,9 +18,7 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
@@ -30,7 +27,6 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
@@ -53,9 +49,6 @@ public class XMLInvoiceGenerationJob implements Job {
 
 	@Inject
 	private BillingRunService billingRunService;
-	
-	@Inject
-	private RatedTransactionService ratedTransactionService;
 	
 	@Inject
 	BillingAccountService billingAccountService;
