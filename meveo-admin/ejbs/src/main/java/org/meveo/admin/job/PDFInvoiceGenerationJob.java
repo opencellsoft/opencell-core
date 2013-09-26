@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +18,14 @@ import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
@@ -75,9 +75,8 @@ public class PDFInvoiceGenerationJob implements Job {
 		List<Invoice> invoices=invoiceService.getValidatedInvoicesWithNoPdf(null);
 		for (Invoice invoice : invoices) {
 			try {
-				 Map<String, Object> parameters=pDFParametersConstruction.constructParameters(invoice);
+		         Map<String, Object> parameters=pDFParametersConstruction.constructParameters(invoice);
 				 pDFFilesOutputProducer.producePdf(parameters);
-		       
 			} catch (Exception e) {
 				e.printStackTrace();
 				result.registerError(e.getMessage());

@@ -140,7 +140,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	            long currentInvoiceNbre = seller.getCurrentInvoiceNb();
 	            result = 1 + currentInvoiceNbre;
 	            seller.setCurrentInvoiceNb(result);
-	            sellerService.update(seller);
+	            sellerService.update(seller,seller.getAuditable().getCreator());
 	        	} else {
 	        		result=getNextValue(seller.getProvider());
 	        	}

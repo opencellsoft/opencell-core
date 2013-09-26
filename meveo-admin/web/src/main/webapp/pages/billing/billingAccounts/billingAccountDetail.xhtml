@@ -1,5 +1,3 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -412,13 +410,11 @@
 										value="#{messages['account.buttonCancelAccount']}"
 										onclick="if(confirm('#{messages['account.confirmCancelAccount']}')){return true;}else{return false;}"
 										disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}" />
-									&nbsp;&nbsp;
 									<p:commandButton id="terminateButton"
 										action="#{billingAccountBean.closeAccount()}"
 										value="#{messages['account.buttonCloseAccount']}"
 										onclick="if(confirm('#{messages['customerAccount.confirmCloseAccount']}')){return true;}else{return false;}"
 										disabled="#{billingAccountBean.entity.status.toString() != 'TERMINATED' and entity.status.toString() != 'CANCELLED'}" />
-									&nbsp;&nbsp;
 									<p:button outcome="addNewUserAccountAction"
 										value="#{messages['billingAccount.addUserAccount']}"
 										disabled="#{billingAccountBean.entity.status.toString() != 'ACTIVE'}">

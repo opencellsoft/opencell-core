@@ -459,13 +459,13 @@ public class UsageRatingService {
 								|| templateCache.getFilter1().equals(edr.getParameter1())) {
 							log.info("filter1 ok");
 							if (templateCache.getFilter2() == null
-									|| templateCache.getFilter1().equals(edr.getParameter2())) {
+									|| templateCache.getFilter2().equals(edr.getParameter2())) {
 								log.info("filter2 ok");
 								if (templateCache.getFilter3() == null
-										|| templateCache.getFilter1().equals(edr.getParameter3())) {
+										|| templateCache.getFilter3().equals(edr.getParameter3())) {
 									log.info("filter3 ok");
 									if (templateCache.getFilter4() == null
-											|| templateCache.getFilter1().equals(
+											|| templateCache.getFilter4().equals(
 													edr.getParameter4())) {
 										log.info("filter4 ok");
 										if (templateCache.getFilterExpression() != null) {
