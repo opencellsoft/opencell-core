@@ -1,5 +1,3 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -185,20 +183,20 @@
 		<h:form id="operationsForm2"
 			rendered="#{billingRun.getInvoices().size()>0}">
 			<h:commandButton action="#{billingRunBean.excludeBillingAccounts}"
-				value="Exclure" />
+				value="Exclude" />
 		</h:form>
 
 		<br />
 		<br />
 		<h:form id="operationsForm" rendered="#{!edit}">
 			<h:commandButton action="#{billingRunBean.validateInvoicing()}"
-				value="Valider" />
-			<h:commandButton
+				value="Validate" />
+			<!-- <h:commandButton
 				action="#{billingRunBean.rerateConfirmedInvoicing()}"
-				value="Revaloriser" />
+				value="Rerate" /> -->
 			<h:commandButton
 				action="#{billingRunBean.cancelConfirmedInvoicing()}"
-				value="Annuler le traitement"
+				value="Cancel billing run"
 				onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
 		</h:form>
 	</ui:define>

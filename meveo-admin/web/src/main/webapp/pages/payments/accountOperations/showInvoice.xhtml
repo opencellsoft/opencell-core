@@ -1,5 +1,3 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -35,10 +33,10 @@
 					<hftl:panelGroup columns="3">
 					<h:commandButton action="#{recordedInvoiceBean.addLitigation()}"
 										value="#{messages['accountOperation_I.buttonAddLitigation']}"
-										rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" />&nbsp;
+										rendered="#{recordedInvoice.matchingStatus.toString() == 'O'}" />
 					<h:commandButton action="#{recordedInvoiceBean.cancelLitigation()}"
 										value="#{messages['accountOperation_I.buttonCancelLitigation']}"
-										rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" />&nbsp;																						
+										rendered="#{recordedInvoice.matchingStatus.toString() == 'I'}" />																				
 					<h:commandButton value="#{messages['action.back']}"	action="/pages/payments/customerAccounts/customerAccountDetail.xhtml">
 						<f:attribute name="objectId" value="#{recordedInvoice.getCustomerAccount().getId()}" />
 						<f:attribute name="edit" value="false" />

@@ -1,5 +1,3 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui"
@@ -349,11 +347,11 @@
 										<p:commandButton
 										action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
 										value="#{messages['customerAccount.buttonLettrage']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;
+										rendered="#{customerAccountBean.isActiveAccount()}" />
 										<p:commandButton
 										action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}"
 										value="#{messages['customerAccount.buttonConsultMatching']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />&nbsp;
+										rendered="#{customerAccountBean.isActiveAccount()}" />
 									</ui:define>
 							</hftl:dataList>
 							<h:form>

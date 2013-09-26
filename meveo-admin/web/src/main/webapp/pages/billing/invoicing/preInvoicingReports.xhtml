@@ -1,5 +1,3 @@
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -42,7 +40,7 @@
 			</hftl:panelGroup>
 
 
-			<b>Nombre de comptes par moyen de paiement :</b>
+			<b>Number of billing account in billing cycle per payment mode :</b>
 			<hftl:panelGroup columns="1">
 				<hf:formEntityField 
 					label="#{messages['paymentMethod.check']}"
@@ -66,7 +64,7 @@
 					field="preInvoicingReports" childField="wiretransferBANumber"
 					popup="false" />
 			</hftl:panelGroup>
-			<b>Nombre de comptes a facturer par moyen de paiement :</b>
+			<b>Number of billing account to invoice per payment mode :</b>
 
 			<hftl:panelGroup columns="1">
 				<hf:formEntityField 
@@ -93,7 +91,7 @@
 					childField="wiretransferBillableBANumber" popup="false" />
 			</hftl:panelGroup>
 
-			<b>Montant HT total valorise par moyen de paiement :</b>
+			<b>Total amount without tax by payment method :</b>
 			<hftl:panelGroup columns="1">
 				<hf:formEntityField 
 					label="#{messages['paymentMethod.check']}"
@@ -127,11 +125,11 @@
 		<h:form id="operationsForm" rendered="#{!edit}">
 			
 				<h:commandButton action="#{billingRunBean.confirmInvoicing()}"
-					value="Confirmer" />
-				<h:commandButton action="#{billingRunBean.rerateInvoicing()}"
-					value="Revaloriser" />
+					value="Confirm" />
+				<!-- <h:commandButton action="#{billingRunBean.rerateInvoicing()}"
+					value="Rerate" /> -->
 				<h:commandButton action="#{billingRunBean.cancelInvoicing()}"
-					value="Annuler le traitement"
+					value="Cancel billing run"
 					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
 			
 		</h:form>
