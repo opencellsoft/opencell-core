@@ -69,10 +69,12 @@ public class XMLInvoiceHeaderCategoryDTO {
 	}
 
 	public void addAmountWithTax(BigDecimal amountToAdd) {
-		if (amountWithTax == null) {
-			amountWithTax = new BigDecimal("0");
+		if(amountToAdd!=null){
+			if (amountWithTax == null) {
+				amountWithTax = new BigDecimal("0");
+			}
+			amountWithTax = amountWithTax.add(amountToAdd);
 		}
-		amountWithTax = amountWithTax.add(amountToAdd);
 	}
 
 	public void addAmountWithoutTax(BigDecimal amountToAdd) {
