@@ -90,7 +90,7 @@ public class XMLInvoiceGenerationJob implements Job {
 			        for (Invoice invoice : billingRun.getInvoices()) {
 			            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
 			        }
-			        billingRun.setDisabled(true);
+			        billingRun.setXmlInvoiceGenerated(true);
 			        billingRunService.update(billingRun);
 			} catch (Exception e) {
 				e.printStackTrace();

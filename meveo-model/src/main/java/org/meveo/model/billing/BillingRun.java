@@ -134,6 +134,9 @@ public class BillingRun extends AuditableEntity {
 	
 	@Column(name = "SELECTED_BILLING_ACCOUNTS")
 	private String selectedBillingAccounts;
+	
+	@Column(name = "XML_INVOICE_GENERATED")
+	private Boolean xmlInvoiceGenerated;
 
 	@Transient
 	PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
@@ -364,6 +367,14 @@ public class BillingRun extends AuditableEntity {
 
 	public void setSelectedBillingAccounts(String selectedBillingAccounts) {
 		this.selectedBillingAccounts = selectedBillingAccounts;
+	}
+
+	public Boolean getXmlInvoiceGenerated() {
+		return xmlInvoiceGenerated;
+	}
+
+	public void setXmlInvoiceGenerated(Boolean xmlInvoiceGenerated) {
+		this.xmlInvoiceGenerated = xmlInvoiceGenerated;
 	}
 	
 	
