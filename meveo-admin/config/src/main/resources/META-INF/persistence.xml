@@ -38,14 +38,12 @@
 		<class>org.meveo.model.admin.Seller</class>
 		<class>org.meveo.model.security.Role</class>
 		<class>org.meveo.model.security.Permission</class>
-		<class>org.meveo.model.admin.User</class>
 		<class>org.meveo.model.admin.CustomerImportHisto</class>
 		<class>org.meveo.model.admin.AccountImportHisto</class>
 		<class>org.meveo.model.admin.DunningHistory</class>
 		<class>org.meveo.model.admin.SubscriptionImportHisto</class>
 		<class>org.meveo.model.admin.InvoiceImportHisto</class>
 		<class>org.meveo.model.admin.TIPImportHisto</class>
-		<class>org.meveo.model.bi.Job</class>
 		<class>org.meveo.model.bi.Job</class>
 		<class>org.meveo.model.bi.JobHistory</class>
 		<class>org.meveo.model.bi.Report</class>
@@ -142,7 +140,6 @@
 		<class>org.meveo.model.payments.MatchingAmount</class>
 		<class>org.meveo.model.rating.EDR</class>
 		<class>org.meveo.model.shared.Title</class>
-		<class>org.meveo.model.security.Permission</class>
 		<class>org.meveo.model.payments.BankOperation</class>
 		<class>org.meveo.model.mediation.Access</class>
 		<class>org.meveo.model.mediation.ZonningPlan</class>
