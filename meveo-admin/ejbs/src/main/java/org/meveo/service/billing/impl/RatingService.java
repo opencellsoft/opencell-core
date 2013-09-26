@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,7 +64,7 @@ public class RatingService {
    			 +RecurringChargeInstance.class.getSimpleName() +" r "
 		 		+ "WHERE r.code=:chargeCode "
 		 		+ "AND r.subscriptionDate<=:chargeDate "
-		 		+ "AND (r.serviceInstance.terminationDate==NULL OR r.serviceInstance.terminationDate>:chargeDate)"
+		 		+ "AND (r.serviceInstance.terminationDate is NULL OR r.serviceInstance.terminationDate>:chargeDate) "
     			+ "AND r.provider=:provider ";
     	switch(level){
 		case BILLING_ACCOUNT:
@@ -194,15 +195,15 @@ public class RatingService {
         }
         //if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of
         // shared charges
-        if(bareWalletOperation.getChargeInstance().getChargeTemplate() instanceof RecurringChargeTemplate){
-        	RecurringChargeTemplate recChargeTemplate=(RecurringChargeTemplate)bareWalletOperation.getChargeInstance().getChargeTemplate();
+        if(bareWalletOperation.getChargeInstance() instanceof RecurringChargeInstance){
+        	RecurringChargeTemplate recChargeTemplate=((RecurringChargeInstance)bareWalletOperation.getChargeInstance()).getRecurringChargeTemplate();
         	if(recChargeTemplate.getShareLevel()!=null){
         		RecurringChargeInstance recChargeInstance = (RecurringChargeInstance)bareWalletOperation.getChargeInstance();
         		int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), provider, recChargeInstance.getCode(), bareWalletOperation.getOperationDate(),recChargeInstance);
         		if(sharedQuantity>0){
-        			unitPriceWithoutTax=unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity));
+        			unitPriceWithoutTax=unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity),20, RoundingMode.HALF_UP);
         			if(unitPriceWithTax!=null){
-        				unitPriceWithTax=unitPriceWithTax.divide(new BigDecimal(sharedQuantity));
+        				unitPriceWithTax=unitPriceWithTax.divide(new BigDecimal(sharedQuantity),20, RoundingMode.HALF_UP);
         			}
         			log.info("charge is shared "+sharedQuantity+" times, so unit price is "+unitPriceWithoutTax);
         		}
