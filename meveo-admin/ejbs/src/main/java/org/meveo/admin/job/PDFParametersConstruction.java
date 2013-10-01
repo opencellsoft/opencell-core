@@ -54,7 +54,6 @@ public class PDFParametersConstruction{
   
     public Map<String, Object> constructParameters(Invoice invoice) {
         try {
-        	 ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
             
@@ -63,17 +62,16 @@ public class PDFParametersConstruction{
             Provider provider=invoice.getProvider();
             String billingTemplateName =billingCycle!=null && billingCycle.getBillingTemplateName()!=null?
                     billingCycle.getBillingTemplateName():"default";
-                    
-            String resourcesFilesDirectory = paramBean.getProperty("pdfInvoiceGenrationJob.resourcesFilesDirectory");
-            String messagePathKey = new StringBuilder(resourcesFilesDirectory).append(File.separator).append(
-                    billingTemplateName).append(File.separator).append(PDF_DIR_NAME).append(File.separator).toString();
-            
-            parameters.put(PdfGenratorConstants.MESSAGE_PATH_KEY, messagePathKey);
-            parameters.put(PdfGenratorConstants.LOGO_PATH_KEY, messagePathKey);
+
+    		ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
+	        String meveoDir = paramBean.getProperty("meveo.dir","/tmp/meveo");
+            String resDir = meveoDir + File.separator +provider.getCode()+ File.separator +"jasper";
+            String templateDir = new StringBuilder(resDir).append(File.separator).append(
+                    billingTemplateName).append(File.separator).append(PDF_DIR_NAME).toString();
+            parameters.put(PdfGenratorConstants.MESSAGE_PATH_KEY, templateDir+File.separator);
+            parameters.put(PdfGenratorConstants.LOGO_PATH_KEY, templateDir+File.separator);
             parameters.put(PdfGenratorConstants.CUSTOMER_ADDRESS_KEY, getCustomerAddress(invoice));
-            String resDir = paramBean.getProperty("pdfInvoiceGenrationJob.resourcesFilesDirectory");
-            String pdfDirName = new StringBuilder(resDir).append(File.separator).append(billingTemplateName).append(File.separator).append(PDF_DIR_NAME).toString();
-            parameters.put(PdfGenratorConstants.SUBREPORT_DIR, pdfDirName);
+            parameters.put(PdfGenratorConstants.SUBREPORT_DIR, templateDir);
             if (TIP_PAYMENT_METHOD.equals(billingAccount.getPaymentMethod().toString())) {
             	BigDecimal netToPay = invoice.getNetToPay();
             	if(netToPay.signum() != 1){
