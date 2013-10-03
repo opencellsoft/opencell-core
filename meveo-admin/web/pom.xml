@@ -10,6 +10,7 @@
 	<artifactId>meveo-admin-web</artifactId>
 	<name>MEVEO Admin Web Application - Web Module</name>
 	<packaging>war</packaging>
+	
 	<build>
 		<resources>
 			<resource>
@@ -34,6 +35,61 @@
 		<!-- </plugin> -->
 		<!-- </plugins> -->
 
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.enunciate</groupId>
+				<artifactId>maven-enunciate-plugin</artifactId>
+				<!-- check for the latest version -->
+				<version>1.17</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>docs</goal>
+						</goals>
+						<configuration>
+							<!-- the directory where to put the docs -->
+							<docsDir>${project.build.directory}/docs</docsDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.enunciate
+										</groupId>
+										<artifactId>
+											maven-enunciate-plugin
+										</artifactId>
+										<versionRange>
+											[1.17,)
+										</versionRange>
+										<goals>
+											<goal>docs</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<dependencies>
@@ -70,6 +126,7 @@
 		</dependency>
 
 	</dependencies>
+
 	<profiles>
 		<profile>
 			<id>development</id>

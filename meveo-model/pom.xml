@@ -17,8 +17,8 @@
 				<groupId>maven-compiler-plugin</groupId>
 				<version>3.0</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -88,8 +88,8 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.2</version>
 		</dependency>
+		
 		<!-- TESTING dependencies -->
 		<dependency>
 			<groupId>org.dbunit</groupId>

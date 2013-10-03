@@ -50,10 +50,10 @@ public class ParamBean {
 
 	private static boolean reload = false;
 
-	public ParamBean(){
-	    
+	public ParamBean() {
+
 	}
-	
+
 	/**
 	 * Constructeur de ParamBean.
 	 * 
@@ -88,6 +88,10 @@ public class ParamBean {
 			setInstance(new ParamBean(propertiesName));
 
 		return instance;
+	}
+
+	public static ParamBean getInstance() {
+		return getInstance("meveo-admin.properties");
 	}
 
 	/*
@@ -126,14 +130,14 @@ public class ParamBean {
 		return getProperties().getProperty(property_p);
 	}
 
-    public int getPropertyAsInt(String property) {
-        try {
-            return Integer.parseInt(getProperty(property));
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
-	
+	public int getPropertyAsInt(String property) {
+		try {
+			return Integer.parseInt(getProperty(property));
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
 	/**
 	 * 
 	 * @param new_valid
