@@ -29,6 +29,7 @@ import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 @Named
@@ -39,6 +40,9 @@ public class CountryService extends PersistenceService<Country> {
 
 	@Inject
 	private UserService userService;
+
+	@Inject
+	private ProviderService providerService;
 
 	public Country findByCode(String countryCode) {
 		if (countryCode == null) {
@@ -64,13 +68,16 @@ public class CountryService extends PersistenceService<Country> {
 		return query.getResultList();
 	}
 
-	public void create(String countryCode, String name, String currencyCode,
-			Long userId) {
+	public void create(Long userId, String countryCode, String name,
+			String currencyCode) {
 		User creator = userService.findById(userId);
+
 		Country c = new Country();
+
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		auditable.setCreator(creator);
+
 		c.setAuditable(auditable);
 		c.setCountryCode(countryCode);
 		c.setDescriptionEn(name);

@@ -10,7 +10,7 @@
 	<artifactId>meveo-admin-web</artifactId>
 	<name>MEVEO Admin Web Application - Web Module</name>
 	<packaging>war</packaging>
-	
+
 	<build>
 		<resources>
 			<resource>
@@ -57,7 +57,8 @@
 
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -105,6 +106,11 @@
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-config</artifactId>
 			<classifier>${env}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.meveo</groupId>
+			<artifactId>meveo-api</artifactId>
+			<version>3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.omnifaces</groupId>
