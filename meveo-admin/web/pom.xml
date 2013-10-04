@@ -33,12 +33,10 @@
 		<!-- </archive> -->
 		<!-- </configuration> -->
 		<!-- </plugin> -->
-		<!-- </plugins> -->		
+		<!-- </plugins> -->
 
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -48,15 +46,9 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.enunciate
-										</groupId>
-										<artifactId>
-											maven-enunciate-plugin
-										</artifactId>
-										<versionRange>
-											[1.17,)
-										</versionRange>
+										<groupId>org.codehaus.enunciate</groupId>
+										<artifactId>maven-enunciate-plugin</artifactId>
+										<versionRange>[1.27,)</versionRange>
 										<goals>
 											<goal>docs</goal>
 										</goals>
@@ -71,6 +63,26 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.enunciate</groupId>
+				<artifactId>maven-enunciate-plugin</artifactId>
+				<version>1.27</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>docs</goal>
+						</goals>
+						<configuration>
+							<docsDir>${project.build.directory}/docs</docsDir>
+							<configFile>src/main/resources/enunciate.xml</configFile>
+						</configuration>						
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
 	</build>
 
 	<dependencies>
