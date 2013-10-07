@@ -7,9 +7,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.CountryServiceApi;
+import org.meveo.api.dto.CountryDto;
+import org.meveo.api.exception.EnvironmentException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -17,13 +20,13 @@ import org.meveo.util.MeveoParamBean;
 
 /**
  * @author Edward P. Legaspi
- * @since Oct 2, 2013
+ * @since Oct 7, 2013
  **/
 @Stateless
-@Path("/environment")
+@Path("/country")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class Environment {
+public class CountryWS {
 
 	@Inject
 	private CountryServiceApi countryServiceApi;
@@ -31,6 +34,10 @@ public class Environment {
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
+
+	public CountryWS() {
+
+	}
 
 	@GET
 	@Path("/index")
@@ -42,19 +49,35 @@ public class Environment {
 	}
 
 	@POST
-	@Path("/createCountry")
-	public ActionStatus createCountry(CountryDto countryDto) {
+	@Path("/")
+	public ActionStatus create(CountryDto countryDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
 			countryDto.setUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
 			countryServiceApi.create(countryDto);
-		} catch (Exception e) {
+		} catch (EnvironmentException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
 
 		return result;
 	}
+
+	@GET
+	public CountryResponse find(@QueryParam("countryCode") String countryCode) {
+		CountryResponse result = new CountryResponse();
+		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		try {
+			result.setCountryDto(countryServiceApi.find(countryCode));
+		} catch (EnvironmentException e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
 }

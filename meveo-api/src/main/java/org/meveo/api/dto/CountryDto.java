@@ -1,9 +1,11 @@
-package org.meveo.rest.environment;
+package org.meveo.api.dto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.model.billing.Country;
 
 /**
  * @author Edward P. Legaspi
@@ -23,6 +25,20 @@ public class CountryDto extends BaseDto {
 	private String currencyCode;
 
 	private String languageCode;
+
+	public CountryDto() {
+
+	}
+
+	public CountryDto(Country e) {
+		countryCode = e.getCountryCode();
+		name = e.getDescriptionEn();
+		currencyCode = e.getCurrency().getCurrencyCode();
+		if (e.getLanguage() != null) {
+			languageCode = e.getLanguage().getLanguageCode();
+		}
+
+	}
 
 	public String getCountryCode() {
 		return countryCode;

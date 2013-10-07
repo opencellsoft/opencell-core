@@ -1,4 +1,4 @@
-package org.meveo.rest.environment;
+package org.meveo.api.exception;
 
 /**
  * @author Edward P. Legaspi

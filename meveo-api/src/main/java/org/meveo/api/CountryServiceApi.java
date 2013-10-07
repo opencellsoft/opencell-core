@@ -6,10 +6,11 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.api.dto.CountryDto;
+import org.meveo.api.exception.EnvironmentException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.rest.environment.CountryDto;
-import org.meveo.rest.environment.EnvironmentException;
+import org.meveo.model.billing.Country;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.util.MeveoParamBean;
@@ -66,4 +67,28 @@ public class CountryServiceApi {
 			sb.append(".");
 		}
 	}
+
+	public CountryDto find(String countryCode) throws EnvironmentException {
+		if (!StringUtils.isBlank(countryCode)) {
+			Country country = countryService.findByCode(countryCode);
+			if (country != null) {
+				return new CountryDto(country);
+			}
+			throw new EnvironmentException("Country code " + countryCode
+					+ " does not exists.");
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(countryCode)) {
+				missingFields.add("countryCode");
+			}
+			sb.append(org.apache.commons.lang.StringUtils.join(
+					missingFields.toArray(), ", "));
+			sb.append(".");
+			throw new EnvironmentException(sb.toString());
+		}
+	}
+
 }
