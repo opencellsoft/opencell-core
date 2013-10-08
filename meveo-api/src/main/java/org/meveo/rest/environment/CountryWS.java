@@ -3,9 +3,11 @@ package org.meveo.rest.environment;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -57,7 +59,7 @@ public class CountryWS {
 			countryDto.setUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
 			countryServiceApi.create(countryDto);
-		} catch (EnvironmentException e) {
+		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -66,15 +68,31 @@ public class CountryWS {
 	}
 
 	@GET
+	@Path("/")
 	public CountryResponse find(@QueryParam("countryCode") String countryCode) {
 		CountryResponse result = new CountryResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
 			result.setCountryDto(countryServiceApi.find(countryCode));
-		} catch (EnvironmentException e) {
+		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@DELETE
+	@Path("/{countryCode}")
+	public ActionStatus remove(@PathParam("countryCode") String countryCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			countryServiceApi.remove(countryCode);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		}
 
 		return result;

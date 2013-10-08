@@ -5,9 +5,10 @@ package org.meveo.api.dto;
  * @since Oct 4, 2013
  **/
 public abstract class BaseDto {
-	
+
 	private Long providerId;
 	private Long userId;
+	private String requestId;
 
 	public Long getProviderId() {
 		return providerId;
@@ -23,5 +24,13 @@ public abstract class BaseDto {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getRequestId() {
+		return requestId;
+	}
+
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
 	}
 }

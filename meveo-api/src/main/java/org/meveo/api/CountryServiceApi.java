@@ -74,6 +74,7 @@ public class CountryServiceApi {
 			if (country != null) {
 				return new CountryDto(country);
 			}
+
 			throw new EnvironmentException("Country code " + countryCode
 					+ " does not exists.");
 		} else {
@@ -87,7 +88,17 @@ public class CountryServiceApi {
 			sb.append(org.apache.commons.lang.StringUtils.join(
 					missingFields.toArray(), ", "));
 			sb.append(".");
+
 			throw new EnvironmentException(sb.toString());
+		}
+	}
+
+	public void remove(String countryCode) throws EnvironmentException {
+		Country country = countryService.findByCode(countryCode);
+		if (country != null) {
+			countryService.remove(country);
+		} else {
+			throw new EnvironmentException("Country code does not exists.");
 		}
 	}
 
