@@ -6,6 +6,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -14,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.CountryServiceApi;
 import org.meveo.api.dto.CountryDto;
-import org.meveo.api.exception.EnvironmentException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -90,6 +90,23 @@ public class CountryWS {
 
 		try {
 			countryServiceApi.remove(countryCode);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@PUT
+	@Path("/")
+	public ActionStatus update(CountryDto countryDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			countryDto.setUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			countryServiceApi.update(countryDto);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

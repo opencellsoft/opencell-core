@@ -10,9 +10,12 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.EnvironmentException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -27,6 +30,9 @@ public class CountryServiceApi {
 
 	@Inject
 	private CurrencyService currencyService;
+
+	@Inject
+	private LanguageService languageService;
 
 	@Inject
 	@MeveoParamBean
@@ -97,6 +103,34 @@ public class CountryServiceApi {
 		Country country = countryService.findByCode(countryCode);
 		if (country != null) {
 			countryService.remove(country);
+		} else {
+			throw new EnvironmentException("Country code does not exists.");
+		}
+	}
+
+	public void update(CountryDto countryDto) throws EnvironmentException {
+		Country country = countryService
+				.findByCode(countryDto.getCountryCode());
+		if (country != null) {
+			country.setDescriptionEn(countryDto.getName());
+			Currency currency = currencyService.findByCode(countryDto
+					.getCurrencyCode());
+			if (currency != null) {
+				country.setCurrency(currency);
+			} else {
+				throw new EnvironmentException("Currency code does not exists.");
+			}
+			if (countryDto.getLanguageCode() != null) {
+				Language language = languageService.findByCode(countryDto
+						.getLanguageCode());
+				if (language != null) {
+					country.setLanguage(language);
+				} else {
+					throw new EnvironmentException(
+							"Language code does not exists.");
+				}
+			}
+			countryService.update(country);
 		} else {
 			throw new EnvironmentException("Country code does not exists.");
 		}
