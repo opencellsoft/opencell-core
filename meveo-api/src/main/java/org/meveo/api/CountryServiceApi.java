@@ -7,7 +7,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.EnvironmentException;
@@ -28,7 +27,6 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 
@@ -137,7 +135,7 @@ public class CountryServiceApi {
 				if (country.isTransient()) {
 					countryService.create(em, country, currentUser, provider);
 				} else {
-					//countryService.update(em, country, currentUser);
+					// countryService.update(em, country, currentUser);
 				}
 
 				Auditable auditableTrading = new Auditable();
@@ -223,12 +221,23 @@ public class CountryServiceApi {
 		}
 	}
 
-	public void remove(String countryCode) throws EnvironmentException {
+	public void remove(String countryCode, Long providerId)
+			throws EnvironmentException {
+		Provider provider = providerService.findById(providerId);
+
 		Country country = countryService.findByCode(countryCode);
-		if (country != null) {
+		TradingCountry tradingCountry = tradingCountryService
+				.findByTradingCountryCode(countryCode, provider);
+		if (country != null && tradingCountry != null) {
+			tradingCountryService.remove(tradingCountry);
 			countryService.remove(country);
 		} else {
-			throw new EnvironmentException("Country code does not exists.");
+			if (country == null) {
+				throw new EnvironmentException("Country code does not exists.");
+			} else {
+				throw new EnvironmentException(
+						"Trading Country code does not exists.");
+			}
 		}
 	}
 
