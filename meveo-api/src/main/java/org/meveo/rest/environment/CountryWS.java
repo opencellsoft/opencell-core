@@ -86,14 +86,15 @@ public class CountryWS {
 	}
 
 	@DELETE
-	@Path("/{countryCode}")
-	public ActionStatus remove(@PathParam("countryCode") String countryCode) {
+	@Path("/{countryCode}/{currencyCode}")
+	public ActionStatus remove(@PathParam("countryCode") String countryCode,
+			@PathParam("currencyCode") String currencyCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Long providerId = Long.valueOf(paramBean.getProperty(
 				"asp.api.providerId", "1"));
 
 		try {
-			countryServiceApi.remove(countryCode, providerId);
+			countryServiceApi.remove(countryCode, currencyCode, providerId);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

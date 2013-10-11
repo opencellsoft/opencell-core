@@ -221,22 +221,24 @@ public class CountryServiceApi {
 		}
 	}
 
-	public void remove(String countryCode, Long providerId)
+	public void remove(String countryCode, String currencyCode, Long providerId)
 			throws EnvironmentException {
 		Provider provider = providerService.findById(providerId);
-
-		Country country = countryService.findByCode(countryCode);
+		
 		TradingCountry tradingCountry = tradingCountryService
 				.findByTradingCountryCode(countryCode, provider);
-		if (country != null && tradingCountry != null) {
-			tradingCountryService.remove(tradingCountry);
-			countryService.remove(country);
+		Currency currency = currencyService.findByCode(currencyCode);
+		if (tradingCountry != null && currency != null) {
+			if (tradingCountry != null) {
+				tradingCountryService.remove(tradingCountry);
+			}
 		} else {
-			if (country == null) {
-				throw new EnvironmentException("Country code does not exists.");
+			if (tradingCountry == null) {
+				throw new EnvironmentException("Trading Country code=" + countryCode
+						+ " does not exists.");
 			} else {
-				throw new EnvironmentException(
-						"Trading Country code does not exists.");
+				throw new EnvironmentException("Currency code=" + currencyCode
+						+ " does not exists.");
 			}
 		}
 	}
