@@ -1,21 +1,35 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.EnvironmentException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -29,31 +43,139 @@ public class CountryServiceApi {
 	private CountryService countryService;
 
 	@Inject
+	private TradingCountryService tradingCountryService;
+
+	@Inject
 	private CurrencyService currencyService;
 
 	@Inject
 	private LanguageService languageService;
 
 	@Inject
+	private ProviderService providerService;
+
+	@Inject
+	private UserService userService;
+
+	@Inject
+	private TradingCurrencyService tradingCurrencyService;
+
+	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
+
+	@Inject
+	@MeveoJpaForJobs
+	private EntityManager em;
 
 	public void create(CountryDto countryDto) throws EnvironmentException {
 		if (!StringUtils.isBlank(countryDto.getCountryCode())
 				&& !StringUtils.isBlank(countryDto.getName())
 				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
-			if (countryService.findByCode(countryDto.getCountryCode()) != null) {
-				throw new EnvironmentException("Country code already exist.");
-			} else {
-				if (currencyService.findByCode(countryDto.getCurrencyCode()) != null) {
-					countryService.create(countryDto.getUserId(),
-							countryDto.getCountryCode(), countryDto.getName(),
-							countryDto.getCurrencyCode());
-				} else {
-					throw new EnvironmentException(
-							"Currency code does not exist.");
-				}
+
+			// If countryCode exist in the trading country table
+			// ("billing_trading_country"), return error.
+			Provider provider = providerService.findById(countryDto
+					.getProviderId());
+			User currentUser = userService.findById(countryDto.getUserId());
+			TradingCountry tradingCountry = tradingCountryService
+					.findByTradingCountryCode(countryDto.getCountryCode(),
+							provider);
+
+			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
+				throw new EnvironmentException("Currency code="
+						+ countryDto.getCurrencyCode() + " does not exists.");
 			}
+
+			if (tradingCountry == null) {
+				// check currency
+				Country country = new Country();
+
+				country = countryService
+						.findByCode(countryDto.getCountryCode());
+				Currency currency = null;
+				Auditable auditable = new Auditable();
+
+				// If country code doesn't exist in the reference table, create
+				// the country in this table ("adm_country") with the currency
+				// code for the default provider.
+				if (country == null) {
+					// If country code don't exist in the reference table,
+					// create the country in this table ("adm_country") with the
+					// currency code for the default provider.
+					country = new Country();
+					auditable.setCreated(new Date());
+					auditable.setCreator(currentUser);
+					country.setDescriptionEn(countryDto.getName());
+					country.setCountryCode(countryDto.getCountryCode());
+				} else {
+					// If country code exist in the reference table but the
+					// currencyCode values in the two tables are different,
+					// change the value of Currencycode in the country reference
+					auditable.setUpdated(new Date());
+					auditable.setUpdater(currentUser);
+				}
+				country.setAuditable(auditable);
+
+				if (countryDto.getCurrencyCode() != null) { //
+					currency = currencyService.findByCode(countryDto
+							.getCurrencyCode());
+					// If currencyCode don't exist in reference table
+					// ("adm_currency"), return error.
+					if (currency == null) {
+						throw new EnvironmentException("Currency code="
+								+ countryDto.getCurrencyCode()
+								+ " does not exists.");
+					}
+				} else {
+					if (provider.getCurrency() != null) {
+						currency = provider.getCurrency();
+					}
+				}
+				country.setCurrency(currency);
+
+				if (country.isTransient()) {
+					countryService.create(em, country, currentUser, provider);
+				} else {
+					//countryService.update(em, country, currentUser);
+				}
+
+				Auditable auditableTrading = new Auditable();
+				auditableTrading.setCreated(new Date());
+				auditableTrading.setCreator(currentUser);
+
+				// If country don't exist in the trading country table, create
+				// the country in this table ("billing_trading_country").
+				tradingCountry = new TradingCountry();
+				tradingCountry.setCountry(country);
+				tradingCountry.setProvider(provider);
+				tradingCountry.setActive(true);
+				tradingCountry.setPrDescription(countryDto.getName());
+				tradingCountry.setAuditable(auditableTrading);
+				tradingCountryService.create(em, tradingCountry, currentUser,
+						provider);
+
+				// If currencyCode exist in reference table ("adm_currency") and
+				// don't exist in the trading currency table, create the
+				// currency in the trading currency table
+				// ('billing_trading_currency").
+				if (!StringUtils.isBlank(countryDto.getCurrencyCode())
+						&& tradingCurrencyService.findByTradingCurrencyCode(
+								countryDto.getCurrencyCode(), provider) != null) {
+					TradingCurrency tradingCurrency = new TradingCurrency();
+					tradingCurrency.setActive(true);
+					tradingCurrency.setCurrency(currency);
+					tradingCurrency.setAuditable(auditableTrading);
+					tradingCurrency.setCurrencyCode(countryDto
+							.getCurrencyCode());
+					tradingCurrencyService.create(em, tradingCurrency,
+							currentUser, provider);
+				}
+			} else {
+				throw new EnvironmentException("Trading country code="
+						+ tradingCountry.getCountryCode() + " already exists.");
+			}
+
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -71,6 +193,8 @@ public class CountryServiceApi {
 			sb.append(org.apache.commons.lang.StringUtils.join(
 					missingFields.toArray(), ", "));
 			sb.append(".");
+
+			throw new EnvironmentException(sb.toString());
 		}
 	}
 

@@ -58,6 +58,8 @@ public class CountryWS {
 		try {
 			countryDto.setUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
+			countryDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
 			countryServiceApi.create(countryDto);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
