@@ -21,6 +21,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -45,6 +46,10 @@ public class CountryService extends PersistenceService<Country> {
 	private ProviderService providerService;
 
 	public Country findByCode(String countryCode) {
+		return findByCode(getEntityManager(), countryCode);
+	}
+
+	public Country findByCode(EntityManager em, String countryCode) {
 		if (countryCode == null) {
 			return null;
 		}
@@ -53,7 +58,7 @@ public class CountryService extends PersistenceService<Country> {
 		qb.addCriterion("countryCode", "=", countryCode, false);
 
 		try {
-			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
+			return (Country) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}

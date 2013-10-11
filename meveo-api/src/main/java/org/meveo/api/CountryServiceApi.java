@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -16,7 +18,6 @@ import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
-import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
@@ -35,6 +36,7 @@ import org.meveo.util.MeveoParamBean;
  * @since Oct 4, 2013
  **/
 @Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class CountryServiceApi {
 
 	@Inject
@@ -166,6 +168,8 @@ public class CountryServiceApi {
 					tradingCurrency.setAuditable(auditableTrading);
 					tradingCurrency.setCurrencyCode(countryDto
 							.getCurrencyCode());
+					tradingCurrency.setPrDescription(countryDto
+							.getCurrencyCode());
 					tradingCurrencyService.create(em, tradingCurrency,
 							currentUser, provider);
 				}
@@ -188,8 +192,12 @@ public class CountryServiceApi {
 			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
 				missingFields.add("currencyCode");
 			}
-			sb.append(org.apache.commons.lang.StringUtils.join(
-					missingFields.toArray(), ", "));
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
 			sb.append(".");
 
 			throw new EnvironmentException(sb.toString());
@@ -213,8 +221,12 @@ public class CountryServiceApi {
 			if (StringUtils.isBlank(countryCode)) {
 				missingFields.add("countryCode");
 			}
-			sb.append(org.apache.commons.lang.StringUtils.join(
-					missingFields.toArray(), ", "));
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
 			sb.append(".");
 
 			throw new EnvironmentException(sb.toString());
@@ -224,50 +236,127 @@ public class CountryServiceApi {
 	public void remove(String countryCode, String currencyCode, Long providerId)
 			throws EnvironmentException {
 		Provider provider = providerService.findById(providerId);
-		
-		TradingCountry tradingCountry = tradingCountryService
-				.findByTradingCountryCode(countryCode, provider);
-		Currency currency = currencyService.findByCode(currencyCode);
-		if (tradingCountry != null && currency != null) {
-			if (tradingCountry != null) {
-				tradingCountryService.remove(tradingCountry);
+
+		if (!StringUtils.isBlank(countryCode)
+				&& !StringUtils.isBlank(currencyCode)) {
+			TradingCountry tradingCountry = tradingCountryService
+					.findByTradingCountryCode(countryCode, provider);
+			Currency currency = currencyService.findByCode(currencyCode);
+			if (tradingCountry != null && currency != null) {
+				if (tradingCountry != null) {
+					tradingCountryService.remove(tradingCountry);
+				}
+			} else {
+				if (tradingCountry == null) {
+					throw new EnvironmentException("Trading Country code="
+							+ countryCode + " does not exists.");
+				} else {
+					throw new EnvironmentException("Currency code="
+							+ currencyCode + " does not exists.");
+				}
 			}
 		} else {
-			if (tradingCountry == null) {
-				throw new EnvironmentException("Trading Country code=" + countryCode
-						+ " does not exists.");
-			} else {
-				throw new EnvironmentException("Currency code=" + currencyCode
-						+ " does not exists.");
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(countryCode)) {
+				missingFields.add("countryCode");
 			}
+			if (StringUtils.isBlank(currencyCode)) {
+				missingFields.add("currencyCode");
+			}
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new EnvironmentException(sb.toString());
 		}
 	}
 
 	public void update(CountryDto countryDto) throws EnvironmentException {
-		Country country = countryService
-				.findByCode(countryDto.getCountryCode());
-		if (country != null) {
-			country.setDescriptionEn(countryDto.getName());
+		Provider provider = providerService
+				.findById(countryDto.getProviderId());
+		User currentUser = userService.findById(countryDto.getUserId());
+
+		if (!StringUtils.isBlank(countryDto.getCountryCode())
+				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
+
 			Currency currency = currencyService.findByCode(countryDto
 					.getCurrencyCode());
-			if (currency != null) {
-				country.setCurrency(currency);
-			} else {
-				throw new EnvironmentException("Currency code does not exists.");
-			}
-			if (countryDto.getLanguageCode() != null) {
-				Language language = languageService.findByCode(countryDto
-						.getLanguageCode());
-				if (language != null) {
-					country.setLanguage(language);
+			TradingCountry tradingCountry = tradingCountryService
+					.findByTradingCountryCode(countryDto.getCountryCode(),
+							provider);
+
+			if (currency != null && tradingCountry != null) {
+				Country country = countryService.findByCode(em,
+						countryDto.getCountryCode());
+				if (country != null
+						&& !StringUtils.isBlank(countryDto.getName())) {
+					if (!country.getDescriptionEn()
+							.equals(countryDto.getName())) {
+						country.setDescriptionEn(countryDto.getName());
+						countryService.update(em, country, currentUser);
+					}
 				} else {
-					throw new EnvironmentException(
-							"Language code does not exists.");
+					throw new EnvironmentException("Country code="
+							+ countryDto.getCountryCode() + " does not exists.");
+				}
+
+				TradingCurrency tradingCurrency = tradingCurrencyService
+						.findByTradingCurrencyCode(
+								countryDto.getCurrencyCode(), provider);
+				if (tradingCurrency == null) {
+					Auditable auditableTrading = new Auditable();
+					auditableTrading.setCreated(new Date());
+					auditableTrading.setCreator(currentUser);
+
+					tradingCurrency = new TradingCurrency();
+					tradingCurrency.setActive(true);
+					tradingCurrency.setCurrency(currency);
+					tradingCurrency.setAuditable(auditableTrading);
+					tradingCurrency.setCurrencyCode(countryDto
+							.getCurrencyCode());
+					tradingCurrency.setPrDescription(countryDto
+							.getCurrencyCode());
+					tradingCurrencyService.create(em, tradingCurrency,
+							currentUser, provider);
+				}
+			} else {
+				if (currency == null) {
+					throw new EnvironmentException("Currency code="
+							+ countryDto.getCurrencyCode()
+							+ " does not exists.");
+				}
+				if (tradingCountry == null) {
+					throw new EnvironmentException("Trading country code="
+							+ countryDto.getCountryCode() + " does not exists.");
 				}
 			}
-			countryService.update(country);
 		} else {
-			throw new EnvironmentException("Country code does not exists.");
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(countryDto.getCountryCode())) {
+				missingFields.add("countryCode");
+			}
+			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
+				missingFields.add("currencyCode");
+			}
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new EnvironmentException(sb.toString());
 		}
 	}
 
