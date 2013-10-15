@@ -18,6 +18,7 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
+import org.meveo.rest.environment.response.CountryResponse;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -60,6 +61,7 @@ public class CountryWS {
 					"asp.api.userId", "1")));
 			countryDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
+			
 			countryServiceApi.create(countryDto);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
