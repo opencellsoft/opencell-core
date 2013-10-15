@@ -8,11 +8,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.api.dto.CountryDto;
-import org.meveo.api.exception.EnvironmentException;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -28,8 +26,6 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.util.MeveoJpaForJobs;
-import org.meveo.util.MeveoParamBean;
 
 /**
  * @author Edward P. Legaspi
@@ -37,7 +33,7 @@ import org.meveo.util.MeveoParamBean;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class CountryServiceApi {
+public class CountryServiceApi extends BaseApi {
 
 	@Inject
 	private CountryService countryService;
@@ -60,15 +56,7 @@ public class CountryServiceApi {
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
 
-	@Inject
-	@MeveoParamBean
-	private ParamBean paramBean;
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
-
-	public void create(CountryDto countryDto) throws EnvironmentException {
+	public void create(CountryDto countryDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(countryDto.getCountryCode())
 				&& !StringUtils.isBlank(countryDto.getName())
 				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
@@ -77,13 +65,13 @@ public class CountryServiceApi {
 			// ("billing_trading_country"), return error.
 			Provider provider = providerService.findById(countryDto
 					.getProviderId());
-			User currentUser = userService.findById(countryDto.getUserId());
+			User currentUser = userService.findById(countryDto.getCurrentUserId());
 			TradingCountry tradingCountry = tradingCountryService
 					.findByTradingCountryCode(countryDto.getCountryCode(),
 							provider);
 
 			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
-				throw new EnvironmentException("Currency code="
+				throw new MeveoApiException("Currency code="
 						+ countryDto.getCurrencyCode() + " does not exists.");
 			}
 
@@ -123,7 +111,7 @@ public class CountryServiceApi {
 					// If currencyCode don't exist in reference table
 					// ("adm_currency"), return error.
 					if (currency == null) {
-						throw new EnvironmentException("Currency code="
+						throw new MeveoApiException("Currency code="
 								+ countryDto.getCurrencyCode()
 								+ " does not exists.");
 					}
@@ -174,7 +162,7 @@ public class CountryServiceApi {
 							currentUser, provider);
 				}
 			} else {
-				throw new EnvironmentException("Trading country code="
+				throw new MeveoApiException("Trading country code="
 						+ tradingCountry.getCountryCode() + " already exists.");
 			}
 
@@ -200,18 +188,18 @@ public class CountryServiceApi {
 			}
 			sb.append(".");
 
-			throw new EnvironmentException(sb.toString());
+			throw new MeveoApiException(sb.toString());
 		}
 	}
 
-	public CountryDto find(String countryCode) throws EnvironmentException {
+	public CountryDto find(String countryCode) throws MeveoApiException {
 		if (!StringUtils.isBlank(countryCode)) {
 			Country country = countryService.findByCode(countryCode);
 			if (country != null) {
 				return new CountryDto(country);
 			}
 
-			throw new EnvironmentException("Country code " + countryCode
+			throw new MeveoApiException("Country code " + countryCode
 					+ " does not exists.");
 		} else {
 			StringBuilder sb = new StringBuilder(
@@ -229,12 +217,12 @@ public class CountryServiceApi {
 			}
 			sb.append(".");
 
-			throw new EnvironmentException(sb.toString());
+			throw new MeveoApiException(sb.toString());
 		}
 	}
 
 	public void remove(String countryCode, String currencyCode, Long providerId)
-			throws EnvironmentException {
+			throws MeveoApiException {
 		Provider provider = providerService.findById(providerId);
 
 		if (!StringUtils.isBlank(countryCode)
@@ -248,11 +236,11 @@ public class CountryServiceApi {
 				}
 			} else {
 				if (tradingCountry == null) {
-					throw new EnvironmentException("Trading Country code="
+					throw new MeveoApiException("Trading Country code="
 							+ countryCode + " does not exists.");
 				} else {
-					throw new EnvironmentException("Currency code="
-							+ currencyCode + " does not exists.");
+					throw new MeveoApiException("Currency code=" + currencyCode
+							+ " does not exists.");
 				}
 			}
 		} else {
@@ -274,14 +262,14 @@ public class CountryServiceApi {
 			}
 			sb.append(".");
 
-			throw new EnvironmentException(sb.toString());
+			throw new MeveoApiException(sb.toString());
 		}
 	}
 
-	public void update(CountryDto countryDto) throws EnvironmentException {
+	public void update(CountryDto countryDto) throws MeveoApiException {
 		Provider provider = providerService
 				.findById(countryDto.getProviderId());
-		User currentUser = userService.findById(countryDto.getUserId());
+		User currentUser = userService.findById(countryDto.getCurrentUserId());
 
 		if (!StringUtils.isBlank(countryDto.getCountryCode())
 				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
@@ -303,7 +291,7 @@ public class CountryServiceApi {
 						countryService.update(em, country, currentUser);
 					}
 				} else {
-					throw new EnvironmentException("Country code="
+					throw new MeveoApiException("Country code="
 							+ countryDto.getCountryCode() + " does not exists.");
 				}
 
@@ -328,12 +316,12 @@ public class CountryServiceApi {
 				}
 			} else {
 				if (currency == null) {
-					throw new EnvironmentException("Currency code="
+					throw new MeveoApiException("Currency code="
 							+ countryDto.getCurrencyCode()
 							+ " does not exists.");
 				}
 				if (tradingCountry == null) {
-					throw new EnvironmentException("Trading country code="
+					throw new MeveoApiException("Trading country code="
 							+ countryDto.getCountryCode() + " does not exists.");
 				}
 			}
@@ -356,7 +344,7 @@ public class CountryServiceApi {
 			}
 			sb.append(".");
 
-			throw new EnvironmentException(sb.toString());
+			throw new MeveoApiException(sb.toString());
 		}
 	}
 

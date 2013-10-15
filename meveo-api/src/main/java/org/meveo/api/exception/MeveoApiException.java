@@ -4,15 +4,15 @@ package org.meveo.api.exception;
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
  **/
-public class EnvironmentException extends Exception {
+public class MeveoApiException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	public EnvironmentException() {
+	public MeveoApiException() {
 
 	}
 
-	public EnvironmentException(String message) {
+	public MeveoApiException(String message) {
 		super(message);
 	}
 

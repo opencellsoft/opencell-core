@@ -7,11 +7,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.api.dto.CountryTaxDto;
 import org.meveo.api.dto.TaxDto;
-import org.meveo.api.exception.EnvironmentException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Tax;
@@ -19,7 +18,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * @author Edward P. Legaspi
@@ -27,11 +25,7 @@ import org.meveo.util.MeveoJpaForJobs;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class TaxServiceApi {
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
+public class TaxServiceApi extends BaseApi {
 
 	@Inject
 	private TaxService taxService;
@@ -42,7 +36,7 @@ public class TaxServiceApi {
 	@Inject
 	private UserService userService;
 
-	public void create(TaxDto taxDto) throws EnvironmentException {
+	public void create(TaxDto taxDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(taxDto.getTaxId())
 				&& !StringUtils.isBlank(taxDto.getName())
 				&& taxDto.getCountryTaxes() != null
@@ -50,7 +44,7 @@ public class TaxServiceApi {
 
 			Provider provider = providerService
 					.findById(taxDto.getProviderId());
-			User currentUser = userService.findById(taxDto.getUserId());
+			User currentUser = userService.findById(taxDto.getCurrentUserId());
 
 			for (CountryTaxDto ct : taxDto.getCountryTaxes()) {
 				Tax tax = new Tax();
@@ -87,11 +81,11 @@ public class TaxServiceApi {
 			}
 			sb.append(".");
 
-			throw new EnvironmentException(sb.toString());
+			throw new MeveoApiException(sb.toString());
 		}
 	}
 
-	public void remove(String taxId) throws EnvironmentException {
+	public void remove(String taxId) throws MeveoApiException {
 		List<Tax> taxes = taxService.findStartsWithCode(em, taxId + "\\_");
 
 		for (Tax tax : taxes) {
@@ -99,7 +93,7 @@ public class TaxServiceApi {
 		}
 	}
 
-	public void update(TaxDto taxDto) throws EnvironmentException {
+	public void update(TaxDto taxDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(taxDto.getTaxId())
 				&& !StringUtils.isBlank(taxDto.getName())
 				&& taxDto.getCountryTaxes() != null
@@ -107,7 +101,7 @@ public class TaxServiceApi {
 
 			Provider provider = providerService
 					.findById(taxDto.getProviderId());
-			User currentUser = userService.findById(taxDto.getUserId());
+			User currentUser = userService.findById(taxDto.getCurrentUserId());
 
 			for (CountryTaxDto ct : taxDto.getCountryTaxes()) {
 				String code = taxDto.getTaxId() + "_" + ct.getCountryCode();
@@ -154,7 +148,7 @@ public class TaxServiceApi {
 			}
 			sb.append(".");
 
-			throw new EnvironmentException(sb.toString());
+			throw new MeveoApiException(sb.toString());
 		}
 	}
 

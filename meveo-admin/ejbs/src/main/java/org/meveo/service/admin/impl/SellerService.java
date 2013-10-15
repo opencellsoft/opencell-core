@@ -18,26 +18,42 @@ package org.meveo.service.admin.impl;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
-
 @Stateless
 @Named
 @LocalBean
 public class SellerService extends PersistenceService<Seller> {
 
-	public org.meveo.model.admin.Seller findByCode(String code,Provider provider) {
-		Query query = getEntityManager().createQuery(
-				"from " + Seller.class.getSimpleName() + " where code=:code and provider=:provider")
-				.setParameter("code", code)
-				.setParameter("provider", provider);
+	public org.meveo.model.admin.Seller findByCode(String code,
+			Provider provider) {
+		Query query = getEntityManager()
+				.createQuery(
+						"from " + Seller.class.getSimpleName()
+								+ " where code=:code and provider=:provider")
+				.setParameter("code", code).setParameter("provider", provider);
 		if (query.getResultList().size() == 0) {
 			return null;
 		}
+
+		return (Seller) query.getResultList().get(0);
+	}
+
+	public Seller findByCode(EntityManager em, String code, Provider provider) {
+		Query query = em
+				.createQuery(
+						"from " + Seller.class.getSimpleName()
+								+ " where code=:code and provider=:provider")
+				.setParameter("code", code).setParameter("provider", provider);
+		if (query.getResultList().size() == 0) {
+			return null;
+		}
+
 		return (Seller) query.getResultList().get(0);
 	}
 }

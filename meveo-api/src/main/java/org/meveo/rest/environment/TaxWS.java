@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.TaxServiceApi;
 import org.meveo.api.dto.TaxDto;
-import org.meveo.api.exception.EnvironmentException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -52,13 +52,13 @@ public class TaxWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			taxDto.setUserId(Long.valueOf(paramBean.getProperty(
+			taxDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
 			taxDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
 			taxServiceApi.create(taxDto);
-		} catch (EnvironmentException e) {
+		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -72,7 +72,7 @@ public class TaxWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			taxDto.setUserId(Long.valueOf(paramBean.getProperty(
+			taxDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
 			taxDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
