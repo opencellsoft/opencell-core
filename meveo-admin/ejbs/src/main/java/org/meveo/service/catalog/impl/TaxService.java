@@ -15,6 +15,8 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -41,4 +43,14 @@ public class TaxService extends PersistenceService<Tax> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Tax> findStartsWithCode(EntityManager em, String taxId) {
+		try {
+			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
+			qb.like("code", taxId, 1, false);
+			return (List<Tax>) qb.getQuery(em).getResultList();
+		} catch (NoResultException ne) {
+			return null;
+		}
+	}
 }

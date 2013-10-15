@@ -23,11 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.crm.Provider;
@@ -95,15 +93,18 @@ public class QueryBuilder {
 	 * @param alias
 	 *            Alias in query.
 	 */
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, Provider provider) {
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields,
+			Provider provider) {
 		this(getInitQuery(clazz, alias, fetchFields));
 		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
 			addCriterionEntity(alias + ".provider", provider);
 		}
 	}
 
-	private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
-		StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
+	private static String getInitQuery(Class<?> clazz, String alias,
+			List<String> fetchFields) {
+		StringBuilder query = new StringBuilder("from " + clazz.getName() + " "
+				+ alias);
 		if (fetchFields != null && !fetchFields.isEmpty()) {
 			for (String fetchField : fetchFields) {
 				query.append(" left join fetch " + alias + "." + fetchField);
@@ -121,7 +122,8 @@ public class QueryBuilder {
 	 * @param paginationConfiguration
 	 * @return
 	 */
-	public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration) {
+	public QueryBuilder addPaginationConfiguration(
+			PaginationConfiguration paginationConfiguration) {
 		return addPaginationConfiguration(paginationConfiguration, null);
 	}
 
@@ -130,8 +132,8 @@ public class QueryBuilder {
 	 * @param sortAlias
 	 * @return
 	 */
-	public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration,
-			String sortAlias) {
+	public QueryBuilder addPaginationConfiguration(
+			PaginationConfiguration paginationConfiguration, String sortAlias) {
 		this.paginationSortAlias = sortAlias;
 		this.paginationConfiguration = paginationConfiguration;
 		return this;
@@ -198,8 +200,8 @@ public class QueryBuilder {
 	 * @param caseInsensitive
 	 * @return
 	 */
-	public QueryBuilder addCriterion(String field, String operator, Object value,
-			boolean caseInsensitive) {
+	public QueryBuilder addCriterion(String field, String operator,
+			Object value, boolean caseInsensitive) {
 		if (StringUtils.isBlank(value))
 			return this;
 
@@ -260,7 +262,8 @@ public class QueryBuilder {
 	 * @param caseInsensitive
 	 * @return
 	 */
-	public QueryBuilder like(String field, String value, int style, boolean caseInsensitive) {
+	public QueryBuilder like(String field, String value, int style,
+			boolean caseInsensitive) {
 		if (StringUtils.isBlank(value))
 			return this;
 
@@ -282,7 +285,8 @@ public class QueryBuilder {
 	 * @param caseInsensitive
 	 * @return
 	 */
-	public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive) {
+	public QueryBuilder addCriterionWildcard(String field, String value,
+			boolean caseInsensitive) {
 		if (StringUtils.isBlank(value))
 			return this;
 		boolean wildcard = (value.indexOf("*") != -1);
@@ -327,9 +331,10 @@ public class QueryBuilder {
 
 		String startDateParameterName = "start" + field.replace(".", "");
 		String endDateParameterName = "end" + field.replace(".", "");
-		return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName,
-				start).addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName,
-				end);
+		return addSqlCriterion(field + ">=:" + startDateParameterName,
+				startDateParameterName, start)
+				.addSqlCriterion(field + "<=:" + endDateParameterName,
+						endDateParameterName, end);
 	}
 
 	/**
@@ -337,7 +342,8 @@ public class QueryBuilder {
 	 * @param valueFrom
 	 * @return
 	 */
-	public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom) {
+	public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field,
+			Date valueFrom) {
 		if (StringUtils.isBlank(valueFrom))
 			return this;
 		Calendar calFrom = Calendar.getInstance();
@@ -349,8 +355,8 @@ public class QueryBuilder {
 		Date start = calFrom.getTime();
 
 		String startDateParameterName = "start" + field.replace(".", "");
-		return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName,
-				start);
+		return addSqlCriterion(field + ">=:" + startDateParameterName,
+				startDateParameterName, start);
 	}
 
 	/**
@@ -358,7 +364,8 @@ public class QueryBuilder {
 	 * @param valueTo
 	 * @return
 	 */
-	public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
+	public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field,
+			Date valueTo) {
 		if (StringUtils.isBlank(valueTo))
 			return this;
 		Calendar calTo = Calendar.getInstance();
@@ -370,7 +377,8 @@ public class QueryBuilder {
 		Date end = calTo.getTime();
 
 		String endDateParameterName = "end" + field.replace(".", "");
-		return addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName, end);
+		return addSqlCriterion(field + "<=:" + endDateParameterName,
+				endDateParameterName, end);
 	}
 
 	/**
@@ -386,10 +394,9 @@ public class QueryBuilder {
 		}
 
 	}
-	
+
 	public void addGroupCriterion(String groupColumn) {
 		q.append(" GROUP BY " + groupColumn);
-		
 
 	}
 
@@ -400,8 +407,8 @@ public class QueryBuilder {
 	 * @param ascending2
 	 * @return
 	 */
-	public QueryBuilder addOrderDoubleCriterion(String orderColumn, boolean ascending,
-			String orderColumn2, boolean ascending2) {
+	public QueryBuilder addOrderDoubleCriterion(String orderColumn,
+			boolean ascending, String orderColumn2, boolean ascending2) {
 		q.append(" ORDER BY " + orderColumn);
 		if (ascending) {
 			q.append(" ASC ");
@@ -422,7 +429,8 @@ public class QueryBuilder {
 	 * @param ascending
 	 * @return
 	 */
-	public QueryBuilder addOrderUniqueCriterion(String orderColumn, boolean ascending) {
+	public QueryBuilder addOrderUniqueCriterion(String orderColumn,
+			boolean ascending) {
 		q.append(" ORDER BY " + orderColumn);
 		if (ascending) {
 			q.append(" ASC ");
@@ -522,8 +530,8 @@ public class QueryBuilder {
 			return;
 
 		if (paginationConfiguration.isSorted())
-			addOrderCriterion(
-					((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(),
+			addOrderCriterion(((alias != null) ? (alias + ".") : "")
+					+ paginationConfiguration.getSortField(),
 					paginationConfiguration.isAscendingSorting());
 
 	}
@@ -543,7 +551,8 @@ public class QueryBuilder {
 	public void debug() {
 		System.out.println("Requete : " + q.toString());
 		for (Map.Entry<String, Object> e : params.entrySet())
-			System.out.println("Param name:" + e.getKey() + " value:" + e.getValue().toString());
+			System.out.println("Param name:" + e.getKey() + " value:"
+					+ e.getValue().toString());
 	}
 
 	public String getSqlString() {
@@ -561,7 +570,8 @@ public class QueryBuilder {
 	public String toString() {
 		String result = q.toString();
 		for (Map.Entry<String, Object> e : params.entrySet()) {
-			result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
+			result = result + " Param name:" + e.getKey() + " value:"
+					+ e.getValue().toString();
 		}
 		return result;
 	}

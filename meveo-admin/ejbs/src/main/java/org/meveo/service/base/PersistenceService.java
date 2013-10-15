@@ -196,15 +196,19 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		}
 	}
 
+	public void remove(E e) {
+		remove(getEntityManager(), e);
+	}
+
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#remove(org.manaty.model.BaseEntity)
 	 */
-	public void remove(E e) {
+	public void remove(EntityManager em, E e) {
 		checkProvider(e);
 		log.debug("start of remove {} entity (id={}) ..", getEntityClass()
 				.getSimpleName(), e.getId());
-		getEntityManager().remove(e);
-		getEntityManager().flush();
+		em.remove(e);
+		em.flush();
 		log.debug("end of remove {} entity (id={}).", getEntityClass()
 				.getSimpleName(), e.getId());
 	}

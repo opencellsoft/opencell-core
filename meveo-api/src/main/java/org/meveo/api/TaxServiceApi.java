@@ -92,7 +92,11 @@ public class TaxServiceApi {
 	}
 
 	public void remove(String taxId) throws EnvironmentException {
+		List<Tax> taxes = taxService.findStartsWithCode(em, taxId + "\\_");
 
+		for (Tax tax : taxes) {
+			taxService.remove(em, tax);
+		}
 	}
 
 	public void update(TaxDto taxDto) throws EnvironmentException {
