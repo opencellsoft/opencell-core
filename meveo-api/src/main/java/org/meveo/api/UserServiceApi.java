@@ -133,4 +133,35 @@ public class UserServiceApi extends BaseApi {
 		}
 	}
 
+	public void remove(Long providerId, String userId) throws MeveoApiException {
+
+		if (!StringUtils.isBlank(userId)) {
+			Provider provider = providerService.findById(providerId);
+			UserAccount userAccount = userAccountService.findByCode(em, userId,
+					provider);
+
+			if (userAccount == null) {
+				throw new MeveoApiException("User account with code=" + userId
+						+ " does not exists.");
+			} else {
+				userAccountService.remove(em, userAccount);
+			}
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			missingFields.add("User Id");
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MeveoApiException(sb.toString());
+		}
+	}
 }

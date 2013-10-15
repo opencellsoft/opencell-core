@@ -3,9 +3,11 @@ package org.meveo.rest.environment;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -66,6 +68,22 @@ public class UserWS {
 					"asp.api.providerId", "1")));
 
 			userServiceApi.update(userDto);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@DELETE
+	@Path("/{userId}")
+	public ActionStatus remove(@PathParam("userId") String userId) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			userServiceApi.remove(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")), userId);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
