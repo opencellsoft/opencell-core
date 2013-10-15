@@ -15,28 +15,37 @@
  */
 package org.meveo.service.base;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.Provider;
 
-public abstract class BusinessService<P extends BusinessEntity> extends PersistenceService<P> {
+public abstract class BusinessService<P extends BusinessEntity> extends
+		PersistenceService<P> {
+
+	public P findByCode(String code, Provider provider) {
+		return findByCode(getEntityManager(), code, provider);
+	}
 
 	@SuppressWarnings("unchecked")
-	public P findByCode(String code, Provider provider) {
-		log.debug("start of find {} by code (code={}) ..", getEntityClass().getSimpleName(), code);
+	public P findByCode(EntityManager em, String code, Provider provider) {
+		log.debug("start of find {} by code (code={}) ..", getEntityClass()
+				.getSimpleName(), code);
 		final Class<? extends P> productClass = getEntityClass();
-		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
+		StringBuilder queryString = new StringBuilder("from "
+				+ productClass.getName() + " a");
 		queryString.append(" where a.code = :code and a.provider=:provider");
-		Query query = getEntityManager().createQuery(queryString.toString());
+		Query query = em.createQuery(queryString.toString());
 		query.setParameter("code", code);
 		query.setParameter("provider", provider);
 		if (query.getResultList().size() == 0) {
 			return null;
 		}
 		P e = (P) query.getResultList().get(0);
-		log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
-				getEntityClass().getSimpleName(), code, e != null });
+		log.debug("end of find {} by code (code={}). Result found={}.",
+				new Object[] { getEntityClass().getSimpleName(), code,
+						e != null });
 
 		return e;
 	}

@@ -91,4 +91,46 @@ public class UserServiceApi extends BaseApi {
 		}
 	}
 
+	public void update(UserDto userDto) throws MeveoApiException {
+		if (!StringUtils.isBlank(userDto.getUserId())
+				&& !StringUtils.isBlank(userDto.getName())) {
+
+			Provider provider = providerService.findById(userDto
+					.getProviderId());
+			User currentUser = userService.findById(userDto.getCurrentUserId());
+
+			UserAccount userAccount = userAccountService.findByCode(em,
+					userDto.getUserId(), provider);
+			if (userAccount == null) {
+				throw new MeveoApiException("User account with code="
+						+ userDto.getUserId() + " does not exists.");
+			} else {
+				userAccount.setDescription(userDto.getName());
+				userAccountService.update(em, userAccount, currentUser);
+			}
+
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(userDto.getUserId())) {
+				missingFields.add("User Id");
+			}
+			if (StringUtils.isBlank(userDto.getName())) {
+				missingFields.add("Name");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MeveoApiException(sb.toString());
+		}
+	}
+
 }
