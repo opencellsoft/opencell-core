@@ -6,6 +6,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -35,7 +36,7 @@ public class TaxWS {
 
 	@Inject
 	private TaxServiceApi taxServiceApi;
-	
+
 	@GET
 	@Path("/index")
 	public ActionStatus index() {
@@ -55,9 +56,29 @@ public class TaxWS {
 					"asp.api.userId", "1")));
 			taxDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
-			
+
 			taxServiceApi.create(taxDto);
 		} catch (EnvironmentException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@PUT
+	@Path("/")
+	public ActionStatus update(TaxDto taxDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			taxDto.setUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			taxDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
+
+			taxServiceApi.update(taxDto);
+		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}

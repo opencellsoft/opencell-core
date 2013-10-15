@@ -48,8 +48,8 @@ public class TaxServiceApi {
 				&& taxDto.getCountryTaxes() != null
 				&& taxDto.getCountryTaxes().size() > 0) {
 
-			Provider provider = providerService.findById(taxDto
-					.getProviderId());
+			Provider provider = providerService
+					.findById(taxDto.getProviderId());
 			User currentUser = userService.findById(taxDto.getUserId());
 
 			for (CountryTaxDto ct : taxDto.getCountryTaxes()) {
@@ -93,6 +93,65 @@ public class TaxServiceApi {
 
 	public void remove(String taxId) throws EnvironmentException {
 
+	}
+
+	public void update(TaxDto taxDto) throws EnvironmentException {
+		if (!StringUtils.isBlank(taxDto.getTaxId())
+				&& !StringUtils.isBlank(taxDto.getName())
+				&& taxDto.getCountryTaxes() != null
+				&& taxDto.getCountryTaxes().size() > 0) {
+
+			Provider provider = providerService
+					.findById(taxDto.getProviderId());
+			User currentUser = userService.findById(taxDto.getUserId());
+
+			for (CountryTaxDto ct : taxDto.getCountryTaxes()) {
+				String code = taxDto.getTaxId() + "_" + ct.getCountryCode();
+				Tax tax = taxService.findByCode(em, code);
+
+				if (tax != null) { // update
+					tax.setDescription(taxDto.getName());
+					tax.setPercent(ct.getTaxValue());
+					taxService.update(em, tax, currentUser);
+				} else { // create
+					tax = new Tax();
+					tax.setCode(code);
+					tax.setDescription(taxDto.getName());
+					tax.setPercent(ct.getTaxValue());
+					taxService.create(em, tax, currentUser, provider);
+				}
+
+			}
+
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(taxDto.getTaxId())) {
+				missingFields.add("Tax Id");
+			}
+			if (StringUtils.isBlank(taxDto.getName())) {
+				missingFields.add("Tax Name");
+			}
+			if (taxDto.getCountryTaxes() == null) {
+				missingFields.add("Country Tax");
+			} else {
+				if (taxDto.getCountryTaxes().size() == 0) {
+					missingFields.add("Country Tax");
+				}
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new EnvironmentException(sb.toString());
+		}
 	}
 
 }

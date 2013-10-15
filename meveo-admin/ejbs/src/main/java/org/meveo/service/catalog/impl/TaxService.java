@@ -17,7 +17,10 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 
@@ -27,5 +30,15 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @LocalBean
 public class TaxService extends PersistenceService<Tax> {
+
+	public Tax findByCode(EntityManager em, String code) {
+		try {
+			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
+			qb.addCriterion("code", "=", code, false);
+			return (Tax) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException ne) {
+			return null;
+		}
+	}
 
 }
