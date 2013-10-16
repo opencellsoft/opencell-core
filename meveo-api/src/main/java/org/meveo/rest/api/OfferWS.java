@@ -1,4 +1,4 @@
-package org.meveo.rest.environment;
+package org.meveo.rest.api;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -8,8 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.OrganizationServiceApi;
-import org.meveo.api.dto.OrganizationDto;
+import org.meveo.api.OfferServiceApi;
+import org.meveo.api.dto.OfferDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
@@ -21,30 +21,30 @@ import org.meveo.util.MeveoParamBean;
  * @since Oct 11, 2013
  **/
 @Stateless
-@Path("/organization")
+@Path("/offer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class OrganizationWS {
+public class OfferWS {
 
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
 	@Inject
-	private OrganizationServiceApi organizationServiceApi;
+	private OfferServiceApi offerServiceApi;
 
 	@POST
 	@Path("/")
-	public ActionStatus create(OrganizationDto orgDto) {
+	public ActionStatus create(OfferDto offerDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			orgDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+			offerDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
-			orgDto.setProviderId(Long.valueOf(paramBean.getProperty(
+			offerDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
-			organizationServiceApi.create(orgDto);
+			offerServiceApi.create(offerDto);
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

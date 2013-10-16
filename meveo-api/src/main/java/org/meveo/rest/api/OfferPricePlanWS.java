@@ -1,4 +1,4 @@
-package org.meveo.rest.environment;
+package org.meveo.rest.api;
 
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -11,9 +11,9 @@ import javax.ws.rs.core.MediaType;
  * @since Oct 11, 2013
  **/
 @Stateless
-@Path("/service")
+@Path("/offerPricePlan")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class ServiceWS {
+public class OfferPricePlanWS {
 
 }

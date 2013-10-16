@@ -1,4 +1,4 @@
-package org.meveo.rest.environment;
+package org.meveo.rest.api;
 
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;

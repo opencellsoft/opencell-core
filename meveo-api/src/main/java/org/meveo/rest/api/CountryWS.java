@@ -1,4 +1,4 @@
-package org.meveo.rest.environment;
+package org.meveo.rest.api;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,7 +18,7 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
-import org.meveo.rest.environment.response.CountryResponse;
+import org.meveo.rest.api.response.CountryResponse;
 import org.meveo.util.MeveoParamBean;
 
 /**

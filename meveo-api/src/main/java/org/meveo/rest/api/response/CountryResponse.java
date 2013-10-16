@@ -1,4 +1,4 @@
-package org.meveo.rest.environment.response;
+package org.meveo.rest.api.response;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
