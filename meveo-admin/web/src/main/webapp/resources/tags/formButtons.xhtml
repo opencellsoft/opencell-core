@@ -35,7 +35,7 @@
 		</p:button>
 		<p:commandButton id="saveButton" rendered="#{cc.attrs.edit}"
 			value="#{messages['action.save']}"
-			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
+			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave,cc.attrs.objectIdParamName,cc.attrs.backingBean.objectId)}"
 			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
