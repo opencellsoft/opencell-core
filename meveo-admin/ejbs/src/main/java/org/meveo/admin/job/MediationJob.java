@@ -94,6 +94,7 @@ public class MediationJob implements Job {
 			rejectDir = parambean.getProperty("mediation.rejectDirectory",
 					"/tmp/meveo/metering/output");
 			report = "";
+			CDRParsingService.resetAccessPointCache();
 			cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
 			if (cdrFile != null) {
 				cdrFileName = cdrFile.getName();

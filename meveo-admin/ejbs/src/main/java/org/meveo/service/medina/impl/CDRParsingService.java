@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -30,6 +31,12 @@ public class CDRParsingService {
 
 	public void init(File CDRFile) {
 		cdrParser.init(CDRFile);
+	}
+	
+	static HashMap<String,List<Access>> accessCache=new HashMap<String, List<Access>>();
+	
+	public static void resetAccessPointCache(){
+		accessCache=new HashMap<String, List<Access>>();
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -75,9 +82,15 @@ public class CDRParsingService {
 
 	private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
-		List<Access> accesses = accessService.findByUserID(userId);
-		if(accesses.size()==0){
-			throw new InvalidAccessException(cdr);
+		List<Access> accesses=null;
+		if(accessCache.containsKey(userId)){
+			accesses=accessCache.get(userId);
+		}else {
+			accesses = accessService.findByUserID(userId);
+			if(accesses.size()==0){
+				throw new InvalidAccessException(cdr);
+			}
+			accessCache.put(userId, accesses);
 		}
 		return accesses;
 	}
