@@ -38,10 +38,13 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 	 * @return Trading country found or null.
 	 * @throws ElementNotFoundException
 	 */
-	public TradingCountry findByTradingCountryCode(String tradingCountryCode, Provider provider) {
+	public TradingCountry findByTradingCountryCode(String tradingCountryCode,
+			Provider provider) {
 		try {
-			log.info("findByTradingCountryCode tradingCountryCode=#0,provider=#1",
-					tradingCountryCode, provider != null ? provider.getCode() : null);
+			log.info(
+					"findByTradingCountryCode tradingCountryCode={},provider={}",
+					tradingCountryCode, provider != null ? provider.getCode()
+							: null);
 			Query query = getEntityManager()
 					.createQuery(
 							"select b from TradingCountry b where b.country.countryCode = :tradingCountryCode and b.provider=:provider");
@@ -51,8 +54,10 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 		} catch (NoResultException e) {
 			log.warn(
 					"findByTradingCountryCode billing cycle not found : tradingCountryCode=#0,provider=#1",
-					tradingCountryCode, provider != null ? provider.getCode() : null);
+					tradingCountryCode, provider != null ? provider.getCode()
+							: null);
 			return null;
 		}
 	}
+
 }

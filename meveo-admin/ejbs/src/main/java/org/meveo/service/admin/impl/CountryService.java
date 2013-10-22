@@ -15,42 +15,80 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.Auditable;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 @Named
 public class CountryService extends PersistenceService<Country> {
+
+	@Inject
+	private CurrencyService currencyService;
+
+	@Inject
+	private UserService userService;
+
+	@Inject
+	private ProviderService providerService;
+
 	public Country findByCode(String countryCode) {
-		log.debug("start of find {} by code (code={}) ..", getEntityClass().getSimpleName(),
-				countryCode);
-		StringBuilder queryString = new StringBuilder("from " + Country.class.getName() + " a");
-		queryString.append(" where a.countryCode = :countryCode");
-		Query query = getEntityManager().createQuery(queryString.toString());
-		query.setParameter("countryCode", countryCode);
-		if (query.getResultList().size() == 0) {
+		return findByCode(getEntityManager(), countryCode);
+	}
+
+	public Country findByCode(EntityManager em, String countryCode) {
+		if (countryCode == null) {
 			return null;
 		}
-		Country e = (Country) query.getSingleResult();
 
-		log.debug("end of find {} by code (code={}). Result found={}.", getEntityClass()
-				.getSimpleName(), countryCode, e != null);
+		QueryBuilder qb = new QueryBuilder(Country.class, "c");
+		qb.addCriterion("countryCode", "=", countryCode, false);
 
-		return e;
+		try {
+			return (Country) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Country> list() {
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, getCurrentProvider());
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null,
+				getCurrentProvider());
 		queryBuilder.addOrderCriterion("a.descriptionEn", true);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
+
+	public void create(Long userId, String countryCode, String name,
+			String currencyCode) {
+		User creator = userService.findById(userId);
+
+		Country c = new Country();
+
+		Auditable auditable = new Auditable();
+		auditable.setCreated(new Date());
+		auditable.setCreator(creator);
+
+		c.setAuditable(auditable);
+		c.setCountryCode(countryCode);
+		c.setDescriptionEn(name);
+		c.setCurrency(currencyService.findByCode(currencyCode));
+
+		create(c, creator);
+	}
+
 }

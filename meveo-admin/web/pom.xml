@@ -10,6 +10,7 @@
 	<artifactId>meveo-admin-web</artifactId>
 	<name>MEVEO Admin Web Application - Web Module</name>
 	<packaging>war</packaging>
+
 	<build>
 		<resources>
 			<resource>
@@ -32,7 +33,7 @@
 		<!-- </archive> -->
 		<!-- </configuration> -->
 		<!-- </plugin> -->
-		<!-- </plugins> -->
+		<!-- </plugins> -->	
 
 	</build>
 
@@ -49,6 +50,11 @@
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-config</artifactId>
 			<classifier>${env}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.meveo</groupId>
+			<artifactId>meveo-api</artifactId>
+			<version>3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.omnifaces</groupId>
@@ -70,6 +76,7 @@
 		</dependency>
 
 	</dependencies>
+
 	<profiles>
 		<profile>
 			<id>development</id>

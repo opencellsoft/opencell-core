@@ -19,13 +19,15 @@
 						<hf:formField label="#{messages['matchingCode.matchingType']}" field="matchingType"  childField="label" isMessage="true" />
 						<hf:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit"  />
 						<hf:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit"  />																		                  																
-					</hftl:panelGroup>												
+					</hftl:panelGroup>		
+					<hftl:panelGroup columns="2">										
 					<p:commandButton value="#{messages['action.back']}"	 action="#{matchingCodeBean.backToCA()}"/>						
 					<p:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
+					</hftl:panelGroup>
 				</hf:formPanel>
 				<p:panel label="#{messages['customerAccount.operations']}">
 					<hftl:dataList backingBean="#{matchingCodeBean}"
-						dataModel="#{matchingCode.getMatchingAmounts()}"
+						dataModel="#{matchingCodeBean.entity.matchingAmounts}"
 						edit="#{false}" checkMany="#{false}">
 						<hftl:column label="#{messages['accountOperation.occCode']}"
 							field="accountOperation" childField="occCode" />					

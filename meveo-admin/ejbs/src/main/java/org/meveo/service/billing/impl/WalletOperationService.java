@@ -98,8 +98,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			applicationDate = new Date();
 		}
 
-		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode=#0,quantity={},"
-				+ "applicationDate={},chargeInstance.getId={}", subscription.getId(), quantity,
+		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode=#0,quantity=#1,"
+				+ "applicationDate=#2,chargeInstance.getId=#3", subscription.getId(), quantity,
 				applicationDate, chargeInstance.getId());
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 		if (chargeTemplate == null) {
@@ -187,8 +187,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		log.debug(
-				"ChargeApplicationService.recurringChargeApplication subscriptionCode=#0,quantity={},"
-						+ "applicationDate={},chargeInstance.getId={}", subscription.getId(),
+				"ChargeApplicationService.recurringChargeApplication subscriptionCode=#0,quantity=#1,"
+						+ "applicationDate=#2,chargeInstance.getId=#3", subscription.getId(),
 				quantity, applicationDate, chargeInstance.getId());
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 		if (chargeTemplate == null) {
@@ -294,7 +294,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate,
 					"dd/MM/yyyy");
 			log.debug(
-					"chargeSubscription applicationDate=#0, nextapplicationDate={},previousapplicationDate={}",
+					"chargeSubscription applicationDate=#0, nextapplicationDate=#1,previousapplicationDate=#2",
 					applicationDate, nextapplicationDate, previousapplicationDate);
 
 			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
@@ -308,12 +308,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					prorataRatio = part1 / part2;
 				} else {
 					log.error(
-							"Error in calendar dates : nextapplicationDate=#0, previousapplicationDate={}",
+							"Error in calendar dates : nextapplicationDate=#0, previousapplicationDate=#1",
 							nextapplicationDate, previousapplicationDate);
 				}
 
 				quantity = quantity.multiply(new BigDecimal(prorataRatio));
-				log.debug("chargeSubscription part1=#0, part2={}, prorataRation={} -> quantity={}",
+				log.debug("chargeSubscription part1=#0, part2=#1, prorataRation=#2 -> quantity=#3",
 						part1, part2, prorataRatio, quantity);
 			}
 
@@ -409,8 +409,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeInstanceException("charge instance is null");
 		}
 
-		log.debug("applyReimbursment subscriptionCode={},chargeCode={},quantity={},"
-				+ "applicationDate={},chargeInstance.getId={},NextChargeDate={}", chargeInstance
+		log.debug("applyReimbursment subscriptionCode=#0,chargeCode=#1,quantity=#2,"
+				+ "applicationDate=#3,chargeInstance.getId=#4,NextChargeDate=#5", chargeInstance
 				.getServiceInstance().getSubscription().getCode(), chargeInstance.getCode(),
 				chargeInstance.getServiceInstance().getQuantity(),
 				chargeInstance.getSubscriptionDate(), chargeInstance.getId(),
@@ -440,7 +440,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				applicationDate);
 		previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate,
 				"dd/MM/yyyy");
-		log.debug("applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
+		log.debug("applicationDate=#0, nextapplicationDate=#1,previousapplicationDate=#2",
 				applicationDate, nextapplicationDate, previousapplicationDate);
 
 		Date periodStart = applicationDate;
@@ -454,7 +454,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				prorataRatio = (-1) * part1 / part2;
 			} else {
 				log.error(
-						"Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
+						"Error in calendar dates : nextapplicationDate=#0, previousapplicationDate=#1",
 						nextapplicationDate, previousapplicationDate);
 			}
 
@@ -462,7 +462,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));
 
 			quantity = quantity.multiply(new BigDecimal(prorataRatio));
-			log.debug("part1={}, part2={}, prorataRatio={}, param2={} -> quantity={}", part1,
+			log.debug("part1=#0, part2=#1, prorataRatio=#2, param2=#3 -> quantity=#4", part1,
 					part2, prorataRatio, param2, quantity);
 
 			InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate.getInvoiceSubCategory();
@@ -526,7 +526,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (recurringChargeTemplate.getApplyInAdvance()) {
 			Date nextChargeDate = chargeInstance.getNextChargeDate();
 			log.debug(
-					"reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}",
+					"reimbursment-applyInAdvance applicationDate=#0, nextapplicationDate=#1,nextChargeDate=#2",
 					applicationDate, nextapplicationDate, nextChargeDate);
 			if (nextChargeDate != null && nextChargeDate.getTime() > nextapplicationDate.getTime()) {
 				applyReccuringCharge(chargeInstance, true, recurringChargeTemplate, creator);
@@ -534,7 +534,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		} else {
 			Date nextChargeDate = chargeInstance.getChargeDate();
 			log.debug(
-					"reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}",
+					"reimbursment-applyInAdvance applicationDate=#0, nextapplicationDate=#1,nextChargeDate=#2",
 					applicationDate, nextapplicationDate, nextChargeDate);
 			if (nextChargeDate != null && nextChargeDate.getTime() > nextapplicationDate.getTime()) {
 				applyNotAppliedinAdvanceReccuringCharge(chargeInstance, true,
@@ -568,10 +568,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			durationTermCalendar = serviceTemplate.getDurationTermCalendar();
 			nextDurationDate = reimbursement ? chargeInstance.getNextChargeDate()
 					: durationTermCalendar.nextCalendarDate(applicationDate);
-			log.debug("reimbursement={},nextDurationDate={},applicationDate={}", reimbursement,
+			log.debug("reimbursement=#0,nextDurationDate=#1,applicationDate=#2", reimbursement,
 					nextDurationDate, applicationDate);
 		} catch (Exception e) {
-			log.error("Cannot find duration term calendar for serviceTemplate.id={}",
+			log.error("Cannot find duration term calendar for serviceTemplate.id=#0",
 					serviceTemplate.getId());
 		}
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate.getInvoiceSubCategory();
@@ -618,7 +618,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(
 					applicationDate);
 			log.debug(
-					"next step for {}, applicationDate={}, nextApplicationDate={},nextApplicationDate={}",
+					"next step for #0, applicationDate=#1, nextApplicationDate=#2,nextApplicationDate=#3",
 					chargeInstance.getId(), applicationDate, nextapplicationDate, nextDurationDate);
 
 			String param2 = (reimbursement ? str_tooPerceived + " " : " ")
@@ -629,7 +629,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			if (reimbursement) {
 				quantity = quantity.negate();
 			}
-			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={} -> quantity={}",
+			log.debug("applyReccuringCharge : nextapplicationDate=#0, param2=#1 -> quantity=#2",
 					nextapplicationDate, param2, quantity);
 
 			WalletOperation chargeApplication = chargeApplicationRatingService
@@ -722,7 +722,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(
 					applicationDate);
 			log.debug(
-					"applyNotAppliedinAdvanceReccuringCharge next step for {}, applicationDate={}, nextApplicationDate={},nextApplicationDate={}",
+					"applyNotAppliedinAdvanceReccuringCharge next step for #0, applicationDate=#1, nextApplicationDate=#2,nextApplicationDate=#3",
 					chargeInstance.getId(), applicationDate, nextapplicationDate, nextChargeDate);
 
 			Date previousapplicationDate = recurringChargeTemplate.getCalendar()
@@ -730,7 +730,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			previousapplicationDate = DateUtils.parseDateWithPattern(previousapplicationDate,
 					"dd/MM/yyyy");
 			log.debug(
-					" applyNotAppliedinAdvanceReccuringCharge applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
+					" applyNotAppliedinAdvanceReccuringCharge applicationDate=#0, nextapplicationDate=#1,previousapplicationDate=#2",
 					applicationDate, nextapplicationDate, previousapplicationDate);
 
 			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
@@ -740,7 +740,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			// n'appliquer le prorata que dans le cas de la 1ere application de
 			// charges �chues
 			log.debug(
-					" applyNotAppliedinAdvanceReccuringCharge chargeInstance.getWalletOperations().size()={}",
+					" applyNotAppliedinAdvanceReccuringCharge chargeInstance.getWalletOperations().size()=#0",
 					chargeInstance.getWalletOperations().size());
 			if (chargeInstance.getWalletOperations().size() == 0
 					&& recurringChargeTemplate.getSubscriptionProrata()) {
@@ -753,11 +753,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					prorataRatio = part1 / part2;
 				} else {
 					log.error(
-							"applyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
+							"applyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate=#0, previousapplicationDate=#1",
 							nextapplicationDate, previousapplicationDate);
 				}
 				quantity = quantity.multiply(new BigDecimal(prorataRatio));
-				log.debug("part1={}, part2={}, prorataRatio={} -> quantity", part1, part2,
+				log.debug("part1=#0, part2=#1, prorataRatio=#2 -> quantity", part1, part2,
 						prorataRatio, quantity);
 			}
 
@@ -765,10 +765,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ sdf.format(applicationDate) + (reimbursement ? " / " : " au ")
 					+ sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));
 
-			log.debug("param2={}", param2);
+			log.debug("param2=#0", param2);
 
 			log.debug(
-					"applyNotAppliedinAdvanceReccuringCharge : nextapplicationDate={}, param2={}",
+					"applyNotAppliedinAdvanceReccuringCharge : nextapplicationDate=#0, param2=#1",
 					nextapplicationDate, param2);
 
 			if (reimbursement) {
@@ -868,7 +868,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		while (applicationDate.getTime() < endAgreementDate.getTime()) {
 			Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(
 					applicationDate);
-			log.debug("agreement next step for {}, applicationDate={}, nextApplicationDate={}",
+			log.debug("agreement next step for #0, applicationDate=#1, nextApplicationDate=#2",
 					recurringChargeTemplate.getCode(), applicationDate, nextapplicationDate);
 			Double prorataRatio = null;
 			ApplicationTypeEnum type = ApplicationTypeEnum.RECURRENT;
@@ -893,7 +893,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				}
 			}
 			String param2 = sdf.format(applicationDate) + " au " + sdf.format(endDate);
-			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={}",
+			log.debug("applyReccuringCharge : nextapplicationDate=#0, param2=#1",
 					nextapplicationDate, param2);
 
 			WalletOperation chargeApplication = chargeApplicationRatingService
@@ -920,8 +920,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		/*
 		 * log.debug(
-		 * "ChargeApplicationService.chargeTermination subscriptionCode={},chargeCode={},quantity={},"
-		 * + "applicationDate={},chargeInstance.getId={}", chargeInstance
+		 * "ChargeApplicationService.chargeTermination subscriptionCode=#0,chargeCode=#1,quantity=#2,"
+		 * + "applicationDate=#3,chargeInstance.getId=#4", chargeInstance
 		 * .getServiceInstance().getSubscription().getCode(),
 		 * chargeInstance.getCode(),
 		 * chargeInstance.getServiceInstance().getQuantity(),
@@ -959,7 +959,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		 * applicationDate); previousapplicationDate =
 		 * DateUtils.parseDateWithPattern(previousapplicationDate,
 		 * "dd/MM/yyyy"); log.debug(
-		 * "applicationDate={}, nextapplicationDate={},previousapplicationDate={}"
+		 * "applicationDate=#0, nextapplicationDate=#1,previousapplicationDate=#2"
 		 * , applicationDate, nextapplicationDate, previousapplicationDate);
 		 * 
 		 * Date periodStart = applicationDate; if
@@ -968,11 +968,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		 * = DateUtils.daysBetween(previousapplicationDate,
 		 * nextapplicationDate); if (part2 > 0) { param1 = Double.toString((-1)
 		 * * part1 / part2); } else { log.error(
-		 * "Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}"
+		 * "Error in calendar dates : nextapplicationDate=#0, previousapplicationDate=#1"
 		 * , nextapplicationDate, previousapplicationDate); } param2 = " " +
 		 * str_tooPerceived + " " + sdf.format(periodStart) + " / " +
 		 * sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));
-		 * log.debug("part1={}, part2={}, param1={}, param2={}", part1, part2,
+		 * log.debug("part1=#0, part2=#1, param1=#2, param2=#3", part1, part2,
 		 * param1, param2);
 		 * 
 		 * InvoiceSubCategory invoiceSubCategory =
@@ -1025,7 +1025,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		 * durationTermCalendar.nextCalendarDate(applicationDate);
 		 * log.debug("nextDurationDate=" + nextDurationDate); } catch (Exception
 		 * e) {
-		 * log.error("Cannot find duration term calendar for serviceTemplate.id={}"
+		 * log.error("Cannot find duration term calendar for serviceTemplate.id=#0"
 		 * , serviceTemplate.getId()); }
 		 * 
 		 * if (nextDurationDate != null && nextDurationDate.getTime() >
@@ -1039,7 +1039,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status) {
 		List<WalletOperation> walletOperations = null;
 		try {
-			log.debug("start of find {} by status (status={})) ..", "WalletOperation",
+			log.debug("start of find #0 by status (status=#1)) ..", "WalletOperation",
 					status);
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
 			qb.addCriterion("c.status", "=", status, true);
@@ -1049,7 +1049,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					walletOperations != null ? walletOperations.size() : 0 });
 
 		} catch (Exception e) {
-			log.error("findByStatus error={} ", e.getMessage());
+			log.error("findByStatus error=#0 ", e.getMessage());
 		}
 		return walletOperations;
 	}

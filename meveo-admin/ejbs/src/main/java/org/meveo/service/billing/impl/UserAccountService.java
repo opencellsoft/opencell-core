@@ -27,8 +27,6 @@ import javax.ejb.Stateless;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
-import org.meveo.admin.exception.IncorrectUserAccountException;
-import org.meveo.admin.exception.UnknownAccountException;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -51,10 +49,11 @@ public class UserAccountService extends AccountService<UserAccount> {
 	@EJB
 	private WalletService walletService;
 
-
-	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount, User creator)
+	public void createUserAccount(BillingAccount billingAccount,
+			UserAccount userAccount, User creator)
 			throws AccountAlreadyExistsException {
-		UserAccount existingUserAccount = findByCode(userAccount.getCode(),userAccount.getProvider());
+		UserAccount existingUserAccount = findByCode(userAccount.getCode(),
+				userAccount.getProvider());
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
 		}
@@ -66,8 +65,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 		walletService.create(wallet, creator, billingAccount.getProvider());
 		userAccount.setWallet(wallet);
 
-		List<WalletTemplate> prepaidWalletTemplates = billingAccount.getProvider()
-				.getPrepaidWalletTemplates();
+		List<WalletTemplate> prepaidWalletTemplates = billingAccount
+				.getProvider().getPrepaidWalletTemplates();
 		if (prepaidWalletTemplates != null && prepaidWalletTemplates.size() > 0) {
 			HashMap<String, WalletInstance> prepaidWallets = new HashMap<String, WalletInstance>(
 					prepaidWalletTemplates.size());
@@ -75,19 +74,24 @@ public class UserAccountService extends AccountService<UserAccount> {
 				WalletInstance prepaidWallet = new WalletInstance();
 				wallet.setUserAccount(userAccount);
 				wallet.setWalletTemplate(prepaidWalletTemplate);
-				walletService.create(wallet, creator, billingAccount.getProvider());
-				prepaidWallets.put(prepaidWalletTemplate.getCode(), prepaidWallet);
+				walletService.create(wallet, creator,
+						billingAccount.getProvider());
+				prepaidWallets.put(prepaidWalletTemplate.getCode(),
+						prepaidWallet);
 			}
 			userAccount.setPrepaidWallets(prepaidWallets);
 		}
 	}
 
-	public void updateUserAccount(UserAccount userAccount, User updater) throws BusinessException {
+	public void updateUserAccount(UserAccount userAccount, User updater)
+			throws BusinessException {
 		update(userAccount, updater);
 	}
 
-	public void userAccountTermination(UserAccount userAccount, Date terminationDate,
-			SubscriptionTerminationReason terminationReason, User updater) throws BusinessException {
+	public void userAccountTermination(UserAccount userAccount,
+			Date terminationDate,
+			SubscriptionTerminationReason terminationReason, User updater)
+			throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
 		if (terminationDate == null) {
@@ -95,8 +99,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.terminateSubscription(subscription, terminationDate,
-					terminationReason, updater);
+			subscriptionService.terminateSubscription(subscription,
+					terminationDate, terminationReason, updater);
 		}
 		userAccount.setTerminationReason(terminationReason);
 		userAccount.setTerminationDate(terminationDate);
@@ -104,8 +108,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 		update(userAccount, updater);
 	}
 
-	public void userAccountCancellation(UserAccount userAccount, Date terminationDate, User updater)
-			throws BusinessException {
+	public void userAccountCancellation(UserAccount userAccount,
+			Date terminationDate, User updater) throws BusinessException {
 
 		SubscriptionService subscriptionService = getManagedBeanInstance(SubscriptionService.class);
 
@@ -114,22 +118,23 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {
-			subscriptionService.subscriptionCancellation(subscription, terminationDate,
-					updater);
+			subscriptionService.subscriptionCancellation(subscription,
+					terminationDate, updater);
 		}
 		userAccount.setTerminationDate(terminationDate);
 		userAccount.setStatus(AccountStatusEnum.CANCELED);
 		update(userAccount, updater);
 	}
 
-	public void userAccountReactivation(UserAccount userAccount, Date activationDate, User updater)
-			throws BusinessException {
+	public void userAccountReactivation(UserAccount userAccount,
+			Date activationDate, User updater) throws BusinessException {
 		if (activationDate == null) {
 			activationDate = new Date();
 		}
 		if (userAccount.getStatus() != AccountStatusEnum.TERMINATED
 				&& userAccount.getStatus() != AccountStatusEnum.CANCELED) {
-			throw new ElementNotResiliatedOrCanceledException("user account", userAccount.getCode());
+			throw new ElementNotResiliatedOrCanceledException("user account",
+					userAccount.getCode());
 		}
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -137,7 +142,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 		update(userAccount, updater);
 	}
 
-	public BillingWalletDetailDTO BillingWalletDetail(UserAccount userAccount) throws BusinessException {
+	public BillingWalletDetailDTO BillingWalletDetail(UserAccount userAccount)
+			throws BusinessException {
 		BillingWalletDetailDTO BillingWalletDetailDTO = new BillingWalletDetailDTO();
 
 		BigDecimal amount = BigDecimal.valueOf(0);
@@ -149,9 +155,10 @@ public class UserAccountService extends AccountService<UserAccount> {
 			return null;
 		}
 		for (RatedTransaction ratedTransaction : wallet.getRatedTransactions()) {
-			if (ratedTransaction.getBillingRun()==null) {
+			if (ratedTransaction.getBillingRun() == null) {
 				amount = amount.add(ratedTransaction.getAmountWithTax());
-				amountWithoutTax = amountWithoutTax.add(ratedTransaction.getAmountWithoutTax());
+				amountWithoutTax = amountWithoutTax.add(ratedTransaction
+						.getAmountWithoutTax());
 				amountTax = amountTax.add(ratedTransaction.getAmountTax());
 			}
 		}
@@ -161,7 +168,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return BillingWalletDetailDTO;
 	}
 
-	public List<RatedTransaction> BillingRatedTransactionList(UserAccount userAccount) throws BusinessException {
+	public List<RatedTransaction> BillingRatedTransactionList(
+			UserAccount userAccount) throws BusinessException {
 		WalletInstance wallet = userAccount.getWallet();
 		return wallet.getRatedTransactions();
 	}
@@ -184,4 +192,5 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return false;
 
 	}
+
 }

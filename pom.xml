@@ -9,16 +9,15 @@
 	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
- 	<modules>
- 		<module>meveo-model</module>
-		<module>meveo-admin</module> 
-<!-- 		<module>meveo-api</module> 		-->
- 	</modules>
-
+	<modules>
+		<module>meveo-model</module>
+		<module>meveo-admin</module>
+		<module>meveo-api</module>
+	</modules>
 
 	<properties>
-		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific 
-			configuration (e.g. import.sql) -->
+		<!-- Env set to dev, so that profile dev would be the default and also 
+			env value is used in copy some files for a specific configuration (e.g. import.sql) -->
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -31,7 +30,6 @@
 		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
 	</properties>
 
-	
 	<repositories>
 		<repository>
 			<id>jboss-repo</id>
@@ -88,8 +86,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-
 
 	<build>
 		<pluginManagement>
@@ -148,5 +144,5 @@
 			</activation>
 		</profile>
 
-	</profiles>	
+	</profiles>
 </project>

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -33,15 +32,12 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunList;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
@@ -388,7 +384,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public List<BillingRun> getValidatedBillingRuns(){
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c",null,getCurrentProvider());
 		qb.addCriterionEnum("c.status", BillingRunStatusEnum.VALIDATED);
-		qb.addBooleanCriterion("c.disabled", false);
+		qb.addBooleanCriterion("c.xmlInvoiceGenerated", false);
 		
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 		return billingRuns;

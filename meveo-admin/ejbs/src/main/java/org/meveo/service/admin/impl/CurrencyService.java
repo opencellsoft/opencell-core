@@ -17,8 +17,10 @@ package org.meveo.service.admin.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.base.PersistenceService;
 
@@ -32,7 +34,8 @@ public class CurrencyService extends PersistenceService<Currency> {
 	private static final String SYSTEM_CURRENCY_QUERY = "select c from Currency c where c.systemCurrency = true";
 
 	public Currency getSystemCurrency() {
-		return (Currency) getEntityManager().createQuery(SYSTEM_CURRENCY_QUERY).getSingleResult();
+		return (Currency) getEntityManager().createQuery(SYSTEM_CURRENCY_QUERY)
+				.getSingleResult();
 	}
 
 	public void setNewSystemCurrency(Currency currency) {
@@ -48,8 +51,24 @@ public class CurrencyService extends PersistenceService<Currency> {
 	 * Don't let to delete a currency which is system currency.
 	 */
 	// TODO use it
-	public void validateBeforeRemove(Currency currency) throws BusinessException {
+	public void validateBeforeRemove(Currency currency)
+			throws BusinessException {
 		if (currency.getSystemCurrency())
 			throw new BusinessException("System currency can not be deleted.");
 	}
+
+	public Currency findByCode(String currencyCode) {
+		if (currencyCode == null) {
+			return null;
+		}
+		QueryBuilder qb = new QueryBuilder(Currency.class, "c");
+		qb.addCriterion("currencyCode", "=", currencyCode, false);
+
+		try {
+			return (Currency) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 }

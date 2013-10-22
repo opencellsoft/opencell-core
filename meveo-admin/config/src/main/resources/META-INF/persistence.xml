@@ -14,6 +14,7 @@
 			<property name="hibernate.cache.use_second_level_cache"
 				value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="true" />
+			<property name="hibernate.connection.release_mode" value="on_close"/> 
 			<!-- <property name="hibernate.cache.provider_configuration_file_resource_path" 
 				value="ehcache.xml"></property> -->
 			<!-- <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" 
