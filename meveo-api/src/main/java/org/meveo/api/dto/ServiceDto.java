@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ServiceDto extends BaseDto {
 
 	private String serviceId;
-	private List<ServiceDescriptionDto> descriptions;
+	private List<DescriptionDto> descriptions;
 
 	public String getServiceId() {
 		return serviceId;
@@ -25,11 +25,11 @@ public class ServiceDto extends BaseDto {
 		this.serviceId = serviceId;
 	}
 
-	public List<ServiceDescriptionDto> getDescriptions() {
+	public List<DescriptionDto> getDescriptions() {
 		return descriptions;
 	}
 
-	public void setDescriptions(List<ServiceDescriptionDto> descriptions) {
+	public void setDescriptions(List<DescriptionDto> descriptions) {
 		this.descriptions = descriptions;
 	}
 

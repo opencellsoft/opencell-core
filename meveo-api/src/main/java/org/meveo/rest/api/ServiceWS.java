@@ -3,8 +3,10 @@ package org.meveo.rest.api;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -53,4 +55,19 @@ public class ServiceWS {
 		return result;
 	}
 
+	@DELETE
+	@Path("/{serviceId}")
+	public ActionStatus remove(@PathParam("serviceId") String serviceId) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			serviceServiceApi.remove(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")), serviceId);
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
 }

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "serviceDescription")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceDescriptionDto {
+public class DescriptionDto {
 	
 	private String languageCode;
 	private String description;
