@@ -75,15 +75,15 @@ public class OfferWS {
 
 		return result;
 	}
-	
+
 	@DELETE
 	@Path("/{offerId}")
 	public ActionStatus remove(@PathParam("offerId") String offerId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
 		try {
 			offerServiceApi.remove(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")), offerId);
+					"asp.api.providerId", "1")), Long.valueOf(paramBean
+					.getProperty("asp.api.userId", "1")), offerId);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
