@@ -26,6 +26,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -42,6 +43,7 @@ import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
@@ -100,6 +102,9 @@ public class ServicePricePlanServiceApi extends BaseApi {
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
+	@Inject
+	private OfferTemplateService offerTemplateService;
+
 	public void create(ServicePricePlanDto servicePricePlanDto)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(servicePricePlanDto.getServiceId())
@@ -149,8 +154,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			serviceTemplate.setCode(serviceTemplateCode);
 
 			serviceTemplate.setActive(true);
-			serviceTemplateService.create(em, serviceTemplate,
-					currentUser, provider);
+			serviceTemplateService.create(em, serviceTemplate, currentUser,
+					provider);
 
 			// Create a recurring charge with service descriptions and
 			// parameters. Charge code is '_RE_SE_[OrganizationId]_[ServceId]'
@@ -240,8 +245,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 									provider);
 
 					PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
-					pricePlanMatrix.setEventCode(subscriptionTemplate
-							.getCode());
+					pricePlanMatrix
+							.setEventCode(subscriptionTemplate.getCode());
 					pricePlanMatrix.setAmountWithoutTax(subscriptionFeeDto
 							.getPrice());
 					pricePlanMatrix.setTradingCurrency(tradingCurrency);
@@ -288,8 +293,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 									provider);
 
 					PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
-					pricePlanMatrix.setEventCode(terminationTemplate
-							.getCode());
+					pricePlanMatrix.setEventCode(terminationTemplate.getCode());
 					pricePlanMatrix.setAmountWithoutTax(terminationFeeDto
 							.getPrice());
 					pricePlanMatrix.setTradingCurrency(tradingCurrency);
@@ -362,8 +366,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				serviceUsageChargeTemplate
 						.setChargeTemplate(usageChargeTemplate);
 				serviceUsageChargeTemplate.setCounterTemplate(counterTemplate);
-				serviceUsageChargeTemplate
-						.setServiceTemplate(serviceTemplate);
+				serviceUsageChargeTemplate.setServiceTemplate(serviceTemplate);
 				serviceUsageChargeTemplateService.create(em,
 						serviceUsageChargeTemplate, currentUser, provider);
 
@@ -389,14 +392,22 @@ public class ServicePricePlanServiceApi extends BaseApi {
 						provider);
 			}
 
-			serviceTemplate.getRecurringCharges().add(
-					recurringChargeTemplate);
-			serviceTemplate.getSubscriptionCharges().add(
-					subscriptionTemplate);
-			serviceTemplate.getTerminationCharges().add(
-					terminationTemplate);
-			serviceTemplateService.update(em, serviceTemplate,
-					currentUser);
+			serviceTemplate.getRecurringCharges().add(recurringChargeTemplate);
+			serviceTemplate.getSubscriptionCharges().add(subscriptionTemplate);
+			serviceTemplate.getTerminationCharges().add(terminationTemplate);
+			serviceTemplateService.update(em, serviceTemplate, currentUser);
+
+			List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
+			serviceTemplates.add(serviceTemplate);
+			String offerTemplatePrefix = paramBean.getProperty(
+					"asg.api.offer.offer.prefix", "_OF_");
+			OfferTemplate offerTemplate = new OfferTemplate();
+			offerTemplate.setCode(offerTemplatePrefix + serviceOfferCodePrefix
+					+ servicePricePlanDto.getOrganizationId() + "_"
+					+ servicePricePlanDto.getServiceId());
+			offerTemplate.setServiceTemplates(serviceTemplates);
+			offerTemplateService.create(em, offerTemplate, currentUser,
+					provider);
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");

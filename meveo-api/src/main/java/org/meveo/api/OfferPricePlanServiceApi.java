@@ -26,6 +26,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -42,6 +43,7 @@ import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
@@ -60,6 +62,9 @@ public class OfferPricePlanServiceApi extends BaseApi {
 
 	@Inject
 	private ParamBean paramBean;
+
+	@Inject
+	private OfferTemplateService offerTemplateService;
 
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
@@ -144,13 +149,13 @@ public class OfferPricePlanServiceApi extends BaseApi {
 						+ serviceTemplateCode + " already exists.");
 			}
 
-			ServiceTemplate chargedServiceTemplate = new ServiceTemplate();
-			chargedServiceTemplate.setCode(offerPricePlanPrefix
+			ServiceTemplate serviceTemplate = new ServiceTemplate();
+			serviceTemplate.setCode(offerPricePlanPrefix
 					+ offerPricePlanDto.getOrganizationId() + "_"
 					+ offerPricePlanDto.getOfferId());
-			chargedServiceTemplate.setActive(true);
-			serviceTemplateService.create(em, chargedServiceTemplate,
-					currentUser, provider);
+			serviceTemplate.setActive(true);
+			serviceTemplateService.create(em, serviceTemplate, currentUser,
+					provider);
 
 			// Create a recurring charge with associated services and
 			// parameters. Charge code is'_RE_OF_[OrganizationId]_[OfferId]'
@@ -361,8 +366,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				serviceUsageChargeTemplate
 						.setChargeTemplate(usageChargeTemplate);
 				serviceUsageChargeTemplate.setCounterTemplate(counterTemplate);
-				serviceUsageChargeTemplate
-						.setServiceTemplate(chargedServiceTemplate);
+				serviceUsageChargeTemplate.setServiceTemplate(serviceTemplate);
 				serviceUsageChargeTemplateService.create(em,
 						serviceUsageChargeTemplate, currentUser, provider);
 
@@ -388,14 +392,25 @@ public class OfferPricePlanServiceApi extends BaseApi {
 						provider);
 			}
 
-			chargedServiceTemplate.getRecurringCharges().add(
-					recurringChargeTemplate);
-			chargedServiceTemplate.getSubscriptionCharges().add(
-					subscriptionTemplate);
-			chargedServiceTemplate.getTerminationCharges().add(
-					terminationTemplate);
-			serviceTemplateService.update(em, chargedServiceTemplate,
-					currentUser);
+			serviceTemplate.getRecurringCharges().add(recurringChargeTemplate);
+			serviceTemplate.getSubscriptionCharges().add(subscriptionTemplate);
+			serviceTemplate.getTerminationCharges().add(terminationTemplate);
+			serviceTemplateService.update(em, serviceTemplate, currentUser);
+
+			List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
+			serviceTemplates.add(serviceTemplate);
+			String offerTemplatePrefix = paramBean.getProperty(
+					"asg.api.offer.offer.prefix", "_OF_");
+			String offerTemplateCode = offerTemplatePrefix
+					+ offerTemplatePrefix
+					+ offerPricePlanDto.getOrganizationId() + "_"
+					+ offerPricePlanDto.getOfferId();
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
+					offerTemplateCode, provider);
+			if (offerTemplate != null) {
+				offerTemplate.setServiceTemplates(serviceTemplates);
+				offerTemplateService.update(em, offerTemplate, currentUser);
+			}
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -425,5 +440,4 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			throw new MeveoApiException(sb.toString());
 		}
 	}
-
 }
