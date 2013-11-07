@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="REST Project" resourceRoot="" soapui-version="4.6.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="Country" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="country" path="/meveo/rest/api/country"><con:settings/><con:parameters/><con:method name="GET" method="GET"><con:settings/><con:parameters><con:parameter><con:name>countryCode</con:name><con:value>Z2</con:value><con:style>QUERY</con:style><con:default>Z2</con:default></con:parameter></con:parameters><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/rest/api/country/">coun:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="countryCode" value="PH" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request></con:method><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/rest/api/country/">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+<con:soapui-project activeEnvironment="Default" name="REST Project" resourceRoot="" soapui-version="4.6.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="Country" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="country" path="/meveo/rest/api/country/{countryCode}/{currencyCode}"><con:settings/><con:parameters/><con:method name="GET" method="GET"><con:settings/><con:parameters><con:parameter><con:name>countryCode</con:name><con:value>Z2</con:value><con:style>QUERY</con:style><con:default>Z2</con:default></con:parameter></con:parameters><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/rest/api/country/">coun:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="countryCode" value="PH" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request></con:method><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:coun="http://localhost/meveo/rest/api/country/">coun:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
     "countryCode" : "Z3",
     "name" : "Z3",
     "currencyCode" : "PHP"
@@ -44,7 +44,7 @@
     "countryCode" : "X5",
     "name" : "PH-Ward-3",
     "currencyCode": "PHP"
-}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="Tax" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="tax" path="/meveo/rest/api/tax"><con:settings/><con:parameters/><con:method name="POST" method="POST"><con:settings/><con:parameters><con:parameter><con:name>taxId</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/></con:parameter></con:parameters><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>400 404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:tax="http://localhost/meveo/rest/api/tax">tax:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=ISO-8859-1</con:mediaType><con:status>500</con:status><con:params/><con:element>html</con:element></con:representation><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="Tax" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="tax" path="/meveo/rest/api/tax/{taxId}"><con:settings/><con:parameters/><con:method name="POST" method="POST"><con:settings/><con:parameters><con:parameter><con:name>taxId</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/></con:parameter></con:parameters><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>400 404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:tax="http://localhost/meveo/rest/api/tax">tax:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=ISO-8859-1</con:mediaType><con:status>500</con:status><con:params/><con:element>html</con:element></con:representation><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
     "taxId" : "PH",
     "name" : "Philippine Tax",
     "countryTaxes" : [
@@ -111,7 +111,7 @@
 	"descriptions" : [
 		{ "languageCode" : "", "description" : "" }
 	]
-}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="Offer" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="offer" path="/meveo/rest/api/offer/{offerId}"><con:settings/><con:parameters/><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://localhost/meveo/rest/api/offer">off:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=ISO-8859-1</con:mediaType><con:status>500</con:status><con:params/><con:element>html</con:element></con:representation><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="Offer" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="offer" path="/meveo/rest/api/offer/{offerId}"><con:settings/><con:parameters/><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://localhost/meveo/rest/api/offer">off:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=ISO-8859-1</con:mediaType><con:status>500</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
     "offerId" : "001",
     "descriptions" : [
 		{ "languageCode" : "PH", "description" : "Philippines" }
@@ -143,7 +143,7 @@
 	"services" : [
 		"001"
 	]
-}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="PUT" method="PUT"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>400</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://localhost/meveo/rest/api/offer">off:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Offer code does not exists" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="PUT" method="PUT"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>400 403</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://localhost/meveo/rest/api/offer">off:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Offer code does not exists" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
     "offerId" : "X1",
     "descriptions" : [
 		{ "languageCode" : "PH", "description" : "Philippines" }
@@ -161,4 +161,295 @@
 		{ "languageCode" : "PH", "description" : "Philippines" }
 	],
     "services" : [ "001" ]
-}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="DELETE" method="DELETE"><con:settings/><con:parameters><con:parameter><con:name>offerId</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/></con:parameter></con:parameters><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>405</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:x="http://localhost/meveo/rest/api/offer/00X">x:Response</con:element></con:representation><con:request name="Offer code does not exists" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="offerId" value="00X" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request><con:request name="Ok" mediaType="application/json"><con:settings/><con:endpoint>http://localhost:18080</con:endpoint><con:request/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:properties/><con:wssContainer/></con:soapui-project>
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="DELETE" method="DELETE"><con:settings/><con:parameters><con:parameter><con:name>offerId</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/></con:parameter></con:parameters><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>405</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:x="http://localhost/meveo/rest/api/offer/00X">x:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Offer code does not exists" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="offerId" value="00X" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request><con:request name="Ok" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="offerId" value="006" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request></con:method></con:resource></con:interface><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="ServicePricePlan" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="servicePricePlan" path="/meveo/rest/api/servicePricePlan/{serviceId}/{organizationId}"><con:settings/><con:parameters/><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404 400</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ser="http://localhost/meveo/rest/api/servicePricePlan">ser:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=ISO-8859-1</con:mediaType><con:status>500</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Missing required fields" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+    "serviceId" : "",
+	"organizationId" : "MAIN_SELLER",
+    "taxId" : "",
+	"subscriptionProrata" : "true",
+	"terminationProrata" : "false",
+	"applyInAdvance" : "true",
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"billingPeriod" : "1234",
+	"recurringCharges" : [
+		{ 
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"minAge" : "5",
+			"maxAge" : "10",
+			"price" : "100"
+		}
+	],
+	"usageUnit" : "Mb",
+	"usageCharges" : [
+		{ 
+			"min" : "5",
+			"max" : "10",
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : "101"
+		}
+	],
+	"subscriptionFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	],
+	"terminationFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	]
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+    "serviceId" : "001",
+	"organizationId" : "MAIN_SELLER",
+    "taxId" : "TAX_18",
+	"subscriptionProrata" : "true",
+	"terminationProrata" : "false",
+	"applyInAdvance" : "true",
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"billingPeriod" : "1234",
+	"recurringCharges" : [
+		{ 
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"minAge" : "5",
+			"maxAge" : "10",
+			"price" : "100"
+		}
+	],
+	"usageUnit" : "Mb",
+	"usageCharges" : [
+		{ 
+			"min" : "5",
+			"max" : "10",
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : "101"
+		}
+	],
+	"subscriptionFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	],
+	"terminationFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	]
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Service template code already exists" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+    "serviceId" : "001",
+	"organizationId" : "MAIN_SELLER",
+    "taxId" : "TAX_18",
+	"subscriptionProrata" : "true",
+	"terminationProrata" : "false",
+	"applyInAdvance" : "true",
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"billingPeriod" : "1234",
+	"recurringCharges" : [
+		{ 
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"minAge" : "5",
+			"maxAge" : "10",
+			"price" : "100"
+		}
+	],
+	"usageUnit" : "Mb",
+	"usageCharges" : [
+		{ 
+			"min" : "5",
+			"max" : "10",
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : "101"
+		}
+	],
+	"subscriptionFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	],
+	"terminationFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	]
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="DELETE" method="DELETE"><con:settings/><con:parameters><con:parameter><con:name>serviceId</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/></con:parameter><con:parameter><con:name>organizationId</con:name><con:value/><con:style>TEMPLATE</con:style><con:default/></con:parameter></con:parameters><con:representation type="FAULT"><con:mediaType>text/html;charset=ISO-8859-1</con:mediaType><con:status>500</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:main="http://localhost/meveo/rest/api/servicePricePlan/001/MAIN_SELLER">main:Response</con:element></con:representation><con:request name="Ok" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request/><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="serviceId" value="001"/>
+  <con:entry key="organizationId" value="MAIN_SELLER"/>
+</con:parameters></con:request></con:method></con:resource></con:interface><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="OfferPricePlan" type="rest" basePath="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://localhost:18080</con:endpoint></con:endpoints><con:resource name="offerPricePlan" path="/meveo/rest/api/offerPricePlan"><con:settings/><con:parameters/><con:method name="POST" method="POST"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>400</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:off="http://localhost/meveo/rest/api/offerPricePlan">off:Response</con:element></con:representation><con:request name="Missing required fields" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+    "offerId" : "",
+	"organizationId" : "MAIN_SELLER",
+    "taxId" : "",
+	"subscriptionProrata" : "true",
+	"terminationProrata" : "false",
+	"applyInAdvance" : "true",
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"billingPeriod" : "1234",
+	"recurringCharges" : [
+		{ 
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"minAge" : "5",
+			"maxAge" : "10",
+			"price" : "100"
+		}
+	],
+	"usageUnit" : "Mb",
+	"usageCharges" : [
+		{ 
+			"min" : "5",
+			"max" : "10",
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : "101"
+		}
+	],
+	"subscriptionFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	],
+	"terminationFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	]
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Ok" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+    "offerId" : "EXCH20102",
+	"organizationId" : "MAIN_SELLER",
+    "taxId" : "",
+	"subscriptionProrata" : "true",
+	"terminationProrata" : "false",
+	"applyInAdvance" : "true",
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"billingPeriod" : "1234",
+	"recurringCharges" : [
+		{ 
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"minAge" : "5",
+			"maxAge" : "10",
+			"price" : "100"
+		}
+	],
+	"usageUnit" : "Mb",
+	"usageCharges" : [
+		{ 
+			"min" : "5",
+			"max" : "10",
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : "101"
+		}
+	],
+	"subscriptionFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	],
+	"terminationFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	]
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Offer template code already exists" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:18080</con:endpoint><con:request>{
+    "offerId" : "EXCH20102-1",
+	"organizationId" : "MAIN_SELLER",
+    "taxId" : "TAX_19",
+	"subscriptionProrata" : "true",
+	"terminationProrata" : "false",
+	"applyInAdvance" : "true",
+	"param1" : "",
+	"param2" : "",
+	"param3" : "",
+	"billingPeriod" : "1234",
+	"recurringCharges" : [
+		{ 
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"minAge" : "5",
+			"maxAge" : "10",
+			"price" : "100"
+		}
+	],
+	"usageUnit" : "Mb",
+	"usageCharges" : [
+		{ 
+			"min" : "5",
+			"max" : "10",
+			"currencyCode" : "PHP",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : "101"
+		}
+	],
+	"subscriptionFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	],
+	"terminationFees" : [
+		{ 
+			"currencyCode" : "",
+			"startDate" : "",
+			"endDate" : "",
+			"price" : ""
+		}
+	]
+}</con:request><con:credentials><con:authType>Global HTTP Settings</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:properties/><con:wssContainer/></con:soapui-project>
