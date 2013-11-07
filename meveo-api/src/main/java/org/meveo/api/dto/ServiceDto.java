@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceDto extends BaseDto {
 
+	private static final long serialVersionUID = -6794700715161690227L;
 	private String serviceId;
 	private List<DescriptionDto> descriptions;
 

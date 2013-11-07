@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferDto extends BaseDto {
 
+	private static final long serialVersionUID = -137632696663739285L;
 	private String offerId;
 	private List<DescriptionDto> descriptions;
 	private List<String> services;

@@ -20,33 +20,48 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Named
 @LocalBean
-public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> {
+public class InvoiceSubCategoryCountryService extends
+		PersistenceService<InvoiceSubcategoryCountry> {
 
 	@SuppressWarnings("unchecked")
-	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId,
-			Long countryId) {
+	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
+			Long invoiceSubCategoryId, Long countryId) {
 		try {
-			QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
-			qb.addCriterionEntity("i.invoiceSubCategory.id", invoiceSubCategoryId);
+			QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
+					"i");
+			qb.addCriterionEntity("i.invoiceSubCategory.id",
+					invoiceSubCategoryId);
 			qb.addCriterionEntity("i.tradingCountry.id", countryId);
-			@SuppressWarnings("unchecked")
-			List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb.getQuery(
-					getEntityManager()).getResultList();
-			return InvoiceSubcategoryCountries.size() > 0 ? InvoiceSubcategoryCountries.get(0)
-					: null;
+
+			List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb
+					.getQuery(getEntityManager()).getResultList();
+			return InvoiceSubcategoryCountries.size() > 0 ? InvoiceSubcategoryCountries
+					.get(0) : null;
 		} catch (NoResultException ex) {
 			ex.printStackTrace();
 		}
 		return null;
 	}
 
+	public InvoiceSubcategoryCountry findByTaxId(EntityManager em, Tax tax) {
+		QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "a");
+		qb.addCriterionEntity("tax", tax);
+
+		Query query = qb.getQuery(em);
+		query.setMaxResults(1);
+
+		return (InvoiceSubcategoryCountry) query.getSingleResult();
+	}
 }

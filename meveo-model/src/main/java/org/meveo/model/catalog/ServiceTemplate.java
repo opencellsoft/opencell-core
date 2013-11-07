@@ -35,12 +35,12 @@ import org.meveo.model.billing.ServiceInstance;
 @Table(name = "CAT_SERVICE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
 public class ServiceTemplate extends BusinessEntity {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_RECCHARGE_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
-	private List<RecurringChargeTemplate> recurringCharges;
+	private List<RecurringChargeTemplate> recurringCharges = new ArrayList<RecurringChargeTemplate>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAT_SERV_ONECHARGE_S_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
@@ -64,7 +64,8 @@ public class ServiceTemplate extends BusinessEntity {
 		return recurringCharges;
 	}
 
-	public void setRecurringCharges(List<RecurringChargeTemplate> recurringCharges) {
+	public void setRecurringCharges(
+			List<RecurringChargeTemplate> recurringCharges) {
 		this.recurringCharges = recurringCharges;
 	}
 
@@ -72,7 +73,8 @@ public class ServiceTemplate extends BusinessEntity {
 		return subscriptionCharges;
 	}
 
-	public void setSubscriptionCharges(List<OneShotChargeTemplate> subscriptionCharges) {
+	public void setSubscriptionCharges(
+			List<OneShotChargeTemplate> subscriptionCharges) {
 		this.subscriptionCharges = subscriptionCharges;
 	}
 
@@ -80,7 +82,8 @@ public class ServiceTemplate extends BusinessEntity {
 		return terminationCharges;
 	}
 
-	public void setTerminationCharges(List<OneShotChargeTemplate> terminationCharges) {
+	public void setTerminationCharges(
+			List<OneShotChargeTemplate> terminationCharges) {
 		this.terminationCharges = terminationCharges;
 	}
 
@@ -96,7 +99,8 @@ public class ServiceTemplate extends BusinessEntity {
 		return serviceUsageCharges;
 	}
 
-	public void setServiceUsageCharges(List<ServiceUsageChargeTemplate> serviceUsageCharges) {
+	public void setServiceUsageCharges(
+			List<ServiceUsageChargeTemplate> serviceUsageCharges) {
 		this.serviceUsageCharges = serviceUsageCharges;
 	}
 

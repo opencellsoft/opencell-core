@@ -20,6 +20,7 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -35,14 +36,22 @@ import org.meveo.service.base.PersistenceService;
 @Named
 public class CalendarService extends PersistenceService<Calendar> {
 
+	public Calendar findByName(EntityManager em, String name) {
+		QueryBuilder qb = new QueryBuilder(Calendar.class, "c");
+		qb.addCriterion("name", "=", name, true);
+
+		return (Calendar) qb.getQuery(em).getSingleResult();
+	}
+
 	/**
 	 * @see org.meveo.service.catalog.local.CalendarServiceLocal#listChargeApplicationCalendars()
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listChargeApplicationCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.CHARGE_IMPUTATION).getQuery(
-						getEntityManager());
+		Query query = new QueryBuilder(Calendar.class, "c", null,
+				getCurrentProvider()).addCriterionEnum("type",
+				CalendarTypeEnum.CHARGE_IMPUTATION)
+				.getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
@@ -51,9 +60,9 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listDurationTermCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.DURATION_TERM).getQuery(
-						getEntityManager());
+		Query query = new QueryBuilder(Calendar.class, "c", null,
+				getCurrentProvider()).addCriterionEnum("type",
+				CalendarTypeEnum.DURATION_TERM).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
@@ -62,15 +71,17 @@ public class CalendarService extends PersistenceService<Calendar> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listBillingCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.BILLING).getQuery(getEntityManager());
+		Query query = new QueryBuilder(Calendar.class, "c", null,
+				getCurrentProvider()).addCriterionEnum("type",
+				CalendarTypeEnum.BILLING).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Calendar> listCounterCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("type", CalendarTypeEnum.COUNTER).getQuery(getEntityManager());
+		Query query = new QueryBuilder(Calendar.class, "c", null,
+				getCurrentProvider()).addCriterionEnum("type",
+				CalendarTypeEnum.COUNTER).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 

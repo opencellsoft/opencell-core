@@ -17,7 +17,9 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.service.base.PersistenceService;
 
@@ -28,7 +30,16 @@ import org.meveo.service.base.PersistenceService;
  * @created Dec 15, 2010
  * 
  */
-@Stateless @LocalBean
-public class InvoiceSubCategoryService extends PersistenceService<InvoiceSubCategory> {
+@Stateless
+@LocalBean
+public class InvoiceSubCategoryService extends
+		PersistenceService<InvoiceSubCategory> {
+
+	public InvoiceSubCategory findByCode(EntityManager em, String code) {
+		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
+		qb.addCriterion("code", "=", code, false);
+
+		return (InvoiceSubCategory) qb.getQuery(em).getSingleResult();
+	}
 
 }

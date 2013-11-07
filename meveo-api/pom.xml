@@ -13,7 +13,14 @@
 
 	<groupId>org.meveo</groupId>
 	<artifactId>meveo-api</artifactId>
-	<name>meveo-api</name>
+	<name>MEVEO API</name>
+
+	<repositories>
+		<repository>
+			<id>codehaus</id>
+			<url>http://repository.codehaus.org/org/codehaus</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<pluginManagement>
@@ -124,6 +131,12 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.2.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.8.5</version>
 		</dependency>
 
 	</dependencies>

@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrganizationDto extends BaseDto {
 
+	private static final long serialVersionUID = -1477234763625399418L;
 	private String organizationId;
 	private String name;
 	private String parentId;
