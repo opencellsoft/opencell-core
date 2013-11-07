@@ -26,7 +26,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -396,18 +395,6 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			serviceTemplate.getSubscriptionCharges().add(subscriptionTemplate);
 			serviceTemplate.getTerminationCharges().add(terminationTemplate);
 			serviceTemplateService.update(em, serviceTemplate, currentUser);
-
-			List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
-			serviceTemplates.add(serviceTemplate);
-			String offerTemplatePrefix = paramBean.getProperty(
-					"asg.api.offer.offer.prefix", "_OF_");
-			OfferTemplate offerTemplate = new OfferTemplate();
-			offerTemplate.setCode(offerTemplatePrefix + serviceOfferCodePrefix
-					+ servicePricePlanDto.getOrganizationId() + "_"
-					+ servicePricePlanDto.getServiceId());
-			offerTemplate.setServiceTemplates(serviceTemplates);
-			offerTemplateService.create(em, offerTemplate, currentUser,
-					provider);
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
