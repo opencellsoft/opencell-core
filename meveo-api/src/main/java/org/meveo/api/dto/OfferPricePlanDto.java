@@ -29,8 +29,8 @@ public class OfferPricePlanDto extends BaseDto {
 	private List<RecurringChargeDto> recurringCharges;
 	private String usageUnit;
 	private List<UsageChargeDto> usageCharges;
-	private SubscriptionFeeDto subscriptionFee;
-	private TerminationFeeDto terminationFee;
+	private List<SubscriptionFeeDto> subscriptionFees;
+	private List<TerminationFeeDto> terminationFees;
 
 	public String getOfferId() {
 		return offerId;
@@ -136,20 +136,20 @@ public class OfferPricePlanDto extends BaseDto {
 		this.usageCharges = usageCharges;
 	}
 
-	public SubscriptionFeeDto getSubscriptionFee() {
-		return subscriptionFee;
+	public List<SubscriptionFeeDto> getSubscriptionFees() {
+		return subscriptionFees;
 	}
 
-	public void setSubscriptionFee(SubscriptionFeeDto subscriptionFee) {
-		this.subscriptionFee = subscriptionFee;
+	public void setSubscriptionFees(List<SubscriptionFeeDto> subscriptionFees) {
+		this.subscriptionFees = subscriptionFees;
 	}
 
-	public TerminationFeeDto getTerminationFee() {
-		return terminationFee;
+	public List<TerminationFeeDto> getTerminationFees() {
+		return terminationFees;
 	}
 
-	public void setTerminationFee(TerminationFeeDto terminationFee) {
-		this.terminationFee = terminationFee;
+	public void setTerminationFees(List<TerminationFeeDto> terminationFees) {
+		this.terminationFees = terminationFees;
 	}
 
 }

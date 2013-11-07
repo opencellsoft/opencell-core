@@ -88,9 +88,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 	@Inject
 	private UsageChargeTemplateService usageChargeTemplateService;
 
-	@SuppressWarnings("rawtypes")
 	@Inject
-	private CounterTemplateService counterTemplateService;
+	private CounterTemplateService<CounterTemplate> counterTemplateService;
 
 	@Inject
 	private ServiceUsageChargeTemplateService serviceUsageChargeTemplateService;
@@ -101,7 +100,6 @@ public class ServicePricePlanServiceApi extends BaseApi {
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
-	@SuppressWarnings("unchecked")
 	public void create(ServicePricePlanDto servicePricePlanDto)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(servicePricePlanDto.getServiceId())
@@ -147,11 +145,11 @@ public class ServicePricePlanServiceApi extends BaseApi {
 						+ serviceTemplateCode + " already exists.");
 			}
 
-			ServiceTemplate chargedServiceTemplate = new ServiceTemplate();
-			chargedServiceTemplate.setCode(serviceTemplateCode);
+			ServiceTemplate serviceTemplate = new ServiceTemplate();
+			serviceTemplate.setCode(serviceTemplateCode);
 
-			chargedServiceTemplate.setActive(true);
-			serviceTemplateService.create(em, chargedServiceTemplate,
+			serviceTemplate.setActive(true);
+			serviceTemplateService.create(em, serviceTemplate,
 					currentUser, provider);
 
 			// Create a recurring charge with service descriptions and
@@ -221,15 +219,15 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			String subscriptionPointChargePrefix = paramBean.getProperty(
 					"asg.api.service.subscription.point.charge.prefix",
 					"_SO_SE_");
-			OneShotChargeTemplate subscriptionPointCharges = new OneShotChargeTemplate();
-			subscriptionPointCharges.setActive(true);
-			subscriptionPointCharges.setCode(subscriptionPointChargePrefix
+			OneShotChargeTemplate subscriptionTemplate = new OneShotChargeTemplate();
+			subscriptionTemplate.setActive(true);
+			subscriptionTemplate.setCode(subscriptionPointChargePrefix
 					+ servicePricePlanDto.getOrganizationId() + "_"
 					+ servicePricePlanDto.getServiceId());
-			subscriptionPointCharges.setInvoiceSubCategory(invoiceSubCategory);
-			subscriptionPointCharges
+			subscriptionTemplate.setInvoiceSubCategory(invoiceSubCategory);
+			subscriptionTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.SUBSCRIPTION);
-			oneShotChargeTemplateService.create(em, subscriptionPointCharges,
+			oneShotChargeTemplateService.create(em, subscriptionTemplate,
 					currentUser, provider);
 
 			if (servicePricePlanDto.getSubscriptionFees() != null
@@ -242,7 +240,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 									provider);
 
 					PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
-					pricePlanMatrix.setEventCode(subscriptionPointCharges
+					pricePlanMatrix.setEventCode(subscriptionTemplate
 							.getCode());
 					pricePlanMatrix.setAmountWithoutTax(subscriptionFeeDto
 							.getPrice());
@@ -269,15 +267,15 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			String terminationPointChargePrefix = paramBean.getProperty(
 					"asg.api.service.termination.point.charge.prefix",
 					"_TE_SE_");
-			OneShotChargeTemplate terminationPointCharges = new OneShotChargeTemplate();
-			terminationPointCharges.setActive(true);
-			terminationPointCharges.setCode(terminationPointChargePrefix
+			OneShotChargeTemplate terminationTemplate = new OneShotChargeTemplate();
+			terminationTemplate.setActive(true);
+			terminationTemplate.setCode(terminationPointChargePrefix
 					+ servicePricePlanDto.getOrganizationId() + "_"
 					+ servicePricePlanDto.getServiceId());
-			terminationPointCharges.setInvoiceSubCategory(invoiceSubCategory);
-			terminationPointCharges
+			terminationTemplate.setInvoiceSubCategory(invoiceSubCategory);
+			terminationTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.TERMINATION);
-			oneShotChargeTemplateService.create(em, terminationPointCharges,
+			oneShotChargeTemplateService.create(em, terminationTemplate,
 					currentUser, provider);
 
 			if (servicePricePlanDto.getTerminationFees() != null
@@ -290,7 +288,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 									provider);
 
 					PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
-					pricePlanMatrix.setEventCode(terminationPointCharges
+					pricePlanMatrix.setEventCode(terminationTemplate
 							.getCode());
 					pricePlanMatrix.setAmountWithoutTax(terminationFeeDto
 							.getPrice());
@@ -365,7 +363,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 						.setChargeTemplate(usageChargeTemplate);
 				serviceUsageChargeTemplate.setCounterTemplate(counterTemplate);
 				serviceUsageChargeTemplate
-						.setServiceTemplate(chargedServiceTemplate);
+						.setServiceTemplate(serviceTemplate);
 				serviceUsageChargeTemplateService.create(em,
 						serviceUsageChargeTemplate, currentUser, provider);
 
@@ -391,13 +389,13 @@ public class ServicePricePlanServiceApi extends BaseApi {
 						provider);
 			}
 
-			chargedServiceTemplate.getRecurringCharges().add(
+			serviceTemplate.getRecurringCharges().add(
 					recurringChargeTemplate);
-			chargedServiceTemplate.getSubscriptionCharges().add(
-					subscriptionPointCharges);
-			chargedServiceTemplate.getTerminationCharges().add(
-					terminationPointCharges);
-			serviceTemplateService.update(em, chargedServiceTemplate,
+			serviceTemplate.getSubscriptionCharges().add(
+					subscriptionTemplate);
+			serviceTemplate.getTerminationCharges().add(
+					terminationTemplate);
+			serviceTemplateService.update(em, serviceTemplate,
 					currentUser);
 		} else {
 			StringBuilder sb = new StringBuilder(
@@ -429,8 +427,10 @@ public class ServicePricePlanServiceApi extends BaseApi {
 		}
 	}
 
-	public void remove() throws MeveoApiException {
-
+	public void remove(Long providerId, Long userId, String serviceId,
+			String organizationId) throws MeveoApiException {
+		Provider provider = providerService.findById(providerId);
+		User currentUser = userService.findById(userId);
 	}
 
 }

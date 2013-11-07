@@ -56,14 +56,15 @@ public class ServicePricePlanWS {
 	}
 
 	@DELETE
-	@Path("/{offerId}")
+	@Path("/{serviceId}/{organizationId}")
 	public ActionStatus remove(@PathParam("serviceId") String serviceId,
 			@PathParam("organizationId") String organizationId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			/*servicePricePlanServiceApi.remove(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")), Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")), offerId);*/
+			servicePricePlanServiceApi.remove(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")), Long
+					.valueOf(paramBean.getProperty("asp.api.userId", "1")),
+					serviceId, organizationId);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
