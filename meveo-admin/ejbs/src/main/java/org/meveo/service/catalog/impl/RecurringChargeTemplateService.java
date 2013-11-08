@@ -17,14 +17,27 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.crm.Provider;
 
 /**
  * Charge Template service implementation.
  * 
  */
-@Stateless @LocalBean
-public class RecurringChargeTemplateService extends ChargeTemplateService<RecurringChargeTemplate> {
+@Stateless
+@LocalBean
+public class RecurringChargeTemplateService extends
+		ChargeTemplateService<RecurringChargeTemplate> {
+
+	public void removeByCode(EntityManager em, String code, Provider provider) {
+		Query query = em
+				.createQuery("DELETE RecurringChargeTemplate t WHERE t.code=:code AND t.provider=:provider");
+		query.setParameter("code", code);
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
 
 }

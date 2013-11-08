@@ -17,8 +17,11 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -27,6 +30,16 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 @LocalBean
-public class CounterTemplateService<P extends CounterTemplate> extends BusinessService<P> {
+public class CounterTemplateService<P extends CounterTemplate> extends
+		BusinessService<P> {
+
+	public void removeByPrefix(EntityManager em, String prefix,
+			Provider provider) {
+		Query query = em
+				.createQuery("DELETE CounterTemplate t WHERE t.code LIKE '"
+						+ prefix + "%' AND t.provider=:provider");
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
 
 }

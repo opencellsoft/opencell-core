@@ -15,22 +15,49 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
-import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.PriceCode;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.service.base.BusinessService;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
- *@author MBAREK
+ * @author MBAREK
  * 
  */
 
-@Stateless @LocalBean
-public class ServiceUsageChargeTemplateService extends PersistenceService<ServiceUsageChargeTemplate> {
+@Stateless
+@LocalBean
+public class ServiceUsageChargeTemplateService extends
+		PersistenceService<ServiceUsageChargeTemplate> {
+
+	public void removeByPrefix(EntityManager em, String prefix,
+			Provider provider) {
+		Query query = em
+				.createQuery("DELETE ServiceUsageChargeTemplate t WHERE t.chargeTemplate.code LIKE '"
+						+ prefix + "%' AND t.provider=:provider");
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ServiceUsageChargeTemplate> findByUsageChargeTemplate(
+			EntityManager em, UsageChargeTemplate usageChargeTemplate,
+			Provider provider) {
+		QueryBuilder qb = new QueryBuilder(ServiceUsageChargeTemplate.class,
+				"a");
+		qb.addCriterionEntity("chargeTemplate", usageChargeTemplate);
+		qb.addCriterionEntity("provider", provider);
+
+		return (List<ServiceUsageChargeTemplate>) qb.getQuery(em)
+				.getResultList();
+	}
 
 }
