@@ -51,6 +51,8 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.ServiceUsageChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -105,6 +107,9 @@ public class OfferPricePlanServiceApi extends BaseApi {
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
+	private static Logger log = LoggerFactory
+			.getLogger(OfferPricePlanServiceApi.class);
+
 	public void create(OfferPricePlanDto offerPricePlanDto)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(offerPricePlanDto.getOfferId())
@@ -135,10 +140,10 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			// Create a charged service for defined offer and organization.
 			// Service code is '_OF_[OrganizationId]_[OferId]'. Prefix '_OF_'
 			// must be settable in properties file.
-			String offerPricePlanPrefix = paramBean.getProperty(
+			String offerTemplatePrefix = paramBean.getProperty(
 					"asg.api.offer.offer.prefix", "_OF_");
 
-			String serviceTemplateCode = offerPricePlanPrefix
+			String serviceTemplateCode = offerTemplatePrefix
 					+ offerPricePlanDto.getOrganizationId() + "_"
 					+ offerPricePlanDto.getOfferId();
 
@@ -150,7 +155,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			}
 
 			ServiceTemplate serviceTemplate = new ServiceTemplate();
-			serviceTemplate.setCode(offerPricePlanPrefix
+			serviceTemplate.setCode(offerTemplatePrefix
 					+ offerPricePlanDto.getOrganizationId() + "_"
 					+ offerPricePlanDto.getOfferId());
 			serviceTemplate.setActive(true);
@@ -313,6 +318,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				}
 			}
 
+			List<ServiceUsageChargeTemplate> serviceUsageChargeTemplates = new ArrayList<ServiceUsageChargeTemplate>();
 			for (UsageChargeDto usageChargeDto : offerPricePlanDto
 					.getUsageCharges()) {
 				// Create a counter for each min range values used as
@@ -321,7 +327,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				// Min]' ('_SE_' must be settable). Counters are ordered by
 				// values.
 				CounterTemplate counterTemplate = new CounterTemplate();
-				counterTemplate.setCode(offerPricePlanPrefix
+				counterTemplate.setCode(offerTemplatePrefix
 						+ offerPricePlanDto.getOrganizationId() + "_"
 						+ offerPricePlanDto.getOfferId() + "_"
 						+ usageChargeDto.getMin());
@@ -369,6 +375,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				serviceUsageChargeTemplate.setServiceTemplate(serviceTemplate);
 				serviceUsageChargeTemplateService.create(em,
 						serviceUsageChargeTemplate, currentUser, provider);
+				serviceUsageChargeTemplates.add(serviceUsageChargeTemplate);
 
 				TradingCurrency tradingCurrency = tradingCurrencyService
 						.findByTradingCurrencyCode(
@@ -395,14 +402,12 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			serviceTemplate.getRecurringCharges().add(recurringChargeTemplate);
 			serviceTemplate.getSubscriptionCharges().add(subscriptionTemplate);
 			serviceTemplate.getTerminationCharges().add(terminationTemplate);
+			serviceTemplate.setServiceUsageCharges(serviceUsageChargeTemplates);
 			serviceTemplateService.update(em, serviceTemplate, currentUser);
 
 			List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
 			serviceTemplates.add(serviceTemplate);
-			String offerTemplatePrefix = paramBean.getProperty(
-					"asg.api.offer.offer.prefix", "_OF_");
 			String offerTemplateCode = offerTemplatePrefix
-					+ offerTemplatePrefix
 					+ offerPricePlanDto.getOrganizationId() + "_"
 					+ offerPricePlanDto.getOfferId();
 			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
@@ -440,4 +445,139 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			throw new MeveoApiException(sb.toString());
 		}
 	}
+
+	public void remove(String offerId, String organizationId, Long userId,
+			Long providerId) throws MeveoApiException {
+		Provider provider = providerService.findById(providerId);
+		User currentUser = userService.findById(userId);
+
+		String offerCodePrefix = paramBean.getProperty(
+				"asg.api.offer.offer.prefix", "_OF_");
+		String offerTemplateCode = offerCodePrefix + organizationId + "_"
+				+ offerId;
+
+		try {
+			ServiceTemplate serviceTemplate = serviceTemplateService
+					.findByCode(em, offerTemplateCode, provider);
+
+			if (serviceTemplate != null) {
+				serviceTemplate.setRecurringCharges(null);
+				serviceTemplate.setSubscriptionCharges(null);
+				serviceTemplate.setTerminationCharges(null);
+				serviceTemplate.setServiceUsageCharges(null);
+				serviceTemplateService.update(em, serviceTemplate, currentUser);
+			}
+
+			// delete usageCharge link
+			String usageChargeTemplatePrefix = paramBean.getProperty(
+					"asg.api.offer.usage.charged.prefix", "_US_OF_");
+			String usageChargeCode = usageChargeTemplatePrefix + organizationId
+					+ "_" + offerId;
+
+			// delete usage charge price plans
+			pricePlanMatrixService
+					.removeByPrefix(em, usageChargeCode, provider);
+
+			// delete usageCharge counter link
+			List<UsageChargeTemplate> usageChargeTemplates = usageChargeTemplateService
+					.findByPrefix(em, usageChargeCode, provider);
+			if (usageChargeTemplates != null) {
+				for (UsageChargeTemplate usageChargeTemplate : usageChargeTemplates) {
+					// getservice usage charge
+					List<ServiceUsageChargeTemplate> serviceUsageChargeTemplates = serviceUsageChargeTemplateService
+							.findByUsageChargeTemplate(em, usageChargeTemplate,
+									provider);
+					if (serviceUsageChargeTemplates != null) {
+						for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceUsageChargeTemplates) {
+							serviceUsageChargeTemplateService.remove(em,
+									serviceUsageChargeTemplate);
+						}
+					}
+
+					usageChargeTemplateService.remove(em, usageChargeTemplate);
+				}
+			}
+
+			counterTemplateService.removeByPrefix(em, offerTemplateCode,
+					provider);
+
+			// delete subscription fee
+			String subscriptionPointChargePrefix = paramBean
+					.getProperty(
+							"asg.api.offer.subscription.point.charge.prefix",
+							"_SO_OF_");
+			String subscriptionTemplateCode = subscriptionPointChargePrefix
+					+ organizationId + "_" + offerId;
+
+			// delete price plan
+			pricePlanMatrixService.removeByCode(em, subscriptionTemplateCode,
+					provider);
+
+			OneShotChargeTemplate subscriptionTemplate = oneShotChargeTemplateService
+					.findByCode(em, subscriptionTemplateCode, provider);
+			if (subscriptionTemplate != null) {
+				oneShotChargeTemplateService.remove(em, subscriptionTemplate);
+			}
+
+			// delete termination fee
+			String terminationPointChargePrefix = paramBean.getProperty(
+					"asg.api.offer.termination.point.charge.prefix", "_TE_OF_");
+			String terminationTemplateCode = terminationPointChargePrefix
+					+ organizationId + "_" + offerId;
+
+			// delete price plan
+			pricePlanMatrixService.removeByCode(em, terminationTemplateCode,
+					provider);
+
+			OneShotChargeTemplate terminationTemplate = oneShotChargeTemplateService
+					.findByCode(em, terminationTemplateCode, provider);
+			if (terminationTemplate != null) {
+				oneShotChargeTemplateService.remove(em, terminationTemplate);
+			}
+
+			// delete recurring charge
+			String recurringChargePrefix = paramBean.getProperty(
+					"asg.api.offer.recurring.prefix", "_RE_OF_");
+			String recurringChargeCode = recurringChargePrefix + organizationId
+					+ "_" + offerId;
+
+			// delete price plan
+			pricePlanMatrixService.removeByCode(em, recurringChargeCode,
+					provider);
+			RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
+					.findByCode(em, recurringChargeCode, provider);
+			if (recurringChargeTemplate != null) {
+				recurringChargeTemplateService.remove(em,
+						recurringChargeTemplate);
+			}
+
+			// remove service template
+			if (serviceTemplate != null) {
+				List<OfferTemplate> offerTemplates = offerTemplateService
+						.findByServiceTemplate(em, serviceTemplate, provider);
+				if (offerTemplates != null) {
+					for (OfferTemplate offerTemplate : offerTemplates) {
+						offerTemplate.getServiceTemplates().remove(
+								serviceTemplate);
+						offerTemplateService.update(em, offerTemplate,
+								currentUser);
+					}
+				}
+				serviceTemplateService.remove(em, serviceTemplate);
+			}
+
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
+					offerTemplateCode, provider);
+			if (offerTemplate != null) {
+				offerTemplateService.remove(em, offerTemplate);
+			}
+		} catch (Exception e) {
+			log.error("Error deleting offer price plan with code={}: {}",
+					offerTemplateCode, e.getMessage());
+			throw new MeveoApiException(
+					"Failed deleting offerPricePlan with code="
+							+ offerTemplateCode + ".");
+		}
+	}
+
 }

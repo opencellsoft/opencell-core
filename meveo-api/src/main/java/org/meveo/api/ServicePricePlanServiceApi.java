@@ -433,8 +433,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 		}
 	}
 
-	public void remove(Long userId, Long providerId, String serviceId,
-			String organizationId) throws MeveoApiException {
+	public void remove(String serviceId, String organizationId, Long userId,
+			Long providerId) throws MeveoApiException {
 		Provider provider = providerService.findById(providerId);
 		User currentUser = userService.findById(userId);
 
@@ -444,39 +444,19 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				+ "_" + serviceId;
 
 		try {
-			// delete usageCharge link
-			String usageChargeTemplatePrefix = paramBean.getProperty(
-					"asg.api.service.usage.charged.prefix", "_US_SE_");
-			String usageChargeCode = usageChargeTemplatePrefix + organizationId
-					+ "_" + serviceId;
+			// remove service template
+			ServiceTemplate serviceTemplate = serviceTemplateService
+					.findByCode(em, serviceTemplateCode, provider);
 
-			// delete usage charge price plans
-			pricePlanMatrixService
-					.removeByPrefix(em, usageChargeCode, provider);
-
-			// delete usageCharge counter link
-			List<UsageChargeTemplate> usageChargeTemplates = usageChargeTemplateService
-					.findByPrefix(em, usageChargeCode, provider);
-			if (usageChargeTemplates != null) {
-				for (UsageChargeTemplate usageChargeTemplate : usageChargeTemplates) {
-					// getservice usage charge
-					List<ServiceUsageChargeTemplate> serviceUsageChargeTemplates = serviceUsageChargeTemplateService
-							.findByUsageChargeTemplate(em, usageChargeTemplate,
-									provider);
-					if (serviceUsageChargeTemplates != null) {
-						for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceUsageChargeTemplates) {
-							serviceUsageChargeTemplateService.remove(em,
-									serviceUsageChargeTemplate);
-						}
-					}
-
-					usageChargeTemplateService.remove(em, usageChargeTemplate);
-				}
+			if (serviceTemplate != null) {
+				serviceTemplate.setRecurringCharges(null);
+				serviceTemplate.setSubscriptionCharges(null);
+				serviceTemplate.setTerminationCharges(null);
+				serviceTemplate.setServiceUsageCharges(null);
+				serviceTemplateService.update(em, serviceTemplate, currentUser);
 			}
 
-			counterTemplateService
-					.removeByPrefix(em, usageChargeCode, provider);
-
+			// delete usageCharge link
 			// delete subscription fee
 			String subscriptionPointChargePrefix = paramBean.getProperty(
 					"asg.api.service.subscription.point.charge.prefix",
@@ -511,6 +491,38 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				oneShotChargeTemplateService.remove(em, terminationTemplate);
 			}
 
+			String usageChargeTemplatePrefix = paramBean.getProperty(
+					"asg.api.service.usage.charged.prefix", "_US_SE_");
+			String usageChargeCode = usageChargeTemplatePrefix + organizationId
+					+ "_" + serviceId;
+
+			// delete usage charge price plans
+			pricePlanMatrixService
+					.removeByPrefix(em, usageChargeCode, provider);
+
+			// delete usageCharge counter link
+			List<UsageChargeTemplate> usageChargeTemplates = usageChargeTemplateService
+					.findByPrefix(em, usageChargeCode, provider);
+			if (usageChargeTemplates != null) {
+				for (UsageChargeTemplate usageChargeTemplate : usageChargeTemplates) {
+					// getservice usage charge
+					List<ServiceUsageChargeTemplate> serviceUsageChargeTemplates = serviceUsageChargeTemplateService
+							.findByUsageChargeTemplate(em, usageChargeTemplate,
+									provider);
+					if (serviceUsageChargeTemplates != null) {
+						for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceUsageChargeTemplates) {
+							serviceUsageChargeTemplateService.remove(em,
+									serviceUsageChargeTemplate);
+						}
+					}
+
+					usageChargeTemplateService.remove(em, usageChargeTemplate);
+				}
+			}
+
+			counterTemplateService
+					.removeByPrefix(em, serviceTemplateCode, provider);
+
 			// delete recurring charge
 			String recurringChargePrefix = paramBean.getProperty(
 					"asg.api.service.recurring.prefix", "_RE_SE_");
@@ -520,16 +532,13 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, recurringChargeCode,
 					provider);
+			
 			RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
 					.findByCode(em, recurringChargeCode, provider);
 			if (recurringChargeTemplate != null) {
 				recurringChargeTemplateService.remove(em,
 						recurringChargeTemplate);
 			}
-
-			// remove service template
-			ServiceTemplate serviceTemplate = serviceTemplateService
-					.findByCode(em, serviceTemplateCode, provider);
 
 			if (serviceTemplate != null) {
 				List<OfferTemplate> offerTemplates = offerTemplateService
@@ -552,4 +561,5 @@ public class ServicePricePlanServiceApi extends BaseApi {
 							+ serviceTemplateCode + ".");
 		}
 	}
+
 }

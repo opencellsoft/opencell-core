@@ -89,7 +89,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 	public void removeByCode(EntityManager em, String code, Provider provider) {
 		Query query = em
 				.createQuery("DELETE PricePlanMatrix m WHERE m.eventCode=:code AND m.provider=:provider");
-		query.setParameter("code", "'" + code + "'");
+		query.setParameter("code", code);
 		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}

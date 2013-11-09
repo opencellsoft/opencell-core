@@ -19,6 +19,8 @@ public class ActionStatus {
 	@Enumerated(EnumType.STRING)
 	private ActionStatusEnum status;
 
+	private int errorCode;
+
 	@XmlElement(required = true)
 	private String message;
 
@@ -44,5 +46,13 @@ public class ActionStatus {
 
 	public void setStatus(ActionStatusEnum status) {
 		this.status = status;
+	}
+
+	public int getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(int errorCode) {
+		this.errorCode = errorCode;
 	}
 }

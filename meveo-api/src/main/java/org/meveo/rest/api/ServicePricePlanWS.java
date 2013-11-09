@@ -61,10 +61,10 @@ public class ServicePricePlanWS {
 			@PathParam("organizationId") String organizationId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			servicePricePlanServiceApi.remove(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")), Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")), serviceId,
-					organizationId);
+			servicePricePlanServiceApi.remove(serviceId, organizationId, Long
+					.valueOf(paramBean.getProperty("asp.api.userId", "1")),
+					Long.valueOf(paramBean.getProperty("asp.api.providerId",
+							"1")));
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -72,4 +72,5 @@ public class ServicePricePlanWS {
 
 		return result;
 	}
+
 }
