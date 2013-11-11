@@ -31,6 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -44,6 +45,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
@@ -51,6 +53,9 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
@@ -80,6 +85,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	private void init() {
 		str_tooPerceived = resourceMessages.getString("str_tooPerceived");
 	}
+	
+	public BigDecimal getRatedAmount(Provider provider,Seller seller, Customer customer,
+	CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount,
+	Date startDate, Date endDate, boolean amountWithTax){
+		BigDecimal result=BigDecimal.ZERO;
+		return result;
+	}
+
 
 	public void usageWalletOperation(Subscription subscription, Date usageDate,
 			BigDecimal quantity, String param1, String param2, String param3) {
