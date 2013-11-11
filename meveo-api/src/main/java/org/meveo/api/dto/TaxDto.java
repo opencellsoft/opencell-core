@@ -15,16 +15,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaxDto extends BaseDto {
 
+	private static final long serialVersionUID = 5184602572648722134L;
+
 	@XmlElement(required = true)
 	private String taxId;
-	
+
 	private String name;
-	
+
 	@XmlElement(required = true)
 	private List<CountryTaxDto> countryTaxes;
-	
+
 	public TaxDto() {
-		
+
 	}
 
 	public String getTaxId() {

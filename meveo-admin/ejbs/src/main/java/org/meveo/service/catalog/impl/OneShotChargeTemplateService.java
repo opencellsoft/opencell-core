@@ -19,18 +19,21 @@ import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.crm.Provider;
 
 /**
  * Charge Template service implementation.
  */
 @Stateless
 @LocalBean
-public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate> {
+public class OneShotChargeTemplateService extends
+		ChargeTemplateService<OneShotChargeTemplate> {
 
 	/**
 	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getTerminationChargeTemplates()
@@ -38,9 +41,11 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getTerminationChargeTemplates() {
 
-		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.TERMINATION).getQuery(getEntityManager());
+		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null,
+				getCurrentProvider()).addCriterionEnum(
+				"oneShotChargeTemplateType",
+				OneShotChargeTemplateTypeEnum.TERMINATION).getQuery(
+				getEntityManager());
 		return query.getResultList();
 	}
 
@@ -50,10 +55,20 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates() {
 
-		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null, getCurrentProvider())
-				.addCriterionEnum("oneShotChargeTemplateType",
-						OneShotChargeTemplateTypeEnum.SUBSCRIPTION).getQuery(getEntityManager());
+		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null,
+				getCurrentProvider()).addCriterionEnum(
+				"oneShotChargeTemplateType",
+				OneShotChargeTemplateTypeEnum.SUBSCRIPTION).getQuery(
+				getEntityManager());
 		return query.getResultList();
+	}
+
+	public void removeByCode(EntityManager em, String code, Provider provider) {
+		Query query = em
+				.createQuery("DELETE OneShotChargeTemplate t WHERE t.code=:code AND t.provider=:provider");
+		query.setParameter("code", code);
+		query.setParameter("provider", provider);
+		query.executeUpdate();
 	}
 
 }

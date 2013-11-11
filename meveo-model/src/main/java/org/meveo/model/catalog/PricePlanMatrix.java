@@ -41,8 +41,8 @@ import org.meveo.model.billing.TradingCurrency;
 public class PricePlanMatrix extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "EVENT_CODE", length = 20, nullable = false)
-	@Size(min = 1, max = 20)
+	@Column(name = "EVENT_CODE", length = 100, nullable = false)
+	@Size(min = 1, max = 100)
 	private String eventCode;
 
 	@Column(name = "START_SUBSCRIPTION_DATE")

@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Oct 16, 2013
  **/
-@XmlRootElement(name = "serviceDescription")
+@XmlRootElement(name = "description")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceDescriptionDto {
+public class DescriptionDto {
 	
 	private String languageCode;
 	private String description;

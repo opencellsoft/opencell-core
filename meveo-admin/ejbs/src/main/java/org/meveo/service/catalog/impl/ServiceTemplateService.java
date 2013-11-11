@@ -17,8 +17,11 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -28,5 +31,13 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 @LocalBean
 public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
+
+	public void removeByCode(EntityManager em, String code, Provider provider) {
+		Query query = em
+				.createQuery("DELETE ServiceTemplate t WHERE t.code=:code AND t.provider=:provider");
+		query.setParameter("code", code);
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
 
 }

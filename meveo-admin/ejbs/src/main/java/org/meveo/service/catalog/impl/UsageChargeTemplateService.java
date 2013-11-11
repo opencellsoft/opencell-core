@@ -15,12 +15,16 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.UsageRatingService;
@@ -29,25 +33,25 @@ import org.meveo.service.billing.impl.UsageRatingService;
  * Charge Template service implementation.
  * 
  */
-@Stateless @LocalBean
-public class UsageChargeTemplateService extends ChargeTemplateService<UsageChargeTemplate> {
+@Stateless
+@LocalBean
+public class UsageChargeTemplateService extends
+		ChargeTemplateService<UsageChargeTemplate> {
 
 	@EJB
 	UsageRatingService usageRatingService;
-	
+
 	public void create(UsageChargeTemplate e) {
 		super.create(e);
 		usageRatingService.updateTemplateCache(e);
 	}
-	
-	
-	public void create(UsageChargeTemplate e,User creator) {
+
+	public void create(UsageChargeTemplate e, User creator) {
 		super.create(e, creator);
 		usageRatingService.updateTemplateCache(e);
 	}
 
-	
-	public void create(UsageChargeTemplate e,User creator,Provider provider) {
+	public void create(UsageChargeTemplate e, User creator, Provider provider) {
 		super.create(e, creator, provider);
 		usageRatingService.updateTemplateCache(e);
 	}
@@ -56,11 +60,19 @@ public class UsageChargeTemplateService extends ChargeTemplateService<UsageCharg
 		super.update(e);
 		usageRatingService.updateTemplateCache(e);
 	}
-	
-	public void update(UsageChargeTemplate e,User updater) {
-		super.update(e,updater);
+
+	public void update(UsageChargeTemplate e, User updater) {
+		super.update(e, updater);
 		usageRatingService.updateTemplateCache(e);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public List<UsageChargeTemplate> findByPrefix(EntityManager em,
+			String usageChargePrefix, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(UsageChargeTemplate.class, "a");
+		qb.like("code", usageChargePrefix, 1, true);
+
+		return (List<UsageChargeTemplate>) qb.getQuery(em).getResultList();
+	}
 
 }

@@ -19,6 +19,8 @@ import java.util.Set;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -26,15 +28,15 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.RatingService;
 
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> {
-
 
 	public void create(PricePlanMatrix e) {
 		super.create(e);
 		RatingService.setPricePlanDirty();
 	}
-	
+
 	public void update(PricePlanMatrix e) {
 		super.update(e);
 		RatingService.setPricePlanDirty();
@@ -49,22 +51,22 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		super.disable(id);
 		RatingService.setPricePlanDirty();
 	}
-	
+
 	public void remove(PricePlanMatrix e) {
 		super.remove(e);
 		RatingService.setPricePlanDirty();
 	}
-	
+
 	public void remove(Set<Long> ids) {
 		super.remove(ids);
 		RatingService.setPricePlanDirty();
 	}
-	
+
 	public void update(PricePlanMatrix e, User updater) {
 		super.update(e, updater);
 		RatingService.setPricePlanDirty();
 	}
-	
+
 	public void create(PricePlanMatrix e, User creator) {
 		super.create(e, creator);
 		RatingService.setPricePlanDirty();
@@ -74,4 +76,22 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		super.create(e, creator, provider);
 		RatingService.setPricePlanDirty();
 	}
+
+	public void removeByPrefix(EntityManager em, String prefix,
+			Provider provider) {
+		Query query = em
+				.createQuery("DELETE PricePlanMatrix m WHERE m.eventCode LIKE '"
+						+ prefix + "%' AND m.provider=:provider");
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
+
+	public void removeByCode(EntityManager em, String code, Provider provider) {
+		Query query = em
+				.createQuery("DELETE PricePlanMatrix m WHERE m.eventCode=:code AND m.provider=:provider");
+		query.setParameter("code", code);
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
+
 }

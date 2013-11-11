@@ -21,11 +21,14 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
@@ -38,8 +41,9 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
-@Stateless @LocalBean
-public class SubscriptionService extends BusinessService<Subscription>  {
+@Stateless
+@LocalBean
+public class SubscriptionService extends BusinessService<Subscription> {
 
 	@EJB
 	private UserAccountService userAccountService;
@@ -50,12 +54,9 @@ public class SubscriptionService extends BusinessService<Subscription>  {
 	@EJB
 	private OfferTemplateService offerTemplateService;
 
-
 	public void updateSubscription(Subscription subscription, User updater) {
 		update(subscription, updater);
 	}
-
-
 
 	public void terminateSubscription(Subscription subscription,
 			Date terminationDate, boolean applyAgreement,
@@ -75,8 +76,8 @@ public class SubscriptionService extends BusinessService<Subscription>  {
 		if (terminationReason == null) {
 			throw new BusinessException("terminationReason is null");
 		}
-		terminateSubscription(subscription, terminationDate,
-				terminationReason, terminationReason.isApplyAgreement(),
+		terminateSubscription(subscription, terminationDate, terminationReason,
+				terminationReason.isApplyAgreement(),
 				terminationReason.isApplyReimbursment(),
 				terminationReason.isApplyTerminationCharges(), user);
 
@@ -89,14 +90,14 @@ public class SubscriptionService extends BusinessService<Subscription>  {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		/*List<ServiceInstance> serviceInstances = subscription
-				.getServiceInstances();
-		for (ServiceInstance serviceInstance : serviceInstances) {
-			if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
-				serviceInstanceService.serviceCancellation(serviceInstance,
-						terminationDate, updater);
-			}
-		}*/
+		/*
+		 * List<ServiceInstance> serviceInstances = subscription
+		 * .getServiceInstances(); for (ServiceInstance serviceInstance :
+		 * serviceInstances) { if
+		 * (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus())) {
+		 * serviceInstanceService.serviceCancellation(serviceInstance,
+		 * terminationDate, updater); } }
+		 */
 		subscription.setTerminationDate(terminationDate);
 		subscription.setStatus(SubscriptionStatusEnum.CANCELED);
 		subscription.setStatusDate(new Date());
@@ -164,12 +165,12 @@ public class SubscriptionService extends BusinessService<Subscription>  {
 	}
 
 	public void subscriptionOffer(String subscriptionCode, String offerCode,
-			Date subscriptionDate, User updater,Provider provider)
+			Date subscriptionDate, User updater, Provider provider)
 			throws IncorrectSusbcriptionException, BusinessException {
 		if (subscriptionDate == null) {
 			subscriptionDate = new Date();
 		}
-		Subscription subscription = findByCode(subscriptionCode,provider);
+		Subscription subscription = findByCode(subscriptionCode, provider);
 		if (subscription == null) {
 			throw new IncorrectSusbcriptionException(
 					"subscription does not exist. code=" + subscriptionCode);
@@ -184,7 +185,8 @@ public class SubscriptionService extends BusinessService<Subscription>  {
 					"subscription has already an offer. code="
 							+ subscriptionCode);
 		}
-		OfferTemplate offer = offerTemplateService.findByCode(offerCode,provider);
+		OfferTemplate offer = offerTemplateService.findByCode(offerCode,
+				provider);
 		if (offer == null) {
 			throw new BusinessException("offer does not exist. code="
 					+ offerCode);
@@ -206,7 +208,7 @@ public class SubscriptionService extends BusinessService<Subscription>  {
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
-		
+
 		List<ServiceInstance> serviceInstances = subscription
 				.getServiceInstances();
 		for (ServiceInstance serviceInstance : serviceInstances) {
@@ -247,6 +249,21 @@ public class SubscriptionService extends BusinessService<Subscription>  {
 
 		return false;
 
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Subscription> findByOfferTemplate(EntityManager em,
+			OfferTemplate offerTemplate, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
+
+		try {
+			qb.addCriterionEntity("provider", provider);
+			qb.addCriterionEntity("offer", offerTemplate);
+
+			return (List<Subscription>) qb.getQuery(em).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }
