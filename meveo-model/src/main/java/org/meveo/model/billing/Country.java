@@ -32,7 +32,7 @@ import org.meveo.model.admin.Currency;
 public class Country extends ProviderlessEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "COUNTRY_CODE", length = 2)
+	@Column(name = "COUNTRY_CODE", length = 10)
 	private String countryCode;
 
 	@Column(name = "DESCRIPTION_EN", length = 100)
