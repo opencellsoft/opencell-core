@@ -98,22 +98,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			BigDecimal quantity, String param1, String param2, String param3) {
 
 	}
-
-	public void oneShotWalletOperation(Subscription subscription,
-			OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate,
-			User creator) throws BusinessException {
-
-		if (chargeInstance == null) {
-			throw new IncorrectChargeInstanceException("charge instance is null");
-		}
-
-		if (applicationDate == null) {
-			applicationDate = new Date();
-		}
-
-		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={},quantity={},"
-				+ "applicationDate={},chargeInstance.getId={}", subscription.getId(), quantity,
-				applicationDate, chargeInstance.getId());
+	
+	public WalletOperation rateOneShotApplication(Subscription subscription,
+			OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate) throws BusinessException {
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 		if (chargeTemplate == null) {
 			throw new IncorrectChargeTemplateException(
@@ -164,7 +151,27 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity == null ? null : new BigDecimal(quantity), currency, countryId,
 				tax.getPercent(), null, null, invoiceSubCategory, chargeInstance.getCriteria1(),
 				chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), null, null, null);
+		return chargeApplication;
+	}
 
+	public void oneShotWalletOperation(Subscription subscription,
+			OneShotChargeInstance chargeInstance, Integer quantity, Date applicationDate,
+			User creator) throws BusinessException {
+
+		if (chargeInstance == null) {
+			throw new IncorrectChargeInstanceException("charge instance is null");
+		}
+
+		if (applicationDate == null) {
+			applicationDate = new Date();
+		}
+
+		log.debug("WalletOperationService.oneShotWalletOperation subscriptionCode={},quantity={},"
+				+ "applicationDate={},chargeInstance.getId={}", subscription.getId(), quantity,
+				applicationDate, chargeInstance.getId());
+		WalletOperation chargeApplication = rateOneShotApplication(subscription, chargeInstance, quantity, applicationDate);
+		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
+		
 		create(chargeApplication, creator, chargeTemplate.getProvider());
 		OneShotChargeTemplate oneShotChargeTemplate = null;
 		if (chargeTemplate instanceof OneShotChargeTemplate) {
@@ -256,26 +263,22 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		create(chargeApplication, creator, chargeTemplate.getProvider());
 	}
-
-	public void chargeSubscription(RecurringChargeInstance chargeInstance, User creator)
-			throws BusinessException {
-
-		if (chargeInstance == null) {
-			throw new IncorrectChargeInstanceException("charge instance is null");
-		}
-
-		log.debug(
-				"ChargeApplicationService.chargeSubscription subscriptionCode={},chargeCode={},quantity={},"
-						+ "applicationDate={},chargeInstance.getId={}",
-				new Object[] { chargeInstance.getServiceInstance().getSubscription().getCode(),
-						chargeInstance.getCode(),
-						chargeInstance.getServiceInstance().getQuantity(),
-						chargeInstance.getSubscriptionDate(), chargeInstance.getId() });
-
+	
+	
+   public Date getNextApplicationDate(RecurringChargeInstance chargeInstance){
 		Date applicationDate = chargeInstance.getSubscriptionDate();
 		applicationDate = DateUtils.parseDateWithPattern(chargeInstance.getSubscriptionDate(),
 				"dd/MM/yyyy");
-
+		chargeInstance.setChargeDate(applicationDate);
+		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
+				.getRecurringChargeTemplate();
+		Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(
+				applicationDate);
+		nextapplicationDate = DateUtils.parseDateWithPattern(nextapplicationDate, "dd/MM/yyyy");
+		return nextapplicationDate;
+	}
+	
+   public Date getNextDurationDate(RecurringChargeInstance chargeInstance) throws BusinessException {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
 				.getRecurringChargeTemplate();
 		if (recurringChargeTemplate.getCalendar() == null) {
@@ -290,17 +293,22 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		try {
 			durationTermCalendar = serviceTemplate.getDurationTermCalendar();
 			nextDurationDate = durationTermCalendar != null ? durationTermCalendar
-					.nextCalendarDate(applicationDate) : null;
+					.nextCalendarDate(chargeInstance.getChargeDate()) : null;
 			log.debug("nextDurationDate=" + nextDurationDate);
 		} catch (Exception e) {
 			log.info("Cannot find duration term calendar for serviceTemplate.id={}",
 					serviceTemplate.getId());
 		}
-		Date nextapplicationDate = recurringChargeTemplate.getCalendar().nextCalendarDate(
-				applicationDate);
-		nextapplicationDate = DateUtils.parseDateWithPattern(nextapplicationDate, "dd/MM/yyyy");
-		chargeInstance.setChargeDate(applicationDate);
-		if (recurringChargeTemplate.getApplyInAdvance()) {
+		return nextDurationDate;
+   }
+	
+	public WalletOperation rateSubscription(RecurringChargeInstance chargeInstance,Date nextapplicationDate)
+			throws BusinessException {
+			WalletOperation result= null;
+			Date applicationDate=chargeInstance.getChargeDate();
+
+			RecurringChargeTemplate recurringChargeTemplate = chargeInstance
+					.getRecurringChargeTemplate();
 
 			Date previousapplicationDate = recurringChargeTemplate.getCalendar()
 					.previousCalendarDate(applicationDate);
@@ -379,7 +387,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			if (!recurringChargeTemplate.getApplyInAdvance()) {
 				applicationDate = nextapplicationDate;
 			}
-			WalletOperation chargeApplication = chargeApplicationRatingService
+			result = chargeApplicationRatingService
 					.rateChargeApplication(chargeInstance.getCode(), chargeInstance
 							.getServiceInstance().getSubscription(), chargeInstance,
 							ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate,
@@ -390,7 +398,31 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 									.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance
 									.getCriteria3(), applicationDate, DateUtils.addDaysToDate(
 									nextapplicationDate, -1), null);
+			return result;
+	}
+	
 
+	public void chargeSubscription(RecurringChargeInstance chargeInstance, User creator)
+			throws BusinessException {
+
+		if (chargeInstance == null) {
+			throw new IncorrectChargeInstanceException("charge instance is null");
+		}
+
+		log.debug(
+				"ChargeApplicationService.chargeSubscription subscriptionCode={},chargeCode={},quantity={},"
+						+ "applicationDate={},chargeInstance.getId={}",
+				new Object[] { chargeInstance.getServiceInstance().getSubscription().getCode(),
+						chargeInstance.getCode(),
+						chargeInstance.getServiceInstance().getQuantity(),
+						chargeInstance.getSubscriptionDate(), chargeInstance.getId() });
+		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
+				.getRecurringChargeTemplate();
+		Date nextapplicationDate= getNextApplicationDate(chargeInstance);
+		Date nextDurationDate= getNextDurationDate(chargeInstance);
+		
+		if (recurringChargeTemplate.getApplyInAdvance()) {
+		    WalletOperation chargeApplication=rateSubscription(chargeInstance,nextapplicationDate);
 			create(chargeApplication, creator, chargeInstance.getProvider());
 
 			chargeInstance.setNextChargeDate(nextapplicationDate);
@@ -398,7 +430,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			// If there is a durationTermCalendar then we apply all
 			// necessary
 			// missing periods
-
 			if (nextDurationDate != null
 					&& nextDurationDate.getTime() > nextapplicationDate.getTime()) {
 				applyReccuringCharge(chargeInstance, false, recurringChargeTemplate, creator);
