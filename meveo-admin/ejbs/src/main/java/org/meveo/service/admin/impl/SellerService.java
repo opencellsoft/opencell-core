@@ -19,8 +19,10 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -55,5 +57,18 @@ public class SellerService extends PersistenceService<Seller> {
 		}
 
 		return (Seller) query.getResultList().get(0);
+	}
+
+	public boolean hasChild(EntityManager em, Seller seller, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(Seller.class, "s");
+		qb.addCriterionEntity("provider", provider);
+		qb.addCriterionEntity("seller", seller);
+
+		try {
+			return ((Long) qb.getCountQuery(em).getSingleResult()) > 0;
+		} catch (NoResultException e) {
+			return false;
+		}
+
 	}
 }

@@ -225,4 +225,64 @@ public class OrganizationServiceApi extends BaseApi {
 			throw new MissingParameterException(sb.toString());
 		}
 	}
+
+	public void update(OrganizationDto orgDto) throws MeveoApiException {
+		if (!StringUtils.isBlank(orgDto.getOrganizationId())
+				&& !StringUtils.isBlank(orgDto.getCountryCode())
+				&& !StringUtils.isBlank(orgDto.getDefaultCurrencyCode())) {
+
+			Provider provider = providerService
+					.findById(orgDto.getProviderId());
+			User currentUser = userService.findById(orgDto.getCurrentUserId());
+
+			TradingCountry tr = tradingCountryService.findByTradingCountryCode(
+					orgDto.getCountryCode(), provider);
+
+			TradingCurrency tc = tradingCurrencyService
+					.findByTradingCurrencyCode(orgDto.getDefaultCurrencyCode(),
+							provider);
+			if (tc == null) {
+				throw new TradingCurrencyDoesNotExistsException(
+						orgDto.getDefaultCurrencyCode());
+			}
+
+			Seller seller = sellerService.findByCode(em,
+					orgDto.getOrganizationId(), provider);
+
+			if (!sellerService.hasChild(em, seller, provider)) {
+				if (tr == null) {
+					seller.setTradingCountry(tr);
+				}
+
+				seller.setTradingCurrency(tc);
+				sellerService.update(em, seller, currentUser);
+			}
+
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(orgDto.getOrganizationId())) {
+				missingFields.add("Organization Id");
+			}
+			if (StringUtils.isBlank(orgDto.getCountryCode())) {
+				missingFields.add("Country code");
+			}
+			if (StringUtils.isBlank(orgDto.getDefaultCurrencyCode())) {
+				missingFields.add("Default currency code");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+	}
+
 }
