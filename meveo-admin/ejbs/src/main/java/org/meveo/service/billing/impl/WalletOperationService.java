@@ -26,6 +26,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
@@ -36,7 +38,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
-import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -50,6 +51,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -59,10 +61,16 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.util.MeveoJpa;
 
 @Stateless
 @LocalBean
 public class WalletOperationService extends BusinessService<WalletOperation> {
+
+    @Inject
+    @MeveoJpa
+    protected EntityManager em;
+    
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
@@ -90,6 +98,84 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount,
 	Date startDate, Date endDate, boolean amountWithTax){
 		BigDecimal result=BigDecimal.ZERO;
+		LevelEnum level=LevelEnum.PROVIDER;
+		if(userAccount!=null){
+			level=LevelEnum.USER_ACCOUNT;
+			provider=userAccount.getProvider();
+		} else if(billingAccount!=null){
+			level=LevelEnum.BILLING_ACCOUNT;
+			provider=billingAccount.getProvider();
+			
+		} else if(customerAccount!=null){
+			level=LevelEnum.CUSTOMER_ACCOUNT;
+			provider=customerAccount.getProvider();
+		} else if(customer!=null){
+			level=LevelEnum.CUSTOMER;
+			provider=customer.getProvider();
+		} else if(seller!=null){
+			level=LevelEnum.SELLER;
+			provider=seller.getProvider();
+		}
+		try{
+		String strQuery="select SUM(w."+(amountWithTax?"amountWithTax":"amountWithoutTax")+") from "
+	   			 +WalletOperation.class.getSimpleName() +" r "
+			 		+ "WHERE r.operationDate>=:startDate AND r.operationDate<:endDate"
+			 		+ "AND (r.status=:open OR r.status=:treated) "
+	    			+ "AND r.provider=:provider ";
+	    	switch(level){
+			case BILLING_ACCOUNT:
+				strQuery+="AND r.wallet.userAccount.billingAccount=:billingAccount ";
+				break;
+			case CUSTOMER:
+				strQuery+="AND r.wallet.userAccount.billingAccount.customerAccount.customer=:customer ";
+				break;
+			case CUSTOMER_ACCOUNT:
+				strQuery+="AND r.wallet.userAccount.billingAccount.customerAccount=:customerAccount ";
+				break;
+			case PROVIDER:
+				break;
+			case SELLER:
+				strQuery+="AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ";
+				break;
+			case USER_ACCOUNT:
+				strQuery+="AND r.wallet.userAccount=:userAccount ";
+				break;
+			default:
+				break;
+	    	
+	    	}
+	    	Query query = em.createQuery(strQuery);
+	    	query.setParameter("startDate", startDate);
+	    	query.setParameter("endDate", endDate);
+	    	query.setParameter("provider", provider);
+	    	query.setParameter("open", WalletOperationStatusEnum.OPEN);
+	    	query.setParameter("treated", WalletOperationStatusEnum.TREATED);
+	    	switch(level){
+			case BILLING_ACCOUNT:
+				query.setParameter("billingAccount",billingAccount);
+				break;
+			case CUSTOMER:
+				query.setParameter("customer",customer);
+				break;
+			case CUSTOMER_ACCOUNT:
+				query.setParameter("customerAccount",customerAccount);
+				break;
+			case PROVIDER:
+				break;
+			case SELLER:
+				query.setParameter("seller",seller);
+				break;
+			case USER_ACCOUNT:
+				query.setParameter("userAccount",userAccount);
+				break;
+			default:
+				break;
+	    	
+	    	}
+	    	result=(BigDecimal) query.getSingleResult();
+	    	} catch(Exception e ){
+	    		e.printStackTrace();
+	    	}
 		return result;
 	}
 
