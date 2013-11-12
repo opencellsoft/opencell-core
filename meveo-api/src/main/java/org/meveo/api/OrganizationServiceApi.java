@@ -302,6 +302,14 @@ public class OrganizationServiceApi extends BaseApi {
 				customerService.remove(customer);
 			}
 
+			String userAccountPrefix = paramBean.getProperty(
+					"asg.api.default.organization.userAccount", "USER_");
+			UserAccount userAccount = userAccountService.findByCode(em,
+					userAccountPrefix + organizationId, provider);
+			if (userAccount != null) {
+				userAccountService.remove(em, userAccount);
+			}
+
 			Seller seller = sellerService.findByCode(em, organizationId,
 					provider);
 
