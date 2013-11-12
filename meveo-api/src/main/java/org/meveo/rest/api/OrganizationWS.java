@@ -8,9 +8,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.OrganizationServiceApi;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.OrganizationAlreadyExistsException;
+import org.meveo.api.exception.ParentSellerDoesNotExistsException;
+import org.meveo.api.exception.TradingCountryDoesNotExistsException;
+import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -45,6 +51,26 @@ public class OrganizationWS {
 					"asp.api.providerId", "1")));
 
 			organizationServiceApi.create(orgDto);
+		} catch (ParentSellerDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.PARENT_SELLER_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (TradingCurrencyDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_CURRENCY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (TradingCountryDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_COUNTRY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (OrganizationAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.ORGANIZATION_ALREADY_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

@@ -565,12 +565,6 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				}
 				serviceTemplateService.remove(em, serviceTemplate);
 			}
-
-			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
-					offerTemplateCode, provider);
-			if (offerTemplate != null) {
-				offerTemplateService.remove(em, offerTemplate);
-			}
 		} catch (Exception e) {
 			log.error("Error deleting offer price plan with code={}: {}",
 					offerTemplateCode, e.getMessage());

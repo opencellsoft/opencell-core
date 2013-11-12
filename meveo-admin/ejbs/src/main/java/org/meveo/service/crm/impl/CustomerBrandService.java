@@ -17,8 +17,10 @@ package org.meveo.service.crm.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.service.base.PersistenceService;
 
@@ -33,8 +35,20 @@ public class CustomerBrandService extends PersistenceService<CustomerBrand> {
 		try {
 			return (CustomerBrand) getEntityManager()
 					.createQuery(
-							"from " + CustomerBrand.class.getSimpleName() + " where code=:code")
+							"from " + CustomerBrand.class.getSimpleName()
+									+ " where code=:code")
 					.setParameter("code", code).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public CustomerBrand findByCode(EntityManager em, String code) {
+		QueryBuilder qb = new QueryBuilder(CustomerBrand.class, "b");
+
+		try {
+			qb.addCriterion("code", "=", code, true);
+			return (CustomerBrand) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}

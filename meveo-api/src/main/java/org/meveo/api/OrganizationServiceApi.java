@@ -11,16 +11,38 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.OrganizationAlreadyExistsException;
+import org.meveo.api.exception.ParentSellerDoesNotExistsException;
+import org.meveo.api.exception.TradingCountryDoesNotExistsException;
+import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.AccountStatusEnum;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CreditCategoryEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.crm.impl.CustomerBrandService;
+import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * @author Edward P. Legaspi
@@ -31,6 +53,9 @@ import org.meveo.service.billing.impl.TradingCountryService;
 public class OrganizationServiceApi extends BaseApi {
 
 	@Inject
+	private ParamBean paramBean;
+
+	@Inject
 	private SellerService sellerService;
 
 	@Inject
@@ -38,6 +63,24 @@ public class OrganizationServiceApi extends BaseApi {
 
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
+
+	@Inject
+	private CustomerBrandService customerBrandService;
+
+	@Inject
+	private CustomerCategoryService customerCategoryService;
+
+	@Inject
+	private CustomerService customerService;
+
+	@Inject
+	private CustomerAccountService customerAccountService;
+
+	@Inject
+	private BillingAccountService billingAccountService;
+
+	@Inject
+	private UserAccountService userAccountService;
 
 	public void create(OrganizationDto orgDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(orgDto.getOrganizationId())
@@ -51,33 +94,95 @@ public class OrganizationServiceApi extends BaseApi {
 			Seller org = sellerService.findByCode(orgDto.getOrganizationId(),
 					provider);
 			if (org != null) {
-				throw new MeveoApiException("Organization with id="
-						+ orgDto.getOrganizationId() + " already exists.");
+				throw new OrganizationAlreadyExistsException(
+						orgDto.getOrganizationId());
 			}
 
 			TradingCountry tr = tradingCountryService.findByTradingCountryCode(
 					orgDto.getCountryCode(), provider);
 			if (tr == null) {
-				throw new MeveoApiException("Trading country with code="
-						+ orgDto.getCountryCode() + " does not exists.");
+				throw new TradingCountryDoesNotExistsException(
+						orgDto.getCountryCode());
 			}
 
 			TradingCurrency tc = tradingCurrencyService
 					.findByTradingCurrencyCode(orgDto.getDefaultCurrencyCode(),
 							provider);
 			if (tc == null) {
-				throw new MeveoApiException("Trading currency with code="
-						+ orgDto.getDefaultCurrencyCode() + " does not exists.");
+				throw new TradingCurrencyDoesNotExistsException(
+						orgDto.getDefaultCurrencyCode());
 			}
 
-			if (!StringUtils.isBlank(orgDto.getParentId())) { // with parent
-																// seller
+			// with parent seller
+			if (!StringUtils.isBlank(orgDto.getParentId())) {
+
 				Seller parentSeller = sellerService.findByCode(em,
 						orgDto.getParentId(), provider);
+
 				if (parentSeller == null) {
-					throw new MeveoApiException("Parent seller with code="
-							+ orgDto.getParentId() + " does not exists.");
+					throw new ParentSellerDoesNotExistsException(
+							orgDto.getParentId());
 				} else {
+					int caPaymentMethod = Integer
+							.parseInt(paramBean
+									.getProperty(
+											"asp.api.default.customerAccount.paymentMethod",
+											"1"));
+					int creditCategory = Integer
+							.parseInt(paramBean
+									.getProperty(
+											"asp.api.default.customerAccount.creditCategory",
+											"5"));
+					CustomerAccount customerAccount = new CustomerAccount();
+					customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
+					customerAccount.setPaymentMethod(PaymentMethodEnum
+							.getValue(caPaymentMethod));
+					customerAccount.setCreditCategory(CreditCategoryEnum
+							.getValue(creditCategory));
+					customerAccountService.create(em, customerAccount,
+							currentUser, provider);
+
+					int baPaymentMethod = Integer
+							.parseInt(paramBean
+									.getProperty(
+											"asp.api.default.customerAccount.paymentMethod",
+											"1"));
+					BillingAccount billingAccount = new BillingAccount();
+					billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+					billingAccount.setCustomerAccount(customerAccount);
+					billingAccount.setPaymentMethod(PaymentMethodEnum
+							.getValue(baPaymentMethod));
+					billingAccount
+							.setElectronicBilling(Boolean.valueOf(paramBean
+									.getProperty(
+											"asp.api.default.billingAccount.electronicBilling",
+											"true")));
+					billingAccountService.create(em, billingAccount,
+							currentUser, provider);
+
+					UserAccount userAccount = new UserAccount();
+					userAccount.setStatus(AccountStatusEnum.ACTIVE);
+					userAccount.setBillingAccount(billingAccount);
+					userAccount.setCode(paramBean.getProperty(
+							"asg.api.default", "_DEF_")
+							+ orgDto.getOrganizationId());
+					userAccountService.create(em, userAccount, currentUser,
+							provider);
+
+					CustomerBrand customerBrand = customerBrandService
+							.findByCode(em, paramBean.getProperty(
+									"asp.api.default.customer.brand", "DEMO"));
+					CustomerCategory customerCategory = customerCategoryService
+							.findByCode(paramBean.getProperty(
+									"asp.api.default.customer.category",
+									"Business"));
+					Customer customer = new Customer();
+					customer.setSeller(parentSeller);
+					customer.setCustomerBrand(customerBrand);
+					customer.setCustomerCategory(customerCategory);
+					customer.getCustomerAccounts().add(customerAccount);
+					customerService.create(em, customer, currentUser, provider);
+
 					Auditable auditable = new Auditable();
 					auditable.setCreated(new Date());
 					auditable.setCreator(currentUser);
@@ -93,10 +198,7 @@ public class OrganizationServiceApi extends BaseApi {
 					newSeller.setSeller(parentSeller);
 					sellerService.create(em, newSeller, currentUser, provider);
 				}
-			} else { // no parent seller
-
 			}
-
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -120,8 +222,7 @@ public class OrganizationServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
-
 }
