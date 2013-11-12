@@ -3,9 +3,11 @@ package org.meveo.rest.api;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -14,8 +16,9 @@ import org.meveo.api.OrganizationServiceApi;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.exception.OrganizationAlreadyExistsException;
 import org.meveo.api.exception.ParentSellerDoesNotExistsException;
+import org.meveo.api.exception.SellerAlreadyExistsException;
+import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
@@ -64,8 +67,8 @@ public class OrganizationWS {
 			result.setErrorCode(MeveoApiErrorCode.TRADING_COUNTRY_DOES_NOT_EXISTS);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-		} catch (OrganizationAlreadyExistsException e) {
-			result.setErrorCode(MeveoApiErrorCode.ORGANIZATION_ALREADY_EXISTS);
+		} catch (SellerAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SELLER_ALREADY_EXISTS);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (MissingParameterException e) {
@@ -92,7 +95,44 @@ public class OrganizationWS {
 					"asp.api.providerId", "1")));
 
 			organizationServiceApi.update(orgDto);
+		} catch (TradingCurrencyDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_CURRENCY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (SellerDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SELLER_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@DELETE
+	@Path("/{organizationId}")
+	public ActionStatus remove(
+			@PathParam("organizationId") String organizationId) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			organizationServiceApi.remove(organizationId, Long
+					.valueOf(paramBean.getProperty("asp.api.providerId", "1")));
+		} catch (SellerDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SELLER_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}

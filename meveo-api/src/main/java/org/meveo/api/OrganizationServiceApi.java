@@ -12,8 +12,9 @@ import javax.inject.Inject;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.exception.OrganizationAlreadyExistsException;
 import org.meveo.api.exception.ParentSellerDoesNotExistsException;
+import org.meveo.api.exception.SellerAlreadyExistsException;
+import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
@@ -94,7 +95,7 @@ public class OrganizationServiceApi extends BaseApi {
 			Seller org = sellerService.findByCode(orgDto.getOrganizationId(),
 					provider);
 			if (org != null) {
-				throw new OrganizationAlreadyExistsException(
+				throw new SellerAlreadyExistsException(
 						orgDto.getOrganizationId());
 			}
 
@@ -205,13 +206,13 @@ public class OrganizationServiceApi extends BaseApi {
 			List<String> missingFields = new ArrayList<String>();
 
 			if (StringUtils.isBlank(orgDto.getOrganizationId())) {
-				missingFields.add("Organization Id");
+				missingFields.add("organizationId");
 			}
 			if (StringUtils.isBlank(orgDto.getCountryCode())) {
-				missingFields.add("Country code");
+				missingFields.add("countryCode");
 			}
 			if (StringUtils.isBlank(orgDto.getDefaultCurrencyCode())) {
-				missingFields.add("Default currency code");
+				missingFields.add("defaultCurrencyCode");
 			}
 
 			if (missingFields.size() > 1) {
@@ -249,6 +250,11 @@ public class OrganizationServiceApi extends BaseApi {
 			Seller seller = sellerService.findByCode(em,
 					orgDto.getOrganizationId(), provider);
 
+			if (seller == null) {
+				throw new SellerDoesNotExistsException(
+						orgDto.getOrganizationId());
+			}
+
 			if (!sellerService.hasChild(em, seller, provider)) {
 				if (tr == null) {
 					seller.setTradingCountry(tr);
@@ -264,13 +270,13 @@ public class OrganizationServiceApi extends BaseApi {
 			List<String> missingFields = new ArrayList<String>();
 
 			if (StringUtils.isBlank(orgDto.getOrganizationId())) {
-				missingFields.add("Organization Id");
+				missingFields.add("organizationId");
 			}
 			if (StringUtils.isBlank(orgDto.getCountryCode())) {
-				missingFields.add("Country code");
+				missingFields.add("countryCode");
 			}
 			if (StringUtils.isBlank(orgDto.getDefaultCurrencyCode())) {
-				missingFields.add("Default currency code");
+				missingFields.add("defaultCurrencyCode");
 			}
 
 			if (missingFields.size() > 1) {
@@ -285,4 +291,44 @@ public class OrganizationServiceApi extends BaseApi {
 		}
 	}
 
+	public void remove(String organizationId, Long providerId)
+			throws MeveoApiException {
+		if (!StringUtils.isBlank(organizationId)) {
+			Provider provider = providerService.findById(providerId);
+
+			Customer customer = customerService.findByCode(em, organizationId,
+					provider);
+			if (customer != null) {
+				customerService.remove(customer);
+			}
+
+			Seller seller = sellerService.findByCode(em, organizationId,
+					provider);
+
+			if (seller == null) {
+				throw new SellerDoesNotExistsException(organizationId);
+			} else {
+				sellerService.remove(em, seller);
+			}
+
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(organizationId)) {
+				missingFields.add("organizationId");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+	}
 }
