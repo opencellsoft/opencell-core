@@ -61,7 +61,7 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	@Column(name = "NB_PERIOD")
 	private Integer nbPeriod;
 
-	@Column(name = "PERCENT", precision = 19, scale = 8)
+	@Column(name = "TAX_PERCENTAGE", precision = 19, scale = 8)
 	@Digits(integer = 19, fraction = 8)
 	@Min(0)
 	private BigDecimal percent;
