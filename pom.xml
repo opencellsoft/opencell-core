@@ -12,7 +12,7 @@
 	<modules>
 		<module>meveo-model</module>
 		<module>meveo-admin</module>
-		<module>meveo-api</module>
+		<!-- <module>meveo-api</module> -->
 	</modules>
 
 	<properties>
