@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.exception.ParentSellerDoesNotExistsException;
 import org.meveo.api.exception.SellerAlreadyExistsException;
 import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
@@ -114,91 +113,164 @@ public class OrganizationServiceApi extends BaseApi {
 						orgDto.getDefaultCurrencyCode());
 			}
 
+			Seller parentSeller = null;
 			// with parent seller
 			if (!StringUtils.isBlank(orgDto.getParentId())) {
-
-				Seller parentSeller = sellerService.findByCode(em,
+				parentSeller = sellerService.findByCode(em,
 						orgDto.getParentId(), provider);
+			}
 
-				if (parentSeller == null) {
-					throw new ParentSellerDoesNotExistsException(
-							orgDto.getParentId());
-				} else {
-					int caPaymentMethod = Integer
-							.parseInt(paramBean
-									.getProperty(
-											"asp.api.default.customerAccount.paymentMethod",
-											"1"));
-					int creditCategory = Integer
-							.parseInt(paramBean
-									.getProperty(
-											"asp.api.default.customerAccount.creditCategory",
-											"5"));
-					CustomerAccount customerAccount = new CustomerAccount();
-					customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
-					customerAccount.setPaymentMethod(PaymentMethodEnum
-							.getValue(caPaymentMethod));
-					customerAccount.setCreditCategory(CreditCategoryEnum
-							.getValue(creditCategory));
-					customerAccountService.create(em, customerAccount,
-							currentUser, provider);
+			String customerPrefix = paramBean.getProperty(
+					"asp.api.default.customer.prefix", "CUST_");
+			String customerAccountPrefix = paramBean.getProperty(
+					"asp.api.default.customerAccount.prefix", "CA_");
+			String billingAccountPrefix = paramBean.getProperty(
+					"asp.api.default.billingAccount.prefix", "BA_");
+			String userAccountPrefix = paramBean.getProperty(
+					"asp.api.default.userAccount.prefix", "UA_");
 
-					int baPaymentMethod = Integer
-							.parseInt(paramBean
-									.getProperty(
-											"asp.api.default.customerAccount.paymentMethod",
-											"1"));
-					BillingAccount billingAccount = new BillingAccount();
-					billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-					billingAccount.setCustomerAccount(customerAccount);
-					billingAccount.setPaymentMethod(PaymentMethodEnum
-							.getValue(baPaymentMethod));
-					billingAccount
-							.setElectronicBilling(Boolean.valueOf(paramBean
-									.getProperty(
-											"asp.api.default.billingAccount.electronicBilling",
-											"true")));
-					billingAccountService.create(em, billingAccount,
-							currentUser, provider);
+			int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.paymentMethod", "1"));
+			int creditCategory = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.creditCategory", "5"));
 
-					UserAccount userAccount = new UserAccount();
-					userAccount.setStatus(AccountStatusEnum.ACTIVE);
-					userAccount.setBillingAccount(billingAccount);
-					userAccount.setCode(paramBean.getProperty(
-							"asg.api.default", "_DEF_")
+			int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.paymentMethod", "1"));
+
+			CustomerBrand customerBrand = customerBrandService.findByCode(em,
+					paramBean.getProperty("asp.api.default.customer.brand",
+							"DEMO"));
+			CustomerCategory customerCategory = customerCategoryService
+					.findByCode(paramBean.getProperty(
+							"asp.api.default.customer.category", "Business"));
+
+			if (parentSeller != null) {
+				CustomerAccount customerAccount = new CustomerAccount();
+				customerAccount.setCode(customerAccountPrefix
+						+ orgDto.getOrganizationId());
+				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
+				customerAccount.setPaymentMethod(PaymentMethodEnum
+						.getValue(caPaymentMethod));
+				customerAccount.setCreditCategory(CreditCategoryEnum
+						.getValue(creditCategory));
+				customerAccountService.create(em, customerAccount, currentUser,
+						provider);
+
+				BillingAccount billingAccount = new BillingAccount();
+				billingAccount.setCode(billingAccountPrefix
+						+ orgDto.getOrganizationId());
+				billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+				billingAccount.setCustomerAccount(customerAccount);
+				billingAccount.setPaymentMethod(PaymentMethodEnum
+						.getValue(baPaymentMethod));
+				billingAccount
+						.setElectronicBilling(Boolean.valueOf(paramBean
+								.getProperty(
+										"asp.api.default.billingAccount.electronicBilling",
+										"true")));
+				billingAccountService.create(em, billingAccount, currentUser,
+						provider);
+
+				UserAccount userAccount = new UserAccount();
+				userAccount.setCode(userAccountPrefix
+						+ orgDto.getOrganizationId());
+				userAccount.setStatus(AccountStatusEnum.ACTIVE);
+				userAccount.setBillingAccount(billingAccount);
+				userAccount.setCode(paramBean.getProperty("asg.api.default",
+						"_DEF_") + orgDto.getOrganizationId());
+				userAccountService.create(em, userAccount, currentUser,
+						provider);
+
+				Customer customer = new Customer();
+				customer.setCode(customerPrefix + orgDto.getOrganizationId());
+				customer.setSeller(parentSeller);
+				customer.setCustomerBrand(customerBrand);
+				customer.setCustomerCategory(customerCategory);
+				customer.getCustomerAccounts().add(customerAccount);
+				customerService.create(em, customer, currentUser, provider);
+
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(currentUser);
+
+				Seller newSeller = new Seller();
+				newSeller.setSeller(parentSeller);
+				newSeller.setActive(true);
+				newSeller.setCode(orgDto.getOrganizationId());
+				newSeller.setAuditable(auditable);
+				newSeller.setProvider(provider);
+				newSeller.setTradingCountry(tr);
+				newSeller.setTradingCurrency(tc);
+				newSeller.setDescription(orgDto.getName());
+				sellerService.create(em, newSeller, currentUser, provider);
+
+				// add user account to parent's billing account
+				String parentBillingAccountCode = billingAccountPrefix
+						+ parentSeller.getCode();
+				BillingAccount parentBillingAccount = billingAccountService
+						.findByCode(em, parentBillingAccountCode, provider);
+				if (parentBillingAccount != null) {
+					UserAccount parentUserAccount = new UserAccount();
+					parentUserAccount.setCode(userAccountPrefix
 							+ orgDto.getOrganizationId());
-					userAccountService.create(em, userAccount, currentUser,
-							provider);
-
-					CustomerBrand customerBrand = customerBrandService
-							.findByCode(em, paramBean.getProperty(
-									"asp.api.default.customer.brand", "DEMO"));
-					CustomerCategory customerCategory = customerCategoryService
-							.findByCode(paramBean.getProperty(
-									"asp.api.default.customer.category",
-									"Business"));
-					Customer customer = new Customer();
-					customer.setSeller(parentSeller);
-					customer.setCustomerBrand(customerBrand);
-					customer.setCustomerCategory(customerCategory);
-					customer.getCustomerAccounts().add(customerAccount);
-					customerService.create(em, customer, currentUser, provider);
-
-					Auditable auditable = new Auditable();
-					auditable.setCreated(new Date());
-					auditable.setCreator(currentUser);
-
-					Seller newSeller = new Seller();
-					newSeller.setActive(true);
-					newSeller.setCode(orgDto.getOrganizationId());
-					newSeller.setAuditable(auditable);
-					newSeller.setProvider(provider);
-					newSeller.setTradingCountry(tr);
-					newSeller.setTradingCurrency(tc);
-					newSeller.setDescription(orgDto.getName());
-					newSeller.setSeller(parentSeller);
-					sellerService.create(em, newSeller, currentUser, provider);
+					parentUserAccount.setStatus(AccountStatusEnum.ACTIVE);
+					parentUserAccount.setBillingAccount(parentBillingAccount);
+					parentUserAccount.setCode(paramBean
+							.getProperty(
+									"asg.api.default.organization.userAccount",
+									"USER_")
+							+ orgDto.getOrganizationId());
+					userAccountService.create(em, parentUserAccount,
+							currentUser, provider);
 				}
+			} else {
+				CustomerAccount customerAccount = new CustomerAccount();
+				customerAccount.setCode(customerAccountPrefix
+						+ orgDto.getOrganizationId());
+				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
+				customerAccount.setPaymentMethod(PaymentMethodEnum
+						.getValue(caPaymentMethod));
+				customerAccount.setCreditCategory(CreditCategoryEnum
+						.getValue(creditCategory));
+				customerAccountService.create(em, customerAccount, currentUser,
+						provider);
+
+				BillingAccount billingAccount = new BillingAccount();
+				billingAccount.setCode(billingAccountPrefix
+						+ orgDto.getOrganizationId());
+				billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+				billingAccount.setCustomerAccount(customerAccount);
+				billingAccount.setPaymentMethod(PaymentMethodEnum
+						.getValue(baPaymentMethod));
+				billingAccount
+						.setElectronicBilling(Boolean.valueOf(paramBean
+								.getProperty(
+										"asp.api.default.billingAccount.electronicBilling",
+										"true")));
+				billingAccountService.create(em, billingAccount, currentUser,
+						provider);
+
+				Customer customer = new Customer();
+				customer.setCode(customerPrefix + orgDto.getOrganizationId());
+				customer.setSeller(parentSeller);
+				customer.setCustomerBrand(customerBrand);
+				customer.setCustomerCategory(customerCategory);
+				customer.getCustomerAccounts().add(customerAccount);
+				customerService.create(em, customer, currentUser, provider);
+
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(currentUser);
+
+				Seller newSeller = new Seller();
+				newSeller.setActive(true);
+				newSeller.setCode(orgDto.getOrganizationId());
+				newSeller.setAuditable(auditable);
+				newSeller.setProvider(provider);
+				newSeller.setTradingCountry(tr);
+				newSeller.setTradingCurrency(tc);
+				newSeller.setDescription(orgDto.getName());
+				sellerService.create(em, newSeller, currentUser, provider);
 			}
 		} else {
 			StringBuilder sb = new StringBuilder(
