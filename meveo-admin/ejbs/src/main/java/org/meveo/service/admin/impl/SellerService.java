@@ -59,7 +59,7 @@ public class SellerService extends PersistenceService<Seller> {
 		return (Seller) query.getResultList().get(0);
 	}
 
-	public boolean hasChild(EntityManager em, Seller seller, Provider provider) {
+	public boolean hasChildren(EntityManager em, Seller seller, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(Seller.class, "s");
 		qb.addCriterionEntity("provider", provider);
 		qb.addCriterionEntity("seller", seller);

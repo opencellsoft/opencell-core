@@ -327,7 +327,7 @@ public class OrganizationServiceApi extends BaseApi {
 						orgDto.getOrganizationId());
 			}
 
-			if (!sellerService.hasChild(em, seller, provider)) {
+			if (!sellerService.hasChildren(em, seller, provider)) {
 				if (tr == null) {
 					seller.setTradingCountry(tr);
 				}
