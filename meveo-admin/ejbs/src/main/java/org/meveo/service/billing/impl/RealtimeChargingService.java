@@ -29,22 +29,24 @@ import org.slf4j.Logger;
 @LocalBean
 public class RealtimeChargingService {
 
-   
-    @Inject
-    protected Logger log;
-    
+	@Inject
+	protected Logger log;
+
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
-	
+
 	@Inject
 	private RatingService chargeApplicationRatingService;
-	
+
 	@Inject
 	private WalletOperationService walletOperationService;
-    
-    public BigDecimal getApplicationPrice(BillingAccount ba, OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
-    	    BigDecimal quantity,String param1,String param2, String param3, boolean priceWithoutTax) throws BusinessException {
-    	InvoiceSubCategory invoiceSubCategory = chargeTemplate.getInvoiceSubCategory();
+
+	public BigDecimal getApplicationPrice(BillingAccount ba,
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			BigDecimal quantity, String param1, String param2, String param3,
+			boolean priceWithoutTax) throws BusinessException {
+		InvoiceSubCategory invoiceSubCategory = chargeTemplate
+				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
 			throw new IncorrectChargeTemplateException(
 					"invoiceSubCategory is null for chargeTemplate code="
@@ -53,23 +55,25 @@ public class RealtimeChargingService {
 
 		TradingCurrency currency = ba.getCustomerAccount().getTradingCurrency();
 		if (currency == null) {
-			throw new IncorrectChargeTemplateException("no currency exists for customerAccount id="
-					+ ba.getCustomerAccount()
-							.getId());
+			throw new IncorrectChargeTemplateException(
+					"no currency exists for customerAccount id="
+							+ ba.getCustomerAccount().getId());
 		}
 		TradingCountry country = ba.getTradingCountry();
 		if (country == null) {
-			throw new IncorrectChargeTemplateException("no country exists for billingAccount id="
-					+ ba.getId());
+			throw new IncorrectChargeTemplateException(
+					"no country exists for billingAccount id=" + ba.getId());
 		}
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
+						countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
-							+ invoiceSubCategory.getCode() + " and trading country="
+							+ invoiceSubCategory.getCode()
+							+ " and trading country="
 							+ country.getCountryCode());
 		}
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -79,64 +83,82 @@ public class RealtimeChargingService {
 							+ invoiceSubcategoryCountry.getId());
 		}
 		WalletOperation op = new WalletOperation();
-        
-        op.setOperationDate(subscriptionDate);
-        op.setParameter1(param1);
-        op.setParameter2(param2);
-        op.setParameter3(param3);
 
-        Provider provider = ba.getProvider();
-        op.setProvider(provider);
-        op.setChargeInstance(new OneShotChargeInstance());
+		op.setOperationDate(subscriptionDate);
+		op.setParameter1(param1);
+		op.setParameter2(param2);
+		op.setParameter3(param3);
 
-        op.setWallet(null);
-        op.setCode(chargeTemplate.getCode());
-      
-    	op.setDescription("");           
-        op.setQuantity(quantity);
-        op.setTaxPercent(tax.getPercent());
-        op.setCurrency(currency.getCurrency());
-        op.setStartDate(null);
-        op.setEndDate(null);
-        op.setStatus(WalletOperationStatusEnum.OPEN);
-        op.setSeller(ba.getCustomerAccount().getCustomer().getSeller());
+		Provider provider = ba.getProvider();
+		op.setProvider(provider);
+		op.setChargeInstance(new OneShotChargeInstance());
 
-        chargeApplicationRatingService.rateBareWalletOperation(op, null, null, countryId, currency,  provider);
-        
-    	return priceWithoutTax?op.getAmountWithoutTax():op.getAmountWithTax();
-    }
-    
-    public BigDecimal getFirstRecurringPrice(BillingAccount ba, RecurringChargeTemplate chargeTemplate, Date subscriptionDate,
-    	    BigDecimal quantity,String param1,String param2, String param3, boolean priceWithoutTax) throws BusinessException {
-    	RecurringChargeInstance chargeInstance= new RecurringChargeInstance();
-    	chargeInstance.setSubscriptionDate(subscriptionDate);
-    	chargeInstance.setChargeDate(subscriptionDate);
-    	chargeInstance.setSeller(ba.getCustomerAccount().getCustomer()
+		op.setWallet(null);
+		op.setCode(chargeTemplate.getCode());
+
+		op.setDescription("");
+		op.setQuantity(quantity);
+		op.setTaxPercent(tax.getPercent());
+		op.setCurrency(currency.getCurrency());
+		op.setStartDate(null);
+		op.setEndDate(null);
+		op.setStatus(WalletOperationStatusEnum.OPEN);
+		op.setSeller(ba.getCustomerAccount().getCustomer().getSeller());
+
+		chargeApplicationRatingService.rateBareWalletOperation(op, null, null,
+				countryId, currency, provider);
+
+		return priceWithoutTax ? op.getAmountWithoutTax() : op
+				.getAmountWithTax();
+	}
+
+	public BigDecimal getFirstRecurringPrice(BillingAccount ba,
+			RecurringChargeTemplate chargeTemplate, Date subscriptionDate,
+			BigDecimal quantity, String param1, String param2, String param3,
+			boolean priceWithoutTax) throws BusinessException {
+		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
+		chargeInstance.setSubscriptionDate(subscriptionDate);
+		chargeInstance.setChargeDate(subscriptionDate);
+		chargeInstance.setSeller(ba.getCustomerAccount().getCustomer()
 				.getSeller());
-    	Date nextApplicationDate=walletOperationService.getNextApplicationDate(chargeInstance);
-    	WalletOperation op = walletOperationService.rateSubscription(chargeInstance, nextApplicationDate);
-    	return priceWithoutTax?op.getAmountWithoutTax():op.getAmountWithTax();
-    }
-    
-    /*
-     * Warning : this method does not handle calendars at service level
-     */
-    public BigDecimal getActivationServicePrice(BillingAccount ba, ServiceTemplate serviceTemplate, Date subscriptionDate,
-    		BigDecimal quantity,String param1,String param2, String param3, boolean priceWithoutTax) throws BusinessException {
-    	BigDecimal result=BigDecimal.ZERO;
-    	if(serviceTemplate.getSubscriptionCharges()!=null){
-    		for(OneShotChargeTemplate charge:serviceTemplate.getSubscriptionCharges()){
-    			result.add(getApplicationPrice(ba,charge,subscriptionDate,quantity,param1,param2,param3,priceWithoutTax));
-    		}
-    	}
-    	if(serviceTemplate.getRecurringCharges()!=null){
-    		for(RecurringChargeTemplate charge:serviceTemplate.getRecurringCharges()){
-    			if(charge.getApplyInAdvance()){
-    				result.add(getFirstRecurringPrice(ba,charge,subscriptionDate,quantity,param1,param2,param3,priceWithoutTax));
-    			}
-    		}
-    	}
-    	return result;
-    }
-  
+		Date nextApplicationDate = walletOperationService
+				.getNextApplicationDate(chargeInstance);
+		WalletOperation op = walletOperationService.rateSubscription(
+				chargeInstance, nextApplicationDate);
+		return priceWithoutTax ? op.getAmountWithoutTax() : op
+				.getAmountWithTax();
+	}
+
+	/*
+	 * Warning : this method does not handle calendars at service level
+	 */
+	public BigDecimal getActivationServicePrice(BillingAccount ba,
+			ServiceTemplate serviceTemplate, Date subscriptionDate,
+			BigDecimal quantity, String param1, String param2, String param3,
+			boolean priceWithoutTax) throws BusinessException {
+		
+		BigDecimal result = BigDecimal.ZERO;
+		
+		if (serviceTemplate.getSubscriptionCharges() != null) {
+			for (OneShotChargeTemplate charge : serviceTemplate
+					.getSubscriptionCharges()) {
+				result.add(getApplicationPrice(ba, charge, subscriptionDate,
+						quantity, param1, param2, param3, priceWithoutTax));
+			}
+		}
+		
+		if (serviceTemplate.getRecurringCharges() != null) {
+			for (RecurringChargeTemplate charge : serviceTemplate
+					.getRecurringCharges()) {
+				if (charge.getApplyInAdvance()) {
+					result.add(getFirstRecurringPrice(ba, charge,
+							subscriptionDate, quantity, param1, param2, param3,
+							priceWithoutTax));
+				}
+			}
+		}
+		
+		return result;
+	}
+
 }

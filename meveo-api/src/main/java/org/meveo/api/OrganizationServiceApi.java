@@ -172,8 +172,6 @@ public class OrganizationServiceApi extends BaseApi {
 						provider);
 
 				UserAccount userAccount = new UserAccount();
-				userAccount.setCode(userAccountPrefix
-						+ orgDto.getOrganizationId());
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
 				userAccount.setCode(paramBean.getProperty("asg.api.default",

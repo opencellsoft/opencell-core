@@ -141,7 +141,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			// Service code is '_OF_[OrganizationId]_[OferId]'. Prefix '_OF_'
 			// must be settable in properties file.
 			String offerTemplatePrefix = paramBean.getProperty(
-					"asg.api.offer.offer.prefix", "_OF_");
+					"asg.api.offer.charged.prefix", "_CH_OF_");
 
 			String serviceTemplateCode = offerTemplatePrefix
 					+ offerPricePlanDto.getOrganizationId() + "_"
@@ -156,8 +156,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 
 			ServiceTemplate serviceTemplate = new ServiceTemplate();
 			serviceTemplate.setCode(offerTemplatePrefix
-					+ offerPricePlanDto.getOrganizationId() + "_"
-					+ offerPricePlanDto.getOfferId());
+					+ offerPricePlanDto.getOfferId() + "_"
+					+ offerPricePlanDto.getOrganizationId());
 			serviceTemplate.setActive(true);
 			serviceTemplateService.create(em, serviceTemplate, currentUser,
 					provider);
@@ -328,8 +328,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				// values.
 				CounterTemplate counterTemplate = new CounterTemplate();
 				counterTemplate.setCode(offerTemplatePrefix
-						+ offerPricePlanDto.getOrganizationId() + "_"
 						+ offerPricePlanDto.getOfferId() + "_"
+						+ offerPricePlanDto.getOrganizationId() + "_"
 						+ usageChargeDto.getMin());
 				counterTemplate.setCounterType(CounterTypeEnum.QUANTITY);
 				counterTemplate.setCalendar(calendar);
@@ -357,8 +357,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 						"asg.api.offer.usage.charged.prefix", "_US_OF_");
 				UsageChargeTemplate usageChargeTemplate = new UsageChargeTemplate();
 				usageChargeTemplate.setCode(usageChargeTemplatePrefix
-						+ offerPricePlanDto.getOrganizationId() + "_"
-						+ offerPricePlanDto.getOfferId() + "_" + min);
+						+ offerPricePlanDto.getOfferId() + "_"
+						+ offerPricePlanDto.getOrganizationId() + "_" + min);
 				usageChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 				usageChargeTemplate
 						.setUnityFormatter(UsageChgTemplateEnum.INTEGER);

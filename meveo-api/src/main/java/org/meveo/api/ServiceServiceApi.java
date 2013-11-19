@@ -49,7 +49,7 @@ public class ServiceServiceApi extends BaseApi {
 					.getCurrentUserId());
 
 			String serviceTemplateCode = paramBean.getProperty(
-					"asg.api.serviceTemplate.prefix", "_NC_")
+					"asg.api.service.notcharged.prefix", "_NC_SE_")
 					+ serviceDto.getServiceId();
 
 			if (serviceTemplateService

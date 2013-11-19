@@ -123,7 +123,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 					.getCurrentUserId());
 
 			String serviceOfferCodePrefix = paramBean.getProperty(
-					"asg.api.service.offer.prefix", "_SE_");
+					"asg.api.service.charged.prefix", "_CH_SE_");
 
 			Calendar calendar = calendarService.findByName(em,
 					servicePricePlanDto.getBillingPeriod().toString());
@@ -145,8 +145,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			// '_SE_' must be settable in properties file..
 
 			String serviceTemplateCode = serviceOfferCodePrefix
-					+ servicePricePlanDto.getOrganizationId() + "_"
-					+ servicePricePlanDto.getServiceId();
+					+ servicePricePlanDto.getServiceId() + "_"
+					+ servicePricePlanDto.getOrganizationId();
 			// check if template exists
 			if (serviceTemplateService.findByCode(em, serviceTemplateCode,
 					provider) != null) {
@@ -170,8 +170,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			RecurringChargeTemplate recurringChargeTemplate = new RecurringChargeTemplate();
 			recurringChargeTemplate.setActive(true);
 			recurringChargeTemplate.setCode(recurringChargePrefix
-					+ servicePricePlanDto.getOrganizationId() + "_"
-					+ servicePricePlanDto.getServiceId());
+					+ servicePricePlanDto.getServiceId() + "_"
+					+ servicePricePlanDto.getOrganizationId());
 			recurringChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			recurringChargeTemplate
 					.setRecurrenceType(RecurrenceTypeEnum.CALENDAR);
@@ -231,8 +231,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			OneShotChargeTemplate subscriptionTemplate = new OneShotChargeTemplate();
 			subscriptionTemplate.setActive(true);
 			subscriptionTemplate.setCode(subscriptionPointChargePrefix
-					+ servicePricePlanDto.getOrganizationId() + "_"
-					+ servicePricePlanDto.getServiceId());
+					+ servicePricePlanDto.getServiceId() + "_"
+					+ servicePricePlanDto.getOrganizationId());
 			subscriptionTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			subscriptionTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.SUBSCRIPTION);
@@ -279,8 +279,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			OneShotChargeTemplate terminationTemplate = new OneShotChargeTemplate();
 			terminationTemplate.setActive(true);
 			terminationTemplate.setCode(terminationPointChargePrefix
-					+ servicePricePlanDto.getOrganizationId() + "_"
-					+ servicePricePlanDto.getServiceId());
+					+ servicePricePlanDto.getServiceId() + "_"
+					+ servicePricePlanDto.getOrganizationId());
 			terminationTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			terminationTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.TERMINATION);
@@ -327,8 +327,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				// values.
 				CounterTemplate counterTemplate = new CounterTemplate();
 				counterTemplate.setCode(serviceOfferCodePrefix
-						+ servicePricePlanDto.getOrganizationId() + "_"
 						+ servicePricePlanDto.getServiceId() + "_"
+						+ servicePricePlanDto.getOrganizationId() + "_"
 						+ usageChargeDto.getMin());
 				counterTemplate.setCounterType(CounterTypeEnum.QUANTITY);
 				counterTemplate.setCalendar(calendar);
@@ -356,8 +356,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 						"asg.api.service.usage.charged.prefix", "_US_SE_");
 				UsageChargeTemplate usageChargeTemplate = new UsageChargeTemplate();
 				usageChargeTemplate.setCode(usageChargeTemplatePrefix
-						+ servicePricePlanDto.getOrganizationId() + "_"
-						+ servicePricePlanDto.getServiceId() + "_" + min);
+						+ servicePricePlanDto.getServiceId() + "_"
+						+ servicePricePlanDto.getOrganizationId() + "_" + min);
 				usageChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 				usageChargeTemplate
 						.setUnityFormatter(UsageChgTemplateEnum.INTEGER);
@@ -520,8 +520,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				}
 			}
 
-			counterTemplateService
-					.removeByPrefix(em, serviceTemplateCode, provider);
+			counterTemplateService.removeByPrefix(em, serviceTemplateCode,
+					provider);
 
 			// delete recurring charge
 			String recurringChargePrefix = paramBean.getProperty(
@@ -532,7 +532,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, recurringChargeCode,
 					provider);
-			
+
 			RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
 					.findByCode(em, recurringChargeCode, provider);
 			if (recurringChargeTemplate != null) {

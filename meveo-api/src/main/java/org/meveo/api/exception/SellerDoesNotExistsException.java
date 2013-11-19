@@ -9,7 +9,7 @@ public class SellerDoesNotExistsException extends MeveoApiException {
 	private static final long serialVersionUID = -6159383154906455450L;
 
 	public SellerDoesNotExistsException(String code) {
-		super("Seller with id=" + code + " does not exists.");
+		super("Seller with code=" + code + " does not exists.");
 	}
 
 }
