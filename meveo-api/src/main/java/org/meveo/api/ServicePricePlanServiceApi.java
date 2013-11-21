@@ -493,7 +493,10 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			// '_US_SE_[OrganizationId]_[ServiceId]_[Valeur Min]' ('_US_SE_'
 			// must be settable). This charge must be associated to step 1
 			// service
-			String usageChargeTemplatePrefix = paramBean.getProperty(
+			String usageChargeTemplatePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.service.usage.charged.prefix",
+							"_REC_US_SE_") : paramBean.getProperty(
 					"asg.api.service.usage.charged.prefix", "_US_SE_");
 			UsageChargeTemplate usageChargeTemplate = new UsageChargeTemplate();
 			usageChargeTemplate.setCode(usageChargeTemplatePrefix
