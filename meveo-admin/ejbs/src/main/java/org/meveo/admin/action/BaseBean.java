@@ -99,7 +99,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	@Inject
 	@RequestParam()
 	private Instance<String> backView;
-	
+
 	private String backViewSave;
 
 	/**
@@ -240,12 +240,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	// entities.forceRefresh();
 	// }
 
-	public String saveOrUpdate(boolean killConversation,String objectName,Long objectId) {
+	public String saveOrUpdate(boolean killConversation, String objectName,
+			Long objectId) {
 		String outcome = saveOrUpdate(entity);
+		
 		if (killConversation) {
 			endConversation();
 		}
-		return objectId==null?outcome:(outcome+"&"+objectName+"="+objectId+"&cid="+conversation.getId());
+		
+		return objectId == null ? outcome : (outcome + "&" + objectName + "="
+				+ objectId + "&cid=" + conversation.getId());
 	}
 
 	public String saveOrUpdate(boolean killConversation) {
@@ -299,8 +303,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	public String back() {
 		if (backView != null && backView.get() != null) {
 			// log.debug("backview parameter is " + backView.get());
-			backViewSave=backView.get();
-		} else if(backViewSave==null) {
+			backViewSave = backView.get();
+		} else if (backViewSave == null) {
 			return getListViewName();
 		}
 		return backViewSave;

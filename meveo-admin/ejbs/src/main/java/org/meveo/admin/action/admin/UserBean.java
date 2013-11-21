@@ -67,7 +67,7 @@ public class UserBean extends BaseBean<User> {
 
 	@Inject
 	private Messages messages;
-	
+
 	private static final Logger log = LoggerFactory.getLogger(UserBean.class);
 
 	private DualListModel<Role> perks;
@@ -98,6 +98,11 @@ public class UserBean extends BaseBean<User> {
 	public UserBean() {
 		super(User.class);
 	}
+	
+	public String saveOrUpdate(boolean killConversation, String objectName,
+			Long objectId) {
+		return saveOrUpdate(killConversation);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -107,13 +112,16 @@ public class UserBean extends BaseBean<User> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
 		log.debug("saving new user={}", entity.getUserName());
-		boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
+		boolean passwordsDoNotMatch = password != null
+				&& !password.equals(repeatedPassword);
+		
 		if (passwordsDoNotMatch) {
 			messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
 			return null;
 		} else {
 			if (getObjectId() != null) {
-				if (userService.isUsernameExists(entity.getUserName(), entity.getId())) {
+				if (userService.isUsernameExists(entity.getUserName(),
+						entity.getId())) {
 					messages.error(new BundleKey("messages",
 							"exception.UsernameAlreadyExistsException"));
 					return null;
@@ -182,13 +190,16 @@ public class UserBean extends BaseBean<User> {
 				perksTarget.addAll(getEntity().getProviders());
 			}
 			perksSource.removeAll(perksTarget);
-			providerPerks = new DualListModel<Provider>(perksSource, perksTarget);
+			providerPerks = new DualListModel<Provider>(perksSource,
+					perksTarget);
 		}
 		return providerPerks;
 	}
 
 	public void setProvidersDualListModel(DualListModel<Provider> providerPerks) {
-		getEntity().setProviders(new HashSet<Provider>((List<Provider>) providerPerks.getTarget()));
+		getEntity().setProviders(
+				new HashSet<Provider>((List<Provider>) providerPerks
+						.getTarget()));
 	}
 
 	public String getPassword() {
