@@ -11,7 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.OfferServiceApi;
+import org.meveo.api.OfferTemplateServiceApi;
 import org.meveo.api.dto.OfferDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
@@ -24,17 +24,17 @@ import org.meveo.util.MeveoParamBean;
  * @since Oct 11, 2013
  **/
 @Stateless
-@Path("/offer")
+@Path("/offerTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class OfferWS {
+public class OfferTemplateWS {
 
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
 	@Inject
-	private OfferServiceApi offerServiceApi;
+	private OfferTemplateServiceApi offerTemplateServiceApi;
 
 	@POST
 	@Path("/")
@@ -47,7 +47,7 @@ public class OfferWS {
 			offerDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
-			offerServiceApi.create(offerDto);
+			offerTemplateServiceApi.create(offerDto);
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -67,7 +67,7 @@ public class OfferWS {
 			offerDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
-			offerServiceApi.update(offerDto);
+			offerTemplateServiceApi.update(offerDto);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -81,7 +81,7 @@ public class OfferWS {
 	public ActionStatus remove(@PathParam("offerId") String offerId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			offerServiceApi.remove(Long.valueOf(paramBean.getProperty(
+			offerTemplateServiceApi.remove(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")), Long.valueOf(paramBean
 					.getProperty("asp.api.userId", "1")), offerId);
 		} catch (Exception e) {

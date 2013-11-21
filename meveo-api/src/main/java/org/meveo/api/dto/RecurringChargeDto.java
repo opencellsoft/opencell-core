@@ -21,6 +21,7 @@ public class RecurringChargeDto {
 	private Integer minAge;
 	private Integer maxAge;
 	private BigDecimal price;
+	private BigDecimal recommendedPrice;
 
 	public String getCurrencyCode() {
 		return currencyCode;
@@ -68,6 +69,14 @@ public class RecurringChargeDto {
 
 	public void setPrice(BigDecimal price) {
 		this.price = price;
+	}
+
+	public BigDecimal getRecommendedPrice() {
+		return recommendedPrice;
+	}
+
+	public void setRecommendedPrice(BigDecimal recommendedPrice) {
+		this.recommendedPrice = recommendedPrice;
 	}
 
 }

@@ -31,7 +31,7 @@ import org.meveo.util.MeveoParamBean;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class OfferServiceApi extends BaseApi {
+public class OfferTemplateServiceApi extends BaseApi {
 
 	@Inject
 	@MeveoParamBean

@@ -21,6 +21,7 @@ public class UsageChargeDto {
 	private Date startDate;
 	private Date endDate;
 	private BigDecimal price;
+	private BigDecimal recommendedPrice;
 
 	public Integer getMin() {
 		return min;
@@ -68,6 +69,14 @@ public class UsageChargeDto {
 
 	public void setPrice(BigDecimal price) {
 		this.price = price;
+	}
+
+	public BigDecimal getRecommendedPrice() {
+		return recommendedPrice;
+	}
+
+	public void setRecommendedPrice(BigDecimal recommendedPrice) {
+		this.recommendedPrice = recommendedPrice;
 	}
 
 }

@@ -26,7 +26,7 @@ import org.meveo.util.MeveoParamBean;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class ServiceServiceApi extends BaseApi {
+public class ServiceTemplateServiceApi extends BaseApi {
 
 	@Inject
 	@MeveoParamBean

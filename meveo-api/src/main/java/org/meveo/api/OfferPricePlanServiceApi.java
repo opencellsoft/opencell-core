@@ -138,7 +138,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 					.findByTaxId(em, tax).getInvoiceSubCategory();
 
 			// Create a charged service for defined offer and organization.
-			// Service code is '_OF_[OrganizationId]_[OferId]'. Prefix '_OF_'
+			// Service code is '_CH_OF_[OrganizationId]_[OferId]'. Prefix '_CH_OF_'
 			// must be settable in properties file.
 			String offerTemplatePrefix = paramBean.getProperty(
 					"asg.api.offer.charged.prefix", "_CH_OF_");

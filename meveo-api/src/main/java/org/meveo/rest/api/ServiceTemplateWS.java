@@ -10,7 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.ServiceServiceApi;
+import org.meveo.api.ServiceTemplateServiceApi;
 import org.meveo.api.dto.ServiceDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
@@ -23,17 +23,17 @@ import org.meveo.util.MeveoParamBean;
  * @since Oct 11, 2013
  **/
 @Stateless
-@Path("/service")
+@Path("/serviceTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class ServiceWS {
+public class ServiceTemplateWS {
 
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
 	@Inject
-	private ServiceServiceApi serviceServiceApi;
+	private ServiceTemplateServiceApi serviceTemplateServiceApi;
 
 	@POST
 	@Path("/")
@@ -46,7 +46,7 @@ public class ServiceWS {
 			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
-			serviceServiceApi.create(serviceDto);
+			serviceTemplateServiceApi.create(serviceDto);
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -61,7 +61,7 @@ public class ServiceWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			serviceServiceApi.remove(Long.valueOf(paramBean.getProperty(
+			serviceTemplateServiceApi.remove(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")), serviceId);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
