@@ -8,8 +8,9 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.meveo.api.CountryServiceApi;
-import org.meveo.asg.api.CountryDeleted;
+import org.meveo.api.UserServiceApi;
+import org.meveo.api.dto.UserDto;
+import org.meveo.asg.api.UserCreated;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
@@ -19,21 +20,20 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
  **/
-@MessageDriven(name = "CountryDeletedMDB", activationConfig = {
+@MessageDriven(name = "UserCreatedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/deleteCountry"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/createUser"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
-public class CountryDeletedMDB implements MessageListener {
+public class UserCreatedMDB implements MessageListener {
 
-	private static Logger log = LoggerFactory
-			.getLogger(CountryDeletedMDB.class);
+	private static Logger log = LoggerFactory.getLogger(UserCreatedMDB.class);
 
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
 	@Inject
-	private CountryServiceApi countryServiceApi;
+	private UserServiceApi userServiceApi;
 
 	@Override
 	public void onMessage(Message msg) {
@@ -51,16 +51,22 @@ public class CountryDeletedMDB implements MessageListener {
 
 			ObjectMapper mapper = new ObjectMapper();
 
-			CountryDeleted data = mapper.readValue(message,
-					CountryDeleted.class);
+			UserCreated data = mapper.readValue(message, UserCreated.class);
 
-			log.debug("Deleting country with code={}", data.getCountryId());
-			
-			countryServiceApi.remove(data.getCountryId(), null, Long
-					.valueOf(paramBean.getProperty("asp.api.providerId", "1")));
+			log.debug("Creating user with code={}", data.getUser().getUserId());
+
+			UserDto userDto = new UserDto();
+			userDto.setUserId(data.getUser().getUserId());
+			userDto.setOrganizationId(data.getUser().getOrganizationId());
+
+			userDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			userDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
+
+			userServiceApi.create(userDto);
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
 	}
-
 }

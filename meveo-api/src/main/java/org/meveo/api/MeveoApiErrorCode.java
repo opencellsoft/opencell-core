@@ -8,8 +8,17 @@ public class MeveoApiErrorCode {
 
 	// General API Errors 1xxx
 	public static int TRADING_COUNTRY_DOES_NOT_EXISTS = 1000;
-
-	public static int TRADING_CURRENCY_DOES_NOT_EXISTS = 1001;
+	public static int TRADING_COUNTRY_ALREADY_EXISTS = 1001;
+	public static int TRADING_CURRENCY_DOES_NOT_EXISTS = 1002;
+	public static int TRADING_CURRENCY_ALREADY_EXISTS = 1003;
+	public static int TRADING_LANGUAGE_DOES_NOT_EXISTS = 1004;
+	public static int TRADING_LANGUAGE_ALREADY_EXISTS = 1005;
+	public static int CURRENCY_DOES_NOT_EXISTS = 1006;
+	public static int CURRENCY_ALREADY_EXISTS = 1007;
+	public static int COUNTRY_DOES_NOT_EXISTS = 1008;
+	public static int COUNTRY_ALREADY_EXISTS = 1009;
+	public static int LANGUAGE_DOES_NOT_EXISTS = 1010;
+	public static int LANGUAGE_ALREADY_EXISTS = 1011;
 
 	// Validation Errors 2xxx
 	/**

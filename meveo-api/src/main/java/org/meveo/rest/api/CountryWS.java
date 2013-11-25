@@ -14,7 +14,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.CountryServiceApi;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.CountryDto;
+import org.meveo.api.exception.CountryDoesNotExistsException;
+import org.meveo.api.exception.CurrencyDoesNotExistsException;
+import org.meveo.api.exception.TradingCountryAlreadyExistsException;
+import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -38,10 +43,6 @@ public class CountryWS {
 	@MeveoParamBean
 	private ParamBean paramBean;
 
-	public CountryWS() {
-
-	}
-
 	@GET
 	@Path("/index")
 	public ActionStatus index() {
@@ -61,8 +62,16 @@ public class CountryWS {
 					"asp.api.userId", "1")));
 			countryDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
-			
+
 			countryServiceApi.create(countryDto);
+		} catch (CurrencyDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.CURRENCY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (TradingCountryAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_COUNTRY_ALREADY_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -97,6 +106,14 @@ public class CountryWS {
 
 		try {
 			countryServiceApi.remove(countryCode, currencyCode, providerId);
+		} catch (TradingCountryDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_COUNTRY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (CurrencyDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.CURRENCY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -115,8 +132,20 @@ public class CountryWS {
 					"asp.api.userId", "1")));
 			countryDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
-			
+
 			countryServiceApi.update(countryDto);
+		} catch (CountryDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.COUNTRY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (CurrencyDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.CURRENCY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (TradingCountryDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_COUNTRY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

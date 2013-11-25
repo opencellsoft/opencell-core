@@ -9,6 +9,7 @@ import javax.jms.TextMessage;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.CountryServiceApi;
+import org.meveo.api.dto.CountryDto;
 import org.meveo.asg.api.CountryCreated;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
@@ -56,12 +57,19 @@ public class CountryCreatedMDB implements MessageListener {
 
 			log.debug("Creating country with code={}", data.getCountry()
 					.getCountryId());
-			countryServiceApi.create(data.getCountry(), Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")), Long
+			
+			CountryDto countryDto = new CountryDto();
+			countryDto.setCountryCode(data.getCountry().getCountryId());
+			countryDto.setName(data.getCountry().getName());
+			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
+			countryDto.setCurrentUserId(Long
 					.valueOf(paramBean.getProperty("asp.api.userId", "1")));
+			countryDto.setProviderId(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")));
+			
+			countryServiceApi.create(countryDto);
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
 	}
-
 }

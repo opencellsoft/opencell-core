@@ -568,7 +568,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 					"asg.api.service.subscription.point.charge.prefix",
 					"_SO_SE_");
 			String subscriptionTemplateCode = subscriptionPointChargePrefix
-					+ organizationId + "_" + serviceId;
+					+ serviceId + "_" + organizationId;
 
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, subscriptionTemplateCode,
@@ -585,7 +585,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 					"asg.api.service.termination.point.charge.prefix",
 					"_TE_SE_");
 			String terminationTemplateCode = terminationPointChargePrefix
-					+ organizationId + "_" + serviceId;
+					+ serviceId + "_" + organizationId;
 
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, terminationTemplateCode,
@@ -599,8 +599,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 
 			String usageChargeTemplatePrefix = paramBean.getProperty(
 					"asg.api.service.usage.charged.prefix", "_US_SE_");
-			String usageChargeCode = usageChargeTemplatePrefix + organizationId
-					+ "_" + serviceId;
+			String usageChargeCode = usageChargeTemplatePrefix + serviceId
+					+ "_" + organizationId;
 
 			// delete usage charge price plans
 			pricePlanMatrixService
@@ -632,8 +632,8 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			// delete recurring charge
 			String recurringChargePrefix = paramBean.getProperty(
 					"asg.api.service.recurring.prefix", "_RE_SE_");
-			String recurringChargeCode = recurringChargePrefix + organizationId
-					+ "_" + serviceId;
+			String recurringChargeCode = recurringChargePrefix + serviceId
+					+ "_" + organizationId;
 
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, recurringChargeCode,

@@ -191,8 +191,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
 			serviceTemplates.add(serviceTemplate);
 			String offerTemplateCode = offerTemplatePrefix
-					+ offerPricePlanDto.getOrganizationId() + "_"
-					+ offerPricePlanDto.getOfferId();
+					+ offerPricePlanDto.getOfferId() + "_"
+					+ offerPricePlanDto.getOrganizationId();
 			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
 					offerTemplateCode, provider);
 			if (offerTemplate != null) {
@@ -205,9 +205,11 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			List<ServiceTemplate> recommendedServiceTemplates = new ArrayList<ServiceTemplate>();
 			recommendedServiceTemplates.add(recommendedServiceTemplate);
 			String recommendedOfferTemplateCode = recommendedOfferTemplatePrefix
-					+ offerPricePlanDto.getOrganizationId()
+					+ offerPricePlanDto.getOfferId()
 					+ "_"
-					+ offerPricePlanDto.getOfferId();
+					+ offerPricePlanDto.getOrganizationId()
+
+			;
 			OfferTemplate recommendedOfferTemplate = offerTemplateService
 					.findByCode(em, recommendedOfferTemplateCode, provider);
 			if (recommendedOfferTemplate != null) {
@@ -258,8 +260,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				"asg.api.offer.charged.prefix", "_CH_OF_");
 
 		String serviceTemplateCode = offerTemplatePrefix
-				+ offerPricePlanDto.getOrganizationId() + "_"
-				+ offerPricePlanDto.getOfferId();
+				+ offerPricePlanDto.getOfferId() + "_"
+				+ offerPricePlanDto.getOrganizationId();
 
 		// check if template exists
 		if (serviceTemplateService
@@ -269,9 +271,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 		}
 
 		ServiceTemplate serviceTemplate = new ServiceTemplate();
-		serviceTemplate.setCode(offerTemplatePrefix
-				+ offerPricePlanDto.getOfferId() + "_"
-				+ offerPricePlanDto.getOrganizationId());
+		serviceTemplate.setCode(serviceTemplateCode);
 		serviceTemplate.setActive(true);
 		serviceTemplateService.create(em, serviceTemplate, currentUser,
 				provider);
@@ -295,8 +295,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 		RecurringChargeTemplate recurringChargeTemplate = new RecurringChargeTemplate();
 		recurringChargeTemplate.setActive(true);
 		recurringChargeTemplate.setCode(recurringChargePrefix
-				+ offerPricePlanDto.getOrganizationId() + "_"
-				+ offerPricePlanDto.getOfferId());
+				+ offerPricePlanDto.getOfferId() + "_"
+				+ offerPricePlanDto.getOrganizationId());
 		recurringChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 		recurringChargeTemplate.setRecurrenceType(RecurrenceTypeEnum.CALENDAR);
 		recurringChargeTemplate.setSubscriptionProrata(offerPricePlanDto
@@ -369,8 +369,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 		OneShotChargeTemplate subscriptionTemplate = new OneShotChargeTemplate();
 		subscriptionTemplate.setActive(true);
 		subscriptionTemplate.setCode(subscriptionPointChargePrefix
-				+ offerPricePlanDto.getOrganizationId() + "_"
-				+ offerPricePlanDto.getOfferId());
+				+ offerPricePlanDto.getOfferId() + "_"
+				+ offerPricePlanDto.getOrganizationId());
 		subscriptionTemplate.setInvoiceSubCategory(invoiceSubCategory);
 		subscriptionTemplate
 				.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.SUBSCRIPTION);
@@ -431,8 +431,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 		OneShotChargeTemplate terminationTemplate = new OneShotChargeTemplate();
 		terminationTemplate.setActive(true);
 		terminationTemplate.setCode(terminationPointChargePrefix
-				+ offerPricePlanDto.getOrganizationId() + "_"
-				+ offerPricePlanDto.getOfferId());
+				+ offerPricePlanDto.getOfferId() + "_"
+				+ offerPricePlanDto.getOrganizationId());
 		terminationTemplate.setInvoiceSubCategory(invoiceSubCategory);
 		terminationTemplate
 				.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum.TERMINATION);
@@ -579,8 +579,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 
 		String offerCodePrefix = paramBean.getProperty(
 				"asg.api.offer.offer.prefix", "_OF_");
-		String offerTemplateCode = offerCodePrefix + organizationId + "_"
-				+ offerId;
+		String offerTemplateCode = offerCodePrefix + offerId + "_"
+				+ organizationId;
 
 		try {
 			ServiceTemplate serviceTemplate = serviceTemplateService
@@ -597,8 +597,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			// delete usageCharge link
 			String usageChargeTemplatePrefix = paramBean.getProperty(
 					"asg.api.offer.usage.charged.prefix", "_US_OF_");
-			String usageChargeCode = usageChargeTemplatePrefix + organizationId
-					+ "_" + offerId;
+			String usageChargeCode = usageChargeTemplatePrefix + offerId + "_"
+					+ organizationId;
 
 			// delete usage charge price plans
 			pricePlanMatrixService
@@ -633,7 +633,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 							"asg.api.offer.subscription.point.charge.prefix",
 							"_SO_OF_");
 			String subscriptionTemplateCode = subscriptionPointChargePrefix
-					+ organizationId + "_" + offerId;
+					+ offerId + "_" + organizationId;
 
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, subscriptionTemplateCode,
@@ -649,7 +649,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			String terminationPointChargePrefix = paramBean.getProperty(
 					"asg.api.offer.termination.point.charge.prefix", "_TE_OF_");
 			String terminationTemplateCode = terminationPointChargePrefix
-					+ organizationId + "_" + offerId;
+					+ offerId + "_" + organizationId;
 
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, terminationTemplateCode,
@@ -664,8 +664,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			// delete recurring charge
 			String recurringChargePrefix = paramBean.getProperty(
 					"asg.api.offer.recurring.prefix", "_RE_OF_");
-			String recurringChargeCode = recurringChargePrefix + organizationId
-					+ "_" + offerId;
+			String recurringChargeCode = recurringChargePrefix + offerId + "_"
+					+ organizationId;
 
 			// delete price plan
 			pricePlanMatrixService.removeByCode(em, recurringChargeCode,
@@ -699,5 +699,4 @@ public class OfferPricePlanServiceApi extends BaseApi {
 							+ offerTemplateCode + ".");
 		}
 	}
-
 }

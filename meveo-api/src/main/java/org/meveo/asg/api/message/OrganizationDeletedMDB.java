@@ -8,8 +8,8 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.meveo.api.CountryServiceApi;
-import org.meveo.asg.api.CountryDeleted;
+import org.meveo.api.OrganizationServiceApi;
+import org.meveo.asg.api.OrganizationDeleted;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
@@ -19,21 +19,21 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
  **/
-@MessageDriven(name = "CountryDeletedMDB", activationConfig = {
+@MessageDriven(name = "OrganizationDeletedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/deleteCountry"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/deleteOrganization"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
-public class CountryDeletedMDB implements MessageListener {
+public class OrganizationDeletedMDB implements MessageListener {
 
 	private static Logger log = LoggerFactory
-			.getLogger(CountryDeletedMDB.class);
+			.getLogger(OrganizationDeletedMDB.class);
 
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
 	@Inject
-	private CountryServiceApi countryServiceApi;
+	private OrganizationServiceApi organizationServiceApi;
 
 	@Override
 	public void onMessage(Message msg) {
@@ -51,16 +51,16 @@ public class CountryDeletedMDB implements MessageListener {
 
 			ObjectMapper mapper = new ObjectMapper();
 
-			CountryDeleted data = mapper.readValue(message,
-					CountryDeleted.class);
+			OrganizationDeleted data = mapper.readValue(message,
+					OrganizationDeleted.class);
 
-			log.debug("Deleting country with code={}", data.getCountryId());
-			
-			countryServiceApi.remove(data.getCountryId(), null, Long
+			log.debug("Creating organization with code={}",
+					data.getOrganizationId());
+
+			organizationServiceApi.remove(data.getOrganizationId(), Long
 					.valueOf(paramBean.getProperty("asp.api.providerId", "1")));
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
 	}
-
 }
