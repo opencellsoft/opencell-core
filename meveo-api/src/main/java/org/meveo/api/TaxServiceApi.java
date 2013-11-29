@@ -11,13 +11,23 @@ import javax.inject.Inject;
 import org.meveo.api.dto.CountryTaxDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
+import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.catalog.impl.InvoiceCategoryService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.util.MeveoParamBean;
 
 /**
  * @author Edward P. Legaspi
@@ -28,6 +38,10 @@ import org.meveo.service.crm.impl.ProviderService;
 public class TaxServiceApi extends BaseApi {
 
 	@Inject
+	@MeveoParamBean
+	private ParamBean paramBean;
+
+	@Inject
 	private TaxService taxService;
 
 	@Inject
@@ -35,6 +49,18 @@ public class TaxServiceApi extends BaseApi {
 
 	@Inject
 	private UserService userService;
+
+	@Inject
+	private InvoiceCategoryService invoiceCategoryService;
+
+	@Inject
+	private InvoiceSubCategoryService invoiceSubCategoryService;
+
+	@Inject
+	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+
+	@Inject
+	private TradingCountryService tradingCountryService;
 
 	public void create(TaxDto taxDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(taxDto.getTaxId())
@@ -46,12 +72,39 @@ public class TaxServiceApi extends BaseApi {
 					.findById(taxDto.getProviderId());
 			User currentUser = userService.findById(taxDto.getCurrentUserId());
 
+			InvoiceCategory invoiceCategory = invoiceCategoryService
+					.findByCode(em,
+							paramBean.getProperty("asp.api.default", "DEFAULT"));
+			if (invoiceCategory == null) {
+				throw new MeveoApiException(
+						"Invoice category with code=DEFAULT does not exists");
+			}
+
+			InvoiceSubCategory invoiceSubCategory = new InvoiceSubCategory();
+			invoiceSubCategory.setCode(taxDto.getTaxId());
+			invoiceSubCategory.setInvoiceCategory(invoiceCategory);
+			invoiceSubCategoryService.create(em, invoiceSubCategory,
+					currentUser, provider);
+
 			for (CountryTaxDto ct : taxDto.getCountryTaxes()) {
+				String taxCode = taxDto.getTaxId() + "_" + ct.getCountryCode();
 				Tax tax = new Tax();
-				tax.setCode(taxDto.getTaxId() + "_" + ct.getCountryCode());
+				tax.setCode(taxCode);
 				tax.setDescription(taxDto.getName());
 				tax.setPercent(ct.getTaxValue());
 				taxService.create(em, tax, currentUser, provider);
+
+				TradingCountry tradingCountry = tradingCountryService
+						.findByTradingCountryCode(em, ct.getCountryCode(),
+								provider);
+
+				InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+				invoiceSubcategoryCountry
+						.setInvoiceSubCategory(invoiceSubCategory);
+				invoiceSubcategoryCountry.setTax(tax);
+				invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
+				invoiceSubCategoryCountryService.create(em,
+						invoiceSubcategoryCountry, currentUser, provider);
 			}
 
 		} else {
