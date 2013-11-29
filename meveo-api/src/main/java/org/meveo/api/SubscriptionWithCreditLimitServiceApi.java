@@ -1,6 +1,8 @@
 package org.meveo.api;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,8 +10,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CreditLimitDto;
 import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
+import org.meveo.api.exception.BillingAccountDoesNotExistsException;
+import org.meveo.api.exception.CreditLimitExceededException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.OfferTemplateDoesNotExistsException;
 import org.meveo.api.exception.ParentSellerDoesNotExistsException;
@@ -18,13 +24,23 @@ import org.meveo.api.exception.ServiceTemplateDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.RealtimeChargingService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.util.MeveoParamBean;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -33,6 +49,9 @@ import org.meveo.util.MeveoParamBean;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	@MeveoParamBean
@@ -47,21 +66,38 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 	@Inject
 	private SellerService sellerService;
 
-	public void create(SubscriptionWithCreditLimitDto subscriptionDto)
-			throws MeveoApiException {
+	@Inject
+	private RealtimeChargingService realtimeChargingService;
 
-		if (!StringUtils.isBlank(subscriptionDto.getUserId())
-				&& !StringUtils.isBlank(subscriptionDto.getOrganizationId())
-				&& !StringUtils.isBlank(subscriptionDto.getOfferId())
-				&& subscriptionDto.getServicesToAdd() != null
-				&& subscriptionDto.getServicesToAdd().size() > 0) {
+	@Inject
+	private WalletOperationService walletOperationService;
 
-			Provider provider = providerService.findById(subscriptionDto
-					.getProviderId());
+	@Inject
+	private BillingAccountService billingAccountService;
+
+	@Inject
+	private SubscriptionService subscriptionService;
+
+	public void create(
+			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto)
+			throws MeveoApiException, BusinessException {
+
+		if (!StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())
+				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
+						.getOrganizationId())
+				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
+						.getOfferId())
+				&& subscriptionWithCreditLimitDto.getServicesToAdd() != null
+				&& subscriptionWithCreditLimitDto.getServicesToAdd().size() > 0) {
+
+			Provider provider = providerService
+					.findById(subscriptionWithCreditLimitDto.getProviderId());
+			User currentUser = userService
+					.findById(subscriptionWithCreditLimitDto.getCurrentUserId());
 
 			String offerTemplateCode = paramBean.getProperty(
 					"asg.api.offer.offer.prefix", "_OF_")
-					+ subscriptionDto.getOfferId();
+					+ subscriptionWithCreditLimitDto.getOfferId();
 			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
 					offerTemplateCode, provider);
 
@@ -70,15 +106,16 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			}
 
 			Seller seller = sellerService.findByCode(em,
-					subscriptionDto.getOrganizationId(), provider);
+					subscriptionWithCreditLimitDto.getOrganizationId(),
+					provider);
 			if (seller == null) {
 				throw new SellerDoesNotExistsException(
-						subscriptionDto.getOrganizationId());
+						subscriptionWithCreditLimitDto.getOrganizationId());
 			}
 
 			if (seller.getSeller() == null) {
 				throw new ParentSellerDoesNotExistsException(
-						subscriptionDto.getOrganizationId());
+						subscriptionWithCreditLimitDto.getOrganizationId());
 			} else {
 				Seller parentSeller = seller.getSeller();
 				String sellerId = parentSeller.getCode();
@@ -100,14 +137,17 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 								paramBean.getProperty(
 										"asg.api.offer.charged.prefix",
 										"_CH_OF_")
-										+ subscriptionDto.getOfferId()
-										+ "_"
-										+ sellerId, provider);
+										+ subscriptionWithCreditLimitDto
+												.getOfferId() + "_" + sellerId,
+								provider);
 				if (chargedServiceTemplate != null) {
 					forSubscription.getOfferTemplateForSubscription()
 							.setOfferTemplate(offerTemplate);
-					forSubscription.getOfferTemplateForSubscription()
-							.getServiceTemplates().add(chargedServiceTemplate);
+					forSubscription
+							.getOfferTemplateForSubscription()
+							.getServiceTemplatesForsuForSubscriptions()
+							.add(new ServiceTemplateForSubscription(
+									chargedServiceTemplate));
 					forSubscription.setChargedOffer(true);
 				} else {
 					// It's not the case we have to take the offers linked at
@@ -115,7 +155,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					// service "_SE_["ServiceId"]"
 					// (asg.api.service.offer.prefix).
 					forSubscription.setChargedOffer(false);
-					for (ServiceToAddDto serviceToAddDto : subscriptionDto
+					for (ServiceToAddDto serviceToAddDto : subscriptionWithCreditLimitDto
 							.getServicesToAdd()) {
 						// find offer
 						String tempOfferTemplateCode = paramBean.getProperty(
@@ -144,34 +184,51 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 						}
 						forSubscription.getOfferTemplateForSubscription()
 								.setOfferTemplate(tempOfferTemplate);
-						forSubscription.getOfferTemplateForSubscription()
-								.getServiceTemplates()
-								.add(chargedServiceTemplate);
+						forSubscription
+								.getOfferTemplateForSubscription()
+								.getServiceTemplatesForsuForSubscriptions()
+								.add(new ServiceTemplateForSubscription(
+										chargedServiceTemplate, serviceToAddDto));
 					}
 				}
 
 				// processParent
 				ForSubscription finalForSubscription = processParent(
 						forSubscription, parentSeller,
-						subscriptionDto.getOfferId(), provider,
-						subscriptionDto.getServicesToAdd());
+						subscriptionWithCreditLimitDto.getOfferId(), provider,
+						subscriptionWithCreditLimitDto.getServicesToAdd());
+
+				// validate credit limit
+				if (!validateCreditLimit(finalForSubscription,
+						subscriptionWithCreditLimitDto, provider)) {
+					throw new CreditLimitExceededException();
+				}
+
+				// check offer and service template association
+				updateOfferAndServiceTemplateAssociation(forSubscription,
+						currentUser);
+
+//				createSubscription(finalForSubscription,
+//						subscriptionWithCreditLimitDto, currentUser, provider);
 			}
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(subscriptionDto.getUserId())) {
+			if (StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())) {
 				missingFields.add("userId");
 			}
-			if (StringUtils.isBlank(subscriptionDto.getOrganizationId())) {
+			if (StringUtils.isBlank(subscriptionWithCreditLimitDto
+					.getOrganizationId())) {
 				missingFields.add("organizationId");
 			}
-			if (StringUtils.isBlank(subscriptionDto.getOfferId())) {
+			if (StringUtils
+					.isBlank(subscriptionWithCreditLimitDto.getOfferId())) {
 				missingFields.add("offerId");
 			}
-			if (subscriptionDto.getServicesToAdd() == null
-					|| subscriptionDto.getServicesToAdd().size() == 0) {
+			if (subscriptionWithCreditLimitDto.getServicesToAdd() == null
+					|| subscriptionWithCreditLimitDto.getServicesToAdd().size() == 0) {
 				missingFields.add("servicesToAdd");
 			}
 
@@ -186,6 +243,169 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			throw new MeveoApiException(sb.toString());
 		}
 
+	}
+
+	private void createSubscription(ForSubscription forSubscription,
+			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto,
+			User currentUser, Provider provider) {
+		// subscription
+		while (forSubscription != null) {
+			Subscription subscription = new Subscription();
+			subscription.setOffer(forSubscription
+					.getOfferTemplateForSubscription().getOfferTemplate());
+			subscription.setCode(forSubscription.getSeller().getCode()); // ?
+			subscription.setDescription("");
+			subscription.setSubscriptionDate(subscriptionWithCreditLimitDto
+					.getSubscriptionDate());
+			subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+			subscription.setUserAccount(null);
+			// TODO: uncomment
+			// subscriptionService.create(em, subscription, currentUser,
+			// provider);
+
+			forSubscription = forSubscription.getChild();
+		}
+	}
+
+	private void updateOfferAndServiceTemplateAssociation(
+			ForSubscription forSubscription, User currentUser) {
+
+		while (forSubscription != null) {
+			OfferTemplate offerTemplate = forSubscription
+					.getOfferTemplateForSubscription().getOfferTemplate();
+
+			if (offerTemplate.getServiceTemplates() == null) {
+				List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
+				for (ServiceTemplateForSubscription serviceTemplateForSubscription : forSubscription
+						.getOfferTemplateForSubscription()
+						.getServiceTemplatesForsuForSubscriptions()) {
+					ServiceTemplate st = serviceTemplateForSubscription
+							.getServiceTemplate();
+					serviceTemplates.add(st);
+				}
+				offerTemplate.setServiceTemplates(serviceTemplates);
+			} else {
+				for (ServiceTemplateForSubscription serviceTemplateForSubscription : forSubscription
+						.getOfferTemplateForSubscription()
+						.getServiceTemplatesForsuForSubscriptions()) {
+					ServiceTemplate st = serviceTemplateForSubscription
+							.getServiceTemplate();
+					if (!offerTemplate.getServiceTemplates().contains(st)) {
+						offerTemplate.getServiceTemplates().add(st);
+					}
+				}
+			}
+
+			// TODO: uncomment
+			// offerTemplateService.update(em, offerTemplate, currentUser);
+
+			forSubscription = forSubscription.getChild();
+		}
+	}
+
+	private boolean validateCreditLimit(ForSubscription forSubscription,
+			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto,
+			Provider provider) throws BusinessException, MeveoApiException {
+
+		// validate children
+		while (forSubscription != null) {
+			Date startDate = null;
+			Date endDate = null;
+
+			String billingAccountCode = paramBean.getProperty(
+					"asp.api.default.billingAccount.prefix", "BA_")
+					+ forSubscription.getSeller().getSeller().getCode();
+			BillingAccount billingAccount = billingAccountService.findByCode(
+					em, billingAccountCode, provider);
+			if (billingAccount == null) {
+				throw new BillingAccountDoesNotExistsException(
+						billingAccountCode);
+			}
+
+			BigDecimal servicesSum = new BigDecimal(0);
+			for (ServiceTemplateForSubscription serviceTemplateForSubscription : forSubscription
+					.getOfferTemplateForSubscription()
+					.getServiceTemplatesForsuForSubscriptions()) {
+				ServiceTemplate st = serviceTemplateForSubscription
+						.getServiceTemplate();
+				if (st.getRecurringCharges() != null
+						&& st.getRecurringCharges().size() > 0) {
+					for (RecurringChargeTemplate ct : st.getRecurringCharges()) {
+						try {
+							if (startDate == null
+									|| ct.getCalendar()
+											.previousCalendarDate(
+													subscriptionWithCreditLimitDto
+															.getSubscriptionDate())
+											.before(startDate)) {
+								startDate = ct.getCalendar()
+										.previousCalendarDate(
+												subscriptionWithCreditLimitDto
+														.getSubscriptionDate());
+							}
+							if (endDate == null
+									|| ct.getCalendar()
+											.nextCalendarDate(
+													subscriptionWithCreditLimitDto
+															.getSubscriptionDate())
+											.after(endDate)) {
+								endDate = ct.getCalendar().nextCalendarDate(
+										subscriptionWithCreditLimitDto
+												.getSubscriptionDate());
+							}
+						} catch (NullPointerException e) {
+							log.debug(
+									"Next or Previous calendar value is null for recurringChargeTemplate with code={}",
+									ct.getCode());
+						}
+					}
+				}
+				if (serviceTemplateForSubscription.getServiceToAddDto() == null) {
+					servicesSum.add(realtimeChargingService
+							.getActivationServicePrice(em, billingAccount, st,
+									subscriptionWithCreditLimitDto
+											.getSubscriptionDate(),
+									new BigDecimal(1), null, null, null, true));
+				} else {
+					servicesSum.add(realtimeChargingService
+							.getActivationServicePrice(em, billingAccount, st,
+									serviceTemplateForSubscription
+											.getServiceToAddDto()
+											.getSubscriptionDate(),
+									new BigDecimal(1),
+									serviceTemplateForSubscription
+											.getServiceToAddDto().getParam1(),
+									serviceTemplateForSubscription
+											.getServiceToAddDto().getParam2(),
+									serviceTemplateForSubscription
+											.getServiceToAddDto().getParam3(),
+									true));
+				}
+			}
+
+			BigDecimal ratedAmount = walletOperationService.getRatedAmount(
+					provider, forSubscription.getSeller(), null, null,
+					billingAccount, null, startDate, endDate, true);
+
+			BigDecimal spentCredit = servicesSum.add(ratedAmount);
+
+			for (CreditLimitDto creditLimitDto : subscriptionWithCreditLimitDto
+					.getCreditLimits()) {
+				if (forSubscription.getSeller().getCode()
+						.equals(creditLimitDto.getOrganizationId())) {
+					if (spentCredit.compareTo(creditLimitDto.getCreditLimit()) > 0) {
+						log.debug("Credit limit exceeded for seller code={}",
+								forSubscription.getSeller().getCode());
+						return false;
+					}
+				}
+			}
+
+			// next node
+			forSubscription = forSubscription.getChild();
+		}
+
+		return true;
 	}
 
 	private ForSubscription processParent(ForSubscription forSubscription,
@@ -215,9 +435,11 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 								forSubscription
 										.getOfferTemplateForSubscription()
 										.getOfferTemplate());
-				newForSubscription.getOfferTemplateForSubscription()
-						.getServiceTemplates()
-						.add(tempChargedOfferServiceTemplate);
+				newForSubscription
+						.getOfferTemplateForSubscription()
+						.getServiceTemplatesForsuForSubscriptions()
+						.add(new ServiceTemplateForSubscription(
+								tempChargedOfferServiceTemplate));
 				newForSubscription = processParent(newForSubscription,
 						seller.getSeller(), offerId, provider, servicesToAdd);
 			} else {
@@ -229,10 +451,6 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 							+ serviceToAddDto.getServiceId();
 					OfferTemplate tempOfferTemplate = offerTemplateService
 							.findByCode(em, tempOfferTemplateCode, provider);
-					if (tempOfferTemplate == null) {
-						throw new OfferTemplateDoesNotExistsException(
-								tempOfferTemplateCode);
-					}
 
 					// find service template
 					String tempChargedServiceTemplateCode = paramBean
@@ -242,15 +460,19 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					ServiceTemplate tempChargedServiceTemplate = serviceTemplateService
 							.findByCode(em, tempChargedServiceTemplateCode,
 									provider);
-					if (tempChargedServiceTemplate == null) {
-						throw new ServiceTemplateDoesNotExistsException(
-								tempChargedServiceTemplateCode);
+
+					if (tempOfferTemplate != null
+							&& tempChargedServiceTemplate != null) {
+						forSubscription.getOfferTemplateForSubscription()
+								.setOfferTemplate(tempOfferTemplate);
+
+						forSubscription
+								.getOfferTemplateForSubscription()
+								.getServiceTemplatesForsuForSubscriptions()
+								.add(new ServiceTemplateForSubscription(
+										tempChargedServiceTemplate,
+										serviceToAddDto));
 					}
-					forSubscription.getOfferTemplateForSubscription()
-							.setOfferTemplate(tempOfferTemplate);
-					forSubscription.getOfferTemplateForSubscription()
-							.getServiceTemplates()
-							.add(tempChargedServiceTemplate);
 
 					newForSubscription = processParent(newForSubscription,
 							seller.getSeller(), offerId, provider,
@@ -284,8 +506,11 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				}
 				forSubscription.getOfferTemplateForSubscription()
 						.setOfferTemplate(tempOfferTemplate);
-				forSubscription.getOfferTemplateForSubscription()
-						.getServiceTemplates().add(tempChargedServiceTemplate);
+				forSubscription
+						.getOfferTemplateForSubscription()
+						.getServiceTemplatesForsuForSubscriptions()
+						.add(new ServiceTemplateForSubscription(
+								tempChargedServiceTemplate, serviceToAddDto));
 
 				newForSubscription = processParent(newForSubscription,
 						seller.getSeller(), offerId, provider, servicesToAdd);
@@ -338,7 +563,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 	class OfferTemplateForSubscription {
 		private OfferTemplate offerTemplate;
-		private List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
+		private List<ServiceTemplateForSubscription> serviceTemplatesForsuForSubscriptions = new ArrayList<ServiceTemplateForSubscription>();
 
 		public OfferTemplate getOfferTemplate() {
 			return offerTemplate;
@@ -348,13 +573,51 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			this.offerTemplate = offerTemplate;
 		}
 
-		public List<ServiceTemplate> getServiceTemplates() {
-			return serviceTemplates;
+		public List<ServiceTemplateForSubscription> getServiceTemplatesForsuForSubscriptions() {
+			return serviceTemplatesForsuForSubscriptions;
 		}
 
-		public void setServiceTemplates(List<ServiceTemplate> serviceTemplates) {
-			this.serviceTemplates = serviceTemplates;
+		public void setServiceTemplatesForsuForSubscriptions(
+				List<ServiceTemplateForSubscription> serviceTemplatesForsuForSubscriptions) {
+			this.serviceTemplatesForsuForSubscriptions = serviceTemplatesForsuForSubscriptions;
 		}
+
+	}
+
+	class ServiceTemplateForSubscription {
+		private ServiceTemplate serviceTemplate;
+		private ServiceToAddDto serviceToAddDto;
+
+		public ServiceTemplateForSubscription() {
+
+		}
+
+		public ServiceTemplateForSubscription(ServiceTemplate serviceTemplate) {
+			this.serviceTemplate = serviceTemplate;
+		}
+
+		public ServiceTemplateForSubscription(ServiceTemplate serviceTemplate,
+				ServiceToAddDto serviceToAddDto) {
+			this.serviceTemplate = serviceTemplate;
+			this.serviceToAddDto = serviceToAddDto;
+		}
+
+		public ServiceTemplate getServiceTemplate() {
+			return serviceTemplate;
+		}
+
+		public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+			this.serviceTemplate = serviceTemplate;
+		}
+
+		public ServiceToAddDto getServiceToAddDto() {
+			return serviceToAddDto;
+		}
+
+		public void setServiceToAddDto(ServiceToAddDto serviceToAddDto) {
+			this.serviceToAddDto = serviceToAddDto;
+		}
+
 	}
 
 }

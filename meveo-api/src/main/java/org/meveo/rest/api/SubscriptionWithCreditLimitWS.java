@@ -8,9 +8,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.SubscriptionWithCreditLimitServiceApi;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
+import org.meveo.api.exception.CreditLimitExceededException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.ParentSellerDoesNotExistsException;
+import org.meveo.api.exception.SellerDoesNotExistsException;
+import org.meveo.api.exception.ServiceTemplateDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.api.response.SubscriptionWithCreditLimitResponse;
 import org.meveo.util.MeveoParamBean;
@@ -49,11 +54,17 @@ public class SubscriptionWithCreditLimitWS {
 
 		try {
 			subscriptionWithCreditLimitServiceApi.create(subscriptionDto);
+		} catch (CreditLimitExceededException e) {
+		} catch (SellerDoesNotExistsException e) {
+		} catch (ParentSellerDoesNotExistsException e) {
+		} catch (ServiceTemplateDoesNotExistsException e) {
+
 		} catch (MeveoApiException e) {
 			log.error(e.getMessage());
+		} catch (BusinessException e) {
+			e.printStackTrace();
 		}
 
 		return result;
 	}
-
 }

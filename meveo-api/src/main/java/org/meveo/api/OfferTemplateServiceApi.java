@@ -80,17 +80,17 @@ public class OfferTemplateServiceApi extends BaseApi {
 						.getDescription());
 			}
 
-			String serviceTemplateCode = paramBean.getProperty(
+			String chargedServiceTemplateCode = paramBean.getProperty(
 					"asg.api.offer.notcharged.prefix", "_NC_OF_")
 					+ offerDto.getOfferId();
 			if (serviceTemplateService
-					.findByCode(serviceTemplateCode, provider) != null) {
+					.findByCode(chargedServiceTemplateCode, provider) != null) {
 				throw new MeveoApiException("Service template code="
-						+ serviceTemplateCode + " already exists.");
+						+ chargedServiceTemplateCode + " already exists.");
 			}
 			ServiceTemplate serviceTemplate = new ServiceTemplate();
 			serviceTemplate.setActive(true);
-			serviceTemplate.setCode(serviceTemplateCode);
+			serviceTemplate.setCode(chargedServiceTemplateCode);
 			serviceTemplateService.create(em, serviceTemplate, currentUser,
 					provider);
 

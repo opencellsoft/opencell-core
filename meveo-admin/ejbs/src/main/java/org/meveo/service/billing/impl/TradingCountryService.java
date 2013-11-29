@@ -18,6 +18,7 @@ package org.meveo.service.billing.impl;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -48,6 +49,27 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 			Query query = getEntityManager()
 					.createQuery(
 							"select b from TradingCountry b where b.country.countryCode = :tradingCountryCode and b.provider=:provider");
+			query.setParameter("tradingCountryCode", tradingCountryCode);
+			query.setParameter("provider", provider);
+			return (TradingCountry) query.getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(
+					"findByTradingCountryCode billing cycle not found : tradingCountryCode=#0,provider=#1",
+					tradingCountryCode, provider != null ? provider.getCode()
+							: null);
+			return null;
+		}
+	}
+
+	public TradingCountry findByTradingCountryCode(EntityManager em,
+			String tradingCountryCode, Provider provider) {
+		try {
+			log.info(
+					"findByTradingCountryCode tradingCountryCode={},provider={}",
+					tradingCountryCode, provider != null ? provider.getCode()
+							: null);
+			Query query = em
+					.createQuery("select b from TradingCountry b where b.country.countryCode = :tradingCountryCode and b.provider=:provider");
 			query.setParameter("tradingCountryCode", tradingCountryCode);
 			query.setParameter("provider", provider);
 			return (TradingCountry) query.getSingleResult();

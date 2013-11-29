@@ -91,24 +91,24 @@ public class OrganizationServiceApi extends BaseApi {
 					.findById(orgDto.getProviderId());
 			User currentUser = userService.findById(orgDto.getCurrentUserId());
 
-			Seller org = sellerService.findByCode(orgDto.getOrganizationId(),
-					provider);
-			if (org != null) {
+			Seller seller = sellerService.findByCode(
+					orgDto.getOrganizationId(), provider);
+			if (seller != null) {
 				throw new SellerAlreadyExistsException(
 						orgDto.getOrganizationId());
 			}
 
-			TradingCountry tr = tradingCountryService.findByTradingCountryCode(
-					orgDto.getCountryCode(), provider);
-			if (tr == null) {
+			TradingCountry tradingCountry = tradingCountryService
+					.findByTradingCountryCode(orgDto.getCountryCode(), provider);
+			if (tradingCountry == null) {
 				throw new TradingCountryDoesNotExistsException(
 						orgDto.getCountryCode());
 			}
 
-			TradingCurrency tc = tradingCurrencyService
+			TradingCurrency tradingCurrency = tradingCurrencyService
 					.findByTradingCurrencyCode(orgDto.getDefaultCurrencyCode(),
 							provider);
-			if (tc == null) {
+			if (tradingCurrency == null) {
 				throw new TradingCurrencyDoesNotExistsException(
 						orgDto.getDefaultCurrencyCode());
 			}
@@ -145,7 +145,30 @@ public class OrganizationServiceApi extends BaseApi {
 							"asp.api.default.customer.category", "Business"));
 
 			if (parentSeller != null) {
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(currentUser);
+
+				Seller newSeller = new Seller();
+				newSeller.setSeller(parentSeller);
+				newSeller.setActive(true);
+				newSeller.setCode(orgDto.getOrganizationId());
+				newSeller.setAuditable(auditable);
+				newSeller.setProvider(provider);
+				newSeller.setTradingCountry(tradingCountry);
+				newSeller.setTradingCurrency(tradingCurrency);
+				newSeller.setDescription(orgDto.getName());
+				sellerService.create(em, newSeller, currentUser, provider);
+
+				Customer customer = new Customer();
+				customer.setCode(customerPrefix + orgDto.getOrganizationId());
+				customer.setSeller(newSeller);
+				customer.setCustomerBrand(customerBrand);
+				customer.setCustomerCategory(customerCategory);
+				customerService.create(em, customer, currentUser, provider);
+
 				CustomerAccount customerAccount = new CustomerAccount();
+				customerAccount.setCustomer(customer);
 				customerAccount.setCode(customerAccountPrefix
 						+ orgDto.getOrganizationId());
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
@@ -153,6 +176,7 @@ public class OrganizationServiceApi extends BaseApi {
 						.getValue(caPaymentMethod));
 				customerAccount.setCreditCategory(CreditCategoryEnum
 						.getValue(creditCategory));
+				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccountService.create(em, customerAccount, currentUser,
 						provider);
 
@@ -168,6 +192,7 @@ public class OrganizationServiceApi extends BaseApi {
 								.getProperty(
 										"asp.api.default.billingAccount.electronicBilling",
 										"true")));
+				billingAccount.setTradingCountry(tradingCountry);
 				billingAccountService.create(em, billingAccount, currentUser,
 						provider);
 
@@ -178,29 +203,6 @@ public class OrganizationServiceApi extends BaseApi {
 						"_DEF_") + orgDto.getOrganizationId());
 				userAccountService.create(em, userAccount, currentUser,
 						provider);
-
-				Customer customer = new Customer();
-				customer.setCode(customerPrefix + orgDto.getOrganizationId());
-				customer.setSeller(parentSeller);
-				customer.setCustomerBrand(customerBrand);
-				customer.setCustomerCategory(customerCategory);
-				customer.getCustomerAccounts().add(customerAccount);
-				customerService.create(em, customer, currentUser, provider);
-
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(currentUser);
-
-				Seller newSeller = new Seller();
-				newSeller.setSeller(parentSeller);
-				newSeller.setActive(true);
-				newSeller.setCode(orgDto.getOrganizationId());
-				newSeller.setAuditable(auditable);
-				newSeller.setProvider(provider);
-				newSeller.setTradingCountry(tr);
-				newSeller.setTradingCurrency(tc);
-				newSeller.setDescription(orgDto.getName());
-				sellerService.create(em, newSeller, currentUser, provider);
 
 				// add user account to parent's billing account
 				String parentBillingAccountCode = billingAccountPrefix
@@ -222,7 +224,29 @@ public class OrganizationServiceApi extends BaseApi {
 							currentUser, provider);
 				}
 			} else {
+				Auditable auditable = new Auditable();
+				auditable.setCreated(new Date());
+				auditable.setCreator(currentUser);
+
+				Seller newSeller = new Seller();
+				newSeller.setActive(true);
+				newSeller.setCode(orgDto.getOrganizationId());
+				newSeller.setAuditable(auditable);
+				newSeller.setProvider(provider);
+				newSeller.setTradingCountry(tradingCountry);
+				newSeller.setTradingCurrency(tradingCurrency);
+				newSeller.setDescription(orgDto.getName());
+				sellerService.create(em, newSeller, currentUser, provider);
+
+				Customer customer = new Customer();
+				customer.setCode(customerPrefix + orgDto.getOrganizationId());
+				customer.setSeller(newSeller);
+				customer.setCustomerBrand(customerBrand);
+				customer.setCustomerCategory(customerCategory);
+				customerService.create(em, customer, currentUser, provider);
+
 				CustomerAccount customerAccount = new CustomerAccount();
+				customerAccount.setCustomer(customer);
 				customerAccount.setCode(customerAccountPrefix
 						+ orgDto.getOrganizationId());
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
@@ -230,6 +254,7 @@ public class OrganizationServiceApi extends BaseApi {
 						.getValue(caPaymentMethod));
 				customerAccount.setCreditCategory(CreditCategoryEnum
 						.getValue(creditCategory));
+				customerAccount.setTradingCurrency(tradingCurrency);
 				customerAccountService.create(em, customerAccount, currentUser,
 						provider);
 
@@ -245,30 +270,9 @@ public class OrganizationServiceApi extends BaseApi {
 								.getProperty(
 										"asp.api.default.billingAccount.electronicBilling",
 										"true")));
+				billingAccount.setTradingCountry(tradingCountry);
 				billingAccountService.create(em, billingAccount, currentUser,
 						provider);
-
-				Customer customer = new Customer();
-				customer.setCode(customerPrefix + orgDto.getOrganizationId());
-				customer.setSeller(parentSeller);
-				customer.setCustomerBrand(customerBrand);
-				customer.setCustomerCategory(customerCategory);
-				customer.getCustomerAccounts().add(customerAccount);
-				customerService.create(em, customer, currentUser, provider);
-
-				Auditable auditable = new Auditable();
-				auditable.setCreated(new Date());
-				auditable.setCreator(currentUser);
-
-				Seller newSeller = new Seller();
-				newSeller.setActive(true);
-				newSeller.setCode(orgDto.getOrganizationId());
-				newSeller.setAuditable(auditable);
-				newSeller.setProvider(provider);
-				newSeller.setTradingCountry(tr);
-				newSeller.setTradingCurrency(tc);
-				newSeller.setDescription(orgDto.getName());
-				sellerService.create(em, newSeller, currentUser, provider);
 			}
 		} else {
 			StringBuilder sb = new StringBuilder(
