@@ -211,9 +211,7 @@ public class UsageRatingService {
 			cachedValue.setChargeDate(usageChargeInstance.getChargeDate());
 			cachedValue.setChargeInstanceId(usageChargeInstance.getId());
 			cachedValue.setProvider(usageChargeInstance.getProvider());
-			cachedValue.setCurrencyId(usageChargeInstance.getServiceInstance().getSubscription()
-					.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency()
-					.getId());
+			cachedValue.setCurrencyId(usageChargeInstance.getCurrency().getId());
 			if (usageChargeInstance.getCounter() != null) {
 				CounterInstanceCache counterCacheValue = null;
 				Long counterKey = CounterInstanceCache.getKey(usageChargeInstance.getCounter());

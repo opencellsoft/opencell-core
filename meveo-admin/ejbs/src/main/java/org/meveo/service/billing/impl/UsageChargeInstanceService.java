@@ -60,7 +60,9 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
 		usageChargeInstance.setSeller(seller);
-
+		usageChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
+		usageChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
+		
 		create(usageChargeInstance, creator, serviceInstance.getProvider());
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
 			CounterInstance counterInstance = counterInstanceService.counterInstanciation(

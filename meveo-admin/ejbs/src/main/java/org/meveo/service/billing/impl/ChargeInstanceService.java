@@ -105,6 +105,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 		chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
 		chargeInstance.setServiceInstance(serviceInst);
 		chargeInstance.setSeller(seller);
+		chargeInstance.setCountry(serviceInst.getSubscription().getUserAccount().getBillingAccount().getTradingCountry());
+		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
 		recurringChargeInstanceService.create(chargeInstance, creator,
 				recurringChargeTemplate.getProvider());
 
