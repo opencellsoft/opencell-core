@@ -98,10 +98,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Customer customer, CustomerAccount customerAccount,
 			BillingAccount billingAccount, UserAccount userAccount,
 			Date startDate, Date endDate, boolean amountWithTax) {
-		
+
 		BigDecimal result = BigDecimal.ZERO;
 		LevelEnum level = LevelEnum.PROVIDER;
-		
+
 		if (userAccount != null) {
 			level = LevelEnum.USER_ACCOUNT;
 			provider = userAccount.getProvider();
@@ -149,14 +149,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			default:
 				break;
 			}
-			
+
 			Query query = em.createQuery(strQuery);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			query.setParameter("provider", provider);
 			query.setParameter("open", WalletOperationStatusEnum.OPEN);
 			query.setParameter("treated", WalletOperationStatusEnum.TREATED);
-			
+
 			switch (level) {
 			case BILLING_ACCOUNT:
 				query.setParameter("billingAccount", billingAccount);
@@ -178,12 +178,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			default:
 				break;
 			}
-			
+
 			result = (BigDecimal) query.getSingleResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 
@@ -442,7 +442,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				"chargeSubscription applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 				applicationDate, nextapplicationDate, previousapplicationDate);
 
-		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
+		BigDecimal quantity = (chargeInstance.getServiceInstance() == null || chargeInstance
+				.getServiceInstance().getQuantity() == null) ? BigDecimal.ONE
 				: new BigDecimal(chargeInstance.getServiceInstance()
 						.getQuantity());
 		if (Boolean.TRUE.equals(recurringChargeTemplate
@@ -472,7 +473,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		log.debug("param2={}", param2);
 
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate
-				.getInvoiceSubCategory();
+				.getInvoiceSubCategory();		
 		if (invoiceSubCategory == null) {
 			throw new IncorrectChargeTemplateException(
 					"invoiceSubCategory is null for chargeTemplate code="

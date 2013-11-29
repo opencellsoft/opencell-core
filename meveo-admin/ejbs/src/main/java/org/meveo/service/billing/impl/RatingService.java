@@ -19,7 +19,6 @@ import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
@@ -38,321 +37,492 @@ import org.slf4j.Logger;
 @LocalBean
 public class RatingService {
 
-    @Inject
-    @MeveoJpa
-    protected EntityManager em;
+	@Inject
+	@MeveoJpa
+	protected EntityManager entityManager;
 
-    @Inject
-    protected Logger log;
-    
-    @Inject
-    protected CatMessagesService catMessagesService;
+	@Inject
+	protected Logger log;
 
-    private static boolean isPricePlanDirty;
-    private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
+	@Inject
+	protected CatMessagesService catMessagesService;
 
-    private static final BigDecimal HUNDRED = new BigDecimal("100");
+	private static boolean isPricePlanDirty;
+	private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
 
-    public static void setPricePlanDirty(){
-    	isPricePlanDirty=true;
-    }
-    
-    public int getSharedQuantity(LevelEnum level,Provider provider,String chargeCode,Date chargeDate,RecurringChargeInstance recChargeInstance){
-    	int result=0;
-    	try{
-    	String strQuery="select SUM(r.serviceInstance.quantity) from "
-   			 +RecurringChargeInstance.class.getSimpleName() +" r "
-		 		+ "WHERE r.code=:chargeCode "
-		 		+ "AND r.subscriptionDate<=:chargeDate "
-		 		+ "AND (r.serviceInstance.terminationDate is NULL OR r.serviceInstance.terminationDate>:chargeDate) "
-    			+ "AND r.provider=:provider ";
-    	switch(level){
-		case BILLING_ACCOUNT:
-			strQuery+="AND r.subscription.userAccount.billingAccount=:billingAccount ";
-			break;
-		case CUSTOMER:
-			strQuery+="AND r.subscription.userAccount.billingAccount.customerAccount.customer=:customer ";
-			break;
-		case CUSTOMER_ACCOUNT:
-			strQuery+="AND r.subscription.userAccount.billingAccount.customerAccount=:customerAccount ";
-			break;
-		case PROVIDER:
-			break;
-		case SELLER:
-			strQuery+="AND r.subscription.userAccount.billingAccount.customerAccount.customer.seller=:seller ";
-			break;
-		case USER_ACCOUNT:
-			strQuery+="AND r.subscription.userAccount=:userAccount ";
-			break;
-		default:
-			break;
-    	
-    	}
-    	Query query = em.createQuery(strQuery);
-    	query.setParameter("chargeCode", chargeCode);
-    	query.setParameter("chargeDate", chargeDate);
-    	query.setParameter("provider", provider);switch(level){
-		case BILLING_ACCOUNT:
-			query.setParameter("billingAccount",recChargeInstance.getSubscription().getUserAccount().getBillingAccount());
-			break;
-		case CUSTOMER:
-			query.setParameter("customer",recChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer());
-			break;
-		case CUSTOMER_ACCOUNT:
-			query.setParameter("customerAccount",recChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount());
-			break;
-		case PROVIDER:
-			break;
-		case SELLER:
-			query.setParameter("seller",recChargeInstance.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-			break;
-		case USER_ACCOUNT:
-			query.setParameter("userAccount",recChargeInstance.getSubscription().getUserAccount());
-			break;
-		default:
-			break;
-    	
-    	}
-    	Number sharedQuantity=(Number) query.getSingleResult();
-    	result=sharedQuantity.intValue();
-    	} catch(Exception e ){
-    		e.printStackTrace();
-    	}
-    	return result;
-    }
-    
-    // used to rate a oneshot or recurring charge
-    public WalletOperation rateChargeApplication(String code, Subscription subscription, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate,
-            BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
-            BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate,
-            Date endDate, ChargeApplicationModeEnum mode) {
-        WalletOperation result = new WalletOperation();
-        if (chargeInstance instanceof RecurringChargeInstance) {
-            result.setSubscriptionDate(((RecurringChargeInstance)chargeInstance).getServiceInstance()
-					.getSubscriptionDate());
-        }
-        result.setOperationDate(applicationDate);
-        result.setParameter1(criteria1);
-        result.setParameter2(criteria2);
-        result.setParameter3(criteria3);
+	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
-        Provider provider = chargeInstance.getProvider();
-        result.setProvider(provider);
-        result.setChargeInstance(chargeInstance);
+	public static void setPricePlanDirty() {
+		isPricePlanDirty = true;
+	}
 
-        result.setWallet(subscription.getUserAccount().getWallet());
-        result.setCode(code);
-      
-    	String languageCode=subscription.getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-    	CatMessages catMessage= catMessagesService.getCatMessages(chargeInstance.getClass().getSimpleName()+"_"+chargeInstance.getId(),languageCode);
-        String chargeInstnceLabel =catMessage != null ?catMessage.getDescription():null;
-        result.setDescription(chargeInstnceLabel!=null?chargeInstnceLabel:chargeInstance.getDescription());           
-        result.setQuantity(quantity);
-        result.setTaxPercent(taxPercent);
-        result.setCurrency(tCurrency.getCurrency());
-        result.setStartDate(startdate);
-        result.setEndDate(endDate);
-        result.setStatus(WalletOperationStatusEnum.OPEN);
-        result.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-        BigDecimal unitPriceWithoutTax = amountWithoutTax;
-        BigDecimal unitPriceWithTax = null;
-        if (unitPriceWithoutTax != null) {
-            unitPriceWithTax = amountWithTax;
-        }
+	public int getSharedQuantity(LevelEnum level, Provider provider,
+			String chargeCode, Date chargeDate,
+			RecurringChargeInstance recChargeInstance) {
+		return getSharedQuantity(entityManager, level, provider, chargeCode,
+				chargeDate, recChargeInstance);
+	}
 
-        rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency,  provider);
-        return result;
+	public int getSharedQuantity(EntityManager em, LevelEnum level,
+			Provider provider, String chargeCode, Date chargeDate,
+			RecurringChargeInstance recChargeInstance) {
+		int result = 0;
+		try {
+			String strQuery = "select SUM(r.serviceInstance.quantity) from "
+					+ RecurringChargeInstance.class.getSimpleName()
+					+ " r "
+					+ "WHERE r.code=:chargeCode "
+					+ "AND r.subscriptionDate<=:chargeDate "
+					+ "AND (r.serviceInstance.terminationDate is NULL OR r.serviceInstance.terminationDate>:chargeDate) "
+					+ "AND r.provider=:provider ";
+			switch (level) {
+			case BILLING_ACCOUNT:
+				strQuery += "AND r.subscription.userAccount.billingAccount=:billingAccount ";
+				break;
+			case CUSTOMER:
+				strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount.customer=:customer ";
+				break;
+			case CUSTOMER_ACCOUNT:
+				strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount=:customerAccount ";
+				break;
+			case PROVIDER:
+				break;
+			case SELLER:
+				strQuery += "AND r.subscription.userAccount.billingAccount.customerAccount.customer.seller=:seller ";
+				break;
+			case USER_ACCOUNT:
+				strQuery += "AND r.subscription.userAccount=:userAccount ";
+				break;
+			default:
+				break;
 
-    }
+			}
+			Query query = em.createQuery(strQuery);
+			query.setParameter("chargeCode", chargeCode);
+			query.setParameter("chargeDate", chargeDate);
+			query.setParameter("provider", provider);
+			switch (level) {
+			case BILLING_ACCOUNT:
+				query.setParameter("billingAccount", recChargeInstance
+						.getSubscription().getUserAccount().getBillingAccount());
+				break;
+			case CUSTOMER:
+				query.setParameter("customer", recChargeInstance
+						.getSubscription().getUserAccount().getBillingAccount()
+						.getCustomerAccount().getCustomer());
+				break;
+			case CUSTOMER_ACCOUNT:
+				query.setParameter("customerAccount", recChargeInstance
+						.getSubscription().getUserAccount().getBillingAccount()
+						.getCustomerAccount());
+				break;
+			case PROVIDER:
+				break;
+			case SELLER:
+				query.setParameter("seller", recChargeInstance
+						.getSubscription().getUserAccount().getBillingAccount()
+						.getCustomerAccount().getCustomer().getSeller());
+				break;
+			case USER_ACCOUNT:
+				query.setParameter("userAccount", recChargeInstance
+						.getSubscription().getUserAccount());
+				break;
+			default:
+				break;
 
-    // used to rate or rerate a bareWalletOperation
-    public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId,
-            TradingCurrency tcurrency,Provider provider) {
+			}
+			Number sharedQuantity = (Number) query.getSingleResult();
+			result = sharedQuantity.intValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
-        PricePlanMatrix ratePrice = null;
-        String providerCode = provider.getCode();
+	// used to rate a oneshot or recurring charge
+	public WalletOperation rateChargeApplication(String code,
+			Subscription subscription, ChargeInstance chargeInstance,
+			ApplicationTypeEnum applicationType, Date applicationDate,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
+			BigDecimal taxPercent, BigDecimal discountPercent,
+			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
+			String criteria1, String criteria2, String criteria3,
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+		WalletOperation result = new WalletOperation();
+		if (chargeInstance instanceof RecurringChargeInstance) {
+			result.setSubscriptionDate(((RecurringChargeInstance) chargeInstance)
+					.getServiceInstance().getSubscriptionDate());
+		}
+		result.setOperationDate(applicationDate);
+		result.setParameter1(criteria1);
+		result.setParameter2(criteria2);
+		result.setParameter3(criteria3);
 
-        if (unitPriceWithoutTax == null) {
-            if (allPricePlan == null) {
-                loadPricePlan();
-            } else if(isPricePlanDirty){
-            	reloadPricePlan();
-            }
-            if (!allPricePlan.containsKey(providerCode)) {
-                throw new RuntimeException("no price plan for provider " + providerCode);
-            }
-            if (!allPricePlan.get(providerCode).containsKey(bareWalletOperation.getCode())) {
-                throw new RuntimeException("no price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
-            }
-            ratePrice = ratePrice(allPricePlan.get(providerCode).get(bareWalletOperation.getCode()), bareWalletOperation, countryId, tcurrency, bareWalletOperation.getSeller()!=null?bareWalletOperation.getSeller().getId():null);
-            if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
-                throw new RuntimeException("invalid price plan for provider " + providerCode + " and charge code " + bareWalletOperation.getCode());
-            } else {
-                log.info("found ratePrice:" + ratePrice.getId() + " priceHT=" + ratePrice.getAmountWithoutTax() + " priceTTC=" + ratePrice.getAmountWithTax());
-                unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
-                unitPriceWithTax = ratePrice.getAmountWithTax();
-            }
-        }
-        //if the wallet operation correspond to a recurring charge that is shared, we divide the price by the number of
-        // shared charges
-        if(bareWalletOperation.getChargeInstance() instanceof RecurringChargeInstance){
-        	RecurringChargeTemplate recChargeTemplate=((RecurringChargeInstance)bareWalletOperation.getChargeInstance()).getRecurringChargeTemplate();
-        	if(recChargeTemplate.getShareLevel()!=null){
-        		RecurringChargeInstance recChargeInstance = (RecurringChargeInstance)bareWalletOperation.getChargeInstance();
-        		int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), provider, recChargeInstance.getCode(), bareWalletOperation.getOperationDate(),recChargeInstance);
-        		if(sharedQuantity>0){
-        			unitPriceWithoutTax=unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity),20, RoundingMode.HALF_UP);
-        			if(unitPriceWithTax!=null){
-        				unitPriceWithTax=unitPriceWithTax.divide(new BigDecimal(sharedQuantity),20, RoundingMode.HALF_UP);
-        			}
-        			log.info("charge is shared "+sharedQuantity+" times, so unit price is "+unitPriceWithoutTax);
-        		}
-        	}
-        }
+		Provider provider = chargeInstance.getProvider();
+		result.setProvider(provider);
+		result.setChargeInstance(chargeInstance);
 
-        BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
-        BigDecimal priceWithTax = null;
-        BigDecimal amountTax = BigDecimal.ZERO;
-        if (bareWalletOperation.getTaxPercent() != null) {
-            amountTax = priceWithoutTax.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
-        }
-        if (unitPriceWithTax == null || unitPriceWithTax.intValue()==0) {
-            priceWithTax = priceWithoutTax.add(amountTax);
-        } else {
-            priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithTax);
-        }
+		result.setWallet(subscription.getUserAccount().getWallet());
+		result.setCode(code);
 
-        if (provider.getRounding() != null && provider.getRounding() > 0) {
-            priceWithoutTax = NumberUtils.round(priceWithoutTax, provider.getRounding());
-            priceWithTax = NumberUtils.round(priceWithTax, provider.getRounding());
-        }
+		String languageCode = subscription.getUserAccount().getBillingAccount()
+				.getTradingLanguage().getLanguage().getLanguageCode();
+		CatMessages catMessage = catMessagesService.getCatMessages(
+				chargeInstance.getClass().getSimpleName() + "_"
+						+ chargeInstance.getId(), languageCode);
+		String chargeInstnceLabel = catMessage != null ? catMessage
+				.getDescription() : null;
+		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
+				: chargeInstance.getDescription());
+		result.setQuantity(quantity);
+		result.setTaxPercent(taxPercent);
+		result.setCurrency(tCurrency.getCurrency());
+		result.setStartDate(startdate);
+		result.setEndDate(endDate);
+		result.setStatus(WalletOperationStatusEnum.OPEN);
+		result.setSeller(subscription.getUserAccount().getBillingAccount()
+				.getCustomerAccount().getCustomer().getSeller());
+		BigDecimal unitPriceWithoutTax = amountWithoutTax;
+		BigDecimal unitPriceWithTax = null;
+		if (unitPriceWithoutTax != null) {
+			unitPriceWithTax = amountWithTax;
+		}
 
-        bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
-        bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-        bareWalletOperation.setTaxPercent(bareWalletOperation.getTaxPercent());
-        bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
-        bareWalletOperation.setAmountWithTax(priceWithTax);
-        bareWalletOperation.setAmountTax(amountTax);
+		rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax,
+				countryId, tCurrency, provider);
+		return result;
 
-    }
+	}
 
-    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId) {
-        // FIXME: the price plan properties could be null !
+	public void rateBareWalletOperation(WalletOperation bareWalletOperation,
+			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax,
+			Long countryId, TradingCurrency tcurrency, Provider provider) {
+		rateBareWalletOperation(entityManager, bareWalletOperation,
+				unitPriceWithoutTax, unitPriceWithTax, countryId, tcurrency,
+				provider);
+	}
 
-    	log.info("rate "+bareOperation);
-        for (PricePlanMatrix pricePlan : listPricePlan) {
-            boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
-            if (!sellerAreEqual) {
-            	log.info("The seller of the customer "+sellerId+" is not the same as pricePlan seller "+pricePlan.getSeller().getId()+" ("+pricePlan.getSeller().getCode()+")");
-                continue;
-            }
-            
-            boolean countryAreEqual = pricePlan.getTradingCountry() == null || pricePlan.getTradingCountry().getId().equals(countryId);
-            if (!countryAreEqual) {
-            	log.info("The country of the billing account "+countryId+" is not the same as pricePlan country"+pricePlan.getTradingCountry().getId()+" ("+pricePlan.getTradingCountry().getCountry().getCountryCode()+")");
-                continue;
-            }
-            boolean currencyAreEqual = pricePlan.getTradingCurrency() == null || (tcurrency != null && tcurrency.getId().equals(pricePlan.getTradingCurrency().getId()));
-            if (!currencyAreEqual) {
-            	log.info("The currency of the customer account "+(tcurrency != null ? tcurrency.getCurrencyCode():"null")+" is not the same as pricePlan currency"+pricePlan.getTradingCurrency().getId()+" ("+pricePlan.getTradingCurrency().getCurrencyCode()+")");
-                continue;
-            }
-            boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null
-                    || ((pricePlan.getStartSubscriptionDate() == null || bareOperation.getSubscriptionDate().after(pricePlan.getStartSubscriptionDate()) || bareOperation
-                        .getSubscriptionDate().equals(pricePlan.getStartSubscriptionDate())) && (pricePlan.getEndSubscriptionDate() == null || bareOperation.getSubscriptionDate()
-                        .before(pricePlan.getEndSubscriptionDate())));
-            if (!subscriptionDateInPricePlanPeriod) {
-            	log.info("The subscription date "+bareOperation.getSubscriptionDate()+"is not in the priceplan subscription range");
-                continue;
-            }
+	// used to rate or rerate a bareWalletOperation
+	public void rateBareWalletOperation(EntityManager em,
+			WalletOperation bareWalletOperation,
+			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax,
+			Long countryId, TradingCurrency tcurrency, Provider provider) {
 
-            int subscriptionAge = 0;
-            if (bareOperation.getSubscriptionDate() != null && bareOperation.getOperationDate() != null) {
-                // logger.info("subscriptionDate=" + bareOperation.getSubscriptionDate() + "->" + DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
-                subscriptionAge = DateUtils.monthsBetween(bareOperation.getOperationDate(), DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(), -1));
-            }
-            //log.info("subscriptionAge=" + subscriptionAge);
-            boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-            //log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" + subscriptionMinAgeOK);
-            if (!subscriptionMinAgeOK) {
-            	log.info("The subscription age "+subscriptionAge+"is less than the priceplan subscription age min :"+pricePlan.getMinSubscriptionAgeInMonth());
-                continue;
-            }
-            boolean subscriptionMaxAgeOK = pricePlan.getMaxSubscriptionAgeInMonth() == null  || pricePlan.getMaxSubscriptionAgeInMonth() == 0  || subscriptionAge < pricePlan.getMaxSubscriptionAgeInMonth();
-            log.info("subscriptionMaxAgeOK(" + pricePlan.getMaxSubscriptionAgeInMonth() + ")=" + subscriptionMaxAgeOK);
-            if (!subscriptionMaxAgeOK) {
-            	log.info("The subscription age "+subscriptionAge+"is greater than the priceplan subscription age max :"+pricePlan.getMaxSubscriptionAgeInMonth());
-                continue;
-            }
+		PricePlanMatrix ratePrice = null;
+		String providerCode = provider.getCode();
 
-            boolean applicationDateInPricePlanPeriod = (pricePlan.getStartRatingDate() == null || bareOperation.getOperationDate().after(pricePlan.getStartRatingDate()) || bareOperation
-                .getOperationDate().equals(pricePlan.getStartRatingDate()))
-                    && (pricePlan.getEndRatingDate() == null || bareOperation.getOperationDate().before(pricePlan.getEndRatingDate()));
-            log.error("applicationDateInPricePlanPeriod(" + pricePlan.getStartRatingDate() + " - " + pricePlan.getEndRatingDate() + ")=" + applicationDateInPricePlanPeriod);
-            if (!applicationDateInPricePlanPeriod) {
-            	log.info("The application date "+bareOperation.getOperationDate()+"is not in the priceplan application range");
-                continue;
-            }
-        	boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null || pricePlan.getCriteria1Value().equals(bareOperation.getParameter1());
-            //log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
-            if (!criteria1SameInPricePlan) {
-            	log.info("The operation param1 "+bareOperation.getParameter1()+" is not compatible with price plan criteria 1: "+pricePlan.getCriteria1Value());
-                continue;
-            }
-        	boolean criteria2SameInPricePlan = pricePlan.getCriteria2Value()==null || pricePlan.getCriteria2Value().equals(bareOperation.getParameter2());
-            //log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
-            if (!criteria2SameInPricePlan) {
-            	log.info("The operation param2 "+bareOperation.getParameter2()+" is not compatible with price plan criteria 2: "+pricePlan.getCriteria2Value());
-                continue;
-            }
-        	boolean criteria3SameInPricePlan = pricePlan.getCriteria3Value()==null || pricePlan.getCriteria3Value().equals(bareOperation.getParameter3());
-            //log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
-            if (criteria3SameInPricePlan) {
-            	log.info("criteria3SameInPricePlan");
-                return pricePlan;
-            }
-        	log.info("The operation param3 "+bareOperation.getParameter3()+" is not compatible with price plan criteria 3: "+pricePlan.getCriteria3Value());
-        }
-        return null;
-    }
-    
+		if (unitPriceWithoutTax == null) {
+			if (allPricePlan == null) {
+				loadPricePlan(em);
+			} else if (isPricePlanDirty) {
+				reloadPricePlan();
+			}
+			if (!allPricePlan.containsKey(providerCode)) {
+				throw new RuntimeException("no price plan for provider "
+						+ providerCode);
+			}
+			if (!allPricePlan.get(providerCode).containsKey(
+					bareWalletOperation.getCode())) {
+				throw new RuntimeException("no price plan for provider "
+						+ providerCode + " and charge code "
+						+ bareWalletOperation.getCode());
+			}
+			ratePrice = ratePrice(
+					allPricePlan.get(providerCode).get(
+							bareWalletOperation.getCode()),
+					bareWalletOperation,
+					countryId,
+					tcurrency,
+					bareWalletOperation.getSeller() != null ? bareWalletOperation
+							.getSeller().getId() : null);
+			if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
+				throw new RuntimeException("invalid price plan for provider "
+						+ providerCode + " and charge code "
+						+ bareWalletOperation.getCode());
+			} else {
+				log.info("found ratePrice:" + ratePrice.getId() + " priceHT="
+						+ ratePrice.getAmountWithoutTax() + " priceTTC="
+						+ ratePrice.getAmountWithTax());
+				unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
+				unitPriceWithTax = ratePrice.getAmountWithTax();
+			}
+		}
+		// if the wallet operation correspond to a recurring charge that is
+		// shared, we divide the price by the number of
+		// shared charges
+		if (bareWalletOperation.getChargeInstance() instanceof RecurringChargeInstance) {
+			RecurringChargeTemplate recChargeTemplate = ((RecurringChargeInstance) bareWalletOperation
+					.getChargeInstance()).getRecurringChargeTemplate();
+			if (recChargeTemplate.getShareLevel() != null) {
+				RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) bareWalletOperation
+						.getChargeInstance();
+				int sharedQuantity = getSharedQuantity(
+						recChargeTemplate.getShareLevel(), provider,
+						recChargeInstance.getCode(),
+						bareWalletOperation.getOperationDate(),
+						recChargeInstance);
+				if (sharedQuantity > 0) {
+					unitPriceWithoutTax = unitPriceWithoutTax.divide(
+							new BigDecimal(sharedQuantity), 20,
+							RoundingMode.HALF_UP);
+					if (unitPriceWithTax != null) {
+						unitPriceWithTax = unitPriceWithTax.divide(
+								new BigDecimal(sharedQuantity), 20,
+								RoundingMode.HALF_UP);
+					}
+					log.info("charge is shared " + sharedQuantity
+							+ " times, so unit price is " + unitPriceWithoutTax);
+				}
+			}
+		}
 
-    //synchronized to avoid different threads to reload the priceplan concurrently
-    protected synchronized void reloadPricePlan() {
-    		if(isPricePlanDirty){
-    			log.info("Reload priceplan");
-        		loadPricePlan();
-        		isPricePlanDirty=false;
-        	}
-    }
+		BigDecimal priceWithoutTax = bareWalletOperation.getQuantity()
+				.multiply(unitPriceWithoutTax);
+		BigDecimal priceWithTax = null;
+		BigDecimal amountTax = BigDecimal.ZERO;
+		if (bareWalletOperation.getTaxPercent() != null) {
+			amountTax = priceWithoutTax.multiply(bareWalletOperation
+					.getTaxPercent().divide(HUNDRED));
+		}
+		if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
+			priceWithTax = priceWithoutTax.add(amountTax);
+		} else {
+			priceWithTax = bareWalletOperation.getQuantity().multiply(
+					unitPriceWithTax);
+		}
 
-    // FIXME : call this method when priceplan is edited (or more precisely add a button to reload the priceplan)
-    @SuppressWarnings("unchecked")
-    protected void loadPricePlan() {
-        HashMap<String, HashMap<String, List<PricePlanMatrix>>> result = new HashMap<String, HashMap<String, List<PricePlanMatrix>>>();
-        List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em.createQuery("from PricePlanMatrix where disabled=false order by priority ASC").getResultList();
-        if (allPricePlans != null & allPricePlans.size() > 0) {
-            for (PricePlanMatrix pricePlan : allPricePlans) {
-                if (!result.containsKey(pricePlan.getProvider().getCode())) {
-                    result.put(pricePlan.getProvider().getCode(), new HashMap<String, List<PricePlanMatrix>>());
-                }
-                HashMap<String, List<PricePlanMatrix>> providerPricePlans = result.get(pricePlan.getProvider().getCode());
-                if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
-                    providerPricePlans.put(pricePlan.getEventCode(), new ArrayList<PricePlanMatrix>());
-                }
-            	if(pricePlan.getCriteria1Value()!=null && pricePlan.getCriteria1Value().length()==0){
-            		pricePlan.setCriteria1Value(null);
-            	}
-            	if(pricePlan.getCriteria2Value()!=null && pricePlan.getCriteria2Value().length()==0){
-            		pricePlan.setCriteria2Value(null);
-            	}
-            	if(pricePlan.getCriteria3Value()!=null && pricePlan.getCriteria3Value().length()==0){
-            		pricePlan.setCriteria3Value(null);
-            	}
-                log.info("Add pricePlan for provider=" + pricePlan.getProvider().getCode() + "chargeCode="+pricePlan.getEventCode()+" priceplan=" + pricePlan + " criteria1="+pricePlan.getCriteria1Value()+" criteria2="+pricePlan.getCriteria2Value()+" criteria3="+pricePlan.getCriteria3Value());
-                providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
-            }
-        }
-        allPricePlan = result;
-    }
+		if (provider.getRounding() != null && provider.getRounding() > 0) {
+			priceWithoutTax = NumberUtils.round(priceWithoutTax,
+					provider.getRounding());
+			priceWithTax = NumberUtils.round(priceWithTax,
+					provider.getRounding());
+		}
+
+		bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+		bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+		bareWalletOperation.setTaxPercent(bareWalletOperation.getTaxPercent());
+		bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
+		bareWalletOperation.setAmountWithTax(priceWithTax);
+		bareWalletOperation.setAmountTax(amountTax);
+
+	}
+
+	private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan,
+			WalletOperation bareOperation, Long countryId,
+			TradingCurrency tcurrency, Long sellerId) {
+		// FIXME: the price plan properties could be null !
+
+		log.info("rate " + bareOperation);
+		for (PricePlanMatrix pricePlan : listPricePlan) {
+			boolean sellerAreEqual = pricePlan.getSeller() == null
+					|| pricePlan.getSeller().getId().equals(sellerId);
+			if (!sellerAreEqual) {
+				log.info("The seller of the customer " + sellerId
+						+ " is not the same as pricePlan seller "
+						+ pricePlan.getSeller().getId() + " ("
+						+ pricePlan.getSeller().getCode() + ")");
+				continue;
+			}
+
+			boolean countryAreEqual = pricePlan.getTradingCountry() == null
+					|| pricePlan.getTradingCountry().getId().equals(countryId);
+			if (!countryAreEqual) {
+				log.info("The country of the billing account "
+						+ countryId
+						+ " is not the same as pricePlan country"
+						+ pricePlan.getTradingCountry().getId()
+						+ " ("
+						+ pricePlan.getTradingCountry().getCountry()
+								.getCountryCode() + ")");
+				continue;
+			}
+			boolean currencyAreEqual = pricePlan.getTradingCurrency() == null
+					|| (tcurrency != null && tcurrency.getId().equals(
+							pricePlan.getTradingCurrency().getId()));
+			if (!currencyAreEqual) {
+				log.info("The currency of the customer account "
+						+ (tcurrency != null ? tcurrency.getCurrencyCode()
+								: "null")
+						+ " is not the same as pricePlan currency"
+						+ pricePlan.getTradingCurrency().getId() + " ("
+						+ pricePlan.getTradingCurrency().getCurrencyCode()
+						+ ")");
+				continue;
+			}
+			boolean subscriptionDateInPricePlanPeriod = bareOperation
+					.getSubscriptionDate() == null
+					|| ((pricePlan.getStartSubscriptionDate() == null
+							|| bareOperation.getSubscriptionDate().after(
+									pricePlan.getStartSubscriptionDate()) || bareOperation
+							.getSubscriptionDate().equals(
+									pricePlan.getStartSubscriptionDate())) && (pricePlan
+							.getEndSubscriptionDate() == null || bareOperation
+							.getSubscriptionDate().before(
+									pricePlan.getEndSubscriptionDate())));
+			if (!subscriptionDateInPricePlanPeriod) {
+				log.info("The subscription date "
+						+ bareOperation.getSubscriptionDate()
+						+ "is not in the priceplan subscription range");
+				continue;
+			}
+
+			int subscriptionAge = 0;
+			if (bareOperation.getSubscriptionDate() != null
+					&& bareOperation.getOperationDate() != null) {
+				// logger.info("subscriptionDate=" +
+				// bareOperation.getSubscriptionDate() + "->" +
+				// DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(),
+				// -1));
+				subscriptionAge = DateUtils.monthsBetween(
+						bareOperation.getOperationDate(),
+						DateUtils.addDaysToDate(
+								bareOperation.getSubscriptionDate(), -1));
+			}
+			// log.info("subscriptionAge=" + subscriptionAge);
+			boolean subscriptionMinAgeOK = pricePlan
+					.getMinSubscriptionAgeInMonth() == null
+					|| subscriptionAge >= pricePlan
+							.getMinSubscriptionAgeInMonth();
+			// log.info("subscriptionMinAgeOK(" +
+			// pricePlan.getMinSubscriptionAgeInMonth() + ")=" +
+			// subscriptionMinAgeOK);
+			if (!subscriptionMinAgeOK) {
+				log.info("The subscription age " + subscriptionAge
+						+ "is less than the priceplan subscription age min :"
+						+ pricePlan.getMinSubscriptionAgeInMonth());
+				continue;
+			}
+			boolean subscriptionMaxAgeOK = pricePlan
+					.getMaxSubscriptionAgeInMonth() == null
+					|| pricePlan.getMaxSubscriptionAgeInMonth() == 0
+					|| subscriptionAge < pricePlan
+							.getMaxSubscriptionAgeInMonth();
+			log.info("subscriptionMaxAgeOK("
+					+ pricePlan.getMaxSubscriptionAgeInMonth() + ")="
+					+ subscriptionMaxAgeOK);
+			if (!subscriptionMaxAgeOK) {
+				log.info("The subscription age "
+						+ subscriptionAge
+						+ "is greater than the priceplan subscription age max :"
+						+ pricePlan.getMaxSubscriptionAgeInMonth());
+				continue;
+			}
+
+			boolean applicationDateInPricePlanPeriod = (pricePlan
+					.getStartRatingDate() == null
+					|| bareOperation.getOperationDate().after(
+							pricePlan.getStartRatingDate()) || bareOperation
+					.getOperationDate().equals(pricePlan.getStartRatingDate()))
+					&& (pricePlan.getEndRatingDate() == null || bareOperation
+							.getOperationDate().before(
+									pricePlan.getEndRatingDate()));
+			log.error("applicationDateInPricePlanPeriod("
+					+ pricePlan.getStartRatingDate() + " - "
+					+ pricePlan.getEndRatingDate() + ")="
+					+ applicationDateInPricePlanPeriod);
+			if (!applicationDateInPricePlanPeriod) {
+				log.info("The application date "
+						+ bareOperation.getOperationDate()
+						+ "is not in the priceplan application range");
+				continue;
+			}
+			boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null
+					|| pricePlan.getCriteria1Value().equals(
+							bareOperation.getParameter1());
+			// log.info("criteria1SameInPricePlan(" +
+			// pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
+			if (!criteria1SameInPricePlan) {
+				log.info("The operation param1 "
+						+ bareOperation.getParameter1()
+						+ " is not compatible with price plan criteria 1: "
+						+ pricePlan.getCriteria1Value());
+				continue;
+			}
+			boolean criteria2SameInPricePlan = pricePlan.getCriteria2Value() == null
+					|| pricePlan.getCriteria2Value().equals(
+							bareOperation.getParameter2());
+			// log.info("criteria2SameInPricePlan(" +
+			// pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
+			if (!criteria2SameInPricePlan) {
+				log.info("The operation param2 "
+						+ bareOperation.getParameter2()
+						+ " is not compatible with price plan criteria 2: "
+						+ pricePlan.getCriteria2Value());
+				continue;
+			}
+			boolean criteria3SameInPricePlan = pricePlan.getCriteria3Value() == null
+					|| pricePlan.getCriteria3Value().equals(
+							bareOperation.getParameter3());
+			// log.info("criteria3SameInPricePlan(" +
+			// pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
+			if (criteria3SameInPricePlan) {
+				log.info("criteria3SameInPricePlan");
+				return pricePlan;
+			}
+			log.info("The operation param3 " + bareOperation.getParameter3()
+					+ " is not compatible with price plan criteria 3: "
+					+ pricePlan.getCriteria3Value());
+		}
+		return null;
+	}
+
+	// synchronized to avoid different threads to reload the priceplan
+	// concurrently
+	protected synchronized void reloadPricePlan() {
+		if (isPricePlanDirty) {
+			log.info("Reload priceplan");
+			loadPricePlan();
+			isPricePlanDirty = false;
+		}
+	}
+
+	protected void loadPricePlan() {
+		loadPricePlan(entityManager);
+	}
+
+	// FIXME : call this method when priceplan is edited (or more precisely add
+	// a button to reload the priceplan)
+	@SuppressWarnings("unchecked")
+	protected void loadPricePlan(EntityManager em) {
+		HashMap<String, HashMap<String, List<PricePlanMatrix>>> result = new HashMap<String, HashMap<String, List<PricePlanMatrix>>>();
+		List<PricePlanMatrix> allPricePlans = (List<PricePlanMatrix>) em
+				.createQuery(
+						"from PricePlanMatrix where disabled=false order by priority ASC")
+				.getResultList();
+		if (allPricePlans != null & allPricePlans.size() > 0) {
+			for (PricePlanMatrix pricePlan : allPricePlans) {
+				if (!result.containsKey(pricePlan.getProvider().getCode())) {
+					result.put(pricePlan.getProvider().getCode(),
+							new HashMap<String, List<PricePlanMatrix>>());
+				}
+				HashMap<String, List<PricePlanMatrix>> providerPricePlans = result
+						.get(pricePlan.getProvider().getCode());
+				if (!providerPricePlans.containsKey(pricePlan.getEventCode())) {
+					providerPricePlans.put(pricePlan.getEventCode(),
+							new ArrayList<PricePlanMatrix>());
+				}
+				if (pricePlan.getCriteria1Value() != null
+						&& pricePlan.getCriteria1Value().length() == 0) {
+					pricePlan.setCriteria1Value(null);
+				}
+				if (pricePlan.getCriteria2Value() != null
+						&& pricePlan.getCriteria2Value().length() == 0) {
+					pricePlan.setCriteria2Value(null);
+				}
+				if (pricePlan.getCriteria3Value() != null
+						&& pricePlan.getCriteria3Value().length() == 0) {
+					pricePlan.setCriteria3Value(null);
+				}
+				log.info("Add pricePlan for provider="
+						+ pricePlan.getProvider().getCode() + "chargeCode="
+						+ pricePlan.getEventCode() + " priceplan=" + pricePlan
+						+ " criteria1=" + pricePlan.getCriteria1Value()
+						+ " criteria2=" + pricePlan.getCriteria2Value()
+						+ " criteria3=" + pricePlan.getCriteria3Value());
+				providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
+			}
+		}
+		allPricePlan = result;
+	}
 }
