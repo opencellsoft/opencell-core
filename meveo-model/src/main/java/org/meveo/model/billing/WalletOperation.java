@@ -70,25 +70,25 @@ public class WalletOperation extends BusinessEntity {
 	@Column(name = "TAX_PERCENT", precision = 23, scale = 12)
 	private BigDecimal taxPercent;
 
-	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX")
+	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
 	private BigDecimal unitAmountWithoutTax;
 
-	@Column(name = "UNIT_AMOUNT_WITH_TAX")
+	@Column(name = "UNIT_AMOUNT_WITH_TAX", precision = 23, scale = 12)
 	private BigDecimal unitAmountWithTax;
 
-	@Column(name = "UNIT_AMOUNT_TAX")
+	@Column(name = "UNIT_AMOUNT_TAX", precision = 23, scale = 12)
 	private BigDecimal unitAmountTax;
 
-	@Column(name = "QUANTITY")
+	@Column(name = "QUANTITY", precision = 23, scale = 12)
 	private BigDecimal quantity;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX")
+	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_WITH_TAX")
+	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
 	private BigDecimal amountWithTax;
 
-	@Column(name = "AMOUNT_TAX")
+	@Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
 	private BigDecimal amountTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)

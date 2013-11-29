@@ -210,17 +210,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ chargeTemplate.getCode());
 		}
 
-		TradingCurrency currency = subscription.getUserAccount()
-				.getBillingAccount().getCustomerAccount().getTradingCurrency();
+		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
 							+ subscription.getUserAccount().getBillingAccount()
 									.getCustomerAccount().getId());
 		}
-		// FIXME: put country in charge instance
-		TradingCountry country = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getTradingCountry();
+		
+		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
 					"no country exists for billingAccount id="
@@ -340,17 +338,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ chargeTemplate.getCode());
 		}
 
-		TradingCurrency currency = subscription.getUserAccount()
-				.getBillingAccount().getCustomerAccount().getTradingCurrency();
+		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
 							+ subscription.getUserAccount().getBillingAccount()
 									.getCustomerAccount().getId());
 		}
-		// FIXME: put country in charge instance
-		TradingCountry country = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getTradingCountry();
+		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
 					"no country exists for billingAccount id="
@@ -484,9 +479,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ recurringChargeTemplate.getCode());
 		}
 
-		TradingCurrency currency = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getCustomerAccount()
-				.getTradingCurrency();
+		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
@@ -495,9 +488,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 									.getId());
 		}
 
-		// FIXME: put country in charge instance
-		TradingCountry country = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getTradingCountry();
+		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
 					"no country exists for billingAccount id="
@@ -675,10 +666,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 								+ recurringChargeTemplate.getCode());
 			}
 
-			// FIXME: put currency in charge instance
-			TradingCurrency currency = chargeInstance.getSubscription()
-					.getUserAccount().getBillingAccount().getCustomerAccount()
-					.getTradingCurrency();
+			TradingCurrency currency = chargeInstance.getCurrency();
 			if (currency == null) {
 				throw new IncorrectChargeTemplateException(
 						"no currency exists for customerAccount id="
@@ -687,9 +675,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 										.getCustomerAccount().getId());
 			}
 
-			// FIXME: put country in charge instance
-			TradingCountry country = chargeInstance.getSubscription()
-					.getUserAccount().getBillingAccount().getTradingCountry();
+			TradingCountry country = chargeInstance.getCountry();
 			if (country == null) {
 				throw new IncorrectChargeTemplateException(
 						"no country exists for billingAccount id="
@@ -781,20 +767,17 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		ServiceTemplate serviceTemplate = chargeInstance.getServiceInstance()
 				.getServiceTemplate();
 		Calendar durationTermCalendar = null;
-		Date nextDurationDate = null;
-		try {
-			durationTermCalendar = serviceTemplate.getDurationTermCalendar();
-			nextDurationDate = reimbursement ? chargeInstance
+		Date nextDurationDate = chargeInstance.getNextChargeDate();
+		durationTermCalendar = serviceTemplate.getDurationTermCalendar();
+		if(durationTermCalendar!=null){
+				nextDurationDate = reimbursement ? chargeInstance
 					.getNextChargeDate() : durationTermCalendar
 					.nextCalendarDate(applicationDate);
-			log.debug(
+		}
+		log.debug(
 					"reimbursement={},nextDurationDate={},applicationDate={}",
 					reimbursement, nextDurationDate, applicationDate);
-		} catch (Exception e) {
-			log.error(
-					"Cannot find duration term calendar for serviceTemplate.id={}",
-					serviceTemplate.getId());
-		}
+		
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate
 				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
@@ -803,10 +786,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ recurringChargeTemplate.getCode());
 		}
 
-		// FIXME: put currency in charge instance
-		TradingCurrency currency = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getCustomerAccount()
-				.getTradingCurrency();
+		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
@@ -815,9 +795,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 									.getId());
 		}
 
-		// FIXME: put country in charge instance
-		TradingCountry country = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getTradingCountry();
+		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
 					"no country exists for billingAccount id="
@@ -934,10 +912,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ recurringChargeTemplate.getCode());
 		}
 
-		// FIXME: put currency in charge instance
-		TradingCurrency currency = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getCustomerAccount()
-				.getTradingCurrency();
+		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
@@ -946,9 +921,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 									.getId());
 		}
 
-		// FIXME: put country in charge instance
-		TradingCountry country = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getTradingCountry();
+		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
 					"no country exists for billingAccount id="
@@ -1115,10 +1088,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ recurringChargeTemplate.getCode());
 		}
 
-		// FIXME: put currency in charge instance
-		TradingCurrency currency = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getCustomerAccount()
-				.getTradingCurrency();
+		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
 					"no currency exists for customerAccount id="
@@ -1127,9 +1097,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 									.getId());
 		}
 
-		// FIXME: put country in charge instance
-		TradingCountry country = chargeInstance.getSubscription()
-				.getUserAccount().getBillingAccount().getTradingCountry();
+		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
 					"no country exists for billingAccount id="

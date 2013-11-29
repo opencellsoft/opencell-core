@@ -95,7 +95,15 @@ public class ChargeInstance extends BusinessEntity {
 
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	protected String prDescription;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_CURRENCY")
+	private TradingCurrency currency;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRADING_COUNTRY")
+	TradingCountry country;
+	
 	public String getCriteria1() {
 		return criteria1;
 	}
@@ -201,6 +209,22 @@ public class ChargeInstance extends BusinessEntity {
 
 	public void setSeller(Seller seller) {
 		this.seller = seller;
+	}
+
+	public TradingCurrency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(TradingCurrency currency) {
+		this.currency = currency;
+	}
+
+	public TradingCountry getCountry() {
+		return country;
+	}
+
+	public void setCountry(TradingCountry country) {
+		this.country = country;
 	}
 
 }

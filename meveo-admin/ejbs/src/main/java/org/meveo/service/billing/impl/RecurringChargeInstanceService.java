@@ -76,6 +76,8 @@ public class RecurringChargeInstanceService extends ChargeInstanceService<Recurr
 		recurringChargeInstance.setCriteria1(criteria1);
 		recurringChargeInstance.setCriteria2(criteria2);
 		recurringChargeInstance.setCriteria3(criteria3);
+		recurringChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
+		recurringChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
 
 		create(recurringChargeInstance, creator, chargetemplate.getProvider());
 

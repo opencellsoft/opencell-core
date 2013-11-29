@@ -32,7 +32,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "UNITY_MULTIPLICATOR")
+	@Column(name = "UNITY_MULTIPLICATOR", precision = 23, scale = 12)
 	private BigDecimal unityMultiplicator = BigDecimal.ONE;
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)

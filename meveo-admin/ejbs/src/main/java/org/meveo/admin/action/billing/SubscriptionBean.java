@@ -235,6 +235,9 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				oneShotChargeInstance.setSubscription(entity);
 				oneShotChargeInstance.setSeller(entity.getUserAccount().getBillingAccount()
 						.getCustomerAccount().getCustomer().getSeller());
+				oneShotChargeInstance.setCurrency(entity.getUserAccount().getBillingAccount()
+						.getCustomerAccount().getTradingCurrency());
+				oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
 				Long id = oneShotChargeInstanceService.oneShotChargeApplication(entity,
 						(OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(),
 						oneShotChargeInstance.getChargeDate(),
