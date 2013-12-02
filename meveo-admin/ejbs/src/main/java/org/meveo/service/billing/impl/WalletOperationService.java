@@ -425,8 +425,17 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return nextDurationDate;
 	}
 
-	public WalletOperation rateSubscription(
-			RecurringChargeInstance chargeInstance, Date nextapplicationDate)
+	public WalletOperation prerateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate)
+			throws BusinessException {
+		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate);
+	}
+	
+	public WalletOperation rateSubscription(RecurringChargeInstance chargeInstance, Date nextapplicationDate)
+			throws BusinessException {
+		return rateSubscription(null, chargeInstance, nextapplicationDate);
+	}
+	
+	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate)
 			throws BusinessException {
 		WalletOperation result = null;
 		Date applicationDate = chargeInstance.getChargeDate();
@@ -439,7 +448,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		previousapplicationDate = DateUtils.parseDateWithPattern(
 				previousapplicationDate, "dd/MM/yyyy");
 		log.debug(
-				"chargeSubscription applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
+				"rateSubscription applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 				applicationDate, nextapplicationDate, previousapplicationDate);
 
 		BigDecimal quantity = (chargeInstance.getServiceInstance() == null || chargeInstance
@@ -464,7 +473,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			quantity = quantity.multiply(new BigDecimal(prorataRatio));
 			log.debug(
-					"chargeSubscription part1={}, part2={}, prorataRation={} -> quantity={}",
+					"rateSubscription part1={}, part2={}, prorataRation={} -> quantity={}",
 					part1, part2, prorataRatio, quantity);
 		}
 
@@ -517,7 +526,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (!recurringChargeTemplate.getApplyInAdvance()) {
 			applicationDate = nextapplicationDate;
 		}
-		result = chargeApplicationRatingService.rateChargeApplication(
+		if(subscriptionDate==null){
+			result = chargeApplicationRatingService.rateChargeApplication(
 				chargeInstance.getCode(), chargeInstance.getServiceInstance()
 						.getSubscription(), chargeInstance,
 				ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate,
@@ -528,6 +538,18 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						.getCriteria1(), chargeInstance.getCriteria2(),
 				chargeInstance.getCriteria3(), applicationDate, DateUtils
 						.addDaysToDate(nextapplicationDate, -1), null);
+		} else {
+			result = chargeApplicationRatingService.prerateChargeApplication(
+				chargeInstance.getCode(), subscriptionDate, chargeInstance,
+				ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate,
+				chargeInstance.getAmountWithoutTax(), chargeInstance
+						.getAmountWithTax(), quantity, currency, countryId, tax
+						.getPercent(), null, nextapplicationDate,
+				recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance
+						.getCriteria1(), chargeInstance.getCriteria2(),
+				chargeInstance.getCriteria3(), applicationDate, DateUtils
+						.addDaysToDate(nextapplicationDate, -1), null);
+		}
 		return result;
 	}
 

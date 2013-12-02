@@ -139,6 +139,50 @@ public class RatingService {
 		return result;
 	}
 
+	// used to prerate a oneshot or recurring charge
+	public WalletOperation prerateChargeApplication(String code,
+			Date subscriptionDate, ChargeInstance chargeInstance,
+				ApplicationTypeEnum applicationType, Date applicationDate,
+				BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+				BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
+				BigDecimal taxPercent, BigDecimal discountPercent,
+				Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
+				String criteria1, String criteria2, String criteria3,
+				Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+			WalletOperation result = new WalletOperation();
+			if (chargeInstance instanceof RecurringChargeInstance) {
+				result.setSubscriptionDate(subscriptionDate);
+			}
+			result.setOperationDate(applicationDate);
+			result.setParameter1(criteria1);
+			result.setParameter2(criteria2);
+			result.setParameter3(criteria3);
+
+			Provider provider = chargeInstance.getProvider();
+			result.setProvider(provider);
+			result.setChargeInstance(chargeInstance);
+
+			result.setCode(code);
+
+			result.setQuantity(quantity);
+			result.setTaxPercent(taxPercent);
+			result.setCurrency(tCurrency.getCurrency());
+			result.setStartDate(startdate);
+			result.setEndDate(endDate);
+			result.setStatus(WalletOperationStatusEnum.OPEN);
+			result.setSeller(chargeInstance.getSeller());
+			BigDecimal unitPriceWithoutTax = amountWithoutTax;
+			BigDecimal unitPriceWithTax = null;
+			if (unitPriceWithoutTax != null) {
+				unitPriceWithTax = amountWithTax;
+			}
+
+			rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax,
+					countryId, tCurrency, provider);
+			return result;
+
+		}
+	
 	// used to rate a oneshot or recurring charge
 	public WalletOperation rateChargeApplication(String code,
 			Subscription subscription, ChargeInstance chargeInstance,
@@ -149,23 +193,23 @@ public class RatingService {
 			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
 			String criteria1, String criteria2, String criteria3,
 			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
-		WalletOperation result = new WalletOperation();
+		Date subscriptionDate=null;
 		if (chargeInstance instanceof RecurringChargeInstance) {
-			result.setSubscriptionDate(((RecurringChargeInstance) chargeInstance)
-					.getServiceInstance().getSubscriptionDate());
+			subscriptionDate=((RecurringChargeInstance) chargeInstance)
+					.getServiceInstance().getSubscriptionDate();
 		}
-		result.setOperationDate(applicationDate);
-		result.setParameter1(criteria1);
-		result.setParameter2(criteria2);
-		result.setParameter3(criteria3);
-
-		Provider provider = chargeInstance.getProvider();
-		result.setProvider(provider);
-		result.setChargeInstance(chargeInstance);
-
+		WalletOperation result = prerateChargeApplication( code,
+			 subscriptionDate,  chargeInstance,
+				 applicationType,  applicationDate,
+				 amountWithoutTax,  amountWithTax,
+				 quantity,  tCurrency,  countryId,
+				 taxPercent,  discountPercent,
+				 nextApplicationDate,  invoiceSubCategory,
+				 criteria1,  criteria2,  criteria3,
+				 startdate,  endDate,  mode);
+		
 		result.setWallet(subscription.getUserAccount().getWallet());
-		result.setCode(code);
-
+		
 		String languageCode = subscription.getUserAccount().getBillingAccount()
 				.getTradingLanguage().getLanguage().getLanguageCode();
 		CatMessages catMessage = catMessagesService.getCatMessages(
@@ -175,22 +219,6 @@ public class RatingService {
 				.getDescription() : null;
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
 				: chargeInstance.getDescription());
-		result.setQuantity(quantity);
-		result.setTaxPercent(taxPercent);
-		result.setCurrency(tCurrency.getCurrency());
-		result.setStartDate(startdate);
-		result.setEndDate(endDate);
-		result.setStatus(WalletOperationStatusEnum.OPEN);
-		result.setSeller(subscription.getUserAccount().getBillingAccount()
-				.getCustomerAccount().getCustomer().getSeller());
-		BigDecimal unitPriceWithoutTax = amountWithoutTax;
-		BigDecimal unitPriceWithTax = null;
-		if (unitPriceWithoutTax != null) {
-			unitPriceWithTax = amountWithTax;
-		}
-
-		rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax,
-				countryId, tCurrency, provider);
 		return result;
 
 	}
