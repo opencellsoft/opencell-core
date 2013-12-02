@@ -143,7 +143,7 @@ public class RealtimeChargingService {
 		chargeInstance.setCurrency(ba.getCustomerAccount().getTradingCurrency());
 		Date nextApplicationDate = walletOperationService
 				.getNextApplicationDate(chargeInstance);
-		WalletOperation op = walletOperationService.rateSubscription(
+		WalletOperation op = walletOperationService.prerateSubscription(subscriptionDate,
 				chargeInstance, nextApplicationDate);
 		return priceWithoutTax ? op.getAmountWithoutTax() : op
 				.getAmountWithTax();
