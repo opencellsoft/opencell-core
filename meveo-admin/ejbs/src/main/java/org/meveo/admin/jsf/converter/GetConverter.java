@@ -120,6 +120,15 @@ public class GetConverter {
 			return (BigDecimal10DigitsConverter) beanManager.getReference(bean,
 					BigDecimal10DigitsConverter.class, ctx);
 
+		}else if ("12digits".equals(param) && obj.getClass() == BigDecimal.class) {
+
+			Bean<BigDecimal12DigitsConverter> bean = (Bean<BigDecimal12DigitsConverter>) beanManager
+					.getBeans(BigDecimal12DigitsConverter.class).iterator().next();
+			CreationalContext<BigDecimal12DigitsConverter> ctx = beanManager
+					.createCreationalContext(bean);
+			return (BigDecimal12DigitsConverter) beanManager.getReference(bean,
+					BigDecimal12DigitsConverter.class, ctx);
+
 		} else if ("date".equals("param")) {
 
 			Bean<DateConverter> bean = (Bean<DateConverter>) beanManager
