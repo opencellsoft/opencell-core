@@ -139,6 +139,7 @@ public class RealtimeChargingService {
 		chargeInstance.setChargeDate(subscriptionDate);
 		chargeInstance.setSeller(ba.getCustomerAccount().getCustomer()
 				.getSeller());
+		chargeInstance.setProvider(ba.getProvider());
 		chargeInstance.setCountry(ba.getTradingCountry());
 		chargeInstance.setCurrency(ba.getCustomerAccount().getTradingCurrency());
 		Date nextApplicationDate = walletOperationService
