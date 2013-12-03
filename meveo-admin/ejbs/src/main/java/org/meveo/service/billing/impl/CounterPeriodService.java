@@ -23,4 +23,10 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless @LocalBean
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
+
+	public void create(CounterPeriod e) {
+		super.create(e);
+		getEntityManager().flush();
+	}
+	
 }
