@@ -153,7 +153,7 @@ public class CountryServiceApi extends BaseApi {
 				// ('billing_trading_currency").
 				if (!StringUtils.isBlank(countryDto.getCurrencyCode())
 						&& tradingCurrencyService.findByTradingCurrencyCode(
-								countryDto.getCurrencyCode(), provider) != null) {
+								countryDto.getCurrencyCode(), provider) == null) {
 					TradingCurrency tradingCurrency = new TradingCurrency();
 					tradingCurrency.setActive(true);
 					tradingCurrency.setCurrency(currency);
