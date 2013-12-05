@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>meveo</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>3.1-SNAPSHOT</version>
+		<version>3.1.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin</artifactId>
 	<packaging>pom</packaging>
-	<name>Meveo Admin Web Application</name>
+	<name>MEVEO Admin Web Application</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<modules>

@@ -69,7 +69,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	@Inject
 	@MeveoJpa
-	protected EntityManager em;
+	protected EntityManager entityManager;
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -98,6 +98,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Customer customer, CustomerAccount customerAccount,
 			BillingAccount billingAccount, UserAccount userAccount,
 			Date startDate, Date endDate, boolean amountWithTax) {
+		return getRatedAmount(entityManager, provider, seller, customer,
+				customerAccount, billingAccount, userAccount, startDate,
+				endDate, amountWithTax);
+	}
+
+	public BigDecimal getRatedAmount(EntityManager em, Provider provider,
+			Seller seller, Customer customer, CustomerAccount customerAccount,
+			BillingAccount billingAccount, UserAccount userAccount,
+			Date startDate, Date endDate, boolean amountWithTax) {
 
 		BigDecimal result = BigDecimal.ZERO;
 		LevelEnum level = LevelEnum.PROVIDER;
@@ -120,12 +129,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		try {
-			String strQuery = "select SUM(w."
+			String strQuery = "select SUM(r."
 					+ (amountWithTax ? "amountWithTax" : "amountWithoutTax")
 					+ ") from "
 					+ WalletOperation.class.getSimpleName()
 					+ " r "
-					+ "WHERE r.operationDate>=:startDate AND r.operationDate<:endDate"
+					+ "WHERE r.operationDate>=:startDate AND r.operationDate<:endDate "
 					+ "AND (r.status=:open OR r.status=:treated) "
 					+ "AND r.provider=:provider ";
 			switch (level) {
@@ -184,6 +193,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			e.printStackTrace();
 		}
 
+		if (result == null)
+			result = BigDecimal.ZERO;
 		return result;
 	}
 
@@ -195,6 +206,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	public WalletOperation rateOneShotApplication(Subscription subscription,
 			OneShotChargeInstance chargeInstance, Integer quantity,
 			Date applicationDate) throws BusinessException {
+		return rateOneShotApplication(getEntityManager(), subscription,
+				chargeInstance, quantity, applicationDate);
+	}
+
+	public WalletOperation rateOneShotApplication(EntityManager em,
+			Subscription subscription, OneShotChargeInstance chargeInstance,
+			Integer quantity, Date applicationDate) throws BusinessException {
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 		if (chargeTemplate == null) {
 			throw new IncorrectChargeTemplateException(
@@ -217,7 +235,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ subscription.getUserAccount().getBillingAccount()
 									.getCustomerAccount().getId());
 		}
-		
+
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
@@ -228,7 +246,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
 						countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
@@ -243,6 +261,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"no tax exists for invoiceSubcategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
 		}
+
 		WalletOperation chargeApplication = chargeApplicationRatingService
 				.rateChargeApplication(chargeTemplate.getCode(), subscription,
 						chargeInstance, ApplicationTypeEnum.PUNCTUAL,
@@ -253,12 +272,21 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						invoiceSubCategory, chargeInstance.getCriteria1(),
 						chargeInstance.getCriteria2(), chargeInstance
 								.getCriteria3(), null, null, null);
+
 		return chargeApplication;
 	}
 
 	public void oneShotWalletOperation(Subscription subscription,
 			OneShotChargeInstance chargeInstance, Integer quantity,
 			Date applicationDate, User creator) throws BusinessException {
+		oneShotWalletOperation(getEntityManager(), subscription,
+				chargeInstance, quantity, applicationDate, creator);
+	}
+
+	public void oneShotWalletOperation(EntityManager em,
+			Subscription subscription, OneShotChargeInstance chargeInstance,
+			Integer quantity, Date applicationDate, User creator)
+			throws BusinessException {
 
 		if (chargeInstance == null) {
 			throw new IncorrectChargeInstanceException(
@@ -425,18 +453,36 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return nextDurationDate;
 	}
 
-	public WalletOperation prerateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate)
+	public WalletOperation prerateSubscription(Date subscriptionDate,
+			RecurringChargeInstance chargeInstance, Date nextapplicationDate)
 			throws BusinessException {
-		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate);
+		return rateSubscription(subscriptionDate, chargeInstance,
+				nextapplicationDate);
 	}
-	
-	public WalletOperation rateSubscription(RecurringChargeInstance chargeInstance, Date nextapplicationDate)
+
+	public WalletOperation rateSubscription(
+			RecurringChargeInstance chargeInstance, Date nextapplicationDate)
 			throws BusinessException {
-		return rateSubscription(null, chargeInstance, nextapplicationDate);
+		return rateSubscription(getEntityManager(), chargeInstance,
+				nextapplicationDate);
 	}
-	
-	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate)
+
+	public WalletOperation rateSubscription(EntityManager em,
+			RecurringChargeInstance chargeInstance, Date nextapplicationDate)
 			throws BusinessException {
+		return rateSubscription(em, null, chargeInstance, nextapplicationDate);
+	}
+
+	public WalletOperation rateSubscription(Date subscriptionDate,
+			RecurringChargeInstance chargeInstance, Date nextapplicationDate)
+			throws BusinessException {
+		return rateSubscription(getEntityManager(), subscriptionDate,
+				chargeInstance, nextapplicationDate);
+	}
+
+	public WalletOperation rateSubscription(EntityManager em,
+			Date subscriptionDate, RecurringChargeInstance chargeInstance,
+			Date nextapplicationDate) throws BusinessException {
 		WalletOperation result = null;
 		Date applicationDate = chargeInstance.getChargeDate();
 
@@ -482,7 +528,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		log.debug("param2={}", param2);
 
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate
-				.getInvoiceSubCategory();		
+				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
 			throw new IncorrectChargeTemplateException(
 					"invoiceSubCategory is null for chargeTemplate code="
@@ -505,10 +551,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ chargeInstance.getSubscription().getUserAccount()
 									.getBillingAccount().getId());
 		}
+		
 		Long countryId = country.getId();
-
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
 						countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
@@ -516,6 +562,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ invoiceSubCategory.getCode()
 							+ " and trading country=" + countryId);
 		}
+		
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
 			throw new IncorrectChargeTemplateException(
@@ -526,35 +573,43 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (!recurringChargeTemplate.getApplyInAdvance()) {
 			applicationDate = nextapplicationDate;
 		}
-		if(subscriptionDate==null){
-			result = chargeApplicationRatingService.rateChargeApplication(
-				chargeInstance.getCode(), chargeInstance.getServiceInstance()
-						.getSubscription(), chargeInstance,
-				ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate,
-				chargeInstance.getAmountWithoutTax(), chargeInstance
-						.getAmountWithTax(), quantity, currency, countryId, tax
-						.getPercent(), null, nextapplicationDate,
-				recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance
-						.getCriteria1(), chargeInstance.getCriteria2(),
-				chargeInstance.getCriteria3(), applicationDate, DateUtils
-						.addDaysToDate(nextapplicationDate, -1), null);
+		if (subscriptionDate == null) {
+			result = chargeApplicationRatingService.rateChargeApplication(em,
+					chargeInstance.getCode(), chargeInstance
+							.getServiceInstance().getSubscription(),
+					chargeInstance, ApplicationTypeEnum.PRORATA_SUBSCRIPTION,
+					applicationDate, chargeInstance.getAmountWithoutTax(),
+					chargeInstance.getAmountWithTax(), quantity, currency,
+					countryId, tax.getPercent(), null, nextapplicationDate,
+					recurringChargeTemplate.getInvoiceSubCategory(),
+					chargeInstance.getCriteria1(), chargeInstance
+							.getCriteria2(), chargeInstance.getCriteria3(),
+					applicationDate, DateUtils.addDaysToDate(
+							nextapplicationDate, -1), null);
 		} else {
 			result = chargeApplicationRatingService.prerateChargeApplication(
-				chargeInstance.getCode(), subscriptionDate, chargeInstance,
-				ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate,
-				chargeInstance.getAmountWithoutTax(), chargeInstance
-						.getAmountWithTax(), quantity, currency, countryId, tax
-						.getPercent(), null, nextapplicationDate,
-				recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance
-						.getCriteria1(), chargeInstance.getCriteria2(),
-				chargeInstance.getCriteria3(), applicationDate, DateUtils
-						.addDaysToDate(nextapplicationDate, -1), null);
+					em, chargeInstance.getCode(), subscriptionDate,
+					chargeInstance, ApplicationTypeEnum.PRORATA_SUBSCRIPTION,
+					applicationDate, chargeInstance.getAmountWithoutTax(),
+					chargeInstance.getAmountWithTax(), quantity, currency,
+					countryId, tax.getPercent(), null, nextapplicationDate,
+					recurringChargeTemplate.getInvoiceSubCategory(),
+					chargeInstance.getCriteria1(),
+					chargeInstance.getCriteria2(),
+					chargeInstance.getCriteria3(), applicationDate,
+					DateUtils.addDaysToDate(nextapplicationDate, -1), null);
 		}
 		return result;
 	}
 
 	public void chargeSubscription(RecurringChargeInstance chargeInstance,
 			User creator) throws BusinessException {
+		chargeSubscription(getEntityManager(), chargeInstance, creator);
+	}
+
+	public void chargeSubscription(EntityManager em,
+			RecurringChargeInstance chargeInstance, User creator)
+			throws BusinessException {
 
 		if (chargeInstance == null) {
 			throw new IncorrectChargeInstanceException(
@@ -570,15 +625,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						chargeInstance.getServiceInstance().getQuantity(),
 						chargeInstance.getSubscriptionDate(),
 						chargeInstance.getId() });
+		
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
 				.getRecurringChargeTemplate();
 		Date nextapplicationDate = getNextApplicationDate(chargeInstance);
 		Date nextDurationDate = getNextDurationDate(chargeInstance);
 
 		if (recurringChargeTemplate.getApplyInAdvance()) {
-			WalletOperation chargeApplication = rateSubscription(
+			WalletOperation chargeApplication = rateSubscription(em,
 					chargeInstance, nextapplicationDate);
-			create(chargeApplication, creator, chargeInstance.getProvider());
+			create(em, chargeApplication, creator, chargeInstance.getProvider());
 
 			chargeInstance.setNextChargeDate(nextapplicationDate);
 
@@ -593,7 +649,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 
 		} else {
-
 			if (nextDurationDate != null
 					&& nextDurationDate.getTime() > nextapplicationDate
 							.getTime()) {
@@ -792,15 +847,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Calendar durationTermCalendar = null;
 		Date nextDurationDate = chargeInstance.getNextChargeDate();
 		durationTermCalendar = serviceTemplate.getDurationTermCalendar();
-		if(durationTermCalendar!=null){
-				nextDurationDate = reimbursement ? chargeInstance
+		if (durationTermCalendar != null) {
+			nextDurationDate = reimbursement ? chargeInstance
 					.getNextChargeDate() : durationTermCalendar
 					.nextCalendarDate(applicationDate);
 		}
-		log.debug(
-					"reimbursement={},nextDurationDate={},applicationDate={}",
-					reimbursement, nextDurationDate, applicationDate);
-		
+		log.debug("reimbursement={},nextDurationDate={},applicationDate={}",
+				reimbursement, nextDurationDate, applicationDate);
+
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate
 				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {

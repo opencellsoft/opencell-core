@@ -21,6 +21,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -36,7 +37,8 @@ import org.meveo.service.base.BusinessService;
 
 @Stateless
 @LocalBean
-public class UsageChargeInstanceService extends BusinessService<UsageChargeInstance> {
+public class UsageChargeInstanceService extends
+		BusinessService<UsageChargeInstance> {
 
 	@EJB
 	private WalletOperationService chargeApplicationService;
@@ -47,57 +49,80 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	@EJB
 	private CounterInstanceService counterInstanceService;
 
-	public UsageChargeInstance usageChargeInstanciation(Subscription subscription,
-			ServiceInstance serviceInstance, ServiceUsageChargeTemplate serviceUsageChargeTemplate,
-			Date startDate, Seller seller, User creator) throws BusinessException {
+	public UsageChargeInstance usageChargeInstanciation(
+			Subscription subscription, ServiceInstance serviceInstance,
+			ServiceUsageChargeTemplate serviceUsageChargeTemplate,
+			Date startDate, Seller seller, User creator)
+			throws BusinessException {
+		return usageChargeInstanciation(getEntityManager(), subscription,
+				serviceInstance, serviceUsageChargeTemplate, startDate, seller,
+				creator);
+	}
+
+	public UsageChargeInstance usageChargeInstanciation(EntityManager em,
+			Subscription subscription, ServiceInstance serviceInstance,
+			ServiceUsageChargeTemplate serviceUsageChargeTemplate,
+			Date startDate, Seller seller, User creator)
+			throws BusinessException {
 
 		UsageChargeInstance usageChargeInstance = new UsageChargeInstance();
 		usageChargeInstance.setSubscription(subscription);
-		usageChargeInstance.setChargeTemplate(serviceUsageChargeTemplate.getChargeTemplate());
+		usageChargeInstance.setChargeTemplate(serviceUsageChargeTemplate
+				.getChargeTemplate());
 		usageChargeInstance.setChargeDate(startDate);
 		usageChargeInstance.setAmountWithoutTax(null);
 		usageChargeInstance.setAmountWithTax(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
 		usageChargeInstance.setSeller(seller);
-		usageChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
-		usageChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
-		
-		create(usageChargeInstance, creator, serviceInstance.getProvider());
+		usageChargeInstance.setCountry(subscription.getUserAccount()
+				.getBillingAccount().getTradingCountry());
+		usageChargeInstance.setCurrency(subscription.getUserAccount()
+				.getBillingAccount().getCustomerAccount().getTradingCurrency());
+
+		create(em, usageChargeInstance, creator, serviceInstance.getProvider());
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
-			CounterInstance counterInstance = counterInstanceService.counterInstanciation(
-					serviceInstance.getSubscription().getUserAccount(),
-					serviceUsageChargeTemplate.getCounterTemplate(), creator);
+			CounterInstance counterInstance = counterInstanceService
+					.counterInstanciation(em, serviceInstance.getSubscription()
+							.getUserAccount(), serviceUsageChargeTemplate
+							.getCounterTemplate(), creator);
 			usageChargeInstance.setCounter(counterInstance);
-			update(usageChargeInstance, creator);
+			update(em, usageChargeInstance, creator);
 		}
+
 		return usageChargeInstance;
 	}
 
-	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance) {
+	public void activateUsageChargeInstance(
+			UsageChargeInstance usageChargeInstance) {
+		activateUsageChargeInstance(getEntityManager(), usageChargeInstance);
+	}
+
+	public void activateUsageChargeInstance(EntityManager em,
+			UsageChargeInstance usageChargeInstance) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-		update(usageChargeInstance);
+		update(em, usageChargeInstance);
 		usageRatingService.updateCache(usageChargeInstance);
 	}
 
-	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance,
-			Date terminationDate) {
+	public void terminateUsageChargeInstance(
+			UsageChargeInstance usageChargeInstance, Date terminationDate) {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		usageRatingService.updateCache(usageChargeInstance);
 		update(usageChargeInstance);
 	}
 
-	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance,
-			Date suspensionDate) {
+	public void suspendUsageChargeInstance(
+			UsageChargeInstance usageChargeInstance, Date suspensionDate) {
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
 		usageRatingService.updateCache(usageChargeInstance);
 		update(usageChargeInstance);
 	}
 
-	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance,
-			Date reactivationDate) {
+	public void reactivateUsageChargeInstance(
+			UsageChargeInstance usageChargeInstance, Date reactivationDate) {
 		usageChargeInstance.setChargeDate(reactivationDate);
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
@@ -106,7 +131,8 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(Long subscriptionId) {
+	public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(
+			Long subscriptionId) {
 		QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c");
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();

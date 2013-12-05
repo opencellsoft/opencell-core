@@ -21,6 +21,7 @@ import java.util.Date;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.Auditable;
@@ -31,7 +32,8 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.service.base.PersistenceService;
 
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
 	@EJB
@@ -39,45 +41,64 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
 	@EJB
 	CounterPeriodService counterPeriodService;
-		
-	public CounterInstance counterInstanciation(UserAccount userAccount,CounterTemplate counterTemplate, User creator)  throws BusinessException{
-		CounterInstance result=null;
-		if(userAccount==null){
+
+	public CounterInstance counterInstanciation(UserAccount userAccount,
+			CounterTemplate counterTemplate, User creator)
+			throws BusinessException {
+		return counterInstanciation(getEntityManager(), userAccount,
+				counterTemplate, creator);
+	}
+
+	public CounterInstance counterInstanciation(EntityManager em,
+			UserAccount userAccount, CounterTemplate counterTemplate,
+			User creator) throws BusinessException {
+		CounterInstance result = null;
+
+		if (userAccount == null) {
 			throw new BusinessException("userAccount is null");
 		}
-		if(counterTemplate==null){
+
+		if (counterTemplate == null) {
 			throw new BusinessException("counterTemplate is null");
 		}
-		if(creator==null){
+
+		if (creator == null) {
 			throw new BusinessException("creator is null");
 		}
-		//we instanciate the counter only if there is no existing instance for the same template
-		if(!userAccount.getCounters().containsKey(counterTemplate.getCode())){
-			result=new CounterInstance();
+
+		// we instanciate the counter only if there is no existing instance for
+		// the same template
+		if (!userAccount.getCounters().containsKey(counterTemplate.getCode())) {
+			result = new CounterInstance();
 			result.setCounterTemplate(counterTemplate);
 			result.setUserAccount(userAccount);
-			create(result, creator,userAccount.getProvider());	
+			create(em, result, creator, userAccount.getProvider());
 			userAccount.getCounters().put(counterTemplate.getCode(), result);
-			userAccountService.update(userAccount);
+			userAccountService.update(em, userAccount);
 		} else {
-			result=userAccount.getCounters().get(counterTemplate.getCode());
+			result = userAccount.getCounters().get(counterTemplate.getCode());
 		}
+
 		return result;
 	}
 
-	public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate) {
-		CounterPeriod counterPeriod =  new CounterPeriod();
+	public CounterPeriod createPeriod(CounterInstance counterInstance,
+			Date chargeDate) {
+		CounterPeriod counterPeriod = new CounterPeriod();
 		counterPeriod.setCounterInstance(counterInstance);
-		Date startDate = counterInstance.getCounterTemplate().getCalendar().previousCalendarDate(chargeDate);
-		Date endDate = counterInstance.getCounterTemplate().getCalendar().nextCalendarDate(startDate);
-		log.info("create counter period from "+startDate+" to "+endDate);
+		Date startDate = counterInstance.getCounterTemplate().getCalendar()
+				.previousCalendarDate(chargeDate);
+		Date endDate = counterInstance.getCounterTemplate().getCalendar()
+				.nextCalendarDate(startDate);
+		log.info("create counter period from " + startDate + " to " + endDate);
 		counterPeriod.setPeriodStartDate(startDate);
 		counterPeriod.setPeriodEndDate(endDate);
 		counterPeriod.setValue(counterInstance.getCounterTemplate().getLevel());
 		counterPeriod.setCode(counterInstance.getCode());
 		counterPeriod.setDescription(counterInstance.getDescription());
 		counterPeriod.setLevel(counterInstance.getCounterTemplate().getLevel());
-		counterPeriod.setCounterType(counterInstance.getCounterTemplate().getCounterType());
+		counterPeriod.setCounterType(counterInstance.getCounterTemplate()
+				.getCounterType());
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		counterPeriod.setAuditable(auditable);
@@ -88,7 +109,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	}
 
 	public void updatePeriodValue(Long counterPeriodId, BigDecimal value) {
-		CounterPeriod counterPeriod = counterPeriodService.findById(counterPeriodId);
+		CounterPeriod counterPeriod = counterPeriodService
+				.findById(counterPeriodId);
 		counterPeriod.setValue(value);
 		counterPeriod.getAuditable().setUpdated(new Date());
 		counterPeriodService.update(counterPeriod);

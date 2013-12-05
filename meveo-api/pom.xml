@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.manaty</groupId>
 		<artifactId>meveo</artifactId>
-		<version>3.1-SNAPSHOT</version>
+		<version>3.1.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -124,7 +124,6 @@
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
-			<version>3.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

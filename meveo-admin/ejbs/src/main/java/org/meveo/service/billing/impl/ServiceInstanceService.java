@@ -88,6 +88,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	public ServiceInstance findByCodeAndSubscription(String code,
 			Subscription subscription) {
+		return findByCodeAndSubscription(getEntityManager(), code, subscription);
+	}
+
+	public ServiceInstance findByCodeAndSubscription(EntityManager em,
+			String code, Subscription subscription) {
 		ServiceInstance chargeInstance = null;
 		try {
 			log.debug("start of find {} by code (code={}) ..",
@@ -95,7 +100,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription", "=", subscription, true);
-			chargeInstance = (ServiceInstance) qb.getQuery(getEntityManager())
+			chargeInstance = (ServiceInstance) qb.getQuery(em)
 					.getSingleResult();
 			log.debug("end of find {} by code (code={}). Result found={}.",
 					new Object[] { "ServiceInstance", code,
@@ -115,28 +120,47 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstanciation(serviceInstance, creator, null, null);
 	}
 
+	public void serviceInstanciation(EntityManager em,
+			ServiceInstance serviceInstance, User creator)
+			throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+		serviceInstanciation(em, serviceInstance, creator, null, null);
+	}
+
 	public void serviceInstanciation(ServiceInstance serviceInstance,
 			User creator, BigDecimal subscriptionAmount,
 			BigDecimal terminationAmount)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
-		log.debug("serviceInstanciation serviceID=#0", serviceInstance.getId());
+		serviceInstanciation(getEntityManager(), serviceInstance, creator);
+	}
+
+	public void serviceInstanciation(EntityManager em,
+			ServiceInstance serviceInstance, User creator,
+			BigDecimal subscriptionAmount, BigDecimal terminationAmount)
+			throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+		log.debug("serviceInstanciation serviceID={}, code={}",
+				serviceInstance.getId(), serviceInstance.getCode());
 
 		String serviceCode = serviceInstance.getServiceTemplate().getCode();
 		Subscription subscription = serviceInstance.getSubscription();
+
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 			throw new IncorrectSusbcriptionException(
 					"subscription is not active");
 		}
-		ServiceInstance serviceInst = findByCodeAndSubscription(serviceCode,
-				subscription);
+
+		ServiceInstance serviceInst = findByCodeAndSubscription(em,
+				serviceCode, subscription);
 		if (serviceInst != null) {
 			throw new IncorrectServiceInstanceException(
 					"service instance already created. service Code="
 							+ serviceInstance.getCode() + ",subscription Code"
 							+ subscription.getCode());
 		}
+
 		Seller seller = subscription.getUserAccount().getBillingAccount()
 				.getCustomerAccount().getCustomer().getSeller();
 
@@ -147,18 +171,20 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		serviceInstance.setStatusDate(new Date());
 		serviceInstance.setCode(serviceCode);
-		create(serviceInstance, creator, subscription.getProvider());
+		create(em, serviceInstance, creator, subscription.getProvider());
+		
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+
 		for (RecurringChargeTemplate recurringChargeTemplate : serviceTemplate
 				.getRecurringCharges()) {
-			chargeInstanceService.recurringChargeInstanciation(serviceInstance,
-					recurringChargeTemplate.getCode(),
+			chargeInstanceService.recurringChargeInstanciation(em,
+					serviceInstance, recurringChargeTemplate.getCode(),
 					serviceInstance.getSubscriptionDate(), seller, creator);
 		}
 
 		for (OneShotChargeTemplate subscriptionChargeTemplate : serviceTemplate
 				.getSubscriptionCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(
+			oneShotChargeInstanceService.oneShotChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
 					subscriptionChargeTemplate,
 					serviceInstance.getSubscriptionDate(), subscriptionAmount,
@@ -167,7 +193,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (OneShotChargeTemplate terminationChargeTemplate : serviceTemplate
 				.getTerminationCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(
+			oneShotChargeInstanceService.oneShotChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
 					terminationChargeTemplate,
 					serviceInstance.getSubscriptionDate(), terminationAmount,
@@ -176,7 +202,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceTemplate
 				.getServiceUsageCharges()) {
-			usageChargeInstanceService.usageChargeInstanciation(
+			usageChargeInstanceService.usageChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
 					serviceUsageChargeTemplate,
 					serviceInstance.getSubscriptionDate(), seller, creator);
@@ -187,6 +213,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2,
 			User creator) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
+		serviceActivation(getEntityManager(), serviceInstance,
+				amountWithoutTax, amountWithoutTax2, creator);
+	}
+
+	public void serviceActivation(EntityManager em,
+			ServiceInstance serviceInstance, BigDecimal amountWithoutTax,
+			BigDecimal amountWithoutTax2, User creator)
+			throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
 		Subscription subscription = serviceInstance.getSubscription();
 
 		// String serviceCode = serviceInstance.getCode();
@@ -195,6 +230,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					"subscription does not exist. code="
 							+ serviceInstance.getSubscription().getCode());
 		}
+
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
 			throw new IncorrectServiceInstanceException("subscription is "
@@ -229,9 +265,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					.getSeller());
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			recurringChargeInstance.setStatusDate(new Date());
-			recurringChargeInstanceService.update(recurringChargeInstance);
-			recurringChargeInstanceService.recurringChargeApplication(
+			recurringChargeInstanceService.update(em, recurringChargeInstance);
+			recurringChargeInstanceService.recurringChargeApplication(em,
 					recurringChargeInstance, creator);
+
 			if (recurringChargeInstance.getRecurringChargeTemplate()
 					.getDurationTermInMonth() != null) {
 				if (recurringChargeInstance.getRecurringChargeTemplate()
@@ -264,22 +301,24 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				serviceInstance.getSubscriptionChargeInstances().size());
 		for (OneShotChargeInstance oneShotChargeInstance : serviceInstance
 				.getSubscriptionChargeInstances()) {
-			oneShotChargeInstanceService.oneShotChargeApplication(subscription,
-					oneShotChargeInstance,
-					serviceInstance.getSubscriptionDate(),
-					serviceInstance.getQuantity(), creator);
+			// oneShotChargeInstanceService.oneShotChargeApplication(em,
+			// subscription, oneShotChargeInstance,
+			// serviceInstance.getSubscriptionDate(),
+			// serviceInstance.getQuantity(), creator);
 			oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 			oneShotChargeInstance.setStatusDate(new Date());
-			oneShotChargeInstanceService.update(oneShotChargeInstance);
+			oneShotChargeInstanceService.update(em, oneShotChargeInstance);
 		}
+
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
-			usageChargeInstanceService
-					.activateUsageChargeInstance(usageChargeInstance);
+			// usageChargeInstanceService.activateUsageChargeInstance(em,
+			// usageChargeInstance);
 		}
+
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		serviceInstance.setStatusDate(new Date());
-		update(serviceInstance, creator);
+		update(em, serviceInstance, creator);
 
 	}
 

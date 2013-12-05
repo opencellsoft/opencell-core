@@ -112,6 +112,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	/**
+	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
+	 */
+	public void update(EntityManager em, E e) {
+		update(em, e, getCurrentUser());
+	}
+
+	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
 	 */
 	public void remove(Long id) {

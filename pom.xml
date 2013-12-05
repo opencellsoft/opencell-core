@@ -5,7 +5,7 @@
 	<groupId>org.manaty</groupId>
 	<artifactId>meveo</artifactId>
 	<packaging>pom</packaging>
-	<version>3.1-SNAPSHOT</version>
+	<version>3.1.2</version>
 	<name>MEVEO Parent Project</name>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
@@ -67,6 +67,16 @@
 			<dependency>
 				<groupId>org.manaty</groupId>
 				<artifactId>manaty-commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.meveo</groupId>
+				<artifactId>meveo-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.manaty</groupId>
+				<artifactId>meveo-admin-ejbs</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>

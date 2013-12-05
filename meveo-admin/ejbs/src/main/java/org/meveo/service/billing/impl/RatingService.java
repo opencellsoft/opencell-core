@@ -139,51 +139,71 @@ public class RatingService {
 		return result;
 	}
 
-	// used to prerate a oneshot or recurring charge
 	public WalletOperation prerateChargeApplication(String code,
 			Date subscriptionDate, ChargeInstance chargeInstance,
-				ApplicationTypeEnum applicationType, Date applicationDate,
-				BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-				BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
-				BigDecimal taxPercent, BigDecimal discountPercent,
-				Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
-				String criteria1, String criteria2, String criteria3,
-				Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
-			WalletOperation result = new WalletOperation();
-			if (chargeInstance instanceof RecurringChargeInstance) {
-				result.setSubscriptionDate(subscriptionDate);
-			}
-			result.setOperationDate(applicationDate);
-			result.setParameter1(criteria1);
-			result.setParameter2(criteria2);
-			result.setParameter3(criteria3);
+			ApplicationTypeEnum applicationType, Date applicationDate,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
+			BigDecimal taxPercent, BigDecimal discountPercent,
+			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
+			String criteria1, String criteria2, String criteria3,
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+		return prerateChargeApplication(entityManager, code, subscriptionDate,
+				chargeInstance, applicationType, applicationDate,
+				amountWithoutTax, amountWithTax, quantity, tCurrency,
+				countryId, taxPercent, discountPercent, nextApplicationDate,
+				invoiceSubCategory, criteria1, criteria2, criteria3, startdate,
+				endDate, mode);
+	}
 
-			Provider provider = chargeInstance.getProvider();
-			result.setProvider(provider);
-			result.setChargeInstance(chargeInstance);
+	// used to prerate a oneshot or recurring charge
+	public WalletOperation prerateChargeApplication(EntityManager em,
+			String code, Date subscriptionDate, ChargeInstance chargeInstance,
+			ApplicationTypeEnum applicationType, Date applicationDate,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
+			BigDecimal taxPercent, BigDecimal discountPercent,
+			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
+			String criteria1, String criteria2, String criteria3,
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
 
-			result.setCode(code);
+		WalletOperation result = new WalletOperation();
 
-			result.setQuantity(quantity);
-			result.setTaxPercent(taxPercent);
-			result.setCurrency(tCurrency.getCurrency());
-			result.setStartDate(startdate);
-			result.setEndDate(endDate);
-			result.setStatus(WalletOperationStatusEnum.OPEN);
-			result.setSeller(chargeInstance.getSeller());
-			BigDecimal unitPriceWithoutTax = amountWithoutTax;
-			BigDecimal unitPriceWithTax = null;
-			if (unitPriceWithoutTax != null) {
-				unitPriceWithTax = amountWithTax;
-			}
-
-			rateBareWalletOperation(result, unitPriceWithoutTax, unitPriceWithTax,
-					countryId, tCurrency, provider);
-			return result;
-
+		if (chargeInstance instanceof RecurringChargeInstance) {
+			result.setSubscriptionDate(subscriptionDate);
 		}
-	
-	// used to rate a oneshot or recurring charge
+
+		Provider provider = chargeInstance.getProvider();
+
+		result.setOperationDate(applicationDate);
+		result.setParameter1(criteria1);
+		result.setParameter2(criteria2);
+		result.setParameter3(criteria3);
+		result.setProvider(provider);
+		result.setChargeInstance(chargeInstance);
+		result.setCode(code);
+		result.setQuantity(quantity);
+		result.setTaxPercent(taxPercent);
+		result.setCurrency(tCurrency.getCurrency());
+		result.setStartDate(startdate);
+		result.setEndDate(endDate);
+		result.setStatus(WalletOperationStatusEnum.OPEN);
+		result.setSeller(chargeInstance.getSeller());
+
+		BigDecimal unitPriceWithoutTax = amountWithoutTax;
+		BigDecimal unitPriceWithTax = null;
+
+		if (unitPriceWithoutTax != null) {
+			unitPriceWithTax = amountWithTax;
+		}
+
+		rateBareWalletOperation(em, result, unitPriceWithoutTax,
+				unitPriceWithTax, countryId, tCurrency, provider);
+
+		return result;
+
+	}
+
 	public WalletOperation rateChargeApplication(String code,
 			Subscription subscription, ChargeInstance chargeInstance,
 			ApplicationTypeEnum applicationType, Date applicationDate,
@@ -193,23 +213,40 @@ public class RatingService {
 			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
 			String criteria1, String criteria2, String criteria3,
 			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
-		Date subscriptionDate=null;
+		return rateChargeApplication(entityManager, code, subscription,
+				chargeInstance, applicationType, applicationDate,
+				amountWithoutTax, amountWithTax, quantity, tCurrency,
+				countryId, taxPercent, discountPercent, nextApplicationDate,
+				invoiceSubCategory, criteria1, criteria2, criteria3, startdate,
+				endDate, mode);
+	}
+
+	// used to rate a oneshot or recurring charge
+	public WalletOperation rateChargeApplication(EntityManager em, String code,
+			Subscription subscription, ChargeInstance chargeInstance,
+			ApplicationTypeEnum applicationType, Date applicationDate,
+			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
+			BigDecimal taxPercent, BigDecimal discountPercent,
+			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
+			String criteria1, String criteria2, String criteria3,
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+		Date subscriptionDate = null;
+
 		if (chargeInstance instanceof RecurringChargeInstance) {
-			subscriptionDate=((RecurringChargeInstance) chargeInstance)
+			subscriptionDate = ((RecurringChargeInstance) chargeInstance)
 					.getServiceInstance().getSubscriptionDate();
 		}
-		WalletOperation result = prerateChargeApplication( code,
-			 subscriptionDate,  chargeInstance,
-				 applicationType,  applicationDate,
-				 amountWithoutTax,  amountWithTax,
-				 quantity,  tCurrency,  countryId,
-				 taxPercent,  discountPercent,
-				 nextApplicationDate,  invoiceSubCategory,
-				 criteria1,  criteria2,  criteria3,
-				 startdate,  endDate,  mode);
-		
+
+		WalletOperation result = prerateChargeApplication(em, code,
+				subscriptionDate, chargeInstance, applicationType,
+				applicationDate, amountWithoutTax, amountWithTax, quantity,
+				tCurrency, countryId, taxPercent, discountPercent,
+				nextApplicationDate, invoiceSubCategory, criteria1, criteria2,
+				criteria3, startdate, endDate, mode);
+
 		result.setWallet(subscription.getUserAccount().getWallet());
-		
+
 		String languageCode = subscription.getUserAccount().getBillingAccount()
 				.getTradingLanguage().getLanguage().getLanguageCode();
 		CatMessages catMessage = catMessagesService.getCatMessages(
@@ -219,8 +256,8 @@ public class RatingService {
 				.getDescription() : null;
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
 				: chargeInstance.getDescription());
-		return result;
 
+		return result;
 	}
 
 	public void rateBareWalletOperation(WalletOperation bareWalletOperation,
@@ -445,7 +482,7 @@ public class RatingService {
 					&& (pricePlan.getEndRatingDate() == null || bareOperation
 							.getOperationDate().before(
 									pricePlan.getEndRatingDate()));
-			log.error("applicationDateInPricePlanPeriod("
+			log.info("applicationDateInPricePlanPeriod("
 					+ pricePlan.getStartRatingDate() + " - "
 					+ pricePlan.getEndRatingDate() + ")="
 					+ applicationDateInPricePlanPeriod);

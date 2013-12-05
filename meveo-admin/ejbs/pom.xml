@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>meveo-admin</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>3.1-SNAPSHOT</version>
+		<version>3.1.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin-ejbs</artifactId>
-	<name>Meveo Admin Web Application - EJBs Module</name>
+	<name>MEVEO Admin Web Application - EJBs Module</name>
 	<packaging>jar</packaging>
 	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 	

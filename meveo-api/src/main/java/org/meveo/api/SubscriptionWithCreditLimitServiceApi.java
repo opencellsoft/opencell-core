@@ -11,6 +11,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectServiceInstanceException;
+import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.dto.CreditLimitDto;
 import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
@@ -26,8 +28,12 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -35,7 +41,9 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -77,6 +85,12 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 	@Inject
 	private SubscriptionService subscriptionService;
+
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
+
+	@Inject
+	private UserAccountService userAccountService;
 
 	public void create(
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto)
@@ -208,8 +222,9 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				updateOfferAndServiceTemplateAssociation(forSubscription,
 						currentUser);
 
-//				createSubscription(finalForSubscription,
-//						subscriptionWithCreditLimitDto, currentUser, provider);
+				createSubscription(finalForSubscription,
+						subscriptionWithCreditLimitDto, currentUser, provider);
+
 			}
 		} else {
 			StringBuilder sb = new StringBuilder(
@@ -247,9 +262,27 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 	private void createSubscription(ForSubscription forSubscription,
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto,
-			User currentUser, Provider provider) {
+			User currentUser, Provider provider)
+			throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+
 		// subscription
 		while (forSubscription != null) {
+			// get userAccount
+			UserAccount userAccount = null;
+			String userAccountCode = null;
+			if (forSubscription.hasChild()) {
+				userAccountCode = paramBean.getProperty("asg.api.default",
+						"_DEF_")
+						+ forSubscription.getChild().getSeller().getCode();
+			} else {
+				userAccountCode = paramBean.getProperty(
+						"asg.api.default.organization.userAccount", "USER_")
+						+ forSubscription.getSeller().getCode();
+			}
+			userAccount = userAccountService.findByCode(em, userAccountCode,
+					provider);
+
 			Subscription subscription = new Subscription();
 			subscription.setOffer(forSubscription
 					.getOfferTemplateForSubscription().getOfferTemplate());
@@ -258,10 +291,87 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			subscription.setSubscriptionDate(subscriptionWithCreditLimitDto
 					.getSubscriptionDate());
 			subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
-			subscription.setUserAccount(null);
-			// TODO: uncomment
-			// subscriptionService.create(em, subscription, currentUser,
-			// provider);
+			subscription.setUserAccount(userAccount);
+
+			subscriptionService.create(em, subscription, currentUser, provider);
+
+			try {
+				for (ServiceTemplateForSubscription serviceTemplateForSubscription : forSubscription
+						.getOfferTemplateForSubscription()
+						.getServiceTemplatesForsuForSubscriptions()) {
+					ServiceTemplate serviceTemplate = serviceTemplateForSubscription
+							.getServiceTemplate();
+
+					ServiceInstance serviceInstance = new ServiceInstance();
+					serviceInstance.setCode(serviceTemplate.getCode());
+					serviceInstance.setDescription(serviceTemplate
+							.getDescription());
+					serviceInstance.setServiceTemplate(serviceTemplate);
+					serviceInstance.setSubscription(subscription);
+					serviceInstance.setProvider(provider);
+					serviceInstance.setQuantity(new Integer(1));
+					
+					if (serviceTemplateForSubscription.getServiceToAddDto() != null) {
+						serviceInstance
+								.setSubscriptionDate(serviceTemplateForSubscription
+										.getServiceToAddDto()
+										.getSubscriptionDate());
+					} else {
+						serviceInstance
+								.setSubscriptionDate(subscriptionWithCreditLimitDto
+										.getSubscriptionDate());
+					}
+
+					serviceInstanceService.serviceInstanciation(em,
+							serviceInstance, currentUser);
+
+					if (serviceInstance.getRecurringChargeInstances() != null) {
+						for (RecurringChargeInstance recurringChargeInstance : serviceInstance
+								.getRecurringChargeInstances()) {
+							if (serviceTemplateForSubscription
+									.getServiceToAddDto() == null) {
+								continue;
+							}
+							recurringChargeInstance
+									.setCriteria1(serviceTemplateForSubscription
+											.getServiceToAddDto().getParam1());
+							recurringChargeInstance
+									.setCriteria2(serviceTemplateForSubscription
+											.getServiceToAddDto().getParam2());
+							recurringChargeInstance
+									.setCriteria3(serviceTemplateForSubscription
+											.getServiceToAddDto().getParam3());
+						}
+					}
+
+					if (serviceInstance.getSubscriptionChargeInstances() != null) {
+						for (ChargeInstance subscriptionChargeInstance : serviceInstance
+								.getSubscriptionChargeInstances()) {
+							if (serviceTemplateForSubscription
+									.getServiceToAddDto() == null) {
+								continue;
+							}
+							subscriptionChargeInstance
+									.setCriteria1(serviceTemplateForSubscription
+											.getServiceToAddDto().getParam1());
+							subscriptionChargeInstance
+									.setCriteria2(serviceTemplateForSubscription
+											.getServiceToAddDto().getParam2());
+							subscriptionChargeInstance
+									.setCriteria3(serviceTemplateForSubscription
+											.getServiceToAddDto().getParam3());
+						}
+					}
+
+					subscriptionService.update(em, subscription, currentUser);
+					serviceInstanceService.serviceActivation(em,
+							serviceInstance, null, null, currentUser);
+				}
+			} catch (Exception e) {
+				log.error("Error instantiating seller with code={}. {}",
+						forSubscription.getSeller().getCode(), e.getMessage());
+				e.printStackTrace();
+			}
 
 			forSubscription = forSubscription.getChild();
 		}
@@ -296,8 +406,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				}
 			}
 
-			// TODO: uncomment
-			// offerTemplateService.update(em, offerTemplate, currentUser);
+			offerTemplateService.update(em, offerTemplate, currentUser);
 
 			forSubscription = forSubscription.getChild();
 		}
@@ -383,7 +492,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				}
 			}
 
-			BigDecimal ratedAmount = walletOperationService.getRatedAmount(
+			BigDecimal ratedAmount = walletOperationService.getRatedAmount(em,
 					provider, forSubscription.getSeller(), null, null,
 					billingAccount, null, startDate, endDate, true);
 
@@ -427,6 +536,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					+ sellerId;
 			ServiceTemplate tempChargedOfferServiceTemplate = serviceTemplateService
 					.findByCode(em, chargedServiceTemplateCode, provider);
+			
 			if (tempChargedOfferServiceTemplate != null) {
 				newForSubscription.setSeller(seller);
 				newForSubscription.setChargedOffer(true);
@@ -557,6 +667,10 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 		public void setChild(ForSubscription child) {
 			this.child = child;
+		}
+
+		public boolean hasChild() {
+			return child != null;
 		}
 
 	}

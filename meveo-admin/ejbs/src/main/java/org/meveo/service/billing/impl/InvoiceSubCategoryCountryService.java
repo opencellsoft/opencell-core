@@ -35,9 +35,15 @@ import org.meveo.service.base.PersistenceService;
 public class InvoiceSubCategoryCountryService extends
 		PersistenceService<InvoiceSubcategoryCountry> {
 
-	@SuppressWarnings("unchecked")
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
 			Long invoiceSubCategoryId, Long countryId) {
+		return findInvoiceSubCategoryCountry(getEntityManager(),
+				invoiceSubCategoryId, countryId);
+	}
+
+	@SuppressWarnings("unchecked")
+	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
+			EntityManager em, Long invoiceSubCategoryId, Long countryId) {
 		try {
 			QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
 					"i");
@@ -46,7 +52,7 @@ public class InvoiceSubCategoryCountryService extends
 			qb.addCriterionEntity("i.tradingCountry.id", countryId);
 
 			List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb
-					.getQuery(getEntityManager()).getResultList();
+					.getQuery(em).getResultList();
 			return InvoiceSubcategoryCountries.size() > 0 ? InvoiceSubcategoryCountries
 					.get(0) : null;
 		} catch (NoResultException ex) {

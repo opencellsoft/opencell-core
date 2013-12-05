@@ -105,7 +105,7 @@ public class RealtimeChargingService {
 
 		Provider provider = ba.getProvider();
 		op.setProvider(provider);
-		OneShotChargeInstance ci=new OneShotChargeInstance();
+		OneShotChargeInstance ci = new OneShotChargeInstance();
 		ci.setCountry(ba.getTradingCountry());
 		ci.setCurrency(ba.getCustomerAccount().getTradingCurrency());
 		op.setChargeInstance(ci);
@@ -141,11 +141,12 @@ public class RealtimeChargingService {
 				.getSeller());
 		chargeInstance.setProvider(ba.getProvider());
 		chargeInstance.setCountry(ba.getTradingCountry());
-		chargeInstance.setCurrency(ba.getCustomerAccount().getTradingCurrency());
+		chargeInstance
+				.setCurrency(ba.getCustomerAccount().getTradingCurrency());
 		Date nextApplicationDate = walletOperationService
 				.getNextApplicationDate(chargeInstance);
-		WalletOperation op = walletOperationService.prerateSubscription(subscriptionDate,
-				chargeInstance, nextApplicationDate);
+		WalletOperation op = walletOperationService.prerateSubscription(
+				subscriptionDate, chargeInstance, nextApplicationDate);
 		return priceWithoutTax ? op.getAmountWithoutTax() : op
 				.getAmountWithTax();
 	}

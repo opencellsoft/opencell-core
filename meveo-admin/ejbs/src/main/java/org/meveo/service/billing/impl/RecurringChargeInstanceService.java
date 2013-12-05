@@ -22,6 +22,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -33,7 +34,8 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 
 @Stateless
 @LocalBean
-public class RecurringChargeInstanceService extends ChargeInstanceService<RecurringChargeInstance> {
+public class RecurringChargeInstanceService extends
+		ChargeInstanceService<RecurringChargeInstance> {
 
 	@EJB
 	private WalletOperationService chargeApplicationService;
@@ -43,18 +45,26 @@ public class RecurringChargeInstanceService extends ChargeInstanceService<Recurr
 	// recurringChargeTemplateService;
 
 	@SuppressWarnings("unchecked")
-	public List<RecurringChargeInstance> findByStatus(InstanceStatusEnum status, Date maxChargeDate) {
+	public List<RecurringChargeInstance> findByStatus(
+			InstanceStatusEnum status, Date maxChargeDate) {
 		List<RecurringChargeInstance> recurringChargeInstances = null;
 		try {
-			log.debug("start of find #0 by status (status=#1)) ..", "RecurringChargeInstance",
-					status);
-			QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
+			log.debug("start of find #0 by status (status=#1)) ..",
+					"RecurringChargeInstance", status);
+			QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class,
+					"c");
 			qb.addCriterion("c.status", "=", status, true);
-			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
-			recurringChargeInstances = qb.getQuery(getEntityManager()).getResultList();
-			log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] {
-					"RecurringChargeInstance", status,
-					recurringChargeInstances != null ? recurringChargeInstances.size() : 0 });
+			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate",
+					maxChargeDate);
+			recurringChargeInstances = qb.getQuery(getEntityManager())
+					.getResultList();
+			log.debug(
+					"end of find {} by status (status={}). Result size found={}.",
+					new Object[] {
+							"RecurringChargeInstance",
+							status,
+							recurringChargeInstances != null ? recurringChargeInstances
+									.size() : 0 });
 
 		} catch (Exception e) {
 			log.error("findByStatus error=#0 ", e.getMessage());
@@ -63,32 +73,44 @@ public class RecurringChargeInstanceService extends ChargeInstanceService<Recurr
 	}
 
 	public Long recurringChargeApplication(Subscription subscription,
-			RecurringChargeTemplate chargetemplate, Date effetDate, BigDecimal amoutWithoutTax,
-			BigDecimal amoutWithoutTx2, Integer quantity, String criteria1, String criteria2,
+			RecurringChargeTemplate chargetemplate, Date effetDate,
+			BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2,
+			Integer quantity, String criteria1, String criteria2,
 			String criteria3, User creator) throws BusinessException {
 
 		if (quantity == null) {
 			quantity = 1;
 		}
 		RecurringChargeInstance recurringChargeInstance = new RecurringChargeInstance(
-				chargetemplate.getCode(), chargetemplate.getDescription(), effetDate,
-				amoutWithoutTax, amoutWithoutTx2, subscription, chargetemplate, null);
+				chargetemplate.getCode(), chargetemplate.getDescription(),
+				effetDate, amoutWithoutTax, amoutWithoutTx2, subscription,
+				chargetemplate, null);
 		recurringChargeInstance.setCriteria1(criteria1);
 		recurringChargeInstance.setCriteria2(criteria2);
 		recurringChargeInstance.setCriteria3(criteria3);
-		recurringChargeInstance.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
-		recurringChargeInstance.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
+		recurringChargeInstance.setCountry(subscription.getUserAccount()
+				.getBillingAccount().getTradingCountry());
+		recurringChargeInstance.setCurrency(subscription.getUserAccount()
+				.getBillingAccount().getCustomerAccount().getTradingCurrency());
 
 		create(recurringChargeInstance, creator, chargetemplate.getProvider());
 
-		chargeApplicationService.recurringWalletOperation(subscription, recurringChargeInstance,
-				quantity, effetDate, creator);
+		chargeApplicationService.recurringWalletOperation(subscription,
+				recurringChargeInstance, quantity, effetDate, creator);
 		return recurringChargeInstance.getId();
 	}
 
-	public void recurringChargeApplication(RecurringChargeInstance chargeInstance, User creator)
+	public void recurringChargeApplication(
+			RecurringChargeInstance chargeInstance, User creator)
 			throws BusinessException {
-		chargeApplicationService.chargeSubscription(chargeInstance, creator);
+		recurringChargeApplication(getEntityManager(), chargeInstance, creator);
+	}
+
+	public void recurringChargeApplication(EntityManager em,
+			RecurringChargeInstance chargeInstance, User creator)
+			throws BusinessException {
+		chargeApplicationService
+				.chargeSubscription(em, chargeInstance, creator);
 	}
 
 	@SuppressWarnings("unchecked")

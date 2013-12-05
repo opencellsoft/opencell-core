@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>meveo-admin</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>3.1-SNAPSHOT</version>
+		<version>3.1.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-admin-web</artifactId>
@@ -54,7 +54,6 @@
 		<dependency>
 			<groupId>org.meveo</groupId>
 			<artifactId>meveo-api</artifactId>
-			<version>3.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.omnifaces</groupId>
