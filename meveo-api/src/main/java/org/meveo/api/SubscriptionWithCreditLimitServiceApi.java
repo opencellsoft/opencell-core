@@ -271,14 +271,14 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			// get userAccount
 			UserAccount userAccount = null;
 			String userAccountCode = null;
+
 			if (forSubscription.hasChild()) {
-				userAccountCode = paramBean.getProperty("asg.api.default",
-						"_DEF_")
-						+ forSubscription.getChild().getSeller().getCode();
-			} else {
 				userAccountCode = paramBean.getProperty(
 						"asg.api.default.organization.userAccount", "USER_")
-						+ forSubscription.getSeller().getCode();
+						+ forSubscription.getChild().getSeller().getCode();
+			} else {
+				userAccountCode = paramBean.getProperty("asg.api.default",
+						"_DEF_") + forSubscription.getSeller().getCode();
 			}
 			userAccount = userAccountService.findByCode(em, userAccountCode,
 					provider);
@@ -310,7 +310,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					serviceInstance.setSubscription(subscription);
 					serviceInstance.setProvider(provider);
 					serviceInstance.setQuantity(new Integer(1));
-					
+
 					if (serviceTemplateForSubscription.getServiceToAddDto() != null) {
 						serviceInstance
 								.setSubscriptionDate(serviceTemplateForSubscription
@@ -536,7 +536,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					+ sellerId;
 			ServiceTemplate tempChargedOfferServiceTemplate = serviceTemplateService
 					.findByCode(em, chargedServiceTemplateCode, provider);
-			
+
 			if (tempChargedOfferServiceTemplate != null) {
 				newForSubscription.setSeller(seller);
 				newForSubscription.setChargedOffer(true);

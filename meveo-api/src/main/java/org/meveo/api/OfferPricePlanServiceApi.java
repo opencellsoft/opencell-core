@@ -171,7 +171,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 					true, offerPricePlanDto, currentUser, provider,
 					invoiceSubCategory, seller);
 			List<ServiceUsageChargeTemplate> recommendedServiceUsageChargeTemplates = createServiceUsageChargeTemplate(
-					false, offerPricePlanDto, currentUser, provider,
+					true, offerPricePlanDto, currentUser, provider,
 					invoiceSubCategory, calendar, recommendedServiceTemplate,
 					seller);
 
