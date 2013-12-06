@@ -13,9 +13,13 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.util.MeveoParamBean;
@@ -37,6 +41,12 @@ public class ServiceTemplateServiceApi extends BaseApi {
 
 	@Inject
 	private OfferTemplateService offerTemplateService;
+
+	@Inject
+	private ServiceInstanceService serviceInstanceService;
+
+	@Inject
+	private SubscriptionService subscriptionService;
 
 	public void create(ServiceDto serviceDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(serviceDto.getServiceId())
@@ -109,12 +119,54 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			Provider provider = providerService.findById(providerId);
 
 			String serviceTemplateCode = paramBean.getProperty(
-					"asg.api.serviceTemplate.prefix", "_NC_") + serviceId;
+					"asg.api.service.notcharged.prefix", "_NC_SE_") + serviceId;
+			ServiceTemplate serviceTemplate = serviceTemplateService
+					.findByCode(serviceTemplateCode, provider);
+			if (serviceTemplate != null) {
+				List<ServiceInstance> serviceInstances = serviceInstanceService
+						.findByServiceTemplate(em, serviceTemplate, provider);
+				if (serviceInstances != null && serviceInstances.size() > 0) {
+					return;
+				}
+			}
 
-			if (serviceTemplateService
-					.findByCode(serviceTemplateCode, provider) != null) {
-				throw new MeveoApiException("Service template with code="
-						+ serviceTemplateCode + " already exists.");
+			String chargedServiceTemplateCode = paramBean.getProperty(
+					"asg.api.service.charged.prefix", "_CH_SE_") + serviceId;
+			ServiceTemplate chargedServiceTemplate = serviceTemplateService
+					.findByCode(chargedServiceTemplateCode, provider);
+			if (chargedServiceTemplate != null) {
+				List<ServiceInstance> chargedServiceInstances = serviceInstanceService
+						.findByServiceTemplate(em, chargedServiceTemplate,
+								provider);
+				if (chargedServiceInstances != null
+						&& chargedServiceInstances.size() > 0) {
+					return;
+				}
+			}
+
+			String offerTemplateCode = paramBean.getProperty(
+					"asg.api.service.offer.prefix", "_SE_") + serviceId;
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
+					offerTemplateCode, provider);
+			if (offerTemplate != null) {
+				List<Subscription> subscriptions = subscriptionService
+						.findByOfferTemplate(em, offerTemplate, provider);
+				if (subscriptions != null && subscriptions.size() > 0) {
+					return;
+				}
+			}
+
+			// delete
+			if (serviceTemplate != null) {
+				serviceTemplateService.remove(em, serviceTemplate);
+			}
+
+			if (chargedServiceTemplate != null) {
+				serviceTemplateService.remove(em, chargedServiceTemplate);
+			}
+
+			if (offerTemplate != null) {
+				offerTemplateService.remove(em, offerTemplate);
 			}
 
 		} else {
@@ -137,5 +189,4 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			throw new MeveoApiException(sb.toString());
 		}
 	}
-
 }
