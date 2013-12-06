@@ -10,6 +10,8 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.ServiceDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -49,10 +51,7 @@ public class ServiceTemplateServiceApi extends BaseApi {
 	private SubscriptionService subscriptionService;
 
 	public void create(ServiceDto serviceDto) throws MeveoApiException {
-		if (!StringUtils.isBlank(serviceDto.getServiceId())
-				&& serviceDto.getDescriptions() != null
-				&& serviceDto.getDescriptions().size() > 0) {
-
+		if (!StringUtils.isBlank(serviceDto.getServiceId())) {
 			Provider provider = providerService.findById(serviceDto
 					.getProviderId());
 			User currentUser = userService.findById(serviceDto
@@ -64,8 +63,8 @@ public class ServiceTemplateServiceApi extends BaseApi {
 
 			if (serviceTemplateService
 					.findByCode(serviceTemplateCode, provider) != null) {
-				throw new MeveoApiException("Service template with code="
-						+ serviceTemplateCode + " already exists.");
+				throw new ServiceTemplateAlreadyExistsException(
+						serviceTemplateCode);
 			}
 
 			ServiceTemplate serviceTemplate = new ServiceTemplate();
@@ -96,9 +95,76 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			if (StringUtils.isBlank(serviceDto.getServiceId())) {
 				missingFields.add("Service Id");
 			}
-			if (serviceDto.getDescriptions() == null
-					|| serviceDto.getDescriptions().size() == 0) {
-				missingFields.add("Description");
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+	}
+
+	public void update(ServiceDto serviceDto) throws MeveoApiException {
+		if (!StringUtils.isBlank(serviceDto.getServiceId())) {
+			Provider provider = providerService.findById(serviceDto
+					.getProviderId());
+			User currentUser = userService.findById(serviceDto
+					.getCurrentUserId());
+
+			String offerTemplateCode = paramBean.getProperty(
+					"asg.api.service.offer.prefix", "_SE_")
+					+ serviceDto.getServiceId();
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
+					offerTemplateCode, provider);
+			if (offerTemplateCode != null) {
+				if (serviceDto.getDescriptions() != null
+						&& serviceDto.getDescriptions().size() > 0) {
+					offerTemplate.setDescription(serviceDto.getDescriptions()
+							.get(0).getDescription());
+					offerTemplateService.update(em, offerTemplate, currentUser);
+				}
+			}
+
+			String serviceTemplateCode = paramBean.getProperty(
+					"asg.api.service.notcharged.prefix", "_NC_SE_")
+					+ serviceDto.getServiceId();
+			ServiceTemplate serviceTemplate = serviceTemplateService
+					.findByCode(serviceTemplateCode, provider);
+			if (serviceTemplate != null) {
+				if (serviceDto.getDescriptions() != null
+						&& serviceDto.getDescriptions().size() > 0) {
+					serviceTemplate.setDescription(serviceDto.getDescriptions()
+							.get(0).getDescription());
+					serviceTemplateService.update(em, serviceTemplate,
+							currentUser);
+				}
+			}
+
+			String chargedServiceTemplateCode = paramBean.getProperty(
+					"asg.api.service.charged.prefix", "_CH_SE_")
+					+ serviceDto.getServiceId();
+			ServiceTemplate chargedServiceTemplate = serviceTemplateService
+					.findByCode(chargedServiceTemplateCode, provider);
+			if (chargedServiceTemplate != null) {
+				if (serviceDto.getDescriptions() != null
+						&& serviceDto.getDescriptions().size() > 0) {
+					chargedServiceTemplate.setDescription(serviceDto
+							.getDescriptions().get(0).getDescription());
+					serviceTemplateService.update(em, chargedServiceTemplate,
+							currentUser);
+				}
+			}
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(serviceDto.getServiceId())) {
+				missingFields.add("Service Id");
 			}
 
 			if (missingFields.size() > 1) {
@@ -109,7 +175,7 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 
@@ -186,7 +252,8 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
+
 }
