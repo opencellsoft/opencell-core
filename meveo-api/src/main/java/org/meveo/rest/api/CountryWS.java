@@ -18,6 +18,7 @@ import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.CountryDoesNotExistsException;
 import org.meveo.api.exception.CurrencyDoesNotExistsException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
@@ -64,6 +65,10 @@ public class CountryWS {
 					"asp.api.providerId", "1")));
 
 			countryServiceApi.create(countryDto);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (CurrencyDoesNotExistsException e) {
 			result.setErrorCode(MeveoApiErrorCode.CURRENCY_DOES_NOT_EXISTS);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -106,6 +111,10 @@ public class CountryWS {
 
 		try {
 			countryServiceApi.remove(countryCode, currencyCode, providerId);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (TradingCountryDoesNotExistsException e) {
 			result.setErrorCode(MeveoApiErrorCode.TRADING_COUNTRY_DOES_NOT_EXISTS);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -134,6 +143,10 @@ public class CountryWS {
 					"asp.api.providerId", "1")));
 
 			countryServiceApi.update(countryDto);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (CountryDoesNotExistsException e) {
 			result.setErrorCode(MeveoApiErrorCode.COUNTRY_DOES_NOT_EXISTS);
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
@@ -87,7 +88,7 @@ public class UserServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 
@@ -129,7 +130,7 @@ public class UserServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 
@@ -161,7 +162,7 @@ public class UserServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 }

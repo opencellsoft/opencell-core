@@ -10,9 +10,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.ServicePricePlanServiceApi;
 import org.meveo.api.dto.ServicePricePlanDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -47,6 +49,10 @@ public class ServicePricePlanWS {
 					.getProperty("asp.api.providerId", "1")));
 
 			servicePricePlanServiceApi.create(servicePricePlanDto);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

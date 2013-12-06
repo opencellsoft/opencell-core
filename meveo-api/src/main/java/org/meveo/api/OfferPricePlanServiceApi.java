@@ -15,6 +15,7 @@ import org.meveo.api.dto.SubscriptionFeeDto;
 import org.meveo.api.dto.TerminationFeeDto;
 import org.meveo.api.dto.UsageChargeDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -244,7 +245,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 

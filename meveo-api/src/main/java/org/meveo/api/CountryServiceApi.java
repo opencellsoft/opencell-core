@@ -13,6 +13,7 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.CountryDoesNotExistsException;
 import org.meveo.api.exception.CurrencyDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
@@ -192,7 +193,7 @@ public class CountryServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 
@@ -263,7 +264,7 @@ public class CountryServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 
@@ -346,7 +347,7 @@ public class CountryServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 

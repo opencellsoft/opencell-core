@@ -79,6 +79,10 @@ public class ServiceTemplateWS {
 					"asp.api.providerId", "1")));
 
 			serviceTemplateServiceApi.update(serviceDto);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -95,6 +99,10 @@ public class ServiceTemplateWS {
 		try {
 			serviceTemplateServiceApi.remove(Long.valueOf(paramBean
 					.getProperty("asp.api.providerId", "1")), serviceId);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
