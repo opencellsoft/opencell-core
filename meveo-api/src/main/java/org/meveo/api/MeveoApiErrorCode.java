@@ -1,6 +1,5 @@
 package org.meveo.api;
 
-
 /**
  * @author Edward P. Legaspi
  * @since Nov 9, 2013
@@ -39,5 +38,8 @@ public class MeveoApiErrorCode {
 
 	// Offer and Service Templates
 	public static int SERVICE_TEMPLATE_ALREADY_EXISTS = 4000;
+	public static int SERVICE_TEMPLATE_DOES_NOT_EXISTS = 4001;
+	public static int OFFER_TEMPLATE_ALREADY_EXISTS = 4100;
+	public static int OFFER_TEMPLATE_DOES_NOT_EXISTS = 4101;
 
 }

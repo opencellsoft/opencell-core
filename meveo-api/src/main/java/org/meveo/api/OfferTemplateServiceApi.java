@@ -10,6 +10,8 @@ import javax.inject.Inject;
 
 import org.meveo.api.dto.OfferDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.OfferTemplateAlreadyExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -66,8 +68,7 @@ public class OfferTemplateServiceApi extends BaseApi {
 					+ offerDto.getOfferId();
 
 			if (offerTemplateService.findByCode(offerTemplateCode, provider) != null) {
-				throw new MeveoApiException("Offer template code="
-						+ offerTemplateCode + " already exists.");
+				throw new OfferTemplateAlreadyExistsException(offerTemplateCode);
 			}
 
 			OfferTemplate offerTemplate = new OfferTemplate();
@@ -83,8 +84,8 @@ public class OfferTemplateServiceApi extends BaseApi {
 			String chargedServiceTemplateCode = paramBean.getProperty(
 					"asg.api.offer.notcharged.prefix", "_NC_OF_")
 					+ offerDto.getOfferId();
-			if (serviceTemplateService
-					.findByCode(chargedServiceTemplateCode, provider) != null) {
+			if (serviceTemplateService.findByCode(chargedServiceTemplateCode,
+					provider) != null) {
 				throw new MeveoApiException("Service template code="
 						+ chargedServiceTemplateCode + " already exists.");
 			}
@@ -151,7 +152,7 @@ public class OfferTemplateServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 
@@ -278,85 +279,60 @@ public class OfferTemplateServiceApi extends BaseApi {
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(offerId)) {
 			Provider provider = providerService.findById(providerId);
-			User currentUser = userService.findById(currentUserId);
+
+			String serviceTemplateCode = paramBean.getProperty(
+					"asg.api.offer.notcharged.prefix", "_NC_OF_") + offerId;
+			ServiceTemplate serviceTemplate = serviceTemplateService
+					.findByCode(em, serviceTemplateCode, provider);
+			if (serviceTemplate != null) {
+				List<ServiceInstance> serviceInstances = serviceInstanceService
+						.findByServiceTemplate(em, serviceTemplate, provider,
+								InstanceStatusEnum.ACTIVE);
+				if (serviceInstances != null && serviceInstances.size() > 0) {
+					return;
+				}
+			}
+
+			String chargedServiceTemplateCode = paramBean.getProperty(
+					"asg.api.offer.charged.prefix", "_CH_OF_") + offerId;
+			ServiceTemplate chargedServiceTemplate = serviceTemplateService
+					.findByCode(em, chargedServiceTemplateCode, provider);
+			if (chargedServiceTemplate != null) {
+				List<ServiceInstance> chargedServiceInstances = serviceInstanceService
+						.findByServiceTemplate(em, chargedServiceTemplate,
+								provider, InstanceStatusEnum.ACTIVE);
+				if (chargedServiceInstances != null
+						&& chargedServiceInstances.size() > 0) {
+					return;
+				}
+			}
 
 			String offerTemplateCode = paramBean.getProperty(
 					"asg.api.offer.offer.prefix", "_OF_") + offerId;
-
 			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
 					offerTemplateCode, provider);
-
 			if (offerTemplate != null) {
-				// uncharged
-				String serviceTemplateCode = paramBean.getProperty(
-						"asg.api.offer.notcharged.prefix", "_NC_OF_") + offerId;
-				ServiceTemplate serviceTemplate = serviceTemplateService
-						.findByCode(em, serviceTemplateCode, provider);
-
-				List<ServiceTemplate> toBeDeletedServices = new ArrayList<ServiceTemplate>();
-
-				if (serviceTemplate != null) {
-					List<ServiceInstance> serviceInstances = serviceInstanceService
-							.findByServiceTemplate(em, serviceTemplate,
-									provider, InstanceStatusEnum.ACTIVE);
-					if (serviceInstances == null
-							|| serviceInstances.size() == 0) {
-						toBeDeletedServices.add(serviceTemplate);
-					}
-				}
-
-				// charged
-				serviceTemplateCode = paramBean.getProperty(
-						"asg.api.offer.notcharged.prefix", "_CH_OF_") + offerId;
-				serviceTemplate = serviceTemplateService.findByCode(em,
-						serviceTemplateCode, provider);
-
-				if (serviceTemplate != null) {
-					List<ServiceInstance> serviceInstances = serviceInstanceService
-							.findByServiceTemplate(em, serviceTemplate,
-									provider, InstanceStatusEnum.ACTIVE);
-					if (serviceInstances == null
-							|| serviceInstances.size() == 0) {
-						toBeDeletedServices.add(serviceTemplate);
-					}
-				}
-
-				// delete other meveo serviceTemplates
-				if (offerTemplate.getServiceTemplates() != null
-						&& offerTemplate.getServiceTemplates().size() > 0) {
-					for (ServiceTemplate otherServiceTemplate : offerTemplate
-							.getServiceTemplates()) {
-						String chargedPrefix = paramBean.getProperty(
-								"asg.api.service.charged.prefix", "_CH_SE_");
-						String unchargedPrefix = paramBean.getProperty(
-								"asg.api.service.notcharged.prefix", "_NC_SE_");
-						if (otherServiceTemplate.getCode().startsWith(
-								chargedPrefix)
-								|| otherServiceTemplate.getCode().startsWith(
-										unchargedPrefix)) {
-							toBeDeletedServices.add(serviceTemplate);
-						}
-					}
-				}
-
-				// check if offer is subscribe
-				List<Subscription> offerSubscriptions = subscriptionService
+				List<Subscription> subscriptions = subscriptionService
 						.findByOfferTemplate(em, offerTemplate, provider);
-				if (offerSubscriptions != null && offerSubscriptions.size() > 0) {
-					offerTemplateService.remove(em, offerTemplate);
-				} else {
-					// to be remove
-					for (ServiceTemplate st : toBeDeletedServices) {
-						offerTemplate.getServiceTemplates().remove(st);
-					}
-					offerTemplateService.update(em, offerTemplate, currentUser);
+				if (subscriptions != null && subscriptions.size() > 0) {
+					return;
 				}
-
-			} else {
-				throw new MeveoApiException("Offer template code="
-						+ offerTemplateCode + " does not exists.");
+				offerTemplate.setServiceTemplates(null);
+				offerTemplateService.update(em, offerTemplate);
 			}
 
+			// delete
+			if (serviceTemplate != null) {
+				serviceTemplateService.remove(em, serviceTemplate);
+			}
+
+			if (chargedServiceTemplate != null) {
+				serviceTemplateService.remove(em, chargedServiceTemplate);
+			}
+
+			if (offerTemplate != null) {
+				offerTemplateService.remove(em, offerTemplate);
+			}
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -372,7 +348,7 @@ public class OfferTemplateServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 }

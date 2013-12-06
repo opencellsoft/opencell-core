@@ -11,9 +11,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.OfferTemplateServiceApi;
 import org.meveo.api.dto.OfferDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.OfferTemplateAlreadyExistsException;
+import org.meveo.api.exception.OfferTemplateDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -48,6 +52,14 @@ public class OfferTemplateWS {
 					"asp.api.providerId", "1")));
 
 			offerTemplateServiceApi.create(offerDto);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (OfferTemplateAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.OFFER_TEMPLATE_ALREADY_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -84,6 +96,14 @@ public class OfferTemplateWS {
 			offerTemplateServiceApi.remove(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")), Long.valueOf(paramBean
 					.getProperty("asp.api.userId", "1")), offerId);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (OfferTemplateDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.OFFER_TEMPLATE_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
