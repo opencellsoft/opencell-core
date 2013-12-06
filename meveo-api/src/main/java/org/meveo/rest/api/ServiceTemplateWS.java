@@ -5,14 +5,18 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.ServiceTemplateServiceApi;
 import org.meveo.api.dto.ServiceDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
@@ -47,6 +51,34 @@ public class ServiceTemplateWS {
 					"asp.api.providerId", "1")));
 
 			serviceTemplateServiceApi.create(serviceDto);
+		} catch (ServiceTemplateAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SERVICE_TEMPLATE_ALREADY_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@PUT
+	@Path("/")
+	public ActionStatus update(ServiceDto serviceDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
+
+			serviceTemplateServiceApi.update(serviceDto);
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -61,8 +93,8 @@ public class ServiceTemplateWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			serviceTemplateServiceApi.remove(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")), serviceId);
+			serviceTemplateServiceApi.remove(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")), serviceId);
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

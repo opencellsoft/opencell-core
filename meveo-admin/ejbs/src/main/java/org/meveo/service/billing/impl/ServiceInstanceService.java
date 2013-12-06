@@ -217,6 +217,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				amountWithoutTax, amountWithoutTax2, creator);
 	}
 
+	@SuppressWarnings("unused")
 	public void serviceActivation(EntityManager em,
 			ServiceInstance serviceInstance, BigDecimal amountWithoutTax,
 			BigDecimal amountWithoutTax2, User creator)

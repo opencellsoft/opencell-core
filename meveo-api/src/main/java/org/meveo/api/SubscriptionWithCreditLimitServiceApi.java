@@ -135,7 +135,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				String sellerId = parentSeller.getCode();
 
 				ForSubscription forSubscription = new ForSubscription();
-				forSubscription.setSeller(seller);
+				forSubscription.setSubscriber(seller);
 
 				// We look if this SELLER has a "charged offer service"
 				// associated
@@ -273,12 +273,13 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			String userAccountCode = null;
 
 			if (forSubscription.hasChild()) {
+				userAccountCode = paramBean.getProperty("asg.api.default",
+						"_DEF_")
+						+ forSubscription.getChild().getSubscriber().getCode();
+			} else {
 				userAccountCode = paramBean.getProperty(
 						"asg.api.default.organization.userAccount", "USER_")
-						+ forSubscription.getChild().getSeller().getCode();
-			} else {
-				userAccountCode = paramBean.getProperty("asg.api.default",
-						"_DEF_") + forSubscription.getSeller().getCode();
+						+ forSubscription.getSubscriber().getCode();
 			}
 			userAccount = userAccountService.findByCode(em, userAccountCode,
 					provider);
@@ -286,7 +287,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			Subscription subscription = new Subscription();
 			subscription.setOffer(forSubscription
 					.getOfferTemplateForSubscription().getOfferTemplate());
-			subscription.setCode(forSubscription.getSeller().getCode()); // ?
+			subscription.setCode(forSubscription.getSubscriber().getCode()); // ?
 			subscription.setDescription("");
 			subscription.setSubscriptionDate(subscriptionWithCreditLimitDto
 					.getSubscriptionDate());
@@ -369,7 +370,8 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				}
 			} catch (Exception e) {
 				log.error("Error instantiating seller with code={}. {}",
-						forSubscription.getSeller().getCode(), e.getMessage());
+						forSubscription.getSubscriber().getCode(),
+						e.getMessage());
 				e.printStackTrace();
 			}
 
@@ -423,7 +425,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 			String billingAccountCode = paramBean.getProperty(
 					"asp.api.default.billingAccount.prefix", "BA_")
-					+ forSubscription.getSeller().getSeller().getCode();
+					+ forSubscription.getSubscriber().getSeller().getCode();
 			BillingAccount billingAccount = billingAccountService.findByCode(
 					em, billingAccountCode, provider);
 			if (billingAccount == null) {
@@ -493,18 +495,18 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			}
 
 			BigDecimal ratedAmount = walletOperationService.getRatedAmount(em,
-					provider, forSubscription.getSeller(), null, null,
+					provider, forSubscription.getSubscriber(), null, null,
 					billingAccount, null, startDate, endDate, true);
 
 			BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
 			for (CreditLimitDto creditLimitDto : subscriptionWithCreditLimitDto
 					.getCreditLimits()) {
-				if (forSubscription.getSeller().getCode()
+				if (forSubscription.getSubscriber().getCode()
 						.equals(creditLimitDto.getOrganizationId())) {
 					if (spentCredit.compareTo(creditLimitDto.getCreditLimit()) > 0) {
 						log.debug("Credit limit exceeded for seller code={}",
-								forSubscription.getSeller().getCode());
+								forSubscription.getSubscriber().getCode());
 						return false;
 					}
 				}
@@ -527,6 +529,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 		String sellerId = seller.getSeller().getCode();
 		ForSubscription newForSubscription = new ForSubscription();
 		newForSubscription.setChild(forSubscription);
+		newForSubscription.setSubscriber(seller);
 
 		if (forSubscription.isChargedOffer()) {
 			String chargedServiceTemplateCode = paramBean.getProperty(
@@ -538,7 +541,6 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					.findByCode(em, chargedServiceTemplateCode, provider);
 
 			if (tempChargedOfferServiceTemplate != null) {
-				newForSubscription.setSeller(seller);
 				newForSubscription.setChargedOffer(true);
 				newForSubscription.getOfferTemplateForSubscription()
 						.setOfferTemplate(
@@ -573,10 +575,10 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 					if (tempOfferTemplate != null
 							&& tempChargedServiceTemplate != null) {
-						forSubscription.getOfferTemplateForSubscription()
+						newForSubscription.getOfferTemplateForSubscription()
 								.setOfferTemplate(tempOfferTemplate);
 
-						forSubscription
+						newForSubscription
 								.getOfferTemplateForSubscription()
 								.getServiceTemplatesForsuForSubscriptions()
 								.add(new ServiceTemplateForSubscription(
@@ -631,17 +633,17 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 	}
 
 	class ForSubscription {
-		private Seller seller;
+		private Seller subscriber;
 		private OfferTemplateForSubscription offerTemplateForSubscription = new OfferTemplateForSubscription();
 		private ForSubscription child;
 		private boolean chargedOffer;
 
-		public Seller getSeller() {
-			return seller;
+		public Seller getSubscriber() {
+			return subscriber;
 		}
 
-		public void setSeller(Seller seller) {
-			this.seller = seller;
+		public void setSubscriber(Seller seller) {
+			this.subscriber = seller;
 		}
 
 		public OfferTemplateForSubscription getOfferTemplateForSubscription() {

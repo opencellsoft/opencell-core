@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+
 /**
  * @author Edward P. Legaspi
  * @since Nov 9, 2013
@@ -35,5 +36,8 @@ public class MeveoApiErrorCode {
 	public static int SELLER_ALREADY_EXISTS = 3000;
 	public static int PARENT_SELLER_DOES_NOT_EXISTS = 3002;
 	public static int SELLER_DOES_NOT_EXISTS = 3003;
+
+	// Offer and Service Templates
+	public static int SERVICE_TEMPLATE_ALREADY_EXISTS = 4000;
 
 }
