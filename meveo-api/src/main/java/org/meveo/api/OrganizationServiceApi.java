@@ -16,6 +16,7 @@ import org.meveo.api.exception.SellerAlreadyExistsException;
 import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
+import org.meveo.api.exception.TradingLanguageAlreadyExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
@@ -25,6 +26,7 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -38,6 +40,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingCountryService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -82,9 +85,13 @@ public class OrganizationServiceApi extends BaseApi {
 	@Inject
 	private UserAccountService userAccountService;
 
+	@Inject
+	private TradingLanguageService tradingLanguageService;
+
 	public void create(OrganizationDto orgDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(orgDto.getOrganizationId())
 				&& !StringUtils.isBlank(orgDto.getCountryCode())
+				&& !StringUtils.isBlank(orgDto.getLanguageCode())
 				&& !StringUtils.isBlank(orgDto.getDefaultCurrencyCode())) {
 
 			Provider provider = providerService
@@ -111,6 +118,14 @@ public class OrganizationServiceApi extends BaseApi {
 			if (tradingCurrency == null) {
 				throw new TradingCurrencyDoesNotExistsException(
 						orgDto.getDefaultCurrencyCode());
+			}
+
+			TradingLanguage tradingLanguage = tradingLanguageService
+					.findByTradingLanguageCode(orgDto.getLanguageCode(),
+							provider);
+			if (tradingLanguage == null) {
+				throw new TradingLanguageAlreadyExistsException(
+						orgDto.getLanguageCode());
 			}
 
 			Seller parentSeller = null;
@@ -193,6 +208,7 @@ public class OrganizationServiceApi extends BaseApi {
 										"asp.api.default.billingAccount.electronicBilling",
 										"true")));
 				billingAccount.setTradingCountry(tradingCountry);
+				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccountService.create(em, billingAccount, currentUser,
 						provider);
 
@@ -271,6 +287,7 @@ public class OrganizationServiceApi extends BaseApi {
 										"asp.api.default.billingAccount.electronicBilling",
 										"true")));
 				billingAccount.setTradingCountry(tradingCountry);
+				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccountService.create(em, billingAccount, currentUser,
 						provider);
 			}
@@ -284,6 +301,9 @@ public class OrganizationServiceApi extends BaseApi {
 			}
 			if (StringUtils.isBlank(orgDto.getCountryCode())) {
 				missingFields.add("countryCode");
+			}
+			if (StringUtils.isBlank(orgDto.getLanguageCode())) {
+				missingFields.add("languageCode");
 			}
 			if (StringUtils.isBlank(orgDto.getDefaultCurrencyCode())) {
 				missingFields.add("defaultCurrencyCode");

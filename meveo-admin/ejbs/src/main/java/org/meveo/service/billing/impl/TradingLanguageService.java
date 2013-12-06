@@ -17,6 +17,7 @@ package org.meveo.service.billing.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -36,20 +37,29 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
 	 * @return Trading language found or null.
 	 * @throws ElementNotFoundException
 	 */
-	public TradingLanguage findByTradingLanguageCode(String tradingLanguageCode, Provider provider) {
+	public TradingLanguage findByTradingLanguageCode(
+			String tradingLanguageCode, Provider provider) {
+		return findByTradingLanguageCode(getEntityManager(),
+				tradingLanguageCode, provider);
+	}
+
+	public TradingLanguage findByTradingLanguageCode(EntityManager em,
+			String tradingLanguageCode, Provider provider) {
 		try {
-			log.info("findByTradingLanguageCode tradingLanguageCode=#0,provider=#1",
-					tradingLanguageCode, provider != null ? provider.getCode() : null);
-			Query query = getEntityManager()
-					.createQuery(
-							"select b from TradingLanguage b where b.language.languageCode = :tradingLanguageCode and b.provider=:provider");
+			log.debug(
+					"findByTradingLanguageCode tradingLanguageCode=#0,provider=#1",
+					tradingLanguageCode, provider != null ? provider.getCode()
+							: null);
+			Query query = em
+					.createQuery("select b from TradingLanguage b where b.language.languageCode = :tradingLanguageCode and b.provider=:provider");
 			query.setParameter("tradingLanguageCode", tradingLanguageCode);
 			query.setParameter("provider", provider);
 			return (TradingLanguage) query.getSingleResult();
 		} catch (NoResultException e) {
 			log.warn(
-					"findByTradingLanguageCode not found : tradingLanguageCode=#0,provider=#1",
-					tradingLanguageCode, provider != null ? provider.getCode() : null);
+					"findByTradingLanguageCode not found : tradingLanguageCode={},provider={}",
+					tradingLanguageCode, provider != null ? provider.getCode()
+							: null);
 			return null;
 		}
 	}

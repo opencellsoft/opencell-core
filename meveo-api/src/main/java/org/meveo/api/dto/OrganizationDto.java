@@ -18,6 +18,7 @@ public class OrganizationDto extends BaseDto {
 	private String parentId;
 	private String countryCode;
 	private String defaultCurrencyCode;
+	private String languageCode;
 
 	public String getOrganizationId() {
 		return organizationId;
@@ -57,6 +58,14 @@ public class OrganizationDto extends BaseDto {
 
 	public void setDefaultCurrencyCode(String defaultCurrencyCode) {
 		this.defaultCurrencyCode = defaultCurrencyCode;
+	}
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
 	}
 
 }

@@ -301,7 +301,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				pricePlanMatrix.setTradingCurrency(tradingCurrency);
 				pricePlanMatrix.setStartRatingDate(recurringChargeDto
 						.getStartDate());
-				pricePlanMatrix.setSeller(seller);
+				// pricePlanMatrix.setSeller(seller);
 				pricePlanMatrix.setEndRatingDate(recurringChargeDto
 						.getEndDate());
 				pricePlanMatrix.setMinSubscriptionAgeInMonth(Long
@@ -368,7 +368,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				pricePlanMatrix.setTradingCurrency(tradingCurrency);
 				pricePlanMatrix.setStartRatingDate(subscriptionFeeDto
 						.getStartDate());
-				pricePlanMatrix.setSeller(seller);
+				//pricePlanMatrix.setSeller(seller);
 				pricePlanMatrix.setEndRatingDate(subscriptionFeeDto
 						.getEndDate());
 				pricePlanMatrix.setCriteria1Value(servicePricePlanDto
@@ -431,7 +431,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 				pricePlanMatrix.setTradingCurrency(tradingCurrency);
 				pricePlanMatrix.setStartRatingDate(terminationFeeDto
 						.getStartDate());
-				pricePlanMatrix.setSeller(seller);
+				//pricePlanMatrix.setSeller(seller);
 				pricePlanMatrix
 						.setEndRatingDate(terminationFeeDto.getEndDate());
 				pricePlanMatrix.setCriteria1Value(servicePricePlanDto
@@ -528,7 +528,7 @@ public class ServicePricePlanServiceApi extends BaseApi {
 			pricePlanMatrix.setAmountWithoutTax(usageChargeDto.getPrice());
 			pricePlanMatrix.setTradingCurrency(tradingCurrency);
 			pricePlanMatrix.setStartRatingDate(usageChargeDto.getStartDate());
-			pricePlanMatrix.setSeller(seller);
+			//pricePlanMatrix.setSeller(seller);
 			pricePlanMatrix.setEndRatingDate(usageChargeDto.getEndDate());
 			pricePlanMatrix.setCriteria1Value(servicePricePlanDto.getParam1());
 			pricePlanMatrix.setCriteria2Value(servicePricePlanDto.getParam2());
