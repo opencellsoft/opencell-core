@@ -30,7 +30,6 @@ import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 @Named
@@ -42,15 +41,12 @@ public class CountryService extends PersistenceService<Country> {
 	@Inject
 	private UserService userService;
 
-	@Inject
-	private ProviderService providerService;
-
 	public Country findByCode(String countryCode) {
 		return findByCode(getEntityManager(), countryCode);
 	}
 
 	public Country findByCode(EntityManager em, String countryCode) {
-		if (countryCode == null) {
+		if (countryCode == null || countryCode.trim().length()==0) {
 			return null;
 		}
 

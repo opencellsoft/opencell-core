@@ -84,7 +84,7 @@ public class BillingAccount extends AccountEntity {
 
 	@Column(name = "PAYMENT_METHOD")
 	@Enumerated(EnumType.STRING)
-	private PaymentMethodEnum paymentMethod;
+	private PaymentMethodEnum paymentMethod=PaymentMethodEnum.CHECK;
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	// TODO : Add orphanRemoval annotation.
