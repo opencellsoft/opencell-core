@@ -39,22 +39,11 @@ public abstract class BaseService {
     @Inject
     BeanManager beanManager;
     
-    User currentUser;
 
     public User getCurrentUser() {
-    	if(currentUser==null){
-         try {
-        	 currentUser=((MeveoUser) identity.getUser()).getUser();
-         } catch(Exception e){
-        	 log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
-         }
-        }
-    	return currentUser;
+    	return ((MeveoUser) identity.getUser()).getUser();
     }
     
-    public void setCurrentUser(User currentUser){
-    	this.currentUser=currentUser;
-    }
 
     protected String generateRequestId() {
         return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());
