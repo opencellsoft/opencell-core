@@ -38,8 +38,10 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.mediation.Access;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.medina.impl.AccessService;
 
 @Stateless
 @LocalBean
@@ -54,6 +56,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 	@EJB
 	private OfferTemplateService offerTemplateService;
 
+	@EJB
+	private AccessService accessService;
+	
 	public void updateSubscription(Subscription subscription, User updater) {
 		update(subscription, updater);
 	}
@@ -222,6 +227,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
 							applyTerminationCharges, user);
 				}
 			}
+		}
+		for(Access access:subscription.getAccessPoints()){
+			access.setEndDate(terminationDate);
+			accessService.update(access);
 		}
 		if (terminationReason != null) {
 			subscription.setSubscriptionTerminationReason(terminationReason);

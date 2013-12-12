@@ -43,6 +43,7 @@ import org.meveo.model.admin.Seller;
 public class WalletOperation extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
+	
 
 	/**
 	 * The wallet on which the account operation is applied.
@@ -67,28 +68,28 @@ public class WalletOperation extends BusinessEntity {
 	@JoinColumn(name = "CURRENCY_ID")
 	private Currency currency;
 
-	@Column(name = "TAX_PERCENT", precision = 23, scale = 12)
+	@Column(name = "TAX_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal taxPercent;
 
-	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithoutTax;
 
-	@Column(name = "UNIT_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "UNIT_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithTax;
 
-	@Column(name = "UNIT_AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "UNIT_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountTax;
 
-	@Column(name = "QUANTITY", precision = 23, scale = 12)
+	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal quantity;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
 
-	@Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)

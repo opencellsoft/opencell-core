@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -329,11 +330,11 @@ public class RatingService {
 						recChargeInstance);
 				if (sharedQuantity > 0) {
 					unitPriceWithoutTax = unitPriceWithoutTax.divide(
-							new BigDecimal(sharedQuantity), 20,
+							new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS,
 							RoundingMode.HALF_UP);
 					if (unitPriceWithTax != null) {
 						unitPriceWithTax = unitPriceWithTax.divide(
-								new BigDecimal(sharedQuantity), 20,
+								new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS,
 								RoundingMode.HALF_UP);
 					}
 					log.info("charge is shared " + sharedQuantity

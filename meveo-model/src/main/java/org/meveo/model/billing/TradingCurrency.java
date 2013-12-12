@@ -42,7 +42,7 @@ public class TradingCurrency extends AuditableEntity {
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	private String prDescription;
 
-	@Column(name = "PR_CURRENCY_TO_THIS", precision = 23, scale = 12)
+	@Column(name = "PR_CURRENCY_TO_THIS", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prCurrencyToThis;
 
 	@Transient

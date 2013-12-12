@@ -46,8 +46,8 @@ public class CounterTemplate extends BusinessEntity {
 	@JoinColumn(name = "CALENDAR_ID")
 	private Calendar calendar;
 
-	@Column(name = "LEVEL_NUM", precision = 23, scale = 12)
-	@Digits(integer = 23, fraction = 12)
+	@Column(name = "LEVEL_NUM", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
 	private BigDecimal level;
 
 	@Column(name = "UNITY_DESCRIPTION", length = 20)

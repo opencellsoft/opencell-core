@@ -45,16 +45,16 @@ public class BillingRunList extends AuditableEntity {
 	@JoinColumn(name = "BILLING_ACCOUNT_ID")
 	private BillingAccount billingAccount;
 
-	@Column(name = "RATED_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "RATED_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmountWithoutTax = BigDecimal.ZERO;
 
-	@Column(name = "RATED_AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "RATED_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmountTax = BigDecimal.ZERO;
 
-	@Column(name = "RATED_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "RATED_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmountWithTax = BigDecimal.ZERO;
 
-	@Column(name = "RATED_AMOUNT2_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "RATED_AMOUNT2_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmount2WithoutTax = BigDecimal.ZERO;
 
 	public Boolean getInvoice() {

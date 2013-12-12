@@ -35,6 +35,9 @@ import org.meveo.model.crm.Provider;
 public abstract class BaseEntity implements Serializable, IEntity {
 	private static final long serialVersionUID = 1L;
 
+	public static final int NB_PRECISION=23;
+	public static final int NB_DECIMALS=12;
+	
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR")
 	@Column(name = "ID")

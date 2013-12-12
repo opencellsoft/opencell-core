@@ -64,25 +64,25 @@ public abstract class InvoiceAgregate extends AuditableEntity {
 	@Column(name = "DESCRIPTION", length = 50)
 	private String description;
 
-	@Column(name = "TAX_PERCENT", precision = 23, scale = 12)
+	@Column(name = "TAX_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal taxPercent;
 
 	@Column(name = "QUANTITY")
 	private BigDecimal quantity;
 
-	@Column(name = "AMOUNT", precision = 23, scale = 12)
+	@Column(name = "AMOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amount;
 
-	@Column(name = "DISCOUNT", precision = 23, scale = 12)
+	@Column(name = "DISCOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discount;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)

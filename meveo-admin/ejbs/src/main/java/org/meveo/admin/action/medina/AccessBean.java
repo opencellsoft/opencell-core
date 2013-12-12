@@ -29,6 +29,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.medina.impl.CDRParsingService;
 
 @Named
 @ConversationScoped
@@ -109,15 +110,17 @@ public class AccessBean extends BaseBean<Access> {
 	}
 
 	public String saveOrUpdate(boolean killConversation) {
+		String result="";
 		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
 		entity.setSubscription(subscription);
 		if (accessService.isDuplicate(entity)) {
 			messages.error(new BundleKey("messages", "access.duplicate"));
 		} else {
-			return super.saveOrUpdate(killConversation);
+			 result=super.saveOrUpdate(killConversation);
+			 CDRParsingService.resetAccessPointCache(entity);
 		}
 
-		return "";
+		return result;
 	}
 
 	public void resetEntity() {

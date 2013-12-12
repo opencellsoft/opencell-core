@@ -41,12 +41,12 @@ public class CounterPeriod extends BusinessEntity {
 	@Column(name = "PERIOD_END_DATE")
 	private Date periodEndDate;
 
-	@Column(name = "LEVEL_NUM", precision = 23, scale = 12)
-	@Digits(integer = 23, fraction = 12)
+	@Column(name = "LEVEL_NUM", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
 	private BigDecimal level;
 
-	@Column(name = "VALUE", precision = 23, scale = 12)
-	@Digits(integer = 23, fraction = 12)
+	@Column(name = "VALUE", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
 	private BigDecimal value;
 
 	public CounterInstance getCounterInstance() {

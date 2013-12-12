@@ -75,22 +75,22 @@ public class Invoice extends AuditableEntity {
 	@Column(name = "DUE_DATE")
 	private Date dueDate;
 
-	@Column(name = "AMOUNT", precision = 23, scale = 12)
+	@Column(name = "AMOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amount;
 
-	@Column(name = "DISCOUNT", precision = 23, scale = 12)
+	@Column(name = "DISCOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discount;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
 	
-	@Column(name = "NET_TO_PAY", precision = 23, scale = 12)
+	@Column(name = "NET_TO_PAY", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal netToPay;
 
 	@Column(name = "PAYMENT_METHOD")

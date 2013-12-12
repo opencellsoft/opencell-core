@@ -2,6 +2,7 @@ package org.meveo.admin.job;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,6 +27,7 @@ import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -347,7 +349,7 @@ public class ImportSubscriptionsJob implements Job {
 																.getRecurringCharges()
 																.getAmountWithoutTax()
 																.replace(',',
-																		'.')));
+																		'.')).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 										log.debug("file:"
 												+ fileName
 												+ ", typeEntity:Subscription, index:"
@@ -367,7 +369,7 @@ public class ImportSubscriptionsJob implements Job {
 																.getRecurringCharges()
 																.getAmountWithTax()
 																.replace(',',
-																		'.')));
+																		'.')).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 										log.debug("file:"
 												+ fileName
 												+ ", typeEntity:Subscription, index:"
@@ -408,7 +410,7 @@ public class ImportSubscriptionsJob implements Job {
 																.getOneshotCharges()
 																.getAmountWithoutTax()
 																.replace(',',
-																		'.')));
+																		'.')).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 										log.debug("file:"
 												+ fileName
 												+ ", typeEntity:Subscription, index:"
@@ -428,7 +430,7 @@ public class ImportSubscriptionsJob implements Job {
 																.getOneshotCharges()
 																.getAmountWithTax()
 																.replace(',',
-																		'.')));
+																		'.')).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 										log.debug("file:"
 												+ fileName
 												+ ", typeEntity:Subscription, index:"

@@ -39,6 +39,32 @@ public class CDRParsingService {
 		accessCache=new HashMap<String, List<Access>>();
 	}
 	
+	public static void resetAccessPointCache(Access access){
+		List<Access> accesses=null;
+		if(accessCache.containsKey(access.getAccessUserId())){
+			accesses=accessCache.get(access.getAccessUserId());
+			boolean found=false;
+			for(Access cachedAccess:accesses){
+				if((access.getSubscription().getId()!=null 
+						&& access.getSubscription().getId().equals(cachedAccess.getSubscription().getId()))
+						|| (cachedAccess.getSubscription().getCode()!=null 
+						&& cachedAccess.getSubscription().getCode().equals(access.getSubscription().getCode()))){
+					cachedAccess.setStartDate(access.getStartDate());
+					cachedAccess.setEndDate(access.getEndDate());
+					found=true;
+					break;
+				}
+			}
+			if(!found){
+				accesses.add(access);
+			}
+		}else {
+			accesses= new ArrayList<Access>();
+			accesses.add(access);
+			accessCache.put(access.getAccessUserId(), accesses);
+		}
+	}
+	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<EDR> getEDRList(String line) throws CDRParsingException {
 		List<EDR> result= new ArrayList<EDR>();

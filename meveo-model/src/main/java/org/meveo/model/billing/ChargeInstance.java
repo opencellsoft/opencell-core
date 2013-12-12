@@ -71,10 +71,10 @@ public class ChargeInstance extends BusinessEntity {
 	@Column(name = "CHARGE_DATE")
 	protected Date chargeDate;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	protected BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	protected BigDecimal amountWithTax;
 
 	@Column(name = "CRITERIA_1")

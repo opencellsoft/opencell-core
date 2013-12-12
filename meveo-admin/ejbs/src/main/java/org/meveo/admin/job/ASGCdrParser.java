@@ -3,11 +3,13 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.inject.Named;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.EDRDAO;
 import org.meveo.service.medina.impl.InvalidAccessException;
@@ -117,7 +119,7 @@ public class ASGCdrParser implements CSVCDRParser{
 		result.setEventDate(new Date(cdr.timestamp));
 		result.setOriginBatch(getOriginBatch());
 		result.setOriginRecord(getOriginRecord(object));
-		result.setQuantity(cdr.quantity);
+		result.setQuantity(cdr.quantity.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 		result.setParameter1(cdr.service_id);
 		result.setParameter2(cdr.user_id);
 		result.setParameter3(cdr.id_type);

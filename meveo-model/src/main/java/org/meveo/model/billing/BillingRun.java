@@ -72,25 +72,25 @@ public class BillingRun extends AuditableEntity {
 	@Column(name = "NB_PRODUCIBLE_INVOICE")
 	private Integer producibleInvoiceNumber;
 
-	@Column(name = "PRODUCIBLE_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "PRODUCIBLE_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal producibleAmountWithoutTax;
 
-	@Column(name = "PRODUCIBLE_AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "PRODUCIBLE_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal producibleAmountTax;
 
 	@Column(name = "NB_INVOICE")
 	private Integer InvoiceNumber;
 
-	@Column(name = "PRODUCIBLE_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "PRODUCIBLE_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal producibleAmountWithTax;
 
-	@Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prAmountWithoutTax;
 
-	@Column(name = "PR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "PR_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prAmountWithTax;
 
-	@Column(name = "PR_AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "PR_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prAmountTax;
 
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

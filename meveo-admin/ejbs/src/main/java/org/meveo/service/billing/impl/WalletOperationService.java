@@ -16,6 +16,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,6 +34,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
@@ -516,8 +518,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						"Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
 						nextapplicationDate, previousapplicationDate);
 			}
-
-			quantity = quantity.multiply(new BigDecimal(prorataRatio));
+			
+			quantity = quantity.multiply(new BigDecimal(prorataRatio).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 			log.debug(
 					"rateSubscription part1={}, part2={}, prorataRation={} -> quantity={}",
 					part1, part2, prorataRatio, quantity);
@@ -731,7 +733,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ sdf.format(DateUtils.addDaysToDate(nextapplicationDate,
 							-1));
 
-			quantity = quantity.multiply(new BigDecimal(prorataRatio));
+			quantity = quantity.multiply(new BigDecimal(prorataRatio+"").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 			log.debug(
 					"part1={}, part2={}, prorataRatio={}, param2={} -> quantity={}",
 					part1, part2, prorataRatio, param2, quantity);
@@ -1067,7 +1069,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							"applyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
 							nextapplicationDate, previousapplicationDate);
 				}
-				quantity = quantity.multiply(new BigDecimal(prorataRatio));
+				quantity = quantity.multiply(new BigDecimal(prorataRatio+"").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 				log.debug("part1={}, part2={}, prorataRatio={} -> quantity",
 						part1, part2, prorataRatio, quantity);
 			}
@@ -1229,7 +1231,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				endDate = nextapplicationDate;
 				if (recurringChargeTemplate.getTerminationProrata()) {
 					type = ApplicationTypeEnum.PRORATA_TERMINATION;
-					quantity = quantity.multiply(new BigDecimal(prorataRatio));
+					quantity = quantity.multiply(new BigDecimal(prorataRatio+"").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 				}
 			}
 			String param2 = sdf.format(applicationDate) + " au "

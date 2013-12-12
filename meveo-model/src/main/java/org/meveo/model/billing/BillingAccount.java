@@ -104,7 +104,7 @@ public class BillingAccount extends AccountEntity {
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
-	@Column(name = "DISCOUNT_RATE", precision = 19, scale = 8)
+	@Column(name = "DISCOUNT_RATE", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discountRate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -123,10 +123,10 @@ public class BillingAccount extends AccountEntity {
 	@JoinColumn(name = "BILLING_RUN")
 	private BillingRun billingRun;
 	
-	@Column(name = "BR_AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "BR_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal brAmountWithoutTax;
 
-	@Column(name = "BR_AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "BR_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal brAmountWithTax;
 
 	@Column(name = "INVOICE_PREFIX")
