@@ -20,8 +20,12 @@ import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 
@@ -35,21 +39,35 @@ public class AccessService extends PersistenceService<Access> {
 		List<Access> result = new ArrayList<Access>();
 		if (userId != null && userId.length() > 0) {
 			Query query = getEntityManager().createQuery(
-					"from Access a where a.accessUserId=:accessUserId").setParameter(
-					"accessUserId", userId);
+					"from Access a where a.accessUserId=:accessUserId")
+					.setParameter("accessUserId", userId);
 			result = query.getResultList();
 		}
 		return result;
 	}
 
 	public boolean isDuplicate(Access access) {
-		String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName()
+		String stringQuery = "SELECT COUNT(*) FROM "
+				+ Access.class.getName()
 				+ " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
 		Query query = getEntityManager().createQuery(stringQuery);
 		query.setParameter("accessUserId", access.getAccessUserId());
 		query.setParameter("subscriptionId", access.getSubscription().getId());
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return ((Long) query.getSingleResult()).intValue() != 0;
+	}
+
+	public Access findByUserIdAndSubscription(EntityManager em,
+			String accessUserId, Subscription subscription) {
+		try {
+			QueryBuilder qb = new QueryBuilder(Access.class, "a");
+			qb.addCriterion("accessUserId", "=", accessUserId, false);
+			qb.addCriterionEntity("subscription", subscription);
+			return (Access) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn("no result found");
+			return null;
+		}
 	}
 
 }

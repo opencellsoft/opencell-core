@@ -38,6 +38,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.mediation.Access;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
@@ -47,6 +48,7 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 
@@ -91,6 +93,9 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 	@Inject
 	private UserAccountService userAccountService;
+
+	@Inject
+	private AccessService accessService;
 
 	public void create(
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto)
@@ -295,6 +300,28 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			subscription.setUserAccount(userAccount);
 
 			subscriptionService.create(em, subscription, currentUser, provider);
+
+			// create accessPoint
+			Access access = accessService.findByUserIdAndSubscription(em,
+					userAccountCode, subscription);
+			if (access != null) {
+				access.setEndDate(null);
+				if (access.getStartDate().after(
+						subscriptionWithCreditLimitDto.getSubscriptionDate())) {
+					access.setStartDate(subscriptionWithCreditLimitDto
+							.getSubscriptionDate());
+				}
+
+				accessService.update(em, access, currentUser);
+			} else {
+				access = new Access();
+				access.setAccessUserId(userAccountCode);
+				access.setSubscription(subscription);
+				access.setStartDate(subscriptionWithCreditLimitDto
+						.getSubscriptionDate());
+
+				accessService.create(em, access, currentUser, provider);
+			}
 
 			try {
 				for (ServiceTemplateForSubscription serviceTemplateForSubscription : forSubscription
