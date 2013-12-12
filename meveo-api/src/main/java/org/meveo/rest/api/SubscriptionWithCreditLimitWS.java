@@ -53,7 +53,7 @@ public class SubscriptionWithCreditLimitWS {
 				"asp.api.providerId", "1")));
 
 		try {
-			subscriptionWithCreditLimitServiceApi.create(subscriptionDto);
+			result = subscriptionWithCreditLimitServiceApi.create(subscriptionDto);
 		} catch (CreditLimitExceededException e) {
 		} catch (SellerDoesNotExistsException e) {
 		} catch (ParentSellerDoesNotExistsException e) {

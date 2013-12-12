@@ -39,6 +39,7 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
+import org.meveo.rest.api.response.SubscriptionWithCreditLimitResponse;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
@@ -97,9 +98,13 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 	@Inject
 	private AccessService accessService;
 
-	public void create(
+	public SubscriptionWithCreditLimitResponse create(
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto)
 			throws MeveoApiException, BusinessException {
+
+		SubscriptionWithCreditLimitResponse result = new SubscriptionWithCreditLimitResponse();
+		result.setRequestId(subscriptionWithCreditLimitDto.getRequestId());
+		result.setAccepted(true);
 
 		if (!StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())
 				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
@@ -227,9 +232,12 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				updateOfferAndServiceTemplateAssociation(forSubscription,
 						currentUser);
 
-				createSubscription(finalForSubscription,
-						subscriptionWithCreditLimitDto, currentUser, provider);
+				Subscription subscription = createSubscription(
+						finalForSubscription, subscriptionWithCreditLimitDto,
+						currentUser, provider);
 
+				result.setSubscriptionId(String.valueOf(subscription.getId()));
+				result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 			}
 		} else {
 			StringBuilder sb = new StringBuilder(
@@ -263,13 +271,17 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			throw new MeveoApiException(sb.toString());
 		}
 
+		result.setStatus(SubscriptionApiStatusEnum.FAIL.name());
+		return result;
 	}
 
-	private void createSubscription(ForSubscription forSubscription,
+	private Subscription createSubscription(ForSubscription forSubscription,
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto,
 			User currentUser, Provider provider)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
+
+		Subscription lastSubscription = null;
 
 		// subscription
 		while (forSubscription != null) {
@@ -292,7 +304,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			Subscription subscription = new Subscription();
 			subscription.setOffer(forSubscription
 					.getOfferTemplateForSubscription().getOfferTemplate());
-			subscription.setCode(forSubscription.getSubscriber().getCode()); // ?
+			subscription.setCode(forSubscription.getSubscriber().getCode());
 			subscription.setDescription("");
 			subscription.setSubscriptionDate(subscriptionWithCreditLimitDto
 					.getSubscriptionDate());
@@ -300,6 +312,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			subscription.setUserAccount(userAccount);
 
 			subscriptionService.create(em, subscription, currentUser, provider);
+			lastSubscription = subscription;
 
 			// create accessPoint
 			Access access = accessService.findByUserIdAndSubscription(em,
@@ -404,6 +417,8 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 			forSubscription = forSubscription.getChild();
 		}
+
+		return lastSubscription;
 	}
 
 	private void updateOfferAndServiceTemplateAssociation(
