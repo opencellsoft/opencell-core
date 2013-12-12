@@ -25,17 +25,7 @@
 		<class>org.meveo.model.admin.Currency</class>		
 		<class>org.meveo.model.admin.User</class>		
 		<class>org.meveo.model.admin.InputHistory</class>
-		<class>org.meveo.model.admin.MedinaInputHistory</class>
-		<class>org.meveo.model.admin.VertinaInputHistory</class>
-		<class>org.meveo.model.admin.OudayaInputHistory</class>
-		<class>org.meveo.model.admin.GriegDunningInputHistory</class>
-		<class>org.meveo.model.admin.GriegValidatedInvoiceInputHistory</class>
-		<class>org.meveo.model.admin.GriegInvoiceConverterInputHistory</class>
-		<class>org.meveo.model.admin.BayadInvoicingInputHistory</class>
-		<class>org.meveo.model.admin.BayadDunningInputHistory</class>
 		<class>org.meveo.model.admin.CommunicatorInputHistory</class>
-		<class>org.meveo.model.admin.VertinaConfiguration</class>
-		<class>org.meveo.model.admin.MedinaConfiguration</class>
 		<class>org.meveo.model.admin.Seller</class>
 		<class>org.meveo.model.security.Role</class>
 		<class>org.meveo.model.security.Permission</class>
@@ -85,7 +75,6 @@
 		<class>org.meveo.model.billing.InvoiceCategoryCountry</class>
 		<class>org.meveo.model.billing.InvoiceSubcategoryCountry</class>
 		<class>org.meveo.model.billing.PriceplanInstanciation</class>
-		<class>org.meveo.model.billing.DiscountplanInstanciation</class>
 		<class>org.meveo.model.billing.CatMessages</class>
 		<class>org.meveo.model.AccountEntity</class>
 		<class>org.meveo.model.catalog.Calendar</class>
