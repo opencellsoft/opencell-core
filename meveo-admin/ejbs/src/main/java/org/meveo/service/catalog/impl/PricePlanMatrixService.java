@@ -20,9 +20,12 @@ import java.util.Set;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
@@ -92,6 +95,19 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		query.setParameter("code", code);
 		query.setParameter("provider", provider);
 		query.executeUpdate();
+	}
+
+	public PricePlanMatrix findByEventCodeAndCurrency(EntityManager em,
+			String code, TradingCurrency tradingCurrency) {
+		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
+		try {
+			qb.addCriterion("eventCode", "=", code, false);
+			qb.addCriterionEntity("tradingCurrency", tradingCurrency);
+			return (PricePlanMatrix) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn("no result");
+			return null;
+		}
 	}
 
 }

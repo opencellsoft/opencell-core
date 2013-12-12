@@ -61,13 +61,22 @@ public class OrganizationCreatedMDB implements MessageListener {
 			OrganizationDto organizationDto = new OrganizationDto();
 			organizationDto.setOrganizationId(data.getOrganization()
 					.getOrganizationId());
-			organizationDto.setName(data.getOrganization().getNames()
-					.getItemNameData().get(0).toString());
+			try {
+				organizationDto.setName(data.getOrganization().getNames()
+						.getItemNameData().get(0).toString());
+			} catch (NullPointerException e) {
+				log.warn("Item name is null.");
+			} catch (IndexOutOfBoundsException e) {
+				log.warn("Item name is empty.");
+			}
 			organizationDto.setParentId(data.getOrganization().getParentId());
 			organizationDto.setCountryCode(data.getOrganization()
 					.getCountryId());
 			organizationDto.setDefaultCurrencyCode(data.getOrganization()
 					.getDefaultCurrencyCode());
+			organizationDto.setLanguageCode(data.getOrganization()
+					.getLanguageCode());
+
 			organizationDto.setCurrentUserId(Long.valueOf(paramBean
 					.getProperty("asp.api.userId", "1")));
 			organizationDto.setProviderId(Long.valueOf(paramBean.getProperty(

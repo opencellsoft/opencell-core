@@ -9,6 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -88,7 +89,8 @@ public class OrganizationServiceApi extends BaseApi {
 	@Inject
 	private TradingLanguageService tradingLanguageService;
 
-	public void create(OrganizationDto orgDto) throws MeveoApiException {
+	public void create(OrganizationDto orgDto) throws MeveoApiException,
+			AccountAlreadyExistsException {
 		if (!StringUtils.isBlank(orgDto.getOrganizationId())
 				&& !StringUtils.isBlank(orgDto.getCountryCode())
 				&& !StringUtils.isBlank(orgDto.getLanguageCode())
@@ -217,8 +219,8 @@ public class OrganizationServiceApi extends BaseApi {
 				userAccount.setBillingAccount(billingAccount);
 				userAccount.setCode(paramBean.getProperty("asg.api.default",
 						"_DEF_") + orgDto.getOrganizationId());
-				userAccountService.create(em, userAccount, currentUser,
-						provider);
+				userAccountService.createUserAccount(em, billingAccount,
+						userAccount, currentUser);
 
 				// add user account to parent's billing account
 				String parentBillingAccountCode = billingAccountPrefix

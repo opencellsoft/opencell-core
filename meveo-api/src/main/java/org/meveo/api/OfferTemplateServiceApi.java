@@ -53,8 +53,6 @@ public class OfferTemplateServiceApi extends BaseApi {
 
 	public void create(OfferDto offerDto) throws MeveoApiException {
 		if (!StringUtils.isBlank(offerDto.getOfferId())
-				&& offerDto.getDescriptions() != null
-				&& offerDto.getDescriptions().size() > 0
 				&& offerDto.getServices() != null
 				&& offerDto.getServices().size() > 0) {
 
@@ -133,15 +131,11 @@ public class OfferTemplateServiceApi extends BaseApi {
 			List<String> missingFields = new ArrayList<String>();
 
 			if (StringUtils.isBlank(offerDto.getOfferId())) {
-				missingFields.add("Service Id");
-			}
-			if (offerDto.getDescriptions() == null
-					|| offerDto.getDescriptions().size() == 0) {
-				missingFields.add("Description");
+				missingFields.add("serviceId");
 			}
 			if (offerDto.getServices() == null
 					|| offerDto.getServices().size() == 0) {
-				missingFields.add("Service");
+				missingFields.add("services");
 			}
 
 			if (missingFields.size() > 1) {

@@ -114,16 +114,16 @@ public class TaxServiceApi extends BaseApi {
 			List<String> missingFields = new ArrayList<String>();
 
 			if (StringUtils.isBlank(taxDto.getTaxId())) {
-				missingFields.add("Tax Id");
+				missingFields.add("taxId");
 			}
 			if (StringUtils.isBlank(taxDto.getName())) {
-				missingFields.add("Tax Name");
+				missingFields.add("taxName");
 			}
 			if (taxDto.getCountryTaxes() == null) {
-				missingFields.add("Country Tax");
+				missingFields.add("countryTax");
 			} else {
 				if (taxDto.getCountryTaxes().size() == 0) {
-					missingFields.add("Country Tax");
+					missingFields.add("countryTax");
 				}
 			}
 

@@ -71,13 +71,13 @@ public class UserServiceApi extends BaseApi {
 			List<String> missingFields = new ArrayList<String>();
 
 			if (StringUtils.isBlank(userDto.getUserId())) {
-				missingFields.add("User Id");
+				missingFields.add("userId");
 			}
 			if (StringUtils.isBlank(userDto.getName())) {
-				missingFields.add("Name");
+				missingFields.add("name");
 			}
 			if (StringUtils.isBlank(userDto.getOrganizationId())) {
-				missingFields.add("Organization Id");
+				missingFields.add("organizationId");
 			}
 
 			if (missingFields.size() > 1) {

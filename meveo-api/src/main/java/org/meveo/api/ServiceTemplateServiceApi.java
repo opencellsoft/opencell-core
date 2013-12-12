@@ -25,6 +25,8 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.util.MeveoParamBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -33,6 +35,9 @@ import org.meveo.util.MeveoParamBean;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class ServiceTemplateServiceApi extends BaseApi {
+
+	private static Logger log = LoggerFactory
+			.getLogger(ServiceTemplateServiceApi.class);
 
 	@Inject
 	@MeveoParamBean
@@ -71,8 +76,14 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			serviceTemplate.setActive(true);
 			serviceTemplate.setCode(serviceTemplateCode);
 			serviceTemplate.setProvider(provider);
-			serviceTemplate.setDescription(serviceDto.getDescriptions().get(0)
-					.getDescription());
+			try {
+				serviceTemplate.setDescription(serviceDto.getDescriptions()
+						.get(0).getDescription());
+			} catch (NullPointerException e) {
+				log.warn("Description is null.");
+			} catch (IndexOutOfBoundsException e) {
+				log.warn("Description is null.");
+			}
 			serviceTemplateService.create(em, serviceTemplate, currentUser,
 					provider);
 
@@ -93,7 +104,7 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			List<String> missingFields = new ArrayList<String>();
 
 			if (StringUtils.isBlank(serviceDto.getServiceId())) {
-				missingFields.add("Service Id");
+				missingFields.add("serviceId");
 			}
 
 			if (missingFields.size() > 1) {
@@ -164,7 +175,7 @@ public class ServiceTemplateServiceApi extends BaseApi {
 			List<String> missingFields = new ArrayList<String>();
 
 			if (StringUtils.isBlank(serviceDto.getServiceId())) {
-				missingFields.add("Service Id");
+				missingFields.add("serviceId");
 			}
 
 			if (missingFields.size() > 1) {

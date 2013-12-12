@@ -398,7 +398,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				pricePlanMatrix.setTradingCurrency(tradingCurrency);
 				pricePlanMatrix.setStartRatingDate(subscriptionFeeDto
 						.getStartDate());
-				//pricePlanMatrix.setSeller(seller);
+				// pricePlanMatrix.setSeller(seller);
 				pricePlanMatrix.setEndRatingDate(subscriptionFeeDto
 						.getEndDate());
 				pricePlanMatrix
@@ -460,7 +460,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 				pricePlanMatrix.setTradingCurrency(tradingCurrency);
 				pricePlanMatrix.setStartRatingDate(terminationFeeDto
 						.getStartDate());
-				//pricePlanMatrix.setSeller(seller);
+				// pricePlanMatrix.setSeller(seller);
 				pricePlanMatrix
 						.setEndRatingDate(terminationFeeDto.getEndDate());
 				pricePlanMatrix
@@ -561,7 +561,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			}
 			pricePlanMatrix.setTradingCurrency(tradingCurrency);
 			pricePlanMatrix.setStartRatingDate(usageChargeDto.getStartDate());
-			//pricePlanMatrix.setSeller(seller);
+			// pricePlanMatrix.setSeller(seller);
 			pricePlanMatrix.setEndRatingDate(usageChargeDto.getEndDate());
 			pricePlanMatrix.setCriteria1Value(offerPricePlanDto.getParam1());
 			pricePlanMatrix.setCriteria2Value(offerPricePlanDto.getParam2());
@@ -700,4 +700,235 @@ public class OfferPricePlanServiceApi extends BaseApi {
 							+ offerTemplateCode + ".");
 		}
 	}
+
+	public void update(OfferPricePlanDto offerPricePlanDto)
+			throws MeveoApiException {
+		if (!StringUtils.isBlank(offerPricePlanDto.getOfferId())
+				&& !StringUtils.isBlank(offerPricePlanDto.getOrganizationId())) {
+
+			Provider provider = providerService.findById(offerPricePlanDto
+					.getProviderId());
+			User currentUser = userService.findById(offerPricePlanDto
+					.getCurrentUserId());
+
+			updateRecurringChargeTemplate(false, offerPricePlanDto,
+					currentUser, provider);
+			updateSubscriptionTemplate(false, offerPricePlanDto, currentUser,
+					provider);
+			updateTerminationTemplate(false, offerPricePlanDto, currentUser,
+					provider);
+			updateServiceUsageChargeTemplate(false, offerPricePlanDto,
+					currentUser, provider);
+
+			// recommended prices
+			updateRecurringChargeTemplate(true, offerPricePlanDto, currentUser,
+					provider);
+			updateSubscriptionTemplate(true, offerPricePlanDto, currentUser,
+					provider);
+			updateTerminationTemplate(true, offerPricePlanDto, currentUser,
+					provider);
+			updateServiceUsageChargeTemplate(true, offerPricePlanDto,
+					currentUser, provider);
+
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(offerPricePlanDto.getOfferId())) {
+				missingFields.add("serviceId");
+			}
+			if (StringUtils.isBlank(offerPricePlanDto.getOrganizationId())) {
+				missingFields.add("organizationId");
+			}
+			if (StringUtils.isBlank(offerPricePlanDto.getBillingPeriod())) {
+				missingFields.add("billingPeriod");
+			}
+			if (StringUtils.isBlank(offerPricePlanDto.getTaxId())) {
+				missingFields.add("taxId");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+	}
+
+	private void updateRecurringChargeTemplate(boolean isRecommendedPrice,
+			OfferPricePlanDto offerPricePlanDto, User currentUser,
+			Provider provider) {
+		// Create a recurring charge with associated services and
+		// parameters. Charge code is'_RE_OF_[OrganizationId]_[OfferId]'
+		// ('_RE_OF_' must be settable). Charge is associate to step 1
+		// service.
+		String recurringChargePrefix = isRecommendedPrice ? paramBean
+				.getProperty("asg.api.recommended.offer.recurring.prefix",
+						"_REC_RE_OF_") : paramBean.getProperty(
+				"asg.api.offer.recurring.prefix", "_RE_OF_");
+		String recurringChargeCode = recurringChargePrefix
+				+ offerPricePlanDto.getOfferId() + "_"
+				+ offerPricePlanDto.getOrganizationId();
+
+		// create price plans
+		if (offerPricePlanDto.getRecurringCharges() != null
+				&& offerPricePlanDto.getRecurringCharges().size() > 0) {
+			for (RecurringChargeDto recurringChargeDto : offerPricePlanDto
+					.getRecurringCharges()) {
+				TradingCurrency tradingCurrency = tradingCurrencyService
+						.findByTradingCurrencyCode(
+								recurringChargeDto.getCurrencyCode(), provider);
+
+				PricePlanMatrix pricePlanMatrix = pricePlanMatrixService
+						.findByEventCodeAndCurrency(em, recurringChargeCode,
+								tradingCurrency);
+				if (pricePlanMatrix != null) {
+					if (isRecommendedPrice) {
+						pricePlanMatrix.setAmountWithoutTax(recurringChargeDto
+								.getRecommendedPrice());
+					} else {
+						pricePlanMatrix.setAmountWithoutTax(recurringChargeDto
+								.getPrice());
+					}
+
+					pricePlanMatrixService.update(em, pricePlanMatrix,
+							currentUser);
+				}
+			}
+		}
+
+	}
+
+	private void updateSubscriptionTemplate(boolean isRecommendedPrice,
+			OfferPricePlanDto offerPricePlanDto, User currentUser,
+			Provider provider) {
+		String subscriptionPointChargePrefix = isRecommendedPrice ? paramBean
+				.getProperty(
+						"asg.api.recommended.offer.subscription.point.charge.prefix",
+						"_REC_SO_OF_")
+				: paramBean.getProperty(
+						"asg.api.offer.subscription.point.charge.prefix",
+						"_SO_OF_");
+		String subscriptionPointChargeCode = subscriptionPointChargePrefix
+				+ offerPricePlanDto.getOfferId() + "_"
+				+ offerPricePlanDto.getOrganizationId();
+
+		if (offerPricePlanDto.getSubscriptionFees() != null
+				&& offerPricePlanDto.getSubscriptionFees().size() > 0) {
+			for (SubscriptionFeeDto subscriptionFeeDto : offerPricePlanDto
+					.getSubscriptionFees()) {
+				TradingCurrency tradingCurrency = tradingCurrencyService
+						.findByTradingCurrencyCode(
+								subscriptionFeeDto.getCurrencyCode(), provider);
+
+				PricePlanMatrix pricePlanMatrix = pricePlanMatrixService
+						.findByEventCodeAndCurrency(em,
+								subscriptionPointChargeCode, tradingCurrency);
+				if (pricePlanMatrix != null) {
+					if (isRecommendedPrice) {
+						pricePlanMatrix.setAmountWithoutTax(subscriptionFeeDto
+								.getRecommendedPrice());
+					} else {
+						pricePlanMatrix.setAmountWithoutTax(subscriptionFeeDto
+								.getPrice());
+					}
+
+					pricePlanMatrixService.update(em, pricePlanMatrix,
+							currentUser);
+				}
+			}
+		}
+
+	}
+
+	private void updateTerminationTemplate(boolean isRecommendedPrice,
+			OfferPricePlanDto offerPricePlanDto, User currentUser,
+			Provider provider) {
+
+		String terminationPointChargePrefix = isRecommendedPrice ? paramBean
+				.getProperty(
+						"asg.api.recommended.offer.termination.point.charge.prefix",
+						"_REC_TE_OF_")
+				: paramBean.getProperty(
+						"asg.api.offer.termination.point.charge.prefix",
+						"_TE_OF_");
+		String terminationPointChargeCode = terminationPointChargePrefix
+				+ offerPricePlanDto.getOfferId() + "_"
+				+ offerPricePlanDto.getOrganizationId();
+
+		if (offerPricePlanDto.getTerminationFees() != null
+				&& offerPricePlanDto.getTerminationFees().size() > 0) {
+			for (TerminationFeeDto terminationFeeDto : offerPricePlanDto
+					.getTerminationFees()) {
+				TradingCurrency tradingCurrency = tradingCurrencyService
+						.findByTradingCurrencyCode(
+								terminationFeeDto.getCurrencyCode(), provider);
+
+				PricePlanMatrix pricePlanMatrix = pricePlanMatrixService
+						.findByEventCodeAndCurrency(em,
+								terminationPointChargeCode, tradingCurrency);
+				if (pricePlanMatrix != null) {
+					if (isRecommendedPrice) {
+						pricePlanMatrix.setAmountWithoutTax(terminationFeeDto
+								.getRecommendedPrice());
+					} else {
+						pricePlanMatrix.setAmountWithoutTax(terminationFeeDto
+								.getPrice());
+					}
+
+					pricePlanMatrixService.update(em, pricePlanMatrix,
+							currentUser);
+				}
+			}
+		}
+
+	}
+
+	private void updateServiceUsageChargeTemplate(boolean isRecommendedPrice,
+			OfferPricePlanDto offerPricePlanDto, User currentUser,
+			Provider provider) {
+
+		for (UsageChargeDto usageChargeDto : offerPricePlanDto
+				.getUsageCharges()) {
+			Integer min = 0;
+			if (usageChargeDto.getMin() != null) {
+				min = usageChargeDto.getMin();
+			}
+
+			String usageChargeTemplatePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.offer.usage.charged.prefix",
+							"_REC_US_OF_") : paramBean.getProperty(
+					"asg.api.offer.usage.charged.prefix", "_US_OF_");
+			String usageChargeTemplateCode = usageChargeTemplatePrefix
+					+ offerPricePlanDto.getOfferId() + "_"
+					+ offerPricePlanDto.getOrganizationId() + "_" + min;
+
+			TradingCurrency tradingCurrency = tradingCurrencyService
+					.findByTradingCurrencyCode(
+							usageChargeDto.getCurrencyCode(), provider);
+
+			PricePlanMatrix pricePlanMatrix = pricePlanMatrixService
+					.findByEventCodeAndCurrency(em, usageChargeTemplateCode,
+							tradingCurrency);
+			if (pricePlanMatrix != null) {
+				if (isRecommendedPrice) {
+					pricePlanMatrix.setAmountWithoutTax(usageChargeDto
+							.getRecommendedPrice());
+				} else {
+					pricePlanMatrix.setAmountWithoutTax(usageChargeDto
+							.getPrice());
+				}
+
+				pricePlanMatrixService.update(em, pricePlanMatrix, currentUser);
+			}
+		}
+
+	}
+
 }

@@ -50,7 +50,8 @@ import javax.xml.bind.annotation.XmlType;
     "countryIsoCode",
     "regionId",
     "defaultCurrencyCode",
-    "creditLimit"
+    "creditLimit",
+    "languageCode"
 })
 public class OrganizationEventData {
 
@@ -70,6 +71,8 @@ public class OrganizationEventData {
     protected String defaultCurrencyCode;
     @XmlElement(name = "CreditLimit", required = true, nillable = true)
     protected BigDecimal creditLimit;
+    @XmlElement(name = "languageCode")
+    protected String languageCode;
 
     /**
      * Gets the value of the organizationId property.
@@ -262,5 +265,13 @@ public class OrganizationEventData {
     public void setCreditLimit(BigDecimal value) {
         this.creditLimit = value;
     }
+
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
+	}
 
 }

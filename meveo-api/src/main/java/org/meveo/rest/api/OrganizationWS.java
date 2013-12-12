@@ -11,6 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.OrganizationServiceApi;
 import org.meveo.api.dto.OrganizationDto;
@@ -76,6 +77,9 @@ public class OrganizationWS {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (AccountAlreadyExistsException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}

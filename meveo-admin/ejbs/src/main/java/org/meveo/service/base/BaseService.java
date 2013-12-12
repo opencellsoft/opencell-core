@@ -28,31 +28,39 @@ import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 public abstract class BaseService {
-    private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new Random();
 
-    @Inject
-    Identity identity;
+	@Inject
+	Identity identity;
 
-    @Inject
-    protected Logger log;
+	@Inject
+	protected Logger log;
 
-    @Inject
-    BeanManager beanManager;
-    
+	@Inject
+	BeanManager beanManager;
 
-    public User getCurrentUser() {
-    	return ((MeveoUser) identity.getUser()).getUser();
-    }
-    
+	User currentUser;
 
-    protected String generateRequestId() {
-        return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());
-    }
+	public User getCurrentUser() {
+		if (currentUser == null) {
+			try {
+				currentUser = ((MeveoUser) identity.getUser()).getUser();
+			} catch (Exception e) {
+				log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
+			}
+		}
+		return currentUser;
+	}
 
-    @SuppressWarnings("unchecked")
-    protected <E> E getManagedBeanInstance(Class<E> beanClazz) {
-        Bean<E> bean = (Bean<E>) beanManager.getBeans(beanClazz).iterator().next();
-        CreationalContext<E> ctx = beanManager.createCreationalContext(bean);
-        return (E) beanManager.getReference(bean, beanClazz, ctx);
-    }
+	protected String generateRequestId() {
+		return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <E> E getManagedBeanInstance(Class<E> beanClazz) {
+		Bean<E> bean = (Bean<E>) beanManager.getBeans(beanClazz).iterator()
+				.next();
+		CreationalContext<E> ctx = beanManager.createCreationalContext(bean);
+		return (E) beanManager.getReference(bean, beanClazz, ctx);
+	}
 }

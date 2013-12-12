@@ -5,7 +5,6 @@
 // Generated on: 2013.10.30 at 08:09:14 AM CST 
 //
 
-
 package org.meveo.asg.api;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,11 +12,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for OfferEventData complex type.
+ * <p>
+ * Java class for OfferEventData complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="OfferEventData">
@@ -39,163 +40,153 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "OfferEventData", propOrder = {
-    "offerId",
-    "code",
-    "categoryId",
-    "organizationId",
-    "isOrganizationOffer",
-    "descriptions"
-})
+@XmlType(name = "OfferEventData", propOrder = { "offerId", "code",
+		"categoryId", "organizationId", "isOrganizationOffer", "descriptions",
+		"services" })
 public class OfferEventData {
 
-    @XmlElement(name = "OfferId", required = true)
-    protected String offerId;
-    @XmlElement(name = "Code")
-    protected String code;
-    @XmlElement(name = "CategoryId", required = true)
-    protected String categoryId;
-    @XmlElement(name = "OrganizationId", required = true)
-    protected String organizationId;
-    @XmlElement(name = "IsOrganizationOffer")
-    protected boolean isOrganizationOffer;
-    @XmlElement(name = "Descriptions")
-    protected ArrayOfItemDescriptionData descriptions;
+	@XmlElement(name = "OfferId", required = true)
+	protected String offerId;
+	@XmlElement(name = "Code")
+	protected String code;
+	@XmlElement(name = "CategoryId", required = true)
+	protected String categoryId;
+	@XmlElement(name = "OrganizationId", required = true)
+	protected String organizationId;
+	@XmlElement(name = "IsOrganizationOffer")
+	protected boolean isOrganizationOffer;
+	@XmlElement(name = "Descriptions")
+	protected ArrayOfItemDescriptionData descriptions;
+	@XmlElement(name = "Services")
+	protected ArrayOfServices services;
 
-    /**
-     * Gets the value of the offerId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getOfferId() {
-        return offerId;
-    }
+	/**
+	 * Gets the value of the offerId property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getOfferId() {
+		return offerId;
+	}
 
-    /**
-     * Sets the value of the offerId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setOfferId(String value) {
-        this.offerId = value;
-    }
+	/**
+	 * Sets the value of the offerId property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setOfferId(String value) {
+		this.offerId = value;
+	}
 
-    /**
-     * Gets the value of the code property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCode() {
-        return code;
-    }
+	/**
+	 * Gets the value of the code property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getCode() {
+		return code;
+	}
 
-    /**
-     * Sets the value of the code property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCode(String value) {
-        this.code = value;
-    }
+	/**
+	 * Sets the value of the code property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setCode(String value) {
+		this.code = value;
+	}
 
-    /**
-     * Gets the value of the categoryId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCategoryId() {
-        return categoryId;
-    }
+	/**
+	 * Gets the value of the categoryId property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getCategoryId() {
+		return categoryId;
+	}
 
-    /**
-     * Sets the value of the categoryId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCategoryId(String value) {
-        this.categoryId = value;
-    }
+	/**
+	 * Sets the value of the categoryId property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setCategoryId(String value) {
+		this.categoryId = value;
+	}
 
-    /**
-     * Gets the value of the organizationId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getOrganizationId() {
-        return organizationId;
-    }
+	/**
+	 * Gets the value of the organizationId property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getOrganizationId() {
+		return organizationId;
+	}
 
-    /**
-     * Sets the value of the organizationId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setOrganizationId(String value) {
-        this.organizationId = value;
-    }
+	/**
+	 * Sets the value of the organizationId property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setOrganizationId(String value) {
+		this.organizationId = value;
+	}
 
-    /**
-     * Gets the value of the isOrganizationOffer property.
-     * 
-     */
-    public boolean isIsOrganizationOffer() {
-        return isOrganizationOffer;
-    }
+	/**
+	 * Gets the value of the isOrganizationOffer property.
+	 * 
+	 */
+	public boolean isIsOrganizationOffer() {
+		return isOrganizationOffer;
+	}
 
-    /**
-     * Sets the value of the isOrganizationOffer property.
-     * 
-     */
-    public void setIsOrganizationOffer(boolean value) {
-        this.isOrganizationOffer = value;
-    }
+	/**
+	 * Sets the value of the isOrganizationOffer property.
+	 * 
+	 */
+	public void setIsOrganizationOffer(boolean value) {
+		this.isOrganizationOffer = value;
+	}
 
-    /**
-     * Gets the value of the descriptions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ArrayOfItemDescriptionData }
-     *     
-     */
-    public ArrayOfItemDescriptionData getDescriptions() {
-        return descriptions;
-    }
+	/**
+	 * Gets the value of the descriptions property.
+	 * 
+	 * @return possible object is {@link ArrayOfItemDescriptionData }
+	 * 
+	 */
+	public ArrayOfItemDescriptionData getDescriptions() {
+		return descriptions;
+	}
 
-    /**
-     * Sets the value of the descriptions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ArrayOfItemDescriptionData }
-     *     
-     */
-    public void setDescriptions(ArrayOfItemDescriptionData value) {
-        this.descriptions = value;
-    }
+	/**
+	 * Sets the value of the descriptions property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link ArrayOfItemDescriptionData }
+	 * 
+	 */
+	public void setDescriptions(ArrayOfItemDescriptionData value) {
+		this.descriptions = value;
+	}
+
+	public ArrayOfServices getServices() {
+		return services;
+	}
+
+	public void setServices(ArrayOfServices services) {
+		this.services = services;
+	}
 
 }

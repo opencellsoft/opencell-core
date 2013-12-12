@@ -23,6 +23,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
@@ -52,17 +53,26 @@ public class UserAccountService extends AccountService<UserAccount> {
 	public void createUserAccount(BillingAccount billingAccount,
 			UserAccount userAccount, User creator)
 			throws AccountAlreadyExistsException {
-		UserAccount existingUserAccount = findByCode(userAccount.getCode(),
+		createUserAccount(getEntityManager(), billingAccount, userAccount,
+				creator);
+	}
+
+	public void createUserAccount(EntityManager em,
+			BillingAccount billingAccount, UserAccount userAccount, User creator)
+			throws AccountAlreadyExistsException {
+
+		UserAccount existingUserAccount = findByCode(em, userAccount.getCode(),
 				userAccount.getProvider());
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
 		}
+
 		userAccount.setBillingAccount(billingAccount);
-		create(userAccount, creator, billingAccount.getProvider());
+		create(em, userAccount, creator, billingAccount.getProvider());
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode("PRINCIPAL");
 		wallet.setUserAccount(userAccount);
-		walletService.create(wallet, creator, billingAccount.getProvider());
+		walletService.create(em, wallet, creator, billingAccount.getProvider());
 		userAccount.setWallet(wallet);
 
 		List<WalletTemplate> prepaidWalletTemplates = billingAccount
@@ -74,7 +84,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 				WalletInstance prepaidWallet = new WalletInstance();
 				wallet.setUserAccount(userAccount);
 				wallet.setWalletTemplate(prepaidWalletTemplate);
-				walletService.create(wallet, creator,
+				walletService.create(em, wallet, creator,
 						billingAccount.getProvider());
 				prepaidWallets.put(prepaidWalletTemplate.getCode(),
 						prepaidWallet);

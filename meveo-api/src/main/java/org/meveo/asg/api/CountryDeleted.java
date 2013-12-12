@@ -5,7 +5,6 @@
 // Generated on: 2013.10.30 at 08:09:14 AM CST 
 //
 
-
 package org.meveo.asg.api;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,11 +12,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for CountryDeleted complex type.
+ * <p>
+ * Java class for CountryDeleted complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="CountryDeleted">
@@ -34,36 +35,42 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CountryDeleted", propOrder = {
-    "countryId"
-})
+@XmlType(name = "CountryDeleted", propOrder = { "countryId", "currencyCode" })
 public class CountryDeleted {
 
-    @XmlElement(name = "CountryId", required = true)
-    protected String countryId;
+	@XmlElement(name = "CountryId", required = true)
+	protected String countryId;
 
-    /**
-     * Gets the value of the countryId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCountryId() {
-        return countryId;
-    }
+	@XmlElement(name = "currencyCode", required = true)
+	protected String currencyCode;
 
-    /**
-     * Sets the value of the countryId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCountryId(String value) {
-        this.countryId = value;
-    }
+	/**
+	 * Gets the value of the countryId property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getCountryId() {
+		return countryId;
+	}
+
+	/**
+	 * Sets the value of the countryId property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setCountryId(String value) {
+		this.countryId = value;
+	}
+
+	public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
 
 }
