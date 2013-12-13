@@ -11,7 +11,8 @@
 	xmlns:cc="http://java.sun.com/jsf/composite">
 
 <cc:interface>
-	<cc:attribute name="backingBean" required="true" />
+	<cc:attribute name="backingBean" required="true"
+		type="org.meveo.admin.action.BaseBean" />
 	<cc:attribute name="ajaxSubmit" required="true" />
 	<cc:attribute name="columns" required="true" />
 	<cc:attribute name="edit" required="true" />
@@ -33,23 +34,32 @@
 				value="#{cc.attrs.backingBean.objectId}" />
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
-		<p:commandButton id="saveButton" rendered="#{cc.attrs.edit}"
+		<p:commandButton id="saveButtonWithObjectId"
+			rendered="#{cc.attrs.edit and cc.attrs.backingBean.objectId}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave,cc.attrs.objectIdParamName,cc.attrs.backingBean.objectId)}"
+			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
+			<f:param name="edit" value="#{cc.attrs.edit}" />
+		</p:commandButton>
+		<p:commandButton id="saveButton"
+			rendered="#{cc.attrs.edit and !cc.attrs.backingBean.objectId}"
+			value="#{messages['action.save']}"
+			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
 			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
 
 		<cc:insertChildren />
 
- 	<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
+		<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
 			edit="#{cc.attrs.edit}"
 			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" />
 
 		<p:button id="backButton" value="#{messages['action.back']}"
 			outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
-			
-			<c:if test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">
+
+			<c:if
+				test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">
 				<f:param name="cid" value="#{conversation.id}" />
 			</c:if>
 		</p:button>
