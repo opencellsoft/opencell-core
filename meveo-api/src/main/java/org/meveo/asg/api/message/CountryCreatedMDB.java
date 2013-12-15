@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.admin.exception.BusinessException;
@@ -15,6 +16,7 @@ import org.meveo.asg.api.CountryCreated;
 import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +40,13 @@ public class CountryCreatedMDB implements MessageListener {
 
 	@Inject
 	private CountryServiceApi countryServiceApi;
-	
+
 	@Inject
 	private AsgIdMappingService asgIdMappingService;
+
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
 
 	@Override
 	public void onMessage(Message msg) {
@@ -63,20 +69,23 @@ public class CountryCreatedMDB implements MessageListener {
 
 			log.debug("Creating country with code={}", data.getCountry()
 					.getCountryId());
-			
+
 			CountryDto countryDto = new CountryDto();
-			countryDto.setCountryCode(asgIdMappingService.getNewCode(data.getCountry().getCountryId(),EntityCodeEnum.C));
+			countryDto.setCountryCode(asgIdMappingService.getNewCode(em, data
+					.getCountry().getCountryId(), EntityCodeEnum.C));
 			countryDto.setName(data.getCountry().getName());
 			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
-			countryDto.setCurrentUserId(Long
-					.valueOf(paramBean.getProperty("asp.api.userId", "1")));
-			countryDto.setProviderId(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")));
-			
+			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			countryDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
+
 			countryServiceApi.create(countryDto);
-		} catch(BusinessException e){
-			//the country code already exist in db, since API must be idempotent we just do nothing
-			log.warn("Create country with existing code, already exists... we just ignore."+e.getMessage());
+		} catch (BusinessException e) {
+			// the country code already exist in db, since API must be
+			// idempotent we just do nothing
+			log.warn("Create country with existing code, already exists... we just ignore."
+					+ e.getMessage());
 		} catch (Exception e) {
 
 			log.error("Error processing ASG message: {}", e.getMessage());

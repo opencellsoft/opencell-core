@@ -4,13 +4,17 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectServiceInstanceException;
+import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.SubscriptionWithCreditLimitServiceApi;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
+import org.meveo.api.dto.SubscriptionWithCreditLimitUpdateDto;
 import org.meveo.api.exception.CreditLimitExceededException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.ParentSellerDoesNotExistsException;
@@ -53,7 +57,8 @@ public class SubscriptionWithCreditLimitWS {
 				"asp.api.providerId", "1")));
 
 		try {
-			result = subscriptionWithCreditLimitServiceApi.create(subscriptionDto);
+			result = subscriptionWithCreditLimitServiceApi
+					.create(subscriptionDto);
 		} catch (CreditLimitExceededException e) {
 		} catch (SellerDoesNotExistsException e) {
 		} catch (ParentSellerDoesNotExistsException e) {
@@ -67,4 +72,24 @@ public class SubscriptionWithCreditLimitWS {
 
 		return result;
 	}
+
+	@PUT
+	@Path("/")
+	public void update(
+			SubscriptionWithCreditLimitUpdateDto subscriptionUpdateDto) {
+		subscriptionUpdateDto.setCurrentUserId(Long.valueOf(paramBean
+				.getProperty("asp.api.userId", "1")));
+		subscriptionUpdateDto.setProviderId(Long.valueOf(paramBean.getProperty(
+				"asp.api.providerId", "1")));
+
+		try {
+			subscriptionWithCreditLimitServiceApi.update(subscriptionUpdateDto);
+		} catch (MeveoApiException e) {
+			log.error(e.getMessage());
+		} catch (IncorrectSusbcriptionException e) {
+		} catch (IncorrectServiceInstanceException e) {
+		} catch (BusinessException e) {
+		}
+	}
+
 }

@@ -172,7 +172,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatusDate(new Date());
 		serviceInstance.setCode(serviceCode);
 		create(em, serviceInstance, creator, subscription.getProvider());
-		
+
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
 		for (RecurringChargeTemplate recurringChargeTemplate : serviceTemplate
@@ -341,8 +341,19 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			boolean applyReimbursment, boolean applyTerminationCharges,
 			User user) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
+		terminateService(getEntityManager(), serviceInstance, terminationDate,
+				applyAgreement, applyReimbursment, applyTerminationCharges,
+				user);
+	}
 
-		log.info("terminateService terminationDate=#0,serviceInstanceId=#1",
+	public void terminateService(EntityManager em,
+			ServiceInstance serviceInstance, Date terminationDate,
+			boolean applyAgreement, boolean applyReimbursment,
+			boolean applyTerminationCharges, User user)
+			throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+
+		log.info("terminateService terminationDate={}, serviceInstanceId={}",
 				terminationDate, serviceInstance.getId());
 		if (terminationDate == null) {
 			terminationDate = new Date();

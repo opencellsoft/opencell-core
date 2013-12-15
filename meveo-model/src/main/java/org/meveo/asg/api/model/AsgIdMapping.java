@@ -13,26 +13,23 @@ import javax.persistence.Table;
 
 import org.meveo.model.IEntity;
 
-
 //TODO: move this to ASG project
 @Entity
-@Table(name="ASG_ID_MAPPING")
+@Table(name = "ASG_ID_MAPPING")
 @SequenceGenerator(name = "ASG_ID_GEN", sequenceName = "CAT_CALENDAR_SEQ")
-public class AsgIdMapping implements IEntity{
-	
+public class AsgIdMapping implements IEntity {
+
 	@Id
-	@Column(name="MEVEO_CODE")
+	@Column(name = "MEVEO_CODE")
 	@GeneratedValue(generator = "ASG_ID_GEN")
 	Long meveoCode;
-	
-	@Column(name="ASG_ID",length=200,unique=true)
+
+	@Column(name = "ASG_ID", length = 200, unique = true)
 	String asgId;
-	
+
 	@Enumerated(EnumType.STRING)
-	@Column(name="ENTITY_TYPE")
+	@Column(name = "ENTITY_TYPE")
 	EntityCodeEnum entityType;
-	
-	
 
 	public String getAsgId() {
 		return asgId;
@@ -67,7 +64,5 @@ public class AsgIdMapping implements IEntity{
 	public boolean isTransient() {
 		return false;
 	}
-	
-	
-	
+
 }

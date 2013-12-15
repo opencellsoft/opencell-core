@@ -15,10 +15,13 @@ import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.dto.CreditLimitDto;
 import org.meveo.api.dto.ServiceToAddDto;
+import org.meveo.api.dto.ServiceToTerminateDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
+import org.meveo.api.dto.SubscriptionWithCreditLimitUpdateDto;
 import org.meveo.api.exception.BillingAccountDoesNotExistsException;
 import org.meveo.api.exception.CreditLimitExceededException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.OfferTemplateDoesNotExistsException;
 import org.meveo.api.exception.ParentSellerDoesNotExistsException;
 import org.meveo.api.exception.SellerDoesNotExistsException;
@@ -105,6 +108,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 		SubscriptionWithCreditLimitResponse result = new SubscriptionWithCreditLimitResponse();
 		result.setRequestId(subscriptionWithCreditLimitDto.getRequestId());
 		result.setAccepted(true);
+		result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 
 		if (!StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())
 				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
@@ -212,7 +216,8 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 								.getOfferTemplateForSubscription()
 								.getServiceTemplatesForsuForSubscriptions()
 								.add(new ServiceTemplateForSubscription(
-										chargedServiceTemplate, serviceToAddDto));
+										tempChargedServiceTemplate,
+										serviceToAddDto));
 					}
 				}
 
@@ -237,8 +242,9 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 						currentUser, provider);
 
 				result.setSubscriptionId(String.valueOf(subscription.getId()));
-				result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 			}
+
+			return result;
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -268,11 +274,9 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 
-		result.setStatus(SubscriptionApiStatusEnum.FAIL.name());
-		return result;
 	}
 
 	private Subscription createSubscription(ForSubscription forSubscription,
@@ -672,6 +676,307 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 		}
 
 		return newForSubscription;
+	}
+
+	public SubscriptionWithCreditLimitResponse update(
+			SubscriptionWithCreditLimitUpdateDto subscriptionWithCreditLimitUpdateDto)
+			throws MeveoApiException, IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+
+		SubscriptionWithCreditLimitResponse result = new SubscriptionWithCreditLimitResponse();
+		result.setRequestId(subscriptionWithCreditLimitUpdateDto.getRequestId());
+		result.setAccepted(true);
+		result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
+
+		if (!StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
+				.getUserId())
+				&& !StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
+						.getOrganizationId())) {
+			Provider provider = providerService
+					.findById(subscriptionWithCreditLimitUpdateDto
+							.getProviderId());
+			User currentUser = userService
+					.findById(subscriptionWithCreditLimitUpdateDto
+							.getCurrentUserId());
+
+			String offerTemplateCode = paramBean.getProperty(
+					"asg.api.offer.offer.prefix", "_OF_")
+					+ subscriptionWithCreditLimitUpdateDto.getOfferId();
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
+					offerTemplateCode, provider);
+
+			if (offerTemplate != null) {
+				Seller seller = sellerService.findByCode(em,
+						subscriptionWithCreditLimitUpdateDto
+								.getOrganizationId(), provider);
+				if (seller == null) {
+					throw new SellerDoesNotExistsException(
+							subscriptionWithCreditLimitUpdateDto
+									.getOrganizationId());
+				}
+
+				if (seller.getSeller() == null) {
+					throw new ParentSellerDoesNotExistsException(
+							subscriptionWithCreditLimitUpdateDto
+									.getOrganizationId());
+				} else {
+					Seller parentSeller = seller.getSeller();
+					String sellerId = parentSeller.getCode();
+
+					ForSubscription forSubscription = new ForSubscription();
+					forSubscription.setSubscriber(seller);
+
+					// We look if this SELLER has a "charged offer service"
+					// associated
+					// at the offer with the code begining with
+					// "_CH_OF_["OfferId"]_[SellerID] (we use
+					// asg.api.offer.charged.prefix).
+					// In the case the offer to select for this seller is too
+					// "_OF_["OfferId"]"
+					// chargedOffer + offerCode + sellerId
+					ServiceTemplate chargedServiceTemplate = serviceTemplateService
+							.findByCode(
+									em,
+									paramBean.getProperty(
+											"asg.api.offer.charged.prefix",
+											"_CH_OF_")
+											+ subscriptionWithCreditLimitUpdateDto
+													.getOfferId()
+											+ "_"
+											+ sellerId, provider);
+					if (chargedServiceTemplate != null) {
+						forSubscription.getOfferTemplateForSubscription()
+								.setOfferTemplate(offerTemplate);
+						forSubscription
+								.getOfferTemplateForSubscription()
+								.getServiceTemplatesForsuForSubscriptions()
+								.add(new ServiceTemplateForSubscription(
+										chargedServiceTemplate));
+						forSubscription.setChargedOffer(true);
+					} else {
+						// It's not the case we have to take the offers linked
+						// at
+						// each
+						// service "_SE_["ServiceId"]"
+						// (asg.api.service.offer.prefix).
+						forSubscription.setChargedOffer(false);
+						for (ServiceToAddDto serviceToAddDto : subscriptionWithCreditLimitUpdateDto
+								.getServicesToAdd()) {
+							// find offer
+							String tempOfferTemplateCode = paramBean
+									.getProperty(
+											"asg.api.service.offer.prefix",
+											"_SE_")
+									+ serviceToAddDto.getServiceId();
+							OfferTemplate tempOfferTemplate = offerTemplateService
+									.findByCode(em, tempOfferTemplateCode,
+											provider);
+							if (tempOfferTemplate == null) {
+								throw new OfferTemplateDoesNotExistsException(
+										tempOfferTemplateCode);
+							}
+
+							// find service template
+							String tempChargedServiceTemplateCode = paramBean
+									.getProperty(
+											"asg.api.service.charged.prefix",
+											"_CH_SE_")
+									+ serviceToAddDto.getServiceId()
+									+ "_"
+									+ sellerId;
+							ServiceTemplate tempChargedServiceTemplate = serviceTemplateService
+									.findByCode(em,
+											tempChargedServiceTemplateCode,
+											provider);
+							if (tempChargedServiceTemplate == null) {
+								throw new ServiceTemplateDoesNotExistsException(
+										tempChargedServiceTemplateCode);
+							}
+							forSubscription.getOfferTemplateForSubscription()
+									.setOfferTemplate(tempOfferTemplate);
+							forSubscription
+									.getOfferTemplateForSubscription()
+									.getServiceTemplatesForsuForSubscriptions()
+									.add(new ServiceTemplateForSubscription(
+											tempChargedServiceTemplate,
+											serviceToAddDto));
+						}
+					}
+
+					// processParent
+					ForSubscription finalForSubscription = processParent(
+							forSubscription, parentSeller,
+							subscriptionWithCreditLimitUpdateDto.getOfferId(),
+							provider,
+							subscriptionWithCreditLimitUpdateDto
+									.getServicesToAdd());
+
+					// validate credit limit
+					if (!validateCreditLimit(finalForSubscription,
+							subscriptionWithCreditLimitUpdateDto, provider)) {
+						throw new CreditLimitExceededException();
+					}
+
+					// check offer and service template association
+					updateOfferAndServiceTemplateAssociation(forSubscription,
+							currentUser);
+
+					Subscription subscription = createSubscription(
+							finalForSubscription,
+							subscriptionWithCreditLimitUpdateDto, currentUser,
+							provider);
+
+					result.setSubscriptionId(String.valueOf(subscription
+							.getId()));
+				}
+
+				// terminate
+				if (subscriptionWithCreditLimitUpdateDto
+						.getServicesToTerminate() != null
+						&& subscriptionWithCreditLimitUpdateDto
+								.getServicesToTerminate().size() > 0) {
+					List<ForTermination> forTerminations = prepareForTermination(
+							subscriptionWithCreditLimitUpdateDto, provider);
+					processTermination(forTerminations, currentUser);
+				}
+			}
+
+			return result;
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
+					.getUserId())) {
+				missingFields.add("userId");
+			}
+			if (StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
+					.getOrganizationId())) {
+				missingFields.add("organizationId");
+			}
+			if (StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
+					.getOfferId())) {
+				missingFields.add("offerId");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+	}
+
+	private void processTermination(List<ForTermination> forTerminations,
+			User currentUser) throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+		if (forTerminations != null && forTerminations.size() > 0) {
+			for (ForTermination forTermination : forTerminations) {
+				for (ServiceInstanceToTerminate serviceInstanceToTerminate : forTermination
+						.getServinceInstances()) {
+					serviceInstanceService.terminateService(em,
+							serviceInstanceToTerminate.getServiceInstance(),
+							serviceInstanceToTerminate.getTerminationDate(),
+							true, true, true, currentUser);
+				}
+			}
+		}
+	}
+
+	private List<ForTermination> prepareForTermination(
+			SubscriptionWithCreditLimitUpdateDto subscriptionWithCreditLimitUpdateDto,
+			Provider provider) {
+		List<ForTermination> forTerminations = new ArrayList<SubscriptionWithCreditLimitServiceApi.ForTermination>();
+
+		Seller seller = sellerService.findByCode(em,
+				subscriptionWithCreditLimitUpdateDto.getOrganizationId(),
+				provider);
+		while (seller != null) {
+
+			if (seller.getSeller() == null) {
+				break;
+			}
+			String sellerId = seller.getSeller().getCode();
+
+			ForTermination forTermination = new ForTermination();
+			forTermination.setSeller(seller);
+
+			Subscription subscription = subscriptionService.findByCode(em,
+					seller.getCode(), provider);
+
+			for (ServiceToTerminateDto serviceToAddDto : subscriptionWithCreditLimitUpdateDto
+					.getServicesToTerminate()) {
+				String tempChargedServiceTemplateCode = paramBean.getProperty(
+						"asg.api.service.charged.prefix", "_CH_SE_")
+						+ serviceToAddDto.getServiceId() + "_" + sellerId;
+				ServiceInstance serviceInstance = serviceInstanceService
+						.findByCodeAndSubscription(
+								tempChargedServiceTemplateCode, subscription);
+				forTermination.getServinceInstances().add(
+						new ServiceInstanceToTerminate(serviceInstance,
+								serviceToAddDto.getTerminationDate()));
+			}
+
+			forTerminations.add(forTermination);
+
+			seller = seller.getSeller();
+		}
+
+		return forTerminations;
+	}
+
+	class ForTermination {
+		private Seller seller;
+		private List<ServiceInstanceToTerminate> servinceInstances = new ArrayList<SubscriptionWithCreditLimitServiceApi.ServiceInstanceToTerminate>();
+
+		public Seller getSeller() {
+			return seller;
+		}
+
+		public void setSeller(Seller seller) {
+			this.seller = seller;
+		}
+
+		public List<ServiceInstanceToTerminate> getServinceInstances() {
+			return servinceInstances;
+		}
+
+		public void setServinceInstances(
+				List<ServiceInstanceToTerminate> servinceInstances) {
+			this.servinceInstances = servinceInstances;
+		}
+	}
+
+	class ServiceInstanceToTerminate {
+		private ServiceInstance serviceInstance;
+		private Date terminationDate;
+
+		public ServiceInstanceToTerminate(ServiceInstance serviceInstance,
+				Date terminationDate) {
+			this.serviceInstance = serviceInstance;
+			this.terminationDate = terminationDate;
+		}
+
+		public ServiceInstance getServiceInstance() {
+			return serviceInstance;
+		}
+
+		public void setServiceInstance(ServiceInstance serviceInstance) {
+			this.serviceInstance = serviceInstance;
+		}
+
+		public Date getTerminationDate() {
+			return terminationDate;
+		}
+
+		public void setTerminationDate(Date terminationDate) {
+			this.terminationDate = terminationDate;
+		}
 	}
 
 	class ForSubscription {
