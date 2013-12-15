@@ -8,9 +8,12 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CountryServiceApi;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.asg.api.CountryCreated;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
@@ -35,6 +38,9 @@ public class CountryCreatedMDB implements MessageListener {
 
 	@Inject
 	private CountryServiceApi countryServiceApi;
+	
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
 
 	@Override
 	public void onMessage(Message msg) {
@@ -59,7 +65,7 @@ public class CountryCreatedMDB implements MessageListener {
 					.getCountryId());
 			
 			CountryDto countryDto = new CountryDto();
-			countryDto.setCountryCode(data.getCountry().getCountryId());
+			countryDto.setCountryCode(asgIdMappingService.getNewCode(data.getCountry().getCountryId(),EntityCodeEnum.C));
 			countryDto.setName(data.getCountry().getName());
 			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
 			countryDto.setCurrentUserId(Long
@@ -68,7 +74,11 @@ public class CountryCreatedMDB implements MessageListener {
 					.getProperty("asp.api.providerId", "1")));
 			
 			countryServiceApi.create(countryDto);
+		} catch(BusinessException e){
+			//the country code already exist in db, since API must be idempotent we just do nothing
+			log.warn("Create country with existing code, already exists... we just ignore."+e.getMessage());
 		} catch (Exception e) {
+
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
 	}
