@@ -208,9 +208,8 @@ public class OfferPricePlanServiceApi extends BaseApi {
 			String recommendedOfferTemplateCode = recommendedOfferTemplatePrefix
 					+ offerPricePlanDto.getOfferId()
 					+ "_"
-					+ offerPricePlanDto.getOrganizationId()
-
-			;
+					+ offerPricePlanDto.getOrganizationId();
+			
 			OfferTemplate recommendedOfferTemplate = offerTemplateService
 					.findByCode(em, recommendedOfferTemplateCode, provider);
 			if (recommendedOfferTemplate != null) {
