@@ -35,14 +35,14 @@
 			<f:param name="cid" value="#{conversation.id}" />
 		</p:button>
 		<p:commandButton id="saveButtonWithObjectId"
-			rendered="#{cc.attrs.edit and cc.attrs.backingBean.objectId}"
+			rendered="#{cc.attrs.edit and empty(cc.attrs.backingBean.objectId)}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave,cc.attrs.objectIdParamName,cc.attrs.backingBean.objectId)}"
 			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
 			<f:param name="edit" value="#{cc.attrs.edit}" />
 		</p:commandButton>
 		<p:commandButton id="saveButton"
-			rendered="#{cc.attrs.edit and !cc.attrs.backingBean.objectId}"
+			rendered="#{cc.attrs.edit and !empty(cc.attrs.backingBean.objectId)}"
 			value="#{messages['action.save']}"
 			action="#{cc.attrs.backingBean.saveOrUpdate(cc.attrs.killConversationOnSave)}"
 			icon="ui-icon-check" ajax="#{cc.attrs.ajaxSubmit}">
