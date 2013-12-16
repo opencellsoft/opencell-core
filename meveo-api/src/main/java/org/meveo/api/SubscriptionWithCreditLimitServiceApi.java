@@ -906,9 +906,11 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				ServiceInstance serviceInstance = serviceInstanceService
 						.findByCodeAndSubscription(
 								tempChargedServiceTemplateCode, subscription);
-				forTermination.getServinceInstances().add(
-						new ServiceInstanceToTerminate(serviceInstance,
-								serviceToAddDto.getTerminationDate()));
+				if (serviceInstance != null) {
+					forTermination.getServinceInstances().add(
+							new ServiceInstanceToTerminate(serviceInstance,
+									serviceToAddDto.getTerminationDate()));
+				}
 			}
 
 			forTerminations.add(forTermination);

@@ -353,8 +353,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 
-		log.info("terminateService terminationDate={}, serviceInstanceId={}",
-				terminationDate, serviceInstance.getId());
+		if (serviceInstance.getId() != null) {
+			log.info(
+					"terminateService terminationDate={}, serviceInstanceId={}",
+					terminationDate, serviceInstance.getId());
+		}
 		if (terminationDate == null) {
 			terminationDate = new Date();
 		}
