@@ -330,12 +330,12 @@ public class RatingService {
 						recChargeInstance);
 				if (sharedQuantity > 0) {
 					unitPriceWithoutTax = unitPriceWithoutTax.divide(
-							new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS,
-							RoundingMode.HALF_UP);
+							new BigDecimal(sharedQuantity),
+							BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 					if (unitPriceWithTax != null) {
 						unitPriceWithTax = unitPriceWithTax.divide(
-								new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS,
-								RoundingMode.HALF_UP);
+								new BigDecimal(sharedQuantity),
+								BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
 					}
 					log.info("charge is shared " + sharedQuantity
 							+ " times, so unit price is " + unitPriceWithoutTax);
@@ -470,7 +470,7 @@ public class RatingService {
 			if (!subscriptionMaxAgeOK) {
 				log.info("The subscription age "
 						+ subscriptionAge
-						+ "is greater than the priceplan subscription age max :"
+						+ " is greater than the priceplan subscription age max :"
 						+ pricePlan.getMaxSubscriptionAgeInMonth());
 				continue;
 			}
@@ -490,7 +490,7 @@ public class RatingService {
 			if (!applicationDateInPricePlanPeriod) {
 				log.info("The application date "
 						+ bareOperation.getOperationDate()
-						+ "is not in the priceplan application range");
+						+ " is not in the priceplan application range");
 				continue;
 			}
 			boolean criteria1SameInPricePlan = pricePlan.getCriteria1Value() == null
@@ -581,11 +581,11 @@ public class RatingService {
 					pricePlan.setCriteria3Value(null);
 				}
 				log.info("Add pricePlan for provider="
-						+ pricePlan.getProvider().getCode() + "chargeCode="
-						+ pricePlan.getEventCode() + " priceplan=" + pricePlan
-						+ " criteria1=" + pricePlan.getCriteria1Value()
-						+ " criteria2=" + pricePlan.getCriteria2Value()
-						+ " criteria3=" + pricePlan.getCriteria3Value());
+						+ pricePlan.getProvider().getCode() + "; chargeCode="
+						+ pricePlan.getEventCode() + "; priceplan=" + pricePlan
+						+ "; criteria1=" + pricePlan.getCriteria1Value()
+						+ "; criteria2=" + pricePlan.getCriteria2Value()
+						+ "; criteria3=" + pricePlan.getCriteria3Value());
 				providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
 			}
 		}

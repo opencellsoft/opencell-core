@@ -107,10 +107,16 @@ public class UsageChargeInstanceService extends
 
 	public void terminateUsageChargeInstance(
 			UsageChargeInstance usageChargeInstance, Date terminationDate) {
+		terminateUsageChargeInstance(getEntityManager(), usageChargeInstance,
+				terminationDate);
+	}
+
+	public void terminateUsageChargeInstance(EntityManager em,
+			UsageChargeInstance usageChargeInstance, Date terminationDate) {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		usageRatingService.updateCache(usageChargeInstance);
-		update(usageChargeInstance);
+		update(em, usageChargeInstance);
 	}
 
 	public void suspendUsageChargeInstance(

@@ -713,115 +713,37 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 						subscriptionWithCreditLimitUpdateDto
 								.getOrganizationId());
 			} else {
-				Seller parentSeller = seller.getSeller();
-				String sellerId = parentSeller.getCode();
+				// Seller parentSeller = seller.getSeller();
+				// tring sellerId = parentSeller.getCode();
 
 				if (subscriptionWithCreditLimitUpdateDto.getServicesToAdd() != null
 						&& subscriptionWithCreditLimitUpdateDto
 								.getServicesToAdd().size() > 0) {
 
-					// check if has chargedOffer
-					ServiceTemplate chargedServiceTemplate = serviceTemplateService
-							.findByCode(
-									em,
-									paramBean.getProperty(
-											"asg.api.offer.charged.prefix",
-											"_CH_OF_")
-											+ subscriptionWithCreditLimitUpdateDto
-													.getOfferId()
-											+ "_"
-											+ sellerId, provider);
-					if (chargedServiceTemplate == null) {
-						ForSubscription newForSubscription = new ForSubscription();
-						newForSubscription.setSubscriber(seller);
+					ForSubscription finalForsubscription = processParentForUpdate(
+							null, seller,
+							subscriptionWithCreditLimitUpdateDto.getOfferId(),
+							provider,
+							subscriptionWithCreditLimitUpdateDto
+									.getServicesToAdd());
 
-						// get the offer
-						for (ServiceToAddDto serviceToAddDto : subscriptionWithCreditLimitUpdateDto
-								.getServicesToAdd()) {
-							String tempOfferTemplateCode = paramBean
-									.getProperty(
-											"asg.api.service.offer.prefix",
-											"_SE_")
-									+ serviceToAddDto.getServiceId();
-							OfferTemplate tempOfferTemplate = offerTemplateService
-									.findByCode(em, tempOfferTemplateCode,
-											provider);
-							if (tempOfferTemplate == null) {
-								throw new OfferTemplateDoesNotExistsException(
-										tempOfferTemplateCode);
-							}
-
-							// find service template
-							String tempChargedServiceTemplateCode = paramBean
-									.getProperty(
-											"asg.api.service.charged.prefix",
-											"_CH_SE_")
-									+ serviceToAddDto.getServiceId()
-									+ "_"
-									+ sellerId;
-							ServiceTemplate tempChargedServiceTemplate = serviceTemplateService
-									.findByCode(em,
-											tempChargedServiceTemplateCode,
-											provider);
-							if (tempChargedServiceTemplate == null) {
-								throw new ServiceTemplateDoesNotExistsException(
-										tempChargedServiceTemplateCode);
-							}
-
-							newForSubscription
-									.getOfferTemplateForSubscription()
-									.setOfferTemplate(tempOfferTemplate);
-							newForSubscription
-									.getOfferTemplateForSubscription()
-									.getServiceTemplatesForsuForSubscriptions()
-									.add(new ServiceTemplateForSubscription(
-											tempChargedServiceTemplate,
-											serviceToAddDto));
-						}
-
-						ForSubscription finalForsubscription = processParentForUpdate(
-								newForSubscription, parentSeller,
-								subscriptionWithCreditLimitUpdateDto
-										.getOfferId(), provider,
-								subscriptionWithCreditLimitUpdateDto
-										.getServicesToAdd());
-
-						// validate credit limit
-						if (!validateCreditLimit(finalForsubscription,
-								subscriptionWithCreditLimitUpdateDto, provider)) {
-							throw new CreditLimitExceededException();
-						}
-
-						// check offer and service template association
-						updateOfferAndServiceTemplateAssociation(
-								finalForsubscription, currentUser);
-
-						Subscription subscription = createSubscription(
-								finalForsubscription,
-								subscriptionWithCreditLimitUpdateDto,
-								currentUser, provider);
-
-						result.setSubscriptionId(String.valueOf(subscription
-								.getId()));
+					// validate credit limit
+					if (!validateCreditLimit(finalForsubscription,
+							subscriptionWithCreditLimitUpdateDto, provider)) {
+						throw new CreditLimitExceededException();
 					}
 
-					// // validate credit limit
-					// if (!validateCreditLimit(finalForSubscription,
-					// subscriptionWithCreditLimitUpdateDto, provider)) {
-					// throw new CreditLimitExceededException();
-					// }
-					//
-					// // check offer and service template association
-					// updateOfferAndServiceTemplateAssociation(forSubscription,
-					// currentUser);
-					//
-					// Subscription subscription = createSubscription(
-					// finalForSubscription,
-					// subscriptionWithCreditLimitUpdateDto, currentUser,
-					// provider);
-					//
-					// result.setSubscriptionId(String.valueOf(subscription
-					// .getId()));
+					// check offer and service template association
+					updateOfferAndServiceTemplateAssociation(
+							finalForsubscription, currentUser);
+
+					Subscription subscription = createSubscription(
+							finalForsubscription,
+							subscriptionWithCreditLimitUpdateDto, currentUser,
+							provider);
+
+					result.setSubscriptionId(String.valueOf(subscription
+							.getId()));
 				}
 
 				// terminate
@@ -829,10 +751,9 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 						.getServicesToTerminate() != null
 						&& subscriptionWithCreditLimitUpdateDto
 								.getServicesToTerminate().size() > 0) {
-					// List<ForTermination> forTerminations =
-					// prepareForTermination(
-					// subscriptionWithCreditLimitUpdateDto, provider);
-					// processTermination(forTerminations, currentUser);
+					List<ForTermination> forTerminations = prepareForTermination(
+							subscriptionWithCreditLimitUpdateDto, provider);
+					processTermination(forTerminations, currentUser);
 				}
 			}
 
@@ -876,47 +797,68 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 			return forSubscription;
 		}
 
-		String sellerId = seller.getSeller().getCode();
+		Seller parentSeller = seller.getSeller();
+		String sellerId = parentSeller.getCode();
 		ForSubscription newForSubscription = new ForSubscription();
-		newForSubscription.setChild(forSubscription);
-		newForSubscription.setSubscriber(seller);
 
-		// get the offer
-		for (ServiceToAddDto serviceToAddDto : servicesToAdd) {
-			String tempOfferTemplateCode = paramBean.getProperty(
-					"asg.api.service.offer.prefix", "_SE_")
-					+ serviceToAddDto.getServiceId();
-			OfferTemplate tempOfferTemplate = offerTemplateService.findByCode(
-					em, tempOfferTemplateCode, provider);
-			if (tempOfferTemplate == null) {
-				throw new OfferTemplateDoesNotExistsException(
-						tempOfferTemplateCode);
+		// check if has chargedOffer
+		ServiceTemplate chargedServiceTemplate = serviceTemplateService
+				.findByCode(
+						em,
+						paramBean.getProperty("asg.api.offer.charged.prefix",
+								"_CH_OF_") + offerId + "_" + sellerId, provider);
+		if (chargedServiceTemplate == null) {
+			if (forSubscription == null) {
+				forSubscription = newForSubscription;
+			} else {
+				newForSubscription.setChild(forSubscription);
 			}
 
-			// find service template
-			String tempChargedServiceTemplateCode = paramBean.getProperty(
-					"asg.api.service.charged.prefix", "_CH_SE_")
-					+ serviceToAddDto.getServiceId() + "_" + sellerId;
-			ServiceTemplate tempChargedServiceTemplate = serviceTemplateService
-					.findByCode(em, tempChargedServiceTemplateCode, provider);
-			if (tempChargedServiceTemplate == null) {
-				throw new ServiceTemplateDoesNotExistsException(
-						tempChargedServiceTemplateCode);
+			newForSubscription.setSubscriber(seller);
+
+			// get the offer
+			for (ServiceToAddDto serviceToAddDto : servicesToAdd) {
+				String tempOfferTemplateCode = paramBean.getProperty(
+						"asg.api.service.offer.prefix", "_SE_")
+						+ serviceToAddDto.getServiceId();
+				OfferTemplate tempOfferTemplate = offerTemplateService
+						.findByCode(em, tempOfferTemplateCode, provider);
+				if (tempOfferTemplate == null) {
+					throw new OfferTemplateDoesNotExistsException(
+							tempOfferTemplateCode);
+				}
+
+				// find service template
+				String tempChargedServiceTemplateCode = paramBean.getProperty(
+						"asg.api.service.charged.prefix", "_CH_SE_")
+						+ serviceToAddDto.getServiceId() + "_" + sellerId;
+				ServiceTemplate tempChargedServiceTemplate = serviceTemplateService
+						.findByCode(em, tempChargedServiceTemplateCode,
+								provider);
+				if (tempChargedServiceTemplate == null) {
+					throw new ServiceTemplateDoesNotExistsException(
+							tempChargedServiceTemplateCode);
+				}
+
+				newForSubscription.getOfferTemplateForSubscription()
+						.setOfferTemplate(tempOfferTemplate);
+				newForSubscription
+						.getOfferTemplateForSubscription()
+						.getServiceTemplatesForsuForSubscriptions()
+						.add(new ServiceTemplateForSubscription(
+								tempChargedServiceTemplate, serviceToAddDto));
+
+				forSubscription = processParentForUpdate(newForSubscription,
+						parentSeller, offerId, provider, servicesToAdd);
 			}
-
-			newForSubscription.getOfferTemplateForSubscription()
-					.setOfferTemplate(tempOfferTemplate);
-			newForSubscription
-					.getOfferTemplateForSubscription()
-					.getServiceTemplatesForsuForSubscriptions()
-					.add(new ServiceTemplateForSubscription(
-							tempChargedServiceTemplate, serviceToAddDto));
-
-			newForSubscription = processParentForUpdate(newForSubscription,
-					seller.getSeller(), offerId, provider, servicesToAdd);
+		} else {
+			if (parentSeller != null) {
+				forSubscription = processParentForUpdate(forSubscription,
+						parentSeller, offerId, provider, servicesToAdd);
+			}
 		}
 
-		return newForSubscription;
+		return forSubscription;
 	}
 
 	private void processTermination(List<ForTermination> forTerminations,
@@ -944,10 +886,10 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 				subscriptionWithCreditLimitUpdateDto.getOrganizationId(),
 				provider);
 		while (seller != null) {
-
 			if (seller.getSeller() == null) {
 				break;
 			}
+
 			String sellerId = seller.getSeller().getCode();
 
 			ForTermination forTermination = new ForTermination();

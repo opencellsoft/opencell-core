@@ -389,7 +389,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				if (endAgrementDate != null
 						&& terminationDate.before(endAgrementDate)) {
 					if (endAgrementDate.after(nextChargeDate)) {
-						chargeApplicationService.applyChargeAgreement(
+						chargeApplicationService.applyChargeAgreement(em,
 								recurringChargeInstance,
 								recurringChargeInstance
 										.getRecurringChargeTemplate(), user);
@@ -397,6 +397,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 				}
 			}
+
 			if (applyReimbursment) {
 				Date endAgrementDate = recurringChargeInstance
 						.getServiceInstance().getEndAgrementDate();
@@ -405,13 +406,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					if (endAgrementDate.before(nextChargeDate)) {
 						recurringChargeInstance
 								.setTerminationDate(endAgrementDate);
-						chargeApplicationService.applyReimbursment(
+						chargeApplicationService.applyReimbursment(em,
 								recurringChargeInstance, user);
 					}
 
 				} else if (terminationDate.before(storedNextChargeDate)) {
 					recurringChargeInstance.setTerminationDate(terminationDate);
-					chargeApplicationService.applyReimbursment(
+					chargeApplicationService.applyReimbursment(em,
 							recurringChargeInstance, user);
 				}
 
@@ -421,13 +422,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			recurringChargeInstance.setNextChargeDate(storedNextChargeDate);
 			recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 			recurringChargeInstance.setStatusDate(new Date());
-			chargeInstanceService.update(recurringChargeInstance);
-
+			chargeInstanceService.update(em, recurringChargeInstance);
 		}
+
 		if (applyTerminationCharges) {
 			for (OneShotChargeInstance oneShotChargeInstance : serviceInstance
 					.getTerminationChargeInstances()) {
-				oneShotChargeInstanceService.oneShotChargeApplication(
+				oneShotChargeInstanceService.oneShotChargeApplication(em,
 						subscription, oneShotChargeInstance, terminationDate,
 						serviceInstance.getQuantity(), user);
 			}
@@ -435,14 +436,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
-			usageChargeInstanceService.terminateUsageChargeInstance(
+			usageChargeInstanceService.terminateUsageChargeInstance(em,
 					usageChargeInstance, terminationDate);
 		}
 
 		serviceInstance.setTerminationDate(terminationDate);
 		serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		serviceInstance.setStatusDate(new Date());
-		update(serviceInstance, user);
+		update(em, serviceInstance, user);
+
 		boolean termineSubscription = true;
 		for (ServiceInstance srv : subscription.getServiceInstances()) {
 			if (srv.getStatus() != InstanceStatusEnum.TERMINATED) {
@@ -453,8 +455,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
 			subscription.setStatusDate(new Date());
 			subscription.setTerminationDate(new Date());
-			subscriptionService.update(subscription);
+			subscriptionService.update(em, subscription);
 		}
+
 		CustomerAccount customerAccount = serviceInstance.getSubscription()
 				.getUserAccount().getBillingAccount().getCustomerAccount();
 		if (customerAccountService
@@ -464,7 +467,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					WalletInstance wallet = ua.getWallet();
 					for (RatedTransaction rt : wallet.getRatedTransactions()) {
 						rt.setDoNotTriggerInvoicing(false);
-						ratedTransactionService.update(rt);
+						ratedTransactionService.update(em, rt);
 					}
 				}
 			}

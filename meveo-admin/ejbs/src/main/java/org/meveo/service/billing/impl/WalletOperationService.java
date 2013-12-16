@@ -518,8 +518,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						"Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
 						nextapplicationDate, previousapplicationDate);
 			}
-			
-			quantity = quantity.multiply(new BigDecimal(prorataRatio).setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+
+			quantity = quantity.multiply(new BigDecimal(prorataRatio).setScale(
+					BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 			log.debug(
 					"rateSubscription part1={}, part2={}, prorataRation={} -> quantity={}",
 					part1, part2, prorataRatio, quantity);
@@ -553,7 +554,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ chargeInstance.getSubscription().getUserAccount()
 									.getBillingAccount().getId());
 		}
-		
+
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
@@ -564,7 +565,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ invoiceSubCategory.getCode()
 							+ " and trading country=" + countryId);
 		}
-		
+
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
 			throw new IncorrectChargeTemplateException(
@@ -627,7 +628,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						chargeInstance.getServiceInstance().getQuantity(),
 						chargeInstance.getSubscriptionDate(),
 						chargeInstance.getId() });
-		
+
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
 				.getRecurringChargeTemplate();
 		Date nextapplicationDate = getNextApplicationDate(chargeInstance);
@@ -664,6 +665,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	public void applyReimbursment(RecurringChargeInstance chargeInstance,
 			User creator) throws BusinessException {
+		applyReimbursment(getEntityManager(), chargeInstance, creator);
+	}
+
+	public void applyReimbursment(EntityManager em,
+			RecurringChargeInstance chargeInstance, User creator)
+			throws BusinessException {
 		if (chargeInstance == null) {
 			throw new IncorrectChargeInstanceException(
 					"charge instance is null");
@@ -733,7 +740,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ sdf.format(DateUtils.addDaysToDate(nextapplicationDate,
 							-1));
 
-			quantity = quantity.multiply(new BigDecimal(prorataRatio+"").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+			quantity = quantity.multiply(new BigDecimal(prorataRatio + "")
+					.setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 			log.debug(
 					"part1={}, part2={}, prorataRatio={}, param2={} -> quantity={}",
 					part1, part2, prorataRatio, param2, quantity);
@@ -766,14 +774,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Long countryId = country.getId();
 
 			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-					.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
-							countryId);
+					.findInvoiceSubCategoryCountry(em,
+							invoiceSubCategory.getId(), countryId);
 			if (invoiceSubcategoryCountry == null) {
 				throw new IncorrectChargeTemplateException(
 						"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 								+ invoiceSubCategory.getCode()
 								+ " and trading country=" + countryId);
 			}
+
 			Tax tax = invoiceSubcategoryCountry.getTax();
 			if (tax == null) {
 				throw new IncorrectChargeTemplateException(
@@ -782,7 +791,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 
 			WalletOperation chargeApplication = chargeApplicationRatingService
-					.rateChargeApplication(chargeInstance.getCode(),
+					.rateChargeApplication(em, chargeInstance.getCode(),
 							chargeInstance.getServiceInstance()
 									.getSubscription(), chargeInstance,
 							ApplicationTypeEnum.PRORATA_TERMINATION,
@@ -796,8 +805,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 									.getCriteria3(), periodStart, DateUtils
 									.addDaysToDate(nextapplicationDate, -1),
 							ChargeApplicationModeEnum.REIMBURSMENT);
-			create(chargeApplication, creator, chargeInstance.getProvider());
 
+			create(em, chargeApplication, creator, chargeInstance.getProvider());
 		}
 
 		if (recurringChargeTemplate.getApplyInAdvance()) {
@@ -805,9 +814,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			log.debug(
 					"reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}",
 					applicationDate, nextapplicationDate, nextChargeDate);
+
 			if (nextChargeDate != null
 					&& nextChargeDate.getTime() > nextapplicationDate.getTime()) {
-				applyReccuringCharge(chargeInstance, true,
+				applyReccuringCharge(em, chargeInstance, true,
 						recurringChargeTemplate, creator);
 			}
 		} else {
@@ -815,16 +825,25 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			log.debug(
 					"reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}",
 					applicationDate, nextapplicationDate, nextChargeDate);
+
 			if (nextChargeDate != null
 					&& nextChargeDate.getTime() > nextapplicationDate.getTime()) {
-				applyNotAppliedinAdvanceReccuringCharge(chargeInstance, true,
-						recurringChargeTemplate, creator);
+				applyNotAppliedinAdvanceReccuringCharge(em, chargeInstance,
+						true, recurringChargeTemplate, creator);
 			}
 		}
 	}
 
 	public void applyReccuringCharge(RecurringChargeInstance chargeInstance,
 			boolean reimbursement,
+			RecurringChargeTemplate recurringChargeTemplate, User creator)
+			throws BusinessException {
+		applyReccuringCharge(getEntityManager(), chargeInstance, reimbursement,
+				recurringChargeTemplate, creator);
+	}
+
+	public void applyReccuringCharge(EntityManager em,
+			RecurringChargeInstance chargeInstance, boolean reimbursement,
 			RecurringChargeTemplate recurringChargeTemplate, User creator)
 			throws BusinessException {
 
@@ -884,7 +903,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
 						countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
@@ -925,6 +944,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			WalletOperation chargeApplication = chargeApplicationRatingService
 					.rateChargeApplication(
+							em,
 							chargeInstance.getCode(),
 							chargeInstance.getServiceInstance()
 									.getSubscription(),
@@ -951,14 +971,23 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			chargeApplication.setSubscriptionDate(chargeInstance
 					.getServiceInstance().getSubscriptionDate());
 
-			create(chargeApplication, creator, chargeInstance.getProvider());
+			create(em, chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
 		}
+
 		chargeInstance.setNextChargeDate(nextDurationDate);
 	}
 
 	public void applyNotAppliedinAdvanceReccuringCharge(
+			RecurringChargeInstance chargeInstance, boolean reimbursement,
+			RecurringChargeTemplate recurringChargeTemplate, User creator)
+			throws BusinessException {
+		applyNotAppliedinAdvanceReccuringCharge(getEntityManager(),
+				chargeInstance, reimbursement, recurringChargeTemplate, creator);
+	}
+
+	public void applyNotAppliedinAdvanceReccuringCharge(EntityManager em,
 			RecurringChargeInstance chargeInstance, boolean reimbursement,
 			RecurringChargeTemplate recurringChargeTemplate, User creator)
 			throws BusinessException {
@@ -1010,7 +1039,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
 						countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
@@ -1069,7 +1098,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							"applyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
 							nextapplicationDate, previousapplicationDate);
 				}
-				quantity = quantity.multiply(new BigDecimal(prorataRatio+"").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+				quantity = quantity
+						.multiply(new BigDecimal(prorataRatio + "").setScale(
+								BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
 				log.debug("part1={}, part2={}, prorataRatio={} -> quantity",
 						part1, part2, prorataRatio, quantity);
 			}
@@ -1092,6 +1123,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			WalletOperation chargeApplication = chargeApplicationRatingService
 					.rateChargeApplication(
+							em,
 							chargeInstance.getCode(),
 							chargeInstance.getServiceInstance()
 									.getSubscription(),
@@ -1118,9 +1150,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			chargeApplication.setSubscriptionDate(chargeInstance
 					.getServiceInstance().getSubscriptionDate());
 
-			create(chargeApplication, creator, chargeInstance.getProvider());
-			getEntityManager().flush();
-			getEntityManager().refresh(chargeInstance);
+			create(em, chargeApplication, creator, chargeInstance.getProvider());
+			em.flush();
+			em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
 		}
@@ -1142,6 +1174,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	public void applyChargeAgreement(RecurringChargeInstance chargeInstance,
+			RecurringChargeTemplate recurringChargeTemplate, User creator)
+			throws BusinessException {
+		applyChargeAgreement(getEntityManager(), chargeInstance,
+				recurringChargeTemplate, creator);
+	}
+
+	public void applyChargeAgreement(EntityManager em,
+			RecurringChargeInstance chargeInstance,
 			RecurringChargeTemplate recurringChargeTemplate, User creator)
 			throws BusinessException {
 
@@ -1231,7 +1271,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				endDate = nextapplicationDate;
 				if (recurringChargeTemplate.getTerminationProrata()) {
 					type = ApplicationTypeEnum.PRORATA_TERMINATION;
-					quantity = quantity.multiply(new BigDecimal(prorataRatio+"").setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+					quantity = quantity.multiply(new BigDecimal(prorataRatio
+							+ "").setScale(BaseEntity.NB_DECIMALS,
+							RoundingMode.HALF_UP));
 				}
 			}
 			String param2 = sdf.format(applicationDate) + " au "
