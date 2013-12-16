@@ -1,10 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:s="http://jboss.com/products/seam/taglib" xmlns:f="http://java.sun.com/jsf/core" xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:c="http://java.sun.com/jstl/core" xmlns:cc="http://java.sun.com/jsf/composite" xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui" xmlns:hf="http://java.sun.com/jsf/composite/tags">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags">
 
 <cc:interface componentType="formField">
 </cc:interface>
@@ -12,27 +19,34 @@
 <cc:implementation>
 
 	<ui:fragment>
-	<hf:formField label="#{messages['businessEntity.defaultDescription']}"
-							field="description" required="true" id="prDescription" maxlength="100"/>
+		<hf:formField label="#{messages['businessEntity.defaultDescription']}"
+			field="description" required="true" id="prDescription"
+			maxlength="100" />
+
 		<p:panelGrid columns="2" id="description">
-			<p:outputLabel for="description" value="#{messages['businessEntity.languageDescriptions']}" />
-			<h:dataTable value="#{cc.backingBeanFromParentOrCurrent.getProviderLanguages()}" var="languageCom">
-									<h:column>
-										<h:graphicImage value="/img/img#{languageCom.language.languageCode}.png" style="height:17px; width:33px;" />
-									</h:column>
-
-									<h:column>
-										<p:inputText rendered="#{cc.backingBeanFromParentOrCurrent.edit}"
-											value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}" size="80" maxlength="100" />
-										<h:outputText rendered="#{!cc.backingBeanFromParentOrCurrent.edit}"
-											value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}" style="font-weight:bold;" />
-									</h:column>
-
+			<p:outputLabel for="description"
+				value="#{messages['businessEntity.languageDescriptions']}" />
+			<h:dataTable
+				value="#{cc.backingBeanFromParentOrCurrent.getProviderLanguages()}"
+				var="languageCom">
+				<h:column>
+					<h:graphicImage
+						value="/img/img#{languageCom.language.languageCode}.png"
+						style="height:17px; width:33px;" />
+				</h:column>
+				<h:column>
+					<p:inputText
+						rendered="#{cc.backingBeanFromParentOrCurrent.edit and !empty(languageCom.language)}"
+						value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}"
+						size="80" maxlength="100" />
+					<h:outputText
+						rendered="#{!cc.backingBeanFromParentOrCurrent.edit and !empty(languageCom.language)}"
+						value="#{cc.backingBeanFromParentOrCurrent.languageMessagesMap[languageCom.language.languageCode]}"
+						style="font-weight:bold;" />
+				</h:column>
 			</h:dataTable>
 		</p:panelGrid>
-	
-	
-		
 	</ui:fragment>
+
 </cc:implementation>
 </html>
