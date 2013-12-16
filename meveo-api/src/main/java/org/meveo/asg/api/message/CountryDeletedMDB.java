@@ -41,7 +41,6 @@ public class CountryDeletedMDB implements MessageListener {
 
 	@Inject
 	private AsgIdMappingService asgIdMappingService;
-	
 
 	@Inject
 	@MeveoJpaForJobs
@@ -68,7 +67,8 @@ public class CountryDeletedMDB implements MessageListener {
 
 			log.debug("Deleting country with code={}", data.getCountryId());
 
-			countryServiceApi.remove(asgIdMappingService.getMeveoCode(em,data.getCountryId(),EntityCodeEnum.C), data
+			countryServiceApi.remove(asgIdMappingService.getMeveoCode(em,
+					data.getCountryId(), EntityCodeEnum.C), data
 					.getCurrencyCode(), Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 		} catch (Exception e) {

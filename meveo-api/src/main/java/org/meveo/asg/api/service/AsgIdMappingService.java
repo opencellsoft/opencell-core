@@ -45,15 +45,16 @@ public class AsgIdMappingService extends PersistenceService<AsgIdMapping> {
 	public String getMeveoCode(EntityManager em, String asgId,
 			EntityCodeEnum entityType) throws BusinessException {
 		@SuppressWarnings("unchecked")
-		List<AsgIdMapping> ids = getEntityManager()
+		List<AsgIdMapping> ids = em
 				.createQuery(
-						"from " + AsgIdMapping.class.getSimpleName()
-								+ " where asgId=:asgId")
+						"FROM " + AsgIdMapping.class.getSimpleName()
+								+ " WHERE asgId=:asgId")
 				.setParameter("asgId", asgId).getResultList();
 		if (ids == null || ids.size() == 0) {
-			throw new BusinessException("Enity with ASG code " + asgId
+			throw new BusinessException("Entity with ASG code " + asgId
 					+ " does not exist");
 		}
+
 		return ids.get(0).getEntityType() + "" + ids.get(0).getMeveoCode();
 	}
 }
