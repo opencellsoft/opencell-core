@@ -35,8 +35,6 @@ import org.primefaces.event.SelectEvent;
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
  * 
- * @author Ignas Lelys
- * @created Nov 29, 2010
  * 
  */
 @Named
@@ -71,7 +69,7 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 	public PricePlanMatrix initEntity() {
 		PricePlanMatrix obj = super.initEntity();
 		obj.setMinSubscriptionAgeInMonth(0L);
-		obj.setMaxSubscriptionAgeInMonth(99L);
+		obj.setMaxSubscriptionAgeInMonth(9999L);
 
 		return obj;
 	}
