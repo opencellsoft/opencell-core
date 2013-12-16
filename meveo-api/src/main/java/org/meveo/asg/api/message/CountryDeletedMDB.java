@@ -6,11 +6,15 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.CountryServiceApi;
 import org.meveo.asg.api.CountryDeleted;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,14 @@ public class CountryDeletedMDB implements MessageListener {
 	@Inject
 	private CountryServiceApi countryServiceApi;
 
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+	
+
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -56,7 +68,7 @@ public class CountryDeletedMDB implements MessageListener {
 
 			log.debug("Deleting country with code={}", data.getCountryId());
 
-			countryServiceApi.remove(data.getCountryId(), data
+			countryServiceApi.remove(asgIdMappingService.getMeveoCode(em,data.getCountryId(),EntityCodeEnum.C), data
 					.getCurrencyCode(), Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 		} catch (Exception e) {

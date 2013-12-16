@@ -6,12 +6,16 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.CountryServiceApi;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.asg.api.CountryUpdated;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +40,13 @@ public class CountryUpdatedMDB implements MessageListener {
 	@Inject
 	private CountryServiceApi countryServiceApi;
 
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -59,7 +70,7 @@ public class CountryUpdatedMDB implements MessageListener {
 					.getCountryId());
 
 			CountryDto countryDto = new CountryDto();
-			countryDto.setCountryCode(data.getCountry().getCountryId());
+			countryDto.setCountryCode(asgIdMappingService.getMeveoCode(em,data.getCountry().getCountryId(),EntityCodeEnum.C));
 			countryDto.setName(data.getCountry().getName());
 			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
 			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
