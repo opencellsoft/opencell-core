@@ -298,9 +298,8 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 						"_DEF_")
 						+ forSubscription.getChild().getSubscriber().getCode();
 			} else {
-				userAccountCode = paramBean.getProperty(
-						"asg.api.default.organization.userAccount", "USER_")
-						+ forSubscription.getSubscriber().getCode();
+				userAccountCode = paramBean.getProperty("asg.api.default",
+						"_DEF_") + forSubscription.getSubscriber().getCode();
 			}
 			userAccount = userAccountService.findByCode(em, userAccountCode,
 					provider);
@@ -431,6 +430,9 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 		while (forSubscription != null) {
 			OfferTemplate offerTemplate = forSubscription
 					.getOfferTemplateForSubscription().getOfferTemplate();
+
+			if (offerTemplate == null)
+				continue;
 
 			if (offerTemplate.getServiceTemplates() == null) {
 				List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
