@@ -72,7 +72,7 @@ public class CountryCreatedMDB implements MessageListener {
 
 			CountryDto countryDto = new CountryDto();
 			countryDto.setCountryCode(asgIdMappingService.getNewCode(em, data
-					.getCountry().getCountryId(), EntityCodeEnum.C));
+					.getCountry().getCountryId(), EntityCodeEnum.COUNTRY));
 			countryDto.setName(data.getCountry().getName());
 			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
 			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
@@ -84,10 +84,9 @@ public class CountryCreatedMDB implements MessageListener {
 		} catch (BusinessException e) {
 			// the country code already exist in db, since API must be
 			// idempotent we just do nothing
-			log.warn("Create country with existing code, already exists... we just ignore."
+			log.warn("Create country with existing code, already exists... Ignoring."
 					+ e.getMessage());
 		} catch (Exception e) {
-
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
 	}

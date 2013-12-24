@@ -6,11 +6,15 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.ServiceTemplateServiceApi;
 import org.meveo.asg.api.ServiceDeleted;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,13 @@ public class ServiceDeletedMDB implements MessageListener {
 	@Inject
 	private ServiceTemplateServiceApi serviceTemplateServiceApi;
 
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -54,8 +65,9 @@ public class ServiceDeletedMDB implements MessageListener {
 					ServiceDeleted.class);
 
 			serviceTemplateServiceApi.remove(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")), data
-					.getServiceId());
+					.getProperty("asp.api.providerId", "1")),
+					asgIdMappingService.getMeveoCode(em, data.getServiceId(),
+							EntityCodeEnum.SERVICE));
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

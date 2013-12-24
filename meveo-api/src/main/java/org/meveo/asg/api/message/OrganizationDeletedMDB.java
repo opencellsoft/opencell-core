@@ -6,11 +6,15 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.OrganizationServiceApi;
 import org.meveo.asg.api.OrganizationDeleted;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,13 @@ public class OrganizationDeletedMDB implements MessageListener {
 	@Inject
 	private OrganizationServiceApi organizationServiceApi;
 
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -57,8 +68,10 @@ public class OrganizationDeletedMDB implements MessageListener {
 			log.debug("Creating organization with code={}",
 					data.getOrganizationId());
 
-			organizationServiceApi.remove(data.getOrganizationId(), Long
-					.valueOf(paramBean.getProperty("asp.api.providerId", "1")));
+			organizationServiceApi.remove(asgIdMappingService.getMeveoCode(em,
+					data.getOrganizationId(), EntityCodeEnum.ORGANIZATION),
+					Long.valueOf(paramBean.getProperty("asp.api.providerId",
+							"1")));
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

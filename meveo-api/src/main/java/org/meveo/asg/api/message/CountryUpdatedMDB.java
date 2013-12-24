@@ -70,7 +70,8 @@ public class CountryUpdatedMDB implements MessageListener {
 					.getCountryId());
 
 			CountryDto countryDto = new CountryDto();
-			countryDto.setCountryCode(asgIdMappingService.getMeveoCode(em,data.getCountry().getCountryId(),EntityCodeEnum.C));
+			countryDto.setCountryCode(asgIdMappingService.getMeveoCode(em, data
+					.getCountry().getCountryId(), EntityCodeEnum.COUNTRY));
 			countryDto.setName(data.getCountry().getName());
 			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
 			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(

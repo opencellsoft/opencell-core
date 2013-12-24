@@ -9,13 +9,17 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.OfferTemplateServiceApi;
 import org.meveo.api.dto.OfferDto;
 import org.meveo.asg.api.OfferCreated;
 import org.meveo.asg.api.ServiceName;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,13 @@ public class OfferCreatedMDB implements MessageListener {
 	@Inject
 	private OfferTemplateServiceApi offerTemplateServiceApi;
 
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+	
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -57,7 +68,8 @@ public class OfferCreatedMDB implements MessageListener {
 			OfferCreated data = mapper.readValue(message, OfferCreated.class);
 
 			OfferDto offerDto = new OfferDto();
-			offerDto.setOfferId(data.getOffer().getOfferId());
+			offerDto.setOfferId(asgIdMappingService.getNewCode(em, data
+					.getOffer().getOfferId(), EntityCodeEnum.OFFER));
 
 			if (data.getOffer().getServices() != null
 					&& data.getOffer().getServices().getServices() != null

@@ -27,13 +27,15 @@ public class AsgIdMappingService extends PersistenceService<AsgIdMapping> {
 								+ " where asgId=:asgId")
 				.setParameter("asgId", asgId).getResultList();
 		if (ids != null && ids.size() > 0) {
-			throw new BusinessException("Enity with ASG code " + asgId
+			throw new BusinessException("Entity with ASG code " + asgId
 					+ " already exists");
 		}
+
 		AsgIdMapping idMapping = new AsgIdMapping();
 		idMapping.setEntityType(entityType);
 		idMapping.setAsgId(asgId);
-		getEntityManager().persist(idMapping);
+		em.persist(idMapping);
+
 		return entityType + "" + idMapping.getMeveoCode();
 	}
 

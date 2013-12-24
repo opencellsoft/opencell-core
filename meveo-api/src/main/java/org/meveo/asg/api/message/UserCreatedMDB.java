@@ -6,12 +6,16 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.UserServiceApi;
 import org.meveo.api.dto.UserDto;
 import org.meveo.asg.api.UserCreated;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,13 @@ public class UserCreatedMDB implements MessageListener {
 	@Inject
 	private UserServiceApi userServiceApi;
 
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -57,7 +68,8 @@ public class UserCreatedMDB implements MessageListener {
 
 			UserDto userDto = new UserDto();
 			userDto.setUserId(data.getUser().getUserId());
-			userDto.setOrganizationId(data.getUser().getOrganizationId());
+			userDto.setOrganizationId(asgIdMappingService.getNewCode(em, data
+					.getUser().getOrganizationId(), EntityCodeEnum.USER));
 
 			userDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));

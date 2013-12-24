@@ -6,9 +6,12 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.meveo.api.OfferPricePlanServiceApi;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +34,11 @@ public class OfferPricePlanUpdatedMDB implements MessageListener {
 	private ParamBean paramBean;
 
 	@Inject
-	private OfferPricePlanServiceApi offerPricePlanServiceApi;
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
 
 	@Override
 	public void onMessage(Message msg) {

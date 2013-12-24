@@ -6,12 +6,16 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.ServiceTemplateServiceApi;
 import org.meveo.api.dto.ServiceDto;
 import org.meveo.asg.api.ServiceCreated;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +40,13 @@ public class ServiceCreatedMDB implements MessageListener {
 	@Inject
 	private ServiceTemplateServiceApi serviceTemplateServiceApi;
 
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -55,11 +66,12 @@ public class ServiceCreatedMDB implements MessageListener {
 					ServiceCreated.class);
 
 			ServiceDto serviceDto = new ServiceDto();
-			serviceDto.setServiceId(data.getService().getServiceId());
-			serviceDto.setCurrentUserId(Long
-					.valueOf(paramBean.getProperty("asp.api.userId", "1")));
-			serviceDto.setProviderId(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")));
+			serviceDto.setServiceId(asgIdMappingService.getNewCode(em, data
+					.getService().getServiceId(), EntityCodeEnum.SERVICE));
+			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
 
 			serviceTemplateServiceApi.create(serviceDto);
 		} catch (Exception e) {

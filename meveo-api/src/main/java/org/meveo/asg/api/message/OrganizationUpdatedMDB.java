@@ -6,12 +6,16 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.OrganizationServiceApi;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.asg.api.OrganizationUpdated;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +40,13 @@ public class OrganizationUpdatedMDB implements MessageListener {
 	@Inject
 	private OrganizationServiceApi organizationServiceApi;
 
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
+
+	@Inject
+	private AsgIdMappingService asgIdMappingService;
+
 	@Override
 	public void onMessage(Message msg) {
 		log.debug("onMessage: {}", msg.toString());
@@ -59,11 +70,16 @@ public class OrganizationUpdatedMDB implements MessageListener {
 					.getOrganization().getCountryId());
 
 			OrganizationDto organizationDto = new OrganizationDto();
-			organizationDto.setOrganizationId(data.getOrganization()
-					.getOrganizationId());
+			organizationDto.setOrganizationId(asgIdMappingService.getNewCode(
+					em, data.getOrganization().getOrganizationId(),
+					EntityCodeEnum.ORGANIZATION));
 			organizationDto.setName(data.getOrganization().getNames()
 					.getItemNameData().get(0).toString());
-			organizationDto.setParentId(data.getOrganization().getParentId());
+			if (data.getOrganization().getParentId() != null) {
+				organizationDto.setParentId(asgIdMappingService.getMeveoCode(
+						em, data.getOrganization().getParentId(),
+						EntityCodeEnum.ORGANIZATION));
+			}
 			organizationDto.setCountryCode(data.getOrganization()
 					.getCountryId());
 			organizationDto.setDefaultCurrencyCode(data.getOrganization()
