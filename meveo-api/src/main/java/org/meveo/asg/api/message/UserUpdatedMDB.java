@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
  **/
-@MessageDriven(name = "UserCreatedMDB", activationConfig = {
+@MessageDriven(name = "UserUpdatedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/createUser"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/updateUser"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
-public class UserCreatedMDB implements MessageListener {
+public class UserUpdatedMDB implements MessageListener {
 
-	private static Logger log = LoggerFactory.getLogger(UserCreatedMDB.class);
+	private static Logger log = LoggerFactory.getLogger(UserUpdatedMDB.class);
 
 	@Inject
 	@MeveoParamBean
@@ -64,12 +64,12 @@ public class UserCreatedMDB implements MessageListener {
 
 			UserCreated data = mapper.readValue(message, UserCreated.class);
 
-			log.debug("Creating user with code={}", data.getUser().getUserId());
+			log.debug("Updating user with code={}", data.getUser().getUserId());
 
 			UserDto userDto = new UserDto();
 			userDto.setUserId(asgIdMappingService.getNewCode(em, data.getUser()
 					.getUserId(), EntityCodeEnum.USER));
-			userDto.setOrganizationId(asgIdMappingService.getMeveoCode(em, data
+			userDto.setOrganizationId(asgIdMappingService.getNewCode(em, data
 					.getUser().getOrganizationId(), EntityCodeEnum.USER));
 			userDto.setName(data.getUser().getName());
 

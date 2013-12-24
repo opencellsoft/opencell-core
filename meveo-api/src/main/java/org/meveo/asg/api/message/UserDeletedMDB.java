@@ -10,8 +10,7 @@ import javax.persistence.EntityManager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.meveo.api.UserServiceApi;
-import org.meveo.api.dto.UserDto;
-import org.meveo.asg.api.UserCreated;
+import org.meveo.asg.api.UserDeleted;
 import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
@@ -24,13 +23,13 @@ import org.slf4j.LoggerFactory;
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
  **/
-@MessageDriven(name = "UserCreatedMDB", activationConfig = {
+@MessageDriven(name = "UserDeletedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/createUser"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/deleteUser"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
-public class UserCreatedMDB implements MessageListener {
+public class UserDeletedMDB implements MessageListener {
 
-	private static Logger log = LoggerFactory.getLogger(UserCreatedMDB.class);
+	private static Logger log = LoggerFactory.getLogger(UserDeletedMDB.class);
 
 	@Inject
 	@MeveoParamBean
@@ -62,23 +61,13 @@ public class UserCreatedMDB implements MessageListener {
 
 			ObjectMapper mapper = new ObjectMapper();
 
-			UserCreated data = mapper.readValue(message, UserCreated.class);
+			UserDeleted data = mapper.readValue(message, UserDeleted.class);
 
-			log.debug("Creating user with code={}", data.getUser().getUserId());
+			log.debug("Deleting user with code={}", data.getUserId());
 
-			UserDto userDto = new UserDto();
-			userDto.setUserId(asgIdMappingService.getNewCode(em, data.getUser()
-					.getUserId(), EntityCodeEnum.USER));
-			userDto.setOrganizationId(asgIdMappingService.getMeveoCode(em, data
-					.getUser().getOrganizationId(), EntityCodeEnum.USER));
-			userDto.setName(data.getUser().getName());
-
-			userDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			userDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
-			userServiceApi.create(userDto);
+			userServiceApi.remove(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")), asgIdMappingService
+					.getMeveoCode(em, data.getUserId(), EntityCodeEnum.USER));
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
