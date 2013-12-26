@@ -18,6 +18,7 @@ import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.ServiceToTerminateDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitUpdateDto;
+import org.meveo.api.dto.TerminateSubscriptionDto;
 import org.meveo.api.exception.BillingAccountDoesNotExistsException;
 import org.meveo.api.exception.CreditLimitExceededException;
 import org.meveo.api.exception.MeveoApiException;
@@ -26,6 +27,7 @@ import org.meveo.api.exception.OfferTemplateDoesNotExistsException;
 import org.meveo.api.exception.ParentSellerDoesNotExistsException;
 import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.ServiceTemplateDoesNotExistsException;
+import org.meveo.api.exception.SubscriptionDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -43,6 +45,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.rest.api.response.SubscriptionWithCreditLimitResponse;
+import org.meveo.rest.api.response.TerminateSubscriptionResponse;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
@@ -110,9 +113,8 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 		result.setAccepted(true);
 		result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 
-		if (!StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())
-				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
-						.getOrganizationId())
+		if (!StringUtils.isBlank(subscriptionWithCreditLimitDto
+				.getOrganizationId())
 				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
 						.getOfferId())
 				&& subscriptionWithCreditLimitDto.getServicesToAdd() != null
@@ -250,9 +252,6 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())) {
-				missingFields.add("userId");
-			}
 			if (StringUtils.isBlank(subscriptionWithCreditLimitDto
 					.getOrganizationId())) {
 				missingFields.add("organizationId");
@@ -691,9 +690,7 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 		result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 
 		if (!StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
-				.getUserId())
-				&& !StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
-						.getOrganizationId())) {
+				.getOrganizationId())) {
 			Provider provider = providerService
 					.findById(subscriptionWithCreditLimitUpdateDto
 							.getProviderId());
@@ -765,10 +762,6 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
-					.getUserId())) {
-				missingFields.add("userId");
-			}
 			if (StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
 					.getOrganizationId())) {
 				missingFields.add("organizationId");
@@ -1074,6 +1067,68 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 			this.serviceToAddDto = serviceToAddDto;
 		}
 
+	}
+
+	public TerminateSubscriptionResponse terminateSubscription(
+			TerminateSubscriptionDto terminateSubscriptionDto)
+			throws MissingParameterException,
+			SubscriptionDoesNotExistsException, IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+		TerminateSubscriptionResponse response = new TerminateSubscriptionResponse();
+		response.setRequestId(terminateSubscriptionDto.getRequestId());
+		response.setAccepted(true);
+		response.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
+
+		if (!StringUtils.isBlank(terminateSubscriptionDto.getSubscriptionId())
+				&& terminateSubscriptionDto.getTerminationDate() != null) {
+			Provider provider = providerService
+					.findById(terminateSubscriptionDto.getProviderId());
+			User currentUser = userService.findById(terminateSubscriptionDto
+					.getCurrentUserId());
+
+			Subscription subscription = subscriptionService.findByCode(em,
+					terminateSubscriptionDto.getSubscriptionId(), provider);
+			if (subscription == null) {
+				throw new SubscriptionDoesNotExistsException(
+						terminateSubscriptionDto.getSubscriptionId());
+			}
+			response.setSubscriptionId(terminateSubscriptionDto
+					.getSubscriptionId());
+
+			subscriptionService.terminateSubscription(subscription,
+					terminateSubscriptionDto.getTerminationDate(), true, true,
+					true, currentUser);
+		} else {
+			response.setAccepted(false);
+			response.setStatus(SubscriptionApiStatusEnum.FAIL.name());
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(terminateSubscriptionDto
+					.getOrganizationId())) {
+				missingFields.add("organizationId");
+			}
+			if (StringUtils.isBlank(terminateSubscriptionDto
+					.getSubscriptionId())) {
+				missingFields.add("subscriptionId");
+			}
+			if (terminateSubscriptionDto.getTerminationDate() == null) {
+				missingFields.add("terminationDate");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+
+		return response;
 	}
 
 }

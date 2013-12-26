@@ -1,5 +1,6 @@
 package org.meveo.asg.api.message;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,17 +12,23 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import javax.persistence.EntityManager;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.meveo.api.SubscriptionApiStatusEnum;
 import org.meveo.api.SubscriptionWithCreditLimitServiceApi;
 import org.meveo.api.dto.CreditLimitDto;
 import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
+import org.meveo.api.util.RabbitUtil;
 import org.meveo.asg.api.CreateOrganizationSubscriptionWithCreditLimitRequest;
+import org.meveo.asg.api.CreateOrganizationSubscriptionWithCreditLimitResponse;
 import org.meveo.asg.api.OrganizationCreditLimit;
 import org.meveo.asg.api.ServiceSubscriptionDate;
 import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.rest.api.response.SubscriptionWithCreditLimitResponse;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
@@ -38,6 +45,8 @@ public class SubscriptionWithCreditLimitCreatedMDB implements MessageListener {
 
 	private static Logger log = LoggerFactory
 			.getLogger(ServiceUpdatedMDB.class);
+
+	private static final String RESPONSE_EXCHANGE_NAME = "ServMan.Messages.Commands.Billing:CreateOrganizationSubscriptionWithCreditLimitResponse";
 
 	@Inject
 	@MeveoParamBean
@@ -58,20 +67,36 @@ public class SubscriptionWithCreditLimitCreatedMDB implements MessageListener {
 		log.debug("onMessage: {}", msg.toString());
 
 		if (msg instanceof TextMessage) {
-			processMessage((TextMessage) msg);
+			try {
+				processMessage((TextMessage) msg);
+			} catch (JsonGenerationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
 
-	private void processMessage(TextMessage msg) {
+	private void processMessage(TextMessage msg)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		CreateOrganizationSubscriptionWithCreditLimitResponse asgResponse = new CreateOrganizationSubscriptionWithCreditLimitResponse();
+		ObjectMapper mapper = new ObjectMapper();
+
 		try {
 			String message = msg.getText();
-			ObjectMapper mapper = new ObjectMapper();
 
 			CreateOrganizationSubscriptionWithCreditLimitRequest data = mapper
 					.readValue(
 							message,
 							CreateOrganizationSubscriptionWithCreditLimitRequest.class);
+
+			asgResponse.setRequestId(data.getRequestId());
 
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto = new SubscriptionWithCreditLimitDto();
 			subscriptionWithCreditLimitDto.setRequestId(data.getRequestId());
@@ -128,11 +153,23 @@ public class SubscriptionWithCreditLimitCreatedMDB implements MessageListener {
 				subscriptionWithCreditLimitDto.setCreditLimits(creditLimits);
 			}
 
-			subscriptionWithCreditLimitServiceApi
+			SubscriptionWithCreditLimitResponse response = subscriptionWithCreditLimitServiceApi
 					.create(subscriptionWithCreditLimitDto);
+
+			asgResponse.setAccepted(response.getAccepted());
+			asgResponse.setStatus(response.getStatus());
+			asgResponse.setSubscriptionId(response.getSubscriptionId());
 		} catch (Exception e) {
+			asgResponse.setAccepted(false);
+			asgResponse.setStatus(SubscriptionApiStatusEnum.FAIL.name());
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
+
+		RabbitUtil
+				.sendMessage(paramBean.getProperty("asg.api.response.host",
+						"192.168.0.116"), RESPONSE_EXCHANGE_NAME, paramBean
+						.getProperty("asg.api.response.queue", "Meveo"), mapper
+						.writeValueAsString(asgResponse));
 	}
 
 }

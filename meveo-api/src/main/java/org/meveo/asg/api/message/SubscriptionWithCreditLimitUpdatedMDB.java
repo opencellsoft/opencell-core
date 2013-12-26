@@ -1,5 +1,6 @@
 package org.meveo.asg.api.message;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,18 +12,24 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import javax.persistence.EntityManager;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.meveo.api.SubscriptionApiStatusEnum;
 import org.meveo.api.SubscriptionWithCreditLimitServiceApi;
 import org.meveo.api.dto.CreditLimitDto;
 import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.ServiceToTerminateDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitUpdateDto;
+import org.meveo.api.util.RabbitUtil;
 import org.meveo.asg.api.OrganizationCreditLimit;
 import org.meveo.asg.api.ServiceSubscriptionDate;
 import org.meveo.asg.api.UpdateOrganizationSubscriptionWithCreditLimitRequest;
+import org.meveo.asg.api.UpdateOrganizationSubscriptionWithCreditLimitResponse;
 import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.rest.api.response.SubscriptionWithCreditLimitResponse;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
@@ -39,6 +46,8 @@ public class SubscriptionWithCreditLimitUpdatedMDB implements MessageListener {
 
 	private static Logger log = LoggerFactory
 			.getLogger(ServiceUpdatedMDB.class);
+
+	private static final String RESPONSE_EXCHANGE_NAME = "ServMan.Messages.Commands.Billing:UpdateOrganizationSubscriptionWithCreditLimitResponse";
 
 	@Inject
 	@MeveoParamBean
@@ -59,20 +68,36 @@ public class SubscriptionWithCreditLimitUpdatedMDB implements MessageListener {
 		log.debug("onMessage: {}", msg.toString());
 
 		if (msg instanceof TextMessage) {
-			processMessage((TextMessage) msg);
+			try {
+				processMessage((TextMessage) msg);
+			} catch (JsonGenerationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
 
-	private void processMessage(TextMessage msg) {
+	private void processMessage(TextMessage msg)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		UpdateOrganizationSubscriptionWithCreditLimitResponse asgResponse = new UpdateOrganizationSubscriptionWithCreditLimitResponse();
+		ObjectMapper mapper = new ObjectMapper();
+
 		try {
 			String message = msg.getText();
-			ObjectMapper mapper = new ObjectMapper();
 
 			UpdateOrganizationSubscriptionWithCreditLimitRequest data = mapper
 					.readValue(
 							message,
 							UpdateOrganizationSubscriptionWithCreditLimitRequest.class);
+
+			asgResponse.setRequestId(data.getRequestId());
 
 			SubscriptionWithCreditLimitUpdateDto subscriptionWithCreditLimitUpdateDto = new SubscriptionWithCreditLimitUpdateDto();
 			subscriptionWithCreditLimitUpdateDto.setRequestId(data
@@ -158,11 +183,23 @@ public class SubscriptionWithCreditLimitUpdatedMDB implements MessageListener {
 						.setCreditLimits(creditLimits);
 			}
 
-			subscriptionWithCreditLimitServiceApi
+			SubscriptionWithCreditLimitResponse response = subscriptionWithCreditLimitServiceApi
 					.update(subscriptionWithCreditLimitUpdateDto);
+
+			asgResponse.setAccepted(response.getAccepted());
+			asgResponse.setStatus(response.getStatus());
+			asgResponse.setSubscriptionId(response.getSubscriptionId());
 		} catch (Exception e) {
+			asgResponse.setAccepted(false);
+			asgResponse.setStatus(SubscriptionApiStatusEnum.FAIL.name());
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
+
+		RabbitUtil
+				.sendMessage(paramBean.getProperty("asg.api.response.host",
+						"192.168.0.116"), RESPONSE_EXCHANGE_NAME, paramBean
+						.getProperty("asg.api.response.queue", "Meveo"), mapper
+						.writeValueAsString(asgResponse));
 	}
 
 }
