@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
  **/
-@XmlRootElement(name = "terminateSubscriptionResponse")
+@XmlRootElement(name = "terminateCustomerSubscriptionResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerminateSubscriptionResponse {
+public class TerminateCustomerSubscriptionResponse {
 
 	private String requestId;
 	private Boolean accepted;

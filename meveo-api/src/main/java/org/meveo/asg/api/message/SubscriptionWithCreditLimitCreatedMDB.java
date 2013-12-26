@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class SubscriptionWithCreditLimitCreatedMDB implements MessageListener {
 
 	private static Logger log = LoggerFactory
-			.getLogger(ServiceUpdatedMDB.class);
+			.getLogger(SubscriptionWithCreditLimitCreatedMDB.class);
 
 	private static final String RESPONSE_EXCHANGE_NAME = "ServMan.Messages.Commands.Billing:CreateOrganizationSubscriptionWithCreditLimitResponse";
 
@@ -99,6 +99,10 @@ public class SubscriptionWithCreditLimitCreatedMDB implements MessageListener {
 			asgResponse.setRequestId(data.getRequestId());
 
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto = new SubscriptionWithCreditLimitDto();
+			subscriptionWithCreditLimitDto.setCurrentUserId(Long
+					.valueOf(paramBean.getProperty("asp.api.userId", "1")));
+			subscriptionWithCreditLimitDto.setProviderId(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")));
 			subscriptionWithCreditLimitDto.setRequestId(data.getRequestId());
 			subscriptionWithCreditLimitDto
 					.setOrganizationId(asgIdMappingService.getMeveoCode(em,

@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.api.response.TerminateSubscriptionResponse;
+import org.meveo.rest.api.response.TerminateCustomerSubscriptionResponse;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 
@@ -32,7 +32,7 @@ public class TerminateCustomerSubscriptionWS {
 
 	@POST
 	@Path("/")
-	public TerminateSubscriptionResponse create(
+	public TerminateCustomerSubscriptionResponse create(
 			SubscriptionWithCreditLimitDto subscriptionDto) {
 		return null;
 	}

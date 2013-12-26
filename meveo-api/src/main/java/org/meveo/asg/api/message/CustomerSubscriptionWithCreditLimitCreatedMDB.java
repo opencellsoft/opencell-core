@@ -45,7 +45,7 @@ public class CustomerSubscriptionWithCreditLimitCreatedMDB implements
 		MessageListener {
 
 	private static Logger log = LoggerFactory
-			.getLogger(ServiceUpdatedMDB.class);
+			.getLogger(CustomerSubscriptionWithCreditLimitCreatedMDB.class);
 
 	private static final String RESPONSE_EXCHANGE_NAME = "ServMan.Messages.Commands.Billing:CreateUserSubscriptionWithCreditLimitResponse";
 
@@ -99,6 +99,10 @@ public class CustomerSubscriptionWithCreditLimitCreatedMDB implements
 			asgResponse.setRequestId(data.getRequestId());
 
 			SubscriptionWithCreditLimitDto subscriptionWithCreditLimitDto = new SubscriptionWithCreditLimitDto();
+			subscriptionWithCreditLimitDto.setCurrentUserId(Long
+					.valueOf(paramBean.getProperty("asp.api.userId", "1")));
+			subscriptionWithCreditLimitDto.setProviderId(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")));
 			subscriptionWithCreditLimitDto
 					.setOrganizationId(asgIdMappingService.getMeveoCode(em,
 							data.getOrganizationId(),
