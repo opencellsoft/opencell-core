@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "terminateSubscription")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerminateSubscriptionDto extends BaseDto {
+public class TerminateCustomerSubscriptionDto extends BaseDto {
 
 	private static final long serialVersionUID = -6700315102709912658L;
 

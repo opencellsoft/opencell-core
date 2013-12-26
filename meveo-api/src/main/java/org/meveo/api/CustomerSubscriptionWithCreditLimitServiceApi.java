@@ -18,7 +18,7 @@ import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.ServiceToTerminateDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitUpdateDto;
-import org.meveo.api.dto.TerminateSubscriptionDto;
+import org.meveo.api.dto.TerminateCustomerSubscriptionDto;
 import org.meveo.api.exception.BillingAccountDoesNotExistsException;
 import org.meveo.api.exception.CreditLimitExceededException;
 import org.meveo.api.exception.MeveoApiException;
@@ -45,7 +45,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.rest.api.response.SubscriptionWithCreditLimitResponse;
-import org.meveo.rest.api.response.TerminateSubscriptionResponse;
+import org.meveo.rest.api.response.TerminateCustomerSubscriptionResponse;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
@@ -1069,34 +1069,34 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 
 	}
 
-	public TerminateSubscriptionResponse terminateSubscription(
-			TerminateSubscriptionDto terminateSubscriptionDto)
+	public TerminateCustomerSubscriptionResponse terminateSubscription(
+			TerminateCustomerSubscriptionDto terminateCustomerSubscriptionDto)
 			throws MissingParameterException,
 			SubscriptionDoesNotExistsException, IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
-		TerminateSubscriptionResponse response = new TerminateSubscriptionResponse();
-		response.setRequestId(terminateSubscriptionDto.getRequestId());
+		TerminateCustomerSubscriptionResponse response = new TerminateCustomerSubscriptionResponse();
+		response.setRequestId(terminateCustomerSubscriptionDto.getRequestId());
 		response.setAccepted(true);
 		response.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 
-		if (!StringUtils.isBlank(terminateSubscriptionDto.getSubscriptionId())
-				&& terminateSubscriptionDto.getTerminationDate() != null) {
+		if (!StringUtils.isBlank(terminateCustomerSubscriptionDto.getSubscriptionId())
+				&& terminateCustomerSubscriptionDto.getTerminationDate() != null) {
 			Provider provider = providerService
-					.findById(terminateSubscriptionDto.getProviderId());
-			User currentUser = userService.findById(terminateSubscriptionDto
+					.findById(terminateCustomerSubscriptionDto.getProviderId());
+			User currentUser = userService.findById(terminateCustomerSubscriptionDto
 					.getCurrentUserId());
 
 			Subscription subscription = subscriptionService.findByCode(em,
-					terminateSubscriptionDto.getSubscriptionId(), provider);
+					terminateCustomerSubscriptionDto.getSubscriptionId(), provider);
 			if (subscription == null) {
 				throw new SubscriptionDoesNotExistsException(
-						terminateSubscriptionDto.getSubscriptionId());
+						terminateCustomerSubscriptionDto.getSubscriptionId());
 			}
-			response.setSubscriptionId(terminateSubscriptionDto
+			response.setSubscriptionId(terminateCustomerSubscriptionDto
 					.getSubscriptionId());
 
 			subscriptionService.terminateSubscription(subscription,
-					terminateSubscriptionDto.getTerminationDate(), true, true,
+					terminateCustomerSubscriptionDto.getTerminationDate(), true, true,
 					true, currentUser);
 		} else {
 			response.setAccepted(false);
@@ -1105,15 +1105,15 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(terminateSubscriptionDto
+			if (StringUtils.isBlank(terminateCustomerSubscriptionDto
 					.getOrganizationId())) {
 				missingFields.add("organizationId");
 			}
-			if (StringUtils.isBlank(terminateSubscriptionDto
+			if (StringUtils.isBlank(terminateCustomerSubscriptionDto
 					.getSubscriptionId())) {
 				missingFields.add("subscriptionId");
 			}
-			if (terminateSubscriptionDto.getTerminationDate() == null) {
+			if (terminateCustomerSubscriptionDto.getTerminationDate() == null) {
 				missingFields.add("terminationDate");
 			}
 

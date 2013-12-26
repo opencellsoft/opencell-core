@@ -8,9 +8,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.CustomerSubscriptionWithCreditLimitServiceApi;
+import org.meveo.api.dto.TerminateCustomerSubscriptionDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.api.response.TerminateSubscriptionResponse;
+import org.meveo.rest.api.response.TerminateCustomerSubscriptionResponse;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 
@@ -30,11 +33,30 @@ public class TerminateCustomerSubscriptionWS {
 	@Inject
 	private Logger log;
 
+	@Inject
+	private CustomerSubscriptionWithCreditLimitServiceApi customerSubscriptionWithCreditLimitServiceApi;
+
 	@POST
 	@Path("/")
-	public TerminateSubscriptionResponse create(
-			SubscriptionWithCreditLimitDto subscriptionDto) {
-		return null;
+	public TerminateCustomerSubscriptionResponse terminate(
+			TerminateCustomerSubscriptionDto terminateCustomerSubscriptionDto) {
+		TerminateCustomerSubscriptionResponse response = new TerminateCustomerSubscriptionResponse();
+
+		terminateCustomerSubscriptionDto.setCurrentUserId(Long
+				.valueOf(paramBean.getProperty("asp.api.userId", "1")));
+		terminateCustomerSubscriptionDto.setProviderId(Long.valueOf(paramBean
+				.getProperty("asp.api.providerId", "1")));
+
+		try {
+			response = customerSubscriptionWithCreditLimitServiceApi
+					.terminateSubscription(terminateCustomerSubscriptionDto);
+		} catch (MeveoApiException e) {
+			log.error(e.getMessage());
+		} catch (BusinessException e) {
+			e.printStackTrace();
+		}
+
+		return response;
 	}
 
 }
