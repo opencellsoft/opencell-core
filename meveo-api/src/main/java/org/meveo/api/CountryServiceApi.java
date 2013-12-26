@@ -26,7 +26,6 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
-import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -48,9 +47,6 @@ public class CountryServiceApi extends BaseApi {
 
 	@Inject
 	private CurrencyService currencyService;
-
-	@Inject
-	private LanguageService languageService;
 
 	@Inject
 	private ProviderService providerService;

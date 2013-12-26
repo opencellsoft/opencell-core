@@ -43,7 +43,6 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -101,9 +100,6 @@ public class OfferPricePlanServiceApi extends BaseApi {
 
 	@Inject
 	private ServiceUsageChargeTemplateService serviceUsageChargeTemplateService;
-
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -209,7 +205,7 @@ public class OfferPricePlanServiceApi extends BaseApi {
 					+ offerPricePlanDto.getOfferId()
 					+ "_"
 					+ offerPricePlanDto.getOrganizationId();
-			
+
 			OfferTemplate recommendedOfferTemplate = offerTemplateService
 					.findByCode(em, recommendedOfferTemplateCode, provider);
 			if (recommendedOfferTemplate != null) {

@@ -37,7 +37,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServicePricePlanDeleted", propOrder = {
     "serviceId",
-    "pricePlanId"
+    "pricePlanId",
+    "organizationId"
 })
 public class ServicePricePlanDeleted {
 
@@ -45,6 +46,8 @@ public class ServicePricePlanDeleted {
     protected String serviceId;
     @XmlElement(name = "PricePlanId", required = true)
     protected String pricePlanId;
+    @XmlElement(name = "OrganizationId", required = true)
+    protected String organizationId;
 
     /**
      * Gets the value of the serviceId property.
@@ -93,5 +96,13 @@ public class ServicePricePlanDeleted {
     public void setPricePlanId(String value) {
         this.pricePlanId = value;
     }
+
+	public String getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
+	}
 
 }
