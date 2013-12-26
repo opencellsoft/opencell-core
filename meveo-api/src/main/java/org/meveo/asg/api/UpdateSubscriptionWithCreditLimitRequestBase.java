@@ -50,7 +50,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "servicesToAdd",
     "servicesToTerminate",
     "creditLimits",
-    "subscriptionDate"
+    "subscriptionDate",
+    "offerId"
 })
 @XmlSeeAlso({
     UpdateOrganizationSubscriptionWithCreditLimitRequest.class,
@@ -73,6 +74,8 @@ public abstract class UpdateSubscriptionWithCreditLimitRequestBase {
     @XmlElement(name = "SubscriptionDate", required = true)
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar subscriptionDate;
+    @XmlElement(name = "OfferId", required = true)
+    protected String offerId;
 
     /**
      * Gets the value of the organizationId property.
@@ -241,5 +244,13 @@ public abstract class UpdateSubscriptionWithCreditLimitRequestBase {
     public void setSubscriptionDate(XMLGregorianCalendar value) {
         this.subscriptionDate = value;
     }
+
+	public String getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(String offerId) {
+		this.offerId = offerId;
+	}
 
 }

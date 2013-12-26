@@ -110,9 +110,8 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 		result.setAccepted(true);
 		result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 
-		if (!StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())
-				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
-						.getOrganizationId())
+		if (!StringUtils.isBlank(subscriptionWithCreditLimitDto
+				.getOrganizationId())
 				&& !StringUtils.isBlank(subscriptionWithCreditLimitDto
 						.getOfferId())
 				&& subscriptionWithCreditLimitDto.getServicesToAdd() != null
@@ -250,9 +249,6 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(subscriptionWithCreditLimitDto.getUserId())) {
-				missingFields.add("userId");
-			}
 			if (StringUtils.isBlank(subscriptionWithCreditLimitDto
 					.getOrganizationId())) {
 				missingFields.add("organizationId");
@@ -689,9 +685,7 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 		result.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 
 		if (!StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
-				.getUserId())
-				&& !StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
-						.getOrganizationId())) {
+				.getOrganizationId())) {
 			Provider provider = providerService
 					.findById(subscriptionWithCreditLimitUpdateDto
 							.getProviderId());
@@ -763,10 +757,6 @@ public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
-					.getUserId())) {
-				missingFields.add("userId");
-			}
 			if (StringUtils.isBlank(subscriptionWithCreditLimitUpdateDto
 					.getOrganizationId())) {
 				missingFields.add("organizationId");

@@ -17,7 +17,7 @@ public class SubscriptionWithCreditLimitDto extends BaseDto {
 
 	private static final long serialVersionUID = -6700315102709912658L;
 
-	private String userId;
+	private String userId; // unused
 	private String organizationId;
 	private String offerId;
 	private List<ServiceToAddDto> servicesToAdd;
