@@ -65,13 +65,12 @@ public class OrganizationDeletedMDB implements MessageListener {
 			OrganizationDeleted data = mapper.readValue(message,
 					OrganizationDeleted.class);
 
-			log.debug("Creating organization with code={}",
+			log.debug("Deleting organization with code={}",
 					data.getOrganizationId());
 
 			organizationServiceApi.remove(asgIdMappingService.getMeveoCode(em,
-					data.getOrganizationId(), EntityCodeEnum.ORGANIZATION),
-					Long.valueOf(paramBean.getProperty("asp.api.providerId",
-							"1")));
+					data.getOrganizationId(), EntityCodeEnum.ORG), Long
+					.valueOf(paramBean.getProperty("asp.api.providerId", "1")));
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

@@ -107,9 +107,9 @@ public class CustomerSubscriptionWithCreditLimitUpdatedMDB implements
 			subscriptionWithCreditLimitUpdateDto
 					.setOrganizationId(asgIdMappingService.getMeveoCode(em,
 							data.getOrganizationId(),
-							EntityCodeEnum.ORGANIZATION));
+							EntityCodeEnum.ORG));
 			subscriptionWithCreditLimitUpdateDto.setOfferId(asgIdMappingService
-					.getMeveoCode(em, data.getOfferId(), EntityCodeEnum.OFFER));
+					.getMeveoCode(em, data.getOfferId(), EntityCodeEnum.O));
 			if (data.getSubscriptionDate() != null) {
 				subscriptionWithCreditLimitUpdateDto.setSubscriptionDate(data
 						.getSubscriptionDate().toGregorianCalendar().getTime());
@@ -124,7 +124,7 @@ public class CustomerSubscriptionWithCreditLimitUpdatedMDB implements
 					serviceToAddDto.setServiceId(asgIdMappingService
 							.getMeveoCode(em,
 									serviceSubscriptionDate.getServiceId(),
-									EntityCodeEnum.SERVICE));
+									EntityCodeEnum.S));
 					if (serviceSubscriptionDate.getSubscriptionDate() != null) {
 						serviceToAddDto
 								.setSubscriptionDate(serviceSubscriptionDate
@@ -149,7 +149,7 @@ public class CustomerSubscriptionWithCreditLimitUpdatedMDB implements
 					serviceToTerminateDto.setServiceId(asgIdMappingService
 							.getMeveoCode(em,
 									serviceSubscriptionDate.getServiceId(),
-									EntityCodeEnum.SERVICE));
+									EntityCodeEnum.S));
 					if (serviceSubscriptionDate.getSubscriptionDate() != null) {
 						serviceToTerminateDto
 								.setTerminationDate(serviceSubscriptionDate
@@ -174,7 +174,7 @@ public class CustomerSubscriptionWithCreditLimitUpdatedMDB implements
 							.setOrganizationId(asgIdMappingService
 									.getMeveoCode(em, organizationCreditLimit
 											.getOrganizationId(),
-											EntityCodeEnum.ORGANIZATION));
+											EntityCodeEnum.ORG));
 					creditLimitDto.setCreditLimit(organizationCreditLimit
 							.getCreditLimit());
 

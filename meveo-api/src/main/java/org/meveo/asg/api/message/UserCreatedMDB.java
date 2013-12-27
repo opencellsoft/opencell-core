@@ -68,9 +68,9 @@ public class UserCreatedMDB implements MessageListener {
 
 			UserDto userDto = new UserDto();
 			userDto.setUserId(asgIdMappingService.getNewCode(em, data.getUser()
-					.getUserId(), EntityCodeEnum.USER));
+					.getUserId(), EntityCodeEnum.U));
 			userDto.setOrganizationId(asgIdMappingService.getMeveoCode(em, data
-					.getUser().getOrganizationId(), EntityCodeEnum.USER));
+					.getUser().getOrganizationId(), EntityCodeEnum.U));
 			userDto.setName(data.getUser().getName());
 
 			userDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(

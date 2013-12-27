@@ -67,7 +67,7 @@ public class UserDeletedMDB implements MessageListener {
 
 			userServiceApi.remove(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")), asgIdMappingService
-					.getMeveoCode(em, data.getUserId(), EntityCodeEnum.USER));
+					.getMeveoCode(em, data.getUserId(), EntityCodeEnum.U));
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

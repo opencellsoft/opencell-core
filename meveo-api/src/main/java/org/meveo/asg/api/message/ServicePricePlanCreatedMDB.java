@@ -85,11 +85,11 @@ public class ServicePricePlanCreatedMDB implements MessageListener {
 			if (data.getServiceId() != null && data.getPricePlan() != null) {
 				servicePricePlanDto.setServiceId(asgIdMappingService
 						.getNewCode(em, data.getServiceId(),
-								EntityCodeEnum.OFFER_PRICE_PLAN));
+								EntityCodeEnum.OPF));
 				servicePricePlanDto.setOrganizationId(asgIdMappingService
 						.getMeveoCode(em, data.getPricePlan()
 								.getOrganizationId(),
-								EntityCodeEnum.ORGANIZATION));
+								EntityCodeEnum.ORG));
 
 				if (data.getPricePlan().getRecurringCharge() != null
 						&& data.getPricePlan().getRecurringCharge()

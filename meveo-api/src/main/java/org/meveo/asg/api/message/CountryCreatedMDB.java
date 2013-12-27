@@ -72,7 +72,7 @@ public class CountryCreatedMDB implements MessageListener {
 
 			CountryDto countryDto = new CountryDto();
 			countryDto.setCountryCode(asgIdMappingService.getNewCode(em, data
-					.getCountry().getCountryId(), EntityCodeEnum.COUNTRY));
+					.getCountry().getCountryId(), EntityCodeEnum.C));
 			countryDto.setName(data.getCountry().getName());
 			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
 			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(

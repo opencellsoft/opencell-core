@@ -65,10 +65,10 @@ public class ServicePricePlanDeletedMDB implements MessageListener {
 					ServicePricePlanDeleted.class);
 
 			servicePricePlanServiceApi.remove(asgIdMappingService.getMeveoCode(
-					em, data.getServiceId(), EntityCodeEnum.OFFER_PRICE_PLAN),
+					em, data.getServiceId(), EntityCodeEnum.OPF),
 					asgIdMappingService.getMeveoCode(em,
 							data.getOrganizationId(),
-							EntityCodeEnum.ORGANIZATION), Long
+							EntityCodeEnum.ORG), Long
 							.parseLong(paramBean.getProperty(
 									"asp.api.providerId", "1")), Long
 							.parseLong(paramBean.getProperty("asp.api.userId",

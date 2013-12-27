@@ -67,7 +67,7 @@ public class ServiceUpdatedMDB implements MessageListener {
 
 			ServiceDto serviceDto = new ServiceDto();
 			serviceDto.setServiceId(asgIdMappingService.getMeveoCode(em, data
-					.getService().getServiceId(), EntityCodeEnum.SERVICE));
+					.getService().getServiceId(), EntityCodeEnum.S));
 			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
 			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(

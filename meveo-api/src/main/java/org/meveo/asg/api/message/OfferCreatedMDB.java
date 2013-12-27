@@ -69,7 +69,7 @@ public class OfferCreatedMDB implements MessageListener {
 
 			OfferDto offerDto = new OfferDto();
 			offerDto.setOfferId(asgIdMappingService.getNewCode(em, data
-					.getOffer().getOfferId(), EntityCodeEnum.OFFER));
+					.getOffer().getOfferId(), EntityCodeEnum.O));
 
 			if (data.getOffer().getServices() != null
 					&& data.getOffer().getServices().getServices() != null

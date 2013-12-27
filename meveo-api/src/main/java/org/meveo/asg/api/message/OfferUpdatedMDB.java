@@ -65,7 +65,7 @@ public class OfferUpdatedMDB implements MessageListener {
 
 			OfferDto offerDto = new OfferDto();
 			offerDto.setOfferId(asgIdMappingService.getMeveoCode(em, data
-					.getOffer().getOfferId(), EntityCodeEnum.OFFER));
+					.getOffer().getOfferId(), EntityCodeEnum.O));
 			offerDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
 			offerDto.setProviderId(Long.valueOf(paramBean.getProperty(

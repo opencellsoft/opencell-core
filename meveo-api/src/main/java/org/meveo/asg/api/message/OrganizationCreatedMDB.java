@@ -15,6 +15,7 @@ import org.meveo.asg.api.OrganizationCreated;
 import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.asg.api.service.AsgIdMappingService;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
@@ -66,39 +67,43 @@ public class OrganizationCreatedMDB implements MessageListener {
 			OrganizationCreated data = mapper.readValue(message,
 					OrganizationCreated.class);
 
-			log.debug("Creating organization with code={}", data
-					.getOrganization().getCountryId());
+			if (data.getOrganization() != null) {
+				log.debug("Creating organization with code={}", data
+						.getOrganization().getOrganizationId());
 
-			OrganizationDto organizationDto = new OrganizationDto();
-			organizationDto.setOrganizationId(asgIdMappingService.getNewCode(
-					em, data.getOrganization().getOrganizationId(),
-					EntityCodeEnum.ORGANIZATION));
-			try {
-				organizationDto.setName(data.getOrganization().getNames()
-						.getItemNameData().get(0).toString());
-			} catch (NullPointerException e) {
-				log.warn("Item name is null.");
-			} catch (IndexOutOfBoundsException e) {
-				log.warn("Item name is empty.");
+				OrganizationDto organizationDto = new OrganizationDto();
+				organizationDto.setOrganizationId(asgIdMappingService
+						.getNewCode(em, data.getOrganization()
+								.getOrganizationId(), EntityCodeEnum.ORG));
+				try {
+					organizationDto.setName(data.getOrganization().getNames()
+							.getItemNameData().get(0).toString());
+				} catch (NullPointerException e) {
+					log.warn("Item name is null.");
+				} catch (IndexOutOfBoundsException e) {
+					log.warn("Item name is empty.");
+				}
+				if (data.getOrganization().getParentId() != null
+						&& !StringUtils.isBlank(data.getOrganization()
+								.getParentId())) {
+					organizationDto.setParentId(asgIdMappingService
+							.getMeveoCode(em, data.getOrganization()
+									.getParentId(), EntityCodeEnum.ORG));
+				}
+				organizationDto.setCountryCode(data.getOrganization()
+						.getCountryId());
+				organizationDto.setDefaultCurrencyCode(data.getOrganization()
+						.getDefaultCurrencyCode());
+				organizationDto.setLanguageCode(data.getOrganization()
+						.getLanguageCode());
+
+				organizationDto.setCurrentUserId(Long.valueOf(paramBean
+						.getProperty("asp.api.userId", "1")));
+				organizationDto.setProviderId(Long.valueOf(paramBean
+						.getProperty("asp.api.providerId", "1")));
+
+				organizationServiceApi.create(organizationDto);
 			}
-			if (data.getOrganization().getParentId() != null) {
-				organizationDto.setParentId(asgIdMappingService.getMeveoCode(
-						em, data.getOrganization().getParentId(),
-						EntityCodeEnum.ORGANIZATION));
-			}
-			organizationDto.setCountryCode(data.getOrganization()
-					.getCountryId());
-			organizationDto.setDefaultCurrencyCode(data.getOrganization()
-					.getDefaultCurrencyCode());
-			organizationDto.setLanguageCode(data.getOrganization()
-					.getLanguageCode());
-
-			organizationDto.setCurrentUserId(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")));
-			organizationDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
-			organizationServiceApi.create(organizationDto);
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

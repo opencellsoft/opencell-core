@@ -86,11 +86,11 @@ public class OfferPricePlanUpdatedMDB implements MessageListener {
 				offerPricePlanDto
 						.setOfferId(asgIdMappingService.getMeveoCode(em,
 								data.getOfferId(),
-								EntityCodeEnum.OFFER_PRICE_PLAN));
+								EntityCodeEnum.OPF));
 				offerPricePlanDto.setOrganizationId(asgIdMappingService
 						.getMeveoCode(em, data.getPricePlan()
 								.getOrganizationId(),
-								EntityCodeEnum.ORGANIZATION));
+								EntityCodeEnum.ORG));
 
 				if (data.getPricePlan().getRecurringCharge() != null
 						&& data.getPricePlan().getRecurringCharge()

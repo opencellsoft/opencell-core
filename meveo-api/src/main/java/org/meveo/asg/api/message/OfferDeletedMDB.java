@@ -65,7 +65,7 @@ public class OfferDeletedMDB implements MessageListener {
 			offerTemplateServiceApi.remove(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")), Long.valueOf(paramBean
 					.getProperty("asp.api.userId", "1")), asgIdMappingService
-					.getMeveoCode(em, data.getOfferId(), EntityCodeEnum.OFFER));
+					.getMeveoCode(em, data.getOfferId(), EntityCodeEnum.O));
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

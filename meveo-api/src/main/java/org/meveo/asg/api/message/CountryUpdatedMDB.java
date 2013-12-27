@@ -66,12 +66,12 @@ public class CountryUpdatedMDB implements MessageListener {
 			CountryUpdated data = mapper.readValue(message,
 					CountryUpdated.class);
 
-			log.debug("Creating country with code={}", data.getCountry()
+			log.debug("Updating country with code={}", data.getCountry()
 					.getCountryId());
 
 			CountryDto countryDto = new CountryDto();
 			countryDto.setCountryCode(asgIdMappingService.getMeveoCode(em, data
-					.getCountry().getCountryId(), EntityCodeEnum.COUNTRY));
+					.getCountry().getCountryId(), EntityCodeEnum.C));
 			countryDto.setName(data.getCountry().getName());
 			countryDto.setCurrencyCode(data.getCountry().getCurrencyCode());
 			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(

@@ -66,30 +66,41 @@ public class OrganizationUpdatedMDB implements MessageListener {
 			OrganizationUpdated data = mapper.readValue(message,
 					OrganizationUpdated.class);
 
-			log.debug("Creating organization with code={}", data
-					.getOrganization().getCountryId());
+			if (data.getOrganization() != null) {
+				log.debug("Updating organization with code={}", data
+						.getOrganization().getCountryId());
 
-			OrganizationDto organizationDto = new OrganizationDto();
-			organizationDto.setOrganizationId(asgIdMappingService.getNewCode(
-					em, data.getOrganization().getOrganizationId(),
-					EntityCodeEnum.ORGANIZATION));
-			organizationDto.setName(data.getOrganization().getNames()
-					.getItemNameData().get(0).toString());
-			if (data.getOrganization().getParentId() != null) {
-				organizationDto.setParentId(asgIdMappingService.getMeveoCode(
-						em, data.getOrganization().getParentId(),
-						EntityCodeEnum.ORGANIZATION));
+				OrganizationDto organizationDto = new OrganizationDto();
+				organizationDto.setOrganizationId(asgIdMappingService
+						.getMeveoCode(em, data.getOrganization()
+								.getOrganizationId(), EntityCodeEnum.ORG));
+				try {
+					organizationDto.setName(data.getOrganization().getNames()
+							.getItemNameData().get(0).toString());
+				} catch (NullPointerException e) {
+					log.warn("Item name is null.");
+				} catch (IndexOutOfBoundsException e) {
+					log.warn("Item name is empty.");
+				}
+				if (data.getOrganization().getParentId() != null) {
+					organizationDto.setParentId(asgIdMappingService
+							.getMeveoCode(em, data.getOrganization()
+									.getParentId(), EntityCodeEnum.ORG));
+				}
+				organizationDto.setCountryCode(data.getOrganization()
+						.getCountryId());
+				organizationDto.setDefaultCurrencyCode(data.getOrganization()
+						.getDefaultCurrencyCode());
+				organizationDto.setLanguageCode(data.getOrganization()
+						.getLanguageCode());
+
+				organizationDto.setCurrentUserId(Long.valueOf(paramBean
+						.getProperty("asp.api.userId", "1")));
+				organizationDto.setProviderId(Long.valueOf(paramBean
+						.getProperty("asp.api.providerId", "1")));
+
+				organizationServiceApi.update(organizationDto);
 			}
-			organizationDto.setCountryCode(data.getOrganization()
-					.getCountryId());
-			organizationDto.setDefaultCurrencyCode(data.getOrganization()
-					.getDefaultCurrencyCode());
-			organizationDto.setCurrentUserId(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")));
-			organizationDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
-			organizationServiceApi.create(organizationDto);
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
