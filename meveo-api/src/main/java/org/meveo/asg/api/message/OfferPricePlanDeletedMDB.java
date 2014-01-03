@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  **/
 @MessageDriven(name = "OfferPricePlanDeletedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/deleteOfferPriceplan"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/deleteOfferPricePlan"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
 public class OfferPricePlanDeletedMDB implements MessageListener {
 

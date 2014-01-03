@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  **/
 @MessageDriven(name = "OfferPricePlanCreatedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/createOfferPriceplan"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/createOfferPricePlan"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
 public class OfferPricePlanCreatedMDB implements MessageListener {
 
@@ -96,6 +96,19 @@ public class OfferPricePlanCreatedMDB implements MessageListener {
 						&& data.getPricePlan().getRecurringCharge()
 								.getSubscriptionAgeRangeCharges()
 								.getSubscriptionAgeRangeChargeData() != null) {
+					
+					offerPricePlanDto.setSubscriptionProrata(data
+							.getPricePlan().getRecurringCharge()
+							.isSubscriptionProrrata());
+					offerPricePlanDto.setTerminationProrata(data
+							.getPricePlan().getRecurringCharge()
+							.isTerminationProrrata());
+					offerPricePlanDto.setApplyInAdvance(data.getPricePlan()
+							.getRecurringCharge().isApplyInAdvance());
+					offerPricePlanDto.setBillingPeriod(Integer.valueOf(data
+							.getPricePlan().getRecurringCharge()
+							.getBillingPeriod()));
+					
 					List<RecurringChargeDto> recurringCharges = new ArrayList<RecurringChargeDto>();
 					for (SubscriptionAgeRangeChargeData subscriptionAgeRangeChargeData : data
 							.getPricePlan().getRecurringCharge()

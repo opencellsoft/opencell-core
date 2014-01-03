@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  **/
 @MessageDriven(name = "ServicePricePlanUpdatedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/updateServicePriceplan"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/updateServicePricePlan"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
 public class ServicePricePlanUpdatedMDB implements MessageListener {
 
@@ -83,6 +83,7 @@ public class ServicePricePlanUpdatedMDB implements MessageListener {
 					.getProperty("asp.api.providerId", "1")));
 
 			if (data.getServiceId() != null && data.getPricePlan() != null) {
+				servicePricePlanDto.setTaxId(data.getPricePlan().getTaxId());
 				servicePricePlanDto.setServiceId(asgIdMappingService
 						.getMeveoCode(em, data.getServiceId(),
 								EntityCodeEnum.OPF));
@@ -97,6 +98,19 @@ public class ServicePricePlanUpdatedMDB implements MessageListener {
 						&& data.getPricePlan().getRecurringCharge()
 								.getSubscriptionAgeRangeCharges()
 								.getSubscriptionAgeRangeChargeData() != null) {
+					
+					servicePricePlanDto.setSubscriptionProrata(data
+							.getPricePlan().getRecurringCharge()
+							.isSubscriptionProrrata());
+					servicePricePlanDto.setTerminationProrata(data
+							.getPricePlan().getRecurringCharge()
+							.isTerminationProrrata());
+					servicePricePlanDto.setApplyInAdvance(data.getPricePlan()
+							.getRecurringCharge().isApplyInAdvance());
+					servicePricePlanDto.setBillingPeriod(Integer.valueOf(data
+							.getPricePlan().getRecurringCharge()
+							.getBillingPeriod()));
+					
 					List<RecurringChargeDto> recurringCharges = new ArrayList<RecurringChargeDto>();
 					for (SubscriptionAgeRangeChargeData subscriptionAgeRangeChargeData : data
 							.getPricePlan().getRecurringCharge()

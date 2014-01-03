@@ -65,15 +65,20 @@ public class ServiceUpdatedMDB implements MessageListener {
 			ServiceCreated data = mapper.readValue(message,
 					ServiceCreated.class);
 
-			ServiceDto serviceDto = new ServiceDto();
-			serviceDto.setServiceId(asgIdMappingService.getMeveoCode(em, data
-					.getService().getServiceId(), EntityCodeEnum.S));
-			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
+			if (data.getService() != null) {
+				log.debug("Updating service with code={}", data.getService()
+						.getServiceId());
 
-			serviceTemplateServiceApi.update(serviceDto);
+				ServiceDto serviceDto = new ServiceDto();
+				serviceDto.setServiceId(asgIdMappingService.getMeveoCode(em,
+						data.getService().getServiceId(), EntityCodeEnum.S));
+				serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+						"asp.api.userId", "1")));
+				serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+						"asp.api.providerId", "1")));
+
+				serviceTemplateServiceApi.update(serviceDto);
+			}
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

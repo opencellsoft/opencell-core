@@ -65,15 +65,20 @@ public class ServiceCreatedMDB implements MessageListener {
 			ServiceCreated data = mapper.readValue(message,
 					ServiceCreated.class);
 
-			ServiceDto serviceDto = new ServiceDto();
-			serviceDto.setServiceId(asgIdMappingService.getNewCode(em, data
-					.getService().getServiceId(), EntityCodeEnum.S));
-			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
+			if (data.getService() != null) {
+				log.debug("Creating service with code={}", data.getService()
+						.getServiceId());
 
-			serviceTemplateServiceApi.create(serviceDto);
+				ServiceDto serviceDto = new ServiceDto();
+				serviceDto.setServiceId(asgIdMappingService.getNewCode(em, data
+						.getService().getServiceId(), EntityCodeEnum.S));
+				serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+						"asp.api.userId", "1")));
+				serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+						"asp.api.providerId", "1")));
+
+				serviceTemplateServiceApi.create(serviceDto);
+			}
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}

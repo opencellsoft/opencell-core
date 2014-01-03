@@ -64,13 +64,16 @@ public class ServiceDeletedMDB implements MessageListener {
 			ServiceDeleted data = mapper.readValue(message,
 					ServiceDeleted.class);
 
-			serviceTemplateServiceApi.remove(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")),
-					asgIdMappingService.getMeveoCode(em, data.getServiceId(),
-							EntityCodeEnum.S));
+			if (data.getServiceId() != null) {
+				log.debug("Updating service with code={}", data.getServiceId());
+
+				serviceTemplateServiceApi.remove(Long.valueOf(paramBean
+						.getProperty("asp.api.providerId", "1")),
+						asgIdMappingService.getMeveoCode(em,
+								data.getServiceId(), EntityCodeEnum.S));
+			}
 		} catch (Exception e) {
 			log.error("Error processing ASG message: {}", e.getMessage());
 		}
 	}
-
 }

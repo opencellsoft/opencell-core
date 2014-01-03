@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  **/
 @MessageDriven(name = "OfferPricePlanUpdatedMDB", activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/updateOfferPriceplan"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/updateOfferPricePlan"),
 		@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
 public class OfferPricePlanUpdatedMDB implements MessageListener {
 
@@ -83,14 +83,11 @@ public class OfferPricePlanUpdatedMDB implements MessageListener {
 					"asp.api.providerId", "1")));
 
 			if (data.getOfferId() != null && data.getPricePlan() != null) {
-				offerPricePlanDto
-						.setOfferId(asgIdMappingService.getMeveoCode(em,
-								data.getOfferId(),
-								EntityCodeEnum.OPF));
+				offerPricePlanDto.setOfferId(asgIdMappingService.getMeveoCode(
+						em, data.getOfferId(), EntityCodeEnum.OPF));
 				offerPricePlanDto.setOrganizationId(asgIdMappingService
 						.getMeveoCode(em, data.getPricePlan()
-								.getOrganizationId(),
-								EntityCodeEnum.ORG));
+								.getOrganizationId(), EntityCodeEnum.ORG));
 
 				if (data.getPricePlan().getRecurringCharge() != null
 						&& data.getPricePlan().getRecurringCharge()
@@ -98,6 +95,18 @@ public class OfferPricePlanUpdatedMDB implements MessageListener {
 						&& data.getPricePlan().getRecurringCharge()
 								.getSubscriptionAgeRangeCharges()
 								.getSubscriptionAgeRangeChargeData() != null) {
+
+					offerPricePlanDto.setSubscriptionProrata(data
+							.getPricePlan().getRecurringCharge()
+							.isSubscriptionProrrata());
+					offerPricePlanDto.setTerminationProrata(data.getPricePlan()
+							.getRecurringCharge().isTerminationProrrata());
+					offerPricePlanDto.setApplyInAdvance(data.getPricePlan()
+							.getRecurringCharge().isApplyInAdvance());
+					offerPricePlanDto.setBillingPeriod(Integer.valueOf(data
+							.getPricePlan().getRecurringCharge()
+							.getBillingPeriod()));
+
 					List<RecurringChargeDto> recurringCharges = new ArrayList<RecurringChargeDto>();
 					for (SubscriptionAgeRangeChargeData subscriptionAgeRangeChargeData : data
 							.getPricePlan().getRecurringCharge()

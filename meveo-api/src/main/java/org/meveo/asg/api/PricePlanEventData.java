@@ -45,7 +45,8 @@ import javax.xml.bind.annotation.XmlType;
     "recurringCharge",
     "usageCharge",
     "subscriptionFee",
-    "terminationFee"
+    "terminationFee",
+    "taxId"
 })
 public class PricePlanEventData {
 
@@ -61,6 +62,8 @@ public class PricePlanEventData {
     protected SubscriptionChargeData subscriptionFee;
     @XmlElement(name = "TerminationFee")
     protected TerminationChargeData terminationFee;
+    @XmlElement(name = "TaxId", required = true)
+    protected String taxId;
 
     /**
      * Gets the value of the pricePlanId property.
@@ -205,5 +208,13 @@ public class PricePlanEventData {
     public void setTerminationFee(TerminationChargeData value) {
         this.terminationFee = value;
     }
+
+	public String getTaxId() {
+		return taxId;
+	}
+
+	public void setTaxId(String taxId) {
+		this.taxId = taxId;
+	}
 
 }
