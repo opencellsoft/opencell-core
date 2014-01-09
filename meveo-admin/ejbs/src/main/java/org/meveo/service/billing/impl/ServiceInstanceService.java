@@ -108,7 +108,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubscription : aucun service n'a ete trouve");
 		} catch (Exception e) {
-			log.error("findByCodeAndSubscription error=#0 ", e.getMessage());
+			log.error("findByCodeAndSubscription error={} ", e.getMessage());
 		}
 
 		return chargeInstance;
@@ -298,7 +298,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		// apply subscription charges
 		log.debug(
-				"serviceActivation:serviceInstance.getSubscriptionChargeInstances.size=#0",
+				"serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}",
 				serviceInstance.getSubscriptionChargeInstances().size());
 		for (OneShotChargeInstance oneShotChargeInstance : serviceInstance
 				.getSubscriptionChargeInstances()) {
@@ -483,14 +483,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 		log.info(
-				"updateTerminationMode terminationDate=#0,serviceInstanceId=#1",
+				"updateTerminationMode terminationDate={},serviceInstanceId={}",
 				terminationDate, serviceInstance.getId());
 
 		SubscriptionTerminationReason newReason = serviceInstance
 				.getSubscriptionTerminationReason();
 
 		log.info(
-				"updateTerminationMode terminationDate=#0,serviceInstanceId=#1,newApplyReimbursment=#2,newApplyAgreement=#3,newApplyTerminationCharges=#4",
+				"updateTerminationMode terminationDate={},serviceInstanceId={},newApplyReimbursment=#2,newApplyAgreement=#3,newApplyTerminationCharges=#4",
 				terminationDate, serviceInstance.getId(),
 				newReason.isApplyReimbursment(), newReason.isApplyAgreement(),
 				newReason.isApplyTerminationCharges());

@@ -54,7 +54,7 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 			return (TradingCountry) query.getSingleResult();
 		} catch (NoResultException e) {
 			log.warn(
-					"findByTradingCountryCode billing cycle not found : tradingCountryCode=#0,provider=#1",
+					"findByTradingCountryCode billing cycle not found : tradingCountryCode={},provider={}",
 					tradingCountryCode, provider != null ? provider.getCode()
 							: null);
 			return null;
@@ -75,7 +75,7 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 			return (TradingCountry) query.getSingleResult();
 		} catch (NoResultException e) {
 			log.warn(
-					"findByTradingCountryCode billing cycle not found : tradingCountryCode=#0,provider=#1",
+					"findByTradingCountryCode billing cycle not found : tradingCountryCode={},provider={}",
 					tradingCountryCode, provider != null ? provider.getCode()
 							: null);
 			return null;

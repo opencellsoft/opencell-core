@@ -47,7 +47,7 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
 			String tradingLanguageCode, Provider provider) {
 		try {
 			log.debug(
-					"findByTradingLanguageCode tradingLanguageCode=#0,provider=#1",
+					"findByTradingLanguageCode tradingLanguageCode={},provider={}",
 					tradingLanguageCode, provider != null ? provider.getCode()
 							: null);
 			Query query = em

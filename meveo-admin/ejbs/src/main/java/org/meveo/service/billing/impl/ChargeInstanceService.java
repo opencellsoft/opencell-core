@@ -74,7 +74,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndService : aucune charge n'a ete trouvee");
 		} catch (Exception e) {
-			log.error("findByCodeAndService error=#0 ", e.getMessage());
+			log.error("findByCodeAndService error={} ", e.getMessage());
 		}
 		return chargeInstance;
 	}
@@ -141,7 +141,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 				.findById(recurringChargeInstanId, true);
 
 		log.debug(
-				"recurringChargeDeactivation : recurringChargeInstanceId=#0,ChargeApplications size=#1",
+				"recurringChargeDeactivation : recurringChargeInstanceId={},ChargeApplications size={}",
 				recurringChargeInstance.getId(), recurringChargeInstance
 						.getWalletOperations().size());
 

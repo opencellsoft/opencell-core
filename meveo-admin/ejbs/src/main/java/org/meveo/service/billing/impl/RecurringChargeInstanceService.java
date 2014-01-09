@@ -49,7 +49,7 @@ public class RecurringChargeInstanceService extends
 			InstanceStatusEnum status, Date maxChargeDate) {
 		List<RecurringChargeInstance> recurringChargeInstances = null;
 		try {
-			log.debug("start of find #0 by status (status=#1)) ..",
+			log.debug("start of find #0 by status (status={})) ..",
 					"RecurringChargeInstance", status);
 			QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class,
 					"c");
@@ -67,7 +67,7 @@ public class RecurringChargeInstanceService extends
 									.size() : 0 });
 
 		} catch (Exception e) {
-			log.error("findByStatus error=#0 ", e.getMessage());
+			log.error("findByStatus error={} ", e.getMessage());
 		}
 		return recurringChargeInstances;
 	}

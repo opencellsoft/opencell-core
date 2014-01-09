@@ -107,7 +107,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			q.setParameter("billingAccount", billingAccount);
 			q.setParameter("invoiceType", invoiceType);
 			List<Invoice> invoices = q.getResultList();
-			log.info("getInvoices: founds #0 invoices with BA_code=#1 and type=#2 ",
+			log.info("getInvoices: founds #0 invoices with BA_code={} and type=#2 ",
 					invoices.size(), billingAccount.getCode(), invoiceType);
 			return invoices;
 		} catch (Exception e) {

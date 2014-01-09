@@ -41,7 +41,7 @@ public class BillingCycleService extends PersistenceService<BillingCycle> {
 	 */
 	public BillingCycle findByBillingCycleCode(String billingCycleCode, Provider provider) {
 		try {
-			log.info("findByBillingCycleCode billingCycleCode=#0,provider=#1", billingCycleCode,
+			log.info("findByBillingCycleCode billingCycleCode={},provider={}", billingCycleCode,
 					provider != null ? provider.getCode() : null);
 			Query query = getEntityManager()
 					.createQuery(
@@ -51,7 +51,7 @@ public class BillingCycleService extends PersistenceService<BillingCycle> {
 			return (BillingCycle) query.getSingleResult();
 		} catch (NoResultException e) {
 			log.warn(
-					"findByBillingCycleCode billing cycle not found : billingCycleCode=#0,provider=#1",
+					"findByBillingCycleCode billing cycle not found : billingCycleCode={},provider={}",
 					billingCycleCode, provider != null ? provider.getCode() : null);
 			return null;
 		}

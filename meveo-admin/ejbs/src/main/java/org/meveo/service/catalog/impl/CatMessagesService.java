@@ -56,7 +56,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 
 	@SuppressWarnings("unchecked")
 	public List<CatMessages> getCatMessagesList(String messageCode) {
-		log.info("getCatMessagesList messageCode=#0 ", messageCode);
+		log.info("getCatMessagesList messageCode={} ", messageCode);
 		if (StringUtils.isBlank(messageCode)) {
 			return new ArrayList<CatMessages>();
 		}
