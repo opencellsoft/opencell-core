@@ -16,7 +16,7 @@ import org.meveo.model.IEntity;
 //TODO: move this to ASG project
 @Entity
 @Table(name = "ASG_ID_MAPPING")
-@SequenceGenerator(name = "ASG_ID_GEN", sequenceName = "CAT_CALENDAR_SEQ")
+@SequenceGenerator(name = "ASG_ID_GEN", sequenceName = "ASG_ID_MAPPING_SEQ")
 public class AsgIdMapping implements IEntity {
 
 	@Id
