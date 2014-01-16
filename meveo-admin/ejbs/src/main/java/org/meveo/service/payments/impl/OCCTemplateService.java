@@ -19,7 +19,9 @@ import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -31,6 +33,8 @@ import org.meveo.service.base.PersistenceService;
 @LocalBean
 public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
+	private static final String DUNNING_OCC_CODE = "bayad.dunning.occCode";
+	
 	public OCCTemplate findByCode(String code, String providerCode) {
 		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
 		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
@@ -55,5 +59,11 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 				new Object[] { "OCCTemplate", providerCode,
 						occTemplates == null ? "null" : occTemplates.size() });
 		return occTemplates;
+	}
+	
+	public OCCTemplate getDunningOCCTemplate(String providerCode) throws Exception {
+		return (OCCTemplate) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
+				.setParameter("code", ParamBean.getInstance().getProperty(DUNNING_OCC_CODE)).setParameter("providerCode", providerCode).getSingleResult();
+
 	}
 }

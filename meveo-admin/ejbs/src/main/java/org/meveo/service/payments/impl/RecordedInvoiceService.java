@@ -15,6 +15,9 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -22,6 +25,7 @@ import javax.persistence.EntityManager;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
@@ -94,5 +98,20 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		} catch (Exception e) {
 		}
 		return recordedInvoice != null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RecordedInvoice> getRecordedInvoices(CustomerAccount customerAccount, MatchingStatusEnum o) {
+		List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
+		try {
+			invoices = (List<RecordedInvoice>) getEntityManager()
+					.createQuery(
+							"from " + RecordedInvoice.class.getSimpleName()
+									+ " where customerAccount.id=:customerAccountId and matchingStatus=:matchingStatus order by dueDate")
+					.setParameter("customerAccountId", customerAccount.getId()).setParameter("matchingStatus", MatchingStatusEnum.O).getResultList();
+		} catch (Exception e) {
+
+		}
+		return invoices;
 	}
 }

@@ -629,4 +629,15 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		}
 		return true;
 	}
+	
+	  @SuppressWarnings("unchecked")
+	    public List<CustomerAccount> getCustomerAccounts(CreditCategoryEnum creditCategory, PaymentMethodEnum paymentMethod, String providerCode) {
+	       List<CustomerAccount> customerAccounts = getEntityManager()
+	                .createQuery(
+	                        "from " + CustomerAccount.class.getSimpleName()
+	                                + " where paymentMethod=:paymentMethod and creditCategory=:creditCategory and status=:status and provider.code=:providerCode ")
+	                .setParameter("paymentMethod", paymentMethod).setParameter("creditCategory", creditCategory)
+	                .setParameter("status", CustomerAccountStatusEnum.ACTIVE).setParameter("providerCode", providerCode).getResultList();
+	        return customerAccounts;
+	    }
 }
