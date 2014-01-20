@@ -20,6 +20,7 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -69,6 +70,21 @@ public class OneShotChargeTemplateService extends
 		query.setParameter("code", code);
 		query.setParameter("provider", provider);
 		query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates(
+			Provider provider) {
+		QueryBuilder qb = new QueryBuilder(OneShotChargeTemplate.class, "t");
+		qb.addCriterionEntity("provider", provider);
+
+		try {
+			return (List<OneShotChargeTemplate>) qb
+					.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
 	}
 
 }
