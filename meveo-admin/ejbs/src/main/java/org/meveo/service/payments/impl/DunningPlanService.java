@@ -15,10 +15,13 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.DunningPlan;
+import org.meveo.model.payments.DunningPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -26,5 +29,11 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless @LocalBean
 public class DunningPlanService extends PersistenceService<DunningPlan> {
+	
+	 @SuppressWarnings("unchecked")
+	    public List<DunningPlan> getDunningPlans() {
+	        return (List<DunningPlan>) getEntityManager().createQuery("from " + DunningPlan.class.getSimpleName() + " where status=:status")
+	                .setParameter("status", DunningPlanStatusEnum.ACTIVE).getResultList();
+	    }
 
 }

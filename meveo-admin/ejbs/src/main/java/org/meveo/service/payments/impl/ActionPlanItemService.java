@@ -15,17 +15,35 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.ActionPlanItem;
+import org.meveo.model.payments.DunningPlan;
+import org.meveo.model.payments.DunningPlanTransition;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author Tyshan(tyshan@manaty.net)
- */
+
 
 @Stateless @LocalBean
 public class ActionPlanItemService extends PersistenceService<ActionPlanItem> {
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<ActionPlanItem> getActionPlanItems(DunningPlan dunningPlan, DunningPlanTransition dunningPlanTransition) {
+		List<ActionPlanItem> actionPlanItems = new ArrayList<ActionPlanItem>();
+		try {
+			actionPlanItems = (List<ActionPlanItem>) getEntityManager()
+					.createQuery(
+							"from " + ActionPlanItem.class.getSimpleName()
+									+ " where dunningPlan.id=:dunningPlanId and dunningLevel=:dunningLevel order by itemOrder")
+					.setParameter("dunningPlanId", dunningPlan.getId()).setParameter("dunningLevel", dunningPlanTransition.getDunningLevelTo()).getResultList();
+		} catch (Exception e) {
+		}
+		return actionPlanItems;
+	}
 
 }

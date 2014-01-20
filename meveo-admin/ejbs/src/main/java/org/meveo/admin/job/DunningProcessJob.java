@@ -1,0 +1,168 @@
+package org.meveo.admin.job;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerHandle;
+import javax.ejb.TimerService;
+import javax.inject.Inject;
+
+import org.meveo.admin.dunning.UpgradeDunning;
+import org.meveo.admin.dunning.UpgradeDunningReturn;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResult;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.TimerInfo;
+import org.meveo.model.payments.ActionDunning;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.DunningPlan;
+import org.meveo.model.payments.OtherCreditAndCharge;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.DunningPlanService;
+import org.meveo.services.job.Job;
+import org.meveo.services.job.JobExecutionService;
+import org.meveo.services.job.TimerEntityService;
+
+@Startup
+@Singleton
+public class DunningProcessJob implements Job {
+
+	@Resource
+	TimerService timerService;
+
+	@Inject
+	private ProviderService providerService;
+	
+	@Inject
+	JobExecutionService jobExecutionService;
+
+
+	@Inject
+	private DunningPlanService dunningPlanService;
+	
+	@Inject
+	private CustomerAccountService customerAccountService;
+	
+	
+	@Inject
+	UpgradeDunning upgradeDunning;
+
+
+	private Logger log = Logger.getLogger(DunningProcessJob.class.getName());
+
+	@PostConstruct
+	public void init() {
+		TimerEntityService.registerJob(this);
+	}
+
+	@Override
+	public JobExecutionResult execute(String parameter, Provider provider) {
+		log.info("execute DunningProcessJob.");
+		JobExecutionResultImpl result = new JobExecutionResultImpl();
+		try {
+			for (DunningPlan dunningPlan : dunningPlanService.getDunningPlans()) {
+				 int loadedCustomerAccounts = 0;
+		            int errorCustomerAccounts = 0;
+		            int updatedCustomerAccounts = 0;
+		            List<CustomerAccount> listCustomerAccountUpdated = new ArrayList<CustomerAccount>();
+		            List<ActionDunning> listActionDunning = new ArrayList<ActionDunning>();
+		            List<OtherCreditAndCharge> listOCC = new ArrayList<OtherCreditAndCharge>();
+
+		            List<CustomerAccount> customerAccounts = customerAccountService.getCustomerAccounts(dunningPlan.getCreditCategory(), dunningPlan.getPaymentMethod(), dunningPlan
+		                    .getProvider().getCode());
+		            log.info(String.format("Found %s CustomerAccounts to check", (customerAccounts == null ? "null" : customerAccounts.size())));
+		            for (CustomerAccount customerAccount : customerAccounts) {
+		                try {
+		                    log.info("Processing  customerAccounts code " + customerAccount.getCode());
+		                    loadedCustomerAccounts++;
+		                    BigDecimal balanceExigible = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount.getId(), null,
+		                            new Date());
+		                    log.info("balanceExigible " + balanceExigible);
+
+		                    if (DowngradeDunning(customerAccount, balanceExigible)) {
+		                        updatedCustomerAccounts++;
+		                        listCustomerAccountUpdated.add(customerAccount);
+		                    } else {
+		                    	UpgradeDunningReturn upgradeDunningReturn=upgradeDunning.execute(customerAccount, balanceExigible, dunningPlan);
+		                        if (upgradeDunningReturn.isUpgraded()) {
+		                            updatedCustomerAccounts++;
+		                            listCustomerAccountUpdated.add(customerAccount);
+		                            listActionDunning.addAll(upgradeDunningReturn.getListActionDunning());
+		                            listOCC.addAll(upgradeDunningReturn.getListOCC());
+		                        }
+		                    }
+		                } catch (Exception e) {
+		                    errorCustomerAccounts++;
+		                    e.printStackTrace();
+		                }
+		            }
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		result.close("");
+		return result;
+	}
+
+	@Override
+	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+		TimerConfig timerConfig = new TimerConfig();
+		timerConfig.setInfo(infos);
+		Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
+		return timer.getHandle();
+	}
+
+	boolean running = false;
+
+	@Timeout
+	public void trigger(Timer timer) {
+		TimerInfo info = (TimerInfo) timer.getInfo();
+		if (!running && info.isActive()) {
+			try {
+				running = true;
+                Provider provider=providerService.findById(info.getProviderId());
+                JobExecutionResult result=execute(info.getParametres(),provider);
+                jobExecutionService.persistResult(this, result,info,provider);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				running = false;
+			}
+		}
+	}
+
+	@Override
+	public Collection<Timer> getTimers() {
+		// TODO Auto-generated method stub
+		return timerService.getTimers();
+	}
+	
+	 public boolean DowngradeDunning(CustomerAccount customerAccount,BigDecimal balanceExigible)throws Exception {
+	        log.info("DowngradeDunningLevelStep ...");
+	        boolean isDowngradelevel = false;    
+	        if (balanceExigible.compareTo(BigDecimal.ZERO) <= 0 && customerAccount.getDunningLevel() != DunningLevelEnum.R0) {
+	            customerAccount.setDunningLevel(DunningLevelEnum.R0);
+	            customerAccount.setDateDunningLevel(new Date());
+	            isDowngradelevel = true;
+	            log.info("customerAccount code:"+customerAccount.getCode()+" updated to R0");
+	        }
+	            // attente besoin pour par exp : R3--> R2 avec actions
+	        
+	        return isDowngradelevel;
+	    }
+
+}
