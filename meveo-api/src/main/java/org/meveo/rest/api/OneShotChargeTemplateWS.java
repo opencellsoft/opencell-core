@@ -1,7 +1,6 @@
 package org.meveo.rest.api;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.OneShotChargeTemplateServiceApi;
-import org.meveo.api.dto.OneShotChargeTemplateDto;
+import org.meveo.api.dto.OneShotChargeTemplateListDto;
 import org.meveo.rest.ActionStatus;
 import org.meveo.rest.ActionStatusEnum;
 
@@ -40,7 +39,7 @@ public class OneShotChargeTemplateWS {
 
 	@GET
 	@Path("/")
-	public List<OneShotChargeTemplateDto> getOneShotChargeTemplates(
+	public OneShotChargeTemplateListDto getOneShotChargeTemplates(
 			@QueryParam("languageCode") String languageCode,
 			@QueryParam("countryCode") String countryCode,
 			@QueryParam("currencyCode") String currencyCode,
