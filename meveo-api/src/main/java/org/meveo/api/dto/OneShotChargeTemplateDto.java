@@ -7,15 +7,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "oneShotCharge")
+@XmlRootElement(name = "oneShotChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OneShotChargeDto {
+public class OneShotChargeTemplateDto {
 	private String chargeCode;
-	private String desccription;
+	private String description;
 	private Double unitPriceWithoutTax;
 	private Double taxPercent;
 	private String taxCode;
 	private String taxDescription;
+
+	public OneShotChargeTemplateDto() {
+
+	}
 
 	public String getChargeCode() {
 		return chargeCode;
@@ -23,14 +27,6 @@ public class OneShotChargeDto {
 
 	public void setChargeCode(String chargeCode) {
 		this.chargeCode = chargeCode;
-	}
-
-	public String getDesccription() {
-		return desccription;
-	}
-
-	public void setDesccription(String desccription) {
-		this.desccription = desccription;
 	}
 
 	public Double getUnitPriceWithoutTax() {
@@ -63,5 +59,13 @@ public class OneShotChargeDto {
 
 	public void setTaxDescription(String taxDescription) {
 		this.taxDescription = taxDescription;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
