@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -7,12 +8,27 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.api.dto.OneShotChargeTemplateDto;
 import org.meveo.api.dto.OneShotChargeTemplateListDto;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.admin.impl.TradingCurrencyService;
+import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
+import org.meveo.service.billing.impl.RealtimeChargingService;
+import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.util.MeveoJpa;
 
 /**
  * @author Edward P. Legaspi
@@ -22,13 +38,37 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 public class OneShotChargeTemplateServiceApi extends BaseApi {
 
 	@Inject
+	@MeveoJpa
+	protected EntityManager entityManager;
+	
+	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
+	
 
+	@Inject
+	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+	
+	@Inject 
+	private RealtimeChargingService realtimeChargingService;
+	
+	@Inject
+	private SellerService sellerService;
+	
+	@Inject
+	private TradingCurrencyService tradingCurrencyService;
+
+	@Inject
+	private TradingCountryService tradingCountryService;
+	
+	
 	public OneShotChargeTemplateListDto getOneShotChargeTemplates(
 			String languageCode, String countryCode, String currencyCode,
 			String providerCode, String sellerCode, Date date) {
 		Provider provider = providerService.findByCode(providerCode);
-
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode, provider);
+        TradingCountry country = tradingCountryService.findByTradingCountryCode(countryCode, provider);
+        
 		List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService
 				.getSubscriptionChargeTemplates(provider);
 		OneShotChargeTemplateListDto oneShotChargeTemplateListDto = new OneShotChargeTemplateListDto();
@@ -37,6 +77,27 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 			oneShotChargeDto.setChargeCode(oneShotChargeTemplate.getCode());
 			oneShotChargeDto.setDescription(oneShotChargeTemplate
 					.getDescription());
+			InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate
+					.getInvoiceSubCategory();
+			
+			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+					.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
+							country.getId());
+			Tax tax = invoiceSubcategoryCountry.getTax();
+			oneShotChargeDto.setTaxCode(tax.getCode());
+			oneShotChargeDto.setTaxDescription(tax.getDescription());
+			oneShotChargeDto.setTaxPercent(tax.getPercent()==null?0.0:tax.getPercent().doubleValue());
+			try {
+				BigDecimal unitPrice =realtimeChargingService.getApplicationPrice(entityManager,provider,seller,
+						 currency, country,
+						 oneShotChargeTemplate, date,
+								BigDecimal.ONE, null, null, null,true);
+				if(unitPrice!=null){
+					oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
+				}
+			} catch (BusinessException e) {
+				e.printStackTrace();
+			}
 			oneShotChargeTemplateListDto.getOneShotChargeTemplateDtos().add(
 					oneShotChargeDto);
 		}

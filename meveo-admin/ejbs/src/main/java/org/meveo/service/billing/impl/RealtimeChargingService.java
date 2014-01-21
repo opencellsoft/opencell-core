@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
@@ -50,7 +51,37 @@ public class RealtimeChargingService {
 				quantity, param1, param2, param3, priceWithoutTax);
 	}
 
+	
 	public BigDecimal getApplicationPrice(EntityManager em, BillingAccount ba,
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			BigDecimal quantity, String param1, String param2, String param3,
+			boolean priceWithoutTax) throws BusinessException {
+
+		TradingCurrency currency = ba.getCustomerAccount().getTradingCurrency();
+		if (currency == null) {
+			throw new IncorrectChargeTemplateException(
+					"no currency exists for customerAccount id="
+							+ ba.getCustomerAccount().getId());
+		}
+		
+
+		TradingCountry tradingCountry = ba.getTradingCountry();
+		if (tradingCountry == null) {
+			throw new IncorrectChargeTemplateException(
+					"no country exists for billingAccount id=" + ba.getId());
+		}
+
+		Provider provider = ba.getProvider();
+		
+		Seller seller = ba.getCustomerAccount().getCustomer().getSeller();
+		
+		return getApplicationPrice(em,provider,seller, currency, tradingCountry,chargeTemplate, subscriptionDate,
+				quantity, param1, param2, param3, priceWithoutTax);
+	}
+	
+	
+	public BigDecimal getApplicationPrice(EntityManager em,Provider provider,Seller seller,
+	TradingCurrency currency,TradingCountry tradingCountry,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
 			BigDecimal quantity, String param1, String param2, String param3,
 			boolean priceWithoutTax) throws BusinessException {
@@ -62,19 +93,6 @@ public class RealtimeChargingService {
 			throw new IncorrectChargeTemplateException(
 					"invoiceSubCategory is null for chargeTemplate code="
 							+ chargeTemplate.getCode());
-		}
-
-		TradingCurrency currency = ba.getCustomerAccount().getTradingCurrency();
-		if (currency == null) {
-			throw new IncorrectChargeTemplateException(
-					"no currency exists for customerAccount id="
-							+ ba.getCustomerAccount().getId());
-		}
-
-		TradingCountry tradingCountry = ba.getTradingCountry();
-		if (tradingCountry == null) {
-			throw new IncorrectChargeTemplateException(
-					"no country exists for billingAccount id=" + ba.getId());
 		}
 
 		Long tradingCountryId = tradingCountry.getId();
@@ -103,11 +121,10 @@ public class RealtimeChargingService {
 		op.setParameter2(param2);
 		op.setParameter3(param3);
 
-		Provider provider = ba.getProvider();
 		op.setProvider(provider);
 		OneShotChargeInstance ci = new OneShotChargeInstance();
-		ci.setCountry(ba.getTradingCountry());
-		ci.setCurrency(ba.getCustomerAccount().getTradingCurrency());
+		ci.setCountry(tradingCountry);
+		ci.setCurrency(currency);
 		op.setChargeInstance(ci);
 
 		op.setWallet(null);
@@ -120,7 +137,7 @@ public class RealtimeChargingService {
 		op.setStartDate(null);
 		op.setEndDate(null);
 		op.setStatus(WalletOperationStatusEnum.OPEN);
-		op.setSeller(ba.getCustomerAccount().getCustomer().getSeller());
+		op.setSeller(seller);
 
 		chargeApplicationRatingService.rateBareWalletOperation(em, op, null,
 				null, tradingCountryId, currency, provider);
