@@ -39,6 +39,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DunningPlanTransitionService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -76,6 +77,9 @@ public class UpgradeDunning  {
 	
 	@Inject
 	OCCTemplateService oCCTemplateService;
+	
+	@Inject
+	CustomerAccountService customerAccountService;
 	
 
 	public UpgradeDunningReturn execute(CustomerAccount customerAccount,BigDecimal balanceExigible,DunningPlan dunningPlan) throws Exception {
@@ -128,6 +132,7 @@ public class UpgradeDunning  {
 								customerAccount.setDunningLevel(dunningPlanTransition.getDunningLevelTo());
 								customerAccount.setDateDunningLevel(new Date());
 								upgradeDunningReturn.setUpgraded(true);
+								customerAccountService.update(customerAccount);
 								logger.info("UpgradeDunningLevelStep   upgrade ok");
 							} else {
 								logger.info("UpgradeDunningLevelStep   ThresholdAmount < invoice.amount");
