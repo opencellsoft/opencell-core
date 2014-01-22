@@ -8,10 +8,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.api.dto.OneShotChargeTemplateDto;
 import org.meveo.api.dto.OneShotChargeTemplateListDto;
 import org.meveo.model.admin.Seller;
@@ -28,7 +26,7 @@ import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.util.MeveoJpa;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -38,39 +36,38 @@ import org.meveo.util.MeveoJpa;
 public class OneShotChargeTemplateServiceApi extends BaseApi {
 
 	@Inject
-	@MeveoJpa
-	protected EntityManager entityManager;
-	
+	private Logger log;
+
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
-	
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
-	
-	@Inject 
+
+	@Inject
 	private RealtimeChargingService realtimeChargingService;
-	
+
 	@Inject
 	private SellerService sellerService;
-	
+
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
 
 	@Inject
 	private TradingCountryService tradingCountryService;
-	
-	
+
 	public OneShotChargeTemplateListDto getOneShotChargeTemplates(
 			String languageCode, String countryCode, String currencyCode,
 			String providerCode, String sellerCode, Date date) {
-		Provider provider = providerService.findByCode(providerCode);
-		Seller seller = sellerService.findByCode(sellerCode, provider);
-		TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode, provider);
-        TradingCountry country = tradingCountryService.findByTradingCountryCode(countryCode, provider);
-        
+		Provider provider = providerService.findByCode(em, providerCode);
+		Seller seller = sellerService.findByCode(em, sellerCode, provider);
+		TradingCurrency currency = tradingCurrencyService
+				.findByTradingCurrencyCode(em, currencyCode, provider);
+		TradingCountry country = tradingCountryService
+				.findByTradingCountryCode(em, countryCode, provider);
+
 		List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService
-				.getSubscriptionChargeTemplates(provider);
+				.getSubscriptionChargeTemplates(em, provider);
 		OneShotChargeTemplateListDto oneShotChargeTemplateListDto = new OneShotChargeTemplateListDto();
 		for (OneShotChargeTemplate oneShotChargeTemplate : oneShotChargeTemplates) {
 			OneShotChargeTemplateDto oneShotChargeDto = new OneShotChargeTemplateDto();
@@ -79,25 +76,31 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 					.getDescription());
 			InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate
 					.getInvoiceSubCategory();
-			
+
 			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-					.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
-							country.getId());
-			Tax tax = invoiceSubcategoryCountry.getTax();
-			oneShotChargeDto.setTaxCode(tax.getCode());
-			oneShotChargeDto.setTaxDescription(tax.getDescription());
-			oneShotChargeDto.setTaxPercent(tax.getPercent()==null?0.0:tax.getPercent().doubleValue());
+					.findInvoiceSubCategoryCountry(em,
+							invoiceSubCategory.getId(), country.getId());
+			if (invoiceSubcategoryCountry != null
+					&& invoiceSubcategoryCountry.getTax() != null) {
+				Tax tax = invoiceSubcategoryCountry.getTax();
+				oneShotChargeDto.setTaxCode(tax.getCode());
+				oneShotChargeDto.setTaxDescription(tax.getDescription());
+				oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0
+						: tax.getPercent().doubleValue());
+			}
 			try {
-				BigDecimal unitPrice =realtimeChargingService.getApplicationPrice(entityManager,provider,seller,
-						 currency, country,
-						 oneShotChargeTemplate, date,
-								BigDecimal.ONE, null, null, null,true);
-				if(unitPrice!=null){
-					oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
+				BigDecimal unitPrice = realtimeChargingService
+						.getApplicationPrice(em, provider, seller, currency,
+								country, oneShotChargeTemplate, date,
+								BigDecimal.ONE, null, null, null, true);
+				if (unitPrice != null) {
+					oneShotChargeDto.setUnitPriceWithoutTax(unitPrice
+							.doubleValue());
 				}
 			} catch (BusinessException e) {
-				e.printStackTrace();
+				log.warn(e.getMessage());
 			}
+
 			oneShotChargeTemplateListDto.getOneShotChargeTemplateDtos().add(
 					oneShotChargeDto);
 		}

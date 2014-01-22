@@ -18,6 +18,7 @@ package org.meveo.service.admin.impl;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -31,14 +32,19 @@ import org.meveo.service.base.PersistenceService;
 public class TradingCurrencyService extends PersistenceService<TradingCurrency> {
 	public TradingCurrency findByTradingCurrencyCode(
 			String tradingCurrencyCode, Provider provider) {
+		return findByTradingCurrencyCode(getEntityManager(),
+				tradingCurrencyCode, provider);
+	}
+
+	public TradingCurrency findByTradingCurrencyCode(EntityManager em,
+			String tradingCurrencyCode, Provider provider) {
 		try {
 			log.info(
 					"findByTradingCurrencyCode tradingCurrencyCode={},provider={}",
 					tradingCurrencyCode, provider != null ? provider.getCode()
 							: null);
-			Query query = getEntityManager()
-					.createQuery(
-							"select b from TradingCurrency b where b.currency.currencyCode = :tradingCurrencyCode and b.provider=:provider");
+			Query query = em
+					.createQuery("select b from TradingCurrency b where b.currency.currencyCode = :tradingCurrencyCode and b.provider=:provider");
 			query.setParameter("tradingCurrencyCode", tradingCurrencyCode);
 			query.setParameter("provider", provider);
 			return (TradingCurrency) query.getSingleResult();

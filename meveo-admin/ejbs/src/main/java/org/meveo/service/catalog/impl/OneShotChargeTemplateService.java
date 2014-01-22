@@ -72,15 +72,20 @@ public class OneShotChargeTemplateService extends
 		query.executeUpdate();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates(
 			Provider provider) {
+		return getSubscriptionChargeTemplates(getEntityManager(), provider);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates(
+			EntityManager em, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(OneShotChargeTemplate.class, "t");
 		qb.addCriterionEntity("provider", provider);
 
 		try {
-			return (List<OneShotChargeTemplate>) qb
-					.getQuery(getEntityManager()).getResultList();
+			return (List<OneShotChargeTemplate>) qb.getQuery(em)
+					.getResultList();
 		} catch (NoResultException e) {
 			log.warn(e.getMessage());
 			return null;

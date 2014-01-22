@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -39,9 +40,15 @@ public class ProviderService extends PersistenceService<Provider> {
 	private UserService userService;
 
 	public Provider findByCode(String code) {
+		return findByCode(getEntityManager(), code);
+	}
+
+	public Provider findByCode(EntityManager em, String code) {
 		try {
-			return (Provider) getEntityManager()
-					.createQuery("from " + Provider.class.getSimpleName() + " where code=:code")
+			return (Provider) em
+					.createQuery(
+							"from " + Provider.class.getSimpleName()
+									+ " where code=:code")
 					.setParameter("code", code).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
@@ -59,15 +66,17 @@ public class ProviderService extends PersistenceService<Provider> {
 
 	@SuppressWarnings("unchecked")
 	public List<Provider> getProviders() {
-		List<Provider> providers = (List<Provider>) getEntityManager().createQuery(
-				"from " + Provider.class.getSimpleName()).getResultList();
+		List<Provider> providers = (List<Provider>) getEntityManager()
+				.createQuery("from " + Provider.class.getSimpleName())
+				.getResultList();
 		return providers;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Provider> list() {
-		Query query = getEntityManager().createQuery("FROM " + Provider.class.getName());
+		Query query = getEntityManager().createQuery(
+				"FROM " + Provider.class.getName());
 		return (List<Provider>) query.getResultList();
 	}
 }
