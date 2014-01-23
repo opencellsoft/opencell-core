@@ -1,11 +1,4 @@
-/*----------IMPORT FOR POSTGRES-----------*/
-
-/*----------TRUNCATE ALL TABLES-----------*/
-
-
-
 /*------INSERTS OF TABLE LANGUAGE----*/
-
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (1, 1, now(), NULL, 'DEU', 'allemand', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (2, 1, now(), NULL, 'ENG','anglais', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (3, 1, now(), NULL, 'ARA','arabe', NULL, NULL);
@@ -39,8 +32,9 @@ INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, descript
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (31, 1, now(), NULL, 'CES','tchèque', NULL, NULL);
 INSERT INTO ADM_LANGUAGE (id, version, created, updated, language_code, description_en, creator_id,  updater_id) VALUES (32, 1, now(), NULL, 'TUR','turc', NULL, NULL);
 
- update ADM_LANGUAGE_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_LANGUAGE) where next_val=1;
- 
+DROP SEQUENCE ADM_LANGUAGE_SEQ;
+CREATE SEQUENCE ADM_LANGUAGE_SEQ start with 33 increment by 1;
+
 /*------INSERTS OF TABLE CURRENCY----*/
 
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (1,1,'AFA','Afghani',true,now(),null,null,null);
@@ -212,8 +206,9 @@ INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_cur
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (167,1,'ZWD','Dollar du Zimbabwe',true,now(),null,null,null);
 INSERT INTO ADM_CURRENCY (id, version, currency_code, description_en, system_currency, created, updated, creator_id,  updater_id) VALUES (168,1,'GHS','Cedi ghanéen',true,now(),null,null,null);
 
- 
- update ADM_CURRENCY_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_CURRENCY) where next_val=1;
+DROP SEQUENCE ADM_CURRENCY_SEQ;
+CREATE SEQUENCE ADM_CURRENCY_SEQ start with 169 increment by 1;
+
 /*-------INSERTS OF TABLE COUNTRY------*/
 
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(1,1,now(),null,'AD','Andorra',null,null,8,5);
@@ -453,15 +448,16 @@ INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, descriptio
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(235,1,now(),null,'ZA','South Africa',null,null,2,2);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(236,1,now(),null,'ZM','Zambia',null,null,2,166);
 INSERT INTO ADM_COUNTRY (id, version, created, updated, country_code, description_en,creator_id, updater_id, language_id,currency_id) VALUES(237,1,now(),null,'ZW','Zimbabwe',null,null,2,167);
- 
- update ADM_COUNTRY_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_COUNTRY) where next_val=1;
+
+DROP SEQUENCE ADM_COUNTRY_SEQ;
+CREATE SEQUENCE ADM_COUNTRY_SEQ start with 238 increment by 1;
 
 /*------INSERTS OF TABLE CRM PROVIDER----*/
 
 INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, code_creancier, code_etblissement_creancier, code_centre, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (1, 1, false, now(), NULL, 'ASG', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'PROV1', false, false, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1);
 
- update CRM_PROVIDER_SEQ SET next_val=(SELECT MAX(ID)+1 FROM CRM_PROVIDER) where next_val=1;
-
+DROP SEQUENCE CRM_PROVIDER_SEQ;
+CREATE SEQUENCE CRM_PROVIDER_SEQ start with 2 increment by 1;
 
 /*------INSERTS OF TABLE ADM_TITLE----*/
 
@@ -503,22 +499,23 @@ INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, COD
 INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (36, 0, false, now(), 1, null, 'SYNDIC', true, null, null);
 INSERT INTO ADM_TITLE (ID, VERSION, DISABLED, CREATED, PROVIDER_ID, UPDATED, CODE, IS_COMPANY, CREATOR_ID, UPDATER_ID) VALUES (37, 0, false, now(), 1, null, 'SYNDCOP', true, null, null);
 
- update ADM_TITLE_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_TITLE) where next_val=1;
+DROP SEQUENCE ADM_TITLE_SEQ;
+CREATE SEQUENCE ADM_TITLE_SEQ start with 38 increment by 1;
 
 /*------INSERTS OF TABLE ADM_USER----*/
 INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('1', 0, false, now(),  'MEVEO.ADMIN', 'fb93a3221422999ba49eb103977a6d736376505b', now(), 1, 1);
 INSERT INTO ADM_USER (ID, VERSION, DISABLED, CREATED, USERNAME, PASSWORD, LAST_PASSWORD_MODIFICATION, CREATOR_ID, PROVIDER_ID) VALUES ('2', 0, false, now(),  'MEVEO.SUPERADMIN', 'fb93a3221422999ba49eb103977a6d736376505b', now() , 1, 1);
- 
-update ADM_USER_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_USER) where next_val=1;
+
+DROP SEQUENCE ADM_USER_SEQ;
+CREATE SEQUENCE ADM_USER_SEQ start with 3 increment by 1;
 
 /*------INSERTS OF TABLE ADM_ROLE----*/
 
 INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (1, 'administrateur', 'Administrateur');
 INSERT INTO ADM_ROLE (ID, ROLE_NAME, ROLE_DESCRIPTION) VALUES (2, 'superAdministrateur', 'Super Administrateur');
-
   
- update ADM_ROLE_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_ROLE) where next_val=1;
-
+DROP SEQUENCE ADM_ROLE_SEQ;
+CREATE SEQUENCE ADM_ROLE_SEQ start with 3 increment by 1;
 
 /*------INSERTS OF TABLE ADM_USER_ROLE----*/
 
@@ -529,7 +526,6 @@ INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (2, 2);
 
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 1);
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 2);
-
 
 /*------INSERTS OF TABLE ADM_PERMISSION----*/
 
@@ -545,9 +541,9 @@ INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (9,'customerSum
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (10,'adv','billing','billingVisualization');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (11,'adv','billing','billingManagement');
 INSERT INTO ADM_PERMISSION (ID,NAME,RESSOURCE,PERMISSION) VALUES (12,'superAdminManagement','superAdmin','superAdminManagement');
-
   
- update ADM_PERMISSION_SEQ SET next_val=(SELECT MAX(ID)+1 FROM ADM_PERMISSION) where next_val=1;
+DROP SEQUENCE ADM_PERMISSION_SEQ;
+CREATE SEQUENCE ADM_PERMISSION_SEQ start with 13 increment by 1;
 
 /*------INSERTS OF TABLE ADM_ROLE_PERMISSION----*/
 
@@ -933,5 +929,5 @@ INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1129, 
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1130, 1, 'DECEMBER', 30, 1);
 INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1131, 1, 'DECEMBER', 31, 1);
 
-
- UPDATE CAT_DAY_IN_YEAR_SEQ SET next_val=(SELECT MAX(ID)+1 FROM CAT_DAY_IN_YEAR);
+DROP SEQUENCE CAT_DAY_IN_YEAR_SEQ;
+CREATE SEQUENCE CAT_DAY_IN_YEAR_SEQ start with 367 increment by 1;

@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
@@ -71,25 +72,36 @@ public class XMLInvoiceGenerationJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute XMLInvoiceGenerationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<BillingRun> billingRuns = billingRunService.getValidatedBillingRuns();
-		log.info("# billingRuns to process:" + billingRuns.size());
-		for (BillingRun billingRun : billingRuns) {
-			try {
-				
-		        ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-		        String invoicesDir = param.getProperty("meveo.dir","/tmp/meveo");
-			        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
-			        billingRundir.mkdirs();
-			        for (Invoice invoice : billingRun.getInvoices()) {
-			            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
-			        }
-			        billingRun.setXmlInvoiceGenerated(true);
-			        billingRunService.update(billingRun);
-			} catch (Exception e) {
+		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
+		if(parameter!=null && parameter.trim().length()>0){
+			try{
+				billingRuns.add(billingRunService.getBillingRunById(Long.parseLong(parameter), provider));
+			} catch (Exception e){
 				e.printStackTrace();
 				result.registerError(e.getMessage());
 			}
+		}else {
+			billingRuns = billingRunService.getValidatedBillingRuns(provider);
 		}
+		log.info("# billingRuns to process:" + billingRuns.size());
+			for (BillingRun billingRun : billingRuns) {
+				try {
+					
+			        ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+			        String invoicesDir = param.getProperty("meveo.dir","/tmp/meveo");
+				        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
+				        billingRundir.mkdirs();
+				        for (Invoice invoice : billingRun.getInvoices()) {
+				            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+				        }
+				        billingRun.setXmlInvoiceGenerated(true);
+				        billingRunService.update(billingRun);
+				} catch (Exception e) {
+					e.printStackTrace();
+					result.registerError(e.getMessage());
+				}
+			}
+		
 		result.close("");
 		return result;
 	}

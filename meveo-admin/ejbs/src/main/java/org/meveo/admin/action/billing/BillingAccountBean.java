@@ -338,7 +338,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 			String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-			log.info("lunchInvoicing allowManyInvoicing=#", isAllowed);
+			log.info("launchInvoicing allowManyInvoicing=#", isAllowed);
 			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
 				messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
 				return null;

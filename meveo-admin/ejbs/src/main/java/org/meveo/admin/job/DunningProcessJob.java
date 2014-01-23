@@ -19,8 +19,11 @@ import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
+import org.meveo.admin.dunning.CommitStep;
 import org.meveo.admin.dunning.UpgradeDunning;
 import org.meveo.admin.dunning.UpgradeDunningReturn;
+import org.meveo.model.admin.BayadDunningInputHistory;
+import org.meveo.model.admin.DunningHistory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -61,6 +64,10 @@ public class DunningProcessJob implements Job {
 	@Inject
 	UpgradeDunning upgradeDunning;
 
+	@Inject
+	CommitStep commitStep;
+	
+	
 
 	private Logger log = Logger.getLogger(DunningProcessJob.class.getName());
 
@@ -78,7 +85,6 @@ public class DunningProcessJob implements Job {
 				 int loadedCustomerAccounts = 0;
 		            int errorCustomerAccounts = 0;
 		            int updatedCustomerAccounts = 0;
-		            List<CustomerAccount> listCustomerAccountUpdated = new ArrayList<CustomerAccount>();
 		            List<ActionDunning> listActionDunning = new ArrayList<ActionDunning>();
 		            List<OtherCreditAndCharge> listOCC = new ArrayList<OtherCreditAndCharge>();
 
@@ -95,12 +101,10 @@ public class DunningProcessJob implements Job {
 
 		                    if (DowngradeDunning(customerAccount, balanceExigible)) {
 		                        updatedCustomerAccounts++;
-		                        listCustomerAccountUpdated.add(customerAccount);
 		                    } else {
 		                    	UpgradeDunningReturn upgradeDunningReturn=upgradeDunning.execute(customerAccount, balanceExigible, dunningPlan);
 		                        if (upgradeDunningReturn.isUpgraded()) {
 		                            updatedCustomerAccounts++;
-		                            listCustomerAccountUpdated.add(customerAccount);
 		                            listActionDunning.addAll(upgradeDunningReturn.getListActionDunning());
 		                            listOCC.addAll(upgradeDunningReturn.getListOCC());
 		                        }
@@ -110,7 +114,16 @@ public class DunningProcessJob implements Job {
 		                    e.printStackTrace();
 		                }
 		            }
+		            DunningHistory dunningHistory = new DunningHistory();
+	                dunningHistory.setExecutionDate(new Date());
+	                dunningHistory.setLinesRead(loadedCustomerAccounts);
+	                dunningHistory.setLinesRejected(errorCustomerAccounts);
+	                dunningHistory.setLinesInserted(updatedCustomerAccounts);
+	                dunningHistory.setProvider(dunningPlan.getProvider());
+		            BayadDunningInputHistory bayadDunningInputHistory= createNewInputHistory(loadedCustomerAccounts, updatedCustomerAccounts, errorCustomerAccounts, new Date(), dunningPlan.getProvider());
+		            commitStep.doCommit(bayadDunningInputHistory, listActionDunning, listOCC, dunningHistory, provider);    
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -158,11 +171,26 @@ public class DunningProcessJob implements Job {
 	            customerAccount.setDunningLevel(DunningLevelEnum.R0);
 	            customerAccount.setDateDunningLevel(new Date());
 	            isDowngradelevel = true;
+	            customerAccountService.update(customerAccount);
 	            log.info("customerAccount code:"+customerAccount.getCode()+" updated to R0");
 	        }
 	            // attente besoin pour par exp : R3--> R2 avec actions
 	        
 	        return isDowngradelevel;
 	    }
+	  /**
+	     * Creates input history object, to save it to DB.
+	     */
+	    private BayadDunningInputHistory createNewInputHistory(int nbTicketsParsed, int nbTicketsSucceeded, int nbTicketsRejected, Date startDate, Provider provider) {
+	        BayadDunningInputHistory inputHistory = new BayadDunningInputHistory();
+	        inputHistory.setName(startDate.toString());
+	        inputHistory.setParsedTickets(nbTicketsParsed);
+	        inputHistory.setRejectedTickets(nbTicketsRejected);
+	        inputHistory.setSucceededTickets(nbTicketsSucceeded);
+	        inputHistory.setAnalysisStartDate(startDate);
+	        inputHistory.setAnalysisEndDate(new Date());
+	        inputHistory.setProvider(provider);
+	        return inputHistory;
+	    } 
 
 }

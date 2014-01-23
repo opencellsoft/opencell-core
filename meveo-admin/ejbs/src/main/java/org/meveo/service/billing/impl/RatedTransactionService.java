@@ -428,7 +428,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  	logger.info("  tax2 ht ->" + taxCat.getAmountWithoutTax());
                  } else {
                  	//compute the percent
-                 	taxCat.setTaxPercent(taxCat.getAmountTax().divide(taxCat.getAmount()).multiply(new BigDecimal("100")).setScale(2, RoundingMode.HALF_UP));
+                	 if(taxCat.getAmountTax()!=null && taxCat.getAmount()!=null && taxCat.getAmount().compareTo(BigDecimal.ZERO)!=0){
+                		 taxCat.setTaxPercent(taxCat.getAmountTax().divide(taxCat.getAmount()).multiply(new BigDecimal("100")).setScale(2, RoundingMode.HALF_UP));
+                	 } else {
+                		 taxCat.setTaxPercent(BigDecimal.ZERO);
+                	 }
                  }
 
              }
