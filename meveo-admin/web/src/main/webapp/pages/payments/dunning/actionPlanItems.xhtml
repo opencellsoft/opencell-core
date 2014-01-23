@@ -8,29 +8,33 @@
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
+	<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{actionPlanItemBean.preRenderView}" />
+		</f:metadata>
+	
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
     
     <ui:define name="body">
-    	
-    	<custom:listPanel label="#{messages['actionPlanItem.title']}" backingBean="#{actionPlanItemBean}">
-    	
-    		<custom:searchPanel label="#{messages['actionPlanItem.search']}" newButtonView="/pages/payments/dunning/actionPlanItemDetail.xhtml">
-    			<custom:searchField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
-    			<custom:searchField label="#{messages['actionPlanItem.actionType']}" field="actionType" />
-    		</custom:searchPanel>
-
-	    	<custom:dataList dataModel="#{actionPlanItems}">
-	    		<custom:column label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
-				<custom:column label="#{messages['actionPlanItem.actionType']}" field="actionType" />
-				<custom:column label="#{messages['actionPlanItem.order']}" field="itemOrder" />
-				<custom:column label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" />
-				<custom:column label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" />
-				<custom:actionsColumn editView="/pages/payments/dunning/actionPlanItemDetail.xhtml" />    	
-		    </custom:dataList>
-		    
-		</custom:listPanel>
+	
+    	  
+     
+			<hf:searchPanel id="searchPanel" label="#{messages['actionPlanItem.search']}" backingBean="#{actionPlanItemBean}">
+                <hf:searchField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
+    			<hf:searchField label="#{messages['actionPlanItem.actionType']}" field="actionType" />				
+		      </hf:searchPanel>
+ 
+			<hftl:dataList label="#{messages['actionPlanItem.title']}" backingBean="#{actionPlanItemBean}"   dataModel="#{actionPlanItems}">
+	    		<hftl:column label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
+				<hftl:column label="#{messages['actionPlanItem.actionType']}" field="actionType" />
+				<hftl:column label="#{messages['actionPlanItem.order']}" field="itemOrder" />
+				<hftl:column label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" />
+				<hftl:column label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" />
+				 <hftl:actionsColumn
+				permission="#{identity.hasPermission('billing','billingManagement')}" />  
+	        </hftl:dataList>
 		
     </ui:define>
     

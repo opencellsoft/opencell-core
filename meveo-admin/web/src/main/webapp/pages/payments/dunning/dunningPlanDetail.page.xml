@@ -5,19 +5,6 @@
     	<restrict>#{persistentPermissionResolver.hasPermission('billing','billingManagement') or (!edit and persistentPermissionResolver.hasPermission('billing','billingVisualization'))}</restrict>
     
 	<param name="edit"/>
-	<navigation>
-		<rule if-outcome="addNewTransaction">
-			<redirect view-id="/pages/payments/dunning/dunningPlanTransitionDetail.xhtml">
-				<param name="dunningPlan" value="#{dunningPlan}" />
-				<param name="backView" value="dunningPlanDetail" />
-			</redirect>
-		</rule>
-		<rule if-outcome="addNewActionItem">
-			<redirect view-id="/pages/payments/dunning/actionPlanItemDetail.xhtml">
-				<param name="dunningPlan" value="#{dunningPlan}" />
-				<param name="backView" value="dunningPlanDetail" />
-			</redirect>
-		</rule>		
-	</navigation>
+	
     
 </page>
