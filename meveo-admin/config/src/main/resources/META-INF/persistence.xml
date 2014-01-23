@@ -136,6 +136,8 @@
 		<class>org.meveo.model.mediation.NumberingPlan</class>
 		<class>org.meveo.model.jobs.JobExecutionResultImpl</class>
 		<class>org.meveo.model.jobs.TimerEntity</class>
+		<class>org.meveo.model.admin.BayadDunningInputHistory</class>	
+		
 		
 		<!-- TODO: move this to ASG project -->
 		<class>org.meveo.asg.api.model.AsgIdMapping</class>

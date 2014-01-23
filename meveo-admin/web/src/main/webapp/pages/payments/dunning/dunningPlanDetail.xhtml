@@ -25,13 +25,9 @@
 			<hf:formField label="#{messages['dunningPlan.paymentMethod']}" field="paymentMethod" required="true"/>
 			 </hftl:panelGroup>
 			<hf:formField label="#{messages['common.status']}" field="status" required="true" />
-			<hf:formField label="#{messages['dunningPlan.transitions']}" field="transitions" backingBean="#{dunningPlanTransitionBean}"
-				showFields="dunningPlanTransition.dunningLevelFrom,dunningLevelFrom;dunningPlanTransition.dunningLevelTo,dunningLevelTo;dunningPlanTransition.delayBeforeProcess,delayBeforeProcess;dunningPlanTransition.thresholdAmount,thresholdAmount,right;dunningPlanTransition.waitDuration,waitDuration" showButtonAddNew="true" />
 			<p:button outcome="addNewTransition" rendered="#{dunningPlanBean.objectId!=null}" value="#{messages['dunningPlan.addNewTransition']}" includeViewParams="true"  > 
 			<f:param name="cid" value="#{conversation.id}" />
             </p:button >
-			<hf:formField label="#{messages['dunningPlan.actions']}" field="actions" backingBean="#{actionPlanItemBean}" 
-			showFields="actionPlanItem.dunningLevel,dunningLevel;actionPlanItem.actionType,actionType,msg;actionPlanItem.order,itemOrder;actionPlanItem.thresholdAmount,thresholdAmount,right;actionPlanItem.letterTemplate,letterTemplate;actionPlanItem.chargeAmount,chargeAmount,right" showButtonAddNew="false" />
 			 <p:button outcome="addNewActionItem" rendered="#{dunningPlanBean.objectId!=null}" value="#{messages['dunningPlan.addNewActionPlanItem']}"  includeViewParams="true" >
 			 <f:param name="cid" value="#{conversation.id}" />
             </p:button >

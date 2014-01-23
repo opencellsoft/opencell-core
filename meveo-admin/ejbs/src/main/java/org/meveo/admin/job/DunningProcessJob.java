@@ -19,8 +19,7 @@ import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.meveo.admin.dunning.CommitStep;
-import org.meveo.admin.dunning.UpgradeDunning;
+import org.meveo.admin.dunning.UpgradeDunningLevel;
 import org.meveo.admin.dunning.UpgradeDunningReturn;
 import org.meveo.model.admin.BayadDunningInputHistory;
 import org.meveo.model.admin.DunningHistory;
@@ -33,8 +32,11 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.OtherCreditAndCharge;
+import org.meveo.service.admin.impl.BayadDunningInputHistoryService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.DunningHistoryService;
+import org.meveo.service.payments.impl.DunningLOTService;
 import org.meveo.service.payments.impl.DunningPlanService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
@@ -62,10 +64,18 @@ public class DunningProcessJob implements Job {
 	
 	
 	@Inject
-	UpgradeDunning upgradeDunning;
+	UpgradeDunningLevel upgradeDunning;
 
 	@Inject
-	CommitStep commitStep;
+	DunningLOTService dunningLOTService;
+	
+	 
+    @Inject
+    DunningHistoryService dunningHistoryService;
+    
+    @Inject
+    BayadDunningInputHistoryService bayadDunningInputHistoryService;
+    
 	
 	
 
@@ -99,7 +109,7 @@ public class DunningProcessJob implements Job {
 		                            new Date());
 		                    log.info("balanceExigible " + balanceExigible);
 
-		                    if (DowngradeDunning(customerAccount, balanceExigible)) {
+		                    if (DowngradeDunningLevel(customerAccount, balanceExigible)) {
 		                        updatedCustomerAccounts++;
 		                    } else {
 		                    	UpgradeDunningReturn upgradeDunningReturn=upgradeDunning.execute(customerAccount, balanceExigible, dunningPlan);
@@ -120,8 +130,10 @@ public class DunningProcessJob implements Job {
 	                dunningHistory.setLinesRejected(errorCustomerAccounts);
 	                dunningHistory.setLinesInserted(updatedCustomerAccounts);
 	                dunningHistory.setProvider(dunningPlan.getProvider());
-		            BayadDunningInputHistory bayadDunningInputHistory= createNewInputHistory(loadedCustomerAccounts, updatedCustomerAccounts, errorCustomerAccounts, new Date(), dunningPlan.getProvider());
-		            commitStep.doCommit(bayadDunningInputHistory, listActionDunning, listOCC, dunningHistory, provider);    
+	                dunningHistoryService.create(dunningHistory);
+	                BayadDunningInputHistory bayadDunningInputHistory= createNewInputHistory(loadedCustomerAccounts, updatedCustomerAccounts, errorCustomerAccounts, new Date(), dunningPlan.getProvider());
+	                bayadDunningInputHistoryService.create(bayadDunningInputHistory);
+	                dunningLOTService.createDunningLOTAndCsvFile(listActionDunning,dunningHistory, provider);    
 			}
 			
 		} catch (Exception e) {
@@ -164,7 +176,7 @@ public class DunningProcessJob implements Job {
 		return timerService.getTimers();
 	}
 	
-	 public boolean DowngradeDunning(CustomerAccount customerAccount,BigDecimal balanceExigible)throws Exception {
+	 public boolean DowngradeDunningLevel(CustomerAccount customerAccount,BigDecimal balanceExigible)throws Exception {
 	        log.info("DowngradeDunningLevelStep ...");
 	        boolean isDowngradelevel = false;    
 	        if (balanceExigible.compareTo(BigDecimal.ZERO) <= 0 && customerAccount.getDunningLevel() != DunningLevelEnum.R0) {
