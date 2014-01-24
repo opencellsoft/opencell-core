@@ -82,9 +82,10 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
     @Override
-    public String saveOrUpdate(boolean killConversation) { 
+    public String saveOrUpdate(boolean killConversation) {
         dunningPlan.getActions().add(entity);
-        return super.saveOrUpdate(killConversation);
+         super.saveOrUpdate(killConversation);
+        return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId=" + dunningPlan.getId() + "&edit=true";
     }
 
     /**
