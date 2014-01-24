@@ -24,14 +24,54 @@
 			<hf:formField label="#{messages['dunningPlan.creditCategory']}" field="creditCategory" required="true"/>
 			<hf:formField label="#{messages['dunningPlan.paymentMethod']}" field="paymentMethod" required="true"/>
 			 </hftl:panelGroup>
-			<hf:formField label="#{messages['common.status']}" field="status" required="true" />
-			<p:button outcome="addNewTransition" rendered="#{dunningPlanBean.objectId!=null}" value="#{messages['dunningPlan.addNewTransition']}" includeViewParams="true"  > 
+			<hf:formField label="#{messages['common.status']}" field="status" required="true"  />
+		</hf:formPanel>	
+	<hftl:panelGroup columns="1">	
+	<p:outputPanel id="transitions_panel"  rendered="#{dunningPlanBean.entity.id!=null}">
+	<h:outputText value="#{messages['dunningPlan.transitions']}"  style="font-weight:bold;"  />
+	<br /><br />
+		<p:panel>
+		<h:form id="transitions_form"  >
+			<hftl:dataList form="transitions" resultsId ="transitions"  backingBean="#{dunningPlanTransitionBean}"    dataModel="#{dunningPlanBean.entity.transitions}" checkMany="false" exportButton="false">
+	    		<hftl:column label="#{messages['dunningPlanTransition.dunningLevelFrom']}" field="dunningLevelFrom" />
+				<hftl:column label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" />
+				<hftl:column label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" />
+				<hftl:column label="#{messages['dunningPlanTransition.thresholdAmount']}" field="thresholdAmount" />
+				<hftl:column label="#{messages['dunningPlanTransition.waitDuration']}" field="waitDuration" />  
+				<hftl:actionsColumn/> 				
+		    </hftl:dataList >
+			 
+		</h:form >
+			 <p:button outcome="addNewTransition"  value="#{messages['dunningPlan.addNewTransition']}" includeViewParams="true"  > 
 			<f:param name="cid" value="#{conversation.id}" />
-            </p:button >
-			 <p:button outcome="addNewActionItem" rendered="#{dunningPlanBean.objectId!=null}" value="#{messages['dunningPlan.addNewActionPlanItem']}"  includeViewParams="true" >
+            </p:button ><br /><br />
+			
+				</p:panel>   
+	</p:outputPanel>
+	  
+	<p:outputPanel id="actionItems_panel"  rendered="#{dunningPlanBean.entity.id!=null}">
+		<h:outputText value="#{messages['dunningPlan.actions']}"  style="font-weight:bold;"   />
+		<br /><br />
+		<p:panel>
+		<h:form id="actionItems_form"  >
+			<hftl:dataList label="#{messages['dunningPlan.title']}"  backingBean="#{actionPlanItemBean}"   dataModel="#{dunningPlanBean.entity.actions}" checkMany="false" exportButton="false">
+	    		<hftl:column label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" />
+				<hftl:column label="#{messages['actionPlanItem.actionType']}" field="actionType" />
+				<hftl:column label="#{messages['actionPlanItem.order']}" field="itemOrder" />
+				<hftl:column label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" />
+				<hftl:column label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" />
+				<hftl:actionsColumn/> 
+		   </hftl:dataList>
+		
+		</h:form >
+		  <p:button outcome="addNewActionItem"  value="#{messages['dunningPlan.addNewActionPlanItem']}"  includeViewParams="true" >
 			 <f:param name="cid" value="#{conversation.id}" />
             </p:button >
-		</hf:formPanel>
+		</p:panel>   
+	</p:outputPanel>		
+				
+	</hftl:panelGroup>		
+			
 	</ui:define>
 
 </ui:composition>

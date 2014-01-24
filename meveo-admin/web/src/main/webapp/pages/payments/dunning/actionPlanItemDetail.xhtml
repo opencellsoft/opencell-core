@@ -14,7 +14,7 @@
 
 	<ui:define name="body">
 	
-		<hf:formPanel label="#{messages['actionPlanItem.panel']}" backingBean="#{actionPlanItemBean}">
+		<hf:formPanel label="#{messages['actionPlanItem.panel']}" backingBean="#{actionPlanItemBean}" showBackButton="false">
 			<hf:formField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" required="true" isMessage="true"/>
 			<hf:formField label="#{messages['actionPlanItem.actionType']}" field="actionType" required="true" event="onchange" render="amountOrTemplate" />
 			<hf:formField label="#{messages['actionPlanItem.order']}" field="itemOrder" required="true"/>
