@@ -20,8 +20,8 @@
 			<f:facet name="header">
 				<h:outputText value="#{messages['dunningPlan.panel']}" />
 			</f:facet>
-	<p:tabView id="tabView">
-		<p:tab title="#{messages['invoiceSubCategory.tab1']}">
+	<p:tabView id="tabView" dynamic="true" cache="true">
+		<p:tab title="#{messages['dunningPlan.panel']}">
 		<hf:formPanel  backingBean="#{dunningPlanBean}">
 			<hftl:panelGroup columns="2">
 			<hf:formField label="#{messages['businessEntity.code']}" field="code"  required="true" validateUnique="true"/>
@@ -106,7 +106,7 @@
 
 
 						<p:panel id="dunningPlanTransitiondiv"
-							rendered="#{dunningPlanTransitionBean.edit}">
+							rendered="#{dunningPlanBean.edit}">
 
 
 							<p:panel id="dunningPlanTransitiondiv1">
@@ -185,7 +185,7 @@
 					</p:panelGrid>
 
 					<br />
-					<p:outputPanel id="actionPlanItems_panel"> 
+					<p:panel id="actionPlanItems_panel"> 
 					 <p:panel>
 					<h:form id="actionItems_form"  >
 						<hftl:dataList backingBean="#{actionPlanItemBean}"
@@ -224,15 +224,14 @@
 						</hftl:dataList>
                        </h:form >
                       </p:panel>					   
-					</p:outputPanel>
+					</p:panel>
 					<p:panel>
 
 
 						<p:panel id="actionPlanItemsdiv"
-							rendered="#{actionPlanItemBean.edit}">
+							rendered="#{dunningPlanBean.edit}">
 
 
-							<p:panel id="actionPlanItemsdiv1">
 								<hf:formPanel id="formPanelActionPlanItems" formId="formActionPlanItems"
 									edit="#{dunningPlanBean.edit}"
 									label="#{messages['dunningPlan.actions']}"
@@ -276,7 +275,7 @@
 										</p:panelGrid>
 
 								</hf:formPanel>
-							</p:panel>
+						
 
 						</p:panel>
 
