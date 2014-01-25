@@ -23,6 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -46,10 +47,10 @@ public class DunningPlan extends BusinessEntity {
 	@Column(name = "PAYMENT_METHOD")
 	private PaymentMethodEnum paymentMethod;
 
-	@OneToMany(mappedBy = "dunningPlan", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "dunningPlan",fetch = FetchType.LAZY)
 	private List<DunningPlanTransition> transitions = new ArrayList<DunningPlanTransition>();
 
-	@OneToMany(mappedBy = "dunningPlan", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "dunningPlan", fetch = FetchType.LAZY)
 	private List<ActionPlanItem> actions = new ArrayList<ActionPlanItem>();
 
 	@Enumerated(EnumType.STRING)

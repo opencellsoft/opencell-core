@@ -20,12 +20,18 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.util.pagination.PaginationDataModel;
+import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DunningPlan;
+import org.meveo.model.payments.DunningPlanTransition;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.DunningPlanService;
+import org.meveo.service.payments.impl.DunningPlanTransitionService;
 
 /**
  * Standard backing bean for {@link DunningPlan} (extends {@link BaseBean} that
@@ -46,6 +52,21 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 	 */
 	@Inject
 	private DunningPlanService dunningPlanService;
+	
+	@Inject
+	private DunningPlanTransitionService dunningPlanTransitionService;
+	
+	@Inject
+	private ActionPlanItemService actionPlanItemService;
+	
+	@Produces
+	@Named
+	private DunningPlanTransition dunningPlanTransition = new DunningPlanTransition();
+	
+	
+	@Produces
+	@Named
+	private ActionPlanItem actionPlanItem = new ActionPlanItem();
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -54,6 +75,85 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 	public DunningPlanBean() {
 		super(DunningPlan.class);
 	}
+	
+	
+	public void newDunningPlanTransitionInstance() {
+		this.dunningPlanTransition = new DunningPlanTransition();
+	}
+	
+	public void newActionPlanItemInstance() {
+		this.actionPlanItem = new ActionPlanItem();
+	}
+	
+	public void saveDunningPlanTransition() { 
+		 
+		if (dunningPlanTransition.getId() != null) {
+			dunningPlanTransitionService.update(dunningPlanTransition);
+			messages.info(new BundleKey("messages", "update.successful"));
+		} else { 
+			try{
+		    	 for (DunningPlanTransition transition : entity.getTransitions()) {
+		             
+		         	if ((transition.getDunningLevelFrom().equals(dunningPlanTransition.getDunningLevelFrom())) && (transition.getDunningLevelTo().equals(dunningPlanTransition.getDunningLevelTo())))  { 
+				            throw new BusinessEntityException();
+		         	}      
+		         }  
+		    	 dunningPlanTransition.setDunningPlan(entity);
+					dunningPlanTransitionService.create(dunningPlanTransition);
+					entity.getTransitions().add(dunningPlanTransition);
+					messages.info(new BundleKey("messages", "save.successful")); 
+		    	} catch (BusinessEntityException e) {
+		            messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
+		        }catch (Exception e) {
+					e.printStackTrace();
+
+		            messages.error(new BundleKey("messages", "dunningPlanTransition.uniqueField"));
+				} 
+		}
+
+		dunningPlanTransition = new DunningPlanTransition();
+}
+	
+	
+	public void saveActionPlanItem() { 
+		 
+		if (actionPlanItem.getId() != null) {
+			actionPlanItemService.update(actionPlanItem);
+			messages.info(new BundleKey("messages", "update.successful"));
+		} else { 
+			actionPlanItem.setDunningPlan(entity);
+			actionPlanItemService.create(actionPlanItem);
+			entity.getActions().add(actionPlanItem);
+			messages.info(new BundleKey("messages", "save.successful"));
+		
+                    }
+		actionPlanItem = new ActionPlanItem();
+	                }
+	
+	
+	public void deleteDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {  
+		dunningPlanTransitionService.remove(dunningPlanTransition); 
+		entity.getTransitions().remove(dunningPlanTransition);
+		messages.info(new BundleKey("messages", "delete.successful")); 
+	}
+	
+	
+	public void deleteActionPlanItem(ActionPlanItem actionPlanItem) {  
+		actionPlanItemService.remove(actionPlanItem); 
+		entity.getActions().remove(actionPlanItem);
+		messages.info(new BundleKey("messages", "delete.successful")); 
+	}
+	
+	
+	
+	public void editDunningPlanTransition(DunningPlanTransition dunningPlanTransition) {
+		this.dunningPlanTransition = dunningPlanTransition;
+	}
+	
+	public void editActionPlanItem(ActionPlanItem actionPlanItem) {
+		this.actionPlanItem = actionPlanItem;
+	}
+	
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
@@ -66,5 +166,10 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 	@Produces
 	public DunningPlan getDunningPlan(){
 	    return entity;
-	}	
+	}
+
+
+ 
+	
+	
 }
