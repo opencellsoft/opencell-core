@@ -117,8 +117,8 @@
 									entity="#{dunningPlanTransition}" showFormButtons="false"
 									ajaxSubmit="true">
                           
-			                <hf:formField label="#{messages['dunningPlanTransition.dunningLevelFrom']}"  field="dunningLevelFrom" required="true" isMessage="true" />
-							<hf:formField label="#{messages['dunningPlanTransition.dunningLevelTo']}" field="dunningLevelTo" required="true" isMessage="true" />
+			                <hf:formField label="#{messages['dunningPlanTransition.dunningLevelFrom']}" style="width: 100px" panelStyle="width: 100px"  field="dunningLevelFrom" required="true" isMessage="true"  />
+							<hf:formField label="#{messages['dunningPlanTransition.dunningLevelTo']}" style="width: 100px" panelStyle="width: 100px" field="dunningLevelTo" required="true" isMessage="true"  />
 							<hf:formField label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" required="true"/>
 							<hf:formField label="#{messages['dunningPlanTransition.thresholdAmount']}" field="thresholdAmount" required="true" />
 							<hf:formField label="#{messages['dunningPlanTransition.waitDuration']}" field="waitDuration" required="true"/>
@@ -240,8 +240,8 @@
 									entity="#{actionPlanItem}" showFormButtons="false"
 									ajaxSubmit="true">
                           
-							 <hf:formField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" required="true" isMessage="true"/>
-							<hf:formField label="#{messages['actionPlanItem.actionType']}" field="actionType" required="true" event="onchange" render="amountOrTemplate" />
+							 <hf:formField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" style="width: 100px" panelStyle="width: 100px" required="true" isMessage="true"/>
+							<hf:formField label="#{messages['actionPlanItem.actionType']}" field="actionType" style="width: 100px" panelStyle="width: 100px" required="true" event="onchange" render="amountOrTemplate" />
 							<hf:formField label="#{messages['actionPlanItem.order']}" field="itemOrder" required="true"/>
 							<hf:formField label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" required="true"/>
 							<p:outputPanel id="amountOrTemplate">

@@ -731,13 +731,18 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>ddrequestLotDetail</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>ddrequestLotOps</from-outcome>
 			<to-view-id>/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>ddrequestLotDetail</from-outcome>
-			<to-view-id>/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml</to-view-id>
+			<from-outcome>ddrequestLotOpDetail</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLotOp/ddrequestLotOpDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
