@@ -14,14 +14,14 @@
 
 	<ui:define name="body">
 	
-		<hf:formPanel label="#{messages['actionPlanItem.panel']}" backingBean="#{actionPlanItemBean}" backButtonView="/pages/payments/dunning/actionPlanItems.xhtml">
+		<hf:formPanel label="#{messages['actionPlanItem.panel']}" backingBean="#{actionPlanItemBean}" showBackButton="false">
 			<hf:formField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" required="true" isMessage="true"/>
 			<hf:formField label="#{messages['actionPlanItem.actionType']}" field="actionType" required="true" event="onchange" render="amountOrTemplate" />
 			<hf:formField label="#{messages['actionPlanItem.order']}" field="itemOrder" required="true"/>
 			<hf:formField label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" required="true"/>
 			<a:outputPanel id="amountOrTemplate">
 			   <h:panelGroup style="display:block;" rendered="#{entity.actionType.toString() != 'CHARGE'}">
-				<hf:formField label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" size="50"  required="true" />
+				<hf:formField label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" size="50"  required="false" />
 				</h:panelGroup>
 				<h:panelGroup style="display:block;" rendered="#{entity.actionType.toString() == 'CHARGE'}" >
 				<hf:formField label="#{messages['actionPlanItem.chargeAmount']}" field="chargeAmount"   required="true"/>

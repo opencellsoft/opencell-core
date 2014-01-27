@@ -262,6 +262,7 @@
 
 				<p:menuitem id="usageChargeTemplates" outcome="usageChargeTemplates"
 					value="#{messages['menu.usageChargeTemplates']}" />
+					
 
 			</p:submenu>
 
@@ -270,6 +271,7 @@
 
 			<p:menuitem id="counterTemplates" outcome="counterTemplates"
 				value="#{messages['menu.counterTemplates']}" />
+				 	
 
 			<!--<p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
 				value="#{messages['menu.discountPlanMatrixes']}" />-->
@@ -552,6 +554,15 @@
 			-->
 
 		</p:submenu>
+		
+		<p:submenu id="payment" label="#{messages['menu.payments']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
+
+		<p:menuitem id="dunningPlan" outcome="dunningPlans" value="#{messages['menu.dunningPlan']}" />
+        <p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />
+		</p:submenu>
+		
+		
+		
 
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}"
 			rendered="#{identity.hasPermission('reporting','reportingVisualization')}">

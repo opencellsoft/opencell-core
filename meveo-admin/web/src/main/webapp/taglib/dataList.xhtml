@@ -22,6 +22,10 @@
 	<c:if test="${empty checkMany}">
 		<c:set var="checkMany" value="true" />
 	</c:if>
+	
+	<c:if test="${empty exportButton}">
+		<c:set var="exportButton" value="true" />
+	</c:if>
 
 	<c:if test="${empty resultsId}">
 		<c:set var="resultsId" value="results" />
@@ -57,7 +61,7 @@
 					ajax="false" /> -->
 
 			<p:commandButton id="#{formId}buttonExport"
-				value="#{messages['commons.exportExcel']}" ajax="false">
+				value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportButton}">
 				<p:dataExporter type="xls" target="datatable" fileName="data"
 					pageOnly="false" />
 			</p:commandButton>

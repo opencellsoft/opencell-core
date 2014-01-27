@@ -83,7 +83,7 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
     @Override
-    public String saveOrUpdate(boolean killConversation) {
+    public String saveOrUpdate(boolean killConversation) { 
         dunningPlan.getTransitions().add(entity);
         super.saveOrUpdate(killConversation);
         return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId=" + dunningPlan.getId() + "&edit=true";

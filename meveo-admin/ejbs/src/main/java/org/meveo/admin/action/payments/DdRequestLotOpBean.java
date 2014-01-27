@@ -15,6 +15,8 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.util.Date;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -23,11 +25,14 @@ import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.payments.ActionPlanItem;
+import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
+import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.meveo.service.payments.impl.DunningPlanService;
 
 /**
@@ -38,7 +43,7 @@ import org.meveo.service.payments.impl.DunningPlanService;
  */
 @Named
 @ConversationScoped
-public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
+public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,16 +54,15 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
     private ActionPlanItemService actionPlanItemService;
 
     @Inject
-    private DunningPlanService dunningPlanService;
-
-    @Inject
-    private DunningPlan dunningPlan;
+    private DDRequestLotOpService ddRequestLotOpService; 
+    
+    
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public ActionPlanItemBean() {
-        super(ActionPlanItem.class);
+    public DdRequestLotOpBean() {
+        super(DDRequestLotOp.class);
     }
 
     /**
@@ -67,14 +71,13 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public ActionPlanItem initEntity() {
-        if (dunningPlan != null && dunningPlan.getId() == null) {
-            dunningPlanService.create(dunningPlan);
-        }
-        super.initEntity();
-        entity.setDunningPlan(dunningPlan);
-        return entity;
-    }
+ 
+    
+	public DDRequestLotOp initEntity() {
+		return super.initEntity();
+	}
+    
+    
 
     /*
      * (non-Javadoc)
@@ -82,37 +85,40 @@ public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
     @Override
-    public String saveOrUpdate(boolean killConversation) {
-        dunningPlan.getActions().add(entity);
-         super.saveOrUpdate(killConversation);
-        return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId=" + dunningPlan.getId() + "&edit=true";
-    }
+    public String saveOrUpdate(boolean killConversation, String objectName,Long objectId) {
+    	 entity.setDdrequestLOT(null); 
+    	 String outcome = saveOrUpdate(entity);
+    	 if (killConversation) {
+ 			endConversation();
+ 		}
+    	return  outcome;
 
+    }
+    
+    
+    
+	@Override
+	public String getNewViewName() {
+		return "ddrequestLotOpDetail";
+	}
+	
+	@Override
+	protected String getListViewName() {
+		return "ddrequestLotOps";
+	}
+
+ 
+
+	@Override
+	public String getEditViewName() {
+		return "ddrequestLotOpDetail";
+	}
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<ActionPlanItem> getPersistenceService() {
-        return actionPlanItemService;
+    protected IPersistenceService<DDRequestLotOp> getPersistenceService() {
+        return ddRequestLotOpService;
     }
-
-    @Override
-    public void delete(Long id) {
-        try {
-            entity = getPersistenceService().findById(id);
-            log.info(String.format("Deleting entity %s with id = %s", entity.getClass().getName(), id));
-            entity.getDunningPlan().getActions().remove(entity);
-            getPersistenceService().remove(id);
-            entity = null;
-            messages.info(new BundleKey("messages", "delete.successful"));
-        } catch (Throwable t) {
-            if (t.getCause() instanceof EntityExistsException) {
-                log.info("delete was unsuccessful because entity is used in the system", t);
-                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-            } else {
-                log.info("unexpected exception when deleting!", t);
-                messages.error(new BundleKey("messages", "error.delete.unexpected"));
-            }
-        }
-    }
+ 
 }

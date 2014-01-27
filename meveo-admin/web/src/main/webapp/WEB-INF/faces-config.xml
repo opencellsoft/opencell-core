@@ -653,13 +653,33 @@
 					<name>backView</name>
 					<value>billingAccountDetail</value>
 				</view-param>
-				<!-- <view-param> -->
+				<!-- <view-param> -->tr
 				<!-- <name>billingAccountId</name> -->
 				<!-- <value>#{billingAccountBean.entity.id}</value> -->
 				<!-- </view-param> -->
 			</redirect>
 		</navigation-case>
-
+			<navigation-case>
+			<from-outcome>addNewTransition</from-outcome>
+			<to-view-id>/pages/payments/dunning/dunningPlanTransitionDetail.xhtml </to-view-id>
+			<redirect include-view-params="true"> 
+			<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+			</redirect> 
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>addNewActionItem</from-outcome>
+			<to-view-id>/pages/payments/dunning/actionPlanItemDetail.xhtml </to-view-id>
+			<redirect include-view-params="true"> 
+			<view-param>
+					<name>edit</name>
+					<value>true</value>
+				</view-param>
+			</redirect> 
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>transferAccount</from-outcome>
 			<to-view-id>/pages/payments/customerAccounts/transferAccount.xhtml</to-view-id>
@@ -711,13 +731,18 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>ddrequestLotDetail</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>ddrequestLotOps</from-outcome>
 			<to-view-id>/pages/payments/ddrequestLotOp/ddrequestLotOps.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>ddrequestLotDetail</from-outcome>
-			<to-view-id>/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml</to-view-id>
+			<from-outcome>ddrequestLotOpDetail</from-outcome>
+			<to-view-id>/pages/payments/ddrequestLotOp/ddrequestLotOpDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
