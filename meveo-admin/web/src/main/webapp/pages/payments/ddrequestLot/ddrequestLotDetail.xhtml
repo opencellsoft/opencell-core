@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -14,40 +15,39 @@
 
 	<ui:define name="body">
 	
-		<hf:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddrequestLOTBean}">
+		<hf:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}">
 			<hf:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
 			<hf:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
 			<hf:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
 			<hf:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
 			<hf:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>			
 		<h:panelGrid columns="3">
-			<h:commandButton rendered="#{!edit}" action="#{ddrequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
-     		<h:commandButton value="#{messages['action.back']}" action="#{ddrequestLOTBean.backAndEndConversation}" immediate="true" />
+			<p:commandButton rendered="#{!edit}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
+     		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.backAndEndConversation}" immediate="true" />
    		</h:panelGrid>	
-		</hf:formPanel>					
-		<custom:listPanel label="#{messages['ddrequestLot.invoices']}">
-			<custom:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddrequestLOTBean.getInvoices()}" edit="#{false}" checkMany="#{false}">
-						<custom:column showSortLinks="false"
+		</hf:formPanel>					 
+			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.getInvoices()}" edit="#{false}" checkMany="#{false}">
+						<hftl:column showSortLinks="false"
 							label="#{messages['accountOperation.operationDate']}"
 							field="auditable" childField="created" />
-						<custom:column label="#{messages['accountOperation.reference']}"
+						<hftl:column label="#{messages['accountOperation.reference']}"
 							field="reference" />	
-						<custom:column label="#{messages['accountOperation.occCode']}"
+						<hftl:column label="#{messages['accountOperation.occCode']}"
 							field="occCode" />					
-						<custom:column
+						<hftl:column
 							label="#{messages['accountOperation.occDescription']}"
 							field="occDescription" />
-						<custom:column label="#{messages['accountOperation.transactionDate']}"
+						<hftl:column label="#{messages['accountOperation.transactionDate']}"
 							field="transactionDate" />						
-						<custom:column label="#{messages['accountOperation.dueDate']}"
+						<hftl:column label="#{messages['accountOperation.dueDate']}"
 							field="dueDate" />
-					<custom:column label="#{messages['recordedInvoice.amount']}"
+					<hftl:column label="#{messages['recordedInvoice.amount']}"
 							field="amount" />							
-						<custom:column label="#{messages['accountOperation.netToPay']}"
+						<hftl:column label="#{messages['accountOperation.netToPay']}"
 							field="netToPay" />
 												- 					
-					</custom:dataList>
-				</custom:listPanel>
+					</hftl:dataList>
+				 
 				 
 	</ui:define>
 
