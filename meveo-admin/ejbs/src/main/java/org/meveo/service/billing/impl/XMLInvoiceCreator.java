@@ -595,6 +595,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                                     : "");
                                     quantity.appendChild(quantityTxt);
                                     line.appendChild(quantity);
+                                    
+                                    Element usageDate = doc.createElement("usageDate");
+                                    Text usageDateTxt = doc
+                                            .createTextNode(ratedTrnsaction.getUsageDate() != null ? DateUtils.formatDateWithPattern(ratedTrnsaction.getUsageDate(),
+                                                    "dd/MM/yyyy")
+                                                    + ""
+                                                    : "");
+                                    usageDate.appendChild(usageDateTxt);
+                                    line.appendChild(usageDate);
 
                                     subCategory.appendChild(line);
                                 }
