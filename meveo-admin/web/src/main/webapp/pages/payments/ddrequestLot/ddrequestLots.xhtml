@@ -22,7 +22,7 @@
     	
      
 			
-			<hf:searchPanel id="searchPanel" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" newButtonView="/pages/payments/ddrequestLot/launchDDRequestProcess.xhtml"> 
+			<hf:searchPanel id="searchPanel" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" renderNewButton="false" > 
                 <hf:searchField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
     			<hf:searchField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
     			<hf:searchField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" />				
