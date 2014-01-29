@@ -8,31 +8,39 @@
     xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
     template="/layout/template.xhtml">
     
+	
+	    
+	<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{ddRequestLOTBean.preRenderView}" />
+		</f:metadata>
     <ui:define name="navigation">
    		<ui:include src="/layout/navigation.xhtml" />
    	</ui:define>
     
     <ui:define name="body">
     	
-    	<custom:listPanel label="#{messages['ddrequestLot.title']}" backingBean="#{ddrequestLOTBean}" >
-    	
-    		<custom:searchPanel label="#{messages['ddrequestLot.search']}" newButtonView="/pages/payments/ddrequestLot/launchDDRequestProcess.xhtml">
-    			<custom:searchField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
-    			<custom:searchField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
-    			<custom:searchField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" />
-    			
-    		</custom:searchPanel>
-
-	    	<custom:dataList backingBean="#{ddrequestLOTBean}" dataModel="#{ddrequestLOTs}" >
-	    		<custom:column label="#{messages['ddrequestLot.fileName']}" field="fileName" />
-				<custom:column label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
-				<custom:column label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
-				<custom:column label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
-				<custom:column label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true" />
-				<custom:actionsColumn  noDelete="true"  noEdit="true" editView="/pages/payments/ddrequestLot/ddrequestLotDetail.xhtml" />    	
-		    </custom:dataList>
-		    
-		</custom:listPanel>
+     
+			
+			<hf:searchPanel id="searchPanel" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" newButtonView="/pages/payments/ddrequestLot/launchDDRequestProcess.xhtml"> 
+                <hf:searchField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
+    			<hf:searchField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
+    			<hf:searchField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" />				
+		      </hf:searchPanel>
+			
+		 
+			
+			
+			<hftl:dataList  backingBean="#{ddRequestLOTBean}">
+	    		<hftl:column label="#{messages['ddrequestLot.fileName']}" field="fileName" />
+				<hftl:column label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
+				<hftl:column label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
+				<hftl:column label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount" />
+				<hftl:column label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true" /> 
+				 <hftl:actionsColumn renderDeleteLink="false"  renderEditLink="false"
+				permission="#{identity.hasPermission('billing','billingManagement')}" />  
+	        </hftl:dataList>
+	 
 		
     </ui:define>
     

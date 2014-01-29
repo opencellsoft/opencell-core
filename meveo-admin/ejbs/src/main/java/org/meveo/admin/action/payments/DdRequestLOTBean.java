@@ -47,7 +47,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  */
 @Named
 @ConversationScoped
-public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
+public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -77,7 +77,7 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public DDRequestLOTBean() {
+	public DdRequestLOTBean() {
 		super(DDRequestLOT.class);
 	}
 
@@ -130,22 +130,41 @@ public class DDRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * 
 	 * @return
 	 */
-	public String launchProcess() {
+	public String launchProcess() { 
 		try {
 			DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
 			ddrequestLotOp.setFromDueDate(getStartDueDate());
 			ddrequestLotOp.setToDueDate(getEndDueDate());
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
+			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE); 
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-			    getCurrentProvider());
-			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessSuccessful"));
-		} catch (Exception e) {
+			    getCurrentProvider()); 
+			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessSuccessful")); 
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessFailed"));
 			messages.info(e.getMessage());
 		}
 		return null;
+	}
+	
+	
+	@Override
+	public String getNewViewName() {
+		return "ddrequestLotDetail";
+	}
+	
+	@Override
+	protected String getListViewName() {
+		return "ddrequestLots";
+	}
+
+ 
+
+	@Override
+	public String getEditViewName() {
+		return "ddrequestLotDetail";
 	}
 
 	/**

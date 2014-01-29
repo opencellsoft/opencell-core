@@ -1,11 +1,13 @@
-Ò<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org" 
+    xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -13,41 +15,25 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<rich:panel>
+		<p:panel> 
 		<f:facet name="header">
 			<h:outputText value="#{messages['ddrequestLot.launchProcessTitle']}" />
 		</f:facet>
-		<a:form id="launchProcessForm" styleClass="mainForm">
-			 <h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: right;">
-				<s:decorate template="/layout/edit.xhtml">
-					<ui:define name="label">
-						<h:outputText value="#{messages['ddrequestLot.startDueDate']}" />
-					</ui:define>
-					<rich:calendar  value="#{ddrequestLOTBean.startDueDate}"
-						popup="true" showApplyButton="false" cellWidth="24px"
-						datePattern="#{messages['meveo.dateTimeFormat']}" cellHeight="22px" style="width:200px"
-						required="true" />
-						<ui:insert />			
-		     	</s:decorate>
-				<s:decorate template="/layout/edit.xhtml">
-					<ui:define name="label">
-						<h:outputText value="#{messages['ddrequestLot.endDueDate']}" />
-					</ui:define>
-					<rich:calendar  value="#{ddrequestLOTBean.endDueDate}"
-						popup="true" showApplyButton="false" cellWidth="24px"
-						datePattern="#{messages['meveo.dateTimeFormat']}" cellHeight="22px" style="width:200px"
-						required="true" />
-						<ui:insert />			
-		     	</s:decorate>	
+	
+		<h:form id="launchProcessForm"  >
+			 <h:panelGrid width="100%" columns="1" border="0" style="padding:0px; margin:0px;text-align: left;">
+				<p:calendar value="#{ddRequestLOTBean.endDueDate}"  pattern="MM/dd/yyyy"
+						  showApplyButton="true"  
+						required="true" /> 	 			
 		     	 </h:panelGrid>
 		     	
 		     	<h:panelGrid columns="4" >	
-				 <h:commandButton value="#{messages['ddrequestLot.buttonLaunchProcess']}" action="#{ddrequestLOTBean.launchProcess()}" />
-				 <h:commandButton value="#{messages['action.back']}" action="ddrequestLots" immediate="true" />
+				 <p:commandButton value="#{messages['ddrequestLot.buttonLaunchProcess']}" action="#{ddRequestLOTBean.launchProcess()}" />
+				 <p:commandButton value="#{messages['action.back']}" action="ddrequestLots" immediate="true" />
 					</h:panelGrid>
 	    
 	
-	  	</a:form>
-	  	</rich:panel>			  				
+	  	</h:form>
+	  	</p:panel>			  				
 	</ui:define>
 </ui:composition>

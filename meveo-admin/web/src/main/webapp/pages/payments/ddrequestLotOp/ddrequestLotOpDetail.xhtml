@@ -12,9 +12,16 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
-	<ui:define name="body">
+ 
 	
-		
-	</ui:define>
+	<ui:define name="body"> 
+		<hf:formPanel  formId="FormId"  label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}">
+		 
+			<hf:formField label="#{messages['ddrequestLotOp.fromDueDate']}"  field="fromDueDate" required="true" isMessage="true"/>
+			<hf:formField label="#{messages['ddrequestLotOp.toDueDate']}"  field="toDueDate" required="true" isMessage="true"/> 
+			<hf:formField label="#{messages['ddrequestLotOp.status']}" field="status" required="true" isMessage="true"/>
+			<hf:formField label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause"/> 
+		</hf:formPanel>
+	</ui:define>  
 
 </ui:composition>
