@@ -29,6 +29,7 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
+import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -78,23 +79,21 @@ public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 		return super.initEntity();
 	}
     
-    
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
+   
     @Override
-    public String saveOrUpdate(boolean killConversation, String objectName,Long objectId) {
-    	 entity.setDdrequestLOT(null); 
-    	 entity.setDdrequestOp(DDRequestOpEnum.CREATE); 
-    	 if (killConversation) {
- 			endConversation();
- 		}
-    	return  saveOrUpdate(entity);
+    public String saveOrUpdate(DDRequestLotOp entity) {
+		if (entity.isTransient()) {
+			entity.setDdrequestOp(DDRequestOpEnum.CREATE); 
+	    	 entity.setStatus(DDRequestOpStatusEnum.WAIT);
+			getPersistenceService().create(entity);
+			messages.info(new BundleKey("messages", "save.successful"));
+		} else {
+			getPersistenceService().update(entity);
+			messages.info(new BundleKey("messages", "update.successful"));
+		}
 
-    }
+		return back();
+	}
     
     
     

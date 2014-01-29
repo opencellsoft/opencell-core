@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.ScheduleExpression;
@@ -19,13 +20,11 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.sepa.SepaService;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
-import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
@@ -36,13 +35,16 @@ import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
 
+/**
+ * @author R.AITYAAZZA
+ *
+ */
 @Startup
 @Singleton
 public class SepaDirectDebitJob
   implements Job
 {
   private Logger logger = Logger.getLogger(SepaDirectDebitJob.class.getName());
-  private static final String USER_SYSTEM_ID = "bayad.userSystemId";
   @Resource
   TimerService timerService;
   @Inject

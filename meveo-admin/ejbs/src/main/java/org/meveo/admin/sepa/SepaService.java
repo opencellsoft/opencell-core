@@ -118,6 +118,15 @@ public class SepaService
       for (Map.Entry<CustomerAccount, List<RecordedInvoice>> e : customerAccountInvoices.entrySet())
       {
         DDRequestItem ddrequestItem = new DDRequestItem();
+        BigDecimal amount = e.getValue().get(0).getNetToPay();
+		if (amount == null) {
+			amount = customerAccountService.customerAccountBalanceDueWithoutLitigation(e.getValue().get(0).getCustomerAccount().getId(), null, e
+					.getValue().get(0).getDueDate());
+		}
+		if (BigDecimal.ZERO.compareTo(amount) == 0) {
+			continue;
+		}
+		ddrequestItem.setAmount(amount);
         BigDecimal totalInvoices = BigDecimal.ZERO;
 		ddrequestItem.setBillingAccountName(e.getValue().get(0).getBillingAccountName());
 		ddrequestItem.setCustomerAccount(e.getValue().get(0).getCustomerAccount());
