@@ -413,6 +413,9 @@ public class DateUtils {
     }
 
     public static XMLGregorianCalendar dateToXMLGregorianCalendar(Date date) throws DatatypeConfigurationException {
+    	if (date==null){
+    		return null;
+    	}
         GregorianCalendar gCalendar = new GregorianCalendar();
         gCalendar.setTime(date);
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(gCalendar);
