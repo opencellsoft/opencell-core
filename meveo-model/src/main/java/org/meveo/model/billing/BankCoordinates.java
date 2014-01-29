@@ -70,7 +70,7 @@ public class BankCoordinates implements Serializable, Cloneable {
 	@Size(max = 50)
 	private String issuerName;
 	
-	@Column(name = "ISSUER_NAME", length = 35)
+	@Column(name = "ICS", length = 35)
 	@Size(max = 35)
 	private String ics; //L'identifiant Créancier Sepa
 	
