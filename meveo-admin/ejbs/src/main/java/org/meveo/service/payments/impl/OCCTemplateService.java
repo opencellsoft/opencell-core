@@ -33,6 +33,7 @@ import org.meveo.service.base.PersistenceService;
 public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
 	private static final String DUNNING_OCC_CODE = "bayad.dunning.occCode";
+	private static final String DDREQUEST_OCC_CODE = "bayad.ddrequest.occCode";
 	
 	public OCCTemplate findByCode(String code, String providerCode) {
 		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
@@ -63,6 +64,12 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 	public OCCTemplate getDunningOCCTemplate(String providerCode) throws Exception {
 		return (OCCTemplate) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
 				.setParameter("code", ParamBean.getInstance().getProperty(DUNNING_OCC_CODE)).setParameter("providerCode", providerCode).getSingleResult();
+
+	}
+
+	public OCCTemplate getDirectDebitOCCTemplate(String providerCode) throws Exception {
+		return (OCCTemplate) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
+				.setParameter("code",ParamBean.getInstance().getProperty(DDREQUEST_OCC_CODE)).setParameter("providerCode", providerCode).getSingleResult();
 
 	}
 }

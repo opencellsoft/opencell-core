@@ -109,6 +109,16 @@ public class CustomerAccount extends AccountEntity {
 
 	@Column(name = "PASSWORD", length = 10)
 	private String password = "";
+	
+	
+	@Column(name = "MANDATE_IDENTIFICATION", length = 35)
+	private String MandateIdentification = "";
+	
+	@Column(name = "MANDATE_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date MandateDate;
+	
+	
 
 	public Customer getCustomer() {
 		return customer;
@@ -238,5 +248,23 @@ public class CustomerAccount extends AccountEntity {
 	public void setdDRequestItems(List<DDRequestItem> dDRequestItems) {
 		this.dDRequestItems = dDRequestItems;
 	}
+
+	public String getMandateIdentification() {
+		return MandateIdentification;
+	}
+
+	public void setMandateIdentification(String mandateIdentification) {
+		MandateIdentification = mandateIdentification;
+	}
+
+	public Date getMandateDate() {
+		return MandateDate;
+	}
+
+	public void setMandateDate(Date mandateDate) {
+		MandateDate = mandateDate;
+	}
+	
+	
 
 }

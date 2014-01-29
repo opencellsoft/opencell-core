@@ -17,6 +17,7 @@ package org.meveo.commons.utils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -164,4 +165,11 @@ public class StringUtils {
             }
         return sb.toString();
     }
+    
+    public static String enleverAccent(String value) {
+		if (StringUtils.isBlank(value)) {
+			return value;
+		}
+		return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
+	}
 }

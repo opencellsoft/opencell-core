@@ -64,6 +64,9 @@ public class DDRequestItem extends AuditableEntity {
 
 	@Column(name = "PAYMENT_INFO5")
 	private String paymentInfo5;// bankName
+	
+	@Column(name = "PAYMENT_INFO6")
+	private String paymentInfo6;// bic
 
 	@Column(name = "DUE_DATE")
 	@Temporal(TemporalType.DATE)
@@ -200,6 +203,14 @@ public class DDRequestItem extends AuditableEntity {
 
 	public BigDecimal getAmountInvoices() {
 		return amountInvoices;
+	}
+
+	public String getPaymentInfo6() {
+		return paymentInfo6;
+	}
+
+	public void setPaymentInfo6(String paymentInfo6) {
+		this.paymentInfo6 = paymentInfo6;
 	}
 
 }

@@ -59,7 +59,7 @@ public class RecordedInvoice extends AccountOperation {
 	private String paymentInfo;// IBAN for direct debit
 
 	@Column(name = "PAYMENT_INFO1")
-	private String paymentInfo1;// bank code or BIC
+	private String paymentInfo1;// bank code
 
 	@Column(name = "PAYMENT_INFO2")
 	private String paymentInfo2;// code guichet
@@ -72,6 +72,9 @@ public class RecordedInvoice extends AccountOperation {
 
 	@Column(name = "PAYMENT_INFO5")
 	private String paymentInfo5;// bankName
+	
+	@Column(name = "PAYMENT_INFO6")
+	private String paymentInfo6;// bic
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "DDRequestLOT_ID")
@@ -204,4 +207,13 @@ public class RecordedInvoice extends AccountOperation {
 		return ddRequestItem;
 	}
 
+	public String getPaymentInfo6() {
+		return paymentInfo6;
+	}
+
+	public void setPaymentInfo6(String paymentInfo6) {
+		this.paymentInfo6 = paymentInfo6;
+	}
+
+	
 }

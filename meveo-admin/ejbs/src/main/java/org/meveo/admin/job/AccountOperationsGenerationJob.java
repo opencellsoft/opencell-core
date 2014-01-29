@@ -171,7 +171,7 @@ public class AccountOperationsGenerationJob implements Job {
 				recordedInvoice.setPaymentInfo3(billingAccount.getBankCoordinates().getAccountNumber());
 				recordedInvoice.setPaymentInfo4(billingAccount.getBankCoordinates().getKey());
 				recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
-
+				recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
 				recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());
 				recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 				recordedInvoiceService.create(recordedInvoice);

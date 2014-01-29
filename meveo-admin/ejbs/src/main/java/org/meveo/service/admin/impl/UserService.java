@@ -54,6 +54,7 @@ import org.meveo.service.base.PersistenceService;
 public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
+	
 
 
     private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");

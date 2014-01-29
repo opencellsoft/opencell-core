@@ -69,6 +69,11 @@ public class BankCoordinates implements Serializable, Cloneable {
 	@Column(name = "ISSUER_NAME", length = 50)
 	@Size(max = 50)
 	private String issuerName;
+	
+	@Column(name = "ISSUER_NAME", length = 35)
+	@Size(max = 35)
+	private String ics; //L'identifiant Créancier Sepa
+	
 
 	public BankCoordinates() {
 	}
@@ -185,5 +190,15 @@ public class BankCoordinates implements Serializable, Cloneable {
 	public String getIssuerName() {
 		return issuerName;
 	}
+
+	public String getIcs() {
+		return ics;
+	}
+
+	public void setIcs(String ics) {
+		this.ics = ics;
+	}
+	
+	
 
 }

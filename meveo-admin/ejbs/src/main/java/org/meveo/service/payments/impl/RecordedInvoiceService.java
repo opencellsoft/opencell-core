@@ -16,6 +16,7 @@
 package org.meveo.service.payments.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -27,6 +28,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 
@@ -113,5 +115,16 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
 		}
 		return invoices;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RecordedInvoice> getInvoices(Date fromDueDate, Date toDueDate, String providerCode) throws Exception {
+		return getEntityManager()
+				.createQuery(
+						"from " + RecordedInvoice.class.getSimpleName()
+								+ " where ddRequestLOT is null and matchingStatus=:matchingStatus and dueDate >=:fromDueDate and"
+								+ " dueDate<=:toDueDate and paymentMethod=:paymentMethod  and provider.code=:providerCode ")
+				.setParameter("fromDueDate", fromDueDate).setParameter("toDueDate", toDueDate).setParameter("matchingStatus", MatchingStatusEnum.O)
+				.setParameter("paymentMethod", PaymentMethodEnum.DIRECTDEBIT).setParameter("providerCode", providerCode).getResultList();
 	}
 }

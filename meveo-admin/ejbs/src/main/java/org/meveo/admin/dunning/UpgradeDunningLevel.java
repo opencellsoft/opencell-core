@@ -37,12 +37,10 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.BayadDunningInputHistoryService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.payments.impl.ActionDunningService;
 import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.DunningHistoryService;
 import org.meveo.service.payments.impl.DunningPlanTransitionService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
@@ -61,7 +59,6 @@ public class UpgradeDunningLevel  {
 
 	private static final Logger logger = Logger.getLogger(UpgradeDunningLevel.class.getName());
 	private static final String DUNNING_BALANCE_FLAG = "bayad.dunning.blanceFlag";
-	private static final String USER_SYSTEM_ID = "bayad.userSystemId";
 	
 	@Inject
 	DunningUtils dunningUtils;
@@ -182,7 +179,7 @@ public class UpgradeDunningLevel  {
 		occ.setOperationDate(new Date());
 		occ.setDueDate(new Date());
 		occ.setProvider(customerAccount.getProvider());
-		occ.setAuditable(DunningUtils.getAuditable(userService.findById(Long.valueOf(ParamBean.getInstance().getProperty(USER_SYSTEM_ID)))));
+		occ.setAuditable(DunningUtils.getAuditable(userService.getSystemUser()));
 		otherCreditAndChargeService.create(occ);
 		return occ;
 

@@ -78,7 +78,7 @@ public class InvoicingJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, Provider provider) {
-		log.info("execute RecurringRatingJob.");
+		log.info("execute InvoicingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
 			List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.NEW,BillingRunStatusEnum.ON_GOING,BillingRunStatusEnum.CONFIRMED);
