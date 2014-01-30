@@ -112,11 +112,11 @@ public class CustomerAccount extends AccountEntity {
 	
 	
 	@Column(name = "MANDATE_IDENTIFICATION", length = 35)
-	private String MandateIdentification = "";
+	private String mandateIdentification = "";
 	
 	@Column(name = "MANDATE_DATE")
 	@Temporal(TemporalType.DATE)
-	private Date MandateDate;
+	private Date mandateDate;
 	
 	
 
@@ -250,20 +250,21 @@ public class CustomerAccount extends AccountEntity {
 	}
 
 	public String getMandateIdentification() {
-		return MandateIdentification;
+		return mandateIdentification;
 	}
 
 	public void setMandateIdentification(String mandateIdentification) {
-		MandateIdentification = mandateIdentification;
+		this.mandateIdentification = mandateIdentification;
 	}
 
 	public Date getMandateDate() {
-		return MandateDate;
+		return mandateDate;
 	}
 
 	public void setMandateDate(Date mandateDate) {
-		MandateDate = mandateDate;
+		this.mandateDate = mandateDate;
 	}
+
 	
 	
 
