@@ -31,11 +31,7 @@ public class ArConfig {
 	private static final String DDREQUEST_HEADER_DDMODE = "bayad.ddrequest.header.DDmode";
 	private static final String DDREQUEST_HEADER_REFRENCE = "bayad.ddrequest.header.reference";
 
-	private static final String DDREQUEST_LINE_DDMODE = "bayad.ddrequest.line.DDmode";
-	private static final String DDREQUEST_LINE_LABEL = "bayad.ddrequest.line.label";
 	private static final String DDREQUEST_DATE_VALUE_AFTER = "bayad.ddrequest.dateValueAfterNbDays";
-
-	private static final String DDREQUEST_FOOTER_DDMODE = "bayad.ddrequest.footer.DDmode";
 
 	private static final String DDREQUEST_OUTPUT_DIR = "bayad.ddrequest.outputDir";
 	private static final String DDREQUEST_FILE_NAME_EXTENSION = "bayad.ddrequest.fileName.extension";
@@ -85,18 +81,9 @@ public class ArConfig {
 		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_HEADER_REFRENCE);
 	}
 
-	public static String getDDRequestLineDDMode() {
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_LINE_DDMODE);
-	}
+	
 
-	public static String getDDRequestLineLabel() {
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_LINE_LABEL);
-	}
-
-	public static String getDDRequestFooterDDMode() {
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_FOOTER_DDMODE);
-	}
-
+	
 	public static String getDunningLotFileName() {
 		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DUNNING_LOT_FILENAME);
 	}

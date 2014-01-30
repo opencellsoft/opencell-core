@@ -273,10 +273,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	      //Restrictions (I don't really understand what you're querying)
 	     Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN);
 	     Predicate pWallet = cb.equal(from.get("wallet"), wallet);
-	     Predicate pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
+	     Predicate pAmoutWithoutTax=null;
+	     if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+	    	 pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
+	     }
+	    
 	     Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
 	     Predicate pInvoice = cb.isNull(from.get("invoice"));
-	     cq.where(pStatus,pWallet,pAmoutWithoutTax,pdoNotTriggerInvoicing,pInvoice);
+	     if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+	    	 cq.where(pStatus,pWallet,pAmoutWithoutTax,pdoNotTriggerInvoicing,pInvoice);
+	     }else{
+	    	 cq.where(pStatus,pWallet,pdoNotTriggerInvoicing,pInvoice);
+	     }
+	     
    		 List<InvoiceAgregate> invoiceAgregateFList=new ArrayList<InvoiceAgregate>();
    		 List<Object[]> invoiceSubCats=getEntityManager().createQuery(cq).getResultList();
    		
@@ -292,7 +301,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
              
    		  for( Object[] object:invoiceSubCats){
-   			  logger.info("amountWithTax="+object[1]+"amountWithoutTax"+object[2]+"amountWithTax"+object[3]);
+   			  logger.info("amountWithoutTax="+object[1]+"amountWithTax"+object[2]+"amountTax"+object[3]);
    			  Long  invoiceSubCategoryId=(Long) object[0];
    			  InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findById(invoiceSubCategoryId);
    			  Tax tax = null;
@@ -489,15 +498,21 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         invoiceAgregate.setItemNumber(itemNumber);
     }
     public void updateRatedTransactions(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice){
-    	
-		  Query query=getEntityManager().createQuery(
-                  "UPDATE RatedTransaction r SET r.billingRun=:billingRun,invoice=:invoice,status=:newStatus where r.invoice is null and r.status=:status and r.doNotTriggerInvoicing=:invoicing and r.amountWithoutTax<>:zeroValue and r.billingAccount=:billingAccount");
+    	String statment ="UPDATE RatedTransaction r SET r.billingRun=:billingRun,invoice=:invoice,status=:newStatus where r.invoice is null and r.status=:status and r.doNotTriggerInvoicing=:invoicing and r.billingAccount=:billingAccount";
+    	if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+    		statment+=" and r.amountWithoutTax<>:zeroValue ";
+    	}
+			
+    	Query query=getEntityManager().createQuery(statment);
          query.setParameter("billingRun", billingRun);
          query.setParameter("invoice", invoice);
          query.setParameter("newStatus", RatedTransactionStatusEnum.BILLED);
          query.setParameter("status", RatedTransactionStatusEnum.OPEN);
          query.setParameter("invoicing", false);
-         query.setParameter("zeroValue", BigDecimal.ZERO);
+         if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+        	 query.setParameter("zeroValue", BigDecimal.ZERO);
+         }
+        
          query.setParameter("billingAccount", billingAccount);
          
         
@@ -512,7 +527,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
 		  qb.addCriterionEntity("c.billingAccount.id", billingAccountId);
 		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
-		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+			  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false); 
+		  }
 		  qb.addSql("c.invoice is null");
          
 
@@ -540,7 +557,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     	 QueryBuilder qb = new QueryBuilder("select sum(amountWithoutTax),sum(amountWithTax),sum(amountTax) from RatedTransaction c");
 		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
 		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
-		  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  if(!billingAccount.getProvider().isDisplayFreeTransacInInvoice()){
+			  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
+		  }
+				
+		 
 		  qb.addCriterionEntity("c.billingAccount", billingAccount);
 		  qb.addSql("c.invoice is null");
 		
