@@ -1,4 +1,4 @@
-package org.meveo.rest.api;
+package org.meveo.api.rest;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,15 +11,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.ActionStatus;
+import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.ServiceTemplateServiceApi;
-import org.meveo.api.dto.ServiceDto;
+import org.meveo.api.UserServiceApi;
+import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.ActionStatus;
-import org.meveo.rest.ActionStatusEnum;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -27,34 +26,30 @@ import org.meveo.util.MeveoParamBean;
  * @since Oct 11, 2013
  **/
 @Stateless
-@Path("/serviceTemplate")
+@Path("/user")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class ServiceTemplateWS {
+public class UserWS {
 
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
 	@Inject
-	private ServiceTemplateServiceApi serviceTemplateServiceApi;
+	private UserServiceApi userServiceApi;
 
 	@POST
 	@Path("/")
-	public ActionStatus create(ServiceDto serviceDto) {
+	public ActionStatus create(UserDto userDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+			userDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
-			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+			userDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
-			serviceTemplateServiceApi.create(serviceDto);
-		} catch (ServiceTemplateAlreadyExistsException e) {
-			result.setErrorCode(MeveoApiErrorCode.SERVICE_TEMPLATE_ALREADY_EXISTS);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
+			userServiceApi.create(userDto);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -69,36 +64,16 @@ public class ServiceTemplateWS {
 
 	@PUT
 	@Path("/")
-	public ActionStatus update(ServiceDto serviceDto) {
+	public ActionStatus update(UserDto userDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+			userDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
-			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+			userDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
-			serviceTemplateServiceApi.update(serviceDto);
-		} catch (MissingParameterException e) {
-			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (MeveoApiException e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
-	@DELETE
-	@Path("/{serviceId}")
-	public ActionStatus remove(@PathParam("serviceId") String serviceId) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			serviceTemplateServiceApi.remove(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")), serviceId);
+			userServiceApi.update(userDto);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -110,4 +85,25 @@ public class ServiceTemplateWS {
 
 		return result;
 	}
+
+	@DELETE
+	@Path("/{userId}")
+	public ActionStatus remove(@PathParam("userId") String userId) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			userServiceApi.remove(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")), userId);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
 }

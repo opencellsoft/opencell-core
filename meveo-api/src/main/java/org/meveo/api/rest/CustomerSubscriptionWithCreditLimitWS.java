@@ -1,4 +1,4 @@
-package org.meveo.rest.api;
+package org.meveo.api.rest;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
-import org.meveo.api.SubscriptionWithCreditLimitServiceApi;
+import org.meveo.api.CustomerSubscriptionWithCreditLimitServiceApi;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitUpdateDto;
 import org.meveo.api.exception.CreditLimitExceededException;
@@ -27,13 +27,12 @@ import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
- * @since Nov 13, 2013
+ * @since Dec 17, 2013
  **/
-@Stateless
-@Path("/subscriptionWithCreditLimit")
+@Path("/customerSubscriptionWithCreditLimit")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class SubscriptionWithCreditLimitWS {
+public class CustomerSubscriptionWithCreditLimitWS {
 
 	@Inject
 	@MeveoParamBean
@@ -43,7 +42,7 @@ public class SubscriptionWithCreditLimitWS {
 	private Logger log;
 
 	@Inject
-	private SubscriptionWithCreditLimitServiceApi subscriptionWithCreditLimitServiceApi;
+	private CustomerSubscriptionWithCreditLimitServiceApi customerSubscriptionWithCreditLimitServiceApi;
 
 	@POST
 	@Path("/")
@@ -57,7 +56,7 @@ public class SubscriptionWithCreditLimitWS {
 				"asp.api.providerId", "1")));
 
 		try {
-			result = subscriptionWithCreditLimitServiceApi
+			result = customerSubscriptionWithCreditLimitServiceApi
 					.create(subscriptionDto);
 		} catch (CreditLimitExceededException e) {
 		} catch (SellerDoesNotExistsException e) {
@@ -83,7 +82,8 @@ public class SubscriptionWithCreditLimitWS {
 				"asp.api.providerId", "1")));
 
 		try {
-			subscriptionWithCreditLimitServiceApi.update(subscriptionUpdateDto);
+			customerSubscriptionWithCreditLimitServiceApi
+					.update(subscriptionUpdateDto);
 		} catch (MeveoApiException e) {
 			log.error(e.getMessage());
 		} catch (IncorrectSusbcriptionException e) {

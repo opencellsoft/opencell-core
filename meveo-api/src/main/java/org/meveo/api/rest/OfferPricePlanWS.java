@@ -1,4 +1,4 @@
-package org.meveo.rest.api;
+package org.meveo.api.rest;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,53 +11,45 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.ActionStatus;
+import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.OfferTemplateServiceApi;
-import org.meveo.api.dto.OfferDto;
+import org.meveo.api.OfferPricePlanServiceApi;
+import org.meveo.api.dto.OfferPricePlanDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.exception.OfferTemplateAlreadyExistsException;
-import org.meveo.api.exception.OfferTemplateDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.ActionStatus;
-import org.meveo.rest.ActionStatusEnum;
-import org.meveo.util.MeveoParamBean;
 
 /**
  * @author Edward P. Legaspi
  * @since Oct 11, 2013
  **/
 @Stateless
-@Path("/offerTemplate")
+@Path("/offerPricePlan")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class OfferTemplateWS {
+public class OfferPricePlanWS {
 
 	@Inject
-	@MeveoParamBean
 	private ParamBean paramBean;
 
 	@Inject
-	private OfferTemplateServiceApi offerTemplateServiceApi;
+	private OfferPricePlanServiceApi offerPricePlanServiceApi;
 
 	@POST
 	@Path("/")
-	public ActionStatus create(OfferDto offerDto) {
+	public ActionStatus create(OfferPricePlanDto offerPricePlanDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			offerDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			offerDto.setProviderId(Long.valueOf(paramBean.getProperty(
+			offerPricePlanDto.setCurrentUserId(Long.valueOf(paramBean
+					.getProperty("asp.api.userId", "1")));
+			offerPricePlanDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
-			offerTemplateServiceApi.create(offerDto);
+			offerPricePlanServiceApi.create(offerPricePlanDto);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (OfferTemplateAlreadyExistsException e) {
-			result.setErrorCode(MeveoApiErrorCode.OFFER_TEMPLATE_ALREADY_EXISTS);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (MeveoApiException e) {
@@ -68,18 +60,16 @@ public class OfferTemplateWS {
 		return result;
 	}
 
-	@PUT
-	@Path("/")
-	public ActionStatus update(OfferDto offerDto) {
+	@DELETE
+	@Path("/{offerId}/{organizationId}")
+	public ActionStatus remove(@PathParam("offerId") String offerId,
+			@PathParam("organizationId") String organizationId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
 		try {
-			offerDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			offerDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
-			offerTemplateServiceApi.update(offerDto);
+			offerPricePlanServiceApi.remove(offerId, organizationId, Long
+					.valueOf(paramBean.getProperty("asp.api.userId", "1")),
+					Long.valueOf(paramBean.getProperty("asp.api.providerId",
+							"1")));
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -88,23 +78,23 @@ public class OfferTemplateWS {
 		return result;
 	}
 
-	@DELETE
-	@Path("/{offerId}")
-	public ActionStatus remove(@PathParam("offerId") String offerId) {
+	@PUT
+	@Path("/")
+	public ActionStatus update(OfferPricePlanDto offerPricePlanDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
 		try {
-			offerTemplateServiceApi.remove(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")), Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")), offerId);
+			offerPricePlanDto.setCurrentUserId(Long.valueOf(paramBean
+					.getProperty("asp.api.userId", "1")));
+			offerPricePlanDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
+
+			offerPricePlanServiceApi.update(offerPricePlanDto);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-		} catch (OfferTemplateDoesNotExistsException e) {
-			result.setErrorCode(MeveoApiErrorCode.OFFER_TEMPLATE_DOES_NOT_EXISTS);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
+		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}

@@ -1,4 +1,4 @@
-package org.meveo.rest;
+package org.meveo.api;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

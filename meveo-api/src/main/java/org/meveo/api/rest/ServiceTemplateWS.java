@@ -1,4 +1,4 @@
-package org.meveo.rest.api;
+package org.meveo.api.rest;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -11,14 +11,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.ActionStatus;
+import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.ServicePricePlanServiceApi;
-import org.meveo.api.dto.ServicePricePlanDto;
+import org.meveo.api.ServiceTemplateServiceApi;
+import org.meveo.api.dto.ServiceDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.ActionStatus;
-import org.meveo.rest.ActionStatusEnum;
 import org.meveo.util.MeveoParamBean;
 
 /**
@@ -26,30 +27,58 @@ import org.meveo.util.MeveoParamBean;
  * @since Oct 11, 2013
  **/
 @Stateless
-@Path("/servicePricePlan")
+@Path("/serviceTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class ServicePricePlanWS {
-
-	@Inject
-	private ServicePricePlanServiceApi servicePricePlanServiceApi;
+public class ServiceTemplateWS {
 
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
 
+	@Inject
+	private ServiceTemplateServiceApi serviceTemplateServiceApi;
+
 	@POST
 	@Path("/")
-	public ActionStatus create(ServicePricePlanDto servicePricePlanDto) {
+	public ActionStatus create(ServiceDto serviceDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			servicePricePlanDto.setCurrentUserId(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")));
-			servicePricePlanDto.setProviderId(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")));
+			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
 
-			servicePricePlanServiceApi.create(servicePricePlanDto);
+			serviceTemplateServiceApi.create(serviceDto);
+		} catch (ServiceTemplateAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SERVICE_TEMPLATE_ALREADY_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@PUT
+	@Path("/")
+	public ActionStatus update(ServiceDto serviceDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			serviceDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
+
+			serviceTemplateServiceApi.update(serviceDto);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -63,15 +92,17 @@ public class ServicePricePlanWS {
 	}
 
 	@DELETE
-	@Path("/{serviceId}/{organizationId}")
-	public ActionStatus remove(@PathParam("serviceId") String serviceId,
-			@PathParam("organizationId") String organizationId) {
+	@Path("/{serviceId}")
+	public ActionStatus remove(@PathParam("serviceId") String serviceId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
 		try {
-			servicePricePlanServiceApi.remove(serviceId, organizationId, Long
-					.valueOf(paramBean.getProperty("asp.api.userId", "1")),
-					Long.valueOf(paramBean.getProperty("asp.api.providerId",
-							"1")));
+			serviceTemplateServiceApi.remove(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")), serviceId);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -79,29 +110,4 @@ public class ServicePricePlanWS {
 
 		return result;
 	}
-
-	@PUT
-	@Path("/")
-	public ActionStatus update(ServicePricePlanDto servicePricePlanDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			servicePricePlanDto.setCurrentUserId(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")));
-			servicePricePlanDto.setProviderId(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")));
-
-			servicePricePlanServiceApi.update(servicePricePlanDto);
-		} catch (MissingParameterException e) {
-			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (MeveoApiException e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
 }

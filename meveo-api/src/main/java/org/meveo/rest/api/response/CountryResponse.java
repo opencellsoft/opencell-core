@@ -4,9 +4,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.ActionStatus;
+import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.dto.CountryDto;
-import org.meveo.rest.ActionStatus;
-import org.meveo.rest.ActionStatusEnum;
 
 /**
  * @author Edward P. Legaspi

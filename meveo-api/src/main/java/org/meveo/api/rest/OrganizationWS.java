@@ -1,4 +1,4 @@
-package org.meveo.rest.api;
+package org.meveo.api.rest;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -12,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
+import org.meveo.api.ActionStatus;
+import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.OrganizationServiceApi;
 import org.meveo.api.dto.OrganizationDto;
@@ -23,8 +25,6 @@ import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.ActionStatus;
-import org.meveo.rest.ActionStatusEnum;
 import org.meveo.util.MeveoParamBean;
 
 /**

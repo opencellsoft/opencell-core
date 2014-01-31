@@ -1,6 +1,5 @@
-package org.meveo.rest.api;
+package org.meveo.asg.api.rest;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -13,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.ActionStatus;
+import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CountryServiceApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.CountryDto;
@@ -21,31 +22,23 @@ import org.meveo.api.exception.CurrencyDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.ActionStatus;
-import org.meveo.rest.ActionStatusEnum;
 import org.meveo.rest.api.response.CountryResponse;
-import org.meveo.util.MeveoParamBean;
 
 /**
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
  **/
-@Stateless
-@Path("/country")
+@Path("/asg/country")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class CountryWS {
+public class CountryWS extends org.meveo.api.rest.CountryWS {
 
 	@Inject
 	private CountryServiceApi countryServiceApi;
 
-	@Inject
-	@MeveoParamBean
-	private ParamBean paramBean;
-
 	@GET
 	@Path("/index")
+	@Override
 	public ActionStatus index() {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
 				"MEVEO API Rest Web Service");

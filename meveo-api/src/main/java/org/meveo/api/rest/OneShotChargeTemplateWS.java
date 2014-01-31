@@ -1,4 +1,4 @@
-package org.meveo.rest.api;
+package org.meveo.api.rest;
 
 import java.util.Date;
 
@@ -11,10 +11,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.api.ActionStatus;
+import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.OneShotChargeTemplateServiceApi;
 import org.meveo.api.dto.OneShotChargeTemplateListDto;
-import org.meveo.rest.ActionStatus;
-import org.meveo.rest.ActionStatusEnum;
 
 /**
  * @author Edward P. Legaspi
