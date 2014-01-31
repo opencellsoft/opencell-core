@@ -28,7 +28,7 @@ import org.meveo.rest.api.response.CountryResponse;
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
  **/
-@Path("/asg/country")
+@Path("/country")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class CountryWS extends org.meveo.api.rest.CountryWS {
