@@ -327,6 +327,12 @@
 			<artifactId>batik-1.5-fop</artifactId>
 			<version>0.20-5</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.meveo</groupId>
+			<artifactId>tahoma</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 
 	</dependencies>
 

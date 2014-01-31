@@ -161,6 +161,10 @@ public class Provider extends BusinessEntity {
 
 	@OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
 	private List<TradingCurrency> tradingCurrencies;
+	
+	@Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
+	private boolean displayFreeTransacInInvoice = false;
+	
 
 	public String getSerializedPaymentMethods() {
 		return serializedPaymentMethods;
@@ -434,5 +438,15 @@ public class Provider extends BusinessEntity {
 	public List<WalletTemplate> getPrepaidWalletTemplates() {
 		return prepaidWalletTemplates;
 	}
+
+	public boolean isDisplayFreeTransacInInvoice() {
+		return displayFreeTransacInInvoice;
+	}
+
+	public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
+		this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
+	}
+	
+	
 
 }
