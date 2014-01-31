@@ -317,13 +317,16 @@
 			<version>1.7.6</version>
 		</dependency>
 
+		<!-- <dependency> -->
+		<!-- <groupId>batik</groupId> -->
+		<!-- <artifactId>batik</artifactId> -->
+		<!-- <version>1.1.1</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>batik</groupId>
-			<artifactId>batik</artifactId>
-			<version>1.1.1</version>
+			<artifactId>batik-1.5-fop</artifactId>
+			<version>0.20-5</version>
 		</dependency>
-
-	
 
 	</dependencies>
 
