@@ -532,7 +532,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
                                         : ratedTrnsaction.getAmountWithoutTax();
-                                if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
+                                if (transactionAmount == null){
+                                	transactionAmount=BigDecimal.ZERO;
+                                }
+                                
+                                if (invoice.getProvider().isDisplayFreeTransacInInvoice() || !transactionAmount.equals(BigDecimal.ZERO)) {
                                     createSubCatElement = true;
                                     break;
                                 }
@@ -559,7 +563,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             for (RatedTransaction ratedTrnsaction : transactions) {
                                 BigDecimal transactionAmount = entreprise ? ratedTrnsaction.getAmountWithTax()
                                         : ratedTrnsaction.getAmountWithoutTax();
-                                if (transactionAmount != null && !transactionAmount.equals(BigDecimal.ZERO)) {
+                                if (transactionAmount == null){
+                                	transactionAmount=BigDecimal.ZERO;
+                                }
+                                
+                                if (invoice.getProvider().isDisplayFreeTransacInInvoice() || !transactionAmount.equals(BigDecimal.ZERO)) {
+                                   
 
                                     Element line = doc.createElement("line");
                                     WalletOperation walletOperation= getEntityManager().find(WalletOperation.class, ratedTrnsaction.getWalletOperationId());
@@ -742,9 +751,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         Map<Long, RatedTransaction> headerRatedTransactions = headerCat.getRatedtransactions();
                         for (RatedTransaction ratedTrnsaction : transactions) {
                             BigDecimal transactionAmountWithTax = ratedTrnsaction.getAmountWithTax();
-                            if (transactionAmountWithTax == null || transactionAmountWithTax.equals(BigDecimal.ZERO)) {
-                                continue;
+                            if (transactionAmountWithTax == null){
+                            	transactionAmountWithTax=BigDecimal.ZERO;
                             }
+                            
+                            if ((!invoice.getProvider().isDisplayFreeTransacInInvoice() && transactionAmountWithTax.equals(BigDecimal.ZERO))) {
+                            	continue;
+                            }
+                               
+                            
                             RatedTransaction headerRatedTransaction = null;
 
                             if (headerRatedTransactions.containsKey(ratedTrnsaction.getId())) {
