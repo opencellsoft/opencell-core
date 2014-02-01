@@ -23,8 +23,8 @@ import org.meveo.api.exception.CurrencyDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
+import org.meveo.api.rest.response.CountryResponse;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.api.response.CountryResponse;
 import org.meveo.util.MeveoParamBean;
 
 /**

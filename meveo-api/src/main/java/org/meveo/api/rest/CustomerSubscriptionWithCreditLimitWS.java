@@ -20,8 +20,8 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.ParentSellerDoesNotExistsException;
 import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.ServiceTemplateDoesNotExistsException;
+import org.meveo.api.rest.response.SubscriptionWithCreditLimitResponse;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.api.response.SubscriptionWithCreditLimitResponse;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 

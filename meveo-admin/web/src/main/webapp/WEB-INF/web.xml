@@ -77,7 +77,7 @@
 
 	<servlet-mapping>
 		<servlet-name>javax.ws.rs.core.Application</servlet-name>
-		<url-pattern>/api/rest/*,/asg/api/rest/*</url-pattern>
+		<url-pattern>/api/rest/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- Primefaces theme <context-param> <param-name>primefaces.THEME</param-name> 

@@ -22,13 +22,13 @@ import org.meveo.api.exception.CurrencyDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
-import org.meveo.rest.api.response.CountryResponse;
+import org.meveo.api.rest.response.CountryResponse;
 
 /**
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
  **/
-@Path("/country")
+@Path("/asg/country")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class CountryWS extends org.meveo.api.rest.CountryWS {

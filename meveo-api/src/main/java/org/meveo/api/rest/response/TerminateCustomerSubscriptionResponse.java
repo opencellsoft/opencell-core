@@ -1,4 +1,4 @@
-package org.meveo.rest.api.response;
+package org.meveo.api.rest.response;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
  **/
-@XmlRootElement(name = "subscriptionWithCreditLimitResponse")
+@XmlRootElement(name = "terminateCustomerSubscriptionResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubscriptionWithCreditLimitResponse {
+public class TerminateCustomerSubscriptionResponse {
 
 	private String requestId;
 	private Boolean accepted;

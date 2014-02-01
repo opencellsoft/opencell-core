@@ -12,8 +12,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CustomerSubscriptionWithCreditLimitServiceApi;
 import org.meveo.api.dto.TerminateCustomerSubscriptionDto;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.rest.response.TerminateCustomerSubscriptionResponse;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.rest.api.response.TerminateCustomerSubscriptionResponse;
 import org.meveo.util.MeveoParamBean;
 import org.slf4j.Logger;
 
