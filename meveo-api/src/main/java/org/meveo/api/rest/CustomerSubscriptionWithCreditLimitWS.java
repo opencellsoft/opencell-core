@@ -1,6 +1,6 @@
 package org.meveo.api.rest;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -30,6 +30,7 @@ import org.slf4j.Logger;
  * @since Dec 17, 2013
  **/
 @Path("/customerSubscriptionWithCreditLimit")
+@RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class CustomerSubscriptionWithCreditLimitWS {

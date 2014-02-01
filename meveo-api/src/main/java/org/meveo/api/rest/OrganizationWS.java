@@ -1,6 +1,6 @@
 package org.meveo.api.rest;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -31,8 +31,8 @@ import org.meveo.util.MeveoParamBean;
  * @author Edward P. Legaspi
  * @since Oct 11, 2013
  **/
-@Stateless
 @Path("/organization")
+@RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class OrganizationWS {

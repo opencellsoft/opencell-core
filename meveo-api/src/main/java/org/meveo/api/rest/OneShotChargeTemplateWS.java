@@ -2,7 +2,7 @@ package org.meveo.api.rest;
 
 import java.util.Date;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,8 +19,8 @@ import org.meveo.api.dto.OneShotChargeTemplateListDto;
 /**
  * @author Edward P. Legaspi
  **/
-@Stateless
 @Path("/oneShotChargeTemplate")
+@RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class OneShotChargeTemplateWS {
