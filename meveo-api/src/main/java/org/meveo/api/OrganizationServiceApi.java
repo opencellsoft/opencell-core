@@ -392,8 +392,11 @@ public class OrganizationServiceApi extends BaseApi {
 		if (!StringUtils.isBlank(organizationId)) {
 			Provider provider = providerService.findById(providerId);
 
-			Customer customer = customerService.findByCode(em, organizationId,
-					provider);
+			String customerPrefix = paramBean.getProperty(
+					"asp.api.default.customer.prefix", "CUST_");
+
+			Customer customer = customerService.findByCode(em, customerPrefix
+					+ organizationId, provider);
 			if (customer != null) {
 				customerService.remove(customer);
 			}

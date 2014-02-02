@@ -39,10 +39,10 @@ public class OrganizationWS {
 
 	@Inject
 	@MeveoParamBean
-	private ParamBean paramBean;
+	protected ParamBean paramBean;
 
 	@Inject
-	private OrganizationServiceApi organizationServiceApi;
+	protected OrganizationServiceApi organizationServiceApi;
 
 	@POST
 	@Path("/")

@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -27,31 +26,36 @@ public class InvoiceApi extends BaseApi {
 
 	@Inject
 	RecordedInvoiceService recordedInvoiceService;
-	
-	@Inject
-	CustomerAccountService customerAccountService;
-	
 
 	@Inject
-	OCCTemplateService  oCCTemplateService;
-	
-	ParamBean paramBean=ParamBean.getInstance();
-	
-	public void registerInvoice(String customerAccountCode,String providerCode,String invoiceNo, 
-			double amount,double amountWithoutTax,double taxAmount,double netToPay, Date date,
-			Date dueDate,String bankAccountName,PaymentMethodEnum paymentMethod,String BIC,String IBAN) throws BusinessException {
+	CustomerAccountService customerAccountService;
+
+	@Inject
+	OCCTemplateService oCCTemplateService;
+
+	ParamBean paramBean = ParamBean.getInstance();
+
+	public void registerInvoice(String customerAccountCode,
+			String providerCode, String invoiceNo, double amount,
+			double amountWithoutTax, double taxAmount, double netToPay,
+			Date date, Date dueDate, String bankAccountName,
+			PaymentMethodEnum paymentMethod, String BIC, String IBAN)
+			throws BusinessException {
 		Provider provider = providerService.findByCode(providerCode);
-		if(provider==null){
+		if (provider == null) {
 			throw new BusinessException("provider code invalid");
 		}
-		CustomerAccount customerAccount = customerAccountService.findByCode(em, customerAccountCode, provider);
-		if(customerAccount==null){
+		CustomerAccount customerAccount = customerAccountService.findByCode(em,
+				customerAccountCode, provider);
+		if (customerAccount == null) {
 			throw new BusinessException("accountCode code invalid");
 		}
 		RecordedInvoice invoice = new RecordedInvoice();
-		OCCTemplate invoiceTemplate=null;
+		OCCTemplate invoiceTemplate = null;
 		try {
-			invoiceTemplate = oCCTemplateService.findByCode(paramBean.getProperty("accountOperationsGenerationJob.occCode"),customerAccount.getProvider().getCode());
+			invoiceTemplate = oCCTemplateService.findByCode(paramBean
+					.getProperty("accountOperationsGenerationJob.occCode"),
+					customerAccount.getProvider().getCode());
 		} catch (Exception e) {
 			throw new BusinessException("Cannot find OCC Template for invoice");
 		}
@@ -60,31 +64,34 @@ public class InvoiceApi extends BaseApi {
 		invoice.setOccDescription(invoiceTemplate.getDescription());
 		try {
 			invoice.setAmount(new BigDecimal(amount));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect amount:"+amount);
+		} catch (Exception e) {
+			throw new BusinessException("Incorrect amount:" + amount);
 		}
 		try {
 			invoice.setAmountWithoutTax(new BigDecimal(amountWithoutTax));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect amountWithoutTax:"+amountWithoutTax);
+		} catch (Exception e) {
+			throw new BusinessException("Incorrect amountWithoutTax:"
+					+ amountWithoutTax);
 		}
 		try {
 			invoice.setUnMatchingAmount(new BigDecimal(amount));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect unMatchingAmount:"+amount);
+		} catch (Exception e) {
+			throw new BusinessException("Incorrect unMatchingAmount:" + amount);
 		}
 		try {
 			invoice.setNetToPay(new BigDecimal(netToPay));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect netToPay:"+netToPay);
+		} catch (Exception e) {
+			throw new BusinessException("Incorrect netToPay:" + netToPay);
 		}
 		invoice.setMatchingAmount(BigDecimal.ZERO);
 		invoice.setBillingAccountName(bankAccountName);
 		invoice.setCustomerAccount(customerAccount);
-		invoice.setDueDate(DateUtils.parseDateWithPattern(dueDate, paramBean.getProperty("accountOperationsGenerationJob.dateFormat","dd/MM/yyyy")));
+		invoice.setDueDate(DateUtils.parseDateWithPattern(dueDate, paramBean
+				.getProperty("accountOperationsGenerationJob.dateFormat",
+						"dd/MM/yyyy")));
 		invoice.setInvoiceDate(date);
 		invoice.setPaymentMethod(paymentMethod);
-		if(paymentMethod==PaymentMethodEnum.DIRECTDEBIT){
+		if (paymentMethod == PaymentMethodEnum.DIRECTDEBIT) {
 			invoice.setPaymentInfo(IBAN);
 			invoice.setPaymentInfo1(BIC);
 		}

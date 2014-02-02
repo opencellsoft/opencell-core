@@ -55,9 +55,15 @@ public class CountryWS extends org.meveo.api.rest.CountryWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
+			String asgCountryCode = countryDto.getCountryCode();
 			countryDto.setCountryCode(asgIdMappingService.getNewCode(em,
-					countryDto.getCountryCode(), EntityCodeEnum.C));
+					asgCountryCode, EntityCodeEnum.C));
 			result = super.create(countryDto);
+
+			if (result.getStatus() == ActionStatusEnum.FAIL) {
+				asgIdMappingService.removeByCodeAndType(em, asgCountryCode,
+						EntityCodeEnum.C);
+			}
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
