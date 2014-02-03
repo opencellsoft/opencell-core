@@ -138,7 +138,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		                .createQuery("select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");
 		   billingQuery.setParameter("customerAccountId", customerAccount.getId());
 		   List<ServiceInstance> services = (List<ServiceInstance>) billingQuery.getResultList();
-		   boolean terminated = isAllServiceInstancesTerminated(services);
+		   boolean terminated = services.size()>0?isAllServiceInstancesTerminated(services):false;
 		    
 		    customerAccountTag.setAttribute("accountTerminated",terminated+"");
             
@@ -824,11 +824,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     Element line = doc.createElement("line");
 
                     Element lebel = doc.createElement("label");
-
-
-                    WalletOperation walletOperation= getEntityManager().find(WalletOperation.class, headerTransaction.getWalletOperationId());
-                    Text lebelTxt = doc.createTextNode(walletOperation.getDescription() != null ? walletOperation
-                            .getDescription() : "");
+                    Text lebelTxt=doc.createTextNode("");
+                    if(headerTransaction.getWalletOperationId()!=null){
+                    	 WalletOperation walletOperation= getEntityManager().find(WalletOperation.class, headerTransaction.getWalletOperationId());
+                    	 lebelTxt = doc.createTextNode(walletOperation.getDescription() != null ? walletOperation
+                                 .getDescription() : "");
+                    }
+                   
+                    
                     lebel.appendChild(lebelTxt);
                     line.appendChild(lebel);
                     log.info("addHeaderCategories2 headerRatedTransaction amountHT="

@@ -41,5 +41,12 @@ public class InvoiceSubCategoryService extends
 
 		return (InvoiceSubCategory) qb.getQuery(em).getSingleResult();
 	}
+	
+	public InvoiceSubCategory findByCode(String code) {
+		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
+		qb.addCriterion("code", "=", code, false);
+
+		return (InvoiceSubCategory) qb.getQuery(getEntityManager()).getSingleResult();
+	}
 
 }
