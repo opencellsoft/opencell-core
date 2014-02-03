@@ -26,13 +26,13 @@ public class InterBankTitle implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE_CREANCIER")
+	@Column(name = "CREDITOR_CODE")
 	private String codeCreancier;
 
-	@Column(name = "CODE_ETBLISSEMENT_CREANCIER")
+	@Column(name = "FINANCIAL_INSTITUTION_CODE")
 	protected String codeEtablissementCreancier;
 
-	@Column(name = "CODE_CENTRE")
+	@Column(name = "CENTER_CODE")
 	protected String codeCentre;
 
 	@Column(name = "NNE")
