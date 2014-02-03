@@ -15,8 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
-import org.meveo.api.CountryServiceApi;
-import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.CountryDoesNotExistsException;
 import org.meveo.api.exception.CurrencyDoesNotExistsException;
@@ -24,6 +22,8 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.rest.response.CountryResponse;
+import org.meveo.asg.api.CountryServiceApi;
+import org.meveo.asg.api.MeveoApiErrorCode;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 
@@ -31,7 +31,7 @@ import org.meveo.util.MeveoParamBean;
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
  **/
-@Path("/country")
+@Path("/asg/country")
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

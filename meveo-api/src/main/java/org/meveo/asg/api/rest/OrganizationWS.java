@@ -2,7 +2,6 @@ package org.meveo.asg.api.rest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -12,13 +11,21 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.dto.OrganizationDto;
-import org.meveo.asg.api.model.EntityCodeEnum;
-import org.meveo.asg.api.service.AsgIdMappingService;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.ParentSellerDoesNotExistsException;
+import org.meveo.api.exception.SellerAlreadyExistsException;
+import org.meveo.api.exception.SellerDoesNotExistsException;
+import org.meveo.api.exception.TradingCountryDoesNotExistsException;
+import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
+import org.meveo.asg.api.MeveoApiErrorCode;
+import org.meveo.asg.api.OrganizationServiceApi;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.util.MeveoParamBean;
 
 /**
  * @author Edward P. Legaspi
@@ -28,14 +35,14 @@ import org.meveo.util.MeveoJpaForJobs;
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class OrganizationWS extends org.meveo.api.rest.OrganizationWS {
+public class OrganizationWS {
 
 	@Inject
-	private AsgIdMappingService asgIdMappingService;
+	@MeveoParamBean
+	protected ParamBean paramBean;
 
 	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
+	protected OrganizationServiceApi organizationServiceApi;
 
 	@POST
 	@Path("/")
@@ -43,27 +50,36 @@ public class OrganizationWS extends org.meveo.api.rest.OrganizationWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			String asgOrganizationId = orgDto.getOrganizationId();
-			String asgParentId = orgDto.getParentId();
+			orgDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			orgDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
 
-			orgDto.setOrganizationId(asgIdMappingService.getNewCode(em,
-					asgOrganizationId, EntityCodeEnum.ORG));
-			if (orgDto.getParentId() != null
-					&& !StringUtils.isBlank(orgDto.getParentId())) {
-				orgDto.setParentId(asgIdMappingService.getMeveoCode(em,
-						asgParentId, EntityCodeEnum.ORG));
-			}
-			result = super.create(orgDto);
-
-			if (result.getStatus() == ActionStatusEnum.FAIL) {
-				asgIdMappingService.removeByCodeAndType(em, asgOrganizationId,
-						EntityCodeEnum.ORG);
-				if (asgParentId != null && !StringUtils.isBlank(asgParentId)) {
-					asgIdMappingService.removeByCodeAndType(em, asgParentId,
-							EntityCodeEnum.ORG);
-				}
-			}
-		} catch (Exception e) {
+			organizationServiceApi.create(orgDto);
+		} catch (ParentSellerDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.PARENT_SELLER_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (TradingCurrencyDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_CURRENCY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (TradingCountryDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_COUNTRY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (SellerAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SELLER_ALREADY_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (AccountAlreadyExistsException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -77,15 +93,24 @@ public class OrganizationWS extends org.meveo.api.rest.OrganizationWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			orgDto.setOrganizationId(asgIdMappingService.getMeveoCode(em,
-					orgDto.getOrganizationId(), EntityCodeEnum.ORG));
-			if (orgDto.getParentId() != null
-					&& !StringUtils.isBlank(orgDto.getParentId())) {
-				orgDto.setParentId(asgIdMappingService.getMeveoCode(em,
-						orgDto.getParentId(), EntityCodeEnum.ORG));
-			}
+			orgDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
+			orgDto.setProviderId(Long.valueOf(paramBean.getProperty(
+					"asp.api.providerId", "1")));
 
-			result = super.update(orgDto);
+			organizationServiceApi.update(orgDto);
+		} catch (TradingCurrencyDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.TRADING_CURRENCY_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (SellerDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SELLER_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -101,16 +126,17 @@ public class OrganizationWS extends org.meveo.api.rest.OrganizationWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			organizationId = asgIdMappingService.getMeveoCode(em,
-					organizationId, EntityCodeEnum.ORG);
-
-			result = super.remove(organizationId);
-
-			if (result.getStatus() == ActionStatusEnum.SUCCESS) {
-				asgIdMappingService.removeByCodeAndType(em, organizationId,
-						EntityCodeEnum.ORG);
-			}
-		} catch (Exception e) {
+			organizationServiceApi.remove(organizationId, Long
+					.valueOf(paramBean.getProperty("asp.api.providerId", "1")));
+		} catch (SellerDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.SELLER_DOES_NOT_EXISTS);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
