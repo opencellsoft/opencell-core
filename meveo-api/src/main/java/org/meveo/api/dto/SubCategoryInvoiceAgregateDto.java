@@ -23,16 +23,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.TaxInvoiceAgregate;
 
+/**
+ * @author R.AITYAAZZA
+ *
+ */
 @XmlRootElement(name = "subCategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public  class SubCategoryInvoiceAgregateDto {
 
-	
-
-    private InvoiceDto invoice;
     
 	private Integer itemNumber;
 
@@ -51,16 +50,6 @@ public  class SubCategoryInvoiceAgregateDto {
 	private BigDecimal amountWithTax;
 
 	private List<RatedTransactionDTO> ratedTransactions = new ArrayList<RatedTransactionDTO>();
-
-
-	public InvoiceDto getInvoice() {
-		return invoice;
-	}
-
-
-	public void setInvoice(InvoiceDto invoice) {
-		this.invoice = invoice;
-	}
 
 
 	public Integer getItemNumber() {

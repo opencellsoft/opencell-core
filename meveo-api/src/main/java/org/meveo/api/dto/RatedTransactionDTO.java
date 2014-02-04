@@ -69,6 +69,10 @@ public class RatedTransactionDTO extends BaseDto {
 	private BigDecimal amountWithTax;
 
 	private BigDecimal amountTax;
+	
+	private String code;
+	
+	private String description;
 
 	private boolean doNotTriggerInvoicing = false;
 
@@ -142,6 +146,22 @@ public class RatedTransactionDTO extends BaseDto {
 
 	public void setDoNotTriggerInvoicing(boolean doNotTriggerInvoicing) {
 		this.doNotTriggerInvoicing = doNotTriggerInvoicing;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	

@@ -63,7 +63,12 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
-
+	
+	@Column(name = "CODE")
+	private String code;
+	
+	@Column(name = "DESCRIPTION")
+	private String description;
   
 
 	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -302,6 +307,22 @@ public class RatedTransaction extends BaseEntity {
 
 	public void setBillingAccount(BillingAccount billingAccount) {
 		this.billingAccount = billingAccount;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 

@@ -45,6 +45,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -80,12 +81,18 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     CustomerAccountService customerAccountService;
     
     @Inject
+    InvoiceService invoiceService;
+    
+    @Inject
     RatedTransactionService ratedTransactionService;
 
     public void createXMLInvoice(Invoice invoice, File billingRundir) throws BusinessException {
         try {
             boolean entreprise = invoice.getProvider().isEntreprise();
 
+            if(BillingRunStatusEnum.VALIDATED.equals(invoice.getBillingRun().getStatus()) && invoice.getInvoiceNumber()==null){
+            	invoiceService.setInvoiceNumber(invoice);
+            }
             DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
@@ -571,13 +578,20 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                    
 
                                     Element line = doc.createElement("line");
-                                    WalletOperation walletOperation= getEntityManager().find(WalletOperation.class, ratedTrnsaction.getWalletOperationId());
+                                    String code="",description="";
+                                    if(ratedTrnsaction.getWalletOperationId()!=null){
+                                    	WalletOperation walletOperation= getEntityManager().find(WalletOperation.class, ratedTrnsaction.getWalletOperationId());
+                                        code=walletOperation.getCode();
+                                        description=walletOperation.getDescription();
+                                    }else{
+                                    	code=ratedTrnsaction.getCode();
+                                        description=ratedTrnsaction.getDescription();
+                                    }
                                     
-                                    line.setAttribute("code", walletOperation.getCode() != null ? walletOperation
-                                            .getCode() : "");
+                                    line.setAttribute("code", code != null ? code: "");
                                     Element lebel = doc.createElement("label");
                                     Text lebelTxt = doc
-                                    .createTextNode(walletOperation.getDescription() != null ? walletOperation.getDescription() : "");
+                                    .createTextNode(description != null ? description : "");
                                     
                                     lebel.appendChild(lebelTxt);
                                     line.appendChild(lebel);
@@ -828,6 +842,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     if(headerTransaction.getWalletOperationId()!=null){
                     	 WalletOperation walletOperation= getEntityManager().find(WalletOperation.class, headerTransaction.getWalletOperationId());
                     	 lebelTxt = doc.createTextNode(walletOperation.getDescription() != null ? walletOperation
+                                 .getDescription() : "");
+                    }else{
+                    	 lebelTxt = doc.createTextNode(headerTransaction.getDescription() != null ? headerTransaction
                                  .getDescription() : "");
                     }
                    

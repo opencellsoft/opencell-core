@@ -1,6 +1,5 @@
 package org.meveo.api;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.ejb.Stateless;
@@ -27,11 +26,6 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -44,6 +38,10 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
+
+/**
+ * @author R.AITYAAZZA
+ */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class InvoiceApi extends BaseApi {
@@ -83,10 +81,9 @@ public class InvoiceApi extends BaseApi {
 	ParamBean paramBean=ParamBean.getInstance();
 	public void createInvoice(InvoiceDto invoiceDTO) throws BusinessException{
 		
-		Provider provider=providerService.findById(invoiceDTO.getProviderId());
-		User currentUser = userService
-				.findById(invoiceDTO.getCurrentUserId());
-		BillingAccount billingAccount=billingAccountService.findByCode(invoiceDTO.getBillingAccountCode(), provider);
+		Provider provider=em.find(Provider.class,invoiceDTO.getProviderId());
+		User currentUser = em.find(User.class,invoiceDTO.getCurrentUserId());
+		BillingAccount billingAccount=billingAccountService.findByCode(em,invoiceDTO.getBillingAccountCode(), provider);
 		String invoiceSubCategoryCode=paramBean.getProperty("invoiceSubCategory.code.default");
 		String taxCode=paramBean.getProperty("tax.code.default");
 		Tax tax=taxService.findByCode(em, taxCode);
@@ -95,7 +92,6 @@ public class InvoiceApi extends BaseApi {
 		br.setStartDate(new Date());
 		br.setProvider(provider);
 		br.setStatus(BillingRunStatusEnum.VALIDATED);
-		br.getBillableBillingAccounts().add(billingAccount);
 		billingRunService.create(em, br, currentUser, provider);
 		
 		  Invoice invoice = new Invoice();
@@ -120,12 +116,13 @@ public class InvoiceApi extends BaseApi {
 			SubCategoryInvoiceAgregate subCategoryInvoiceAgregate=new SubCategoryInvoiceAgregate();
 			subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregateDTO.getAmountWithoutTax());
 			subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregateDTO.getAmountWithTax());
-			subCategoryInvoiceAgregateDTO.setAmountTax(subCategoryInvoiceAgregateDTO.getAmountTax());
+			subCategoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregateDTO.getAmountTax());
 			subCategoryInvoiceAgregate.setAccountingCode(subCategoryInvoiceAgregateDTO.getAccountingCode());
 			subCategoryInvoiceAgregate.setBillingAccount(billingAccount);
 			subCategoryInvoiceAgregate.setUserAccount(userAccount);
 			subCategoryInvoiceAgregate.setBillingRun(br);
 			subCategoryInvoiceAgregate.setInvoice(invoice);
+			subCategoryInvoiceAgregate.setSubCategoryTax(tax);
 			subCategoryInvoiceAgregate.setItemNumber(subCategoryInvoiceAgregateDTO.getItemNumber());
 			subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCategory);
 			subCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
@@ -159,12 +156,14 @@ public class InvoiceApi extends BaseApi {
 			
 			subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
 			subCategoryInvoiceAgregate.setTaxInvoiceAgregate(taxInvoiceAgregate);
-			invoiceAgregateService.create(subCategoryInvoiceAgregate);
+			invoiceAgregateService.create(em,subCategoryInvoiceAgregate, currentUser, provider);
 			
 			for(RatedTransactionDTO ratedTransaction:subCategoryInvoiceAgregateDTO.getRatedTransactions()){
 				RatedTransaction meveoRatedTransaction=new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(), 
 						ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(),
 						ratedTransaction.getAmountTax(),RatedTransactionStatusEnum.BILLED, provider, null, billingAccount, invoiceSubCategory);
+				meveoRatedTransaction.setCode(ratedTransaction.getCode());
+				meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
 				meveoRatedTransaction.setBillingRun(br);
 				meveoRatedTransaction.setInvoice(invoice);
 				meveoRatedTransaction.setWallet(userAccount.getWallet());
@@ -177,63 +176,6 @@ public class InvoiceApi extends BaseApi {
 		  
 		
 		
-	}
-	
-	public void registerInvoice(String customerAccountCode,String providerCode,String invoiceNo, 
-			double amount,double amountWithoutTax,double taxAmount,double netToPay, Date date,
-			Date dueDate,String bankAccountName,PaymentMethodEnum paymentMethod,String BIC,String IBAN) throws BusinessException {
-		Provider provider = providerService.findByCode(providerCode);
-		if(provider==null){
-			throw new BusinessException("provider code invalid");
-		}
-		CustomerAccount customerAccount = customerAccountService.findByCode(em, customerAccountCode, provider);
-		if(customerAccount==null){
-			throw new BusinessException("accountCode code invalid");
-		}
-		RecordedInvoice invoice = new RecordedInvoice();
-		OCCTemplate invoiceTemplate=null;
-		try {
-			invoiceTemplate = oCCTemplateService.findByCode(paramBean.getProperty("accountOperationsGenerationJob.occCode"),customerAccount.getProvider().getCode());
-		} catch (Exception e) {
-			throw new BusinessException("Cannot find OCC Template for invoice");
-		}
-		invoice.setAccountCode(invoiceTemplate.getAccountCode());
-		invoice.setOccCode(invoiceTemplate.getCode());
-		invoice.setOccDescription(invoiceTemplate.getDescription());
-		try {
-			invoice.setAmount(new BigDecimal(amount));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect amount:"+amount);
-		}
-		try {
-			invoice.setAmountWithoutTax(new BigDecimal(amountWithoutTax));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect amountWithoutTax:"+amountWithoutTax);
-		}
-		try {
-			invoice.setUnMatchingAmount(new BigDecimal(amount));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect unMatchingAmount:"+amount);
-		}
-		try {
-			invoice.setNetToPay(new BigDecimal(netToPay));
-		} catch(Exception e){
-			throw new BusinessException("Incorrect netToPay:"+netToPay);
-		}
-		invoice.setMatchingAmount(BigDecimal.ZERO);
-		invoice.setBillingAccountName(bankAccountName);
-		invoice.setCustomerAccount(customerAccount);
-		invoice.setDueDate(DateUtils.parseDateWithPattern(dueDate, paramBean.getProperty("accountOperationsGenerationJob.dateFormat","dd/MM/yyyy")));
-		invoice.setInvoiceDate(date);
-		invoice.setPaymentMethod(paymentMethod);
-		if(paymentMethod==PaymentMethodEnum.DIRECTDEBIT){
-			invoice.setPaymentInfo(IBAN);
-			invoice.setPaymentInfo1(BIC);
-		}
-		invoice.setProvider(provider);
-		invoice.setTaxAmount(new BigDecimal(taxAmount));
-		invoice.setReference(invoiceNo);
-		recordedInvoiceService.create(invoice);
 	}
 
 }
