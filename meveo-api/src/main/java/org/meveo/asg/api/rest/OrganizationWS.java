@@ -148,6 +148,11 @@ public class OrganizationWS {
 			result.setMessage(e.getMessage());
 		}
 
+		if (result.getStatus() == ActionStatusEnum.SUCCESS) {
+			organizationServiceApi.removeAsgMapping(organizationId,
+					EntityCodeEnum.ORG);
+		}
+
 		return result;
 	}
 

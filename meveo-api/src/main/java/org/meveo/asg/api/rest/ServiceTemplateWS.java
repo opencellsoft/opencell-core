@@ -115,6 +115,11 @@ public class ServiceTemplateWS {
 			result.setMessage(e.getMessage());
 		}
 
+		if (result.getStatus() == ActionStatusEnum.SUCCESS) {
+			serviceTemplateServiceApi.removeAsgMapping(serviceId,
+					EntityCodeEnum.S);
+		}
+
 		return result;
 	}
 }

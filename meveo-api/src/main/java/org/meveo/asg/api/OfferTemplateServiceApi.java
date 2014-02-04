@@ -8,10 +8,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.OfferDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.OfferTemplateAlreadyExistsException;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -60,6 +62,13 @@ public class OfferTemplateServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService
 					.findById(offerDto.getCurrentUserId());
+
+			try {
+				offerDto.setOfferId(asgIdMappingService.getNewCode(em,
+						offerDto.getOfferId(), EntityCodeEnum.O));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String offerTemplateCode = paramBean.getProperty(
 					"asg.api.offer.offer.prefix", "_OF_")
@@ -153,6 +162,13 @@ public class OfferTemplateServiceApi extends BaseAsgApi {
 	public void update(OfferDto offerDto) throws MeveoApiException {
 		Provider provider = providerService.findById(offerDto.getProviderId());
 		User currentUser = userService.findById(offerDto.getCurrentUserId());
+
+		try {
+			offerDto.setOfferId(asgIdMappingService.getMeveoCode(em,
+					offerDto.getOfferId(), EntityCodeEnum.O));
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
 
 		String offerTemplateCode = paramBean.getProperty(
 				"asg.api.offer.offer.prefix", "_OF_") + offerDto.getOfferId();
@@ -273,6 +289,13 @@ public class OfferTemplateServiceApi extends BaseAsgApi {
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(offerId)) {
 			Provider provider = providerService.findById(providerId);
+
+			try {
+				offerId = asgIdMappingService.getMeveoCode(em, offerId,
+						EntityCodeEnum.O);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String serviceTemplateCode = paramBean.getProperty(
 					"asg.api.offer.notcharged.prefix", "_NC_OF_") + offerId;

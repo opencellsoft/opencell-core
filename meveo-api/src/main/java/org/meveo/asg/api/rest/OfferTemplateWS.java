@@ -20,6 +20,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.OfferTemplateAlreadyExistsException;
 import org.meveo.api.exception.OfferTemplateDoesNotExistsException;
 import org.meveo.asg.api.OfferTemplateServiceApi;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 
@@ -45,6 +46,7 @@ public class OfferTemplateWS {
 	public ActionStatus create(OfferDto offerDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		String offerId = offerDto.getOfferId();
 		try {
 			offerDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
@@ -63,6 +65,10 @@ public class OfferTemplateWS {
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		if (result.getStatus() == ActionStatusEnum.FAIL) {
+			offerTemplateServiceApi.removeAsgMapping(offerId, EntityCodeEnum.O);
 		}
 
 		return result;
@@ -107,6 +113,10 @@ public class OfferTemplateWS {
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		if (result.getStatus() == ActionStatusEnum.SUCCESS) {
+			offerTemplateServiceApi.removeAsgMapping(offerId, EntityCodeEnum.O);
 		}
 
 		return result;
