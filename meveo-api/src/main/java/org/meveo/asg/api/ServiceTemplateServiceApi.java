@@ -8,10 +8,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ServiceDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -61,6 +63,13 @@ public class ServiceTemplateServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService.findById(serviceDto
 					.getCurrentUserId());
+
+			try {
+				serviceDto.setServiceId(asgIdMappingService.getNewCode(em,
+						serviceDto.getServiceId(), EntityCodeEnum.S));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String serviceTemplateCode = paramBean.getProperty(
 					"asg.api.service.notcharged.prefix", "_NC_SE_")
@@ -125,6 +134,13 @@ public class ServiceTemplateServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService.findById(serviceDto
 					.getCurrentUserId());
+
+			try {
+				serviceDto.setServiceId(asgIdMappingService.getMeveoCode(em,
+						serviceDto.getServiceId(), EntityCodeEnum.S));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String offerTemplateCode = paramBean.getProperty(
 					"asg.api.service.offer.prefix", "_SE_")
@@ -194,11 +210,17 @@ public class ServiceTemplateServiceApi extends BaseAsgApi {
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(serviceId)) {
 			Provider provider = providerService.findById(providerId);
+			try {
+				serviceId = asgIdMappingService.getMeveoCode(em, serviceId,
+						EntityCodeEnum.S);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String serviceTemplateCode = paramBean.getProperty(
 					"asg.api.service.notcharged.prefix", "_NC_SE_") + serviceId;
 			ServiceTemplate serviceTemplate = serviceTemplateService
-					.findByCode(serviceTemplateCode, provider);
+					.findByCode(em, serviceTemplateCode, provider);
 			if (serviceTemplate != null) {
 				List<ServiceInstance> serviceInstances = serviceInstanceService
 						.findByServiceTemplate(em, serviceTemplate, provider);
@@ -210,7 +232,7 @@ public class ServiceTemplateServiceApi extends BaseAsgApi {
 			String chargedServiceTemplateCode = paramBean.getProperty(
 					"asg.api.service.charged.prefix", "_CH_SE_") + serviceId;
 			ServiceTemplate chargedServiceTemplate = serviceTemplateService
-					.findByCode(chargedServiceTemplateCode, provider);
+					.findByCode(em, chargedServiceTemplateCode, provider);
 			if (chargedServiceTemplate != null) {
 				List<ServiceInstance> chargedServiceInstances = serviceInstanceService
 						.findByServiceTemplate(em, chargedServiceTemplate,
@@ -234,16 +256,16 @@ public class ServiceTemplateServiceApi extends BaseAsgApi {
 			}
 
 			// delete
+			if (offerTemplate != null) {
+				offerTemplateService.remove(em, offerTemplate);
+			}
+
 			if (serviceTemplate != null) {
 				serviceTemplateService.remove(em, serviceTemplate);
 			}
 
 			if (chargedServiceTemplate != null) {
 				serviceTemplateService.remove(em, chargedServiceTemplate);
-			}
-
-			if (offerTemplate != null) {
-				offerTemplateService.remove(em, offerTemplate);
 			}
 
 		} else {

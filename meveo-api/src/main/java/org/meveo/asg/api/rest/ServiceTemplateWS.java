@@ -19,6 +19,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
 import org.meveo.asg.api.ServiceTemplateServiceApi;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 
@@ -44,6 +45,7 @@ public class ServiceTemplateWS {
 	public ActionStatus create(ServiceDto serviceDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		String serviceId = serviceDto.getServiceId();
 		try {
 			serviceDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
@@ -62,6 +64,11 @@ public class ServiceTemplateWS {
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		if (result.getStatus() == ActionStatusEnum.FAIL) {
+			serviceTemplateServiceApi.removeAsgMapping(serviceId,
+					EntityCodeEnum.S);
 		}
 
 		return result;
