@@ -85,8 +85,8 @@
 
 				<configuration>
 					<includes>
-						<include>org/meveo/rest/*</include>
-						<include>org/meveo/rest/environment/*</include>
+						<include>org/meveo/api/rest/*</include>
+						<include>org/meveo/asg/api/rest/*</include>
 					</includes>
 					<verbose>true</verbose>
 				</configuration>
@@ -124,6 +124,14 @@
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
+		</dependency>
+
+		<!-- Import the JAX-RS API, we use provided scope as the API is included 
+			in JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ws.rs</groupId>
+			<artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>

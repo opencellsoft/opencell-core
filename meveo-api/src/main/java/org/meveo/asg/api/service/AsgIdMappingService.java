@@ -4,10 +4,12 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.asg.api.model.AsgIdMapping;
 import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -58,5 +60,21 @@ public class AsgIdMappingService extends PersistenceService<AsgIdMapping> {
 		}
 
 		return ids.get(0).getEntityType() + "" + ids.get(0).getMeveoCode();
+	}
+
+	public void removeByCodeAndType(EntityManager em, String asgId,
+			EntityCodeEnum entityType) {
+		QueryBuilder qb = new QueryBuilder(AsgIdMapping.class, "a");
+		qb.addCriterion("asgId", "=", asgId, false);
+		qb.addCriterionEnum("entityType", entityType);
+
+		try {
+			AsgIdMapping obj = (AsgIdMapping) qb.getQuery(em).getSingleResult();
+			if (obj != null) {
+				remove(em, obj);
+			}
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+		}
 	}
 }

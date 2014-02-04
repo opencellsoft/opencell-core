@@ -18,42 +18,24 @@ package org.meveo.api.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.BaseEntity;
-import org.meveo.model.crm.Provider;
-
-
 /**
  * @author R.AITYAAZZA
- *
+ * 
  */
 
 @XmlRootElement(name = "ratedTransaction")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RatedTransactionDTO extends BaseDto {
 
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7627662294414998797L;
 
-	
 	private Date usageDate;
 
 	private BigDecimal unitAmountWithoutTax;
@@ -69,9 +51,9 @@ public class RatedTransactionDTO extends BaseDto {
 	private BigDecimal amountWithTax;
 
 	private BigDecimal amountTax;
-	
+
 	private String code;
-	
+
 	private String description;
 
 	private boolean doNotTriggerInvoicing = false;
@@ -163,13 +145,5 @@ public class RatedTransactionDTO extends BaseDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
-
-	
-
-
-
-	 
 
 }

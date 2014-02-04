@@ -5,26 +5,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 /**
  * @author R.AITYAAZZA
- *
+ * 
  */
 @XmlRootElement(name = "invoice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceDto extends BaseDto {
 
-	
 	private static final long serialVersionUID = 1072382628068718580L;
-	
+
 	private String billingAccountCode;
-	
-	
+
 	private Date invoiceDate;
 
 	private Date dueDate;
@@ -37,9 +33,8 @@ public class InvoiceDto extends BaseDto {
 
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
-	
-	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 
+	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 
 	public String getBillingAccountCode() {
 		return billingAccountCode;
@@ -49,8 +44,6 @@ public class InvoiceDto extends BaseDto {
 		this.billingAccountCode = billingAccountCode;
 	}
 
-
-
 	public List<SubCategoryInvoiceAgregateDto> getSubCategoryInvoiceAgregates() {
 		return subCategoryInvoiceAgregates;
 	}
@@ -59,8 +52,6 @@ public class InvoiceDto extends BaseDto {
 			List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates) {
 		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
 	}
-
-
 
 	public Date getInvoiceDate() {
 		return invoiceDate;
@@ -117,8 +108,5 @@ public class InvoiceDto extends BaseDto {
 	public void setAmountWithTax(BigDecimal amountWithTax) {
 		this.amountWithTax = amountWithTax;
 	}
-
-
-
 
 }
