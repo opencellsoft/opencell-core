@@ -8,7 +8,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CountryTaxDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.exception.MeveoApiException;
@@ -37,7 +36,7 @@ import org.meveo.util.MeveoParamBean;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class TaxServiceApi extends BaseApi {
+public class TaxServiceApi extends BaseAsgApi {
 
 	@Inject
 	@MeveoParamBean

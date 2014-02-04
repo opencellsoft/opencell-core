@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.SubscriptionApiStatusEnum;
 import org.meveo.api.dto.CreditLimitDto;
 import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.ServiceToTerminateDto;
@@ -66,7 +66,7 @@ import org.slf4j.Logger;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
+public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseAsgApi {
 
 	@Inject
 	private Logger log;
@@ -1080,15 +1080,18 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 		response.setAccepted(true);
 		response.setStatus(SubscriptionApiStatusEnum.SUCCESS.name());
 
-		if (!StringUtils.isBlank(terminateCustomerSubscriptionDto.getSubscriptionId())
+		if (!StringUtils.isBlank(terminateCustomerSubscriptionDto
+				.getSubscriptionId())
 				&& terminateCustomerSubscriptionDto.getTerminationDate() != null) {
 			Provider provider = providerService
 					.findById(terminateCustomerSubscriptionDto.getProviderId());
-			User currentUser = userService.findById(terminateCustomerSubscriptionDto
-					.getCurrentUserId());
+			User currentUser = userService
+					.findById(terminateCustomerSubscriptionDto
+							.getCurrentUserId());
 
 			Subscription subscription = subscriptionService.findByCode(em,
-					terminateCustomerSubscriptionDto.getSubscriptionId(), provider);
+					terminateCustomerSubscriptionDto.getSubscriptionId(),
+					provider);
 			if (subscription == null) {
 				throw new SubscriptionDoesNotExistsException(
 						terminateCustomerSubscriptionDto.getSubscriptionId());
@@ -1097,8 +1100,8 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseApi {
 					.getSubscriptionId());
 
 			subscriptionService.terminateSubscription(subscription,
-					terminateCustomerSubscriptionDto.getTerminationDate(), true, true,
-					true, currentUser);
+					terminateCustomerSubscriptionDto.getTerminationDate(),
+					true, true, true, currentUser);
 		} else {
 			response.setAccepted(false);
 			response.setStatus(SubscriptionApiStatusEnum.FAIL.name());

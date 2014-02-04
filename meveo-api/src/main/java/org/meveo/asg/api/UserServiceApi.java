@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -28,7 +27,7 @@ import org.meveo.service.billing.impl.UserAccountService;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class UserServiceApi extends BaseApi {
+public class UserServiceApi extends BaseAsgApi {
 
 	@Inject
 	private BillingAccountService billingAccountService;

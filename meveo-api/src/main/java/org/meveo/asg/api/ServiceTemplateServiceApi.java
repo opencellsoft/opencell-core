@@ -8,7 +8,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.ServiceDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class ServiceTemplateServiceApi extends BaseApi {
+public class ServiceTemplateServiceApi extends BaseAsgApi {
 
 	private static Logger log = LoggerFactory
 			.getLogger(ServiceTemplateServiceApi.class);

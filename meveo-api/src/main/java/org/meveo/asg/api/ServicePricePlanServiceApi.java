@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RecurringChargeDto;
 import org.meveo.api.dto.ServicePricePlanDto;
 import org.meveo.api.dto.SubscriptionFeeDto;
@@ -62,7 +61,7 @@ import org.slf4j.Logger;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class ServicePricePlanServiceApi extends BaseApi {
+public class ServicePricePlanServiceApi extends BaseAsgApi {
 
 	@Inject
 	private ParamBean paramBean;

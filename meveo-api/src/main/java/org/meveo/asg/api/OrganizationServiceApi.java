@@ -10,7 +10,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
-import org.meveo.api.BaseApi;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -19,6 +19,7 @@ import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
 import org.meveo.api.exception.TradingLanguageAlreadyExistsException;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
@@ -55,7 +56,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class OrganizationServiceApi extends BaseApi {
+public class OrganizationServiceApi extends BaseAsgApi {
 
 	@Inject
 	private ParamBean paramBean;
@@ -100,6 +101,13 @@ public class OrganizationServiceApi extends BaseApi {
 			Provider provider = providerService
 					.findById(orgDto.getProviderId());
 			User currentUser = userService.findById(orgDto.getCurrentUserId());
+
+			try {
+				orgDto.setOrganizationId(asgIdMappingService.getNewCode(em,
+						orgDto.getOrganizationId(), EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			Seller seller = sellerService.findByCode(
 					orgDto.getOrganizationId(), provider);
@@ -333,6 +341,13 @@ public class OrganizationServiceApi extends BaseApi {
 					.findById(orgDto.getProviderId());
 			User currentUser = userService.findById(orgDto.getCurrentUserId());
 
+			try {
+				orgDto.setOrganizationId(asgIdMappingService.getMeveoCode(em,
+						orgDto.getOrganizationId(), EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
 			TradingCountry tr = tradingCountryService.findByTradingCountryCode(
 					orgDto.getCountryCode(), provider);
 
@@ -392,6 +407,13 @@ public class OrganizationServiceApi extends BaseApi {
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(organizationId)) {
 			Provider provider = providerService.findById(providerId);
+
+			try {
+				organizationId = asgIdMappingService.getMeveoCode(em,
+						organizationId, EntityCodeEnum.ORG);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String customerPrefix = paramBean.getProperty(
 					"asp.api.default.customer.prefix", "CUST_");

@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.SubscriptionApiStatusEnum;
 import org.meveo.api.dto.CreditLimitDto;
 import org.meveo.api.dto.ServiceToAddDto;
 import org.meveo.api.dto.ServiceToTerminateDto;
@@ -63,7 +63,7 @@ import org.slf4j.Logger;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class SubscriptionWithCreditLimitServiceApi extends BaseApi {
+public class SubscriptionWithCreditLimitServiceApi extends BaseAsgApi {
 
 	@Inject
 	private Logger log;

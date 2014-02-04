@@ -13,11 +13,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ServiceDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
-import org.meveo.asg.api.MeveoApiErrorCode;
 import org.meveo.asg.api.ServiceTemplateServiceApi;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;

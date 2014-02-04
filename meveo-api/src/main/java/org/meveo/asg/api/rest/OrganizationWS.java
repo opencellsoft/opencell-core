@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.OrganizationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -22,8 +23,8 @@ import org.meveo.api.exception.SellerAlreadyExistsException;
 import org.meveo.api.exception.SellerDoesNotExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.exception.TradingCurrencyDoesNotExistsException;
-import org.meveo.asg.api.MeveoApiErrorCode;
 import org.meveo.asg.api.OrganizationServiceApi;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 
@@ -49,6 +50,7 @@ public class OrganizationWS {
 	public ActionStatus create(OrganizationDto orgDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		String organizationId = orgDto.getOrganizationId();
 		try {
 			orgDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
@@ -82,6 +84,11 @@ public class OrganizationWS {
 		} catch (AccountAlreadyExistsException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		if (result.getStatus() == ActionStatusEnum.FAIL) {
+			organizationServiceApi.removeAsgMapping(organizationId,
+					EntityCodeEnum.ORG);
 		}
 
 		return result;

@@ -8,7 +8,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.OfferDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -34,7 +33,7 @@ import org.meveo.util.MeveoParamBean;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class OfferTemplateServiceApi extends BaseApi {
+public class OfferTemplateServiceApi extends BaseAsgApi {
 
 	@Inject
 	@MeveoParamBean

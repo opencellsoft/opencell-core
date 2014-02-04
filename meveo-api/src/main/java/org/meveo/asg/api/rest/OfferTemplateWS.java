@@ -13,12 +13,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.OfferDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.OfferTemplateAlreadyExistsException;
 import org.meveo.api.exception.OfferTemplateDoesNotExistsException;
-import org.meveo.asg.api.MeveoApiErrorCode;
 import org.meveo.asg.api.OfferTemplateServiceApi;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;

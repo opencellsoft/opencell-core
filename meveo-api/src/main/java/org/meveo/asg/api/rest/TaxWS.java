@@ -14,10 +14,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
+import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.asg.api.MeveoApiErrorCode;
 import org.meveo.asg.api.TaxServiceApi;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;

@@ -1,4 +1,4 @@
-package org.meveo.asg.api;
+package org.meveo.api;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.exception.CountryDoesNotExistsException;
 import org.meveo.api.exception.CurrencyDoesNotExistsException;
