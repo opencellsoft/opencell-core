@@ -395,11 +395,28 @@ public class OrganizationServiceApi extends BaseApi {
 
 			String customerPrefix = paramBean.getProperty(
 					"asp.api.default.customer.prefix", "CUST_");
+			String customerAccountPrefix = paramBean.getProperty(
+					"asp.api.default.customerAccount.prefix", "CA_");
+			String billingAccountPrefix = paramBean.getProperty(
+					"asp.api.default.billingAccount.prefix", "BA_");
+
+			BillingAccount billingAccount = billingAccountService.findByCode(
+					em, billingAccountPrefix + organizationId, provider);
+			if (billingAccount != null) {
+				billingAccountService.remove(em, billingAccount);
+			}
+
+			CustomerAccount customerAccount = customerAccountService
+					.findByCode(em, customerAccountPrefix + organizationId,
+							provider);
+			if (customerAccount != null) {
+				customerAccountService.remove(em, customerAccount);
+			}
 
 			Customer customer = customerService.findByCode(em, customerPrefix
 					+ organizationId, provider);
 			if (customer != null) {
-				customerService.remove(customer);
+				customerService.remove(em, customer);
 			}
 
 			String userAccountPrefix = paramBean.getProperty(
@@ -410,9 +427,16 @@ public class OrganizationServiceApi extends BaseApi {
 				userAccountService.remove(em, userAccount);
 			}
 
+			String userAccountPrefix2 = paramBean.getProperty(
+					"asp.api.default.userAccount.prefix", "UA_");
+			UserAccount userAccount2 = userAccountService.findByCode(em,
+					userAccountPrefix2 + organizationId, provider);
+			if (userAccount2 != null) {
+				userAccountService.remove(em, userAccount2);
+			}
+
 			Seller seller = sellerService.findByCode(em, organizationId,
 					provider);
-
 			if (seller == null) {
 				throw new SellerDoesNotExistsException(organizationId);
 			} else {
