@@ -102,6 +102,17 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		return recordedInvoice != null;
 	}
 	
+	public RecordedInvoice getRecordedInvoiceExist(String reference, Provider provider) {
+		RecordedInvoice recordedInvoice = null;
+		try {
+			recordedInvoice = (RecordedInvoice) getEntityManager()
+					.createQuery("from " + RecordedInvoice.class.getSimpleName() + " where reference =:reference and provider=:provider")
+					.setParameter("reference", reference).setParameter("provider", provider).getSingleResult();
+		} catch (Exception e) {
+		}
+		return recordedInvoice;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<RecordedInvoice> getRecordedInvoices(CustomerAccount customerAccount, MatchingStatusEnum o) {
 		List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
