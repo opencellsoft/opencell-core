@@ -31,7 +31,7 @@ import org.meveo.util.MeveoParamBean;
  * @author Edward P. Legaspi
  * @since Oct 7, 2013
  **/
-@Path("/asg/country")
+@Path("/country")
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
