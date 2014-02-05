@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.api.SubscriptionApiStatusEnum;
 import org.meveo.api.dto.SubscriptionWithCreditLimitDto;
 import org.meveo.api.dto.SubscriptionWithCreditLimitUpdateDto;
 import org.meveo.api.exception.CreditLimitExceededException;
@@ -60,13 +61,28 @@ public class SubscriptionWithCreditLimitWS {
 			result = subscriptionWithCreditLimitServiceApi
 					.create(subscriptionDto);
 		} catch (CreditLimitExceededException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
+			log.error(e.getMessage());
 		} catch (SellerDoesNotExistsException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
+			log.error(e.getMessage());
 		} catch (ParentSellerDoesNotExistsException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
+			log.error(e.getMessage());
 		} catch (ServiceTemplateDoesNotExistsException e) {
-
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
+			log.error(e.getMessage());
 		} catch (MeveoApiException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
 			log.error(e.getMessage());
 		} catch (BusinessException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
 			e.printStackTrace();
 		}
 
@@ -75,8 +91,10 @@ public class SubscriptionWithCreditLimitWS {
 
 	@PUT
 	@Path("/")
-	public void update(
+	public SubscriptionWithCreditLimitResponse update(
 			SubscriptionWithCreditLimitUpdateDto subscriptionUpdateDto) {
+		SubscriptionWithCreditLimitResponse result = new SubscriptionWithCreditLimitResponse();
+
 		subscriptionUpdateDto.setCurrentUserId(Long.valueOf(paramBean
 				.getProperty("asp.api.userId", "1")));
 		subscriptionUpdateDto.setProviderId(Long.valueOf(paramBean.getProperty(
@@ -85,11 +103,24 @@ public class SubscriptionWithCreditLimitWS {
 		try {
 			subscriptionWithCreditLimitServiceApi.update(subscriptionUpdateDto);
 		} catch (MeveoApiException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
 			log.error(e.getMessage());
 		} catch (IncorrectSusbcriptionException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
+			log.error(e.getMessage());
 		} catch (IncorrectServiceInstanceException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
+			log.error(e.getMessage());
 		} catch (BusinessException e) {
+			result.setStatus(SubscriptionApiStatusEnum.FAIL.toString());
+			result.setAccepted(Boolean.valueOf(false));
+			log.error(e.getMessage());
 		}
+
+		return result;
 	}
 
 }

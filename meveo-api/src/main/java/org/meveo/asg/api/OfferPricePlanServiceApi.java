@@ -122,7 +122,7 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 					.getCurrentUserId());
 
 			try {
-				offerPricePlanDto.setOfferId(asgIdMappingService.getNewCode(em,
+				offerPricePlanDto.setOfferId(asgIdMappingService.getMeveoCode(em,
 						offerPricePlanDto.getOfferId(), EntityCodeEnum.OPF));
 
 				offerPricePlanDto.setOrganizationId(asgIdMappingService

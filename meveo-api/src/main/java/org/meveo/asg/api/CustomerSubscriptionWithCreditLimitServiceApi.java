@@ -31,6 +31,7 @@ import org.meveo.api.exception.ServiceTemplateDoesNotExistsException;
 import org.meveo.api.exception.SubscriptionDoesNotExistsException;
 import org.meveo.api.rest.response.SubscriptionWithCreditLimitResponse;
 import org.meveo.api.rest.response.TerminateCustomerSubscriptionResponse;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -125,6 +126,76 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseAsgApi {
 					.findById(subscriptionWithCreditLimitDto.getProviderId());
 			User currentUser = userService
 					.findById(subscriptionWithCreditLimitDto.getCurrentUserId());
+
+			try {
+				subscriptionWithCreditLimitDto.setOfferId(asgIdMappingService
+						.getMeveoCode(em,
+								subscriptionWithCreditLimitDto.getOfferId(),
+								EntityCodeEnum.O));
+
+				subscriptionWithCreditLimitDto
+						.setOrganizationId(asgIdMappingService.getMeveoCode(em,
+								subscriptionWithCreditLimitDto
+										.getOrganizationId(),
+								EntityCodeEnum.ORG));
+				
+				if (subscriptionWithCreditLimitDto.getServicesToAdd() != null) {
+					for (ServiceToAddDto serviceToAddDto : subscriptionWithCreditLimitDto
+							.getServicesToAdd()) {
+						serviceToAddDto.setServiceId(asgIdMappingService
+								.getMeveoCode(em,
+										serviceToAddDto.getServiceId(),
+										EntityCodeEnum.S));
+					}
+				}
+
+				if (subscriptionWithCreditLimitDto.getCreditLimits() != null) {
+					for (CreditLimitDto creditLimitDto : subscriptionWithCreditLimitDto
+							.getCreditLimits()) {
+						creditLimitDto.setOrganizationId(asgIdMappingService
+								.getMeveoCode(em,
+										creditLimitDto.getOrganizationId(),
+										EntityCodeEnum.ORG));
+					}
+				}
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
+			try {
+				subscriptionWithCreditLimitDto
+						.setOrganizationId(asgIdMappingService.getMeveoCode(em,
+								subscriptionWithCreditLimitDto
+										.getOrganizationId(),
+								EntityCodeEnum.ORG));
+
+				subscriptionWithCreditLimitDto.setOfferId(asgIdMappingService
+						.getMeveoCode(em,
+								subscriptionWithCreditLimitDto.getOfferId(),
+								EntityCodeEnum.O));
+
+				if (subscriptionWithCreditLimitDto.getServicesToAdd() != null) {
+					for (ServiceToAddDto serviceToAddDto : subscriptionWithCreditLimitDto
+							.getServicesToAdd()) {
+						serviceToAddDto.setServiceId(asgIdMappingService
+								.getMeveoCode(em,
+										serviceToAddDto.getServiceId(),
+										EntityCodeEnum.S));
+					}
+				}
+
+				if (subscriptionWithCreditLimitDto.getCreditLimits() != null) {
+					for (CreditLimitDto creditLimitDto : subscriptionWithCreditLimitDto
+							.getCreditLimits()) {
+						creditLimitDto.setOrganizationId(asgIdMappingService
+								.getMeveoCode(em,
+										creditLimitDto.getOrganizationId(),
+										EntityCodeEnum.ORG));
+					}
+				}
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String offerTemplateCode = paramBean.getProperty(
 					"asg.api.offer.offer.prefix", "_OF_")
@@ -699,6 +770,67 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseAsgApi {
 					.findById(subscriptionWithCreditLimitUpdateDto
 							.getCurrentUserId());
 
+			try {
+				subscriptionWithCreditLimitUpdateDto
+						.setOfferId(asgIdMappingService.getMeveoCode(em,
+								subscriptionWithCreditLimitUpdateDto
+										.getOfferId(), EntityCodeEnum.O));
+
+				subscriptionWithCreditLimitUpdateDto
+						.setOrganizationId(asgIdMappingService.getMeveoCode(em,
+								subscriptionWithCreditLimitUpdateDto
+										.getOrganizationId(),
+								EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
+			try {
+				subscriptionWithCreditLimitUpdateDto
+						.setOrganizationId(asgIdMappingService.getMeveoCode(em,
+								subscriptionWithCreditLimitUpdateDto
+										.getOrganizationId(),
+								EntityCodeEnum.ORG));
+
+				subscriptionWithCreditLimitUpdateDto
+						.setOfferId(asgIdMappingService.getMeveoCode(em,
+								subscriptionWithCreditLimitUpdateDto
+										.getOfferId(), EntityCodeEnum.O));
+
+				if (subscriptionWithCreditLimitUpdateDto.getServicesToAdd() != null) {
+					for (ServiceToAddDto serviceToAddDto : subscriptionWithCreditLimitUpdateDto
+							.getServicesToAdd()) {
+						serviceToAddDto.setServiceId(asgIdMappingService
+								.getMeveoCode(em,
+										serviceToAddDto.getServiceId(),
+										EntityCodeEnum.S));
+					}
+				}
+
+				if (subscriptionWithCreditLimitUpdateDto
+						.getServicesToTerminate() != null) {
+					for (ServiceToAddDto serviceToTerminateDto : subscriptionWithCreditLimitUpdateDto
+							.getServicesToAdd()) {
+						serviceToTerminateDto.setServiceId(asgIdMappingService
+								.getMeveoCode(em,
+										serviceToTerminateDto.getServiceId(),
+										EntityCodeEnum.S));
+					}
+				}
+
+				if (subscriptionWithCreditLimitUpdateDto.getCreditLimits() != null) {
+					for (CreditLimitDto creditLimitDto : subscriptionWithCreditLimitUpdateDto
+							.getCreditLimits()) {
+						creditLimitDto.setOrganizationId(asgIdMappingService
+								.getMeveoCode(em,
+										creditLimitDto.getOrganizationId(),
+										EntityCodeEnum.ORG));
+					}
+				}
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
 			Seller seller = sellerService.findByCode(em,
 					subscriptionWithCreditLimitUpdateDto.getOrganizationId(),
 					provider);
@@ -1075,6 +1207,7 @@ public class CustomerSubscriptionWithCreditLimitServiceApi extends BaseAsgApi {
 			throws MissingParameterException,
 			SubscriptionDoesNotExistsException, IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
+
 		TerminateCustomerSubscriptionResponse response = new TerminateCustomerSubscriptionResponse();
 		response.setRequestId(terminateCustomerSubscriptionDto.getRequestId());
 		response.setAccepted(true);

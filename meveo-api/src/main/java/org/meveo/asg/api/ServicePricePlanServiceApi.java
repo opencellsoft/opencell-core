@@ -125,7 +125,7 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 
 			try {
 				servicePricePlanDto.setServiceId(asgIdMappingService
-						.getNewCode(em, servicePricePlanDto.getServiceId(),
+						.getMeveoCode(em, servicePricePlanDto.getServiceId(),
 								EntityCodeEnum.SPF));
 
 				servicePricePlanDto.setOrganizationId(asgIdMappingService

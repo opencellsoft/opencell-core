@@ -105,6 +105,11 @@ public class OrganizationServiceApi extends BaseAsgApi {
 			try {
 				orgDto.setOrganizationId(asgIdMappingService.getNewCode(em,
 						orgDto.getOrganizationId(), EntityCodeEnum.ORG));
+
+				if (!StringUtils.isBlank(orgDto.getParentId())) {
+					orgDto.setParentId(asgIdMappingService.getMeveoCode(em,
+							orgDto.getParentId(), EntityCodeEnum.ORG));
+				}
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
@@ -344,6 +349,11 @@ public class OrganizationServiceApi extends BaseAsgApi {
 			try {
 				orgDto.setOrganizationId(asgIdMappingService.getMeveoCode(em,
 						orgDto.getOrganizationId(), EntityCodeEnum.ORG));
+
+				if (!StringUtils.isBlank(orgDto.getParentId())) {
+					orgDto.setParentId(asgIdMappingService.getMeveoCode(em,
+							orgDto.getOrganizationId(), EntityCodeEnum.ORG));
+				}
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}
