@@ -199,7 +199,6 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 					.setServiceUsageCharges(recommendedServiceUsageChargeTemplates);
 			serviceTemplateService.update(em, recommendedServiceTemplate,
 					currentUser);
-
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -584,6 +583,14 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 			throw new MissingParameterException(sb.toString());
 		}
 
+		removeService(true, serviceId, organizationId, userId, providerId);
+		removeService(false, serviceId, organizationId, userId, providerId);
+	}
+
+	public void removeService(boolean isRecommendedPrice, String serviceId,
+			String organizationId, Long userId, Long providerId)
+			throws MeveoApiException {
+
 		Provider provider = providerService.findById(providerId);
 		User currentUser = userService.findById(userId);
 
@@ -597,8 +604,11 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 			throw new MeveoApiException(e.getMessage());
 		}
 
-		String serviceOfferCodePrefix = paramBean.getProperty(
-				"asg.api.service.offer.prefix", "_SE_");
+		String serviceOfferCodePrefix = isRecommendedPrice ? paramBean
+				.getProperty("asg.api.recommended.service.charged.prefix",
+						"_REC_CH_SE_") : paramBean.getProperty(
+				"asg.api.service.charged.prefix", "_CH_SE_");
+
 		String serviceTemplateCode = serviceOfferCodePrefix + organizationId
 				+ "_" + serviceId;
 
@@ -614,11 +624,15 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 				serviceTemplate.setServiceUsageCharges(null);
 				serviceTemplateService.update(em, serviceTemplate, currentUser);
 			}
-			
+
 			// delete subscription fee
-			String subscriptionPointChargePrefix = paramBean.getProperty(
-					"asg.api.service.subscription.point.charge.prefix",
-					"_SO_SE_");
+			String subscriptionPointChargePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.service.subscription.point.charge.prefix",
+							"_REC_SO_SE_")
+					: paramBean.getProperty(
+							"asg.api.service.subscription.point.charge.prefix",
+							"_SO_SE_");
 			String subscriptionTemplateCode = subscriptionPointChargePrefix
 					+ serviceId + "_" + organizationId;
 
@@ -633,9 +647,13 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 			}
 
 			// delete termination fee
-			String terminationPointChargePrefix = paramBean.getProperty(
-					"asg.api.service.termination.point.charge.prefix",
-					"_TE_SE_");
+			String terminationPointChargePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.service.termination.point.charge.prefix",
+							"_REC_TE_SE_")
+					: paramBean.getProperty(
+							"asg.api.service.termination.point.charge.prefix",
+							"_TE_SE_");
 			String terminationTemplateCode = terminationPointChargePrefix
 					+ serviceId + "_" + organizationId;
 
@@ -650,7 +668,10 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 			}
 
 			// delete usageCharge link
-			String usageChargeTemplatePrefix = paramBean.getProperty(
+			String usageChargeTemplatePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.service.usage.charged.prefix",
+							"_REC_US_SE_") : paramBean.getProperty(
 					"asg.api.service.usage.charged.prefix", "_US_SE_");
 			String usageChargeCode = usageChargeTemplatePrefix + serviceId
 					+ "_" + organizationId;
@@ -683,7 +704,10 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 					provider);
 
 			// delete recurring charge
-			String recurringChargePrefix = paramBean.getProperty(
+			String recurringChargePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.service.recurring.prefix",
+							"_REC_RE_SE_") : paramBean.getProperty(
 					"asg.api.service.recurring.prefix", "_RE_SE_");
 			String recurringChargeCode = recurringChargePrefix + serviceId
 					+ "_" + organizationId;
@@ -710,6 +734,7 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 								currentUser);
 					}
 				}
+
 				serviceTemplateService.remove(em, serviceTemplate);
 			}
 		} catch (Exception e) {
