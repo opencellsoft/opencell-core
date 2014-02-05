@@ -76,6 +76,7 @@ public class PDFInvoiceGenerationJob implements Job {
 		for (Invoice invoice : invoices) {
 			try {
 		         Map<String, Object> parameters=pDFParametersConstruction.constructParameters(invoice);
+		         log.info("PDFInvoiceGenerationJob parameters="+parameters);
 				 pDFFilesOutputProducer.producePdf(parameters);
 			} catch (Exception e) {
 				e.printStackTrace();
