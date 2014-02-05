@@ -136,7 +136,7 @@ public class BillingRun extends AuditableEntity {
 	private String selectedBillingAccounts;
 	
 	@Column(name = "XML_INVOICE_GENERATED")
-	private Boolean xmlInvoiceGenerated=false;
+	private Boolean xmlInvoiceGenerated=Boolean.FALSE;
 
 	@Transient
 	PreInvoicingReportsDTO preInvoicingReports = new PreInvoicingReportsDTO();
