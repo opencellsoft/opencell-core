@@ -18,6 +18,7 @@ import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.asg.api.UserServiceApi;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 
@@ -43,6 +44,7 @@ public class UserWS {
 	public ActionStatus create(UserDto userDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		String userId = userDto.getUserId();
 		try {
 			userDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
 					"asp.api.userId", "1")));
@@ -57,6 +59,10 @@ public class UserWS {
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		if (result.getStatus() == ActionStatusEnum.FAIL) {
+			userServiceApi.removeAsgMapping(userId, EntityCodeEnum.U);
 		}
 
 		return result;

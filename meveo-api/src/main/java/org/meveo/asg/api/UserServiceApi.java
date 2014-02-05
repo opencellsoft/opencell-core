@@ -9,9 +9,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.asg.api.model.EntityCodeEnum;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
@@ -29,6 +32,8 @@ import org.meveo.service.billing.impl.UserAccountService;
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class UserServiceApi extends BaseAsgApi {
 
+	ParamBean paramBean = ParamBean.getInstance();
+
 	@Inject
 	private BillingAccountService billingAccountService;
 
@@ -44,8 +49,23 @@ public class UserServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService.findById(userDto.getCurrentUserId());
 
+			try {
+				userDto.setUserId(asgIdMappingService.getNewCode(em,
+						userDto.getUserId(), EntityCodeEnum.U));
+
+				userDto.setOrganizationId(asgIdMappingService.getMeveoCode(em,
+						userDto.getOrganizationId(), EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
+			String billingAccountPrefix = paramBean.getProperty(
+					"asp.api.default.billingAccount.prefix", "BA_");
+
 			BillingAccount billingAccount = billingAccountService.findByCode(
-					userDto.getOrganizationId(), provider);
+					billingAccountPrefix + userDto.getOrganizationId(),
+					provider);
+
 			if (billingAccount == null) {
 				throw new MeveoApiException("Billing account with code="
 						+ userDto.getOrganizationId() + " does not exists.");
@@ -100,6 +120,13 @@ public class UserServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService.findById(userDto.getCurrentUserId());
 
+			try {
+				userDto.setUserId(asgIdMappingService.getMeveoCode(em,
+						userDto.getUserId(), EntityCodeEnum.U));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
 			UserAccount userAccount = userAccountService.findByCode(em,
 					userDto.getUserId(), provider);
 			if (userAccount == null) {
@@ -138,6 +165,14 @@ public class UserServiceApi extends BaseAsgApi {
 
 		if (!StringUtils.isBlank(userId)) {
 			Provider provider = providerService.findById(providerId);
+
+			try {
+				userId = asgIdMappingService.getMeveoCode(em, userId,
+						EntityCodeEnum.U);
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
 			UserAccount userAccount = userAccountService.findByCode(em, userId,
 					provider);
 
