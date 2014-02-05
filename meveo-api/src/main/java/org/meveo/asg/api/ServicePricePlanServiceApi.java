@@ -559,9 +559,34 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 
 	public void remove(String serviceId, String organizationId, Long userId,
 			Long providerId) throws MeveoApiException {
+
+		if (StringUtils.isBlank(serviceId)
+				|| StringUtils.isBlank(organizationId)) {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(serviceId)) {
+				missingFields.add("serviceId");
+			}
+			if (StringUtils.isBlank(organizationId)) {
+				missingFields.add("organizationId");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+
 		Provider provider = providerService.findById(providerId);
 		User currentUser = userService.findById(userId);
-		
+
 		try {
 			serviceId = asgIdMappingService.getMeveoCode(em, serviceId,
 					EntityCodeEnum.SPF);
@@ -575,7 +600,7 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 		String serviceOfferCodePrefix = paramBean.getProperty(
 				"asg.api.service.offer.prefix", "_SE_");
 		String serviceTemplateCode = serviceOfferCodePrefix + organizationId
-				+ "_" + serviceId;		
+				+ "_" + serviceId;
 
 		try {
 			// remove service template

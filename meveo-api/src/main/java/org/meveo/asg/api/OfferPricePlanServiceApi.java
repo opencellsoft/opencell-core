@@ -9,6 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.OfferPricePlanDto;
 import org.meveo.api.dto.RecurringChargeDto;
 import org.meveo.api.dto.SubscriptionFeeDto;
@@ -16,6 +17,7 @@ import org.meveo.api.dto.TerminationFeeDto;
 import org.meveo.api.dto.UsageChargeDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -118,6 +120,18 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService.findById(offerPricePlanDto
 					.getCurrentUserId());
+
+			try {
+				offerPricePlanDto.setOfferId(asgIdMappingService.getNewCode(em,
+						offerPricePlanDto.getOfferId(), EntityCodeEnum.OPF));
+
+				offerPricePlanDto.setOrganizationId(asgIdMappingService
+						.getMeveoCode(em,
+								offerPricePlanDto.getOrganizationId(),
+								EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			Calendar calendar = calendarService.findByName(em,
 					offerPricePlanDto.getBillingPeriod().toString());
@@ -570,8 +584,42 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 
 	public void remove(String offerId, String organizationId, Long userId,
 			Long providerId) throws MeveoApiException {
+
+		if (StringUtils.isBlank(offerId) || StringUtils.isBlank(organizationId)) {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(offerId)) {
+				missingFields.add("offerId");
+			}
+			if (StringUtils.isBlank(organizationId)) {
+				missingFields.add("organizationId");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+		}
+
 		Provider provider = providerService.findById(providerId);
 		User currentUser = userService.findById(userId);
+
+		try {
+			offerId = asgIdMappingService.getMeveoCode(em, offerId,
+					EntityCodeEnum.OPF);
+
+			organizationId = asgIdMappingService.getMeveoCode(em,
+					organizationId, EntityCodeEnum.ORG);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
 
 		String offerCodePrefix = paramBean.getProperty(
 				"asg.api.offer.offer.prefix", "_OF_");
@@ -705,6 +753,20 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService.findById(offerPricePlanDto
 					.getCurrentUserId());
+
+			try {
+				offerPricePlanDto
+						.setOfferId(asgIdMappingService.getMeveoCode(em,
+								offerPricePlanDto.getOfferId(),
+								EntityCodeEnum.OPF));
+
+				offerPricePlanDto.setOrganizationId(asgIdMappingService
+						.getMeveoCode(em,
+								offerPricePlanDto.getOrganizationId(),
+								EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			updateRecurringChargeTemplate(false, offerPricePlanDto,
 					currentUser, provider);
