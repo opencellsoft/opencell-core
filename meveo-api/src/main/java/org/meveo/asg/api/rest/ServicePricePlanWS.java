@@ -18,6 +18,7 @@ import org.meveo.api.dto.ServicePricePlanDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.asg.api.ServicePricePlanServiceApi;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
 
@@ -43,6 +44,7 @@ public class ServicePricePlanWS {
 	public ActionStatus create(ServicePricePlanDto servicePricePlanDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+		String servicePricePlanId = servicePricePlanDto.getServiceId();
 		try {
 			servicePricePlanDto.setCurrentUserId(Long.valueOf(paramBean
 					.getProperty("asp.api.userId", "1")));
@@ -59,6 +61,11 @@ public class ServicePricePlanWS {
 			result.setMessage(e.getMessage());
 		}
 
+		if (result.getStatus() == ActionStatusEnum.FAIL) {
+			servicePricePlanServiceApi.removeAsgMapping(servicePricePlanId,
+					EntityCodeEnum.SPF);
+		}
+
 		return result;
 	}
 
@@ -67,6 +74,7 @@ public class ServicePricePlanWS {
 	public ActionStatus remove(@PathParam("serviceId") String serviceId,
 			@PathParam("organizationId") String organizationId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
 		try {
 			servicePricePlanServiceApi.remove(serviceId, organizationId, Long
 					.valueOf(paramBean.getProperty("asp.api.userId", "1")),
@@ -75,6 +83,11 @@ public class ServicePricePlanWS {
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		if (result.getStatus() == ActionStatusEnum.SUCCESS) {
+			servicePricePlanServiceApi.removeAsgMapping(serviceId,
+					EntityCodeEnum.SPF);
 		}
 
 		return result;

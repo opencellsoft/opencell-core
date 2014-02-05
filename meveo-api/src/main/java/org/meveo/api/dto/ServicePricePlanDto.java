@@ -25,7 +25,7 @@ public class ServicePricePlanDto extends BaseDto {
 	private String param1;
 	private String param2;
 	private String param3;
-	private Integer billingPeriod;
+	private String billingPeriod;
 	private List<RecurringChargeDto> recurringCharges;
 	private String usageUnit;
 	private List<UsageChargeDto> usageCharges;
@@ -104,11 +104,11 @@ public class ServicePricePlanDto extends BaseDto {
 		this.param3 = param3;
 	}
 
-	public Integer getBillingPeriod() {
+	public String getBillingPeriod() {
 		return billingPeriod;
 	}
 
-	public void setBillingPeriod(Integer billingPeriod) {
+	public void setBillingPeriod(String billingPeriod) {
 		this.billingPeriod = billingPeriod;
 	}
 

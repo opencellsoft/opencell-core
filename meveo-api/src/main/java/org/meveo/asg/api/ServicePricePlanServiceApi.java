@@ -9,6 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RecurringChargeDto;
 import org.meveo.api.dto.ServicePricePlanDto;
 import org.meveo.api.dto.SubscriptionFeeDto;
@@ -18,6 +19,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.ServiceTemplateAlreadyExistsException;
 import org.meveo.api.exception.ServiceTemplateDoesNotExistsException;
+import org.meveo.asg.api.model.EntityCodeEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -121,8 +123,21 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 			User currentUser = userService.findById(servicePricePlanDto
 					.getCurrentUserId());
 
+			try {
+				servicePricePlanDto.setServiceId(asgIdMappingService
+						.getNewCode(em, servicePricePlanDto.getServiceId(),
+								EntityCodeEnum.SPF));
+
+				servicePricePlanDto.setOrganizationId(asgIdMappingService
+						.getMeveoCode(em,
+								servicePricePlanDto.getOrganizationId(),
+								EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
+
 			Calendar calendar = calendarService.findByName(em,
-					servicePricePlanDto.getBillingPeriod().toString());
+					servicePricePlanDto.getBillingPeriod());
 			if (calendar == null) {
 				throw new MeveoApiException("Calendar with name="
 						+ servicePricePlanDto.getBillingPeriod()
@@ -546,11 +561,21 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 			Long providerId) throws MeveoApiException {
 		Provider provider = providerService.findById(providerId);
 		User currentUser = userService.findById(userId);
+		
+		try {
+			serviceId = asgIdMappingService.getMeveoCode(em, serviceId,
+					EntityCodeEnum.SPF);
+
+			organizationId = asgIdMappingService.getMeveoCode(em,
+					organizationId, EntityCodeEnum.ORG);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
 
 		String serviceOfferCodePrefix = paramBean.getProperty(
 				"asg.api.service.offer.prefix", "_SE_");
 		String serviceTemplateCode = serviceOfferCodePrefix + organizationId
-				+ "_" + serviceId;
+				+ "_" + serviceId;		
 
 		try {
 			// remove service template
@@ -681,6 +706,19 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 					.getProviderId());
 			User currentUser = userService.findById(servicePricePlanDto
 					.getCurrentUserId());
+
+			try {
+				servicePricePlanDto.setServiceId(asgIdMappingService
+						.getMeveoCode(em, servicePricePlanDto.getServiceId(),
+								EntityCodeEnum.SPF));
+
+				servicePricePlanDto.setOrganizationId(asgIdMappingService
+						.getMeveoCode(em,
+								servicePricePlanDto.getOrganizationId(),
+								EntityCodeEnum.ORG));
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 
 			String serviceOfferCodePrefix = paramBean.getProperty(
 					"asg.api.service.charged.prefix", "_CH_SE_");
