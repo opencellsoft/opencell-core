@@ -169,6 +169,20 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 			serviceTemplate.setServiceUsageCharges(serviceUsageChargeTemplates);
 			serviceTemplateService.update(em, serviceTemplate, currentUser);
 
+			String offerTemplatePrefix = paramBean.getProperty(
+					"asg.api.offer.charged.prefix", "_CH_OF_");
+			List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
+			serviceTemplates.add(serviceTemplate);
+			String offerTemplateCode = offerTemplatePrefix
+					+ offerPricePlanDto.getOfferId() + "_"
+					+ offerPricePlanDto.getOrganizationId();
+			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
+					offerTemplateCode, provider);
+			if (offerTemplate != null) {
+				offerTemplate.setServiceTemplates(serviceTemplates);
+				offerTemplateService.update(em, offerTemplate, currentUser);
+			}
+
 			// recommended prices
 			ServiceTemplate recommendedServiceTemplate = createServiceTemplate(
 					true, offerPricePlanDto, currentUser, provider);
@@ -196,20 +210,6 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 					.setServiceUsageCharges(recommendedServiceUsageChargeTemplates);
 			serviceTemplateService.update(em, recommendedServiceTemplate,
 					currentUser);
-
-			String offerTemplatePrefix = paramBean.getProperty(
-					"asg.api.offer.charged.prefix", "_CH_OF_");
-			List<ServiceTemplate> serviceTemplates = new ArrayList<ServiceTemplate>();
-			serviceTemplates.add(serviceTemplate);
-			String offerTemplateCode = offerTemplatePrefix
-					+ offerPricePlanDto.getOfferId() + "_"
-					+ offerPricePlanDto.getOrganizationId();
-			OfferTemplate offerTemplate = offerTemplateService.findByCode(em,
-					offerTemplateCode, provider);
-			if (offerTemplate != null) {
-				offerTemplate.setServiceTemplates(serviceTemplates);
-				offerTemplateService.update(em, offerTemplate, currentUser);
-			}
 
 			String recommendedOfferTemplatePrefix = paramBean.getProperty(
 					"asg.api.recommended.offer.charged.prefix", "_REC_CH_OF_");
@@ -608,6 +608,14 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 			throw new MissingParameterException(sb.toString());
 		}
 
+		removeOffer(true, offerId, organizationId, userId, providerId);
+		removeOffer(false, offerId, organizationId, userId, providerId);
+	}
+
+	public void removeOffer(boolean isRecommendedPrice, String offerId,
+			String organizationId, Long userId, Long providerId)
+			throws MeveoApiException {
+
 		Provider provider = providerService.findById(providerId);
 		User currentUser = userService.findById(userId);
 
@@ -621,14 +629,20 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 			throw new MeveoApiException(e.getMessage());
 		}
 
-		String offerCodePrefix = paramBean.getProperty(
-				"asg.api.offer.offer.prefix", "_OF_");
-		String offerTemplateCode = offerCodePrefix + offerId + "_"
+		String offerTemplatePrefix = isRecommendedPrice ? paramBean
+				.getProperty("asg.api.recommended.offer.charged.prefix",
+						"_REC_CH_OF_") : paramBean.getProperty(
+				"asg.api.offer.charged.prefix", "_CH_OF_");
+
+		String offerTemplateCode = offerTemplatePrefix + offerId + "_"
+				+ organizationId;
+
+		String serviceTemplateCode = offerTemplatePrefix + offerId + "_"
 				+ organizationId;
 
 		try {
 			ServiceTemplate serviceTemplate = serviceTemplateService
-					.findByCode(em, offerTemplateCode, provider);
+					.findByCode(em, serviceTemplateCode, provider);
 
 			if (serviceTemplate != null) {
 				serviceTemplate.setRecurringCharges(null);
@@ -638,8 +652,53 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 				serviceTemplateService.update(em, serviceTemplate, currentUser);
 			}
 
+			// delete subscription fee
+			String subscriptionPointChargePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.offer.subscription.point.charge.prefix",
+							"_REC_SO_OF_")
+					: paramBean.getProperty(
+							"asg.api.offer.subscription.point.charge.prefix",
+							"_SO_OF_");
+			String subscriptionTemplateCode = subscriptionPointChargePrefix
+					+ offerId + "_" + organizationId;
+
+			// delete price plan
+			pricePlanMatrixService.removeByCode(em, subscriptionTemplateCode,
+					provider);
+
+			OneShotChargeTemplate subscriptionTemplate = oneShotChargeTemplateService
+					.findByCode(em, subscriptionTemplateCode, provider);
+			if (subscriptionTemplate != null) {
+				oneShotChargeTemplateService.remove(em, subscriptionTemplate);
+			}
+
+			// delete termination fee
+			String terminationPointChargePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.offer.termination.point.charge.prefix",
+							"_REC_TE_OF_")
+					: paramBean.getProperty(
+							"asg.api.offer.termination.point.charge.prefix",
+							"_TE_OF_");
+			String terminationTemplateCode = terminationPointChargePrefix
+					+ offerId + "_" + organizationId;
+
+			// delete price plan
+			pricePlanMatrixService.removeByCode(em, terminationTemplateCode,
+					provider);
+
+			OneShotChargeTemplate terminationTemplate = oneShotChargeTemplateService
+					.findByCode(em, terminationTemplateCode, provider);
+			if (terminationTemplate != null) {
+				oneShotChargeTemplateService.remove(em, terminationTemplate);
+			}
+
 			// delete usageCharge link
-			String usageChargeTemplatePrefix = paramBean.getProperty(
+			String usageChargeTemplatePrefix = isRecommendedPrice ? paramBean
+					.getProperty(
+							"asg.api.recommended.offer.usage.charged.prefix",
+							"_REC_US_OF_") : paramBean.getProperty(
 					"asg.api.offer.usage.charged.prefix", "_US_OF_");
 			String usageChargeCode = usageChargeTemplatePrefix + offerId + "_"
 					+ organizationId;
@@ -671,42 +730,10 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 			counterTemplateService.removeByPrefix(em, offerTemplateCode,
 					provider);
 
-			// delete subscription fee
-			String subscriptionPointChargePrefix = paramBean
-					.getProperty(
-							"asg.api.offer.subscription.point.charge.prefix",
-							"_SO_OF_");
-			String subscriptionTemplateCode = subscriptionPointChargePrefix
-					+ offerId + "_" + organizationId;
-
-			// delete price plan
-			pricePlanMatrixService.removeByCode(em, subscriptionTemplateCode,
-					provider);
-
-			OneShotChargeTemplate subscriptionTemplate = oneShotChargeTemplateService
-					.findByCode(em, subscriptionTemplateCode, provider);
-			if (subscriptionTemplate != null) {
-				oneShotChargeTemplateService.remove(em, subscriptionTemplate);
-			}
-
-			// delete termination fee
-			String terminationPointChargePrefix = paramBean.getProperty(
-					"asg.api.offer.termination.point.charge.prefix", "_TE_OF_");
-			String terminationTemplateCode = terminationPointChargePrefix
-					+ offerId + "_" + organizationId;
-
-			// delete price plan
-			pricePlanMatrixService.removeByCode(em, terminationTemplateCode,
-					provider);
-
-			OneShotChargeTemplate terminationTemplate = oneShotChargeTemplateService
-					.findByCode(em, terminationTemplateCode, provider);
-			if (terminationTemplate != null) {
-				oneShotChargeTemplateService.remove(em, terminationTemplate);
-			}
-
 			// delete recurring charge
-			String recurringChargePrefix = paramBean.getProperty(
+			String recurringChargePrefix = isRecommendedPrice ? paramBean
+					.getProperty("asg.api.recommended.offer.recurring.prefix",
+							"_REC_RE_OF_") : paramBean.getProperty(
 					"asg.api.offer.recurring.prefix", "_RE_OF_");
 			String recurringChargeCode = recurringChargePrefix + offerId + "_"
 					+ organizationId;
@@ -726,11 +753,9 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 				List<OfferTemplate> offerTemplates = offerTemplateService
 						.findByServiceTemplate(em, serviceTemplate, provider);
 				if (offerTemplates != null) {
-					for (OfferTemplate offerTemplate : offerTemplates) {
-						offerTemplate.getServiceTemplates().remove(
-								serviceTemplate);
-						offerTemplateService.update(em, offerTemplate,
-								currentUser);
+					for (OfferTemplate ot : offerTemplates) {
+						ot.getServiceTemplates().remove(serviceTemplate);
+						offerTemplateService.update(em, ot, currentUser);
 					}
 				}
 				serviceTemplateService.remove(em, serviceTemplate);

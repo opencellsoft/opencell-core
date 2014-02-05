@@ -614,8 +614,7 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 				serviceTemplate.setServiceUsageCharges(null);
 				serviceTemplateService.update(em, serviceTemplate, currentUser);
 			}
-
-			// delete usageCharge link
+			
 			// delete subscription fee
 			String subscriptionPointChargePrefix = paramBean.getProperty(
 					"asg.api.service.subscription.point.charge.prefix",
@@ -650,6 +649,7 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 				oneShotChargeTemplateService.remove(em, terminationTemplate);
 			}
 
+			// delete usageCharge link
 			String usageChargeTemplatePrefix = paramBean.getProperty(
 					"asg.api.service.usage.charged.prefix", "_US_SE_");
 			String usageChargeCode = usageChargeTemplatePrefix + serviceId
