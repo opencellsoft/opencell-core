@@ -115,8 +115,7 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 		if (!StringUtils.isBlank(servicePricePlanDto.getServiceId())
 				&& !StringUtils
 						.isBlank(servicePricePlanDto.getOrganizationId())
-				&& !StringUtils.isBlank(servicePricePlanDto.getTaxId())
-				&& !StringUtils.isBlank(servicePricePlanDto.getBillingPeriod())) {
+				&& !StringUtils.isBlank(servicePricePlanDto.getTaxId())) {
 
 			Provider provider = providerService.findById(servicePricePlanDto
 					.getProviderId());
@@ -209,9 +208,6 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 			}
 			if (StringUtils.isBlank(servicePricePlanDto.getOrganizationId())) {
 				missingFields.add("organizationId");
-			}
-			if (StringUtils.isBlank(servicePricePlanDto.getBillingPeriod())) {
-				missingFields.add("billingPeriod");
 			}
 			if (StringUtils.isBlank(servicePricePlanDto.getTaxId())) {
 				missingFields.add("taxId");
@@ -315,10 +311,14 @@ public class ServicePricePlanServiceApi extends BaseAsgApi {
 				// pricePlanMatrix.setSeller(seller);
 				pricePlanMatrix.setEndRatingDate(recurringChargeDto
 						.getEndDate());
-				pricePlanMatrix.setMinSubscriptionAgeInMonth(Long
-						.valueOf(recurringChargeDto.getMinAge()));
-				pricePlanMatrix.setMaxSubscriptionAgeInMonth(Long
-						.valueOf(recurringChargeDto.getMaxAge()));
+				try {
+					pricePlanMatrix.setMinSubscriptionAgeInMonth(Long
+							.valueOf(recurringChargeDto.getMinAge()));
+					pricePlanMatrix.setMaxSubscriptionAgeInMonth(Long
+							.valueOf(recurringChargeDto.getMaxAge()));
+				} catch (NullPointerException e) {
+					log.warn("Min or max age null={}", e.getMessage());
+				}
 				pricePlanMatrix.setCriteria1Value(servicePricePlanDto
 						.getParam1());
 				pricePlanMatrix.setCriteria2Value(servicePricePlanDto

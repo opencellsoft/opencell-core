@@ -66,6 +66,15 @@ public class OfferTemplateServiceApi extends BaseAsgApi {
 			try {
 				offerDto.setOfferId(asgIdMappingService.getNewCode(em,
 						offerDto.getOfferId(), EntityCodeEnum.O));
+
+				if (offerDto.getServices() != null) {
+					List<String> services = new ArrayList<>();
+					for (String serviceId : offerDto.getServices()) {
+						services.add(asgIdMappingService.getNewCode(em,
+								serviceId, EntityCodeEnum.S));
+					}
+					offerDto.setServices(services);
+				}
 			} catch (BusinessException e) {
 				throw new MeveoApiException(e.getMessage());
 			}

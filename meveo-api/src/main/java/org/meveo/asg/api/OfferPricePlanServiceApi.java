@@ -113,8 +113,7 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(offerPricePlanDto.getOfferId())
 				&& !StringUtils.isBlank(offerPricePlanDto.getOrganizationId())
-				&& !StringUtils.isBlank(offerPricePlanDto.getTaxId())
-				&& !StringUtils.isBlank(offerPricePlanDto.getBillingPeriod())) {
+				&& !StringUtils.isBlank(offerPricePlanDto.getTaxId())) {
 
 			Provider provider = providerService.findById(offerPricePlanDto
 					.getProviderId());
@@ -122,8 +121,10 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 					.getCurrentUserId());
 
 			try {
-				offerPricePlanDto.setOfferId(asgIdMappingService.getMeveoCode(em,
-						offerPricePlanDto.getOfferId(), EntityCodeEnum.OPF));
+				offerPricePlanDto
+						.setOfferId(asgIdMappingService.getMeveoCode(em,
+								offerPricePlanDto.getOfferId(),
+								EntityCodeEnum.OPF));
 
 				offerPricePlanDto.setOrganizationId(asgIdMappingService
 						.getMeveoCode(em,
@@ -239,9 +240,6 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 			if (StringUtils.isBlank(offerPricePlanDto.getOrganizationId())) {
 				missingFields.add("organizationId");
 			}
-			if (StringUtils.isBlank(offerPricePlanDto.getBillingPeriod())) {
-				missingFields.add("billingPeriod");
-			}
 			if (StringUtils.isBlank(offerPricePlanDto.getTaxId())) {
 				missingFields.add("taxId");
 			}
@@ -344,10 +342,14 @@ public class OfferPricePlanServiceApi extends BaseAsgApi {
 				// pricePlanMatrix.setSeller(seller);
 				pricePlanMatrix.setEndRatingDate(recurringChargeDto
 						.getEndDate());
-				pricePlanMatrix.setMinSubscriptionAgeInMonth(Long
-						.valueOf(recurringChargeDto.getMinAge()));
-				pricePlanMatrix.setMaxSubscriptionAgeInMonth(Long
-						.valueOf(recurringChargeDto.getMaxAge()));
+				try {
+					pricePlanMatrix.setMinSubscriptionAgeInMonth(Long
+							.valueOf(recurringChargeDto.getMinAge()));
+					pricePlanMatrix.setMaxSubscriptionAgeInMonth(Long
+							.valueOf(recurringChargeDto.getMaxAge()));
+				} catch (NullPointerException e) {
+					log.warn("Min or max age null={}", e.getMessage());
+				}
 				pricePlanMatrix
 						.setCriteria1Value(offerPricePlanDto.getParam1());
 				pricePlanMatrix
