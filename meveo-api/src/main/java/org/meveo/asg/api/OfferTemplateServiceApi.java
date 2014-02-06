@@ -68,7 +68,7 @@ public class OfferTemplateServiceApi extends BaseAsgApi {
 						offerDto.getOfferId(), EntityCodeEnum.O));
 
 				if (offerDto.getServices() != null) {
-					List<String> services = new ArrayList<>();
+					List<String> services = new ArrayList<String>();
 					for (String serviceId : offerDto.getServices()) {
 						services.add(asgIdMappingService.getNewCode(em,
 								serviceId, EntityCodeEnum.S));
