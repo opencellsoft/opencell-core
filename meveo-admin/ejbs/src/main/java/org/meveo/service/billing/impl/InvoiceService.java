@@ -20,6 +20,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -67,10 +68,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 	
-	public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount)
+	public Invoice getInvoice(EntityManager em,String invoiceNumber, CustomerAccount customerAccount)
 			throws BusinessException {
 		try {
-			Query q = getEntityManager().createQuery(
+			Query q = em.createQuery(
 					"from Invoice where invoiceNumber = :invoiceNumber and billingAccount.customerAccount=:customerAccount");
 			q.setParameter("invoiceNumber", invoiceNumber).setParameter("customerAccount", customerAccount);
 			Object invoiceObject = q.getSingleResult();
