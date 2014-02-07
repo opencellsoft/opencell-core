@@ -242,7 +242,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	public String saveOrUpdate(boolean killConversation, String objectName,
 			Long objectId) {
-		String outcome = saveOrUpdate(entity);
+		String outcome = saveOrUpdate(killConversation);
 		
 		if (killConversation) {
 			endConversation();
