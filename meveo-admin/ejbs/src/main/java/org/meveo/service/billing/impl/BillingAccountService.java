@@ -24,6 +24,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -37,8 +38,12 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 
 @Stateless
@@ -206,5 +211,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 		return null;
 	}
+	
+
+	
+	
+	
+	
+	
 
 }
