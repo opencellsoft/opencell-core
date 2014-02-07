@@ -26,6 +26,7 @@ import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.rest.response.CountryResponse;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.util.MeveoParamBean;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -38,11 +39,14 @@ import org.meveo.util.MeveoParamBean;
 public class CountryWS {
 
 	@Inject
-	private CountryServiceApi countryServiceApi;
+	private Logger log;
 
 	@Inject
 	@MeveoParamBean
 	protected ParamBean paramBean;
+
+	@Inject
+	private CountryServiceApi countryServiceApi;
 
 	@GET
 	@Path("/index")
@@ -56,6 +60,8 @@ public class CountryWS {
 	@POST
 	@Path("/")
 	public ActionStatus create(CountryDto countryDto) {
+		log.debug("createCountry={}", countryDto);
+
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -88,6 +94,8 @@ public class CountryWS {
 	@GET
 	@Path("/")
 	public CountryResponse find(@QueryParam("countryCode") String countryCode) {
+		log.debug("country.find countryCode={}", countryCode);
+
 		CountryResponse result = new CountryResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
@@ -105,6 +113,9 @@ public class CountryWS {
 	@Path("/{countryCode}/{currencyCode}")
 	public ActionStatus remove(@PathParam("countryCode") String countryCode,
 			@PathParam("currencyCode") String currencyCode) {
+		log.debug("country.remove countryCode={}, currencyCode={}",
+				countryCode, currencyCode);
+
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Long providerId = Long.valueOf(paramBean.getProperty(
 				"asp.api.providerId", "1"));
@@ -134,6 +145,8 @@ public class CountryWS {
 	@PUT
 	@Path("/")
 	public ActionStatus update(CountryDto countryDto) {
+		log.debug("country.update={}", countryDto);
+
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

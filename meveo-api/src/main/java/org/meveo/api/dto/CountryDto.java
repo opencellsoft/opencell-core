@@ -74,4 +74,11 @@ public class CountryDto extends BaseDto {
 		this.languageCode = languageCode;
 	}
 
+	@Override
+	public String toString() {
+		return "CountryDto [countryCode=" + countryCode + ", name=" + name
+				+ ", currencyCode=" + currencyCode + ", languageCode="
+				+ languageCode + "]";
+	}
+
 }

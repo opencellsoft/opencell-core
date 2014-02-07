@@ -15,6 +15,7 @@ import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.OneShotChargeTemplateServiceApi;
 import org.meveo.api.dto.OneShotChargeTemplateListDto;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -24,6 +25,9 @@ import org.meveo.api.dto.OneShotChargeTemplateListDto;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class OneShotChargeTemplateWS {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private OneShotChargeTemplateServiceApi oneShotChargeTemplateServiceApi;
@@ -46,6 +50,10 @@ public class OneShotChargeTemplateWS {
 			@QueryParam("providerCode") String providerCode,
 			@QueryParam("sellerCode") String sellerCode,
 			@QueryParam("date") Date date) {
+		log.debug(
+				"oneShotChargeTemplate.getOneShotChargeTemplates languageCode={}, countryCode={}, currencyCode={}, providerCode={}, sellerCode={}, date={}",
+				languageCode, countryCode, currencyCode, providerCode,
+				sellerCode, date);
 
 		return oneShotChargeTemplateServiceApi.getOneShotChargeTemplates(
 				languageCode, countryCode, currencyCode, providerCode,

@@ -14,6 +14,7 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.InvoiceApi;
 import org.meveo.api.dto.InvoiceDto;
 import org.meveo.commons.utils.ParamBean;
+import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
@@ -26,6 +27,9 @@ import org.meveo.commons.utils.ParamBean;
 public class InvoiceWS {
 
 	@Inject
+	private Logger log;
+
+	@Inject
 	private ParamBean paramBean;
 
 	@Inject
@@ -34,6 +38,8 @@ public class InvoiceWS {
 	@POST
 	@Path("/")
 	public ActionStatus create(InvoiceDto invoiceDto) {
+		log.debug("invoice.create={}", invoiceDto);
+
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

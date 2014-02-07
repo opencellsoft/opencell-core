@@ -14,17 +14,20 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.PaymentApi;
 import org.meveo.api.dto.PaymentDto;
 import org.meveo.commons.utils.ParamBean;
-
+import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
- *
+ * 
  */
 @Stateless
 @Path("/payment")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class PaymentWS {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private ParamBean paramBean;
@@ -35,11 +38,13 @@ public class PaymentWS {
 	@POST
 	@Path("/")
 	public ActionStatus create(PaymentDto paymentDto) {
+		log.debug("payment.create={}", paymentDto);
+
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			paymentDto.setCurrentUserId(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")));
+			paymentDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
+					"asp.api.userId", "1")));
 			paymentDto.setProviderId(Long.valueOf(paramBean.getProperty(
 					"asp.api.providerId", "1")));
 
@@ -57,5 +62,4 @@ public class PaymentWS {
 		return result;
 	}
 
-	
 }

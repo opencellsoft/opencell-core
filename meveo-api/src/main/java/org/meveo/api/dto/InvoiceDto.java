@@ -20,17 +20,11 @@ public class InvoiceDto extends BaseDto {
 	private static final long serialVersionUID = 1072382628068718580L;
 
 	private String billingAccountCode;
-
 	private Date invoiceDate;
-
 	private Date dueDate;
-
 	private BigDecimal amount;
-
 	private BigDecimal discount;
-
 	private BigDecimal amountWithoutTax;
-
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
 
@@ -107,6 +101,17 @@ public class InvoiceDto extends BaseDto {
 
 	public void setAmountWithTax(BigDecimal amountWithTax) {
 		this.amountWithTax = amountWithTax;
+	}
+
+	@Override
+	public String toString() {
+		return "InvoiceDto [billingAccountCode=" + billingAccountCode
+				+ ", invoiceDate=" + invoiceDate + ", dueDate=" + dueDate
+				+ ", amount=" + amount + ", discount=" + discount
+				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
+				+ amountTax + ", amountWithTax=" + amountWithTax
+				+ ", subCategoryInvoiceAgregates="
+				+ subCategoryInvoiceAgregates + "]";
 	}
 
 }

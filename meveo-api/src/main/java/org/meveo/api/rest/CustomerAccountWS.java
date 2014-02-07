@@ -13,12 +13,16 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerAccountApi;
+import org.slf4j.Logger;
 
 @Path("/customerAccount")
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class CustomerAccountWS {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private CustomerAccountApi customerAccountapi;
@@ -37,7 +41,12 @@ public class CustomerAccountWS {
 	public ActionStatus getCustomerAccount(
 			@QueryParam("customerAccountCode") String customerAccountCode,
 			@QueryParam("providerCode") String providerCode) throws Exception {
+		log.debug(
+				"customerAccount.getCustomer customerAccountCode={}, providerCode={}",
+				customerAccountCode, providerCode);
+
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
 		try {
 			customerAccountapi.getCustomerAccount(customerAccountCode,
 					providerCode);
@@ -52,5 +61,4 @@ public class CustomerAccountWS {
 		}
 		return result;
 	}
-
 }
