@@ -15,7 +15,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -29,11 +28,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -54,6 +53,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					"from Invoice where invoiceNumber = :invoiceNumber and provider=:provider");
 			q.setParameter("invoiceNumber", invoiceNumber).setParameter("provider",
 					providerService.findByCode(providerCode));
+			Object invoiceObject = q.getSingleResult();
+			return (Invoice) invoiceObject;
+		} catch (NoResultException e) {
+			log.info("Invoice with invoice number #0 was not found. Returning null.", invoiceNumber);
+			return null;
+		} catch (NonUniqueResultException e) {
+			log.info("Multiple invoices with invoice number #0 was found. Returning null.",
+					invoiceNumber);
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public Invoice getInvoiceByNumber(String invoiceNumber, CustomerAccount customerAccount)
+			throws BusinessException {
+		try {
+			Query q = getEntityManager().createQuery(
+					"from Invoice where invoiceNumber = :invoiceNumber and billingAccount.customerAccount=:customerAccount");
+			q.setParameter("invoiceNumber", invoiceNumber).setParameter("customerAccount", customerAccount);
 			Object invoiceObject = q.getSingleResult();
 			return (Invoice) invoiceObject;
 		} catch (NoResultException e) {
