@@ -67,7 +67,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 	
-	public Invoice getInvoiceByNumber(String invoiceNumber, CustomerAccount customerAccount)
+	public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount)
 			throws BusinessException {
 		try {
 			Query q = getEntityManager().createQuery(
