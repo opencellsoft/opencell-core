@@ -6,13 +6,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType; 
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerAccountApi;
-
 
 @Path("/customerAccount")
 @RequestScoped
@@ -20,7 +20,6 @@ import org.meveo.api.CustomerAccountApi;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class CustomerAccountWS {
 
- 
 	@Inject
 	private CustomerAccountApi customerAccountapi;
 
@@ -32,23 +31,25 @@ public class CustomerAccountWS {
 
 		return result;
 	}
-	
-	
+
 	@GET
 	@Path("/")
-	public ActionStatus getCustomerAccount(String customerAccountCode,String providerCode) throws Exception  {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-         try{	 
-        customerAccountapi.getCustomerAccount(customerAccountCode, providerCode);	 
-	} catch (BusinessException e) {
-		result.setStatus(ActionStatusEnum.FAIL);
-		result.setMessage(e.getMessage());
-		e.printStackTrace();
-	} catch (Exception e) {
-		result.setStatus(ActionStatusEnum.FAIL);
-		result.setMessage(e.getMessage());
-		e.printStackTrace();
-	}
+	public ActionStatus getCustomerAccount(
+			@QueryParam("customerAccountCode") String customerAccountCode,
+			@QueryParam("providerCode") String providerCode) throws Exception {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try {
+			customerAccountapi.getCustomerAccount(customerAccountCode,
+					providerCode);
+		} catch (BusinessException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			e.printStackTrace();
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			e.printStackTrace();
+		}
 		return result;
 	}
 

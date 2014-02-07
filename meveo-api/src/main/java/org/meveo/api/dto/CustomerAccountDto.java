@@ -9,32 +9,29 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @XmlRootElement(name = "customerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerAccountDto extends BaseDto {
 
 	private static final long serialVersionUID = -137632696663739285L;
-	
+
 	private String status;
-	private String paymentMethod; 
-	private String creditCategory; 
-	private List<AccountOperationDto> accountOperations= new ArrayList<AccountOperationDto>();
+	private String paymentMethod;
+	private String creditCategory;
+	private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
 	private Date dateStatus;
-	private Date dateDunningLevel; 
-	 
-	private String email; 
-	private String phone; 
+	private Date dateDunningLevel;
+
+	private String email;
+	private String phone;
 	private String mobile;
 	private String fax;
-	  
+
 	private String customerCode;
 	private String dunningLevel;
-	private String mandateIdentification = ""; 
+	private String mandateIdentification = "";
 	private Date mandateDate;
-	private BigDecimal balance=BigDecimal.ZERO;
-	
-	
+	private BigDecimal balance = BigDecimal.ZERO;
 
 	public String getStatus() {
 		return status;
@@ -51,8 +48,6 @@ public class CustomerAccountDto extends BaseDto {
 	public void setCreditCategory(String creditCategory) {
 		this.creditCategory = creditCategory;
 	}
-
-
 
 	public List<AccountOperationDto> getAccountOperations() {
 		return accountOperations;
@@ -157,12 +152,12 @@ public class CustomerAccountDto extends BaseDto {
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
-	
+
 	public void addAccountOperations(AccountOperationDto accountOperation) {
-		if(accountOperations==null){
-			accountOperations=new ArrayList<>();
+		if (accountOperations == null) {
+			accountOperations = new ArrayList<AccountOperationDto>();
 		}
 		this.accountOperations.add(accountOperation);
 	}
-	 
+
 }
