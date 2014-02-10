@@ -116,6 +116,7 @@ public class InvoiceApi extends BaseApi {
                invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
                invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
                invoice.setDiscount(invoiceDTO.getDiscount());
+               invoice.setComment(invoiceDTO.getComment());
 
                invoiceService.create(em, invoice, currentUser, provider);
              UserAccount userAccount=billingAccount.getDefaultUserAccount();
@@ -177,7 +178,7 @@ public class InvoiceApi extends BaseApi {
                  for(RatedTransactionDTO ratedTransaction:subCategoryInvoiceAgregateDTO.getRatedTransactions()){
                      RatedTransaction meveoRatedTransaction=new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                              ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(),
-                             ratedTransaction.getAmountTax(),RatedTransactionStatusEnum.BILLED, provider, null, billingAccount, invoiceSubCategory);
+                             ratedTransaction.getAmountTax(),RatedTransactionStatusEnum.BILLED, provider, null, billingAccount, invoiceSubCategory,null,null,null);
                      meveoRatedTransaction.setCode(ratedTransaction.getCode());
                      meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
                      meveoRatedTransaction.setBillingRun(br);

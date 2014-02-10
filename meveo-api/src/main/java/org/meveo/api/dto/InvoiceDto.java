@@ -27,6 +27,7 @@ public class InvoiceDto extends BaseDto {
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
+	private String comment;
 
 	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 
@@ -102,6 +103,15 @@ public class InvoiceDto extends BaseDto {
 	public void setAmountWithTax(BigDecimal amountWithTax) {
 		this.amountWithTax = amountWithTax;
 	}
+	
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
 
 	@Override
 	public String toString() {
@@ -109,7 +119,7 @@ public class InvoiceDto extends BaseDto {
 				+ ", invoiceDate=" + invoiceDate + ", dueDate=" + dueDate
 				+ ", amount=" + amount + ", discount=" + discount
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
-				+ amountTax + ", amountWithTax=" + amountWithTax
+				+ amountTax + ", amountWithTax=" + amountWithTax+", comment=" + comment
 				+ ", subCategoryInvoiceAgregates="
 				+ subCategoryInvoiceAgregates + "]";
 	}

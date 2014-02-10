@@ -68,6 +68,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import org.w3c.dom.Comment;
 
 /**
  * @author R.AITYAAZZA
@@ -199,8 +200,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             Text dueDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getDueDate(), dueDateFormat));
             dueDate.appendChild(dueDateTxt);
             header.appendChild(dueDate);
-            addHeaderCategories(invoice, doc, header);
 
+            Element comment = doc.createElement("comment");
+            Comment commentText = doc.createComment(invoice.getComment()!=null?invoice.getComment():"");
+            comment.appendChild(commentText);
+            header.appendChild(comment);
+            
+            addHeaderCategories(invoice, doc, header);
+            
+            
             Element amount = doc.createElement("amount");
             invoiceTag.appendChild(amount);
 
