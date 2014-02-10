@@ -29,6 +29,7 @@
     			<hf:formField label="#{messages['invoice.paymentMethod']}" field="paymentMethod" childField="label" isMessage="true" />
     			<hf:formField label="#{messages['invoice.iban']}" field="iban" />
     			<hf:formField label="#{messages['invoice.alias']}" field="alias" />
+    			<hf:formField label="#{messages['invoice.comment']}" field="comment" textArea="true"/>
 		<s:decorate template="/layout/edit.xhtml" rendered="#{billingAccountBean.pdfExists(invoice.id)}"> 
 				<ui:define name="label">
 					<h:outputText value="#{messages['invoice.file']}" />

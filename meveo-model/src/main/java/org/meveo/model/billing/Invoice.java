@@ -127,7 +127,7 @@ public class Invoice extends AuditableEntity {
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
 	
-	@Column(name = "COMMENT", length = 600)
+	@Column(name = "COMMENT", length =1200)
 	private String comment;
 
 	public List<RatedTransaction> getRatedTransactions() {
