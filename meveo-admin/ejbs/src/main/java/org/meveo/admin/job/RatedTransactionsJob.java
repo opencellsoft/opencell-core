@@ -72,7 +72,8 @@ public class RatedTransactionsJob implements Job {
 					
 					RatedTransaction ratedTransaction=new RatedTransaction(walletOperation.getId(), walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(), walletOperation.getUnitAmountWithTax(), 
 							walletOperation.getUnitAmountTax(), walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), walletOperation.getAmountWithTax(),
-							walletOperation.getAmountTax(), RatedTransactionStatusEnum.OPEN,walletOperation.getProvider(),walletOperation.getWallet(),walletOperation.getWallet().getUserAccount().getBillingAccount(),walletOperation.getChargeInstance().getChargeTemplate().getInvoiceSubCategory());
+							walletOperation.getAmountTax(), RatedTransactionStatusEnum.OPEN,walletOperation.getProvider(),walletOperation.getWallet(),
+							walletOperation.getWallet().getUserAccount().getBillingAccount(),walletOperation.getChargeInstance().getChargeTemplate().getInvoiceSubCategory(),walletOperation.getParameter1(),walletOperation.getParameter2(),walletOperation.getParameter3());
 					ratedTransactionService.create(ratedTransaction);
 					
 					walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
