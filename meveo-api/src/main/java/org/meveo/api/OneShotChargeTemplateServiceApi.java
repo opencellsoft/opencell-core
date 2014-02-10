@@ -69,6 +69,7 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 		List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService
 				.getSubscriptionChargeTemplates(em, provider);
 		OneShotChargeTemplateListDto oneShotChargeTemplateListDto = new OneShotChargeTemplateListDto();
+
 		for (OneShotChargeTemplate oneShotChargeTemplate : oneShotChargeTemplates) {
 			OneShotChargeTemplateDto oneShotChargeDto = new OneShotChargeTemplateDto();
 			oneShotChargeDto.setChargeCode(oneShotChargeTemplate.getCode());
@@ -77,28 +78,35 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 			InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate
 					.getInvoiceSubCategory();
 
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-					.findInvoiceSubCategoryCountry(em,
-							invoiceSubCategory.getId(), country.getId());
-			if (invoiceSubcategoryCountry != null
-					&& invoiceSubcategoryCountry.getTax() != null) {
-				Tax tax = invoiceSubcategoryCountry.getTax();
-				oneShotChargeDto.setTaxCode(tax.getCode());
-				oneShotChargeDto.setTaxDescription(tax.getDescription());
-				oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0
-						: tax.getPercent().doubleValue());
+			if(country == null) {
+				log.warn("country with code={} does not exists", countryCode);
 			}
-			try {
-				BigDecimal unitPrice = realtimeChargingService
-						.getApplicationPrice(em, provider, seller, currency,
-								country, oneShotChargeTemplate, date,
-								BigDecimal.ONE, null, null, null, true);
-				if (unitPrice != null) {
-					oneShotChargeDto.setUnitPriceWithoutTax(unitPrice
-							.doubleValue());
+			else {
+				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+						.findInvoiceSubCategoryCountry(em,
+								invoiceSubCategory.getId(), country.getId());
+				if (invoiceSubcategoryCountry != null
+						&& invoiceSubcategoryCountry.getTax() != null) {
+					Tax tax = invoiceSubcategoryCountry.getTax();
+					oneShotChargeDto.setTaxCode(tax.getCode());
+					oneShotChargeDto.setTaxDescription(tax.getDescription());
+					oneShotChargeDto
+							.setTaxPercent(tax.getPercent() == null ? 0.0 : tax
+									.getPercent().doubleValue());
 				}
-			} catch (BusinessException e) {
-				log.warn(e.getMessage());
+				try {
+					BigDecimal unitPrice = realtimeChargingService
+							.getApplicationPrice(em, provider, seller,
+									currency, country, oneShotChargeTemplate,
+									date, BigDecimal.ONE, null, null, null,
+									true);
+					if (unitPrice != null) {
+						oneShotChargeDto.setUnitPriceWithoutTax(unitPrice
+								.doubleValue());
+					}
+				} catch (BusinessException e) {
+					log.warn(e.getMessage());
+				}
 			}
 
 			oneShotChargeTemplateListDto.getOneShotChargeTemplateDtos().add(
