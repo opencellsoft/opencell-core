@@ -5,7 +5,9 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hftl="http://hftl.org" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -30,19 +32,19 @@
     			<hf:formField label="#{messages['invoice.iban']}" field="iban" />
     			<hf:formField label="#{messages['invoice.alias']}" field="alias" />
     			<hf:formField label="#{messages['invoice.comment']}" field="comment" textArea="true"/>
-		<s:decorate template="/layout/edit.xhtml" rendered="#{billingAccountBean.pdfExists(invoice.id)}"> 
-				<ui:define name="label">
-					<h:outputText value="#{messages['invoice.file']}" />
-				</ui:define>
-    			<h:commandLink action="#{billingAccountBean.generatePDF(invoice.id)}">
-    				<h:graphicImage value="/img/pdf.gif" style="border:0"/>
+	
+			    <p:panelGrid columns="2" rendered="#{billingAccountBean.pdfExists(invoiceBean.entity.id)}">
+			    <h:outputText value="#{messages['invoice.file']}" styleClass="field-value" /> 
+			    <h:commandLink action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
+    			<h:graphicImage value="/img/pdf.gif" style="border:0"/>
     			</h:commandLink>
-    			
-				<ui:insert />
-			</s:decorate>
-				<h:panelGrid columns="1"  styleClass="formPanelGrid">
-					<h:commandButton value="#{messages['action.back']}" action="#{backingBean.back}" immediate="true" rendered="#{!edit}"/>
-				</h:panelGrid>
+			    </p:panelGrid>
+			   
+				<p:button outcome="billingAccountDetail" value="#{messages['action.back']}">
+				<f:param name="billingAccountId" value="#{invoiceBean.entity.getBillingAccount().getId}" /> 
+			    <f:param name="edit" value="false" />
+				<f:param name="cid" value="#{conversation.id}" />
+				</p:button>
 			
 		
 		</hf:formPanel>
