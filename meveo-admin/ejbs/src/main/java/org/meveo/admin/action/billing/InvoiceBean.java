@@ -16,6 +16,7 @@
 package org.meveo.admin.action.billing;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,7 +38,7 @@ import org.primefaces.model.LazyDataModel;
  * 
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class InvoiceBean extends BaseBean<Invoice> {
 
     private static final long serialVersionUID = 1L;
