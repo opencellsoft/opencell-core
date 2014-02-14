@@ -74,7 +74,7 @@ public class SepaFileBuilder {
 	public void addHeader(CstmrDrctDbtInitn Message,  DDRequestLOT ddRequestLOT) throws Exception {
 		GrpHdr  groupHeader=new GrpHdr();
 		Message.setGrpHdr(groupHeader);
-		groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference()+ddRequestLOT.getId());
+		groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference()+"-"+ddRequestLOT.getId());
 		groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
 		groupHeader.setNbOfTxs(ddRequestLOT.getInvoicesNumber());
 		groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount());
@@ -91,7 +91,7 @@ public class SepaFileBuilder {
 		
 		PmtInf PaymentInformation=new PmtInf();
 		Message.getPmtInf().add(PaymentInformation);
-		PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference()+dDRequestItem.getId());
+		PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference()+"-"+dDRequestItem.getId());
 		PaymentInformation.setPmtMtd("DD");
 		PaymentInformation.setNbOfTxs(dDRequestItem.getInvoices().size());
 		PaymentInformation.setCtrlSum(dDRequestItem.getAmountInvoices());

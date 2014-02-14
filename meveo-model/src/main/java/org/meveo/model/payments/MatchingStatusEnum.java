@@ -21,7 +21,8 @@ public enum MatchingStatusEnum {
     L(2, "matchingStatus.L"), // Lettree (matched with other group of operation)
     P(3, "matchingStatus.P"), // Partially Matched
     C(4, "matchingStatus.C"), // Closed
-    I(5, "matchingStatus.I");// Litigation
+    I(5, "matchingStatus.I"),// Litigation
+    R(6, "matchingStatus.R");// Rejected
 
     private Integer id;
     private String label;

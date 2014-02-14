@@ -107,7 +107,7 @@ public class PaymentApi extends BaseApi {
 				      BigDecimal amountToMatch = BigDecimal.ZERO;
 				      for (int i = 0; i < paymentDto.getListOCCReferenceforMatching().size(); i++)
 				      {
-				    	RecordedInvoice accountOperation = recordedInvoiceService.getRecordedInvoiceExist(paymentDto.getListOCCReferenceforMatching().get(i), provider);
+				    	RecordedInvoice accountOperation = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i), provider);
 				        amountToMatch = accountOperation.getUnMatchingAmount();
 				        accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
 				        accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));

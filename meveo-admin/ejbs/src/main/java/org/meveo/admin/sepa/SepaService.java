@@ -11,12 +11,19 @@ import java.util.Map;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.dunning.DunningUtils;
 import org.meveo.admin.exception.BusinessEntityException;
+import org.meveo.admin.sepa.jaxb.Pain002;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts;
+import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain008;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
 import org.meveo.admin.utils.ArConfig;
+import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -40,6 +47,7 @@ import org.meveo.service.payments.impl.AutomatedPaymentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
+import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -69,6 +77,8 @@ public class SepaService
   AccountOperationService accountOperationService;
   @Inject
   MatchingCodeService matchingCodeService;
+  @Inject
+  MatchingAmountService matchingAmountService;
   @Inject
   SepaFileBuilder sepaFileBuilder;
   
@@ -101,8 +111,8 @@ public class SepaService
     
       DDRequestLOT ddRequestLOT = new DDRequestLOT();
       ddRequestLOT.setProvider(provider);
-      ddRequestLOT.setAuditable(DunningUtils.getAuditable(user));
       ddRequestLOT.setInvoicesNumber(Integer.valueOf(invoices.size()));
+      dDRequestLOTService.create(ddRequestLOT,user);
       List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
       Map<CustomerAccount, List<RecordedInvoice>> customerAccountInvoices = new HashMap();
       for (RecordedInvoice invoice : invoices) {
@@ -139,21 +149,18 @@ public class SepaService
 		ddrequestItem.setPaymentInfo5(e.getValue().get(0).getPaymentInfo5());
 		ddrequestItem.setProvider(e.getValue().get(0).getProvider());
 		ddrequestItem.setReference(e.getValue().get(0).getReference());
-		ddrequestItem.setAuditable(DunningUtils.getAuditable(user));
 		ddrequestItem.setInvoices(e.getValue());
 		for (RecordedInvoice invoice : e.getValue()) {
 			totalInvoices = totalInvoices.add(invoice.getAmount());
 			invoice.setDdRequestLOT(ddRequestLOT);
 			invoice.setDdRequestItem(ddrequestItem);
-			invoice.getAuditable().setUpdated(new Date());
-			invoice.getAuditable().setUpdater(user);
 			recordedInvoiceService.update(invoice);
 			ddRequestLOT.getInvoices().add(invoice);
 			logger.info("invoice reference : " + invoice.getReference() + " processed");
 		}
 		ddrequestItem.setAmountInvoices(totalInvoices);
 		ddrequestItems.add(ddrequestItem);
-		create(ddrequestItem);
+		create(ddrequestItem,user);
 		totalAmount = totalAmount.add(ddrequestItem.getAmountInvoices());
       }
       if (!ddrequestItems.isEmpty())
@@ -162,9 +169,7 @@ public class SepaService
         ddRequestLOT.setInvoicesAmount(totalAmount);
         ddRequestLOT.setFileName(exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount, provider));
         ddRequestLOT.setSendDate(new Date());
-        ddRequestLOT.getAuditable().setUpdated(new Date());
-        ddRequestLOT.getAuditable().setUpdater(user);
-        dDRequestLOTService.update(ddRequestLOT);
+        dDRequestLOTService.update(ddRequestLOT,user);
       }
       else
       {
@@ -242,13 +247,16 @@ public class SepaService
         {
           boolean addMatching = ddrequestItem.getAmountInvoices().compareTo(ddrequestItem.getAmount()) == 0;
           List<RecordedInvoice> invoicesList = ddrequestItem.getInvoices();
-          createPayment(ddrequestItem.getProvider(), PaymentMethodEnum.DIRECTDEBIT, directDebitTemplate, ddrequestItem.getAmount(), ddrequestItem.getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(), DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(), invoicesList, addMatching, MatchingTypeEnum.A_DERICT_DEBIT);
+          AutomatedPayment automatedPayment=createPayment(ddrequestItem.getProvider(), PaymentMethodEnum.DIRECTDEBIT, directDebitTemplate, ddrequestItem.getAmount(), ddrequestItem.getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(), DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(), invoicesList, addMatching, MatchingTypeEnum.A_DERICT_DEBIT);
+          ddrequestItem.setAutomatedPayment(automatedPayment);
+          update(ddrequestItem,user);
+          
         }
       }
       ddRequestLOT.setPaymentCreated(true);
-      ddRequestLOT.getAuditable().setUpdated(new Date());
-      ddRequestLOT.getAuditable().setUpdater(user);
-      dDRequestLOTService.update(ddRequestLOT);
+      dDRequestLOTService.update(ddRequestLOT,user);
+      
+      
       logger.info("Successful createPaymentsForDDRequestLot ddRequestLotId:" + ddRequestLOT.getId());
     }
     catch (Exception e)
@@ -257,7 +265,7 @@ public class SepaService
     }
   }
   
-  public void createPayment(Provider provider, PaymentMethodEnum paymentMethodEnum, OCCTemplate occTemplate, BigDecimal amount, CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate, List<RecordedInvoice> listOCCforMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
+  public AutomatedPayment createPayment(Provider provider, PaymentMethodEnum paymentMethodEnum, OCCTemplate occTemplate, BigDecimal amount, CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate, List<RecordedInvoice> listOCCforMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
     throws Exception
   {
     log.info("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:" + customerAccount.getCode() + "...");
@@ -282,8 +290,17 @@ public class SepaService
     automatedPayment.setDueDate(dueDate);
     automatedPayment.setTransactionDate(transactionDate);
     automatedPayment.setAuditable(DunningUtils.getAuditable(user));
-    automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
-    automatedPaymentService.create(automatedPayment);
+    if(isToMatching && listOCCforMatching.size()>0){
+    	automatedPayment.setMatchingStatus(MatchingStatusEnum.L);
+    	automatedPayment.setUnMatchingAmount(BigDecimal.ZERO);
+        automatedPayment.setMatchingAmount(amount);
+    }else{
+    	automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
+    	automatedPayment.setUnMatchingAmount(amount);
+        automatedPayment.setMatchingAmount(BigDecimal.ZERO);
+    }
+    
+    automatedPaymentService.create(automatedPayment,user);
     if (isToMatching)
     {
       MatchingCode matchingCode = new MatchingCode();
@@ -313,13 +330,96 @@ public class SepaService
       matchingCode.setMatchingType(matchingTypeEnum);
       matchingCode.setAuditable(DunningUtils.getAuditable(user));
       matchingCode.setProvider(provider);
-      matchingCodeService.create(matchingCode);
-      log.info("matching created  for 1 automatedPayment and " + (listOCCforMatching.size() - 1) + " occ");
+      matchingCodeService.create(matchingCode,user);
+      log.info("matching created  for 1 automatedPayment and " + listOCCforMatching.size() + " occ");
     }
     else
     {
       log.info("no matching created ");
     }
     log.info("automatedPayment created for amount:" + automatedPayment.getAmount());
+    return automatedPayment;
+  }
+  
+  public List<File> getFilesToProcess(File dir, String prefix, String ext) {
+		List<File> files = new ArrayList<File>();
+		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
+		File[] listFile = dir.listFiles(filtre);
+		if (listFile == null) {
+			return files;
+		}
+		for (File file : listFile) {
+			if (file.isFile()) {
+				files.add(file);
+			}
+		}
+		return files;
+	}
+  public void processRejectFile(File file, String fileName, Provider provider)
+			throws JAXBException, Exception {
+	  Pain002 pain002=(Pain002)JAXBUtils.unmarshaller(Pain002.class, file);
+	  
+	  
+	  CstmrPmtStsRpt cstmrPmtStsRpt=pain002.getCstmrPmtStsRpt();
+	  
+	  OrgnlGrpInfAndSts orgnlGrpInfAndSts=cstmrPmtStsRpt.getOrgnlGrpInfAndSts();
+	  
+	  if(orgnlGrpInfAndSts==null){
+		  throw new Exception("OriginalGroupInformationAndStatus tag doesn't exist");
+	  }
+	  String dDRequestLOTref=orgnlGrpInfAndSts.getOrgnlMsgId();
+	  String[] dDRequestLOTrefSplited=dDRequestLOTref.split("-");
+	  
+	  DDRequestLOT dDRequestLOT=dDRequestLOTService.findById(Long.valueOf(dDRequestLOTrefSplited[1]));
+	  if(dDRequestLOT==null){
+		  throw new Exception("DDRequestLOT doesn't exist. id="+dDRequestLOTrefSplited[1]);
+	  }
+	  if(orgnlGrpInfAndSts.getGrpSts()!=null && "RJCT".equals(orgnlGrpInfAndSts.getGrpSts())){
+		  //original message rejected at protocol level control
+		  
+		 
+		  for(RecordedInvoice recordedInvoice:dDRequestLOT.getInvoices()){
+			  for(MatchingAmount matchingAmount:recordedInvoice.getMatchingAmounts()){
+				  matchingCodeService.unmatching(matchingAmount.getId(), userService.getSystemUser());
+			  }
+			  AutomatedPayment automatedPayment=recordedInvoice.getDdRequestItem().getAutomatedPayment();
+			  if(automatedPayment!=null){
+				  automatedPayment.setUnMatchingAmount(automatedPayment.getMatchingAmount());
+				  automatedPayment.setMatchingAmount(BigDecimal.ZERO);
+				  automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
+				  automatedPaymentService.update(automatedPayment);
+			  }
+		  }
+		 
+		  dDRequestLOT.setReturnStatusCode(orgnlGrpInfAndSts.getStsRsnInf().getRsn().getCd()); 
+	  }else{
+		  OrgnlPmtInfAndSts orgnlPmtInfAndSts=cstmrPmtStsRpt.getOrgnlPmtInfAndSts();
+		  BigDecimal unmatchingAmount=BigDecimal.ZERO;
+		  for(TxInfAndSts txInfAndSts:orgnlPmtInfAndSts.getTxInfAndSts()){
+			  if("RJCT".equals(txInfAndSts.getTxSts())){
+				  RecordedInvoice invoice=recordedInvoiceService.getRecordedInvoice(txInfAndSts.getOrgnlEndToEndId(), provider);
+				  for(MatchingAmount matchingAmount:invoice.getMatchingAmounts()){
+					  unmatchingAmount.add(invoice.getMatchingAmount());
+					  matchingAmountService.unmatching(matchingAmount.getId(), userService.getSystemUser());
+				  }
+				  DDRequestItem ddrequestItem=invoice.getDdRequestItem();
+				  AutomatedPayment automatedPayment=ddrequestItem.getAutomatedPayment();
+				  if(automatedPayment!=null){
+					  automatedPayment.setMatchingAmount(automatedPayment.getMatchingAmount().subtract(unmatchingAmount));
+					  if(automatedPayment.getMatchingAmount().compareTo(BigDecimal.ZERO)==0){
+						  automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
+					  }
+					 
+					  automatedPaymentService.update(automatedPayment);
+				  }
+				  
+			  }
+		  }
+		 
+		  
+		  
+	  }
+	  dDRequestLOT.setReturnFileName(file.getName()); 
+	  dDRequestLOTService.update(dDRequestLOT);
   }
 }

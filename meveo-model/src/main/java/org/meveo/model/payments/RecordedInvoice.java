@@ -78,7 +78,7 @@ public class RecordedInvoice extends AccountOperation {
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "DDRequestLOT_ID")
-	private DDRequestLOT ddRequestLOT;// todo: supprimer ce champ
+	private DDRequestLOT ddRequestLOT;
 
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "DDREQUEST_ITEM_ID")

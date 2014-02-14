@@ -78,7 +78,7 @@ public class ArConfig {
 	}
 
 	public static String getDDRequestHeaderReference() {
-		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_HEADER_REFRENCE);
+		return ParamBean.getInstance(BAYAD_PROPERTIES_FILENAME).getProperty(DDREQUEST_HEADER_REFRENCE,"DD");
 	}
 
 	

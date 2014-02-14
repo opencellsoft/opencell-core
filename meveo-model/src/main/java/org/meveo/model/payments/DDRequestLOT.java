@@ -24,6 +24,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -41,6 +43,9 @@ public class DDRequestLOT extends AuditableEntity {
 
 	@Column(name = "FILE_NAME")
 	private String fileName;
+	
+	@Column(name = "RETURN_FILE_NAME")
+	private String returnFileName;
 
 	@Column(name = "SEND_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -49,6 +54,7 @@ public class DDRequestLOT extends AuditableEntity {
 	@Column(name = "INVOICE_NUMBER")
 	private Integer invoicesNumber;
 
+	
 	@Column(name = "IS_PAYMENT_CREATED")
 	private boolean paymentCreated;
 
@@ -60,6 +66,9 @@ public class DDRequestLOT extends AuditableEntity {
 
 	@OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
+	
+	@Column(name = "RETURN_STATUS_CODE")
+	private String returnStatusCode;
 
 	public String getFileName() {
 		return fileName;
@@ -101,19 +110,14 @@ public class DDRequestLOT extends AuditableEntity {
 		this.invoicesAmount = invoicesAmount;
 	}
 
-	/**
-	 * @param paymentCreated
-	 *            the paymentCreated to set
-	 */
-	public void setPaymentCreated(boolean paymentCreated) {
-		this.paymentCreated = paymentCreated;
-	}
 
-	/**
-	 * @return the paymentCreated
-	 */
+
 	public boolean isPaymentCreated() {
 		return paymentCreated;
+	}
+
+	public void setPaymentCreated(boolean paymentCreated) {
+		this.paymentCreated = paymentCreated;
 	}
 
 	public void setDdrequestItems(List<DDRequestItem> ddrequestItems) {
@@ -123,5 +127,24 @@ public class DDRequestLOT extends AuditableEntity {
 	public List<DDRequestItem> getDdrequestItems() {
 		return ddrequestItems;
 	}
+
+	public String getReturnStatusCode() {
+		return returnStatusCode;
+	}
+
+	public void setReturnStatusCode(String returnStatusCode) {
+		this.returnStatusCode = returnStatusCode;
+	}
+
+	public String getReturnFileName() {
+		return returnFileName;
+	}
+
+	public void setReturnFileName(String returnFileName) {
+		this.returnFileName = returnFileName;
+	}
+
+	
+	
 
 }

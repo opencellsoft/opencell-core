@@ -88,6 +88,10 @@ public class DDRequestItem extends AuditableEntity {
 
 	@OneToMany(mappedBy = "ddRequestItem", fetch = FetchType.LAZY)
 	private List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "PAYMENT_ID")
+	private AutomatedPayment automatedPayment;
 
 	public DDRequestItem() {
 
@@ -212,5 +216,15 @@ public class DDRequestItem extends AuditableEntity {
 	public void setPaymentInfo6(String paymentInfo6) {
 		this.paymentInfo6 = paymentInfo6;
 	}
+
+	public AutomatedPayment getAutomatedPayment() {
+		return automatedPayment;
+	}
+
+	public void setAutomatedPayment(AutomatedPayment automatedPayment) {
+		this.automatedPayment = automatedPayment;
+	}
+	
+	
 
 }

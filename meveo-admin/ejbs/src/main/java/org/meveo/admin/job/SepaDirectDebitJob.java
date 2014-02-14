@@ -66,29 +66,23 @@ public class SepaDirectDebitJob
   
   public JobExecutionResult execute(String parameter, Provider provider)
   {
-    this.logger.info("execute SepaDirectDebitJob.");
+    logger.info("execute SepaDirectDebitJob.");
     JobExecutionResultImpl result = new JobExecutionResultImpl();
     User user = null;
     try
     {
-      user = this.userService.getSystemUser();
-      List<DDRequestLotOp> ddrequestOps = this.dDRequestLotOpService.getDDRequestOps();
-      this.logger.info("ddrequestOps founded:" + ddrequestOps.size());
+      user = userService.getSystemUser();
+      List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps();
+      logger.info("ddrequestOps founded:" + ddrequestOps.size());
       for (DDRequestLotOp ddrequestLotOp : ddrequestOps)
       {
         try
         {
           if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-            this.SepaService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), user, ddrequestLotOp.getProvider());
+            SepaService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(), user, ddrequestLotOp.getProvider());
           }else if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
-            this.SepaService.exportDDRequestLot(ddrequestLotOp.getDdrequestLOT().getId());
+            SepaService.exportDDRequestLot(ddrequestLotOp.getDdrequestLOT().getId());
           }
-          if (ddrequestLotOp.getStatus() != DDRequestOpStatusEnum.WAIT){
-          
-              ddrequestLotOp.getAuditable().setUpdater(user);
-              ddrequestLotOp.getAuditable().setUpdated(new Date());
-              this.dDRequestLotOpService.update(ddrequestLotOp);
-            }
           ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
         }catch (BusinessEntityException e)
         {
@@ -115,7 +109,7 @@ public class SepaDirectDebitJob
   {
     TimerConfig timerConfig = new TimerConfig();
     timerConfig.setInfo(infos);
-    Timer timer = this.timerService.createCalendarTimer(scheduleExpression, timerConfig);
+    Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
     return timer.getHandle();
   }
   
@@ -125,13 +119,13 @@ public class SepaDirectDebitJob
   public void trigger(Timer timer)
   {
     TimerInfo info = (TimerInfo)timer.getInfo();
-    if ((!this.running) && (info.isActive())) {
+    if ((!running) && (info.isActive())) {
       try
       {
-        this.running = true;
-        Provider provider = (Provider)this.providerService.findById(info.getProviderId());
+        running = true;
+        Provider provider = (Provider)providerService.findById(info.getProviderId());
         JobExecutionResult result = execute(info.getParametres(), provider);
-        this.jobExecutionService.persistResult(this, result, info, provider);
+        jobExecutionService.persistResult(this, result, info, provider);
       }
       catch (Exception e)
       {
@@ -139,13 +133,13 @@ public class SepaDirectDebitJob
       }
       finally
       {
-        this.running = false;
+        running = false;
       }
     }
   }
   
   public Collection<Timer> getTimers()
   {
-    return this.timerService.getTimers();
+    return timerService.getTimers();
   }
 }

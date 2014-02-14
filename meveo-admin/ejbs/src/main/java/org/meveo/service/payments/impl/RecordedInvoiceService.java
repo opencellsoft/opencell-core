@@ -102,7 +102,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		return recordedInvoice != null;
 	}
 	
-	public RecordedInvoice getRecordedInvoiceExist(String reference, Provider provider) {
+	public RecordedInvoice getRecordedInvoice(String reference, Provider provider) {
 		RecordedInvoice recordedInvoice = null;
 		try {
 			recordedInvoice = (RecordedInvoice) getEntityManager()
