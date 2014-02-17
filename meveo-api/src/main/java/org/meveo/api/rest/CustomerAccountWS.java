@@ -9,17 +9,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerAccountApi;
 import org.meveo.api.rest.response.CustomerAccountResponse;
-import org.meveo.api.rest.response.CustomerInvoicesResponse;
 import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
- *
+ * 
  */
 @Path("/customerAccount")
 @RequestScoped
@@ -55,7 +53,8 @@ public class CustomerAccountWS {
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCustomerAccountDto(customerAccountapi.getCustomerAccount(customerAccountCode, providerCode));
+			result.setCustomerAccountDto(customerAccountapi.getCustomerAccount(
+					customerAccountCode, providerCode));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
@@ -63,4 +62,5 @@ public class CustomerAccountWS {
 
 		return result;
 	}
+	
 }
