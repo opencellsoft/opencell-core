@@ -133,7 +133,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		return getEntityManager()
 				.createQuery(
 						"from " + RecordedInvoice.class.getSimpleName()
-								+ " where ddRequestLOT is null and matchingStatus=:matchingStatus and dueDate >=:fromDueDate and"
+								+ " where matchingStatus=:matchingStatus and dueDate >=:fromDueDate and"
 								+ " dueDate<=:toDueDate and paymentMethod=:paymentMethod  and provider.code=:providerCode ")
 				.setParameter("fromDueDate", fromDueDate).setParameter("toDueDate", toDueDate).setParameter("matchingStatus", MatchingStatusEnum.O)
 				.setParameter("paymentMethod", PaymentMethodEnum.DIRECTDEBIT).setParameter("providerCode", providerCode).getResultList();

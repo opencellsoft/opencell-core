@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
-import org.meveo.admin.dunning.DunningUtils;
 import org.meveo.admin.exception.BusinessEntityException;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.jaxb.Pain002;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlGrpInfAndSts;
@@ -59,28 +59,30 @@ public class SepaService
 {
   private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SepaService.class.getName());
 
- @Inject
+  @EJB
   RecordedInvoiceService recordedInvoiceService;
-  @Inject
+  @EJB
   CustomerAccountService customerAccountService;
-  @Inject
+  @EJB
   DDRequestLotOpService dDRequestLotOpService;
-  @Inject
+  @EJB
   DDRequestLOTService dDRequestLOTService;
-  @Inject
+  @EJB
   OCCTemplateService oCCTemplateService;
-  @Inject
+  @EJB
   UserService userService;
-  @Inject
+  @EJB
   AutomatedPaymentService automatedPaymentService;
-  @Inject
+  @EJB
   AccountOperationService accountOperationService;
-  @Inject
+  @EJB
   MatchingCodeService matchingCodeService;
-  @Inject
+  @EJB
   MatchingAmountService matchingAmountService;
-  @Inject
+  @EJB
   SepaFileBuilder sepaFileBuilder;
+  @EJB
+  SepaService sepaService;
   
   public void createDDRquestLot(Date fromDueDate, Date toDueDate, User user, Provider provider)
     throws BusinessEntityException,Exception
@@ -105,6 +107,10 @@ public class SepaService
     if ((invoices == null) || (invoices.isEmpty())) {
       throw new BusinessEntityException("no invoices!");
     }
+      OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate(provider.getCode());
+      if(directDebitTemplate==null){
+      	throw new BusinessException("OCC doesn't exist. code="+ArConfig.getDirectDebitOccCode());
+      }
     logger.info("number invoices : " + invoices.size());
     
     BigDecimal totalAmount = BigDecimal.ZERO;
@@ -160,24 +166,27 @@ public class SepaService
 		}
 		ddrequestItem.setAmountInvoices(totalInvoices);
 		ddrequestItems.add(ddrequestItem);
-		create(ddrequestItem,user);
+		sepaService.create(ddrequestItem,user);
 		totalAmount = totalAmount.add(ddrequestItem.getAmountInvoices());
       }
       if (!ddrequestItems.isEmpty())
       {
+    	   createPaymentsForDDRequestLot(ddRequestLOT,directDebitTemplate, user);
+    	    
         ddRequestLOT.setDdrequestItems(ddrequestItems);
         ddRequestLOT.setInvoicesAmount(totalAmount);
         ddRequestLOT.setFileName(exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount, provider));
         ddRequestLOT.setSendDate(new Date());
         dDRequestLOTService.update(ddRequestLOT,user);
+        
+        logger.info("ddRequestLOT created , totalAmount:" + ddRequestLOT.getInvoicesAmount());
+	      logger.info("Successful createDDRquestLot fromDueDate:" + fromDueDate + "  toDueDate:" + toDueDate + " provider:" + provider.getCode());
+	   
       }
       else
       {
         throw new BusinessEntityException("No ddRequestItems!");
       }
-      createPaymentsForDDRequestLot(ddRequestLOT, user);
-      logger.info("ddRequestLOT created , totalAmount:" + ddRequestLOT.getInvoicesAmount());
-      logger.info("Successful createDDRquestLot fromDueDate:" + fromDueDate + "  toDueDate:" + toDueDate + " provider:" + provider.getCode());
     }
   
   
@@ -213,31 +222,26 @@ public class SepaService
     fileName = fileName + "_" + provider.getCode();
     fileName = fileName + DateUtils.formatDateWithPattern(new Date(), ArConfig.getDDRequestFileNameExtension());
     String outputDir = ArConfig.getDDRequestOutputDirectory();
-    
-
+    File dir = new File(outputDir);
+	if (!dir.exists()) {
+		dir.mkdirs();
+	}
 	JAXBUtils.marshaller(document, new File(outputDir + File.separator + fileName));
     return fileName;
   }
   
-  private void createPaymentsForDDRequestLot(DDRequestLOT ddRequestLOT, User user)
-    throws Exception
+  private void createPaymentsForDDRequestLot(DDRequestLOT ddRequestLOT,OCCTemplate directDebitTemplate, User user)
+    throws BusinessException
   {
     logger.info("createPaymentsForDDRequestLot ddRequestLotId:" + ddRequestLOT.getId() + " user :" + (user == null ? "null" : user.getUserName()));
     if (user == null) {
-      throw new Exception("user is empty!");
+      throw new BusinessException("user is empty!");
     }
+
     if (ddRequestLOT.isPaymentCreated()) {
-      throw new Exception("Payment Already created.");
-    }
-    if ((ddRequestLOT.getInvoices() == null) || (ddRequestLOT.getInvoices().isEmpty())) {
-      throw new Exception("No Invoices Founded");
-    }
-    OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate(ddRequestLOT.getProvider().getCode());
-    if(directDebitTemplate==null){
-    	throw new Exception("OCC doesn't exist. code="+ArConfig.getDirectDebitOccCode());
-    }
-    try
-    {
+        throw new BusinessException("Payment Already created.");
+      }
+   
       for (DDRequestItem ddrequestItem : ddRequestLOT.getDdrequestItems()) {
         if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0)
         {
@@ -249,7 +253,7 @@ public class SepaService
           List<RecordedInvoice> invoicesList = ddrequestItem.getInvoices();
           AutomatedPayment automatedPayment=createPayment(ddrequestItem.getProvider(), PaymentMethodEnum.DIRECTDEBIT, directDebitTemplate, ddrequestItem.getAmount(), ddrequestItem.getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(), DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(), invoicesList, addMatching, MatchingTypeEnum.A_DERICT_DEBIT);
           ddrequestItem.setAutomatedPayment(automatedPayment);
-          update(ddrequestItem,user);
+          sepaService.update(ddrequestItem,user);
           
         }
       }
@@ -258,15 +262,11 @@ public class SepaService
       
       
       logger.info("Successful createPaymentsForDDRequestLot ddRequestLotId:" + ddRequestLOT.getId());
-    }
-    catch (Exception e)
-    {
-      throw e;
-    }
+    
   }
   
   public AutomatedPayment createPayment(Provider provider, PaymentMethodEnum paymentMethodEnum, OCCTemplate occTemplate, BigDecimal amount, CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate, List<RecordedInvoice> listOCCforMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
-    throws Exception
+    throws BusinessException
   {
     log.info("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:" + customerAccount.getCode() + "...");
     
@@ -289,7 +289,6 @@ public class SepaService
     automatedPayment.setBankCollectionDate(bankCollectionDate);
     automatedPayment.setDueDate(dueDate);
     automatedPayment.setTransactionDate(transactionDate);
-    automatedPayment.setAuditable(DunningUtils.getAuditable(user));
     if(isToMatching && listOCCforMatching.size()>0){
     	automatedPayment.setMatchingStatus(MatchingStatusEnum.L);
     	automatedPayment.setUnMatchingAmount(BigDecimal.ZERO);
@@ -328,7 +327,6 @@ public class SepaService
       matchingCode.setMatchingAmountCredit(amount);
       matchingCode.setMatchingDate(new Date());
       matchingCode.setMatchingType(matchingTypeEnum);
-      matchingCode.setAuditable(DunningUtils.getAuditable(user));
       matchingCode.setProvider(provider);
       matchingCodeService.create(matchingCode,user);
       log.info("matching created  for 1 automatedPayment and " + listOCCforMatching.size() + " occ");
@@ -380,7 +378,7 @@ public class SepaService
 		 
 		  for(RecordedInvoice recordedInvoice:dDRequestLOT.getInvoices()){
 			  for(MatchingAmount matchingAmount:recordedInvoice.getMatchingAmounts()){
-				  matchingCodeService.unmatching(matchingAmount.getId(), userService.getSystemUser());
+				  matchingAmountService.unmatching(matchingAmount.getId(), userService.getSystemUser());
 			  }
 			  AutomatedPayment automatedPayment=recordedInvoice.getDdRequestItem().getAutomatedPayment();
 			  if(automatedPayment!=null){
@@ -408,9 +406,10 @@ public class SepaService
 					  automatedPayment.setMatchingAmount(automatedPayment.getMatchingAmount().subtract(unmatchingAmount));
 					  if(automatedPayment.getMatchingAmount().compareTo(BigDecimal.ZERO)==0){
 						  automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
+						  automatedPaymentService.update(automatedPayment);
 					  }
 					 
-					  automatedPaymentService.update(automatedPayment);
+					  
 				  }
 				  
 			  }
