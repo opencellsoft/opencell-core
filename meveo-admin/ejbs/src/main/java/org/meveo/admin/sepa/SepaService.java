@@ -133,7 +133,9 @@ public class SepaService
       for (Map.Entry<CustomerAccount, List<RecordedInvoice>> e : customerAccountInvoices.entrySet())
       {
         DDRequestItem ddrequestItem = new DDRequestItem();
+       
         BigDecimal amount = e.getValue().get(0).getNetToPay();
+        
 		if (amount == null) {
 			amount = customerAccountService.customerAccountBalanceDueWithoutLitigation(e.getValue().get(0).getCustomerAccount().getId(), null, e
 					.getValue().get(0).getDueDate());
@@ -141,6 +143,7 @@ public class SepaService
 		if (BigDecimal.ZERO.compareTo(amount) == 0) {
 			continue;
 		}
+		 logger.info("ddrequestItem : " + ddrequestItem.getId()+"amount="+amount);
 		ddrequestItem.setAmount(amount);
         BigDecimal totalInvoices = BigDecimal.ZERO;
 		ddrequestItem.setBillingAccountName(e.getValue().get(0).getBillingAccountName());
@@ -171,10 +174,10 @@ public class SepaService
       }
       if (!ddrequestItems.isEmpty())
       {
-    	   createPaymentsForDDRequestLot(ddRequestLOT,directDebitTemplate, user);
+    	  ddRequestLOT.setDdrequestItems(ddrequestItems);
+          ddRequestLOT.setInvoicesAmount(totalAmount);
+    	  createPaymentsForDDRequestLot(ddRequestLOT,directDebitTemplate, user);
     	    
-        ddRequestLOT.setDdrequestItems(ddrequestItems);
-        ddRequestLOT.setInvoicesAmount(totalAmount);
         ddRequestLOT.setFileName(exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount, provider));
         ddRequestLOT.setSendDate(new Date());
         dDRequestLOTService.update(ddRequestLOT,user);
