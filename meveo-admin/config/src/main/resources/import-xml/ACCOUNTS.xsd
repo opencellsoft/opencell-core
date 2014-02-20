@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="billingAccounts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="billingAccount"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="billingAccount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="subscriptionDate"/>
+        <xs:element ref="externalRef1"/>
+        <xs:element ref="externalRef2"/>
+        <xs:element ref="tradingCountryCode"/>
+        <xs:element ref="name"/>
+        <xs:element ref="address"/>
+        <xs:element ref="electronicBilling"/>
+        <xs:element ref="email"/>
+        <xs:element ref="bankCoordinates"/>
+        <xs:element ref="userAccounts"/>
+      </xs:sequence>
+      <xs:attribute name="billingCycle" use="required" type="xs:NCName"/>
+      <xs:attribute name="code" use="required" type="xs:NCName"/>
+      <xs:attribute name="customerAccountId" use="required" type="xs:NCName"/>
+      <xs:attribute name="paymentMethod" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="externalRef2">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="tradingCountryCode" type="xs:NCName"/>
+  <xs:element name="electronicBilling" type="xs:integer"/>
+  <xs:element name="email">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="bankCoordinates">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="key"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="key">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="userAccounts">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="userAccount"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="userAccount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="subscriptionDate"/>
+        <xs:element ref="externalRef1"/>
+        <xs:element ref="name"/>
+        <xs:element ref="address"/>
+      </xs:sequence>
+      <xs:attribute name="code" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subscriptionDate" type="xs:NMTOKEN"/>
+  <xs:element name="externalRef1" type="xs:NMTOKEN"/>
+  <xs:element name="name">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="name"/>
+        <xs:element ref="firstname"/>
+        <xs:element ref="title"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="firstname">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="title" type="xs:NCName"/>
+  <xs:element name="address">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="address1"/>
+        <xs:element ref="address2"/>
+        <xs:element ref="zipCode"/>
+        <xs:element ref="city"/>
+        <xs:element ref="country"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="address1" type="xs:string"/>
+  <xs:element name="address2" type="xs:string"/>
+  <xs:element name="zipCode" type="xs:integer"/>
+  <xs:element name="city" type="xs:string"/>
+  <xs:element name="country" type="xs:NCName"/>
+</xs:schema>

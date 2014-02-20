@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <schemaSystemId>file:/Users/babyfooter/Documents/svn/Meveo/meveo-admin/config/src/main/resources/import-xml/ACCOUNTS.xsd</schemaSystemId>
+    <documentRoot>billingAccounts</documentRoot>
+    <outputFolder>/Users/babyfooter/Documents/svn/Meveo/meveo-admin/config/src/main/resources/import-xml</outputFolder>
+    <filenamePrefix>accounts</filenamePrefix>
+    <filenameExtension>xml</filenameExtension>
+    <noOfInstances>1</noOfInstances>
+    <openFirstInstance>false</openFirstInstance>
+    <defaultNamespace>&lt;NO_NAMESPACE></defaultNamespace>
+    <valuesMaxLength>30</valuesMaxLength>
+    <isUseIncrementalNamesForValues>true</isUseIncrementalNamesForValues>
+    <discardOptionalElementsAfterNestedLevel>6</discardOptionalElementsAfterNestedLevel>
+    <element namespace="&lt;ANY>" name="&lt;ANY>">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="billingAccount">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="customerAccountId">
+        </attribute>
+    </element>
+</settings>
