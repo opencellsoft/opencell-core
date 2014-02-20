@@ -351,6 +351,21 @@ public class ImportCustomersJob implements Job {
 				log.info("file:" + fileName + ", typeEntity:Seller, index:" + i
 						+ ", code:" + sell.getCode() + ", status:Created");
 			}
+			if (customer == null) {
+				customer = new Customer();
+				customer.setCode(cust.getCode());
+				customer.setDescription(cust.getDesCustomer());
+				customer.setCustomerBrand(customerBrandService.findByCode(cust
+						.getCustomerBrand()));
+				customer.setCustomerCategory(customerCategoryService
+						.findByCode(cust.getCustomerCategory()));
+				customer.setSeller(seller);
+				customer.setProvider(provider);
+				customerService.create(customer, userJob);
+				nbCustomersCreated++;
+				log.info("file:" + fileName + ", typeEntity:Customer, index:" + i
+						+ ", code:" + cust.getCode() + ", status:Created");
+			}
 
 			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust
 					.getCustomerAccounts().getCustomerAccount()) {
@@ -412,21 +427,7 @@ public class ImportCustomersJob implements Job {
 					+ ", index:" + j + " Code:" + custAcc.getCode()
 					+ ", status:Warning");
 		}
-		if (customer == null) {
-			customer = new Customer();
-			customer.setCode(cust.getCode());
-			customer.setDescription(cust.getDesCustomer());
-			customer.setCustomerBrand(customerBrandService.findByCode(cust
-					.getCustomerBrand()));
-			customer.setCustomerCategory(customerCategoryService
-					.findByCode(cust.getCustomerCategory()));
-			customer.setSeller(seller);
-			customer.setProvider(provider);
-			customerService.create(customer, userJob);
-			nbCustomersCreated++;
-			log.info("file:" + fileName + ", typeEntity:Customer, index:" + i
-					+ ", code:" + cust.getCode() + ", status:Created");
-		}
+	
 
 		CustomerAccount customerAccount = new CustomerAccount();
 		customerAccount.setCode(custAcc.getCode());
