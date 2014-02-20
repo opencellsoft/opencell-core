@@ -22,20 +22,35 @@ import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 
+/**
+ * @author R.AITYAAZZA
+ *
+ */
 public class GenerateImportXml {
 
 	/**
 	 * @param args
 	 */
-	
+	/**************************configuration properties***********************************/
 	private static int count=4;
 	private static int startIndex=1;
+	private static String customersFile="d:\\CUSTOMERS.xml";
+	private static String accountsFile="d:\\ACCOUNTS.xml";
+	private static String subscriptionsFile="d:\\SUBSCRIPTIONS.xml";
+	private static String providerCode="MANATY";
+	private static String customerBrand="MANATY";
+	private static String customerCategory="Business";
+	private static String serviceCode="SRV1";
+	private static String creditCategory="VIP";
+	private static String offerCode="OFFER1";
+	private static String billingCycle="CYC_INV_MT";
+	/***********************************************************************/
 	
 	public static void main(String[] args) {
 		   try
 		    {
 		      Sellers sellers=new Sellers();
-		      sellers.setProviderCode("MANATY");
+		      sellers.setProviderCode(providerCode);
 		      Seller seller=new Seller();
 		      seller.setCode("SELLER");
 		      seller.setDescription("SELLER");
@@ -48,8 +63,8 @@ public class GenerateImportXml {
 		      customers.getCustomer().add(customer);
 		      seller.setCustomers(customers);
 			  customer.setCode("cust");
-			  customer.setCustomerCategory("Business");
-			  customer.setCustomerBrand("MANATY");
+			  customer.setCustomerCategory(customerCategory);
+			  customer.setCustomerBrand(customerBrand);
 			  customer.setDesCustomer("customer");
 			  CustomerAccounts customerAccounts=new CustomerAccounts();
 			  customer.setCustomerAccounts(customerAccounts);
@@ -57,7 +72,7 @@ public class GenerateImportXml {
 			  BillingAccounts billingAccounts=new BillingAccounts();
 			  
 			  ServiceInstance serviceInstance=new ServiceInstance();
-			  serviceInstance.setCode("ServiceInstance");
+			  serviceInstance.setCode(serviceCode);
 			  serviceInstance.setSubscriptionDate("2014-02-20");
 			  Status status =new Status();
 			  status.setDate("2014-02-20");
@@ -72,7 +87,7 @@ public class GenerateImportXml {
 		    	  //xml of customers
 		    	  CustomerAccount ca=new CustomerAccount();
 		    	  ca.setCode("CA"+i);
-		    	  ca.setCreditCategory("VIP");
+		    	  ca.setCreditCategory(creditCategory);
 		    	  ca.setExternalRef1("ORCC25"+i);
 		    	  ca.setTradingCurrencyCode("EUR");
 		    	  Name name=new Name();
@@ -94,7 +109,7 @@ public class GenerateImportXml {
 		    	  ba.setCustomerAccountId("CA"+i);
 		    	  ba.setCode("BA"+i);
 		    	  ba.setPaymentMethod("CHECK");
-		    	  ba.setBillingCycle("CYC_INV_MT");
+		    	  ba.setBillingCycle(billingCycle);
 		    	  ba.setSubscriptionDate("2014-02-20");
 		    	  ba.setExternalRef1("ORCC25"+i);
 		    	  ba.setTradingCountryCode("FR");
@@ -143,7 +158,7 @@ public class GenerateImportXml {
 		    	  Subscription sub=new Subscription();
 		    	  sub.setCode("SUB"+i);
 		    	  sub.setUserAccountId("UA"+i);
-		    	  sub.setOfferCode("OFFER");
+		    	  sub.setOfferCode(offerCode);
 		    	  sub.setSubscriptionDate("2014-02-20");
 		    	  Status statuSub=new Status();
 		    	  statuSub.setDate("2014-02-20");
@@ -158,9 +173,9 @@ public class GenerateImportXml {
 		      
 		      
 		      
-		      JAXBUtils.marshaller(sellers, new File("d:\\CUSTOMERS.xml"));
-		      JAXBUtils.marshaller(billingAccounts, new File("d:\\ACCOUNTS.xml"));
-		      JAXBUtils.marshaller(subscriptions, new File("d:\\SUBSCRIPTIONS.xml"));
+		      JAXBUtils.marshaller(sellers, new File(customersFile));
+		      JAXBUtils.marshaller(billingAccounts, new File(accountsFile));
+		      JAXBUtils.marshaller(subscriptions, new File(subscriptionsFile));
 		      
 		      System.out.println("Import effetué avec succes");
 		    }catch(Exception e){
