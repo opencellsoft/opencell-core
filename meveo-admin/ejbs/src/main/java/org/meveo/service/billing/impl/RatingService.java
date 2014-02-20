@@ -247,14 +247,16 @@ public class RatingService {
 				criteria3, startdate, endDate, mode);
 
 		result.setWallet(subscription.getUserAccount().getWallet());
-
-		String languageCode = subscription.getUserAccount().getBillingAccount()
-				.getTradingLanguage().getLanguage().getLanguageCode();
-		CatMessages catMessage = catMessagesService.getCatMessages(
-				chargeInstance.getClass().getSimpleName() + "_"
-						+ chargeInstance.getId(), languageCode);
-		String chargeInstnceLabel = catMessage != null ? catMessage
-				.getDescription() : null;
+		String chargeInstnceLabel=null;
+		try{
+			String languageCode = subscription.getUserAccount().getBillingAccount()
+					.getTradingLanguage().getLanguage().getLanguageCode();
+			CatMessages catMessage = catMessagesService.getCatMessages(
+					chargeInstance.getClass().getSimpleName() + "_"
+							+ chargeInstance.getId(), languageCode);
+			chargeInstnceLabel = catMessage != null ? catMessage
+					.getDescription() : null;
+		} catch(Exception e){}
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
 				: chargeInstance.getDescription());
 
