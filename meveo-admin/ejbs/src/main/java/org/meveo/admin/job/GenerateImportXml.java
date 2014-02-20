@@ -113,6 +113,7 @@ public class GenerateImportXml {
 		    	  ba.setSubscriptionDate("2014-02-20");
 		    	  ba.setExternalRef1("ORCC25"+i);
 		    	  ba.setTradingCountryCode("FR");
+		    	  ba.setTradingLanguageCode("FRA");
 		    	  
 		    	  org.meveo.model.jaxb.account.Name nameBa=new org.meveo.model.jaxb.account.Name();
 		    	  nameBa.setFirstname("firstName"+i);
