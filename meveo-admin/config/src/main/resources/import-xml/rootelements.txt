@@ -1,0 +1,5 @@
+Root element of XML files
+
+Account : billingAccounts
+Customer : sellers
+Subscription : subscriptions
