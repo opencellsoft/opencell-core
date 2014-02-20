@@ -34,15 +34,15 @@ public class GenerateImportXml {
 	/**************************configuration properties***********************************/
 	private static int count=4;
 	private static int startIndex=1;
-	private static String customersFile="d:\\CUSTOMERS.xml";
-	private static String accountsFile="d:\\ACCOUNTS.xml";
-	private static String subscriptionsFile="d:\\SUBSCRIPTIONS.xml";
-	private static String providerCode="MANATY";
-	private static String customerBrand="MANATY";
+	private static String customersFile="/tmp/CUST_INST.xml";
+	private static String accountsFile="/tmp/ACC_INST.xml";
+	private static String subscriptionsFile="/tmp/SUB_INST.xml";
+	private static String providerCode="DEMO";
+	private static String customerBrand="DEMO";
 	private static String customerCategory="Business";
-	private static String serviceCode="SRV1";
+	private static String serviceCode="EXCH20101";
 	private static String creditCategory="VIP";
-	private static String offerCode="OFFER1";
+	private static String offerCode="EXCH20101";
 	private static String billingCycle="CYC_INV_MT";
 	/***********************************************************************/
 	
@@ -52,8 +52,8 @@ public class GenerateImportXml {
 		      Sellers sellers=new Sellers();
 		      sellers.setProviderCode(providerCode);
 		      Seller seller=new Seller();
-		      seller.setCode("SELLER");
-		      seller.setDescription("SELLER");
+		      seller.setCode("SELLER_FR");
+		      seller.setDescription("french seller");
 		      seller.setTradingCountryCode("FR");
 		      seller.setTradingCurrencyCode("EUR");
 		      seller.setTradingLanguageCode("FRA");
@@ -62,7 +62,7 @@ public class GenerateImportXml {
 		      Customers customers=new Customers();
 		      customers.getCustomer().add(customer);
 		      seller.setCustomers(customers);
-			  customer.setCode("cust");
+			  customer.setCode("CUST");
 			  customer.setCustomerCategory(customerCategory);
 			  customer.setCustomerBrand(customerBrand);
 			  customer.setDesCustomer("customer");
@@ -100,7 +100,7 @@ public class GenerateImportXml {
 		    	  address.setCity("La Defense");
 		    	  address.setCountry("France");
 		    	  ca.setAddress(address);
-		    	  ca.setPaymentMethod("CHECK");
+		    	  ca.setPaymentMethod("DIRECTDEBIT");
 		    	  customerAccounts.getCustomerAccount().add(ca);
 		    	  
 		    	//xml of billingAccounts
@@ -108,7 +108,7 @@ public class GenerateImportXml {
 		    	  BillingAccount ba=new BillingAccount();
 		    	  ba.setCustomerAccountId("CA"+i);
 		    	  ba.setCode("BA"+i);
-		    	  ba.setPaymentMethod("CHECK");
+		    	  ba.setPaymentMethod("DIRECTDEBIT");
 		    	  ba.setBillingCycle(billingCycle);
 		    	  ba.setSubscriptionDate("2014-02-20");
 		    	  ba.setExternalRef1("ORCC25"+i);
@@ -139,7 +139,7 @@ public class GenerateImportXml {
 		    	  
 		    	  org.meveo.model.jaxb.account.Name nameUA=new org.meveo.model.jaxb.account.Name(); 
 		    	  nameUA.setTitle("M");
-		    	  nameUA.setName("Scenario" +i);
+		    	  nameUA.setName("name" +i);
 		    	  nameUA.setFirstname("firstName"+i);
 		    	  userAccount.setName(nameUA);
 		    	  
