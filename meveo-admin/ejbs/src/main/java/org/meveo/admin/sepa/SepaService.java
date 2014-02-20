@@ -174,11 +174,15 @@ public class SepaService
       }
       if (!ddrequestItems.isEmpty())
       {
+    	  
+    	  
     	  ddRequestLOT.setDdrequestItems(ddrequestItems);
           ddRequestLOT.setInvoicesAmount(totalAmount);
+          String ddFileName=getDDFileName(ddRequestLOT);
+          ddRequestLOT.setFileName(ddFileName);
     	  createPaymentsForDDRequestLot(ddRequestLOT,directDebitTemplate, user);
     	    
-        ddRequestLOT.setFileName(exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount, provider));
+        exportDDRequestLot(ddRequestLOT, ddrequestItems, totalAmount, provider,ddFileName);
         ddRequestLOT.setSendDate(new Date());
         dDRequestLOTService.update(ddRequestLOT,user);
         
@@ -192,6 +196,17 @@ public class SepaService
       }
     }
   
+  public String getDDFileName(DDRequestLOT ddRequestLot){
+	  String fileName =ArConfig.getDDRequestFileNamePrefix()+ddRequestLot.getId();
+	    fileName = fileName + "_" + ddRequestLot.getProvider().getCode();
+	    fileName = fileName + DateUtils.formatDateWithPattern(new Date(), ArConfig.getDDRequestFileNameExtension());
+	    String outputDir = ArConfig.getDDRequestOutputDirectory();
+	    File dir = new File(outputDir);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		return outputDir+File.separator+fileName;
+  }
   
   public String exportDDRequestLot(Long ddRequestLotId)
     throws Exception
@@ -204,13 +219,13 @@ public class SepaService
     if (ddRequestLOT == null) {
       throw new Exception("ddRequestLotId doesn't exist");
     }
-    String fileName = exportDDRequestLot(ddRequestLOT, ddRequestLOT.getDdrequestItems(), ddRequestLOT.getInvoicesAmount(), ddRequestLOT.getProvider());
+    String fileName = exportDDRequestLot(ddRequestLOT, ddRequestLOT.getDdrequestItems(), ddRequestLOT.getInvoicesAmount(), ddRequestLOT.getProvider(),getDDFileName(ddRequestLOT));
     
     logger.info("Successful exportDDRequestLot ddRequestLotId:" + ddRequestLOT.getId() + " , fileName:" + fileName);
     return fileName;
   }
   
-  private String exportDDRequestLot(DDRequestLOT ddRequestLot, List<DDRequestItem> ddrequestItems, BigDecimal totalAmount, Provider provider)
+  private String exportDDRequestLot(DDRequestLOT ddRequestLot, List<DDRequestItem> ddrequestItems, BigDecimal totalAmount, Provider provider, String fileName)
     throws Exception
   {
     Pain008 document=new Pain008();
@@ -220,16 +235,8 @@ public class SepaService
     for (DDRequestItem ddrequestItem : ddrequestItems) {
     	sepaFileBuilder.addPaymentInformation(Message, ddrequestItem);
     	}
-    
-    String fileName =ArConfig.getDDRequestFileNamePrefix()+ddRequestLot.getId();
-    fileName = fileName + "_" + provider.getCode();
-    fileName = fileName + DateUtils.formatDateWithPattern(new Date(), ArConfig.getDDRequestFileNameExtension());
-    String outputDir = ArConfig.getDDRequestOutputDirectory();
-    File dir = new File(outputDir);
-	if (!dir.exists()) {
-		dir.mkdirs();
-	}
-	JAXBUtils.marshaller(document, new File(outputDir + File.separator + fileName));
+   
+	JAXBUtils.marshaller(document, new File(fileName));
     return fileName;
   }
   
