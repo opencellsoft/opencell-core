@@ -1,6 +1,6 @@
 package org.meveo.service.crm.impl;
 
-public class SubscriptionIgnoredException extends Exception {
+public class ImportIgnoredException extends Exception {
 
 	/**
 	 * 

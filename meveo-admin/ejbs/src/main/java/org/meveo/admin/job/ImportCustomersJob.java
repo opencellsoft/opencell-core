@@ -59,6 +59,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -106,13 +107,13 @@ public class ImportCustomersJob implements Job {
 	TradingLanguageService tradingLanguageService;
 
 	@Inject
-	private TitleService titleService;
-
-	@Inject
 	private CustomerImportHistoService customerImportHistoService;
 
 	@Inject
 	private ProviderService providerService;
+	
+	@Inject
+	private CustomerImportService customerImportService;
 
 	Sellers sellersWarning;
 	Sellers sellersError;
@@ -303,7 +304,7 @@ public class ImportCustomersJob implements Job {
 			org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, int i) {
 		nbSellers++;
-		int j = 0;
+		int j=0;
 		Customer customer = null;
 		try {
 			log.debug("customer found  code:" + cust.getCode());
@@ -332,41 +333,18 @@ public class ImportCustomersJob implements Job {
 				return;
 			}
 
+			customerImportService.createCustomer(customer, provider, userJob, seller, sell, cust);
 			if (seller == null) {
-				seller = new org.meveo.model.admin.Seller();
-				seller.setCode(sell.getCode());
-				seller.setDescription(sell.getDescription());
-				seller.setTradingCountry(tradingCountryService
-						.findByTradingCountryCode(sell.getTradingCountryCode(),
-								provider));
-				seller.setTradingCurrency(tradingCurrencyService
-						.findByTradingCurrencyCode(
-								sell.getTradingCurrencyCode(), provider));
-				seller.setTradingLanguage(tradingLanguageService
-						.findByTradingLanguageCode(
-								sell.getTradingLanguageCode(), provider));
-				seller.setProvider(provider);
-				sellerService.create(seller, userJob);
 				nbSellersCreated++;
 				log.info("file:" + fileName + ", typeEntity:Seller, index:" + i
 						+ ", code:" + sell.getCode() + ", status:Created");
 			}
 			if (customer == null) {
-				customer = new Customer();
-				customer.setCode(cust.getCode());
-				customer.setDescription(cust.getDesCustomer());
-				customer.setCustomerBrand(customerBrandService.findByCode(cust
-						.getCustomerBrand()));
-				customer.setCustomerCategory(customerCategoryService
-						.findByCode(cust.getCustomerCategory()));
-				customer.setSeller(seller);
-				customer.setProvider(provider);
-				customerService.create(customer, userJob);
 				nbCustomersCreated++;
 				log.info("file:" + fileName + ", typeEntity:Customer, index:" + i
 						+ ", code:" + cust.getCode() + ", status:Created");
 			}
-
+			
 			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust
 					.getCustomerAccounts().getCustomerAccount()) {
 				j++;
@@ -429,49 +407,7 @@ public class ImportCustomersJob implements Job {
 		}
 	
 
-		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setCode(custAcc.getCode());
-		customerAccount.setDescription(custAcc.getDescription());
-		customerAccount.setDateDunningLevel(new Date());
-		customerAccount.setDunningLevel(DunningLevelEnum.R0);
-		customerAccount.setPassword(RandomStringUtils.randomAlphabetic(8));
-		customerAccount.setDateStatus(new Date());
-		customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
-		Address address = new Address();
-		address.setAddress1(custAcc.getAddress().getAddress1());
-		address.setAddress2(custAcc.getAddress().getAddress2());
-		address.setAddress3(custAcc.getAddress().getAddress3());
-		address.setCity(custAcc.getAddress().getCity());
-		address.setCountry(custAcc.getAddress().getCountry());
-		address.setZipCode("" + custAcc.getAddress().getZipCode());
-		address.setState(custAcc.getAddress().getState());
-		customerAccount.setAddress(address);
-		ContactInformation contactInformation = new ContactInformation();
-		contactInformation.setEmail(custAcc.getEmail());
-		contactInformation.setPhone(custAcc.getTel1());
-		contactInformation.setMobile(custAcc.getTel2());
-		customerAccount.setContactInformation(contactInformation);
-		customerAccount.setCreditCategory(CreditCategoryEnum.valueOf(custAcc
-				.getCreditCategory()));
-		customerAccount.setExternalRef1(custAcc.getExternalRef1());
-		customerAccount.setExternalRef2(custAcc.getExternalRef2());
-		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc
-				.getPaymentMethod()));
-		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
-		if (custAcc.getName() != null) {
-			name.setFirstName(custAcc.getName().getFirstname());
-			name.setLastName(custAcc.getName().getName());
-			Title title = titleService.findByCode(provider, custAcc.getName()
-					.getTitle().trim());
-			name.setTitle(title);
-			customerAccount.setName(name);
-		}
-		customerAccount.setTradingCurrency(tradingCurrencyService
-				.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(),
-						provider));
-		customerAccount.setProvider(provider);
-		customerAccount.setCustomer(customer);
-		customerAccountService.create(customerAccount, userJob);
+        customerImportService.createCustomerAccount(provider, userJob, customer, seller, custAcc, cust, sell);
 		nbCustomerAccountsCreated++;
 		log.info("file:" + fileName
 				+ ", typeEntity:CustomerAccount,  indexCustomer:" + i

@@ -71,7 +71,7 @@ public class SubscriptionImportService {
 	//return 1 if a subscription has been created, 0 else
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public int importSubscription(CheckedSubscription checkSubscription,Provider provider
-			,org.meveo.model.jaxb.subscription.Subscription subscrip,String fileName,User userJob,int i) throws BusinessException, SubscriptionServiceException, SubscriptionIgnoredException {
+			,org.meveo.model.jaxb.subscription.Subscription subscrip,String fileName,User userJob,int i) throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
 		
 		Subscription subscription=checkSubscription.subscription;
 		if (subscription != null) {
@@ -106,7 +106,7 @@ public class SubscriptionImportService {
 							+ ", status:Terminated");
 				return 0;
 			} else {
-				throw new SubscriptionIgnoredException();
+				throw new ImportIgnoredException();
 			}
 		}
 

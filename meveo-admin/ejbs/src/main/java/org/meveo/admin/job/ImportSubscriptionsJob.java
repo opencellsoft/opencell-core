@@ -46,7 +46,7 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.crm.impl.CheckedSubscription;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.crm.impl.SubscriptionIgnoredException;
+import org.meveo.service.crm.impl.ImportIgnoredException;
 import org.meveo.service.crm.impl.SubscriptionImportService;
 import org.meveo.service.crm.impl.SubscriptionServiceException;
 import org.meveo.services.job.Job;
@@ -199,7 +199,7 @@ public class ImportSubscriptionsJob implements Job {
 					break;
 				}
 				nbSubscriptionsCreated+=subscriptionImportService.importSubscription(checkSubscription,provider,subscrip,fileName,userJob,i);
-			} catch(SubscriptionIgnoredException ie){
+			} catch(ImportIgnoredException ie){
 				log.info("file:" + fileName
 						+ ", typeEntity:Subscription, index:" + i
 						+ ", code:" + subscrip.getCode()
