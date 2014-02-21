@@ -386,7 +386,7 @@ public class RatingService {
 			boolean sellerAreEqual = pricePlan.getSeller() == null
 					|| pricePlan.getSeller().getId().equals(sellerId);
 			if (!sellerAreEqual) {
-				log.info("The seller of the customer " + sellerId
+				log.debug("The seller of the customer " + sellerId
 						+ " is not the same as pricePlan seller "
 						+ pricePlan.getSeller().getId() + " ("
 						+ pricePlan.getSeller().getCode() + ")");
@@ -396,7 +396,7 @@ public class RatingService {
 			boolean countryAreEqual = pricePlan.getTradingCountry() == null
 					|| pricePlan.getTradingCountry().getId().equals(countryId);
 			if (!countryAreEqual) {
-				log.info("The country of the billing account "
+				log.debug("The country of the billing account "
 						+ countryId
 						+ " is not the same as pricePlan country"
 						+ pricePlan.getTradingCountry().getId()
@@ -409,7 +409,7 @@ public class RatingService {
 					|| (tcurrency != null && tcurrency.getId().equals(
 							pricePlan.getTradingCurrency().getId()));
 			if (!currencyAreEqual) {
-				log.info("The currency of the customer account "
+				log.debug("The currency of the customer account "
 						+ (tcurrency != null ? tcurrency.getCurrencyCode()
 								: "null")
 						+ " is not the same as pricePlan currency"
@@ -429,7 +429,7 @@ public class RatingService {
 							.getSubscriptionDate().before(
 									pricePlan.getEndSubscriptionDate())));
 			if (!subscriptionDateInPricePlanPeriod) {
-				log.info("The subscription date "
+				log.debug("The subscription date "
 						+ bareOperation.getSubscriptionDate()
 						+ "is not in the priceplan subscription range");
 				continue;
@@ -456,7 +456,7 @@ public class RatingService {
 			// pricePlan.getMinSubscriptionAgeInMonth() + ")=" +
 			// subscriptionMinAgeOK);
 			if (!subscriptionMinAgeOK) {
-				log.info("The subscription age " + subscriptionAge
+				log.debug("The subscription age " + subscriptionAge
 						+ "is less than the priceplan subscription age min :"
 						+ pricePlan.getMinSubscriptionAgeInMonth());
 				continue;
@@ -466,11 +466,11 @@ public class RatingService {
 					|| pricePlan.getMaxSubscriptionAgeInMonth() == 0
 					|| subscriptionAge < pricePlan
 							.getMaxSubscriptionAgeInMonth();
-			log.info("subscriptionMaxAgeOK("
+			log.debug("subscriptionMaxAgeOK("
 					+ pricePlan.getMaxSubscriptionAgeInMonth() + ")="
 					+ subscriptionMaxAgeOK);
 			if (!subscriptionMaxAgeOK) {
-				log.info("The subscription age "
+				log.debug("The subscription age "
 						+ subscriptionAge
 						+ " is greater than the priceplan subscription age max :"
 						+ pricePlan.getMaxSubscriptionAgeInMonth());
@@ -485,12 +485,12 @@ public class RatingService {
 					&& (pricePlan.getEndRatingDate() == null || bareOperation
 							.getOperationDate().before(
 									pricePlan.getEndRatingDate()));
-			log.info("applicationDateInPricePlanPeriod("
+			log.debug("applicationDateInPricePlanPeriod("
 					+ pricePlan.getStartRatingDate() + " - "
 					+ pricePlan.getEndRatingDate() + ")="
 					+ applicationDateInPricePlanPeriod);
 			if (!applicationDateInPricePlanPeriod) {
-				log.info("The application date "
+				log.debug("The application date "
 						+ bareOperation.getOperationDate()
 						+ " is not in the priceplan application range");
 				continue;
@@ -501,7 +501,7 @@ public class RatingService {
 			// log.info("criteria1SameInPricePlan(" +
 			// pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
 			if (!criteria1SameInPricePlan) {
-				log.info("The operation param1 "
+				log.debug("The operation param1 "
 						+ bareOperation.getParameter1()
 						+ " is not compatible with price plan criteria 1: "
 						+ pricePlan.getCriteria1Value());
@@ -513,7 +513,7 @@ public class RatingService {
 			// log.info("criteria2SameInPricePlan(" +
 			// pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
 			if (!criteria2SameInPricePlan) {
-				log.info("The operation param2 "
+				log.debug("The operation param2 "
 						+ bareOperation.getParameter2()
 						+ " is not compatible with price plan criteria 2: "
 						+ pricePlan.getCriteria2Value());
@@ -525,10 +525,10 @@ public class RatingService {
 			// log.info("criteria3SameInPricePlan(" +
 			// pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
 			if (criteria3SameInPricePlan) {
-				log.info("criteria3SameInPricePlan");
+				log.debug("criteria3SameInPricePlan");
 				return pricePlan;
 			}
-			log.info("The operation param3 " + bareOperation.getParameter3()
+			log.debug("The operation param3 " + bareOperation.getParameter3()
 					+ " is not compatible with price plan criteria 3: "
 					+ pricePlan.getCriteria3Value());
 		}

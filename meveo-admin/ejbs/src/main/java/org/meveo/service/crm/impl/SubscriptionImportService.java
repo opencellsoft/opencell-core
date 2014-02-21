@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.jboss.solder.logging.Logger;
@@ -67,6 +69,7 @@ public class SubscriptionImportService {
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 	
 	//return 1 if a subscription has been created, 0 else
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public int importSubscription(CheckedSubscription checkSubscription,Provider provider
 			,org.meveo.model.jaxb.subscription.Subscription subscrip,String fileName,User userJob,int i) throws BusinessException, SubscriptionServiceException, SubscriptionIgnoredException {
 		
