@@ -58,16 +58,8 @@ public class GenerateImportXml {
 		      seller.setTradingCurrencyCode("EUR");
 		      seller.setTradingLanguageCode("FRA");
 		      sellers.getSeller().add(seller);
-		      Customer customer=new Customer();
 		      Customers customers=new Customers();
-		      customers.getCustomer().add(customer);
 		      seller.setCustomers(customers);
-			  customer.setCode("CUST");
-			  customer.setCustomerCategory(customerCategory);
-			  customer.setCustomerBrand(customerBrand);
-			  customer.setDesCustomer("customer");
-			  CustomerAccounts customerAccounts=new CustomerAccounts();
-			  customer.setCustomerAccounts(customerAccounts);
 			  
 			  BillingAccounts billingAccounts=new BillingAccounts();
 			  
@@ -84,7 +76,16 @@ public class GenerateImportXml {
 			  
 			  
 		      for(int i=startIndex;i<=count;i++){
+
 		    	  //xml of customers
+			      Customer customer=new Customer();
+				  customer.setCode("CUST"+i);
+				  customer.setCustomerCategory(customerCategory);
+				  customer.setCustomerBrand(customerBrand);
+				  customer.setDesCustomer("customer "+i);
+			      customers.getCustomer().add(customer);
+
+				  CustomerAccounts customerAccounts=new CustomerAccounts();
 		    	  CustomerAccount ca=new CustomerAccount();
 		    	  ca.setCode("CA"+i);
 		    	  ca.setCreditCategory(creditCategory);
@@ -102,6 +103,7 @@ public class GenerateImportXml {
 		    	  ca.setAddress(address);
 		    	  ca.setPaymentMethod("DIRECTDEBIT");
 		    	  customerAccounts.getCustomerAccount().add(ca);
+				  customer.setCustomerAccounts(customerAccounts);
 		    	  
 		    	//xml of billingAccounts
 		    	  
