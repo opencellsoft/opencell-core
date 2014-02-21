@@ -1,4 +1,4 @@
-package org.meveo.admin.job;
+package org.meveo.test;
 
 import java.io.File;
 
