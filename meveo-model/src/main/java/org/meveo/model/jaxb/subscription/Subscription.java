@@ -63,7 +63,8 @@ import javax.xml.bind.annotation.XmlType;
     "endAgreementDate",
     "status",
     "description",
-    "services"
+    "services",
+    "accesses"
 })
 @XmlRootElement(name = "subscription")
 public class Subscription {
@@ -80,6 +81,7 @@ public class Subscription {
     protected String userAccountId;
     @XmlAttribute(name = "offerCode")
     protected String offerCode;
+    protected Accesses accesses;
 
     /**
      * Gets the value of the subscriptionDate property.
@@ -273,4 +275,9 @@ public class Subscription {
         this.offerCode = value;
     }
 
+	public Accesses getAccesses() {
+		return accesses;
+	}
+
+    
 }
