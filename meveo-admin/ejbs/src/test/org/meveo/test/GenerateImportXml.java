@@ -32,11 +32,11 @@ public class GenerateImportXml {
 	 * @param args
 	 */
 	/**************************configuration properties***********************************/
-	private static int count=4;
+	private static int count=5;
 	private static int startIndex=1;
-	private static String customersFile="/tmp/CUST_INST.xml";
-	private static String accountsFile="/tmp/ACC_INST.xml";
-	private static String subscriptionsFile="/tmp/SUB_INST.xml";
+	private static String customersFile="/tmp/CUSTOMERS.xml";
+	private static String accountsFile="/tmp/ACCOUNTS.xml";
+	private static String subscriptionsFile="/tmp/SUBSCRIPTIONS.xml";
 	private static String providerCode="DEMO";
 	private static String customerBrand="DEMO";
 	private static String customerCategory="Business";
