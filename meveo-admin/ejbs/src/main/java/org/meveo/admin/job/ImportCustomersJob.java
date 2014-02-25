@@ -19,7 +19,6 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.solder.logging.Logger;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.FileUtils;
@@ -42,21 +41,13 @@ import org.meveo.model.jaxb.customer.Warnings;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
-import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.DunningLevelEnum;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.shared.Address;
-import org.meveo.model.shared.ContactInformation;
-import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CustomerImportHistoService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerImportService;
@@ -205,6 +196,8 @@ public class ImportCustomersJob implements Job {
 		for (File file : listFile) {
 			if (file.isFile()) {
 				files.add(file);
+				//we just process one file
+				return files;
 			}
 		}
 		return files;

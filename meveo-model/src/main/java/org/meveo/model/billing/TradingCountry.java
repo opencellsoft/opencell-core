@@ -17,6 +17,7 @@ package org.meveo.model.billing;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +31,7 @@ import javax.persistence.Transient;
 import org.meveo.model.AuditableEntity;
 
 @Entity
+@Cacheable
 @Table(name = "BILLING_TRADING_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_COUNTRY_SEQ")
 public class TradingCountry extends AuditableEntity {

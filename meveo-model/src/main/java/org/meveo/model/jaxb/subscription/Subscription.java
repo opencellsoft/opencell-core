@@ -279,5 +279,8 @@ public class Subscription {
 		return accesses;
 	}
 
+	public void setAccesses(Accesses value){
+		this.accesses=value;
+	}
     
 }

@@ -17,6 +17,7 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +31,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
+@Cacheable
 @Table(name = "BILLING_TRADING_CURRENCY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_CURRENCY_SEQ")
 public class TradingCurrency extends AuditableEntity {
