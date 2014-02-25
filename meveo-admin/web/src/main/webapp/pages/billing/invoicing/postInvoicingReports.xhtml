@@ -189,12 +189,12 @@
 		<br />
 		<br />
 		<h:form id="operationsForm" rendered="#{!edit}">
-			<h:commandButton action="#{billingRunBean.validateInvoicing()}"
+			<p:commandButton action="#{billingRunBean.validateInvoicing()}"
 				value="Validate" />
 			<!-- <h:commandButton
 				action="#{billingRunBean.rerateConfirmedInvoicing()}"
 				value="Rerate" /> -->
-			<h:commandButton
+			<p:commandButton
 				action="#{billingRunBean.cancelConfirmedInvoicing()}"
 				value="Cancel billing run"
 				onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
