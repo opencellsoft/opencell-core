@@ -18,7 +18,7 @@ package org.meveo.model.payments;
 public enum PaymentTermEnum {
 
 	CASH(1, "paymentTerm.cash"), 
-	THREE_X(2, "3X sans frais ");
+	THREE_X(2, "paymentTerm.threeX");
 
 	private Integer id;
 	private String label;
