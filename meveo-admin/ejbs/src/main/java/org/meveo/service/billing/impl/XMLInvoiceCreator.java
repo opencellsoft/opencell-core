@@ -189,6 +189,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             addNameAndAdress(billingAccount, doc, billingAccountTag);
 
             addPaymentInfo(billingAccount, doc, billingAccountTag);
+            
+           
 
             Element invoiceDate = doc.createElement("invoiceDate");
             Text invoiceDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(invoice.getInvoiceDate(),
@@ -423,6 +425,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element paymentMethod = doc.createElement("paymentMethod");
         parent.appendChild(paymentMethod);
         paymentMethod.setAttribute("type", billingAccount.getPaymentMethod().toString());
+        
         Element bankCoordinates = doc.createElement("bankCoordinates");
         Element bankCode = doc.createElement("bankCode");
         Element branchCode = doc.createElement("branchCode");
@@ -437,6 +440,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         bankCoordinates.appendChild(key);
         bankCoordinates.appendChild(iban);
         paymentMethod.appendChild(bankCoordinates);
+
+        Element paymentTerm = doc.createElement("paymentTerm");
+        parent.appendChild(paymentTerm);
+        paymentTerm.setAttribute("type", billingAccount.getPaymentTerm().toString());
+        
 
         if (billingAccount.getBankCoordinates() != null && billingAccount.getBankCoordinates().getBankCode() != null) {
             Text bankCodeTxt = doc
