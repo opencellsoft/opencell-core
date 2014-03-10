@@ -16,6 +16,8 @@ import org.meveo.model.jaxb.customer.Customers;
 import org.meveo.model.jaxb.customer.Name; 
 import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
+import org.meveo.model.jaxb.subscription.Access;
+import org.meveo.model.jaxb.subscription.AccessPoints;
 import org.meveo.model.jaxb.subscription.ServiceInstance;
 import org.meveo.model.jaxb.subscription.Services;
 import org.meveo.model.jaxb.subscription.Status;
@@ -109,8 +111,8 @@ public class GenerateImportXml {
 		    	  
 		    	  BillingAccount ba=new BillingAccount();
 		    	  ba.setCustomerAccountId("CA"+i);
-		    	  ba.setCode("BA"+i);
-		    	  ba.setPaymentMethod("DIRECTDEBIT");
+		    	  ba.setCode("BLA"+i);
+		    	  ba.setPaymentMethod("CHECK");
 		    	  ba.setBillingCycle(billingCycle);
 		    	  ba.setSubscriptionDate("2014-02-20");
 		    	  ba.setExternalRef1("ORCC25"+i);
@@ -131,6 +133,7 @@ public class GenerateImportXml {
 		    	  ba.setElectronicBilling("0");
 		    	  BankCoordinates bankCoordinate =new BankCoordinates(); 
 		    	  bankCoordinate.setKey("");
+		    	  bankCoordinate.setAccountName("xx");
 		    	  ba.setBankCoordinates(bankCoordinate);
 		    	  billingAccounts.getBillingAccount().add(ba);
 		    	  
@@ -171,6 +174,19 @@ public class GenerateImportXml {
 		    	  services.getServiceInstance().add(serviceInstance);
 		    	  sub.setServices(services);
 		    	  subscriptions.getSubscription().add(sub); 
+		    	  
+		    	  AccessPoints accessPoints=new AccessPoints();
+		    	  sub.setAccessPoints(accessPoints);
+		    	  
+		    	  Access access1=new Access();
+		    	  access1.setAccessUserId("MSISDN"+i);
+		    	  accessPoints.getAccess().add(access1);
+		    	  
+		    	  Access access2=new Access();
+		    	  access2.setAccessUserId("IMSI"+i);
+		    	  accessPoints.getAccess().add(access2);
+		    	  
+		    	  
 		    	  
 		      }
 		      

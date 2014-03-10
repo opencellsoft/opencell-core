@@ -13,6 +13,7 @@
         <xs:element ref="subscriptionDate"/>
         <xs:element ref="status"/>
         <xs:element ref="services"/>
+        <xs:element ref="AccessPoints"/>
       </xs:sequence>
       <xs:attribute name="code" use="required" type="xs:NCName"/>
       <xs:attribute name="offerCode" use="required" type="xs:NCName"/>
@@ -26,6 +27,13 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+   <xs:element name="AccessPoints">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="access"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="serviceInstance">
     <xs:complexType>
       <xs:sequence>
@@ -36,6 +44,18 @@
       <xs:attribute name="code" use="required" type="xs:NCName"/>
     </xs:complexType>
   </xs:element>
+    <xs:element name="access">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="starDate"/>
+        <xs:element ref="endDate"/>
+        <xs:element ref="accessUserId"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="starDate" type="xs:NMTOKEN"/>
+  <xs:element name="endDate" type="xs:NMTOKEN"/>
+  <xs:element name="accessUserId" type="xs:NCName" />
   <xs:element name="quantity" type="xs:integer"/>
   <xs:element name="subscriptionDate" type="xs:NMTOKEN"/>
   <xs:element name="status">
