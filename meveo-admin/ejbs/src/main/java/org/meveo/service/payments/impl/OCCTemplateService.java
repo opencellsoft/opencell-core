@@ -36,13 +36,19 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 	private static final String DDREQUEST_OCC_CODE = "bayad.ddrequest.occCode";
 	
 	public OCCTemplate findByCode(String code, String providerCode) {
+		OCCTemplate occTemplate=null;
 		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
-		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
-		qb.addCriterion("c.code", "=", code, true);
-		qb.addCriterion("c.provider.code", "=", providerCode, true);
-		OCCTemplate occTemplate = (OCCTemplate) qb.getQuery(getEntityManager()).getSingleResult();
-		log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
-				"OCCTemplate", code, occTemplate != null });
+		try {
+			QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
+			qb.addCriterion("c.code", "=", code, true);
+			qb.addCriterion("c.provider.code", "=", providerCode, true);
+			 occTemplate = (OCCTemplate) qb.getQuery(getEntityManager()).getSingleResult();
+			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
+					"OCCTemplate", code, occTemplate != null });
+		} catch (Exception e) {
+			return null;
+		}
+	
 		return occTemplate;
 	}
 

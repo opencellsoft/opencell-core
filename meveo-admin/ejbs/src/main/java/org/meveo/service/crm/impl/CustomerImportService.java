@@ -57,11 +57,11 @@ public class CustomerImportService {
 	private CustomerAccountService customerAccountService;
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public int createCustomer(Customer customer, Provider provider,
+	public Customer createCustomer(Provider provider,
 			User userJob, org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust) {
-			int result=0;
+		Customer customer=null;
 
 			if (seller == null) {
 				seller = new org.meveo.model.admin.Seller();
@@ -78,7 +78,6 @@ public class CustomerImportService {
 								sell.getTradingLanguageCode(), provider));
 				seller.setProvider(provider);
 				sellerService.create(seller, userJob);
-				result+=1;
 			}
 			if (customer == null) {
 				customer = new Customer();
@@ -91,9 +90,8 @@ public class CustomerImportService {
 				customer.setSeller(seller);
 				customer.setProvider(provider);
 				customerService.create(customer, userJob);
-				result+=2;
 			}
-			return result;
+			return customer;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
