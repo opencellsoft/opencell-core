@@ -34,8 +34,15 @@ public class GenerateImportXml {
 	 * @param args
 	 */
 	/**************************configuration properties***********************************/
+<<<<<<< HEAD
 	private static int count=1;
+=======
+	private static int count=1000;
+>>>>>>> branch 'master' of git@git.assembla.com:meveo.git
 	private static int startIndex=1;
+	private static int BC_NUMBER=8;
+	private static String billingCyclePrefix="CYC_INV_MT";
+	
 	private static String customersFile="/tmp/CUSTOMERS.xml";
 	private static String accountsFile="/tmp/ACCOUNTS.xml";
 	private static String subscriptionsFile="/tmp/SUBSCRIPTIONS.xml";
@@ -45,7 +52,8 @@ public class GenerateImportXml {
 	private static String serviceCode="EXCH20101";
 	private static String creditCategory="VIP";
 	private static String offerCode="EXCH20101";
-	private static String billingCycle="CYC_INV_MT";
+	
+	
 	/***********************************************************************/
 	
 	public static void main(String[] args) {
@@ -76,9 +84,20 @@ public class GenerateImportXml {
 			  
 			  Subscriptions subscriptions=new Subscriptions();
 			  
+			  int j=1;
+			  int bcPerBC=count/BC_NUMBER;
+			  int bcCounter=bcPerBC;
 			  
+			  String billingCycle="";
 		      for(int i=startIndex;i<=count;i++){
-
+		    	  if(i==startIndex){
+		    		  billingCycle=billingCyclePrefix+"_"+j;
+		    		  j++;
+		    	  }else if(i==startIndex+bcCounter){
+		    		  billingCycle=billingCyclePrefix+"_"+j;
+		    		  j++;
+		    		  bcCounter=bcCounter+bcPerBC;
+		    	  }
 		    	  //xml of customers
 			      Customer customer=new Customer();
 				  customer.setCode("CUST"+i);
@@ -91,7 +110,7 @@ public class GenerateImportXml {
 		    	  CustomerAccount ca=new CustomerAccount();
 		    	  ca.setCode("CA"+i);
 		    	  ca.setCreditCategory(creditCategory);
-		    	  ca.setExternalRef1("ORCC25"+i);
+		    	  ca.setExternalRef1("ORCC25P"+i);
 		    	  ca.setTradingCurrencyCode("EUR");
 		    	  Name name=new Name();
 		    	  name.setFirstname("firstName"+i);
@@ -111,7 +130,7 @@ public class GenerateImportXml {
 		    	  
 		    	  BillingAccount ba=new BillingAccount();
 		    	  ba.setCustomerAccountId("CA"+i);
-		    	  ba.setCode("BLA"+i);
+		    	  ba.setCode("BA"+i);
 		    	  ba.setPaymentMethod("CHECK");
 		    	  ba.setBillingCycle(billingCycle);
 		    	  ba.setSubscriptionDate("2014-02-20");
