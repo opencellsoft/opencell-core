@@ -161,7 +161,9 @@ public class InvoicingJob implements Job {
 
 	public void createAgregatesAndInvoice(BillingRun billingRun) throws BusinessException, Exception {
 		List<BillingAccount> billingAccounts=billingRun.getBillableBillingAccounts();
+		
 		 for (BillingAccount billingAccount : billingAccounts) {
+			Long startDate=System.currentTimeMillis();
             BillingCycle billingCycle = billingRun.getBillingCycle();
             if (billingCycle == null) {
                 billingCycle = billingAccount.getBillingCycle();
@@ -197,7 +199,8 @@ public class InvoicingJob implements Job {
             }
             invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
             invoiceService.update(invoice);
-            
+            Long endDate=System.currentTimeMillis();
+            log.info("createAgregatesAndInvoice BR_ID="+billingRun.getId()+", BA_ID="+billingAccount.getId()+", Time en ms="+(endDate-startDate));
 	        
                
         }
