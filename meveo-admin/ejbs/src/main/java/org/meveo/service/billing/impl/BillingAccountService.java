@@ -24,6 +24,8 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -35,6 +37,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -52,6 +55,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 	@EJB
 	private UserAccountService userAccountService;
+	
+	@EJB
+	RatedTransactionService ratedTransactionService;
 
 	public void createBillingAccount(BillingAccount billingAccount, User creator) {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -212,8 +218,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 	
-
-	
+	 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public BillingRun updateBillingAccountTotalAmounts(long billingAccountId,BillingRun billingRun,boolean entreprise){
+		BillingAccount billingAccount=findById(billingAccountId);
+		billingRun.getBillableBillingAccounts().add(billingAccount);
+	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);
+	        billingAccount.setBillingRun(billingRun);
+	        update(billingAccount);
+	    return billingRun;    
+	}
 	
 	
 	
