@@ -443,7 +443,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         Element paymentTerm = doc.createElement("paymentTerm");
         parent.appendChild(paymentTerm);
-        paymentTerm.setAttribute("type", billingAccount.getPaymentTerm().toString());
+        paymentTerm.setAttribute("type", billingAccount.getPaymentTerm()!=null?billingAccount.getPaymentTerm().toString():"");
         
 
         if (billingAccount.getBankCoordinates() != null && billingAccount.getBankCoordinates().getBankCode() != null) {
