@@ -302,10 +302,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				serviceInstance.getSubscriptionChargeInstances().size());
 		for (OneShotChargeInstance oneShotChargeInstance : serviceInstance
 				.getSubscriptionChargeInstances()) {
-			// oneShotChargeInstanceService.oneShotChargeApplication(em,
-			// subscription, oneShotChargeInstance,
-			// serviceInstance.getSubscriptionDate(),
-			// serviceInstance.getQuantity(), creator);
+			oneShotChargeInstanceService.oneShotChargeApplication(em,
+					subscription, oneShotChargeInstance,
+					serviceInstance.getSubscriptionDate(),
+					serviceInstance.getQuantity(), creator);
 			oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 			oneShotChargeInstance.setStatusDate(new Date());
 			oneShotChargeInstanceService.update(em, oneShotChargeInstance);
@@ -313,8 +313,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
-			// usageChargeInstanceService.activateUsageChargeInstance(em,
-			// usageChargeInstance);
+			usageChargeInstanceService.activateUsageChargeInstance(em,
+					usageChargeInstance);
 		}
 
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
