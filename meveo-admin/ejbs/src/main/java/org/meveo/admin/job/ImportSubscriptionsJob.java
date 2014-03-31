@@ -45,8 +45,8 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.crm.impl.CheckedSubscription;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.impl.ImportIgnoredException;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.impl.SubscriptionImportService;
 import org.meveo.service.crm.impl.SubscriptionServiceException;
 import org.meveo.services.job.Job;
@@ -71,7 +71,6 @@ public class ImportSubscriptionsJob implements Job {
 	@Inject
 	SubscriptionService subscriptionService;
 
-
 	@Inject
 	SubscriptionImportHistoService subscriptionImportHistoService;
 
@@ -86,7 +85,7 @@ public class ImportSubscriptionsJob implements Job {
 
 	@Inject
 	private SubscriptionImportService subscriptionImportService;
-	
+
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 	String importDir = param.getProperty("connectorCRM.importDir",
 			"/tmp/meveo/crm");
@@ -191,31 +190,31 @@ public class ImportSubscriptionsJob implements Job {
 				CheckedSubscription checkSubscription = subscriptionCheckError(
 						provider, subscrip);
 				if (checkSubscription == null) {
-					createSubscriptionError(subscrip,"error in checkSubscription");
+					createSubscriptionError(subscrip,
+							"error in checkSubscription");
 					nbSubscriptionsError++;
 					log.info("file:" + fileName
-							+ ", typeEntity:Subscription, index:" + i + ", code:"
-							+ subscrip.getCode() + ", status:Error");
+							+ ", typeEntity:Subscription, index:" + i
+							+ ", code:" + subscrip.getCode() + ", status:Error");
 					break;
 				}
-				nbSubscriptionsCreated+=subscriptionImportService.importSubscription(checkSubscription,provider,subscrip,fileName,userJob,i);
-			} catch(ImportIgnoredException ie){
+				nbSubscriptionsCreated += subscriptionImportService
+						.importSubscription(checkSubscription, provider,
+								subscrip, fileName, userJob, i);
+			} catch (ImportIgnoredException ie) {
 				log.info("file:" + fileName
-						+ ", typeEntity:Subscription, index:" + i
-						+ ", code:" + subscrip.getCode()
-						+ ", status:Ignored");
+						+ ", typeEntity:Subscription, index:" + i + ", code:"
+						+ subscrip.getCode() + ", status:Ignored");
 				nbSubscriptionsIgnored++;
-			}	catch(SubscriptionServiceException se){
-				createServiceInstanceError(se.getSubscrip(), se.getServiceInst(),
-						se.getMess());
+			} catch (SubscriptionServiceException se) {
+				createServiceInstanceError(se.getSubscrip(),
+						se.getServiceInst(), se.getMess());
 				nbSubscriptionsError++;
 				log.info("file:" + fileName
-						+ ", typeEntity:Subscription, index:" + i
-						+ ", code:" + subscrip.getCode()
-						+ ", status:Error");
-			}
-			catch (Exception e) {
-			
+						+ ", typeEntity:Subscription, index:" + i + ", code:"
+						+ subscrip.getCode() + ", status:Error");
+			} catch (Exception e) {
+
 				// createSubscriptionError(subscrip,
 				// ExceptionUtils.getRootCause(e).getMessage());
 				createSubscriptionError(subscrip, e.getMessage());
@@ -274,7 +273,6 @@ public class ImportSubscriptionsJob implements Job {
 
 	}
 
-
 	private List<File> getFilesToProcess(File dir, String prefix, String ext) {
 		List<File> files = new ArrayList<File>();
 		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
@@ -326,7 +324,6 @@ public class ImportSubscriptionsJob implements Job {
 		// TODO Auto-generated method stub
 		return timerService.getTimers();
 	}
-	
 
 	private CheckedSubscription subscriptionCheckError(Provider provider,
 			org.meveo.model.jaxb.subscription.Subscription subscrip) {
@@ -409,7 +406,7 @@ public class ImportSubscriptionsJob implements Job {
 				checkSubscription.serviceInsts.add(serviceInst);
 			}
 			for (org.meveo.model.jaxb.subscription.Access access : subscrip
-					.getAccessPoints().getAccess()) {
+					.getAccesses().getAccess()) {
 				if (accessCheckError(subscrip, access)) {
 					return null;
 				}
@@ -418,7 +415,6 @@ public class ImportSubscriptionsJob implements Job {
 		}
 		return checkSubscription;
 	}
-	
 
 	private void createSubscriptionError(
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
@@ -459,7 +455,6 @@ public class ImportSubscriptionsJob implements Job {
 				.add(warningSubscription);
 	}
 
-
 	private boolean serviceInstanceCheckError(
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst) {
@@ -474,6 +469,7 @@ public class ImportSubscriptionsJob implements Job {
 		}
 		return false;
 	}
+
 	private boolean accessCheckError(
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.Access access) {
@@ -482,7 +478,7 @@ public class ImportSubscriptionsJob implements Job {
 			createSubscriptionError(subscrip, "AccessUserId is null");
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -503,7 +499,5 @@ public class ImportSubscriptionsJob implements Job {
 		subscriptionsError.getErrors().getErrorServiceInstance()
 				.add(errorServiceInstance);
 	}
-	
-	
-}
 
+}
