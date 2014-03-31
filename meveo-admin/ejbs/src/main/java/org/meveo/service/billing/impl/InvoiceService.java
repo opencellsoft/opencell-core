@@ -15,11 +15,14 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -29,11 +32,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -46,6 +51,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	@EJB
 	private SellerService sellerService;
+	
+	@EJB
+	private RatedTransactionService ratedTransactionService;
 
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode)
 			throws BusinessException {
@@ -209,4 +217,48 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			return null;
 		}
+	  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	  public void createAgregatesAndInvoice(BillingAccount billingAccount,BillingRun billingRun) throws BusinessException, Exception {
+			
+				Long startDate=System.currentTimeMillis();
+	            BillingCycle billingCycle = billingRun.getBillingCycle();
+	            if (billingCycle == null) {
+	                billingCycle = billingAccount.getBillingCycle();
+	            }
+	            Invoice invoice = new Invoice();
+	            invoice.setBillingAccount(billingAccount);
+	            invoice.setBillingRun(billingRun);
+	            invoice.setAuditable(billingRun.getAuditable());
+	            invoice.setProvider(billingRun.getProvider());
+	            Date invoiceDate = new Date();
+	            invoice.setInvoiceDate(invoiceDate);
+
+	            Integer delay = billingCycle.getDueDateDelay();
+	            Date dueDate = invoiceDate;
+	            if (delay != null) {
+	                dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
+	            }
+	            invoice.setDueDate(dueDate);
+
+	            invoice.setPaymentMethod(billingAccount.getPaymentMethod());
+	            invoice.setProvider(billingRun.getProvider());
+	            create(invoice);
+	            ratedTransactionService.createInvoiceAndAgregates(billingRun, billingAccount,invoice);
+
+		        ratedTransactionService.updateRatedTransactions(billingRun, billingAccount,invoice);
+		        
+	            StringBuffer num1 = new StringBuffer("000000000");
+	            num1.append(invoice.getId() + "");
+	            String invoiceNumber = num1.substring(num1.length() - 9);
+	            int key = 0;
+	            for (int i = 0; i < invoiceNumber.length(); i++) {
+	                key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
+	            }
+	            invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
+	            update(invoice);
+	            Long endDate=System.currentTimeMillis();
+	            log.info("createAgregatesAndInvoice BR_ID="+billingRun.getId()+", BA_ID="+billingAccount.getId()+", Time en ms="+(endDate-startDate));
+		        
+		}
+
 }

@@ -326,7 +326,7 @@ public class ImportCustomersJob implements Job {
 				return;
 			}
 
-			customerImportService.createCustomer(customer, provider, userJob, seller, sell, cust);
+			customer=customerImportService.createCustomer(provider, userJob, seller, sell, cust);
 			if (seller == null) {
 				nbSellersCreated++;
 				log.info("file:" + fileName + ", typeEntity:Seller, index:" + i

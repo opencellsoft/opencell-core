@@ -61,9 +61,10 @@ public class AccountImportService {
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void importBillingAccount(org.meveo.model.billing.BillingAccount billingAccount,
+	public org.meveo.model.billing.BillingAccount importBillingAccount(
 			org.meveo.model.jaxb.account.BillingAccount billAccount,Provider provider,User userJob) throws BusinessException, ImportWarningException{
 		log.debug("billingAccount found code:" + billAccount.getCode());
+		org.meveo.model.billing.BillingAccount billingAccount=null;
 		CustomerAccount customerAccount=null;
 			BillingCycle billingCycle = null;
 			try {
@@ -183,6 +184,7 @@ public class AccountImportService {
 			billingAccount.setProvider(provider);
 
 			billingAccountService.create(billingAccount, userJob);
+			return billingAccount;
 		}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

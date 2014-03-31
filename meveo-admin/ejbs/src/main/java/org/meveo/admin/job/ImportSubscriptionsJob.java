@@ -408,6 +408,13 @@ public class ImportSubscriptionsJob implements Job {
 				}
 				checkSubscription.serviceInsts.add(serviceInst);
 			}
+			for (org.meveo.model.jaxb.subscription.Access access : subscrip
+					.getAccessPoints().getAccess()) {
+				if (accessCheckError(subscrip, access)) {
+					return null;
+				}
+				checkSubscription.accessPoints.add(access);
+			}
 		}
 		return checkSubscription;
 	}
@@ -465,6 +472,17 @@ public class ImportSubscriptionsJob implements Job {
 			createSubscriptionError(subscrip, "SubscriptionDate is null");
 			return true;
 		}
+		return false;
+	}
+	private boolean accessCheckError(
+			org.meveo.model.jaxb.subscription.Subscription subscrip,
+			org.meveo.model.jaxb.subscription.Access access) {
+
+		if (StringUtils.isBlank(access.getAccessUserId())) {
+			createSubscriptionError(subscrip, "AccessUserId is null");
+			return true;
+		}
+		
 		return false;
 	}
 

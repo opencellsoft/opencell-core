@@ -27,6 +27,8 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.subscription.Access;
+import org.meveo.model.jaxb.subscription.AccessPoints;
 import org.meveo.model.jaxb.subscription.ErrorServiceInstance;
 import org.meveo.model.jaxb.subscription.ErrorSubscription;
 import org.meveo.model.jaxb.subscription.Errors;
@@ -39,6 +41,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.medina.impl.AccessService;
 
 @Stateless
 public class SubscriptionImportService {
@@ -64,6 +67,10 @@ public class SubscriptionImportService {
 
 	@Inject
 	ServiceInstanceService serviceInstanceService;
+	
+	
+	@Inject
+	AccessService accessService;
 	
 
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
@@ -300,6 +307,16 @@ public class SubscriptionImportService {
 					+ ", typeEntity:ServiceInstance, index:" + i
 					+ ", code:" + serviceInst.getCode()
 					+ ", status:Actived");
+		}
+		log.info("accessPoints.size="+checkSubscription.accessPoints.size());
+		for(Access accessPoint:checkSubscription.accessPoints){
+			org.meveo.model.mediation.Access access=new org.meveo.model.mediation.Access();
+			access.setSubscription(subscription);
+			access.setAccessUserId(accessPoint.getAccessUserId());
+			accessService.create(access,userJob,provider);
+			log.info("file:" + fileName
+					+ ", typeEntity:access, index:" + i
+					+ ", AccessUserId:" + access.getAccessUserId());
 		}
 		return 1;
 	}

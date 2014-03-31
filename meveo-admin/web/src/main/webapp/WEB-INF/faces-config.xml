@@ -645,18 +645,7 @@
 			<from-outcome>addNewUserAccountAction</from-outcome>
 			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
 			<redirect include-view-params="true">
-				<view-param>
-					<name>edit</name>
-					<value>true</value>
-				</view-param>
-				<view-param>
-					<name>backView</name>
-					<value>billingAccountDetail</value>
-				</view-param>
-				<!-- <view-param> -->tr
-				<!-- <name>billingAccountId</name> -->
-				<!-- <value>#{billingAccountBean.entity.id}</value> -->
-				<!-- </view-param> -->
+				
 			</redirect>
 		</navigation-case>
 			<navigation-case>

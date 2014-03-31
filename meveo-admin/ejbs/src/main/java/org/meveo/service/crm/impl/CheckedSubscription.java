@@ -12,4 +12,5 @@ public class CheckedSubscription {
 		 public UserAccount userAccount;
 		 public Subscription subscription;
 		 public List<org.meveo.model.jaxb.subscription.ServiceInstance> serviceInsts = new ArrayList<org.meveo.model.jaxb.subscription.ServiceInstance>();
+		 public List<org.meveo.model.jaxb.subscription.Access> accessPoints = new ArrayList<org.meveo.model.jaxb.subscription.Access>();
 }

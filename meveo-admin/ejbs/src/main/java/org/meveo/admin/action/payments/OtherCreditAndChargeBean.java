@@ -198,11 +198,14 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
     private void copyFromTemplate(OCCTemplate occ) {
         entity = new OtherCreditAndCharge();
         entity.setCustomerAccount(customerAccount);
-        entity.setOccCode(occ.getCode());
-        entity.setOccDescription(occ.getDescription());
-        entity.setAccountCode(occ.getAccountCode());
-        entity.setTransactionCategory(occ.getOccCategory());
-        entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
+        if(occ!=null){
+        	 entity.setOccCode(occ.getCode());
+             entity.setOccDescription(occ.getDescription());
+             entity.setAccountCode(occ.getAccountCode());
+             entity.setTransactionCategory(occ.getOccCategory());
+             entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
+        }
+       
         entity.setMatchingStatus(MatchingStatusEnum.O);
         entity.setDueDate(new Date());
         entity.setTransactionDate(new Date());

@@ -26,13 +26,8 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.AccountStatusEnum;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.BillingAccounts;
@@ -45,12 +40,8 @@ import org.meveo.model.jaxb.account.Warnings;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.shared.Address;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.AccountImportHistoService;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.base.AccountService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -60,7 +51,6 @@ import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.ImportWarningException;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -245,13 +235,12 @@ public class ImportAccountsJob implements Job {
 			i++;
 			int j = -1;
 			org.meveo.model.billing.BillingAccount billingAccount = null;
-			org.meveo.model.payments.CustomerAccount customerAccount = null;
 			boolean existBillingAccount = false;
 			try {
 				try {
 					billingAccount = billingAccountService.findByCode(
 							billAccount.getCode(), provider);
-					accountImportService.importBillingAccount(billingAccount, billAccount, provider, userJob);
+					billingAccount=accountImportService.importBillingAccount(billAccount, provider, userJob);
 					log.info("file6:" + fileName
 							+ ", typeEntity:BillingAccount, index:" + i
 							+ ", code:" + billAccount.getCode()
@@ -409,7 +398,7 @@ public class ImportAccountsJob implements Job {
 				.add(warningBillingAccount);
 	}
 
-	@SuppressWarnings("unused")
+	
 	private void createUserAccountWarning(
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {

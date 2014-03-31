@@ -106,13 +106,8 @@ public class InvoicingJob implements Job {
 						        int billableBA=0;
 						        for (BillingAccount billingAccount : billingAccounts) {
 						           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount.getId())){
-						        	   billingAccount=billingAccountService.findById(billingAccount.getId());//to avoid detached entity exception
-							   	        billingRun.getBillableBillingAccounts().add(billingAccount);
-							   	        ratedTransactionService.billingAccountTotalAmounts(billingAccount,entreprise);
-							   	        billingAccount.setBillingRun(billingRun);
-							   	        billingAccountService.update(billingAccount);
-							   	        
-							   	        billableBA++;
+						        	   billingRun=billingAccountService.updateBillingAccountTotalAmounts(billingAccount.getId(), billingRun, entreprise);
+								   	    billableBA++;
 						           }
 						        }
 						        billingRun.setBillingAccountNumber(billingAccounts.size());
@@ -161,45 +156,12 @@ public class InvoicingJob implements Job {
 
 	public void createAgregatesAndInvoice(BillingRun billingRun) throws BusinessException, Exception {
 		List<BillingAccount> billingAccounts=billingRun.getBillableBillingAccounts();
+		
 		 for (BillingAccount billingAccount : billingAccounts) {
-            BillingCycle billingCycle = billingRun.getBillingCycle();
-            if (billingCycle == null) {
-                billingCycle = billingAccount.getBillingCycle();
-            }
-            Invoice invoice = new Invoice();
-            invoice.setBillingAccount(billingAccount);
-            invoice.setBillingRun(billingRun);
-            invoice.setAuditable(billingRun.getAuditable());
-            invoice.setProvider(billingRun.getProvider());
-            Date invoiceDate = new Date();
-            invoice.setInvoiceDate(invoiceDate);
-
-            Integer delay = billingCycle.getDueDateDelay();
-            Date dueDate = invoiceDate;
-            if (delay != null) {
-                dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
-            }
-            invoice.setDueDate(dueDate);
-
-            invoice.setPaymentMethod(billingAccount.getPaymentMethod());
-            invoice.setProvider(billingRun.getProvider());
-            invoiceService.create(invoice);
-            ratedTransactionService.createInvoiceAndAgregates(billingRun, billingAccount,invoice);
-
-	        ratedTransactionService.updateRatedTransactions(billingRun, billingAccount,invoice);
-	        
-            StringBuffer num1 = new StringBuffer("000000000");
-            num1.append(invoice.getId() + "");
-            String invoiceNumber = num1.substring(num1.length() - 9);
-            int key = 0;
-            for (int i = 0; i < invoiceNumber.length(); i++) {
-                key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
-            }
-            invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
-            invoiceService.update(invoice);
-            
-	        
-               
+			Long startDate=System.currentTimeMillis();
+			invoiceService.createAgregatesAndInvoice(billingAccount, billingRun);
+			Long endDate=System.currentTimeMillis();
+            log.info("createAgregatesAndInvoice BR_ID="+billingRun.getId()+", BA_ID="+billingAccount.getId()+", Time en ms="+(endDate-startDate));
         }
 
          billingRun.setStatus(BillingRunStatusEnum.TERMINATED);

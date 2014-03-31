@@ -38,6 +38,7 @@ import javax.persistence.TemporalType;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentTermEnum;
 
 @Entity
 @Table(name = "BILLING_BILLING_ACCOUNT")
@@ -85,6 +86,10 @@ public class BillingAccount extends AccountEntity {
 	@Column(name = "PAYMENT_METHOD")
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod=PaymentMethodEnum.CHECK;
+	
+	@Column(name = "PAYMENT_TERM")
+	@Enumerated(EnumType.STRING)
+	private PaymentTermEnum paymentTerm;
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	// TODO : Add orphanRemoval annotation.
@@ -337,6 +342,16 @@ public class BillingAccount extends AccountEntity {
 	public void setBrAmountWithTax(BigDecimal brAmountWithTax) {
 		this.brAmountWithTax = brAmountWithTax;
 	}
+
+	public PaymentTermEnum getPaymentTerm() {
+		return paymentTerm;
+	}
+
+	public void setPaymentTerm(PaymentTermEnum paymentTerm) {
+		this.paymentTerm = paymentTerm;
+	}
+
+	
 	
 	
 }
