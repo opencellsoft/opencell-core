@@ -216,10 +216,24 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceActivation(getEntityManager(), serviceInstance,
 				amountWithoutTax, amountWithoutTax2, creator);
 	}
-
-	@SuppressWarnings("unused")
+	/**
+	 * Activate a service, the subscription charges are applied
+	 */
 	public void serviceActivation(EntityManager em,
 			ServiceInstance serviceInstance, BigDecimal amountWithoutTax,
+			BigDecimal amountWithoutTax2, User creator)
+			throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
+		serviceActivation(em,serviceInstance, true, amountWithoutTax,
+				 amountWithoutTax2,  creator);
+	}
+	
+	/**
+	 * Activate a service, the subscription charges can be applied or not
+	 */
+	@SuppressWarnings("unused")
+	public void serviceActivation(EntityManager em,
+			ServiceInstance serviceInstance, boolean applySubscriptionCharges,BigDecimal amountWithoutTax,
 			BigDecimal amountWithoutTax2, User creator)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
@@ -297,24 +311,28 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		// apply subscription charges
-		log.debug(
-				"serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}",
-				serviceInstance.getSubscriptionChargeInstances().size());
-		for (OneShotChargeInstance oneShotChargeInstance : serviceInstance
-				.getSubscriptionChargeInstances()) {
-			// oneShotChargeInstanceService.oneShotChargeApplication(em,
-			// subscription, oneShotChargeInstance,
-			// serviceInstance.getSubscriptionDate(),
-			// serviceInstance.getQuantity(), creator);
-			oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-			oneShotChargeInstance.setStatusDate(new Date());
-			oneShotChargeInstanceService.update(em, oneShotChargeInstance);
+		if(applySubscriptionCharges){
+			log.debug(
+					"serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}",
+					serviceInstance.getSubscriptionChargeInstances().size());
+			for (OneShotChargeInstance oneShotChargeInstance : serviceInstance
+					.getSubscriptionChargeInstances()) {
+				 oneShotChargeInstanceService.oneShotChargeApplication(em,
+				 subscription, oneShotChargeInstance,
+				 serviceInstance.getSubscriptionDate(),
+				 serviceInstance.getQuantity(), creator);
+				oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+				oneShotChargeInstance.setStatusDate(new Date());
+				oneShotChargeInstanceService.update(em, oneShotChargeInstance);
+			}
+		} else {
+			log.debug("serviceActivation: subscription charges are not applied");
 		}
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
-			// usageChargeInstanceService.activateUsageChargeInstance(em,
-			// usageChargeInstance);
+			 usageChargeInstanceService.activateUsageChargeInstance(em,
+			 usageChargeInstance);
 		}
 
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
