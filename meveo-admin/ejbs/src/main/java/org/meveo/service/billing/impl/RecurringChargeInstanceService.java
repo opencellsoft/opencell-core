@@ -16,6 +16,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class RecurringChargeInstanceService extends
 	@SuppressWarnings("unchecked")
 	public List<RecurringChargeInstance> findByStatus(
 			InstanceStatusEnum status, Date maxChargeDate) {
-		List<RecurringChargeInstance> recurringChargeInstances = null;
+		List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
 		try {
 			log.debug("start of find #0 by status (status={})) ..",
 					"RecurringChargeInstance", status);
