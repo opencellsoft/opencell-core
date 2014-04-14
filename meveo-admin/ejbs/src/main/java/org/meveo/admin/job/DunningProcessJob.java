@@ -205,4 +205,8 @@ public class DunningProcessJob implements Job {
 	        return inputHistory;
 	    } 
 
+		@Override
+		public JobExecutionService getJobExecutionService() {
+			return jobExecutionService;
+		}
 }

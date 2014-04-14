@@ -500,4 +500,8 @@ public class ImportSubscriptionsJob implements Job {
 				.add(errorServiceInstance);
 	}
 
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
+	}
 }

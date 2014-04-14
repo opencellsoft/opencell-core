@@ -42,7 +42,7 @@ public interface Job {
 	
 	public Collection<Timer> getTimers();
 
-	
+	public JobExecutionService getJobExecutionService();
     
     /*
      * those methods will be used later for asynchronous jobs

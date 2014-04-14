@@ -86,8 +86,6 @@ public class ImportAccountsJob implements Job {
 	@Inject
 	private ProviderService providerService;
 
-	@Inject
-	private TitleService titleService;
 
 	@Inject
 	TradingCountryService tradingCountryService;
@@ -503,5 +501,10 @@ public class ImportAccountsJob implements Job {
 	public Collection<Timer> getTimers() {
 		// TODO Auto-generated method stub
 		return timerService.getTimers();
+	}
+	
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
 	}
 }

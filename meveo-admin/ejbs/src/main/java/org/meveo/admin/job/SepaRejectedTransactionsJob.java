@@ -162,4 +162,10 @@ public class SepaRejectedTransactionsJob
   {
     return this.timerService.getTimers();
   }
+  
+
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
+	}
 }

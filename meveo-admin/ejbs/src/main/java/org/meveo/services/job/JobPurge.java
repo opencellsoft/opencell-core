@@ -13,7 +13,6 @@ import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
-
 import javax.inject.Inject;
 
 import org.jboss.solder.logging.Logger;
@@ -89,6 +88,12 @@ public class JobPurge implements Job {
 	public Collection<Timer> getTimers() {
 		// TODO Auto-generated method stub
 		return timerService.getTimers();
+	}
+	
+
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
 	}
 
 }

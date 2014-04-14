@@ -104,7 +104,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	public String updateTimer() {
@@ -117,7 +117,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 			return null;
 		}
 
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	public String deleteTimer() {// FIXME: throws BusinessException {
@@ -130,7 +130,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 			e.printStackTrace();
 		}
 
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	public String executeTimer() {
@@ -152,7 +152,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 			messages.error(new BundleKey("messages", "error.execution"));
 			return null;
 		}
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	/*
