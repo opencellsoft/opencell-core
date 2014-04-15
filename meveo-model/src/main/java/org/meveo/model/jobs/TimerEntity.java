@@ -43,7 +43,7 @@ public class TimerEntity extends BaseEntity {
 	@Column(name = "JOB_NAME",nullable=false)
 	private String jobName;
 
-	@Column(name = "TIMER_HANDLE",nullable=false)
+	@Column(name = "TIMER_HANDLE",nullable=false,length=1000)
 	private TimerHandle timerHandle;
 
 	@JoinColumn(name = "FOLLOWING_TIMER_ID")

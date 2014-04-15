@@ -204,7 +204,7 @@ public class ImportAccountsJob implements Job {
 		accountImportHisto.setExecutionDate(new Date());
 		accountImportHisto.setFileName(fileName);
 		User userJob = userService.findById(new Long(param
-				.getProperty("connectorCRM.userId")));
+				.getProperty("connectorCRM.userId","1")));
 		if (file.length() < 83) {
 			createBillingAccountWarning(null, "Fichier vide");
 			generateReport(fileName, provider);
@@ -338,7 +338,7 @@ public class ImportAccountsJob implements Job {
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		ErrorBillingAccount errorBillingAccount = new ErrorBillingAccount();
 		errorBillingAccount.setCause(cause);
 		errorBillingAccount.setCode(billAccount.getCode());
@@ -357,7 +357,7 @@ public class ImportAccountsJob implements Job {
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		ErrorUserAccount errorUserAccount = new ErrorUserAccount();
 		errorUserAccount.setCause(cause);
 		errorUserAccount.setCode(uAccount.getCode());
@@ -378,7 +378,7 @@ public class ImportAccountsJob implements Job {
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		WarningBillingAccount warningBillingAccount = new WarningBillingAccount();
 		warningBillingAccount.setCause(cause);
 		warningBillingAccount.setCode(billAccount == null ? "" : billAccount
@@ -400,7 +400,7 @@ public class ImportAccountsJob implements Job {
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		WarningUserAccount warningUserAccount = new WarningUserAccount();
 		warningUserAccount.setCause(cause);
 		warningUserAccount.setCode(uAccount.getCode());

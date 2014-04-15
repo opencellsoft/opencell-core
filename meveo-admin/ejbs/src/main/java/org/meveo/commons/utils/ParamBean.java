@@ -18,6 +18,7 @@ package org.meveo.commons.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
@@ -36,7 +37,7 @@ public class ParamBean {
 	/**
 	 * Save properties imported from the file
 	 */
-	private Properties properties;
+	private Properties properties=new Properties();
 
 	/**
 	 * Initialisation du Bean correcte.
@@ -60,6 +61,7 @@ public class ParamBean {
 	 */
 	private ParamBean(String name) {
 		super();
+		_propertyFile=name;
 		if (System.getProperty(name) != null) {
 			_propertyFile = System.getProperty(name);
 		} else {
@@ -73,6 +75,7 @@ public class ParamBean {
 						+ File.separator + name;
 			}
 		}
+		log.info("Created Parambean for file:"+_propertyFile);
 		setValid(initialize());
 	}
 
@@ -116,27 +119,7 @@ public class ParamBean {
 		return properties;
 	}
 
-	/**
-	 * Retourne une propriï¿½tï¿½ de l'application.
-	 * 
-	 * @param property_p
-	 *            Le nom de la propriï¿½tï¿½ ï¿½ rechercher
-	 * @return La valeur de la propriï¿½tï¿½ trouvï¿½e
-	 */
-	public String getProperty(String property_p) {
-		// if (getProperties().getProperty(property_p) == null)
-		// log.error("- getProperty : La propriete " + property_p
-		// + " n'est pas definie dans le fichier : " + _propertyFile);
-		return getProperties().getProperty(property_p);
-	}
 
-	public int getPropertyAsInt(String property) {
-		try {
-			return Integer.parseInt(getProperty(property));
-		} catch (NumberFormatException e) {
-			return 0;
-		}
-	}
 
 	/**
 	 * 
@@ -160,13 +143,21 @@ public class ParamBean {
 
 		boolean result = false;
 		FileInputStream propertyFile = null;
+		Properties pr = new Properties();
+		File file = new File(_propertyFile);
 		try {
-			Properties pr = new Properties();
-			pr.load(new FileInputStream(_propertyFile));
-			setProperties(pr);
-			result = true;
-		} catch (Exception e) {
-			e.printStackTrace();
+			if(file.createNewFile()){
+				setProperties(pr);
+				saveProperties(file);
+				result = true;
+			} else {
+				pr.load(new FileInputStream(_propertyFile));
+				setProperties(pr);
+				result = true;
+			}
+		} catch (IOException e1) {
+			log.error("Impossible to create :"+_propertyFile);
+			e1.printStackTrace();
 		} finally {
 			if (propertyFile != null) {
 				try {
@@ -222,7 +213,7 @@ public class ParamBean {
 	 * @return <code>true</code> si la sauvegarde a rï¿½ussi, <code>false</code>
 	 *         sinon
 	 */
-	public boolean saveProperties() {
+	public synchronized boolean saveProperties() {
 		return saveProperties(new File(_propertyFile));
 	}
 
@@ -252,19 +243,19 @@ public class ParamBean {
 				}
 			}
 		}
-		setInstance(new ParamBean(fileName));
+		//setInstance(new ParamBean(fileName));
 		// log.info("-Fin saveProperties , result:" + result);
 		return result;
 	}
 
 	public String getProperty(String key, String defaultValue) {
 		String result = null;
-		try {
-			result = getProperty(key);
-		} catch (Exception e) {
-		}
-		if (result == null) {
+		if(properties.containsKey(key)){
+			result = properties.getProperty(key);
+		} else {
 			result = defaultValue;
+			properties.put(key, defaultValue);
+			saveProperties();
 		}
 		return result;
 	}

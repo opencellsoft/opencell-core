@@ -91,7 +91,7 @@ public class SubscriptionImportService {
 									DateUtils.parseDateWithPattern(
 											subscrip.getStatus()
 													.getDate(),
-											param.getProperty("connectorCRM.dateFormat")),
+											param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")),
 									subscriptionTerminationType,
 									userJob);
 				log.info("file:" + fileName
@@ -111,13 +111,13 @@ public class SubscriptionImportService {
 		subscription.setDescription(subscrip.getDescription());
 		subscription.setSubscriptionDate(DateUtils
 				.parseDateWithPattern(subscrip.getSubscriptionDate(),
-						param.getProperty("connectorCRM.dateFormat")));
+						param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 		subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(
 				subscrip.getEndAgreementDate(),
-				param.getProperty("connectorCRM.dateFormat")));
+				param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 		subscription.setStatusDate(DateUtils.parseDateWithPattern(
 				subscrip.getStatus().getDate(),
-				param.getProperty("connectorCRM.dateFormat")));
+				param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
 		subscriptionService.create(subscription, userJob, provider);
@@ -139,7 +139,7 @@ public class SubscriptionImportService {
 				serviceInstance
 						.setSubscriptionDate(DateUtils.parseDateWithPattern(
 								serviceInst.getSubscriptionDate(),
-								param.getProperty("connectorCRM.dateFormat")));
+								param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 				int quantity = 1;
 				if (serviceInst.getQuantity() != null
 						&& serviceInst.getQuantity().trim().length() != 0) {

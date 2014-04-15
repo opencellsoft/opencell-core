@@ -77,8 +77,8 @@ public class Management implements Serializable {
 	 */
 	public void connect() {
 
-		String connectionUrl = paramBean.getProperty("connectionUrl");
-		int connectionPort = paramBean.getPropertyAsInt("connectionPort");
+		String connectionUrl = paramBean.getProperty("connectionUrl","127.0.0.1");
+		int connectionPort = Integer.parseInt(paramBean.getProperty("connectionPort","3000"));
 
 		connectionEstablished = false;
 		// open a socket connection

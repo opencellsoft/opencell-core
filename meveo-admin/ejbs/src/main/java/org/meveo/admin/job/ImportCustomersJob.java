@@ -233,7 +233,7 @@ public class ImportCustomersJob implements Job {
 		customerImportHisto.setExecutionDate(new Date());
 		customerImportHisto.setFileName(fileName);
 		User userJob = userService.findById(new Long(param
-				.getProperty("connectorCRM.userId")));
+				.getProperty("connectorCRM.userId","1")));
 		if (file.length() < 83) {
 			createSellerWarning(null, "File empty");
 			generateReport(fileName, provider);
@@ -465,7 +465,7 @@ public class ImportCustomersJob implements Job {
 	private void createSellerError(org.meveo.model.jaxb.customer.Seller sell,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		ErrorSeller errorSeller = new ErrorSeller();
 		errorSeller.setCause(cause);
 		errorSeller.setCode(sell.getCode());
@@ -482,7 +482,7 @@ public class ImportCustomersJob implements Job {
 	private void createCustomerError(org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		ErrorCustomer errorCustomer = new ErrorCustomer();
 		errorCustomer.setCause(cause);
 		errorCustomer.setCode(cust.getCode());
@@ -499,7 +499,7 @@ public class ImportCustomersJob implements Job {
 	private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		WarningSeller warningSeller = new WarningSeller();
 		warningSeller.setCause(cause);
 		warningSeller.setCode(sell == null ? "" : sell.getCode());
@@ -521,7 +521,7 @@ public class ImportCustomersJob implements Job {
 			org.meveo.model.jaxb.customer.CustomerAccount custAccount,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		ErrorCustomerAccount errorCustomerAccount = new ErrorCustomerAccount();
 		errorCustomerAccount.setCause(cause);
 		errorCustomerAccount.setCode(custAccount.getCode());
@@ -544,7 +544,7 @@ public class ImportCustomersJob implements Job {
 			org.meveo.model.jaxb.customer.CustomerAccount custAccount,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		WarningCustomerAccount warningCustomerAccount = new WarningCustomerAccount();
 		warningCustomerAccount.setCause(cause);
 		warningCustomerAccount.setCode(custAccount.getCode());

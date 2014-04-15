@@ -104,7 +104,7 @@ public class AccountOperationsGenerationJob implements Job {
 				}
 
 				try {
-					invoiceTemplate = oCCTemplateService.findByCode(paramBan.getProperty("accountOperationsGenerationJob.occCode"),customerAccount.getProvider().getCode());
+					invoiceTemplate = oCCTemplateService.findByCode(paramBan.getProperty("accountOperationsGenerationJob.occCode","FA_FACT"),customerAccount.getProvider().getCode());
 				} catch (Exception e) {
 					// TODO message fr|en
 					throw new ImportInvoiceException("Cannot found OCC Template for invoice");

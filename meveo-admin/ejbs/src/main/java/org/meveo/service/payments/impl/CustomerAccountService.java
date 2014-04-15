@@ -362,7 +362,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		try {
 			log.debug("closeCustomerAccount  update customerAccount ok");
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-			String codeOCCTemplate = param.getProperty("occ.codeOccCloseAccount");
+			String codeOCCTemplate = param.getProperty("occ.codeOccCloseAccount","CLOSE_ACC");
 			BigDecimal balanceDue = customerAccountBalanceDue(customerAccount, new Date());
 			if (balanceDue == null) {
 				log.warn("closeCustomerAccount balanceDue is null");
@@ -428,10 +428,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		try {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 			String occTransferAccountCredit = param
-					.getProperty("occ.templateTransferAccountCredit");
-			String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit");
-			String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom");
-			String descTransfertTo = paramBean.getProperty("occ.descTransfertFrom");
+					.getProperty("occ.templateTransferAccountCredit","TRANS_CRED");
+			String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit","TRANS_DEB");
+			String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom","transfer from");
+			String descTransfertTo = paramBean.getProperty("occ.descTransfertFrom","transfer from");
 
 			otherCreditAndChargeService.addOCC(occTransferAccountDebit, descTransfertFrom + " "
 					+ toCustomerAccount.getCode(), fromCustomerAccount, amount, new Date(), user);

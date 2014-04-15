@@ -514,7 +514,7 @@
 																</f:facet>
 																<h:outputText value="#{oneShotWalletOp.operationDate}">
 																	<f:convertDateTime
-																		pattern="#{paramBean.getProperty('meveo.dateFormat')}" />
+																		pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
 																</h:outputText>
 																</p:column>
 

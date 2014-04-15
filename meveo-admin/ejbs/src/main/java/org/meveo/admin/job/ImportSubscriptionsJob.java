@@ -168,7 +168,7 @@ public class ImportSubscriptionsJob implements Job {
 		subscriptionImportHisto.setExecutionDate(new Date());
 		subscriptionImportHisto.setFileName(fileName);
 		User userJob = userService.findById(new Long(param
-				.getProperty("connectorCRM.userId")));
+				.getProperty("connectorCRM.userId","1")));
 		if (file.length() < 100) {
 			createSubscriptionWarning(null, "Fichier vide");
 			generateReport(fileName, provider);
@@ -420,7 +420,7 @@ public class ImportSubscriptionsJob implements Job {
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		ErrorSubscription errorSubscription = new ErrorSubscription();
 		errorSubscription.setCause(cause);
 		errorSubscription.setCode(subscrip.getCode());
@@ -439,7 +439,7 @@ public class ImportSubscriptionsJob implements Job {
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			String cause) {
 		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject");
+				.getProperty("connectorCRM.generateFullCrmReject","true");
 		WarningSubscription warningSubscription = new WarningSubscription();
 		warningSubscription.setCause(cause);
 		warningSubscription.setCode(subscrip == null ? "" : subscrip.getCode());

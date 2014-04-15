@@ -48,8 +48,8 @@ public class DunningLotBuilder {
     private String fileName;
 
     public DunningLotBuilder(DunningLOT dunningLOT) {
-        this.fileName = paramBean.getProperty(DUNNING_LOT_FILENAME) + "_" + dunningLOT.getProvider().getCode() + "_" + dunningLOT.getActionType() + "_"
-                + dunningLOT.getId() + paramBean.getProperty(DUNNING_LOT_FILENAME_EXT);
+        this.fileName = paramBean.getProperty(DUNNING_LOT_FILENAME,"Dunning") + "_" + dunningLOT.getProvider().getCode() + "_" + dunningLOT.getActionType() + "_"
+                + dunningLOT.getId() + paramBean.getProperty(DUNNING_LOT_FILENAME_EXT,".csv");
         this.dunningLOT = dunningLOT;
     }
 
@@ -102,8 +102,8 @@ public class DunningLotBuilder {
             csv.appendValue(getNotNull(firstName));
             csv.appendValue(getNotNull(lastName)); 
             csv.appendValue(actionDunning.getRecordedInvoice().getReference());
-            csv.appendValue(NumberUtils.format(actionDunning.getAmountDue(),paramBean.getProperty(DECIMAL_FORMAT)));
-            csv.appendValue(NumberUtils.format(actionDunning.getRecordedInvoice().getAmount(),paramBean.getProperty(DECIMAL_FORMAT)));
+            csv.appendValue(NumberUtils.format(actionDunning.getAmountDue(),paramBean.getProperty(DECIMAL_FORMAT,"#,#00.0#")));
+            csv.appendValue(NumberUtils.format(actionDunning.getRecordedInvoice().getAmount(),paramBean.getProperty(DECIMAL_FORMAT,"#,#00.0#")));
             csv.appendValue(DateUtils.formatDateWithPattern(actionDunning.getRecordedInvoice().getInvoiceDate(), "dd/MM/yyyy"));
             csv.appendValue(DateUtils.formatDateWithPattern(actionDunning.getCreationDate(), "dd/MM/yyyy"));
             csv.appendValue("" + actionDunning.getFromLevel());
@@ -122,7 +122,7 @@ public class DunningLotBuilder {
 
             csv.startNewLine();
         }
-        csv.toFile(paramBean.getProperty(DUNNING_LOT_OUTPUT_DIR) + File.separator + fileName);
+        csv.toFile(paramBean.getProperty(DUNNING_LOT_OUTPUT_DIR,"/tmp/dunning/out/") + File.separator + fileName);
     }
 
     public String getFileName() {

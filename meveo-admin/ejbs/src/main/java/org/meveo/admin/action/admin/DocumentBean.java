@@ -69,8 +69,8 @@ public class DocumentBean implements Serializable {
 	private static String tmpPath = null;
 	static {
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-		savePath = param.getProperty("document.path");
-		tmpPath = param.getProperty("document.tmp.path");
+		savePath = param.getProperty("document.path","/tmp/docs");
+		tmpPath = param.getProperty("document.tmp.path","/tmp");
 	}
 	private String sortOrder = "desc";
 

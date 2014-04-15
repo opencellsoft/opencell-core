@@ -42,7 +42,7 @@
 	<cc:attribute name="validateRib" default="false" />
 	<cc:attribute name="validateEmail" default="false" />
 	<cc:attribute name="datePattern"
-		default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat'):paramBean.getProperty('meveo.dateFormat')}" />
+		default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
 	<cc:attribute name="edit"
 		default="#{cc.backingBeanFromParentOrCurrent.edit}" />
 	<cc:attribute name="minValue" default="0" />

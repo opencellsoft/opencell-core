@@ -130,9 +130,9 @@ public class Journal extends FileProducer implements Reporting {
 
 	public void export(Report report) {
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-		reportsFolder = param.getProperty("reportsURL");
-		separator = param.getProperty("reporting.accountingCode.separator");
-		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder");
+		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
+		separator = param.getProperty("reporting.accountingCode.separator",",");
+		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
 		templateFilename = jasperTemplatesFolder + "journal.jasper";
 		generateJournalFile(report.getProvider() == null ? null : report.getProvider().getCode(),
 				report.getStartDate(), report.getEndDate(), report.getOutputFormat());

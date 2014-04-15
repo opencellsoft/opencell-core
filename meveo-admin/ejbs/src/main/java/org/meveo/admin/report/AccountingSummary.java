@@ -140,8 +140,8 @@ public class AccountingSummary extends FileProducer implements Reporting {
 
     public void export(Report report) {
         ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-        reportsFolder = param.getProperty("reportsURL");
-        String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder");
+		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
+		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
         templateFilename = jasperTemplatesFolder + "accountingSummary.jasper";
         generateAccountingSummaryFile(report.getProvider() == null ? null : report.getProvider().getCode(), report
                 .getStartDate(), report.getEndDate(), report.getOutputFormat());

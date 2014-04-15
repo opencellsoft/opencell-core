@@ -92,9 +92,14 @@ public class InvoiceApi extends BaseApi {
 				&& !StringUtils.isBlank(invoiceDTO.getAmountWithoutTax())
 				&& !StringUtils.isBlank(invoiceDTO.getAmountWithTax())) {
         	 BillingAccount billingAccount=billingAccountService.findByCode(em,invoiceDTO.getBillingAccountCode(), provider);
-             String invoiceSubCategoryCode=paramBean.getProperty("invoiceSubCategory.code.default");
-             String taxCode=paramBean.getProperty("tax.code.default");
-             Tax tax=taxService.findByCode(em, taxCode);
+             
+        	 //FIXME : store that in SubCategoryInvoiceAgregateDto
+        	 String invoiceSubCategoryCode=paramBean.getProperty("invoiceSubCategory.code.default","");
+        	
+        	 //FIXME : store that in SubCategoryInvoiceAgregateDto
+        	 String taxCode=paramBean.getProperty("tax.code.default","");
+             
+        	 Tax tax=taxService.findByCode(em, taxCode);
              InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findByCode(em,invoiceSubCategoryCode);
              BillingRun br=new BillingRun();
              br.setStartDate(new Date());
