@@ -88,7 +88,6 @@ public class DocumentBean implements Serializable {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
-	@SuppressWarnings("unchecked")
 	@Produces
 	@Named("documents")
 	@ConversationScoped
@@ -113,7 +112,7 @@ public class DocumentBean implements Serializable {
 				documents.add(d);
 			}
 		}
-		Comparator comparator = null;
+		Comparator<Document> comparator = null;
 		if (sortOrder.equals("asc")) {
 			comparator = new DocumetCreateDateASCComparator();
 		} else {
@@ -245,12 +244,12 @@ public class DocumentBean implements Serializable {
 		this.toDate = toDate;
 	}
 
-	class DocumetCreateDateDESCComparator implements Comparator {
+	class DocumetCreateDateDESCComparator implements Comparator<Document> {
 
-		public int compare(Object d1, Object d2) {
-			if (((Document) d1).getCreateDate().before(((Document) d2).getCreateDate())) {
+		public int compare(Document d1, Document d2) {
+			if (d1.getCreateDate().before(d2.getCreateDate())) {
 				return 1;
-			} else if (((Document) d1).getCreateDate().equals(((Document) d2).getCreateDate())) {
+			} else if (d1.getCreateDate().equals(d2.getCreateDate())) {
 				return 0;
 			} else
 				return -1;
@@ -258,12 +257,12 @@ public class DocumentBean implements Serializable {
 
 	}
 
-	class DocumetCreateDateASCComparator implements Comparator {
+	class DocumetCreateDateASCComparator implements Comparator<Document> {
 
-		public int compare(Object d1, Object d2) {
-			if (((Document) d1).getCreateDate().before(((Document) d2).getCreateDate())) {
+		public int compare(Document d1, Document d2) {
+			if (d1.getCreateDate().before(d2.getCreateDate())) {
 				return -1;
-			} else if (((Document) d1).getCreateDate().equals(((Document) d2).getCreateDate())) {
+			} else if (d1.getCreateDate().equals(d2.getCreateDate())) {
 				return 0;
 			} else
 				return 1;

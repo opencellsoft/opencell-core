@@ -11,15 +11,11 @@ import javax.inject.Inject;
 import org.jboss.seam.security.Identity;
 import org.jboss.seam.security.permission.PermissionResolver;
 import org.meveo.model.security.Role;
-import org.slf4j.Logger;
 
 @Model
 public class MeveoPermissionResolver implements Serializable, PermissionResolver {
 
 	private static final long serialVersionUID = -7908760356168494113L;
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private Identity identity;

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Timer;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -14,7 +13,6 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.logging.Logger;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.util.pagination.PaginationDataModel;
@@ -32,13 +30,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 	TimerEntityService timerEntityservice;
 
 	@Inject
-	private Logger log;
-
-	@Inject
 	private Messages messages;
-
-	@Inject
-	private Conversation conversation;
 
 	private int pageSize = 20;
 	private PaginationDataModel<TimerEntity> timersDataModel;

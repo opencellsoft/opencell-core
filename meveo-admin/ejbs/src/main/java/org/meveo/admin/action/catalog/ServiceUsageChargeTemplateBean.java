@@ -20,11 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceUsageChargeTemplate;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.ServiceUsageChargeTemplateService;
 
 /** 

@@ -74,6 +74,7 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 	}
 
 	public OCCTemplate getDirectDebitOCCTemplate(String providerCode) {
+		@SuppressWarnings("unchecked")
 		List<OCCTemplate> occs= (List<OCCTemplate>) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
 				.setParameter("code",ParamBean.getInstance().getProperty(DDREQUEST_OCC_CODE)).setParameter("providerCode", providerCode).getResultList();
 		

@@ -17,12 +17,10 @@ package org.meveo.service.payments.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
-import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
 
 

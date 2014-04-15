@@ -30,9 +30,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -533,7 +531,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  qb.addSql("c.invoice is null");
          
 
-		  List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  @SuppressWarnings("unchecked")
+		List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
 		  return ratedTransactions.size()>0?true:false;
  
 		  
@@ -546,7 +545,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  qb.addCriterionEntity("c.invoice", invoice);
 		  qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
 
-		  List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  @SuppressWarnings("unchecked")
+		List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
 		  return ratedTransactions;
 
 		  

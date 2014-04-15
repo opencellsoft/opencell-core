@@ -58,7 +58,7 @@ public class JobService extends PersistenceService<Job> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@SuppressWarnings("unchecked")
 	public Map<String, Integer> getJobSchedulerInfo(int jobRepositoryId) {
-		Query query = dwhEntityManager.createNativeQuery(SELECT_JOB_INFO);
+		Query query = getEntityManager().createNativeQuery(SELECT_JOB_INFO);
 		query.setParameter("id", jobRepositoryId);
 		List<Object> list = query.getResultList();
 		Map<String, Integer> valuesMap = new HashMap<String, Integer>();
@@ -95,7 +95,7 @@ public class JobService extends PersistenceService<Job> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@SuppressWarnings({ "rawtypes" })
 	public Job getJobInfo(String jobName) {
-		Query query = dwhEntityManager.createNativeQuery(SELECT_JOB);
+		Query query = getEntityManager().createNativeQuery(SELECT_JOB);
 		query.setParameter("name", jobName);
 		List results = query.getResultList();
 		Job job = new Job();

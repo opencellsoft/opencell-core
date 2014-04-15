@@ -15,9 +15,6 @@
 */
 package org.meveo.admin.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.meveo.commons.utils.ParamBean;
 
 
@@ -46,7 +43,6 @@ public class ArConfig {
 	private static final String WORKING_THREADS = "bayad.workingThreadCount";
 
 	private static final String DUNNING_LOT_FILENAME = "bayad.dunning.lotFileName";
-	private static final String DUNNING_LOT_FILENAME_EXT = "bayad.dunning.lotFileName.extention";
 	private static final String DUNNING_BALANCE_FLAG = "bayad.dunning.blanceFlag";
 	private static final String DUNNING_OCC_CODE = "bayad.dunning.occCode";
 

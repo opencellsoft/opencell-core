@@ -37,7 +37,7 @@ public class ReportService extends PersistenceService<Report> {
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Object> getRows(String queryString) {
-		Query query = dwhEntityManager.createNativeQuery(queryString);
+		Query query = getEntityManager().createNativeQuery(queryString);
 		return query.getResultList();
 	}
 

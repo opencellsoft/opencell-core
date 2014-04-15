@@ -37,8 +37,8 @@ public class ReflectionUtils {
      *            Class name for which instance is created.
      * @return Instance of className.
      */
-    @SuppressWarnings("unchecked")
-    public static Object createObject(String className) {
+    @SuppressWarnings("rawtypes")
+	public static Object createObject(String className) {
         Object object = null;
         try {
             Class classDefinition = Class.forName(className);
@@ -69,7 +69,7 @@ public class ReflectionUtils {
      * @throws NoSuchFieldException
      * @throws SecurityException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static Object getPrivateField(Class clazz, Object instance, String fieldName)
             throws IllegalArgumentException, IllegalAccessException, SecurityException, NoSuchFieldException {
         final Field field = clazz.getDeclaredField(fieldName);
@@ -95,7 +95,7 @@ public class ReflectionUtils {
      * @throws NoSuchFieldException
      * @throws SecurityException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static void setPrivateField(Class clazz, Object instance, String fieldName, Object fieldValue)
             throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         final Field field = clazz.getDeclaredField(fieldName);

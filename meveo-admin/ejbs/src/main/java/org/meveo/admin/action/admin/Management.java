@@ -21,8 +21,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -68,11 +66,6 @@ public class Management implements Serializable {
 	 * machines. )
 	 */
 	private transient Socket socket = null;
-
-	/**
-	 * List of application logs.
-	 */
-	private List<String> logs = new ArrayList<String>();
 
 	/**
 	 * Is connection established flag.

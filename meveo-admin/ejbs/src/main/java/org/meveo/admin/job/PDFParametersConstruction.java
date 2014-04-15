@@ -52,7 +52,8 @@ public class PDFParametersConstruction{
             "reports/fonts.jar") });
 
   
-    public Map<String, Object> constructParameters(Invoice invoice) {
+    @SuppressWarnings("deprecation")
+	public Map<String, Object> constructParameters(Invoice invoice) {
         try {
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);

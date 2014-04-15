@@ -40,7 +40,6 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.util.MeveoDWHJpa;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 

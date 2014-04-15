@@ -231,7 +231,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	/**
 	 * Activate a service, the subscription charges can be applied or not
 	 */
-	@SuppressWarnings("unused")
 	public void serviceActivation(EntityManager em,
 			ServiceInstance serviceInstance, boolean applySubscriptionCharges,BigDecimal amountWithoutTax,
 			BigDecimal amountWithoutTax2, User creator)

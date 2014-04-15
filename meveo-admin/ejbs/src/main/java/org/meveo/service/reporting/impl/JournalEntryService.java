@@ -40,7 +40,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	public List<Object> getTaxRecodsBetweenDate(String providerCode, Date startDate, Date endDate) {
 		List<Object> result = null;
 		log.info("getTaxRecodsBetweenDate ( {}, {})", startDate, endDate);
-		Query query = dwhEntityManager
+		Query query = getEntityManager()
 				.createQuery(
 						"select a.taxCode, a.taxDescription, a.taxPercent, sum(amountWithoutTax) as amountWithoutTax,  sum(amountTax) as amountTax from "
 								+ getEntityClass().getSimpleName()
@@ -58,7 +58,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	public List<Object> getJournalRecords(String providerCode, Date startDate, Date endDate) {
 		List<Object> result = null;
 		log.info("getJournalRecords ( {}, {})", startDate, endDate);
-		Query query = dwhEntityManager
+		Query query = getEntityManager()
 				.createQuery(
 						"select a.type, a.invoiceDate, a.invoiceNumber,a.customerAccountCode, a.accountingCode, sum(a.amountWithoutTax),sum(a.amountTax),sum(a.amountWithTax) from "
 								+ getEntityClass().getSimpleName()
@@ -79,7 +79,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 	public List<Object> getSIMPACRecords(String providerCode, Date startDate, Date endDate) {
 		List<Object> result = null;
 		log.info("getSIMPACRecords( {}, {})", startDate, endDate);
-		Query query = dwhEntityManager
+		Query query = getEntityManager()
 				.createQuery(
 						"select a.type,a.accountingCode, sum(amountWithoutTax) as amountWithoutTax , sum(amountTax) as amountTax, sum(amountWithTax) as amountWithTax  from "
 								+ getEntityClass().getSimpleName()

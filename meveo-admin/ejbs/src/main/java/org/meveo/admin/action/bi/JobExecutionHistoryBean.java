@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.admin.DunningHistory;
 import org.meveo.model.bi.JobExecutionHisto;
 import org.meveo.model.bi.JobHistory;

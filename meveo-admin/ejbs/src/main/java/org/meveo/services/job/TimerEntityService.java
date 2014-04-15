@@ -72,6 +72,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		job.getJobExecutionService().getTimerEntityService().cleanTimers(job);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void cleanTimers(Job job){
 		String jobName=job.getClass().getSimpleName();
 		log.info("cleanTimer " + jobName);

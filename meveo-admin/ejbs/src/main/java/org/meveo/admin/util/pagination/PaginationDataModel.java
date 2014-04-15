@@ -52,7 +52,7 @@ public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arran
     private ArrangeableState arrangeableState;
     private int currentFirstRow = -1;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IPersistenceService service;
 
     private final List<Serializable> wrappedKeys = new LinkedList<Serializable>();
@@ -71,7 +71,7 @@ public class PaginationDataModel<T>extends ExtendedDataModel<T> implements Arran
      *            Persistence service for concrete entity implementation. For
      *            example {@link UsageTypeService}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public PaginationDataModel(IPersistenceService service) {
         this.service = service;
     }

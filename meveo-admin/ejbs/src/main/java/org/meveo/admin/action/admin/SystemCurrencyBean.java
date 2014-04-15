@@ -82,7 +82,6 @@ public class SystemCurrencyBean implements Serializable {
 	 * 
 	 * @return List of currencies.
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Currency> getCurrencies() {
 		return (List<Currency>) currencyService.list();
 	}

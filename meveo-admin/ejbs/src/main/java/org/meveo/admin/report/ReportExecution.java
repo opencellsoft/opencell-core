@@ -240,7 +240,6 @@ public class ReportExecution implements Serializable{
 	/**
 	 * Execute all reports from DB.
 	 */
-	@SuppressWarnings("unchecked")
 	public void reportsExecution() {
 		List<Report> reportList = (List<Report>) reportService.list();
 		Date date = new Date();

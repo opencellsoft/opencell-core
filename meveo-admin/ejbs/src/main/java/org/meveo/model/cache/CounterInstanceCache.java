@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.crm.Provider;
 
 /**
  * 

@@ -47,7 +47,6 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.ImportWarningException;
 import org.meveo.service.crm.impl.ProviderService;

@@ -120,7 +120,7 @@ public class SepaService
       ddRequestLOT.setInvoicesNumber(Integer.valueOf(invoices.size()));
       dDRequestLOTService.create(ddRequestLOT,user);
       List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
-      Map<CustomerAccount, List<RecordedInvoice>> customerAccountInvoices = new HashMap();
+      Map<CustomerAccount, List<RecordedInvoice>> customerAccountInvoices = new HashMap<CustomerAccount, List<RecordedInvoice>>();
       for (RecordedInvoice invoice : invoices) {
 			if (customerAccountInvoices.containsKey(invoice.getCustomerAccount())) {
 				customerAccountInvoices.get(invoice.getCustomerAccount()).add(invoice);
