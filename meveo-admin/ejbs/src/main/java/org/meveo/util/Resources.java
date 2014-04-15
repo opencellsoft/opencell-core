@@ -37,12 +37,12 @@ public class Resources {
 	@MeveoJpaForJobs
 	private EntityManagerFactory emfForJobs;
 
-	@ExtensionManaged
+/*	@ExtensionManaged
 	@ConversationScoped
 	@Produces
 	@PersistenceUnit(unitName = "MeveoDWH")
 	@MeveoDWHJpa
-	private EntityManagerFactory emfDwh;
+	private EntityManagerFactory emfDwh;*/
 
 	// @Produces
 	// @MeveoJpa

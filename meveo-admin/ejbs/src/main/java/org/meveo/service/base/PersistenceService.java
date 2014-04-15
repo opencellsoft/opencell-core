@@ -61,9 +61,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	private EntityManager emfForJobs;
 
 	// TODO move to places where it is needed
-	@Inject
+	/*@Inject
 	@MeveoDWHJpa
-	protected EntityManager dwhEntityManager;
+	protected EntityManager dwhEntityManager;*/
 
 	@Inject
 	private Conversation conversation;

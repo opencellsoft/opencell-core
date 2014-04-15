@@ -70,28 +70,7 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<id>schemagen</id>
-						<goals>
-							<goal>schemagen</goal>
-						</goals>
-					</execution>
-				</executions>
-
-				<configuration>
-					<includes>
-						<include>org/meveo/api/rest/*</include>
-						<include>org/meveo/asg/api/rest/*</include>
-					</includes>
-					<verbose>true</verbose>
-				</configuration>
-			</plugin>
-
+			
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.5</version>
