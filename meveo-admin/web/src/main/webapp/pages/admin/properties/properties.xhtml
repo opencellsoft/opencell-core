@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{paramActionBean.reset()}" />
+			<f:event type="preRenderView" listener="#{paramActionBean.preRenderView()}" />
 		</f:metadata>
 	</ui:define>
 
@@ -20,10 +20,11 @@
 				<h:outputText value="#{messages['properties.panel']}" />
 			</f:facet>
 			<h:form id="form">
+				<p:growl id="messages" showDetail="true"/>  
 				<p:dataTable id="properties" var="property"
 					value="#{paramActionBean.properties}" editable="true"
 					editMode="cell" widgetVar="propertiesTable">
-
+					 <p:ajax event="cellEdit" listener="#{paramActionBean.onCellEdit}" update=":form:messages" />  
 					<p:column headerText="#{messages['properties.key']}"
 						style="width:25%">
 						<h:outputText value="#{property.key}" />
@@ -42,7 +43,8 @@
 					</p:column>
 				</p:dataTable>
 				<p:commandButton action="#{paramActionBean.save}"
-					value="#{messages['action.save']}"></p:commandButton>
+					value="#{messages['action.save']}" ajax="false">
+				</p:commandButton>
 				<p:commandButton action="#{paramActionBean.reset}"
 					value="#{messages['action.reset']}" ajax="false"></p:commandButton>
 			</h:form>
