@@ -16,7 +16,6 @@
 package org.meveo.admin.jsf.validator;
 
 import java.math.BigDecimal;
-import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -26,6 +25,8 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
+
+import org.meveo.admin.util.ResourceBundle;
 
 /**
  * @author Gediminas Ubartas

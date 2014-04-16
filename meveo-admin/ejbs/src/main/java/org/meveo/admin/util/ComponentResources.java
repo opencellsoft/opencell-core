@@ -2,8 +2,6 @@ package org.meveo.admin.util;
 
 import java.io.Serializable;
 import java.util.Locale;
-import java.util.ResourceBundle;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -23,15 +21,19 @@ public class ComponentResources implements Serializable {
 
 	@Produces
 	public ResourceBundle getResourceBundle() {
-		ResourceBundle result = null;
-		if (FacesContext.getCurrentInstance() != null)
+		String bundleName="messages";
+		if (FacesContext.getCurrentInstance() != null){
 			try {
 				locale = FacesContext.getCurrentInstance().getViewRoot()
 						.getLocale();
 			} catch (Exception e) {
 			}
-		result = ResourceBundle.getBundle("messages", locale);
-		return result;
+			try {
+				bundleName=FacesContext.getCurrentInstance().getApplication().getMessageBundle();
+			} catch (Exception e) {
+			}
+		}
+		return new ResourceBundle(java.util.ResourceBundle.getBundle(bundleName, locale));
 	}
 
 	@Produces

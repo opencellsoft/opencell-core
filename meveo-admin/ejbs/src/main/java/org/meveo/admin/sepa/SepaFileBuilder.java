@@ -17,7 +17,6 @@ package org.meveo.admin.sepa;
 
 //import java.text.Normalizer;
 import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.ejb.LocalBean;
@@ -58,17 +57,10 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 
 
-
-/**
- * @author R.AITYAAZZA
- *
- */
 @Stateless @LocalBean
 public class SepaFileBuilder {
 
 	private static final Logger logger = Logger.getLogger(SepaFileBuilder.class.getName());
-	
-	ResourceBundle resource = ResourceBundle.getBundle("messages");
 
 
 	public void addHeader(CstmrDrctDbtInitn Message,  DDRequestLOT ddRequestLOT) throws Exception {

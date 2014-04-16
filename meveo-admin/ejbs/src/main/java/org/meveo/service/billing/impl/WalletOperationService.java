@@ -21,7 +21,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
@@ -33,6 +32,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;

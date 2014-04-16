@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.ParamProperty;
 import org.primefaces.component.datatable.DataTable;
@@ -31,6 +32,9 @@ public class ParamActionBean implements Serializable {
 	
 	@Inject
 	private org.slf4j.Logger log;
+	
+	@Inject
+	private transient ResourceBundle bundle;
 	
 	private ParamBean paramBean= ParamBean.getInstance();
 	
@@ -79,7 +83,7 @@ public class ParamActionBean implements Serializable {
 		}
 		paramBean.saveProperties();
 		reset();
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "success", "properties.save.successful");  
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("success"), bundle.getString("properties.save.successful"));  
         FacesContext.getCurrentInstance().addMessage(null, msg);  
 	}
 	
