@@ -132,11 +132,10 @@
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="terminationReasons"
 				value="#{messages['menu.terminationReason']}" />
-				
-			<p:menuitem id="properties"
+
+			<p:menuitem id="meveoProperties"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
-				outcome="properties"
-				value="#{messages['menu.properties']}" />
+				outcome="meveoProperties" value="#{messages['menu.properties']}" />
 
 			<!-- <p:menuitem id="titles" 
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
@@ -267,7 +266,7 @@
 
 				<p:menuitem id="usageChargeTemplates" outcome="usageChargeTemplates"
 					value="#{messages['menu.usageChargeTemplates']}" />
-					
+
 
 			</p:submenu>
 
@@ -276,7 +275,7 @@
 
 			<p:menuitem id="counterTemplates" outcome="counterTemplates"
 				value="#{messages['menu.counterTemplates']}" />
-				 	
+
 
 			<!--<p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
 				value="#{messages['menu.discountPlanMatrixes']}" />-->
@@ -434,19 +433,19 @@
 			</rich:menuItem>
 		</rich:dropDownMenu>
 		-->
-	    <p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
-				rendered="#{identity.hasPermission('billing','billingVisualization')}">
+		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
+			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
-				<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
-					value="#{messages['menu.globalExecution']}" />
+			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
+				value="#{messages['menu.globalExecution']}" />
 
-				<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
-					value="#{messages['menu.exceptionalInvoicing']}" />
+			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"
+				value="#{messages['menu.exceptionalInvoicing']}" />
 
-				<p:menuitem id="billingRuns" outcome="billingRuns"
-					value="#{messages['menu.billingRuns']}" />
+			<p:menuitem id="billingRuns" outcome="billingRuns"
+				value="#{messages['menu.billingRuns']}" />
 
-			</p:submenu>
+		</p:submenu>
 		<p:submenu id="billing"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}"
 			label="#{messages['menu.billing']}">
@@ -498,8 +497,8 @@
 
 			</p:submenu> -->
 
-		
-<!--
+
+			<!--
 			<p:submenu id="reports" label="#{messages['menu.reports']}"
 				rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
@@ -559,16 +558,20 @@
 			-->
 
 		</p:submenu>
-		
-		<p:submenu id="payment" label="#{messages['menu.payments']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
 
-		<p:menuitem id="dunningPlan" outcome="dunningPlans" value="#{messages['menu.dunningPlan']}" />
-        <p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />
-		<p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
+		<p:submenu id="payment" label="#{messages['menu.payments']}"
+			rendered="#{identity.hasPermission('billing','billingManagement')}">
+
+			<p:menuitem id="dunningPlan" outcome="dunningPlans"
+				value="#{messages['menu.dunningPlan']}" />
+			<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps"
+				value="#{messages['menu.ddrequestLotOp']}" />
+			<p:menuitem id="ddrequestLots" outcome="ddrequestLots"
+				value="#{messages['menu.ddrequestLot']}" />
 		</p:submenu>
-		
-		
-		
+
+
+
 
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}"
 			rendered="#{identity.hasPermission('reporting','reportingVisualization')}">

@@ -28,13 +28,21 @@
 			<if>#{identity.loggedIn}</if>
 			<to-view-id>/home.xhtml</to-view-id>
 		</navigation-case>
+
 		<navigation-case>
 			<from-action>#{identity.logout}</from-action>
 			<if>#{not(identity.loggedIn)}</if>
 			<to-view-id>/loginInternal.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>meveoProperties</from-outcome>
+			<to-view-id>/pages/admin/properties/properties.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>home</from-outcome>
@@ -110,12 +118,6 @@
 		</navigation-case>
 
 		<navigation-case>
-			<from-outcome>properties</from-outcome>
-			<to-view-id>/pages/admin/properties/properties.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-
-		<navigation-case>
 			<from-outcome>timers</from-outcome>
 			<to-view-id>/pages/admin/job/ejbTimers.xhtml</to-view-id>
 			<redirect />
@@ -141,7 +143,86 @@
 			<to-view-id>/pages/admin/userRoles/userRoleDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-
+		<navigation-case>
+			<from-outcome>medinaInputs</from-outcome>
+			<to-view-id>/pages/admin/medina/medinaInputs/medinaInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>medinaInputDetail</from-outcome>
+			<to-view-id>/pages/admin/medina/medinaInputs/medinaInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaInputs</from-outcome>
+			<to-view-id>/pages/admin/vertina/vertinaInputs/vertinaInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaInputDetail</from-outcome>
+			<to-view-id>/pages/admin/vertina/vertinaInputs/vertinaInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>oudayaInputs</from-outcome>
+			<to-view-id>/pages/admin/oudaya/oudayaInputs/oudayaInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>oudayaInputDetail</from-outcome>
+			<to-view-id>/pages/admin/oudaya/oudayaInputs/oudayaInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegDunningInputs</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegDunningInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegDunningInputDetail</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegDunningInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegValidatedInputs</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegValidatedInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegValidatedInputDetail</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegValidatedInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegConverterInputs</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegConverterInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>griegConverterInputDetail</from-outcome>
+			<to-view-id>/pages/admin/grieg/griegInputs/griegConverterInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bayadInvoicingInputs</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadInvoicingInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bayadInvoicingInputDetail</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadInvoicingInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bayadDunningInputs</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadDunningInputs.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bayadDunningInputDetail</from-outcome>
+			<to-view-id>/pages/admin/bayad/bayadInputs/bayadDunningInputDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
 
 
@@ -151,6 +232,46 @@
 		<!-- <redirect /> -->
 		<!-- </navigation-case> -->
 
+		<navigation-case>
+			<from-outcome>oudayaConfigurationDetail</from-outcome>
+			<to-view-id>/pages/admin/oudaya/configuration/oudayaConfigurationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>oudayaConfigurations</from-outcome>
+			<to-view-id>/pages/admin/oudaya/configuration/oudayaConfigurations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>medinaConfigurationDetail</from-outcome>
+			<to-view-id>/pages/admin/medina/configuration/medinaConfigurationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>medinaConfigurations</from-outcome>
+			<to-view-id>/pages/admin/medina/configuration/medinaConfigurations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaConfigurationDetail</from-outcome>
+			<to-view-id>/pages/admin/vertina/configuration/vertinaConfigurationDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaConfigurations</from-outcome>
+			<to-view-id>/pages/admin/vertina/configuration/vertinaConfigurations.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>medinaManagement</from-outcome>
+			<to-view-id>/pages/admin/medina/management/medinaManagement.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vertinaManagement</from-outcome>
+			<to-view-id>/pages/admin/vertina/management/vertinaManagement.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>taxes</from-outcome>
 			<to-view-id>/pages/admin/taxes/taxes.xhtml</to-view-id>
@@ -181,6 +302,36 @@
 		<navigation-case>
 			<from-outcome>documents</from-outcome>
 			<to-view-id>/pages/admin/documents/documents.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/accountImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/customerImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>subscriptionImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/subscriptionImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountImportHisto</from-outcome>
+			<to-view-id>/pages/admin/history/accountImportHistory.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dunningHisto</from-outcome>
+			<to-view-id>/pages/admin/history/dunningHistories.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>crmRejectedFiles</from-outcome>
+			<to-view-id>/pages/admin/history/crmConnectorRejectedFiles.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
@@ -502,29 +653,29 @@
 			<from-outcome>addNewUserAccountAction</from-outcome>
 			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
 			<redirect include-view-params="true">
-				
+
 			</redirect>
 		</navigation-case>
-			<navigation-case>
+		<navigation-case>
 			<from-outcome>addNewTransition</from-outcome>
 			<to-view-id>/pages/payments/dunning/dunningPlanTransitionDetail.xhtml </to-view-id>
-			<redirect include-view-params="true"> 
-			<view-param>
+			<redirect include-view-params="true">
+				<view-param>
 					<name>edit</name>
 					<value>true</value>
 				</view-param>
-			</redirect> 
+			</redirect>
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>addNewActionItem</from-outcome>
 			<to-view-id>/pages/payments/dunning/actionPlanItemDetail.xhtml </to-view-id>
-			<redirect include-view-params="true"> 
-			<view-param>
+			<redirect include-view-params="true">
+				<view-param>
 					<name>edit</name>
 					<value>true</value>
 				</view-param>
-			</redirect> 
+			</redirect>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>transferAccount</from-outcome>
@@ -650,7 +801,7 @@
 			<to-view-id>/pages/medina/access/accessDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>addNewSubscription</from-outcome>
 			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
@@ -730,6 +881,28 @@
 			<to-view-id>/pages/rating/usageTypes/usageTypeDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>matrixes</from-outcome>
+			<to-view-id>/pages/rating/matrixes/matrixes.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>matrixDetail</from-outcome>
+			<to-view-id>/pages/rating/matrixes/matrixDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>matrixEntries</from-outcome>
+			<to-view-id>/pages/rating/matrixEntries/matrixEntries.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>matrixEntryDetail</from-outcome>
+			<to-view-id>/pages/rating/matrixEntries/matrixEntryDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+
 
 		<!-- <navigation-case> -->
 		<!-- <from-outcome>pricePlanInstances</from-outcome> -->
