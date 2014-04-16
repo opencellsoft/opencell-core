@@ -34,9 +34,9 @@ public class GenerateImportXml {
      * @param args
      */
     /**************************configuration properties***********************************/
-    private static int count=1000;
+    private static int count=2000;
     private static int startIndex=1;
-    private static int BC_NUMBER=8;
+    private static int BC_NUMBER=2;
     private static String billingCyclePrefix="CYC_INV_MT";
 
     private static String customersFile="/tmp/CUSTOMERS.xml";
