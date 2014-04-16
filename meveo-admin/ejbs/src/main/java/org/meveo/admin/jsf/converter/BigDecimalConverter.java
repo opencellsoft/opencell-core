@@ -17,21 +17,16 @@ package org.meveo.admin.jsf.converter;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ResourceBundle;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Inject;
 
 
 @FacesConverter("bigDecimalConverter")
 public class BigDecimalConverter implements Converter {
 
-    @Inject
-    private ResourceBundle resourceMessages;
-    
 	private DecimalFormat format = new DecimalFormat("#,##0.00");
 	
 	@Override

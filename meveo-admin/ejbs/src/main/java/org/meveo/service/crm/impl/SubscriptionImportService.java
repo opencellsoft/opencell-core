@@ -2,8 +2,6 @@ package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -12,9 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.solder.logging.Logger;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.ImportSubscriptionsJob;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
@@ -23,18 +19,9 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.subscription.Access;
-import org.meveo.model.jaxb.subscription.AccessPoints;
-import org.meveo.model.jaxb.subscription.ErrorServiceInstance;
-import org.meveo.model.jaxb.subscription.ErrorSubscription;
-import org.meveo.model.jaxb.subscription.Errors;
-import org.meveo.model.jaxb.subscription.Subscriptions;
-import org.meveo.model.jaxb.subscription.WarningSubscription;
-import org.meveo.model.jaxb.subscription.Warnings;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -104,7 +91,7 @@ public class SubscriptionImportService {
 									DateUtils.parseDateWithPattern(
 											subscrip.getStatus()
 													.getDate(),
-											param.getProperty("connectorCRM.dateFormat")),
+											param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")),
 									subscriptionTerminationType,
 									userJob);
 				log.info("file:" + fileName
@@ -124,13 +111,13 @@ public class SubscriptionImportService {
 		subscription.setDescription(subscrip.getDescription());
 		subscription.setSubscriptionDate(DateUtils
 				.parseDateWithPattern(subscrip.getSubscriptionDate(),
-						param.getProperty("connectorCRM.dateFormat")));
+						param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 		subscription.setEndAgrementDate(DateUtils.parseDateWithPattern(
 				subscrip.getEndAgreementDate(),
-				param.getProperty("connectorCRM.dateFormat")));
+				param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 		subscription.setStatusDate(DateUtils.parseDateWithPattern(
 				subscrip.getStatus().getDate(),
-				param.getProperty("connectorCRM.dateFormat")));
+				param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
 		subscriptionService.create(subscription, userJob, provider);
@@ -152,7 +139,7 @@ public class SubscriptionImportService {
 				serviceInstance
 						.setSubscriptionDate(DateUtils.parseDateWithPattern(
 								serviceInst.getSubscriptionDate(),
-								param.getProperty("connectorCRM.dateFormat")));
+								param.getProperty("connectorCRM.dateFormat","dd/MM/yyyy")));
 				int quantity = 1;
 				if (serviceInst.getQuantity() != null
 						&& serviceInst.getQuantity().trim().length() != 0) {

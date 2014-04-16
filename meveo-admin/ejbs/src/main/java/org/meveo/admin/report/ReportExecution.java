@@ -152,7 +152,7 @@ public class ReportExecution implements Serializable{
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		StringBuilder sb = new StringBuilder(name);
 		sb.delete(name.length() - 4, name.length());
-		String reportsUrl = paramBean.getProperty("reportsURL");
+		String reportsUrl = paramBean.getProperty("reportsURL","/opt/jboss/files/reports/");
 		return reportsUrl + sb.toString() + df.format(date) + ".pdf";
 	}
 
@@ -240,7 +240,6 @@ public class ReportExecution implements Serializable{
 	/**
 	 * Execute all reports from DB.
 	 */
-	@SuppressWarnings("unchecked")
 	public void reportsExecution() {
 		List<Report> reportList = (List<Report>) reportService.list();
 		Date date = new Date();

@@ -17,7 +17,7 @@ import org.meveo.model.jaxb.customer.Name;
 import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jaxb.subscription.Access;
-import org.meveo.model.jaxb.subscription.AccessPoints;
+import org.meveo.model.jaxb.subscription.Accesses;
 import org.meveo.model.jaxb.subscription.ServiceInstance;
 import org.meveo.model.jaxb.subscription.Services;
 import org.meveo.model.jaxb.subscription.Status;
@@ -190,8 +190,8 @@ public class GenerateImportXml {
                   sub.setServices(services);
                   subscriptions.getSubscription().add(sub);
 
-                  AccessPoints accessPoints=new AccessPoints();
-                  sub.setAccessPoints(accessPoints);
+                  Accesses accessPoints=new Accesses();
+                  sub.setAccesses(accessPoints);
 
                   Access access1=new Access();
                   access1.setAccessUserId("MSISDN"+i);

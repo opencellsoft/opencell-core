@@ -16,7 +16,6 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -30,11 +29,9 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -55,10 +52,6 @@ public class AccountOperationsGenerationJob implements Job {
 	
 	@Inject
 	JobExecutionService jobExecutionService;
-
-
-	@Inject
-	private BillingRunService billingRunService;
 	
 	
 	@Inject
@@ -111,7 +104,7 @@ public class AccountOperationsGenerationJob implements Job {
 				}
 
 				try {
-					invoiceTemplate = oCCTemplateService.findByCode(paramBan.getProperty("accountOperationsGenerationJob.occCode"),customerAccount.getProvider().getCode());
+					invoiceTemplate = oCCTemplateService.findByCode(paramBan.getProperty("accountOperationsGenerationJob.occCode","FA_FACT"),customerAccount.getProvider().getCode());
 				} catch (Exception e) {
 					// TODO message fr|en
 					throw new ImportInvoiceException("Cannot found OCC Template for invoice");
@@ -221,6 +214,11 @@ public class AccountOperationsGenerationJob implements Job {
 		return timerService.getTimers();
 	}
 	
+
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
+	}
 
 
 }

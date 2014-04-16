@@ -15,6 +15,7 @@
  */
 package org.meveo.model.shared;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
@@ -27,6 +28,7 @@ import javax.validation.constraints.Size;
 import org.meveo.model.AuditableEntity;
 
 @Entity
+@Cacheable
 @Table(name = "ADM_TITLE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID",
 		"CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_TITLE_SEQ")

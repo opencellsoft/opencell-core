@@ -129,13 +129,13 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
             // Create a new entity from a rejectPayment template
         } else if ("loadFromTemplateRejectPayment".equals(initType.get())) {
-            String occTemplateRejectPaymentCode = paramBean.getProperty("occ.templateRejectPaymentCode");
+            String occTemplateRejectPaymentCode = paramBean.getProperty("occ.templateRejectPaymentCode","IP_PLVT");
             OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode, getCurrentProvider().getCode());
             copyFromTemplate(occ);
 
             // Create a new entity from a paymentCheck template
         } else if ("loadFromTemplatePaymentCheck".equals(initType.get())) {
-            String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode");
+            String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode","RG_CHQ");
             OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode, getCurrentProvider().getCode());
             copyFromTemplate(occ);
 

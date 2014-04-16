@@ -44,8 +44,6 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.ProviderService;
 
 @Named
 @ViewScoped
@@ -62,12 +60,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	private BillingRunService billingRunService;
 
 	@Inject
-	private InvoiceService invoiceService;
-
-	@Inject
-	private ProviderService providerService;
-
-	@Inject
 	@RequestParam
 	private Instance<Boolean> preReport;
 
@@ -80,7 +72,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	@Inject
 	private Messages messages;
 
-	private DataModel invoicesModel;
+	private DataModel<Invoice> invoicesModel;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -115,7 +107,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 						.generatePostInvoicingReports(billingRun);
 				billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
 			}
-			invoicesModel = new ListDataModel(billingRun.getInvoices());
+			invoicesModel = new ListDataModel<Invoice>(billingRun.getInvoices());
 
 		} catch (BusinessException e) {
 			log.error("Failed to initialize an object", e);
@@ -340,11 +332,11 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		}
 	}
 
-	public DataModel getInvoicesModel() {
+	public DataModel<Invoice> getInvoicesModel() {
 		return invoicesModel;
 	}
 
-	public void setInvoicesModel(DataModel invoicesModel) {
+	public void setInvoicesModel(DataModel<Invoice> invoicesModel) {
 		this.invoicesModel = invoicesModel;
 	}
 

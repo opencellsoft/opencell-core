@@ -40,7 +40,6 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.util.MeveoDWHJpa;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 
@@ -61,9 +60,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	private EntityManager emfForJobs;
 
 	// TODO move to places where it is needed
-	@Inject
+	/*@Inject
 	@MeveoDWHJpa
-	protected EntityManager dwhEntityManager;
+	protected EntityManager dwhEntityManager;*/
 
 	@Inject
 	private Conversation conversation;

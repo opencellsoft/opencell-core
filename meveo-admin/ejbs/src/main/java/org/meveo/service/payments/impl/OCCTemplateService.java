@@ -69,13 +69,14 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 	
 	public OCCTemplate getDunningOCCTemplate(String providerCode) throws Exception {
 		return (OCCTemplate) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
-				.setParameter("code", ParamBean.getInstance().getProperty(DUNNING_OCC_CODE)).setParameter("providerCode", providerCode).getSingleResult();
+				.setParameter("code", ParamBean.getInstance().getProperty(DUNNING_OCC_CODE,"DUNNING")).setParameter("providerCode", providerCode).getSingleResult();
 
 	}
 
 	public OCCTemplate getDirectDebitOCCTemplate(String providerCode) {
+		@SuppressWarnings("unchecked")
 		List<OCCTemplate> occs= (List<OCCTemplate>) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
-				.setParameter("code",ParamBean.getInstance().getProperty(DDREQUEST_OCC_CODE)).setParameter("providerCode", providerCode).getResultList();
+				.setParameter("code",ParamBean.getInstance().getProperty(DDREQUEST_OCC_CODE,"DD_OCC")).setParameter("providerCode", providerCode).getResultList();
 		
 		if(occs.size()>0){
 			return occs.get(0);

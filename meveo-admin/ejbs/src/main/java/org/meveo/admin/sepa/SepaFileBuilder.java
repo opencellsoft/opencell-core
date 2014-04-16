@@ -15,7 +15,7 @@
 */
 package org.meveo.admin.sepa;
 
-import java.text.Normalizer;
+//import java.text.Normalizer;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -48,7 +48,7 @@ import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.LclInstrm;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.SvcLvl;
 import org.meveo.admin.utils.ArConfig;
-import org.meveo.commons.utils.StringUtils;
+//import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -180,10 +180,10 @@ public class SepaFileBuilder {
 	}
 
 
-	private String enleverAccent(String value) {
+	/*private String enleverAccent(String value) {
 		if (StringUtils.isBlank(value)) {
 			return value;
 		}
 		return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
-	}
+	}*/
 }

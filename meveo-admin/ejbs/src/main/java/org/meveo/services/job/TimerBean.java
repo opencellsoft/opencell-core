@@ -15,13 +15,11 @@
  */
 package org.meveo.services.job;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.Timer;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
@@ -104,7 +102,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	public String updateTimer() {
@@ -117,7 +115,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 			return null;
 		}
 
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	public String deleteTimer() {// FIXME: throws BusinessException {
@@ -130,7 +128,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 			e.printStackTrace();
 		}
 
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	public String executeTimer() {
@@ -152,7 +150,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 			messages.error(new BundleKey("messages", "error.execution"));
 			return null;
 		}
-		return "/administration/job/jobs.xhtml?faces-redirect=true";
+		return "jobTimers";
 	}
 
 	/*

@@ -174,8 +174,8 @@ public class AgedBalance extends FileProducer implements Reporting {
 
 	public void export(Report report) {
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-		reportsFolder = param.getProperty("reportsURL");
-		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder");
+		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
+		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
 		templateFilename = jasperTemplatesFolder + "agedBalance.jasper";
 		generateAgedBalanceFile(report.getProvider() == null ? null : report.getProvider()
 				.getCode(), report.getSchedule(), report.getOutputFormat());

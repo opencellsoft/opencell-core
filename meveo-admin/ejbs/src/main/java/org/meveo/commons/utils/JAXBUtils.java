@@ -31,7 +31,7 @@ import javax.xml.bind.Unmarshaller;
 public class JAXBUtils {
 
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "rawtypes" )
     public static Object unmarshaller(Class clazz, File file) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(clazz);
         Unmarshaller unmarshaller = jc.createUnmarshaller();

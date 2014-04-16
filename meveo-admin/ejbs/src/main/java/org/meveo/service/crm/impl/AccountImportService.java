@@ -98,7 +98,7 @@ public class AccountImportService {
 			billingAccount.setSubscriptionDate(DateUtils
 					.parseDateWithPattern(billAccount
 							.getSubscriptionDate(), param
-							.getProperty("connectorCRM.dateFormat")));
+							.getProperty("connectorCRM.dateFormat","yyyy-MM-dd")));
 			billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 			billingAccount.setStatusDate(new Date());
 			billingAccount.setDescription(billAccount.getDescription());

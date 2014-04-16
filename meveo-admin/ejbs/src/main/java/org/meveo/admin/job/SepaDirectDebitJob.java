@@ -1,7 +1,6 @@
 package org.meveo.admin.job;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -142,4 +141,9 @@ public class SepaDirectDebitJob
   {
     return timerService.getTimers();
   }
+
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
+	}
 }

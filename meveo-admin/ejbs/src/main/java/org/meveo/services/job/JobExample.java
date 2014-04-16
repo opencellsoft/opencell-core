@@ -15,7 +15,6 @@ import javax.ejb.TimerService;
 
 import javax.inject.Inject;
 
-import org.jboss.solder.logging.Logger;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -34,9 +33,6 @@ public class JobExample implements Job {
 	
 	@Inject
 	JobExecutionService jobExecutionService;
-
-	@Inject
-	private Logger log;
 
 	@PostConstruct
 	public void init() {
@@ -90,6 +86,11 @@ public class JobExample implements Job {
 	public Collection<Timer> getTimers() {
 		// TODO Auto-generated method stub
 		return timerService.getTimers();
+	}
+
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
 	}
 
 }

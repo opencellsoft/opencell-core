@@ -131,4 +131,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		return getFindQuery(jobName, configuration).count(getEntityManager());
 	}
 
+	public TimerEntityService getTimerEntityService() {
+		return timerEntityService;
+	}
+
 }

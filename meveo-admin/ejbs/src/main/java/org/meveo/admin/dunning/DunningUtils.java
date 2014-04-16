@@ -17,13 +17,11 @@ package org.meveo.admin.dunning;
 
 import java.util.Date;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.User;
 import org.meveo.model.payments.DunningLevelEnum;
-import org.meveo.service.admin.impl.UserService;
 
 @Named
 public class DunningUtils {

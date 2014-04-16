@@ -30,7 +30,7 @@ import org.meveo.model.AuditableEntity;
  */
 @Entity
 @Table(name = "BILLING_INVOICE_CAT_COUNTRY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOIC_SUB_COUNTRY_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_COUNTRY_SEQ")
 public class InvoiceCategoryCountry extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 

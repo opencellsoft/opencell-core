@@ -197,8 +197,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
 	public void export(Report report) {
 		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-		reportsFolder = param.getProperty("reportsURL");
-		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder");
+		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
+		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
 		templateFilename = jasperTemplatesFolder + "accountingDetail.jasper";
 		accountOperationTransformationService = null;
 		customerAccountService = null; 

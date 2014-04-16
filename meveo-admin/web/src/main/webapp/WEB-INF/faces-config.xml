@@ -28,13 +28,21 @@
 			<if>#{identity.loggedIn}</if>
 			<to-view-id>/home.xhtml</to-view-id>
 		</navigation-case>
+
 		<navigation-case>
 			<from-action>#{identity.logout}</from-action>
 			<if>#{not(identity.loggedIn)}</if>
 			<to-view-id>/loginInternal.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>meveoProperties</from-outcome>
+			<to-view-id>/pages/admin/properties/properties.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>home</from-outcome>
@@ -645,40 +653,29 @@
 			<from-outcome>addNewUserAccountAction</from-outcome>
 			<to-view-id>/pages/billing/userAccounts/userAccountDetail.xhtml</to-view-id>
 			<redirect include-view-params="true">
-				<view-param>
-					<name>edit</name>
-					<value>true</value>
-				</view-param>
-				<view-param>
-					<name>backView</name>
-					<value>billingAccountDetail</value>
-				</view-param>
-				<!-- <view-param> -->tr
-				<!-- <name>billingAccountId</name> -->
-				<!-- <value>#{billingAccountBean.entity.id}</value> -->
-				<!-- </view-param> -->
+
 			</redirect>
 		</navigation-case>
-			<navigation-case>
+		<navigation-case>
 			<from-outcome>addNewTransition</from-outcome>
 			<to-view-id>/pages/payments/dunning/dunningPlanTransitionDetail.xhtml </to-view-id>
-			<redirect include-view-params="true"> 
-			<view-param>
+			<redirect include-view-params="true">
+				<view-param>
 					<name>edit</name>
 					<value>true</value>
 				</view-param>
-			</redirect> 
+			</redirect>
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>addNewActionItem</from-outcome>
 			<to-view-id>/pages/payments/dunning/actionPlanItemDetail.xhtml </to-view-id>
-			<redirect include-view-params="true"> 
-			<view-param>
+			<redirect include-view-params="true">
+				<view-param>
 					<name>edit</name>
 					<value>true</value>
 				</view-param>
-			</redirect> 
+			</redirect>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>transferAccount</from-outcome>
@@ -804,7 +801,7 @@
 			<to-view-id>/pages/medina/access/accessDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>addNewSubscription</from-outcome>
 			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>

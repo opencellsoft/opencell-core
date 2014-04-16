@@ -275,7 +275,7 @@ public class UserService extends PersistenceService<User> {
 
 	public void saveActivity(User user, String objectId, String action, String uri) {
 		// String sequenceValue = "ADM_USER_LOG_SEQ.nextval";
-		String sequenceValueTest = paramBean.getProperty("sequence.test");
+		String sequenceValueTest = paramBean.getProperty("sequence.test","false");
 		if (!sequenceValueTest.equals("true")) {
 
 			String stringQuery = "INSERT INTO ADM_USER_LOG (USER_NAME, USER_ID, DATE_EXECUTED, ACTION, URL, OBJECT_ID) VALUES ( ?, ?, ?, ?, ?, ?)";

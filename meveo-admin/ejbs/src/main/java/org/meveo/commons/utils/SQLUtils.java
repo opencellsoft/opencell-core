@@ -69,7 +69,7 @@ public final class SQLUtils {
      * @return Object array.
      * @throws SQLException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static Object[] getValuesAndCloseResultSet(ResultSet rs, Class... types) throws SQLException {
         try {
             if (rs.next()) {

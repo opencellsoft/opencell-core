@@ -15,8 +15,6 @@
 */
 package org.meveo.admin.job;
 
-import javax.persistence.Access;
-
 
 public class PdfGenratorConstants {
 

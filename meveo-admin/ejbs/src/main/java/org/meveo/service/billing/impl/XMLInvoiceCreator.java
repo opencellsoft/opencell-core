@@ -87,7 +87,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     RatedTransactionService ratedTransactionService;
 
-    public void createXMLInvoice(Invoice invoice, File billingRundir) throws BusinessException {
+    @SuppressWarnings("unchecked")
+	public void createXMLInvoice(Invoice invoice, File billingRundir) throws BusinessException {
         try {
             boolean entreprise = invoice.getProvider().isEntreprise();
 
@@ -176,7 +177,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             header.appendChild(billingAccountTag);
 
             if(billingAccount.getName()!=null && billingAccount.getName().getTitle()!=null){
-           	 Element company = doc.createElement("company");
+           	 //Element company = doc.createElement("company");
            	 Text companyTxt = doc.createTextNode(billingAccount.getName().getTitle().getIsCompany()+"");
                 billingAccountTag.appendChild(companyTxt);
            }
@@ -480,6 +481,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
     }
     
+	@SuppressWarnings("unchecked")
 	private  String  getMessageDescription(String messageCode,String languageCode){ 
 		String result="";
 		QueryBuilder qb = new QueryBuilder(CatMessages.class,"c");

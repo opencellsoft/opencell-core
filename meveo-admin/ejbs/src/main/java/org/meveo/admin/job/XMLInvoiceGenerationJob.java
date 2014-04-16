@@ -140,4 +140,8 @@ public class XMLInvoiceGenerationJob implements Job {
 		return timerService.getTimers();
 	}
 
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
+	}
 }

@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 
-import org.meveo.model.jaxb.customer.Sellers;
 
 
 /**

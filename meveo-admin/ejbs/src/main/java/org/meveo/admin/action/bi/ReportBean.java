@@ -19,13 +19,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.report.ReportExecution;
-import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;

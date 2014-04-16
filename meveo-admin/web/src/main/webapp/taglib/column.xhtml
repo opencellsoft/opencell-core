@@ -37,12 +37,12 @@
 
 	<c:if test="${time}">
 		<c:set var="datePattern"
-			value="#{paramBean.getProperty('meveo.dateTimeFormat')}" />
+			value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
 	</c:if>
 
 	<c:if test="${!time}">
 		<c:set var="datePattern"
-			value="#{paramBean.getProperty('meveo.dateFormat')}" />
+			value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
 	</c:if>
 
 	<c:if test="${empty isList}">

@@ -59,7 +59,6 @@ public class UserActionsLoggingFilter /*extends AbstractFilter*/ {
     }
 
     public void output(User user, String objectId, String edit, String uri) {
-        String action = "";
         if (uri.endsWith("jsf") && (user != null)) {
             
             // TODO

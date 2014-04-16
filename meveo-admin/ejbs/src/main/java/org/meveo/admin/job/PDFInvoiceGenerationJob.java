@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
@@ -121,4 +119,8 @@ public class PDFInvoiceGenerationJob implements Job {
 		return timerService.getTimers();
 	}
 
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
+	}
 }

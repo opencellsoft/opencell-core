@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
     "status",
     "description",
     "services",
-    "accessPoints"
+    "accesses"
 })
 @XmlRootElement(name = "subscription")
 public class Subscription {
@@ -75,13 +75,13 @@ public class Subscription {
     protected Status status;
     protected String description;
     protected Services services;
-    protected AccessPoints accessPoints;
     @XmlAttribute(name = "code")
     protected String code;
     @XmlAttribute(name = "userAccountId")
     protected String userAccountId;
     @XmlAttribute(name = "offerCode")
     protected String offerCode;
+    protected Accesses accesses;
 
     /**
      * Gets the value of the subscriptionDate property.
@@ -275,14 +275,12 @@ public class Subscription {
         this.offerCode = value;
     }
 
-	public AccessPoints getAccessPoints() {
-		return accessPoints;
+	public Accesses getAccesses() {
+		return accesses;
 	}
 
-	public void setAccessPoints(AccessPoints accessPoints) {
-		this.accessPoints = accessPoints;
+	public void setAccesses(Accesses value){
+		this.accesses=value;
 	}
     
-    
-
 }

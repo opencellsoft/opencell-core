@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.security.Identity;
-import org.meveo.model.billing.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.MeveoUser;
 

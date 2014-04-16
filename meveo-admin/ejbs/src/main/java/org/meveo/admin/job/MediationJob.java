@@ -233,4 +233,9 @@ public class MediationJob implements Job {
 		// TODO Auto-generated method stub
 		return timerService.getTimers();
 	}
+
+	@Override
+	public JobExecutionService getJobExecutionService() {
+		return jobExecutionService;
+	}
 }

@@ -55,13 +55,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "errorSubscription",
-    "errorServiceInstance"
+    "errorServiceInstance",
+    "errorAccess"
 })
 @XmlRootElement(name = "errors")
 public class Errors {
 
     protected List<ErrorSubscription> errorSubscription;
     protected List<ErrorServiceInstance> errorServiceInstance;
+    protected List<ErrorAccess> errorAccess;
 
     /**
      * Gets the value of the errorSubscription property.
@@ -119,6 +121,13 @@ public class Errors {
             errorServiceInstance = new ArrayList<ErrorServiceInstance>();
         }
         return this.errorServiceInstance;
+    }
+
+    public List<ErrorAccess> getErrorAccess() {
+        if (errorAccess == null) {
+        	errorAccess = new ArrayList<ErrorAccess>();
+        }
+        return this.errorAccess;
     }
 
 }

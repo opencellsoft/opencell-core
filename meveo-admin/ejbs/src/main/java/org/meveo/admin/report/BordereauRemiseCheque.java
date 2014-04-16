@@ -93,7 +93,7 @@ public class BordereauRemiseCheque {
 		parameters.put("date", new Date());
 		String providerCode = currentProvider.getCode();
 
-		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes").split(",");
+		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes","RG_CHQ,RG_CHQNI").split(",");
 		try {
 			jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
 			File dataSourceFile = generateDataFile(occCodes);
@@ -194,7 +194,7 @@ public class BordereauRemiseCheque {
 		sb.append(df.format(this.date));
 		sb.append(".pdf");
 		
-		String reportsUrl = paramBean.getProperty("reportsURL");
+		String reportsUrl = paramBean.getProperty("reportsURL","/opt/jboss/files/reports/");
 		return reportsUrl + sb.toString();
 	}
 

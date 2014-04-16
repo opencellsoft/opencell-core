@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.ApplicationTypeEnum;
@@ -148,7 +149,8 @@ public class RatingService {
 			BigDecimal taxPercent, BigDecimal discountPercent,
 			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
 			String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode)
+			throws BusinessException {
 		return prerateChargeApplication(entityManager, code, subscriptionDate,
 				chargeInstance, applicationType, applicationDate,
 				amountWithoutTax, amountWithTax, quantity, tCurrency,
@@ -166,7 +168,8 @@ public class RatingService {
 			BigDecimal taxPercent, BigDecimal discountPercent,
 			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
 			String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode)
+			throws BusinessException {
 
 		WalletOperation result = new WalletOperation();
 
@@ -213,7 +216,8 @@ public class RatingService {
 			BigDecimal taxPercent, BigDecimal discountPercent,
 			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
 			String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode)
+			throws BusinessException {
 		return rateChargeApplication(entityManager, code, subscription,
 				chargeInstance, applicationType, applicationDate,
 				amountWithoutTax, amountWithTax, quantity, tCurrency,
@@ -231,7 +235,8 @@ public class RatingService {
 			BigDecimal taxPercent, BigDecimal discountPercent,
 			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
 			String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode) {
+			Date startdate, Date endDate, ChargeApplicationModeEnum mode)
+			throws BusinessException {
 		Date subscriptionDate = null;
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
@@ -247,16 +252,18 @@ public class RatingService {
 				criteria3, startdate, endDate, mode);
 
 		result.setWallet(subscription.getUserAccount().getWallet());
-		String chargeInstnceLabel=null;
-		try{
-			String languageCode = subscription.getUserAccount().getBillingAccount()
-					.getTradingLanguage().getLanguage().getLanguageCode();
+		String chargeInstnceLabel = null;
+		try {
+			String languageCode = subscription.getUserAccount()
+					.getBillingAccount().getTradingLanguage().getLanguage()
+					.getLanguageCode();
 			CatMessages catMessage = catMessagesService.getCatMessages(
 					chargeInstance.getClass().getSimpleName() + "_"
 							+ chargeInstance.getId(), languageCode);
 			chargeInstnceLabel = catMessage != null ? catMessage
 					.getDescription() : null;
-		} catch(Exception e){}
+		} catch (Exception e) {
+		}
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
 				: chargeInstance.getDescription());
 
@@ -265,7 +272,8 @@ public class RatingService {
 
 	public void rateBareWalletOperation(WalletOperation bareWalletOperation,
 			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax,
-			Long countryId, TradingCurrency tcurrency, Provider provider) {
+			Long countryId, TradingCurrency tcurrency, Provider provider)
+			throws BusinessException {
 		rateBareWalletOperation(entityManager, bareWalletOperation,
 				unitPriceWithoutTax, unitPriceWithTax, countryId, tcurrency,
 				provider);
@@ -275,7 +283,8 @@ public class RatingService {
 	public void rateBareWalletOperation(EntityManager em,
 			WalletOperation bareWalletOperation,
 			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax,
-			Long countryId, TradingCurrency tcurrency, Provider provider) {
+			Long countryId, TradingCurrency tcurrency, Provider provider)
+			throws BusinessException {
 
 		PricePlanMatrix ratePrice = null;
 		String providerCode = provider.getCode();
@@ -305,7 +314,7 @@ public class RatingService {
 					bareWalletOperation.getSeller() != null ? bareWalletOperation
 							.getSeller().getId() : null);
 			if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
-				throw new RuntimeException("invalid price plan for provider "
+				throw new BusinessException("Invalid price plan for provider "
 						+ providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
 			} else {

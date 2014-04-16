@@ -55,7 +55,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 	 public void createDunningLOTAndCsvFile(List<ActionDunning> listActionDunning,DunningHistory dunningHistory,Provider provider) throws Exception {
 	        logger.info("createDunningLOTAndCsvFile ...");        
 	     
-	        User systemUser=userService.findById(Long.valueOf(ParamBean.getInstance().getProperty(USER_SYSTEM_ID)));
+	        User systemUser=userService.findById(Long.valueOf(ParamBean.getInstance().getProperty(USER_SYSTEM_ID,"1")));
 
 	        if (listActionDunning != null && !listActionDunning.isEmpty()) {
 	            for (DunningActionTypeEnum actionType : DunningActionTypeEnum.values()) {

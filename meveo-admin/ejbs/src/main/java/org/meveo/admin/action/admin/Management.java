@@ -21,8 +21,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -70,11 +68,6 @@ public class Management implements Serializable {
 	private transient Socket socket = null;
 
 	/**
-	 * List of application logs.
-	 */
-	private List<String> logs = new ArrayList<String>();
-
-	/**
 	 * Is connection established flag.
 	 */
 	private boolean connectionEstablished;
@@ -84,8 +77,8 @@ public class Management implements Serializable {
 	 */
 	public void connect() {
 
-		String connectionUrl = paramBean.getProperty("connectionUrl");
-		int connectionPort = paramBean.getPropertyAsInt("connectionPort");
+		String connectionUrl = paramBean.getProperty("connectionUrl","127.0.0.1");
+		int connectionPort = Integer.parseInt(paramBean.getProperty("connectionPort","3000"));
 
 		connectionEstablished = false;
 		// open a socket connection

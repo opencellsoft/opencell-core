@@ -56,8 +56,13 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 	@EJB
 	private WalletOperationService chargeApplicationService;
 
-	@SuppressWarnings("unchecked")
 	public P findByCodeAndService(String code, Long subscriptionId) {
+		return findByCodeAndService(getEntityManager(), code, subscriptionId);
+	}
+
+	@SuppressWarnings("unchecked")
+	public P findByCodeAndService(EntityManager em, String code,
+			Long subscriptionId) {
 		P chargeInstance = null;
 		try {
 			log.debug("start of find {} by code (code={}) ..",
@@ -65,8 +70,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 			QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-			chargeInstance = (P) qb.getQuery(getEntityManager())
-					.getSingleResult();
+			chargeInstance = (P) qb.getQuery(em).getSingleResult();
 			log.debug(
 					"end of find {} by code (code={}). Result found={}.",
 					new Object[] { "OCCTemplate", code, chargeInstance != null });
@@ -94,7 +98,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		if (serviceInst == null) {
 			throw new BusinessException("service instance does not exist.");
 		}
-		
+
 		if (serviceInst.getStatus() == InstanceStatusEnum.CANCELED
 				|| serviceInst.getStatus() == InstanceStatusEnum.TERMINATED
 				|| serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
@@ -104,15 +108,15 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		}
 
 		RecurringChargeInstance chargeInst = (RecurringChargeInstance) recurringChargeInstanceService
-				.findByCodeAndService(chargeCode, serviceInst.getId());
-		
+				.findByCodeAndService(em, chargeCode, serviceInst.getId());
+
 		if (chargeInst != null) {
 			throw new BusinessException(
 					"charge instance code already exists. code=" + chargeCode);
 		}
-		
+
 		RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
-				.findByCode(chargeCode, serviceInst.getProvider());
+				.findByCode(em, chargeCode, serviceInst.getProvider());
 		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
 		chargeInstance.setCode(chargeCode);
 		chargeInstance.setDescription(recurringChargeTemplate.getDescription());
@@ -129,13 +133,20 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		chargeInstance.setCurrency(serviceInst.getSubscription()
 				.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency());
-		
+
 		recurringChargeInstanceService.create(em, chargeInstance, creator,
 				recurringChargeTemplate.getProvider());
 	}
 
 	public void recurringChargeDeactivation(long recurringChargeInstanId,
 			Date terminationDate, User updater) throws BusinessException {
+		recurringChargeDeactivation(getEntityManager(),
+				recurringChargeInstanId, terminationDate, updater);
+	}
+
+	public void recurringChargeDeactivation(EntityManager em,
+			long recurringChargeInstanId, Date terminationDate, User updater)
+			throws BusinessException {
 
 		RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService
 				.findById(recurringChargeInstanId, true);
@@ -150,7 +161,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		// chargeApplicationService.cancelChargeApplications(recurringChargeInstanId,
 		// null, updater);
 
-		recurringChargeInstanceService.update(recurringChargeInstance, updater);
+		recurringChargeInstanceService.update(em, recurringChargeInstance,
+				updater);
 
 	}
 

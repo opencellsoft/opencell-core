@@ -16,6 +16,7 @@
 package org.meveo.services.job;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,10 +28,12 @@ import javax.inject.Inject;
 import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 
@@ -44,7 +47,11 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	
 	@Inject
 	ProviderService providerService;
+	
+	static ParamBean paramBean = ParamBean.getInstance();
 
+	static Long defaultProviderId = Long.parseLong(paramBean.getProperty("jobs.autoStart.providerId", "1"));
+	
 	/**
 	 * Used by job instance classes to register themselves to the timer service
 	 * 
@@ -62,13 +69,73 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			throw new RuntimeException(job.getClass().getSimpleName() + " already registered.");
 		}
 		jobEntries.put(job.getClass().getSimpleName(), job);
+		job.getJobExecutionService().getTimerEntityService().cleanTimers(job);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void cleanTimers(Job job){
+		String jobName=job.getClass().getSimpleName();
+		log.info("cleanTimer " + jobName);
+		List<TimerHandle> timerHandles=new ArrayList<TimerHandle>();
+		Collection<Timer> timers = job.getTimers();
+		if(timers!=null){
+			log.debug("cleanTimer found " + timers.size()+" ejb timers");
+			for(Timer timer : timers){
+				TimerEntity timerEntity = findByTimerHandle(timer.getHandle());
+				if(timerEntity==null){
+					log.warn("EJB timer as no counterPart in database, we cancel the timer");
+					timer.cancel();
+				}
+				else {
+					timerHandles.add(timer.getHandle());
+				}
+			}
+		}
+		String sql = "select distinct t from TimerEntity t";
+		QueryBuilder qb = new QueryBuilder(sql);// FIXME: .cacheable();
+		qb.addCriterion("t.jobName", "=",jobName,false);
+		List<TimerEntity> timerEntities = qb.find(getEntityManager());
+		if(timerEntities!=null){
+			log.debug("cleanTimer found " + timers.size()+" timer entities in database");
+			for(TimerEntity timerEntity :timerEntities){
+				if(!timerHandles.contains(timerEntity.getTimerHandle())){
+					log.warn("Database timer as no counterPart in EJB, we delete it from the database");
+					timerHandles.remove(timerEntity.getTimerHandle());
+					super.remove(timerEntity);
+				}
+			}
+		}
+		//now if there is no timer and it is set in the properties that we must start one, then we start one
+		String scheduleProperty = paramBean.getProperty("jobs.autoStart."+jobName, "");
+		if(timerHandles.size()==0 && scheduleProperty.trim().length()>0){
+			TimerEntity entity=new TimerEntity();
+			entity.setName(jobName+"_auto");
+			entity.setJobName(jobName);
+			String[] values = scheduleProperty.split(" ");
+			if(values!=null && values.length==7){
+				entity.setYear(values[6]);
+				entity.setMonth(values[5]);
+				entity.setDayOfMonth(values[4]);
+				entity.setDayOfWeek(values[3]);
+				entity.setHour(values[2]);
+				entity.setMinute(values[1]);
+				entity.setSecond(values[0]);
+				entity.setInfo(new TimerInfo());
+				entity.setProvider(providerService.findById(defaultProviderId));
+				create(entity);
+				log.warn("Timer as no instance and was started automatically.");
+			} else {
+				log.error("incorrect schedule Porperty jobs.autoStart."+jobName+"="+scheduleProperty);
+			}
+		}
+	}
+
 
 	public void create(TimerEntity entity) {// FIXME: throws BusinessException{
 		if (jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
 			entity.getInfo().setJobName(entity.getJobName());
-			entity.getInfo().setProviderId(getCurrentProvider().getId());
+			entity.getInfo().setProviderId(getCurrentProvider()==null?defaultProviderId:getCurrentProvider().getId());
 			if(entity.getFollowingTimer()!=null){
 				entity.getInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
 			}

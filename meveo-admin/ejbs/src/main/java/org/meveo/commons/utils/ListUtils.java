@@ -38,8 +38,8 @@ public final class ListUtils {
      * @param collection Collection to check.
      * @return True if collection is empty.
      */
-    @SuppressWarnings("unchecked")
-    public static boolean isEmtyCollection(Collection collection) {
+    @SuppressWarnings("rawtypes")
+	public static boolean isEmtyCollection(Collection collection) {
         return collection == null || collection.size() == 0;
     }
 }

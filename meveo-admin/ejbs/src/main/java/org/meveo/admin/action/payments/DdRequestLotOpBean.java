@@ -15,27 +15,19 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.Date;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.DunningPlan;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.payments.impl.ActionPlanItemService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
-import org.meveo.service.payments.impl.DunningPlanService;
 
 /**
  * Standard backing bean for {@link ActionPlanItem} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
@@ -48,12 +40,6 @@ import org.meveo.service.payments.impl.DunningPlanService;
 public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Injected @{link ActionPlanItem} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private ActionPlanItemService actionPlanItemService;
 
     @Inject
     private DDRequestLotOpService ddRequestLotOpService; 
