@@ -9,6 +9,7 @@
 		<jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
 
 		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.cache.use_second_level_cache"
@@ -149,6 +150,7 @@
 
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="@hibernateDWH.hbm2ddl.auto@" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.cache.use_second_level_cache"
 				value="true" />
