@@ -132,6 +132,11 @@
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="terminationReasons"
 				value="#{messages['menu.terminationReason']}" />
+				
+			<p:menuitem id="properties"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				outcome="properties"
+				value="#{messages['menu.properties']}" />
 
 			<!-- <p:menuitem id="titles" 
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"

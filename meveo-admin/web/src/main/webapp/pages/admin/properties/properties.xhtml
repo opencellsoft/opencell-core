@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{paramActionBean.reset()}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+
+	<ui:define name="body">
+		<p:panel>
+			<f:facet name="header">
+				<h:outputText value="#{messages['properties.panel']}" />
+			</f:facet>
+			<h:form id="form">
+				<p:dataTable id="properties" var="property"
+					value="#{paramActionBean.properties}" editable="true"
+					editMode="cell" widgetVar="propertiesTable">
+
+					<p:column headerText="#{messages['properties.key']}"
+						style="width:25%">
+						<h:outputText value="#{property.key}" />
+					</p:column>
+					<p:column headerText="#{messages['properties.value']}"
+						style="width:75%">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{property.value}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="key" value="#{property.value}"
+									style="width:96%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+				</p:dataTable>
+				<p:commandButton action="#{paramActionBean.save}"
+					value="#{messages['action.save']}"></p:commandButton>
+				<p:commandButton action="#{paramActionBean.reset}"
+					value="#{messages['action.reset']}" ajax="false"></p:commandButton>
+			</h:form>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>
