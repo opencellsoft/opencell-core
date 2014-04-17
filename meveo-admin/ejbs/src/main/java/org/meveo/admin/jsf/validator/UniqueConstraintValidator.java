@@ -16,7 +16,6 @@
 package org.meveo.admin.jsf.validator;
 
 import java.text.MessageFormat;
-import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -27,14 +26,10 @@ import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.validation.ValidationService;
 
-/**
- * @author Ignas Lelys
- * @created Jan 5, 2011
- * 
- */
 @FacesValidator("uniqueConstraintValidator")
 public class UniqueConstraintValidator implements Validator {
     @Inject

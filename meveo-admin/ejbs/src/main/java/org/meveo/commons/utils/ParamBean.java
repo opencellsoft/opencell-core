@@ -204,6 +204,7 @@ public class ParamBean {
 	 * @return String
 	 */
 	public void setProperty(String property_p, String vNewValue) {
+		log.info("setProperty "+property_p+"->"+vNewValue);
 		getProperties().setProperty(property_p, vNewValue);
 	}
 
@@ -224,9 +225,9 @@ public class ParamBean {
 	 *         sinon
 	 */
 	public boolean saveProperties(File file) {
-		// log.info("-Debut saveProperties ...");
 		boolean result = false;
 		String fileName = file.getAbsolutePath();
+		log.info("saveProperties to "+fileName);
 		OutputStream propertyFile = null;
 		try {
 			propertyFile = new FileOutputStream(file);

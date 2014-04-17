@@ -18,6 +18,8 @@ package org.meveo.admin.dunning;
 import java.io.File;
 import java.util.ResourceBundle;
 
+import javax.inject.Inject;
+
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -42,6 +44,10 @@ public class DunningLotBuilder {
 	
 	private static final String DUNNING_LOT_OUTPUT_DIR = "bayad.dunning.lotOutputDir";
 	
+
+    @Inject
+    private ResourceBundle resource;
+    
 	ParamBean paramBean=ParamBean.getInstance();
 	
     private DunningLOT dunningLOT;
@@ -54,7 +60,6 @@ public class DunningLotBuilder {
     }
 
     public void exportToFile() throws Exception {
-    	ResourceBundle resource = ResourceBundle.getBundle("messages");
         CsvBuilder csv = new CsvBuilder();
         csv.appendValue("ActionType");
         csv.appendValue("ProviderCode");
