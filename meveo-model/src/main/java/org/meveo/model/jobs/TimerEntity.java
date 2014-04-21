@@ -37,17 +37,17 @@ public class TimerEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
-	@Column(name = "NAME",unique=true,nullable=false)
+	@Column(name = "NAME", unique = true, nullable = false)
 	private String name;
-	
-	@Column(name = "JOB_NAME",nullable=false)
+
+	@Column(name = "JOB_NAME", nullable = false)
 	private String jobName;
 
-	@Column(name = "TIMER_HANDLE",nullable=false,length=1000)
+	@Column(name = "TIMER_HANDLE", nullable = false, length = 1000)
 	private TimerHandle timerHandle;
 
 	@JoinColumn(name = "FOLLOWING_TIMER_ID")
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private TimerEntity followingTimer;
 
 	@Transient
@@ -81,7 +81,8 @@ public class TimerEntity extends BaseEntity {
 	private TimerInfo info = new TimerInfo();
 
 	public String getName() {
-		return (name==null)?(getId()==null?null:jobName+"_"+getId()):name;
+		return (name == null) ? (getId() == null ? null : jobName + "_"
+				+ getId()) : name;
 	}
 
 	public void setName(String name) {
@@ -104,7 +105,6 @@ public class TimerEntity extends BaseEntity {
 	public void setTimerHandle(TimerHandle timerHandle) {
 		this.timerHandle = timerHandle;
 	}
-	
 
 	public TimerEntity getFollowingTimer() {
 		return followingTimer;
@@ -210,7 +210,8 @@ public class TimerEntity extends BaseEntity {
 
 	public void setFieldsFromTimerHandler() {
 		try {
-			ScheduleExpression expression = timerHandle.getTimer().getSchedule();
+			ScheduleExpression expression = timerHandle.getTimer()
+					.getSchedule();
 			setDayOfMonth(expression.getDayOfMonth());
 			setDayOfWeek(expression.getDayOfWeek());
 			setEnd(expression.getEnd());
@@ -235,26 +236,27 @@ public class TimerEntity extends BaseEntity {
 		}
 		return result;
 	}
-	
+
 	@Override
-	public boolean equals(Object other){
-		if(other!=null && other instanceof TimerEntity){
-			if(this==other){
+	public boolean equals(Object other) {
+		if (other != null && other instanceof TimerEntity) {
+			if (this == other) {
 				return true;
 			}
 			TimerEntity timer = (TimerEntity) other;
-			if(timerHandle!=null && timerHandle.equals(timer.getTimerHandle())){
+			if (timerHandle != null
+					&& timerHandle.equals(timer.getTimerHandle())) {
 				return true;
-			} 
+			}
 		}
-		return false;	
+		return false;
 	}
-	
-	public int hashcode(){
-		int result=super.hashCode();
-		if(timerHandle!=null){
+
+	public int hashcode() {
+		int result = super.hashCode();
+		if (timerHandle != null) {
 			return timerHandle.hashCode();
-		} 
+		}
 		return result;
 	}
 }

@@ -21,7 +21,6 @@ import java.util.List;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
-import javax.faces.bean.ViewScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -46,7 +45,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
 
 @Named
-@ViewScoped
+@ConversationScoped
 public class BillingRunBean extends BaseBean<BillingRun> {
 
 	private static final long serialVersionUID = 1L;
@@ -134,7 +133,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		return billingRunService;
 	}
 
-	public String lunchRecurringInvoicing() {
+	public String launchRecurringInvoicing() {
 		log.info("launchInvoicing billingRun BillingCycle={}", entity
 				.getBillingCycle().getCode());
 		try {
@@ -243,7 +242,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String preInvoicingRepport(long id) {
 		try {
-
 			return "/pages/billing/invoicing/preInvoicingReports.xhtml?edit=false&preReport=true&objectId="
 					+ id;
 
