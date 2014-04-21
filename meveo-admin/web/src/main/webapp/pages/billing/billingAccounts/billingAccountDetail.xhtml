@@ -290,7 +290,7 @@
 														size="80" maxlength="80" />
 													<hf:formEntityField label="#{messages['address.address2']}"
 														field="address" childField="address2" popup="false"
-														size="80" maxlength="80"/>
+														size="80" maxlength="80" />
 													<hf:formEntityField label="#{messages['address.address3']}"
 														field="address" childField="address3" popup="false"
 														size="80" maxlength="80" />
@@ -316,12 +316,12 @@
 													<hftl:panelGroup columns="1">
 														<hf:formField id="paymentMethod"
 															label="#{messages['billingAccount.paymentMethod']}"
-															field="paymentMethod" required="true"/>
+															field="paymentMethod" required="true" />
 													</hftl:panelGroup>
-												<hftl:panelGroup columns="1">
+													<hftl:panelGroup columns="1">
 														<hf:formField id="paymentTerm"
 															label="#{messages['billingAccount.paymentTerm']}"
-															field="paymentTerm" required="false"/>
+															field="paymentTerm" required="false" />
 													</hftl:panelGroup>
 													<hftl:panelGroup columns="2">
 														<p:outputPanel id="electronicBillingField">
@@ -426,7 +426,6 @@
 										<f:param name="cid" value="#{conversation.id}" />
 									</p:button>
 								</div>
-								<!-- 								</custom:listPanel> -->
 							</h:form>
 
 						</p:tab>
@@ -490,7 +489,8 @@
 									</h:commandLink>
 								</p:column>
 								<hftl:actionsColumn
-									editView="/pages/billing/invoices/invoiceDetail.xhtml" renderEditLink="false" renderDeleteLink="false"/>
+									editView="/pages/billing/invoices/invoiceDetail.xhtml"
+									renderEditLink="false" renderDeleteLink="false" />
 							</hftl:dataList>
 						</p:tab>
 					</p:tabView>
