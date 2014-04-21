@@ -349,8 +349,8 @@
 							<p:tab id="oneShotChgTab"
 								title="#{messages['subscription.tab.oneShotChg']}"
 								rendered="#{!subscriptionBean.edit}">
-
-								<hf:formPanel formId="form3" backingBean="#{subscriptionBean}"
+								<p:outputPanel id="oneShotPanel">
+									<hf:formPanel formId="form3" backingBean="#{subscriptionBean}"
 									showFormButtons="false">
 									<hftl:panelGroup columns="3">
 										<hf:formField label="#{messages['businessEntity.code']}"
@@ -492,6 +492,8 @@
 														value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 														size="5" maxlength="3">
 													</h:inputText>
+													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{subscriptionBean.oneShotChargeInstanceQuantity}">
+													</h:outputText>
 												</h:panelGrid>
 												<p:outputPanel id="oneShotWalletOperationsPanel"
 													rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
@@ -659,7 +661,7 @@
 													<p:commandButton
 														action="#{subscriptionBean.saveOneShotChargeIns}"
 														value="#{messages['action.save']}"
-														update=":subscriptionTab:OS_oneShot_results_form"
+														update=":subscriptionTab:oneShotPanel"
 														oncomplete="document.getElementById('oneShotChgDiv').style.display='none';"
 														rendered="#{!currentProvider.amountValidation}" />
 
@@ -670,6 +672,7 @@
 										</div>
 									</div>
 								</p:panel>
+								</p:outputPanel>
 							</p:tab>
 							<!-- recurring charge instance -->
 							<p:tab id="recurringShotChgTab"

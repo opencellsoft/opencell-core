@@ -22,82 +22,6 @@
 		</repository>
 	</repositories>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.enunciate</groupId>
-										<artifactId>maven-enunciate-plugin</artifactId>
-										<versionRange>[1.27,)</versionRange>
-										<goals>
-											<goal>docs</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.enunciate</groupId>
-				<artifactId>maven-enunciate-plugin</artifactId>
-				<version>1.27</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>docs</goal>
-						</goals>
-						<configuration>
-							<docsDir>${project.build.directory}/docs</docsDir>
-							<configFile>src/main/resources/enunciate.xml</configFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/generated-resources/schemagen/</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/src/main/resources/</directory>
-									<includes>
-										<include>jaxb.properties</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
 	<dependencies>
 
 		<dependency>
@@ -132,5 +56,85 @@
 		</dependency>
 
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>api</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.codehaus.enunciate</groupId>
+												<artifactId>maven-enunciate-plugin</artifactId>
+												<versionRange>[1.27,)</versionRange>
+												<goals>
+													<goal>docs</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore></ignore>
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.enunciate</groupId>
+						<artifactId>maven-enunciate-plugin</artifactId>
+						<version>1.27</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>docs</goal>
+								</goals>
+								<configuration>
+									<docsDir>${project.build.directory}/docs</docsDir>
+									<configFile>src/main/resources/enunciate.xml</configFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/generated-resources/schemagen/</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/src/main/resources/</directory>
+											<includes>
+												<include>jaxb.properties</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

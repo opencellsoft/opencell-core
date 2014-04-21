@@ -263,7 +263,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				entity.getOneShotChargeInstances().add(oneShotChargeInstance);
 			}
 			messages.info(new BundleKey("messages", "save.successful"));
-			oneShotChargeInstance = new OneShotChargeInstance();
+			
 			clearObjectId();
 		} catch (Exception e) {
 			log.error("exception when applying one shot charge!", e);
