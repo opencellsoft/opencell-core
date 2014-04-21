@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -53,7 +53,7 @@ import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 
 @Named
-@ViewScoped
+@ConversationScoped
 public class SubscriptionBean extends BaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;

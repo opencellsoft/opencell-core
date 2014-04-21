@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
-import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -48,7 +48,7 @@ import org.primefaces.model.LazyDataModel;
  * 
  */
 @Named
-@ViewScoped
+@ConversationScoped
 public class UserAccountBean extends BaseBean<UserAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -101,7 +101,8 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		super.initEntity();
 		System.out.println("initentity useraccount id=" + entity.getId());
 		if (entity.getId() == null && billingAccountId != null) {
-			BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+			BillingAccount billingAccount = billingAccountService
+					.findById(billingAccountId);
 			entity.setBillingAccount(billingAccount);
 			populateAccounts(billingAccount);
 
@@ -130,9 +131,11 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 			}
 			super.saveOrUpdate(killConversation);
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId="
-					+ entity.getId() + "&faces-redirect=true&includeViewParams=true";
+					+ entity.getId()
+					+ "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
-			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
+			messages.error(new BundleKey("messages",
+					"error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
@@ -160,8 +163,8 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	protected String saveOrUpdate(UserAccount entity) {
 		try {
 			if (entity.isTransient()) {
-				userAccountService.createUserAccount(entity.getBillingAccount(), entity,
-						getCurrentUser());
+				userAccountService.createUserAccount(
+						entity.getBillingAccount(), entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} else {
 				userAccountService.updateUserAccount(entity, getCurrentUser());
@@ -180,8 +183,10 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		log.debug("resiliateAccount userAccountId:" + entity.getId());
 		try {
 			userAccountService.userAccountTermination(entity,
-					entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+					entity.getTerminationDate(), entity.getTerminationReason(),
+					getCurrentUser());
+			messages.info(new BundleKey("messages",
+					"resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -196,9 +201,10 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		try {
 			userAccountService.userAccountCancellation(entity, new Date(),
 					getCurrentUser());
-			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
+			messages.info(new BundleKey("messages",
+					"cancellation.cancelSuccessful"));
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId="
+					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -214,9 +220,10 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		try {
 			userAccountService.userAccountReactivation(entity, new Date(),
 					getCurrentUser());
-			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
-			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId=" + entity.getId()
-					+ "&edit=false";
+			messages.info(new BundleKey("messages",
+					"reactivation.reactivateSuccessful"));
+			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId="
+					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
 			e.printStackTrace(); // TODO WTF printStackTrace??
 			messages.error(e.getMessage());
@@ -232,13 +239,14 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 		LazyDataModel<WalletOperation> result = null;
 		HashMap<String, Object> filters = new HashMap<String, Object>();
 		if (entity == null) {
-			System.out.println("getWalletOperationsNoInvoiced: userAccount is null");
+			System.out
+					.println("getWalletOperationsNoInvoiced: userAccount is null");
 			initEntity();
 			System.out.println("entity.id=" + entity.getId());
 		}
 		if (entity.getWallet() == null) {
-			System.out.println("getWalletOperationsNoInvoiced: userAccount " + entity.getId()
-					+ " has no wallet");
+			System.out.println("getWalletOperationsNoInvoiced: userAccount "
+					+ entity.getId() + " has no wallet");
 		} else {
 			filters.put("wallet", entity.getWallet());
 			filters.put("status", WalletOperationStatusEnum.OPEN);

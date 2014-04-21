@@ -15,7 +15,7 @@
  */
 package org.meveo.admin.action.crm;
 
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -35,7 +35,7 @@ import org.meveo.service.crm.impl.CustomerService;
  * @created 2010.11.15
  */
 @Named
-@ViewScoped
+@ConversationScoped
 public class CustomerBean extends BaseBean<Customer> {
 
 	private static final long serialVersionUID = 1L;
@@ -71,8 +71,8 @@ public class CustomerBean extends BaseBean<Customer> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
 		super.saveOrUpdate(killConversation);
-		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId=" + entity.getId()
-				+ "&faces-redirect=true";
+		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId="
+				+ entity.getId() + "&faces-redirect=true";
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class CustomerBean extends BaseBean<Customer> {
 	protected IPersistenceService<Customer> getPersistenceService() {
 		return customerService;
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
