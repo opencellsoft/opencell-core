@@ -230,12 +230,11 @@
 												</hftl:panelGroup>
 												<hftl:panelGroup columns="2">
 													<hf:formEntityField label="#{messages['address.zipCode']}"
-														size="5" id="zipCode" field="address"
-														childField="zipCode" length="3" popup="false"
-														maxlength="5" />
+														size="5" id="zipCode" field="address" childField="zipCode"
+														length="3" popup="false" maxlength="5" />
 													<hf:formEntityField label="#{messages['address.city']}"
-														id="city" field="address"
-														childField="city" popup="false" maxlength="50" />
+														id="city" field="address" childField="city" popup="false"
+														maxlength="50" />
 												</hftl:panelGroup>
 												<hf:formEntityField id="countryPanel"
 													label="#{messages['address.country']}" embedded="true"
@@ -243,14 +242,16 @@
 													labelField="descriptionEn" valueField="countryCode"
 													listBean="#{countryBean}"></hf:formEntityField>
 											</hftl:fieldset>
-											<hftl:fieldset name="#{messages['customerAccount.sepaDebit']}"
-												columns="1">
+											<hftl:fieldset
+												name="#{messages['customerAccount.sepaDebit']}" columns="1">
 												<hftl:panelGroup columns="1">
-													<hf:formField label="#{messages['customerAccount.mandateIdentification']}"
-														field="mandateIdentification"   />
-													<hf:formField label="#{messages['customerAccount.mandateDate']}"
-														field="mandateDate" isDate="true"  />
-													 </hftl:panelGroup>
+													<hf:formField
+														label="#{messages['customerAccount.mandateIdentification']}"
+														field="mandateIdentification" />
+													<hf:formField
+														label="#{messages['customerAccount.mandateDate']}"
+														field="mandateDate" isDate="true" />
+												</hftl:panelGroup>
 											</hftl:fieldset>
 										</p:tab>
 									</p:tabView>
@@ -316,87 +317,88 @@
 									value="#{messages['customerAccount.addPaymentCheck']}"
 									action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
 									rendered="#{customerAccountBean.isActiveAccount()}" />
-								<p:button  outcome="transferAccount" value="#{messages['customerAccount.buttonTransfert']}"
+								<p:button outcome="transferAccount"
+									value="#{messages['customerAccount.buttonTransfert']}"
 									rendered="#{customerAccountBean.isActiveAccount()}">
-									<f:param name="objectId" value="#{customerAccountBean.entity.id}" />
+									<f:param name="objectId"
+										value="#{customerAccountBean.entity.id}" />
 									<f:param name="cid" value="#{conversation.id}" />
 								</p:button>
 							</h:form>
 							<hftl:dataList backingBean="#{accountOperationBean}"
 								label="#{messages['accountOperation.title']}" disabled="true"
-								checkMany="true"> 
-									
-							    <p:column style="width:8%">
-								<f:facet name="header">
-								<h:outputText value="#{messages['accountOperation.type']}" />
-								</f:facet>
-								<h:outputText value="#{entity.type}" /> 
-								 </p:column>	
-								 
-								 <p:column style="width:10%">
-								<f:facet name="header">
-								<h:outputText value="#{messages['accountOperation.occCode']}" />
-								</f:facet>
-								<h:outputText value="#{entity.occCode}" /> 
-								 </p:column>
-								 
+								checkMany="true">
+
+								<p:column style="width:8%">
+									<f:facet name="header">
+										<h:outputText value="#{messages['accountOperation.type']}" />
+									</f:facet>
+									<h:outputText value="#{entity.type}" />
+								</p:column>
+
+								<p:column style="width:10%">
+									<f:facet name="header">
+										<h:outputText value="#{messages['accountOperation.occCode']}" />
+									</f:facet>
+									<h:outputText value="#{entity.occCode}" />
+								</p:column>
+
 								<p:column style="width:20%">
-								<f:facet name="header">
-								<h:outputText value="#{messages['accountOperation.occDescription']}" />
-								</f:facet>
-								<h:outputText value="#{entity.occDescription}" /> 
-								 </p:column>
-								  
-									
+									<f:facet name="header">
+										<h:outputText
+											value="#{messages['accountOperation.occDescription']}" />
+									</f:facet>
+									<h:outputText value="#{entity.occDescription}" />
+								</p:column>
+
+
 								<p:column style="width:20%">
-								<f:facet name="header">
-								<h:outputText value="#{messages['accountOperation.transactionDate']}" />
-								</f:facet>
-								<h:outputText value="#{entity.transactionDate}" /> 
-								 </p:column> 
-								 
+									<f:facet name="header">
+										<h:outputText
+											value="#{messages['accountOperation.transactionDate']}" />
+									</f:facet>
+									<h:outputText value="#{entity.transactionDate}" />
+								</p:column>
+
 								<p:column style="width:20%">
-								<f:facet name="header">
-								<h:outputText value="#{messages['accountOperation.dueDate']}" />
-								</f:facet>
-								<h:outputText value="#{entity.dueDate}" /> 
-								 </p:column>
-								 
+									<f:facet name="header">
+										<h:outputText value="#{messages['accountOperation.dueDate']}" />
+									</f:facet>
+									<h:outputText value="#{entity.dueDate}" />
+								</p:column>
+
 								<hftl:column label="#{messages['accountOperation.debit']}"
 									field="amount"
 									show="#{entity.transactionCategory.toString() == 'DEBIT'}" />
 								<hftl:column label="#{messages['accountOperation.credit']}"
 									field="amount"
 									show="#{entity.transactionCategory.toString() == 'CREDIT'}" />
-								 
-									
+
+
 								<p:column style="width:15%">
-								<f:facet name="header">
-								<h:outputText value="#{messages['accountOperation.unMatchingAmount']}" />
-								</f:facet>
-								<h:outputText value="#{entity.unMatchingAmount}" /> 
-								 </p:column>
-								 
+									<f:facet name="header">
+										<h:outputText
+											value="#{messages['accountOperation.unMatchingAmount']}" />
+									</f:facet>
+									<h:outputText value="#{entity.unMatchingAmount}" />
+								</p:column>
+
 								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
 									field="matchingStatus" childField="label" isMessage="true" />
-									
-								
-									
-									
 
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
-										<ui:define name="add-on-buttons">
-										<p:commandButton
+								<ui:define name="add-on-buttons">
+									<p:commandButton
 										action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
 										value="#{messages['customerAccount.buttonLettrage']}"
 										rendered="#{customerAccountBean.isActiveAccount()}" />
-										<p:commandButton
+									<p:commandButton
 										action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}"
 										value="#{messages['customerAccount.buttonConsultMatching']}"
 										rendered="#{customerAccountBean.isActiveAccount()}" />
-									</ui:define>
+								</ui:define>
 							</hftl:dataList>
 							<h:form>
 								<hf:formButtons columns="3" backingBean="#{customerAccountBean}"

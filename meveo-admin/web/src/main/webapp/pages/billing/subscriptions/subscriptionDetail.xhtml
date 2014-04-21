@@ -57,10 +57,6 @@
 			column1="code" column2Label="#{messages['userAccount.name']}"
 			column2="name" selection="#{subscriptionBean.entity.userAccount}"
 			updateField=":subscriptionTab:subscriptionFormPanel:formId:userSelectId:userSelectId">
-			<!-- select link -->
-			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="formId" action="#{subscriptionBean.populateAccounts(entity)}" -->
-			<!-- 				oncomplete="Richfaces.hideModalPanel('userAccountPopup')"> -->
-			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="offerPopup"
@@ -90,10 +86,7 @@
 			column2Label="#{messages['chargeTemplate.description']}"
 			column2="description"
 			selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"
-			updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId:chargeTemplateSelectId">
-			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="oneShotChgForm1" action="#{subscriptionBean.oneShotChargeInstance.setChargeTemplate(entity)}" -->
-			<!-- 				oncomplete="Richfaces.hideModalPanel('oneShotChargeTmpPopup')"> -->
-			<!-- 			</a:commandLink> -->
+			updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId_text :subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:oneshot_description:oneshot_description_textArea">
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="chargeTemplatePopup"
@@ -107,9 +100,6 @@
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description"
 			selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}">
-			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="formId" action="#{oneShotChargeInstance.setChargeTemplate(entity)}" -->
-			<!-- 				oncomplete="Richfaces.hideModalPanel('chargeTemplatePopup')"> -->
-			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
 		<hftl:entityPopup id="recurringChargeTmpPopup"
@@ -124,9 +114,6 @@
 			column2="description"
 			selection="#{subscriptionBean.recurringChargeInstance.chargeTemplate}"
 			updateField=":recurringChgForm1Panel:recurringChgForm1:RCchargeTemplateSelectId:RCchargeTemplateSelectId">
-			<!-- 			<a:commandLink value="#{messages['commons.select']}" reRender="recurringChgForm1" action="#{subscriptionBean.recurringChargeInstance.setChargeTemplate(entity)}" -->
-			<!-- 				oncomplete="Richfaces.hideModalPanel('recurringChargeTmpPopup')"> -->
-			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
 
 		<p:dialog id="serviceTerminationPopup"
@@ -351,205 +338,223 @@
 								rendered="#{!subscriptionBean.edit}">
 								<p:outputPanel id="oneShotPanel">
 									<hf:formPanel formId="form3" backingBean="#{subscriptionBean}"
-									showFormButtons="false">
-									<hftl:panelGroup columns="3">
-										<hf:formField label="#{messages['businessEntity.code']}"
-											field="code" />
-										<hf:formField label="#{messages['serviceInstance.status']}"
-											field="status" />
-										<hf:formField
-											label="#{messages['serviceInstance.statusDate']}"
-											field="statusDate" />
-									</hftl:panelGroup>
-									<hftl:panelGroup columns="3">
-										<hf:formEntityField id="offerSelectId"
-											label="#{messages['subscription.offer']}" field="offer"
-											childField="code" popup="false" />
-										<hf:formField
-											label="#{messages['billingAccount.subscriptionDate']}"
-											field="subscriptionDate" />
-										<hf:formField
-											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
-											field="terminationDate" />
-									</hftl:panelGroup>
-								</hf:formPanel>
-								<br />
-								<br />
-								<p:outputPanel id="oneShotDataPanel">
-									<h:form id="OS_oneShot_results_form" prependId="false">
-										<p:dataTable
-											value="#{subscriptionBean.oneShotChargeInstances}"
-											var="entity">
-											<hftl:column label="#{messages['chargeInstance.code']}"
+										showFormButtons="false">
+										<hftl:panelGroup columns="3">
+											<hf:formField label="#{messages['businessEntity.code']}"
 												field="code" />
-											<hftl:column
-												label="#{messages['chargeInstance.description']}"
-												field="description" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria1']}"
-												field="criteria1" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria2']}"
-												field="criteria2" />
-											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria3']}"
-												field="criteria3" />
+											<hf:formField label="#{messages['serviceInstance.status']}"
+												field="status" />
+											<hf:formField
+												label="#{messages['serviceInstance.statusDate']}"
+												field="statusDate" />
+										</hftl:panelGroup>
+										<hftl:panelGroup columns="3">
+											<hf:formEntityField id="offerSelectId"
+												label="#{messages['subscription.offer']}" field="offer"
+												childField="code" popup="false" />
+											<hf:formField
+												label="#{messages['billingAccount.subscriptionDate']}"
+												field="subscriptionDate" />
+											<hf:formField
+												label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
+												field="terminationDate" />
+										</hftl:panelGroup>
+									</hf:formPanel>
+									<br />
+									<br />
+									<p:outputPanel id="oneShotDataPanel">
+										<h:form id="OS_oneShot_results_form" prependId="false">
+											<p:dataTable
+												value="#{subscriptionBean.oneShotChargeInstances}"
+												var="entity">
+												<hftl:column label="#{messages['chargeInstance.code']}"
+													field="code" />
+												<hftl:column
+													label="#{messages['chargeInstance.description']}"
+													field="description" />
+												<hftl:column
+													label="#{messages['oneShotChargeInstance.criteria1']}"
+													field="criteria1" />
+												<hftl:column
+													label="#{messages['oneShotChargeInstance.criteria2']}"
+													field="criteria2" />
+												<hftl:column
+													label="#{messages['oneShotChargeInstance.criteria3']}"
+													field="criteria3" />
 
-											<p:column styleClass="actions-column">
-												<f:facet name="header">
-													<h:outputText value="#{messages['commons.actions']}" />
-												</f:facet>
-												<p:commandButton id="editOneShotChgInsLink"
-													action="#{subscriptionBean.editOneShotChargeIns(entity)}"
-													onclick="document.getElementById('oneShotChgDiv').style.display='';"
-													update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
-													icon="ui-icon-document">
-												</p:commandButton>
-												<!-- <p:commandLink id="editOneShotChgInsLink" render="oneShotChgSdiv" update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
+												<p:column styleClass="actions-column">
+													<f:facet name="header">
+														<h:outputText value="#{messages['commons.actions']}" />
+													</f:facet>
+													<p:commandButton id="editOneShotChgInsLink"
+														action="#{subscriptionBean.editOneShotChargeIns(entity)}"
+														onclick="document.getElementById('oneShotChgDiv').style.display='';"
+														update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
+														icon="ui-icon-document">
+													</p:commandButton>
+													<!-- <p:commandLink id="editOneShotChgInsLink" render="oneShotChgSdiv" update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
 													onclick="document.getElementById('oneShotChgDiv').style.display='';" action="#{subscriptionBean.editOneShotChargeIns(entity)}">
 													<h:graphicImage value="/img/edit.gif" style="border:0" />
 												</p:commandLink> -->
-												<p:tooltip for="editOneShotChgInsLink"
-													value="#{messages['commons.edit']}" showEffect="slide"
-													hideEffect="slide" />
-											</p:column>
-										</p:dataTable>
-									</h:form>
-								</p:outputPanel>
-								<p:panel>
-									<h:form>
-										<p:commandButton
-											value="#{messages['subscription.oneShotChgButton']}"
-											action="#{subscriptionBean.newOneShotChargeInstance}"
-											onclick="document.getElementById('oneShotChgDiv').style.display='';" />
-									</h:form>
-									<br />
-									<br />
-									<div id="oneShotChgDiv" style="display: none">
-										<div id="oneShotChgSdiv">
-											<hf:formPanel id="oneShotChargeFormPanel" edit="true"
-												label="#{messages['subscription.tab.oneShotChg']}"
-												backingBean="#{subscriptionBean}"
-												entity="#{subscriptionBean.oneShotChargeInstance}"
-												formId="oneShotChgForm1" showFormButtons="false"
-												ajaxSubmit="true">
-												<hf:formEntityField id="chargeTemplateSelectId"
-													label="#{messages['businessEntity.code']}"
-													field="chargeTemplate" childField="code" popup="true"
-													popupId="oneShotChargeTmpPopup" edit="true" />
-												<hf:formField
-													label="#{messages['businessEntity.description']}"
-													field="description" size="50" maxlength="50"
-													disabled="true" edit="true" />
-												<hf:formField
-													label="#{messages['oneShotChargeInstance.chargeDate']}"
-													field="chargeDate" edit="true" />
-												<h:panelGrid columns="2">
-													<p:outputLabel for="amountWithoutTax2"
-														value="#{messages['oneShotChargeInstance.amountWithoutTax']}" />
-													<h:inputText rendered="#{subscriptionBean.edit}"
-														id="amountWithoutTax2"
-														value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
-														size="5" converter="bigDecimalConverter"
-														onkeyup="validateAmounts();"
-														disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+													<p:tooltip for="editOneShotChgInsLink"
+														value="#{messages['commons.edit']}" showEffect="slide"
+														hideEffect="slide" />
+												</p:column>
+											</p:dataTable>
+										</h:form>
+									</p:outputPanel>
+									<p:panel>
+										<h:form>
+											<p:commandButton
+												value="#{messages['subscription.oneShotChgButton']}"
+												action="#{subscriptionBean.newOneShotChargeInstance}"
+												onclick="document.getElementById('oneShotChgDiv').style.display='';" />
+										</h:form>
+										<br />
+										<br />
+										<div id="oneShotChgDiv" style="display: none">
+											<div id="oneShotChgSdiv">
+												<hf:formPanel id="oneShotChargeFormPanel" edit="true"
+													label="#{messages['subscription.tab.oneShotChg']}"
+													backingBean="#{subscriptionBean}"
+													entity="#{subscriptionBean.oneShotChargeInstance}"
+													formId="oneShotChgForm1" showFormButtons="false"
+													ajaxSubmit="true">
 
-													</h:inputText>
-													<h:outputText rendered="#{!subscriptionBean.edit}"
-														value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
-														style="font-weight:bold;" converter="bigDecimalConverter" />
-												</h:panelGrid>
+													<p:panelGrid columns="2" id="chargeTemplateSelectId">
+														<p:outputLabel for="chargeTemplateSelectId_text"
+															value="#{messages['businessEntity.code']}" />
+														<p:panelGrid styleClass="inner-table" columns="3">
+															<p:inputText id="chargeTemplateSelectId_text"
+																value="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.code}"
+																disabled="true" />
+															<p:commandButton id="chargeTemplateSelectId_selectLink"
+																onclick="PF('dlg_oneShotChargeTmpPopup').show()"
+																icon="ui-icon-search" type="button" />
+														</p:panelGrid>
+														<p:tooltip for="chargeTemplateSelectId_selectLink"
+															value="#{messages['commons.search']}" />
+													</p:panelGrid>
 
-												<h:panelGrid columns="2">
-													<p:outputLabel for="amountWithTax"
-														value="#{messages['oneShotChargeInstance.amountWithTax']}" />
-													<h:inputText rendered="#{subscriptionBean.edit}"
-														id="amountWithTax"
-														value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
-														size="5" converter="bigDecimalConverter"
-														onkeyup="validateAmounts();"
-														disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
-													</h:inputText>
-													<h:outputText rendered="#{!subscriptionBean.edit}"
-														value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
-														style="font-weight:bold;" converter="bigDecimalConverter" />
-												</h:panelGrid>
-												<hf:formField
-													label="#{messages['oneShotChargeInstance.criteria1']}"
-													field="criteria1" edit="true" />
-												<hf:formField
-													label="#{messages['oneShotChargeInstance.criteria2']}"
-													field="criteria2" edit="true" />
-												<hf:formField
-													label="#{messages['oneShotChargeInstance.criteria3']}"
-													field="criteria3" edit="true" />
+													<!-- 													<hf:formEntityField id="chargeTemplateSelectId" -->
+													<!-- 														label="#{messages['businessEntity.code']}" -->
+													<!-- 														field="chargeTemplate" childField="code" popup="true" -->
+													<!-- 														popupId="oneShotChargeTmpPopup" edit="true" /> -->
+													<hf:formField id="oneshot_description"
+														label="#{messages['businessEntity.description']}"
+														field="description" size="50" maxlength="50"
+														textArea="true" rows="4" disabled="true"
+														edit="true" />
+													<hf:formField
+														label="#{messages['oneShotChargeInstance.chargeDate']}"
+														field="chargeDate" edit="true" />
+													<h:panelGrid columns="2">
+														<p:outputLabel for="amountWithoutTax2"
+															value="#{messages['oneShotChargeInstance.amountWithoutTax']}" />
+														<h:inputText rendered="#{subscriptionBean.edit}"
+															id="amountWithoutTax2"
+															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
+															size="5" converter="bigDecimalConverter"
+															onkeyup="validateAmounts();"
+															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
 
-												<h:panelGrid columns="2">
-													<p:outputLabel for="amountWithoutTax"
-														value="#{messages['serviceInstance.quantity']}" />
-													<h:inputText rendered="#{subscriptionBean.edit}"
-														id="amountWithoutTax"
-														value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
-														size="5" maxlength="3">
-													</h:inputText>
-													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{subscriptionBean.oneShotChargeInstanceQuantity}">
-													</h:outputText>
-												</h:panelGrid>
-												<p:outputPanel id="oneShotWalletOperationsPanel"
-													rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
-													<span style="height: 1px" />
-													<h:outputText value="#{messages['commons.noItems']}"
-														rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
-													<h:panelGrid width="100%" columns="1" border="0"
-														style="padding:0px; margin:0px;text-align: right;"
-														rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
-														<h:outputText
-															value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
-														<p:dataTable id="oneShotWalletOperationTable"
-															value="#{subscriptionBean.oneShotWalletOperations}"
-															var="oneShotWalletOp" rows="10" styleClass="custom-grid">
-															<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
-															<p:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['chargeApplication.applicationDate']}" />
-																</f:facet>
-																<h:outputText value="#{oneShotWalletOp.operationDate}">
-																	<f:convertDateTime
-																		pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
-																</h:outputText>
+														</h:inputText>
+														<h:outputText rendered="#{!subscriptionBean.edit}"
+															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
+															style="font-weight:bold;" converter="bigDecimalConverter" />
+													</h:panelGrid>
+
+													<h:panelGrid columns="2">
+														<p:outputLabel for="amountWithTax"
+															value="#{messages['oneShotChargeInstance.amountWithTax']}" />
+														<h:inputText rendered="#{subscriptionBean.edit}"
+															id="amountWithTax"
+															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
+															size="5" converter="bigDecimalConverter"
+															onkeyup="validateAmounts();"
+															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+														</h:inputText>
+														<h:outputText rendered="#{!subscriptionBean.edit}"
+															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
+															style="font-weight:bold;" converter="bigDecimalConverter" />
+													</h:panelGrid>
+													<hf:formField
+														label="#{messages['oneShotChargeInstance.criteria1']}"
+														field="criteria1" edit="true" />
+													<hf:formField
+														label="#{messages['oneShotChargeInstance.criteria2']}"
+														field="criteria2" edit="true" />
+													<hf:formField
+														label="#{messages['oneShotChargeInstance.criteria3']}"
+														field="criteria3" edit="true" />
+
+													<h:panelGrid columns="2">
+														<p:outputLabel for="amountWithoutTax"
+															value="#{messages['serviceInstance.quantity']}" />
+														<h:inputText rendered="#{subscriptionBean.edit}"
+															id="amountWithoutTax"
+															value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
+															size="5" maxlength="3">
+														</h:inputText>
+														<h:outputText rendered="#{!subscriptionBean.edit}"
+															value="#{subscriptionBean.oneShotChargeInstanceQuantity}">
+														</h:outputText>
+													</h:panelGrid>
+													<p:outputPanel id="oneShotWalletOperationsPanel"
+														rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
+														<span style="height: 1px" />
+														<h:outputText value="#{messages['commons.noItems']}"
+															rendered="#{empty subscriptionBean.oneShotWalletOperations}" />
+														<h:panelGrid width="100%" columns="1" border="0"
+															style="padding:0px; margin:0px;text-align: right;"
+															rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
+															<h:outputText
+																value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
+															<p:dataTable id="oneShotWalletOperationTable"
+																value="#{subscriptionBean.oneShotWalletOperations}"
+																var="oneShotWalletOp" rows="10" styleClass="custom-grid">
+																<!-- <hftl:column label="#{messages['chargeApplication.applicationDate']}" isDate="true" showSortLinks="false" field="operationDate" /> -->
+																<p:column>
+																	<f:facet name="header">
+																		<h:outputText
+																			value="#{messages['chargeApplication.applicationDate']}" />
+																	</f:facet>
+																	<h:outputText value="#{oneShotWalletOp.operationDate}">
+																		<f:convertDateTime
+																			pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+																	</h:outputText>
 																</p:column>
 
-															<hftl:column
-																label="#{messages['chargeApplication.description']}"
-																field="description" />
-															<!-- 																<hftl:column label="#{messages['chargeApplication.amountWithoutTax']}" showSortLinks="false" field="amountWithoutTax" /> -->
-															<p:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['chargeApplication.amountWithoutTax']}" />
-																</f:facet>
+																<hftl:column
+																	label="#{messages['chargeApplication.description']}"
+																	field="description" />
+																<!-- 																<hftl:column label="#{messages['chargeApplication.amountWithoutTax']}" showSortLinks="false" field="amountWithoutTax" /> -->
+																<p:column>
+																	<f:facet name="header">
+																		<h:outputText
+																			value="#{messages['chargeApplication.amountWithoutTax']}" />
+																	</f:facet>
 																	#{oneShotWalletOp.amountWithoutTax}
 																</p:column>
 
-															<!-- 																<hftl:column label="#{messages['walletOperation.amountWithTax']}" showSortLinks="false" field="amountWithTax" /> -->
-															<p:column>
-																<f:facet name="header">
-																	<h:outputText
-																		value="#{messages['walletOperation.amountWithTax']}" />
-																</f:facet>
+																<!-- 																<hftl:column label="#{messages['walletOperation.amountWithTax']}" showSortLinks="false" field="amountWithTax" /> -->
+																<p:column>
+																	<f:facet name="header">
+																		<h:outputText
+																			value="#{messages['walletOperation.amountWithTax']}" />
+																	</f:facet>
 																	#{oneShotWalletOp.amountWithTax}
 																</p:column>
 
-															<!-- 																<hftl:column label="#{messages['currency.codeCurrency']}" field="currency" /> -->
-															<hftl:column
-																label="#{messages['chargeApplication.status']}"
-																field="status" />
-														</p:dataTable>
-													</h:panelGrid>
-												</p:outputPanel>
+																<!-- 																<hftl:column label="#{messages['currency.codeCurrency']}" field="currency" /> -->
+																<hftl:column
+																	label="#{messages['chargeApplication.status']}"
+																	field="status" />
+															</p:dataTable>
+														</h:panelGrid>
+													</p:outputPanel>
 
-												<script type="text/javascript">
+													<script type="text/javascript">
     //<![CDATA[
 
     var validAmount;
@@ -647,31 +652,31 @@
     // ]]>
   </script>
 
-												<h:panelGrid columns="2">
-													<h:commandButton
-														action="#{subscriptionBean.saveOneShotChargeIns}"
-														value="#{messages['action.save']}"
-														rendered="#{currentProvider.amountValidation}">
-														<a:ajax event="click" render="OS_oneShot_results_form"
-															onsubmit="return validation();"
-															oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" />
+													<h:panelGrid columns="2">
+														<h:commandButton
+															action="#{subscriptionBean.saveOneShotChargeIns}"
+															value="#{messages['action.save']}"
+															rendered="#{currentProvider.amountValidation}">
+															<a:ajax event="click" render="OS_oneShot_results_form"
+																onsubmit="return validation();"
+																oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" />
 
-													</h:commandButton>
+														</h:commandButton>
 
-													<p:commandButton
-														action="#{subscriptionBean.saveOneShotChargeIns}"
-														value="#{messages['action.save']}"
-														update=":subscriptionTab:oneShotPanel"
-														oncomplete="document.getElementById('oneShotChgDiv').style.display='none';"
-														rendered="#{!currentProvider.amountValidation}" />
+														<p:commandButton
+															action="#{subscriptionBean.saveOneShotChargeIns}"
+															value="#{messages['action.save']}"
+															update=":subscriptionTab:oneShotPanel"
+															oncomplete="document.getElementById('oneShotChgDiv').style.display='none';"
+															rendered="#{!currentProvider.amountValidation}" />
 
-													<p:commandButton value="#{messages['action.cancel']}"
-														onclick="document.getElementById('oneShotChgDiv').style.display='none';return false;" />
-												</h:panelGrid>
-											</hf:formPanel>
+														<p:commandButton value="#{messages['action.cancel']}"
+															onclick="document.getElementById('oneShotChgDiv').style.display='none';return false;" />
+													</h:panelGrid>
+												</hf:formPanel>
+											</div>
 										</div>
-									</div>
-								</p:panel>
+									</p:panel>
 								</p:outputPanel>
 							</p:tab>
 							<!-- recurring charge instance -->

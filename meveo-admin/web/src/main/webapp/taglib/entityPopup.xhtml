@@ -69,7 +69,6 @@
 			<p:dataTable id="#{id}datatable" var="e" paginator="true"
 				value="#{dataModel}" rows="10" selection="#{selection}"
 				selectionMode="single" rowKey="#{e.id}" lazy="#{lazy}">
-				<!-- rowSelectListener="#{rowSelectListener}"> -->
 				<p:ajax event="rowSelect" listener="#{eventBackingBean.onRowSelect}"
 					oncomplete="dlg_#{id}.hide()" update="#{updateField}" />
 

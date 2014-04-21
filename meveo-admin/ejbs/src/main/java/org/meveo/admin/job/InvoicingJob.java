@@ -49,23 +49,21 @@ public class InvoicingJob implements Job {
 
 	@Inject
 	private ProviderService providerService;
-	
+
 	@Inject
 	JobExecutionService jobExecutionService;
 
-
 	@Inject
 	private BillingRunService billingRunService;
-	
+
 	@Inject
 	private RatedTransactionService ratedTransactionService;
-	
+
 	@Inject
 	private BillingAccountService billingAccountService;
-	
+
 	@Inject
 	private InvoiceService invoiceService;
-
 
 	private Logger log = Logger.getLogger(InvoicingJob.class.getName());
 
@@ -79,67 +77,86 @@ public class InvoicingJob implements Job {
 		log.info("execute InvoicingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
-			List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.NEW,BillingRunStatusEnum.ON_GOING,BillingRunStatusEnum.CONFIRMED);
+			List<BillingRun> billingRuns = billingRunService.getbillingRuns(
+					BillingRunStatusEnum.NEW, BillingRunStatusEnum.ON_GOING,
+					BillingRunStatusEnum.CONFIRMED);
 			log.info("# billingRuns to process:" + billingRuns.size());
 			for (BillingRun billingRun : billingRuns) {
 				try {
-					if(BillingRunStatusEnum.NEW.equals(billingRun.getStatus())){
-						BillingCycle billingCycle = billingRun.getBillingCycle();
+					if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+						BillingCycle billingCycle = billingRun
+								.getBillingCycle();
 
-				        boolean entreprise = billingRun.getProvider().isEntreprise();
+						boolean entreprise = billingRun.getProvider()
+								.isEntreprise();
 
-				        Date startDate = billingRun.getStartDate();
-				        Date endDate = billingRun.getEndDate();
-				        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
-				        if (billingCycle != null) {
-				            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
-				        }else{
-				        	String[] baIds=billingRun.getSelectedBillingAccounts().split(",");
-				        	for(String id:Arrays.asList(baIds)){
-				        		Long baId=Long.valueOf(id);
-				        		billingAccounts.add(billingAccountService.findById(baId));
-				        	}
-				        }
-				        if(billingAccounts!=null && billingAccounts.size()>0){
-				        	 ratedTransactionService.sumbillingRunAmounts(billingRun, billingAccounts, RatedTransactionStatusEnum.OPEN, entreprise);
-						        int billableBA=0;
-						        for (BillingAccount billingAccount : billingAccounts) {
-						           if(ratedTransactionService.isBillingAccountBillable(billingRun, billingAccount.getId())){
-						        	   billingRun=billingAccountService.updateBillingAccountTotalAmounts(billingAccount.getId(), billingRun, entreprise);
-								   	    billableBA++;
-						           }
-						        }
-						        billingRun.setBillingAccountNumber(billingAccounts.size());
-						        billingRun.setBillableBillingAcountNumber(billableBA);
-						        billingRun.setProcessDate(new Date());
-						        billingRun.setStatus(BillingRunStatusEnum.WAITING);
-						        billingRunService.update(billingRun);
-						        if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
-						                || billingRun.getProvider().isAutomaticInvoicing()) {
-						        	
-						            createAgregatesAndInvoice(billingRun);
-						        }
-				        }
-				       
-				        
-					}else if(BillingRunStatusEnum.ON_GOING.equals(billingRun.getStatus())){
-						 createAgregatesAndInvoice(billingRun);
-					}else if(BillingRunStatusEnum.CONFIRMED.equals(billingRun.getStatus())){
+						Date startDate = billingRun.getStartDate();
+						Date endDate = billingRun.getEndDate();
+						List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+						if (billingCycle != null) {
+							billingAccounts = billingAccountService
+									.findBillingAccounts(billingCycle,
+											startDate, endDate);
+						} else {
+							String[] baIds = billingRun
+									.getSelectedBillingAccounts().split(",");
+							for (String id : Arrays.asList(baIds)) {
+								Long baId = Long.valueOf(id);
+								billingAccounts.add(billingAccountService
+										.findById(baId));
+							}
+						}
+						if (billingAccounts != null
+								&& billingAccounts.size() > 0) {
+							ratedTransactionService
+									.sumbillingRunAmounts(billingRun,
+											billingAccounts,
+											RatedTransactionStatusEnum.OPEN,
+											entreprise);
+							int billableBA = 0;
+							for (BillingAccount billingAccount : billingAccounts) {
+								if (ratedTransactionService
+										.isBillingAccountBillable(billingRun,
+												billingAccount.getId())) {
+									billingRun = billingAccountService
+											.updateBillingAccountTotalAmounts(
+													billingAccount.getId(),
+													billingRun, entreprise);
+									billableBA++;
+								}
+							}
+							billingRun.setBillingAccountNumber(billingAccounts
+									.size());
+							billingRun
+									.setBillableBillingAcountNumber(billableBA);
+							billingRun.setProcessDate(new Date());
+							billingRun.setStatus(BillingRunStatusEnum.WAITING);
+							billingRunService.update(billingRun);
+							if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+									|| billingRun.getProvider()
+											.isAutomaticInvoicing()) {
+
+								createAgregatesAndInvoice(billingRun);
+							}
+						}
+
+					} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun
+							.getStatus())) {
+						createAgregatesAndInvoice(billingRun);
+					} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun
+							.getStatus())) {
 						for (Invoice invoice : billingRun.getInvoices()) {
-				            invoiceService.setInvoiceNumber(invoice);
-				            BillingAccount billingAccount = invoice.getBillingAccount();
-				            Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate();
-				            billingAccount.setNextInvoiceDate(nextCalendarDate);
-				            billingAccountService.update(billingAccount);
-				        }
+							invoiceService.setInvoiceNumber(invoice);
+							BillingAccount billingAccount = invoice
+									.getBillingAccount();
+							Date nextCalendarDate = billingAccount
+									.getBillingCycle().getNextCalendarDate();
+							billingAccount.setNextInvoiceDate(nextCalendarDate);
+							billingAccountService.update(billingAccount);
+						}
 						billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
 						billingRunService.update(billingRun);
 					}
-					
-			       
-			       
-			        
-			       
 				} catch (Exception e) {
 					e.printStackTrace();
 					result.registerError(e.getMessage());
@@ -151,28 +168,34 @@ public class InvoicingJob implements Job {
 		result.close("");
 		return result;
 	}
-	
 
-	public void createAgregatesAndInvoice(BillingRun billingRun) throws BusinessException, Exception {
-		List<BillingAccount> billingAccounts=billingRun.getBillableBillingAccounts();
-		
-		 for (BillingAccount billingAccount : billingAccounts) {
-			Long startDate=System.currentTimeMillis();
-			invoiceService.createAgregatesAndInvoice(billingAccount, billingRun);
-			Long endDate=System.currentTimeMillis();
-            log.info("createAgregatesAndInvoice BR_ID="+billingRun.getId()+", BA_ID="+billingAccount.getId()+", Time en ms="+(endDate-startDate));
-        }
+	public void createAgregatesAndInvoice(BillingRun billingRun)
+			throws BusinessException, Exception {
+		List<BillingAccount> billingAccounts = billingRun
+				.getBillableBillingAccounts();
 
-         billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
-	        billingRunService.update(billingRun);
-		
+		for (BillingAccount billingAccount : billingAccounts) {
+			Long startDate = System.currentTimeMillis();
+			invoiceService
+					.createAgregatesAndInvoice(billingAccount, billingRun);
+			Long endDate = System.currentTimeMillis();
+			log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId()
+					+ ", BA_ID=" + billingAccount.getId() + ", Time en ms="
+					+ (endDate - startDate));
+		}
+
+		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
+		billingRunService.update(billingRun);
+
 	}
 
 	@Override
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public TimerHandle createTimer(ScheduleExpression scheduleExpression,
+			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
+		Timer timer = timerService.createCalendarTimer(scheduleExpression,
+				timerConfig);
 		return timer.getHandle();
 	}
 
@@ -184,9 +207,11 @@ public class InvoicingJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-                Provider provider=providerService.findById(info.getProviderId());
-                JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info,provider);
+				Provider provider = providerService.findById(info
+						.getProviderId());
+				JobExecutionResult result = execute(info.getParametres(),
+						provider);
+				jobExecutionService.persistResult(this, result, info, provider);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

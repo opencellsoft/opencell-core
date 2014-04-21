@@ -18,8 +18,8 @@ package org.meveo.admin.action.payments;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
-import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,197 +37,212 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
 
 /**
- * Standard backing bean for {@link OtherCreditAndCharge} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link OtherCreditAndCharge} (extends
+ * {@link BaseBean} that provides almost all common methods to handle entities
+ * filtering/sorting in datatable, their create, edit, view, delete operations).
+ * It works with Manaty custom JSF components.
  * 
  * @author Ignas
  * @created 2009.10.13
  */
 @Named
-@ViewScoped
+@ConversationScoped
 public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link OtherCreditAndCharge} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private OtherCreditAndChargeService otherCreditAndChargeService;
+	/**
+	 * Injected @{link OtherCreditAndCharge} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private OtherCreditAndChargeService otherCreditAndChargeService;
 
-    /**
-     * Injected @{link OCustomerAccountService} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private CustomerAccountService customerAccountService;
+	/**
+	 * Injected @{link OCustomerAccountService} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private CustomerAccountService customerAccountService;
 
-    /**
-     * Injected @{link OCCTemplateService} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private OCCTemplateService occTemplateService;
+	/**
+	 * Injected @{link OCCTemplateService} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private OCCTemplateService occTemplateService;
 
+	private ParamBean paramBean = ParamBean
+			.getInstance("meveo-admin.properties");
 
-    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
+	private CustomerAccount customerAccount;
 
-    private CustomerAccount customerAccount;
+	private OCCTemplate occTemplate;
 
-    private OCCTemplate occTemplate;
+	/**
+	 * CustomerAccoiunt Id passed as a parameter.
+	 */
+	@Inject
+	@RequestParam
+	private Instance<Long> customerAccountId;
 
-    /**
-     * CustomerAccoiunt Id passed as a parameter.
-     */
-    @Inject
-    @RequestParam
-    private Instance<Long> customerAccountId;
+	/**
+	 * OCCTemplate Id passed as a parameter.
+	 */
+	@Inject
+	@RequestParam
+	private Instance<Long> occTemplateId;
 
-    /**
-     * OCCTemplate Id passed as a parameter.
-     */
-    @Inject
-    @RequestParam
-    private Instance<Long> occTemplateId;
+	@Inject
+	@RequestParam
+	private Instance<String> initType = null;
 
-    @Inject
-    @RequestParam
-    private Instance<String> initType = null;
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public OtherCreditAndChargeBean() {
+		super(OtherCreditAndCharge.class);
+	}
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public OtherCreditAndChargeBean() {
-        super(OtherCreditAndCharge.class);
-    }
+	@PostConstruct
+	public void init() {
 
-    @PostConstruct
-    public void init() {
+		if (customerAccountId != null && customerAccountId.get() != null) {
+			customerAccount = customerAccountService.findById(customerAccountId
+					.get());
+		}
+		if (occTemplateId != null && occTemplateId.get() != null) {
+			occTemplate = occTemplateService.findById(occTemplateId.get());
+		}
+	}
 
-        if (customerAccountId != null && customerAccountId.get() != null) {
-            customerAccount = customerAccountService.findById(customerAccountId.get());
-        }
-        if (occTemplateId != null && occTemplateId.get() != null) {
-            occTemplate = occTemplateService.findById(occTemplateId.get());
-        }
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	public OtherCreditAndCharge initEntity() {
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    public OtherCreditAndCharge initEntity() {
+		// Initialize a new one from ID or empty
+		if (initType == null || initType.get() == null) {
+			super.initEntity();
 
-        // Initialize a new one from ID or empty
-        if (initType == null || initType.get() == null) {
-            super.initEntity();
+			// Either create a new entity from a user selected template
+		} else if ("loadFromTemplate".equals(initType.get())) {
+			if (occTemplateId != null && occTemplateId.get() != null) {
+				copyFromTemplate(occTemplateService.findById(occTemplateId
+						.get()));
 
-            // Either create a new entity from a user selected template
-        } else if ("loadFromTemplate".equals(initType.get())) {
-        	if (occTemplateId != null && occTemplateId.get() != null) {
-        		copyFromTemplate(occTemplateService.findById(occTemplateId.get()));
-                
-            }
-            return entity;
+			}
+			return entity;
 
-            // Create a new entity from a rejectPayment template
-        } else if ("loadFromTemplateRejectPayment".equals(initType.get())) {
-            String occTemplateRejectPaymentCode = paramBean.getProperty("occ.templateRejectPaymentCode","IP_PLVT");
-            OCCTemplate occ = occTemplateService.findByCode(occTemplateRejectPaymentCode, getCurrentProvider().getCode());
-            copyFromTemplate(occ);
+			// Create a new entity from a rejectPayment template
+		} else if ("loadFromTemplateRejectPayment".equals(initType.get())) {
+			String occTemplateRejectPaymentCode = paramBean.getProperty(
+					"occ.templateRejectPaymentCode", "IP_PLVT");
+			OCCTemplate occ = occTemplateService.findByCode(
+					occTemplateRejectPaymentCode, getCurrentProvider()
+							.getCode());
+			copyFromTemplate(occ);
 
-            // Create a new entity from a paymentCheck template
-        } else if ("loadFromTemplatePaymentCheck".equals(initType.get())) {
-            String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode","RG_CHQ");
-            OCCTemplate occ = occTemplateService.findByCode(occTemplatePaymentCode, getCurrentProvider().getCode());
-            copyFromTemplate(occ);
+			// Create a new entity from a paymentCheck template
+		} else if ("loadFromTemplatePaymentCheck".equals(initType.get())) {
+			String occTemplatePaymentCode = paramBean.getProperty(
+					"occ.templatePaymentCheckCode", "RG_CHQ");
+			OCCTemplate occ = occTemplateService.findByCode(
+					occTemplatePaymentCode, getCurrentProvider().getCode());
+			copyFromTemplate(occ);
 
-        }
-        return entity;
-    }
+		}
+		return entity;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    public String saveOrUpdate(boolean killConversation) {
-        entity.setUnMatchingAmount(entity.getAmount());
-        entity.getCustomerAccount().getAccountOperations().add(entity);
-        return super.saveOrUpdate(killConversation);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
+	@Override
+	public String saveOrUpdate(boolean killConversation) {
+		entity.setUnMatchingAmount(entity.getAmount());
+		entity.getCustomerAccount().getAccountOperations().add(entity);
+		return super.saveOrUpdate(killConversation);
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<OtherCreditAndCharge> getPersistenceService() {
-        return otherCreditAndChargeService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<OtherCreditAndCharge> getPersistenceService() {
+		return otherCreditAndChargeService;
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#back()
-     */
-    @Override
-    public String back() {
-        return "customerAccountDetail";
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#back()
+	 */
+	@Override
+	public String back() {
+		return "customerAccountDetail";
+	}
 
-    /**
-     * 
-     * @param customerAccountId
-     * @return
-     */
-    public String loadFromTemplatePaymentCheck(Long customerAccountId) {
-        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplatePaymentCheck"
-                + "&edit=true&faces-redirect=true&includeViewParams=true";
-    }
+	/**
+	 * 
+	 * @param customerAccountId
+	 * @return
+	 */
+	public String loadFromTemplatePaymentCheck(Long customerAccountId) {
+		return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplatePaymentCheck"
+				+ "&edit=true&faces-redirect=true&includeViewParams=true";
+	}
 
-    /**
-     * @param customerAccountId
-     * @return
-     */
-    public String loadFromTemplateRejectPayment(Long customerAccountId) {
-        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplateRejectPayment"
-                + "&edit=true&faces-redirect=true&includeViewParams=true";
+	/**
+	 * @param customerAccountId
+	 * @return
+	 */
+	public String loadFromTemplateRejectPayment(Long customerAccountId) {
+		return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplateRejectPayment"
+				+ "&edit=true&faces-redirect=true&includeViewParams=true";
 
-    }
+	}
 
-    /**
-     * @param occ
-     * @param customerAccountId
-     */
-    private void copyFromTemplate(OCCTemplate occ) {
-        entity = new OtherCreditAndCharge();
-        entity.setCustomerAccount(customerAccount);
-        if(occ!=null){
-        	 entity.setOccCode(occ.getCode());
-             entity.setOccDescription(occ.getDescription());
-             entity.setAccountCode(occ.getAccountCode());
-             entity.setTransactionCategory(occ.getOccCategory());
-             entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
-        }
-       
-        entity.setMatchingStatus(MatchingStatusEnum.O);
-        entity.setDueDate(new Date());
-        entity.setTransactionDate(new Date());
-    }
+	/**
+	 * @param occ
+	 * @param customerAccountId
+	 */
+	private void copyFromTemplate(OCCTemplate occ) {
+		entity = new OtherCreditAndCharge();
+		entity.setCustomerAccount(customerAccount);
+		if (occ != null) {
+			entity.setOccCode(occ.getCode());
+			entity.setOccDescription(occ.getDescription());
+			entity.setAccountCode(occ.getAccountCode());
+			entity.setTransactionCategory(occ.getOccCategory());
+			entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
+		}
 
-    public String loadFromTemplate() {
-        return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplate"
-                + "&edit=true&faces-redirect=true&includeViewParams=true&occTemplateId="+occTemplate.getId();
-    }
+		entity.setMatchingStatus(MatchingStatusEnum.O);
+		entity.setDueDate(new Date());
+		entity.setTransactionDate(new Date());
+	}
 
-    public void setOccTemplate(OCCTemplate occTemplate) {
-        this.occTemplate = occTemplate;
-    }
+	public String loadFromTemplate() {
+		return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplate"
+				+ "&edit=true&faces-redirect=true&includeViewParams=true&occTemplateId="
+				+ occTemplate.getId();
+	}
 
-    public OCCTemplate getOccTemplate() {
-        return occTemplate;
-    }
+	public void setOccTemplate(OCCTemplate occTemplate) {
+		this.occTemplate = occTemplate;
+	}
 
-    public CustomerAccount getCustomerAccount() {
-        return customerAccount;
-    }
+	public OCCTemplate getOccTemplate() {
+		return occTemplate;
+	}
+
+	public CustomerAccount getCustomerAccount() {
+		return customerAccount;
+	}
 }
