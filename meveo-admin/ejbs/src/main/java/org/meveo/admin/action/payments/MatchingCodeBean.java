@@ -15,7 +15,7 @@
  */
 package org.meveo.admin.action.payments;
 
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -38,7 +38,7 @@ import org.meveo.service.payments.impl.MatchingCodeService;
  */
 @Named
 // TODO: @Scope(ScopeType.PAGE)
-@ViewScoped
+@ConversationScoped
 public class MatchingCodeBean extends BaseBean<MatchingCode> {
 
 	private static final long serialVersionUID = 1L;
@@ -69,8 +69,9 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		String returnPage = null;
 
 		returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount()
-						.getId() + "&edit=false&tab=ops&faces-redirect=true";
+				+ entity.getMatchingAmounts().get(0).getAccountOperation()
+						.getCustomerAccount().getId()
+				+ "&edit=false&tab=ops&faces-redirect=true";
 
 		return returnPage;
 	}
@@ -79,12 +80,14 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		String returnPage = null;
 		try {
 			returnPage = "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-					+ entity.getMatchingAmounts().get(0).getAccountOperation().getCustomerAccount()
-							.getId() + "&edit=false&tab=ops";
+					+ entity.getMatchingAmounts().get(0).getAccountOperation()
+							.getCustomerAccount().getId()
+					+ "&edit=false&tab=ops";
 			matchingCodeService.unmatching(entity.getId(), getCurrentUser());
 			messages.info(new BundleKey("messages", "matchingCode.unmatchingOK"));
 		} catch (BusinessException e) {
-			messages.error(new BundleKey("messages", "matchingCode.unmatchingKO"));
+			messages.error(new BundleKey("messages",
+					"matchingCode.unmatchingKO"));
 			e.printStackTrace();
 		}
 		return returnPage;

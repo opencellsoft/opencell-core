@@ -18,8 +18,8 @@ package org.meveo.admin.action.payments;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
-import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -47,7 +47,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * @created 2009.10.13
  */
 @Named
-@ViewScoped
+@ConversationScoped
 public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 
 	private static final long serialVersionUID = 1L;
@@ -142,7 +142,8 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 					+ conversation.getId()
 					+ "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
-			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
+			messages.error(new BundleKey("messages",
+					"error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
@@ -160,20 +161,24 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 */
 	public String transferAccount() {
 		try {
-			customerAccountService.transferAccount(entity, getCustomerAccountTransfer(),
-					getAmountToTransfer(), getCurrentUser());
-			messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
+			customerAccountService.transferAccount(entity,
+					getCustomerAccountTransfer(), getAmountToTransfer(),
+					getCurrentUser());
+			messages.info(new BundleKey("messages",
+					"customerAccount.transfertOK"));
 			setCustomerAccountTransfer(null);
 			setAmountToTransfer(BigDecimal.ZERO);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			messages.error(new BundleKey("messages", "customerAccount.transfertKO"));
+			messages.error(new BundleKey("messages",
+					"customerAccount.transfertKO"));
 		}
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
 				+ entity.getId() + "&edit=false&tab=ops&faces-redirect=true";
 	}
+
 	public String backCA() {
 
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
@@ -198,7 +203,8 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 		if (entity.getId() == null) {
 			return new BigDecimal(0);
 		} else
-			return customerAccountService.customerAccountBalanceDue(entity, new Date());
+			return customerAccountService.customerAccountBalanceDue(entity,
+					new Date());
 	}
 
 	/**
@@ -207,12 +213,14 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * @return exigible balance without litigation
 	 * @throws BusinessException
 	 */
-	public BigDecimal getBalanceExigibleWithoutLitigation() throws BusinessException {
+	public BigDecimal getBalanceExigibleWithoutLitigation()
+			throws BusinessException {
 		if (entity.getId() == null) {
 			return new BigDecimal(0);
 		} else
-			return customerAccountService.customerAccountBalanceExigibleWithoutLitigation(entity,
-					new Date());
+			return customerAccountService
+					.customerAccountBalanceExigibleWithoutLitigation(entity,
+							new Date());
 	}
 
 	/**
@@ -233,8 +241,10 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	public String closeCustomerAccount() {
 		log.info("closeAccount customerAccountId:" + entity.getId());
 		try {
-			customerAccountService.closeCustomerAccount(entity, getCurrentUser());
-			messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
+			customerAccountService.closeCustomerAccount(entity,
+					getCurrentUser());
+			messages.info(new BundleKey("messages",
+					"customerAccount.closeSuccessful"));
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -249,7 +259,8 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 	 * @param customerAccountTransfer
 	 *            the customerAccountTransfer to set
 	 */
-	public void setCustomerAccountTransfer(CustomerAccount customerAccountTransfer) {
+	public void setCustomerAccountTransfer(
+			CustomerAccount customerAccountTransfer) {
 		this.customerAccountTransfer = customerAccountTransfer;
 	}
 

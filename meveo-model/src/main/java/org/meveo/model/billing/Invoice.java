@@ -51,11 +51,10 @@ public class Invoice extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN_ID")
 	private BillingRun billingRun;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "RECORDED_INVOICE_ID")
 	private RecordedInvoice recordedInvoice;
-	
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
@@ -89,7 +88,7 @@ public class Invoice extends AuditableEntity {
 
 	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
-	
+
 	@Column(name = "NET_TO_PAY", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal netToPay;
 
@@ -126,8 +125,8 @@ public class Invoice extends AuditableEntity {
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
-	
-	@Column(name = "COMMENT", length =1200)
+
+	@Column(name = "COMMENT", length = 1200)
 	private String comment;
 
 	public List<RatedTransaction> getRatedTransactions() {
@@ -367,7 +366,5 @@ public class Invoice extends AuditableEntity {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
-	
 
 }
