@@ -1,12 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:custom="http://manaty.net/custom"
-	xmlns:a="http://richfaces.org/a4j" template="layout/template.xhtml">
+	template="layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml">
@@ -25,14 +23,14 @@
 			column1Label="#{messages['businessEntity.code']}" column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" filtersMap="#{providerBean.filters}"> -->
-			<!-- select link -->
-			<!-- <a:commandLink value="#{messages['commons.select']}"
+		<!-- select link -->
+		<!-- <a:commandLink value="#{messages['commons.select']}"
 				action="#{currentProviderBean.setCurrentProvider(entity)}"
 				oncomplete="Richfaces.hideModalPanel('providerPopup')">
 			</a:commandLink>
 		</custom:entityPopup> -->
 
-		<rich:panel>
+		<p:panel>
 			<h:panelGrid columns="2" style="width:100%;text-align:center;">
 				<h:graphicImage value="/img/home.png" style="border:0px;" />
 				<!-- REMOVED FOR NOW -->
@@ -42,7 +40,7 @@
 				</p:columnChart >
                -->
 			</h:panelGrid>
-		</rich:panel>
+		</p:panel>
 
 	</ui:define>
 </ui:composition>

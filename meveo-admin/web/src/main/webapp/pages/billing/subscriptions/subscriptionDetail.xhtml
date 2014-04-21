@@ -492,6 +492,8 @@
 														value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 														size="5" maxlength="3">
 													</h:inputText>
+													<h:outputText rendered="#{!subscriptionBean.edit}" value="#{subscriptionBean.oneShotChargeInstanceQuantity}">
+													</h:outputText>
 												</h:panelGrid>
 												<p:outputPanel id="oneShotWalletOperationsPanel"
 													rendered="#{subscriptionBean.oneShotChargeInstance.id!=null}">
