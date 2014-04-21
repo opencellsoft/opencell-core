@@ -124,7 +124,10 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
             // Either create a new entity from a user selected template
         } else if ("loadFromTemplate".equals(initType.get())) {
-            copyFromTemplate(getOccTemplate());
+        	if (occTemplateId != null && occTemplateId.get() != null) {
+        		copyFromTemplate(occTemplateService.findById(occTemplateId.get()));
+                
+            }
             return entity;
 
             // Create a new entity from a rejectPayment template
@@ -213,7 +216,7 @@ public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
 
     public String loadFromTemplate() {
         return "/pages/payments/accountOperations/accountOperationDetail.xhtml?initType=loadFromTemplate"
-                + "&edit=true&faces-redirect=true&includeViewParams=true";
+                + "&edit=true&faces-redirect=true&includeViewParams=true&occTemplateId="+occTemplate.getId();
     }
 
     public void setOccTemplate(OCCTemplate occTemplate) {
