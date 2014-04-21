@@ -7,6 +7,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:e="http://primefaces.org/extension"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <ui:composition>
@@ -22,7 +23,7 @@
 	<c:if test="${empty checkMany}">
 		<c:set var="checkMany" value="true" />
 	</c:if>
-	
+
 	<c:if test="${empty exportButton}">
 		<c:set var="exportButton" value="true" />
 	</c:if>
@@ -49,6 +50,8 @@
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 				rowsPerPageTemplate="5,10,15" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid">
+				<p:ajax event="page" onstart="PF('blockUIWidgetDataTable').block()"
+					oncomplete="PF('blockUIWidgetDataTable').unblock()" />
 				<p:column selectionMode="multiple" style="width:2%"
 					rendered="#{checkMany}" exportable="false" />
 				<ui:insert />
@@ -61,14 +64,26 @@
 					ajax="false" /> -->
 
 			<p:commandButton id="#{formId}buttonExport"
-				value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportButton}">
+				value="#{messages['commons.exportExcel']}" ajax="false"
+				rendered="#{exportButton}">
 				<p:dataExporter type="xls" target="datatable" fileName="data"
 					pageOnly="false" />
 			</p:commandButton>
 
-			<p:panel>
+			<p:panel styleClass="buttons-set-data-table">
 				<ui:insert name="add-on-buttons" />
 			</p:panel>
+
+			<pe:blockUI target="datatable" content="blockUIContentDataTable"
+				widgetVar="blockUIWidgetDataTable" />
+
+			<p:panelGrid id="blockUIContentDataTable" columns="2"
+				style="display:none;">
+				<h:graphicImage library="img" name="ajax-loader1.gif"
+					style="margin-right: 12px; vertical-align: middle;" />
+				<h:outputText value="#{messages['message.loading.data']}"
+					style="white-space: nowrap;" />
+			</p:panelGrid>
 
 		</h:form>
 	</p:panel>
