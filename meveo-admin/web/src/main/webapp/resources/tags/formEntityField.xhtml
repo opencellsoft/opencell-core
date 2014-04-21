@@ -56,11 +56,8 @@
 				rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}" />
 			<p:outputLabel for="#{cc.attrs.id}_notext" value="#{cc.attrs.label}"
 				rendered="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]==null}" />
+				
 			<p:panelGrid styleClass="inner-table" columns="3">
-				<!-- 				<p:inputText id="#{cc.attrs.id}_text2" rendered="#{cc.attrs.edit}" -->
-				<!-- 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}" required="#{cc.attrs.required}" size="#{cc.attrs.size}" -->
-				<!-- 					disabled="true" /> -->
-
 				<p:inputText id="#{cc.attrs.id}_text"
 					rendered="#{cc.attrs.edit and cc.entityFromBackingBeanOrAttribute[cc.attrs.field]!=null}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field][cc.attrs.childField]}"
