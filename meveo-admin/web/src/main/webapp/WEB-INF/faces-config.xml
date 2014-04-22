@@ -786,6 +786,11 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>subscriptionDetailWithNavigation</from-outcome>
+			<to-view-id>/pages/billing/subscriptions/subscriptionDetail.xhtml</to-view-id>
+			<redirect include-view-params="true" />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>userAccounts</from-outcome>
 			<to-view-id>/pages/billing/userAccounts/userAccounts.xhtml</to-view-id>
 			<redirect />
@@ -861,7 +866,7 @@
 			<redirect include-view-params="true">
 				<view-param>
 					<name>backView</name>
-					<value>subscriptionDetail</value>
+					<value>subscriptionDetailWithNavigation</value>
 				</view-param>
 			</redirect>
 		</navigation-case>
