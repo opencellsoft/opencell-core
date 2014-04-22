@@ -23,15 +23,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-
 @FacesConverter("bigDecimalConverter")
 public class BigDecimalConverter implements Converter {
 
 	private DecimalFormat format = new DecimalFormat("#,##0.00");
-	
+
 	@Override
-	public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
-		if (obj == null) {
+	public String getAsString(FacesContext facesContext,
+			UIComponent uIComponent, Object obj) {
+		if (obj == null || obj.toString().length() == 0) {
 			return "";
 		}
 
@@ -43,14 +43,16 @@ public class BigDecimalConverter implements Converter {
 	}
 
 	@Override
-	public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+	public Object getAsObject(FacesContext facesContext,
+			UIComponent uIComponent, String str) {
 		if (str == null || str.equals("")) {
 			return null;
 		}
-		/*if (!str.matches(paramBean.getProperty("bigDecimal.pattern"))) {
-			throw new ConverterException(resourceMessages.getString(
-					"javax.faces.converter.BigDecimalConverter.DECIMAL_detail"));
-		}*/
+		/*
+		 * if (!str.matches(paramBean.getProperty("bigDecimal.pattern"))) {
+		 * throw new ConverterException(resourceMessages.getString(
+		 * "javax.faces.converter.BigDecimalConverter.DECIMAL_detail")); }
+		 */
 		str = str.replace(" ", "");
 		str = str.replace("\u00a0", "");
 		str = str.replace(",", ".");
