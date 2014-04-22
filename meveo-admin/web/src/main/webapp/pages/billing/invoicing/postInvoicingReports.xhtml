@@ -18,65 +18,61 @@
 
 		<hf:formPanel formId="form3" edit="false"
 			label="#{messages['postInvoicingReport.title']}"
-			backingBean="#{billingRunBean}"
-			showFormButtons="false">
-	<hftl:panelGroup columns="2">
-			<hftl:panelGroup columns="1">
-				<hf:formEntityField
-					label="#{messages['postInvoicingReport.globalAmountHT']}"
-					field="postInvoicingReports" childField="globalAmount"
-					popup="false" />
-				<hf:formEntityField
-					label="#{messages['postInvoicingReport.invoicesNumber']}"
-					field="postInvoicingReports" childField="invoicesNumber"
-					popup="false" />
-				<hf:formEntityField
-					label="#{messages['postInvoicingReport.positiveInvoicesNumber']}"
-					field="postInvoicingReports" childField="positiveInvoicesNumber"
-					popup="false" />
-				<hf:formEntityField
-					label="#{messages['postInvoicingReport.positiveInvoicesAmountHT']}"
-					field="postInvoicingReports" childField="positiveInvoicesAmountHT"
-					popup="false" />
+			backingBean="#{billingRunBean}" showFormButtons="false">
+			<hftl:panelGroup columns="2">
+				<hftl:panelGroup columns="1">
 					<hf:formEntityField
-					label="#{messages['postInvoicingReport.positiveInvoicesAmount']}"
-					field="postInvoicingReports" childField="positiveInvoicesAmount"
-					popup="false" />
-					
-				<hf:formEntityField id="emptyInvoicesNumber"
-					label="#{messages['postInvoicingReport.emptyInvoicesNumber']}"
-					field="postInvoicingReports" childField="emptyInvoicesNumber"
-					popup="false" />
+						label="#{messages['postInvoicingReport.globalAmountHT']}"
+						field="postInvoicingReports" childField="globalAmount"
+						popup="false" />
+					<hf:formEntityField
+						label="#{messages['postInvoicingReport.invoicesNumber']}"
+						field="postInvoicingReports" childField="invoicesNumber"
+						popup="false" />
+					<hf:formEntityField
+						label="#{messages['postInvoicingReport.positiveInvoicesNumber']}"
+						field="postInvoicingReports" childField="positiveInvoicesNumber"
+						popup="false" />
+					<hf:formEntityField
+						label="#{messages['postInvoicingReport.positiveInvoicesAmountHT']}"
+						field="postInvoicingReports" childField="positiveInvoicesAmountHT"
+						popup="false" />
+					<hf:formEntityField
+						label="#{messages['postInvoicingReport.positiveInvoicesAmount']}"
+						field="postInvoicingReports" childField="positiveInvoicesAmount"
+						popup="false" />
+
+					<hf:formEntityField id="emptyInvoicesNumber"
+						label="#{messages['postInvoicingReport.emptyInvoicesNumber']}"
+						field="postInvoicingReports" childField="emptyInvoicesNumber"
+						popup="false" />
+				</hftl:panelGroup>
+
+				<hftl:panelGroup columns="1">
+
+					<hf:formEntityField
+						label="#{messages['postInvoicingReport.positiveInvoicesTaxAmount']}"
+						field="postInvoicingReports"
+						childField="positiveInvoicesTaxAmount" popup="false" />
+					<hf:formEntityField
+						label="#{messages['postInvoicingReport.negativeInvoicesAmountHT']}"
+						field="postInvoicingReports" childField="negativeInvoicesAmountHT"
+						popup="false" />
+					<hf:formEntityField
+						label="#{messages['postInvoicingReport.negativeInvoicesTaxAmount']}"
+						field="postInvoicingReports"
+						childField="negativeInvoicesTaxAmount" popup="false" />
+					<hf:formEntityField id="positiveInvoicesAmount"
+						label="#{messages['postInvoicingReport.negativeInvoicesAmount']}"
+						field="postInvoicingReports" childField="negativeInvoicesAmount"
+						popup="false" />
+					<hf:formEntityField id="electronicInvoicesNumber"
+						label="#{messages['postInvoicingReport.electronicInvoicesNumber']}"
+						field="postInvoicingReports" childField="electronicInvoicesNumber"
+						popup="false" />
+				</hftl:panelGroup>
 			</hftl:panelGroup>
 
-			<hftl:panelGroup columns="1">
-				
-				<hf:formEntityField
-					label="#{messages['postInvoicingReport.positiveInvoicesTaxAmount']}"
-					field="postInvoicingReports" childField="positiveInvoicesTaxAmount"
-					popup="false" />
-				<hf:formEntityField
-					label="#{messages['postInvoicingReport.negativeInvoicesAmountHT']}"
-					field="postInvoicingReports" childField="negativeInvoicesAmountHT"
-					popup="false" />
-				<hf:formEntityField
-					label="#{messages['postInvoicingReport.negativeInvoicesTaxAmount']}"
-					field="postInvoicingReports" childField="negativeInvoicesTaxAmount"
-					popup="false" />
-						<hf:formEntityField id="positiveInvoicesAmount"
-					label="#{messages['postInvoicingReport.negativeInvoicesAmount']}"
-					field="postInvoicingReports" childField="negativeInvoicesAmount"
-					popup="false" />
-							<hf:formEntityField id="electronicInvoicesNumber"
-					label="#{messages['postInvoicingReport.electronicInvoicesNumber']}"
-					field="postInvoicingReports" childField="electronicInvoicesNumber"
-					popup="false" />
-			</hftl:panelGroup>
-</hftl:panelGroup>
-
-
-
-			<br />
 			<br />
 			<b>#{messages['postInvoicingReport.invoicesNumberPerPaymentMode']}</b>
 			<hftl:panelGroup columns="1">
@@ -85,8 +81,7 @@
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<hf:formEntityField
-					label="#{messages['paymentMethod.directDebit']}"
+				<hf:formEntityField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitInvoicesNumber"
 					popup="false" />
 			</hftl:panelGroup>
@@ -109,8 +104,7 @@
 					popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<hf:formEntityField
-					label="#{messages['paymentMethod.directDebit']}"
+				<hf:formEntityField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitAmuontHT"
 					popup="false" />
 			</hftl:panelGroup>
@@ -132,8 +126,7 @@
 					field="postInvoicingReports" childField="checkAmuont" popup="false" />
 			</hftl:panelGroup>
 			<hftl:panelGroup columns="1">
-				<hf:formEntityField
-					label="#{messages['paymentMethod.directDebit']}"
+				<hf:formEntityField label="#{messages['paymentMethod.directDebit']}"
 					field="postInvoicingReports" childField="directDebitAmuont"
 					popup="false" />
 			</hftl:panelGroup>
@@ -154,8 +147,8 @@
 		<h:outputText value="#{messages['postInvoicingReport.billableBA']}"
 			style="font-weight: bold;font-size=14;" />
 		<hftl:dataList dataModel="#{billingRunBean.entity.invoices}"
-			backingBean="#{billingRunBean}" checkMany="false">
-			
+			backingBean="#{invoiceBean}" checkMany="false">
+
 			<hftl:column label="#{messages['businessEntity.code']}"
 				field="billingAccount" childField="code" />
 			<rich:column width="100">
@@ -186,7 +179,6 @@
 				value="Exclude" />
 		</h:form>
 
-		<br />
 		<br />
 		<h:form id="operationsForm" rendered="#{!edit}">
 			<p:commandButton action="#{billingRunBean.validateInvoicing()}"
