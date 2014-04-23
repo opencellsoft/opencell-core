@@ -52,7 +52,7 @@
 
 		<hf:formPanel label="#{messages['serviceInstance.panel']}"
 			backingBean="#{serviceInstanceBean}" columns="2"
-			killConversationOnBack="#{param['serviceInstanceId'] == null}">
+			killConversationOnBack="#{param['serviceInstanceId'] == null}" killConversationOnSave="#{param['backView'] != null}">
 
 			<hf:formEntityField id="serviceSelectedId"
 				label="#{messages['serviceInstance.code']}" field="serviceTemplate"

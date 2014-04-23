@@ -15,8 +15,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.math.BigDecimal;
-
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -107,15 +105,6 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 
 	}
 
-	@Override
-	public String saveOrUpdate(boolean killConversation) {
-		if (entity.getAmountWithoutTax() == null)
-			entity.setAmountWithoutTax(new BigDecimal(0));
-		if (entity.getAmountWithTax() == null)
-			entity.setAmountWithTax(new BigDecimal(0));
-		return super.saveOrUpdate(killConversation);
-	}
-	
 	@Override
 	protected String getDefaultSort() {
 		return "eventCode";

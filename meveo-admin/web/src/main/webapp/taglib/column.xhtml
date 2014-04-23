@@ -67,6 +67,7 @@
 
 	<c:set var="converter"
 		value="#{getConverter.forType(entity[field], converterParam)}"></c:set>
+
 	<p:column exportable="#{exportable}">
 		<f:facet name="header">
 			<h:outputText value="#{label}" />
