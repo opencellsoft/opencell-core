@@ -288,5 +288,5 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-
+	
 }

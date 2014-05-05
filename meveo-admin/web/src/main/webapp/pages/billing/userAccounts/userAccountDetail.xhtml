@@ -218,7 +218,7 @@
 							<p:button outcome="addNewSubscription"
 								value="#{messages['userAccount.addNewSubscription']}"
 								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
-								<f:param name="cid" value="#{conversation.id}" />
+<!-- 								<f:param name="cid" value="#{conversation.id}" /> -->
 							</p:button>
 							<p:commandButton value="#{messages['button.terminateButton']}"
 								oncomplete="dlg_userAccountTerminationPopup.show()"

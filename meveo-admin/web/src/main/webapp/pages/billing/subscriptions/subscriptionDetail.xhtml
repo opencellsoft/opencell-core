@@ -11,7 +11,8 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-
+			<f:event listener="#{subscriptionBean.beginConversation()}"
+				type="preRenderView"></f:event>
 			<f:viewParam name="subscriptionId"
 				value="#{subscriptionBean.objectId}" />
 			<f:viewParam name="userAccountId"
