@@ -391,7 +391,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + countryId);
+							+ " and trading country=" + country.getCountryCode());
 		}
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
@@ -563,7 +563,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + countryId);
+							+ " and trading country=" + country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -780,7 +780,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				throw new IncorrectChargeTemplateException(
 						"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 								+ invoiceSubCategory.getCode()
-								+ " and trading country=" + countryId);
+								+ " and trading country=" + country.getCountryCode());
 			}
 
 			Tax tax = invoiceSubcategoryCountry.getTax();
@@ -909,7 +909,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + countryId);
+							+ " and trading country=" + country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -1045,7 +1045,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + countryId);
+							+ " and trading country=" + country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -1232,7 +1232,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + countryId);
+							+ " and trading country=" + country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
