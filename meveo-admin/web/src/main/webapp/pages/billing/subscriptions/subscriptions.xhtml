@@ -42,7 +42,7 @@
 				view="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
 				backView="subscriptions" />
 
-			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false"
+			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false" propagateConversation="false"
 				permission="#{identity.hasPermission('billing','billingManagement')}" />
 		</hftl:dataList>
 

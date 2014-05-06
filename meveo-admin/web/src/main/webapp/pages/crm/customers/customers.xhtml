@@ -44,7 +44,7 @@
 			<hftl:column label="#{messages['customer.customerBrand']}" field="customerBrand" childField="description" isMessage="false" />
 			<hftl:column label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:column label="#{messages['seller.title']}" field="seller" childField="description" />
-			<hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('account','accountManagement')}" />
+			<hftl:actionsColumn useCustomIdParam="true" propagateConversation="false" permission="#{identity.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

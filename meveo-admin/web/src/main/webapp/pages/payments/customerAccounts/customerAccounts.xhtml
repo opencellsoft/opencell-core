@@ -70,7 +70,7 @@
 				field="customer" childField="code" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
-			<hftl:actionsColumn useCustomIdParam="true"
+			<hftl:actionsColumn useCustomIdParam="true" propagateConversation="false"
 				permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 

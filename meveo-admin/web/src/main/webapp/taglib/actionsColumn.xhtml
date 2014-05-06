@@ -10,6 +10,9 @@
 
 <ui:composition>
 
+	<c:if test="${empty propagateConversation}">
+		<c:set var="propagateConversation" value="true" />
+	</c:if>
 	<c:if test="${empty renderViewLink}">
 		<c:set var="renderViewLink" value="true" />
 	</c:if>
@@ -44,7 +47,9 @@
 			icon="ui-icon-search" rendered="#{renderViewLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="false" />
-			<f:param name="cid" value="#{conversation.id}" />
+			<c:if test="${propagateConversation}">
+				<f:param name="cid" value="#{conversation.id}" />
+			</c:if>
 		</p:button>
 
 		<p:tooltip for="#{resultsId}editlink"
@@ -54,7 +59,9 @@
 			icon="ui-icon-document" rendered="#{renderEditLink}">
 			<f:param name="#{objectIdParamName}" value="#{entity.id}" />
 			<f:param name="edit" value="true" />
-			<f:param name="cid" value="#{conversation.id}" />
+			<c:if test="${propagateConversation}">
+				<f:param name="cid" value="#{conversation.id}" />
+			</c:if>
 		</p:button>
 
 		<p:tooltip for="#{resultsId}deletelink"

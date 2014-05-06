@@ -10,6 +10,8 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
+		<f:event type="preRenderView" listener="#{billingAccountBean.preRenderView}" />
+		
 			<f:viewParam name="billingAccountId"
 				value="#{billingAccountBean.objectId}" />
 			<f:viewParam name="customerAccountId"

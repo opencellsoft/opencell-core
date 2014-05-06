@@ -43,7 +43,7 @@
 							outcome="#{node.view}"
 							styleClass="#{node.selected?'selectedTreeNode':''}">
 							<f:param name="customerId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
 							<f:param name="edit" value="false" />
 						</h:link>
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
@@ -72,7 +72,7 @@
 							outcome="#{node.view}"
 							styleClass="#{node.selected?'selectedTreeNode':''}">
 							<f:param name="customerAccountId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
 							<f:param name="edit" value="false" />
 						</h:link>
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
@@ -100,7 +100,7 @@
 							outcome="#{node.view}"
 							styleClass="#{node.selected?'selectedTreeNode':''}">
 							<f:param name="billingAccountId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
 							<f:param name="edit" value="false" />
 						</h:link>
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
@@ -127,7 +127,7 @@
 							outcome="#{node.view}"
 							styleClass="#{node.selected?'selectedTreeNode':''}">
 							<f:param name="userAccountId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />
+<!-- 							<f:param name="cid" value="#{conversation.id}" /> -->
 							<f:param name="edit" value="false" />
 						</h:link>
 						<p:tooltip rendered="#{node.firstAndLastName != null}"
@@ -152,7 +152,7 @@
 						<h:link id="subscription_tree_value" value="#{node}"
 							outcome="#{node.view}">
 							<f:param name="subscriptionId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />		
+<!-- 							<f:param name="cid" value="#{conversation.id}" />		 -->
 							<f:param name="edit" value="false" />
 						</h:link>					
 						<p:tooltip rendered="#{node.code != null}"
@@ -177,7 +177,7 @@
 						<h:link id="access_tree_value" value="#{node}"
 							outcome="#{node.view}">
 							<f:param name="subscriptionId" value="#{node.id}"/>
-							<f:param name="cid" value="#{conversation.id}" />		
+<!-- 							<f:param name="cid" value="#{conversation.id}" />		 -->
 							<f:param name="edit" value="false" />
 						</h:link>					
 						<p:tooltip rendered="#{node.code != null}"
