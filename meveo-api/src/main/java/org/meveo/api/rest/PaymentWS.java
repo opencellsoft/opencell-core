@@ -29,8 +29,8 @@ public class PaymentWS {
 	@Inject
 	private Logger log;
 
-	@Inject
-	private ParamBean paramBean;
+	private ParamBean paramBean = ParamBean
+			.getInstance("meveo-admin.properties");
 
 	@Inject
 	private PaymentApi paymentApi;

@@ -15,13 +15,30 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceCategoryDTO;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceSubCategoryDTO;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -91,113 +108,81 @@ public class InvoiceBean extends BaseBean<Invoice> {
 		return invoiceService;
 	}
 
-	// TODO: Rachid kindly pushed the missing classes :-).
-	// @SuppressWarnings("unchecked")
-	// public List<InvoiceCategoryDTO> getInvoiceCategories() {
-	//
-	// LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new
-	// LinkedHashMap<String, InvoiceCategoryDTO>();
-	// List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new
-	// ArrayList<CategoryInvoiceAgregate>();
-	// for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-	// if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-	// CategoryInvoiceAgregate categoryInvoiceAgregate =
-	// (CategoryInvoiceAgregate) invoiceAgregate;
-	// categoryInvoiceAgregates.add(categoryInvoiceAgregate);
-	// }
-	// }
-	// Collections.sort(categoryInvoiceAgregates,
-	// new Comparator<CategoryInvoiceAgregate>() {
-	// public int compare(CategoryInvoiceAgregate c0,
-	// CategoryInvoiceAgregate c1) {
-	// if (c0.getInvoiceCategory() != null
-	// && c1.getInvoiceCategory() != null
-	// && c0.getInvoiceCategory().getSortIndex() != null
-	// && c1.getInvoiceCategory().getSortIndex() != null) {
-	// return c0
-	// .getInvoiceCategory()
-	// .getSortIndex()
-	// .compareTo(
-	// c1.getInvoiceCategory()
-	// .getSortIndex());
-	// }
-	// return 0;
-	// }
-	// });
-	//
-	// for (CategoryInvoiceAgregate categoryInvoiceAgregate :
-	// categoryInvoiceAgregates) {
-	// InvoiceCategory invoiceCategory = categoryInvoiceAgregate
-	// .getInvoiceCategory();
-	// InvoiceCategoryDTO headerCat = null;
-	// if (headerCategories.containsKey(invoiceCategory.getCode())) {
-	// headerCat = headerCategories.get(invoiceCategory.getCode());
-	// headerCat.addAmountWithoutTax(categoryInvoiceAgregate
-	// .getAmountWithoutTax());
-	// headerCat.addAmountWithTax(categoryInvoiceAgregate
-	// .getAmountWithTax());
-	// } else {
-	// headerCat = new InvoiceCategoryDTO();
-	// headerCat.setDescription(invoiceCategory.getDescription());
-	// headerCat.setCode(invoiceCategory.getCode());
-	// headerCat.setAmountWithoutTax(categoryInvoiceAgregate
-	// .getAmountWithoutTax());
-	// headerCat.setAmountWithTax(categoryInvoiceAgregate
-	// .getAmountWithTax());
-	// headerCategories.put(invoiceCategory.getCode(), headerCat);
-	// }
-	// Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates =
-	// categoryInvoiceAgregate
-	// .getSubCategoryInvoiceAgregates();
-	// LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories =
-	// headerCat
-	// .getInvoiceSubCategoryDTOMap();
-	// for (SubCategoryInvoiceAgregate subCatInvoiceAgregate :
-	// subCategoryInvoiceAgregates) {
-	// InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate
-	// .getInvoiceSubCategory();
-	// InvoiceSubCategoryDTO headerSUbCat = null;
-	// if (headerSubCategories.containsKey(invoiceSubCategory
-	// .getCode())) {
-	// headerSUbCat = headerSubCategories.get(invoiceSubCategory
-	// .getCode());
-	// headerSUbCat.addAmountWithoutTax(categoryInvoiceAgregate
-	// .getAmountWithoutTax());
-	// headerSUbCat.addAmountWithTax(categoryInvoiceAgregate
-	// .getAmountWithTax());
-	// } else {
-	// headerSUbCat = new InvoiceSubCategoryDTO();
-	// headerSUbCat.setDescription(invoiceSubCategory
-	// .getDescription());
-	// headerSUbCat.setCode(invoiceSubCategory.getCode());
-	// headerSUbCat.setAmountWithoutTax(categoryInvoiceAgregate
-	// .getAmountWithoutTax());
-	// headerSUbCat.setAmountWithTax(categoryInvoiceAgregate
-	// .getAmountWithTax());
-	// headerSubCategories.put(invoiceSubCategory.getCode(),
-	// headerSUbCat);
-	// }
-	// }
-	// }
-	// return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
-	// }
-	//
-	// public String getNetToPay() throws BusinessException {
-	// BigDecimal balance = customerAccountService.customerAccountBalanceDue(
-	// null,
-	// entity.getBillingAccount().getCustomerAccount().getCode(),
-	// entity.getDueDate());
-	//
-	// if (balance == null) {
-	// throw new BusinessException("account balance calculation failed");
-	// }
-	// BigDecimal netToPay = BigDecimal.ZERO;
-	// if (entity.getProvider().isEntreprise()) {
-	// netToPay = entity.getAmountWithTax();
-	// } else {
-	// netToPay = entity.getAmountWithTax().add(balance);
-	// }
-	// return netToPay.setScale(2, RoundingMode.HALF_UP).toString();
-	// }
+	public List<InvoiceCategoryDTO> getInvoiceCategories(){
+
+        LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
+	        List<CategoryInvoiceAgregate> categoryInvoiceAgregates=new ArrayList<CategoryInvoiceAgregate>();
+	        for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
+	                if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+	                	CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+	                	categoryInvoiceAgregates.add(categoryInvoiceAgregate);
+	                }
+	        }
+	        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
+	                                public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
+	                                    if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null
+	                                    		&& c0.getInvoiceCategory().getSortIndex()!=null 
+	                                    		&& c1.getInvoiceCategory().getSortIndex()!=null) {
+	                                        return c0.getInvoiceCategory().getSortIndex().compareTo(
+	                                                c1.getInvoiceCategory().getSortIndex());
+	                                    }
+	                                    return 0;
+	                                }
+	                            });
+	        
+	        
+	        for (CategoryInvoiceAgregate categoryInvoiceAgregate: categoryInvoiceAgregates) {
+	                InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
+	                InvoiceCategoryDTO headerCat = null;
+	                if (headerCategories.containsKey(invoiceCategory.getCode())) {
+	                    headerCat = headerCategories.get(invoiceCategory.getCode());
+	                    headerCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+	                    headerCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+	                } else {
+	                    headerCat = new InvoiceCategoryDTO();
+	                    headerCat.setDescription(invoiceCategory.getDescription());
+	                    headerCat.setCode(invoiceCategory.getCode());
+	                    headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+	                    headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+	                    headerCategories.put(invoiceCategory.getCode(), headerCat);
+	                }
+	                Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate
+                            .getSubCategoryInvoiceAgregates();
+	                LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
+                    for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+                    	 InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
+     	                InvoiceSubCategoryDTO headerSUbCat = null;
+     	                if (headerSubCategories.containsKey(invoiceSubCategory.getCode())) {
+     	                    headerSUbCat = headerSubCategories.get(invoiceSubCategory.getCode());
+     	                    headerSUbCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+     	                    headerSUbCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+     	                } else {
+     	                    headerSUbCat = new InvoiceSubCategoryDTO();
+     	                    headerSUbCat.setDescription(invoiceSubCategory.getDescription());
+     	                    headerSUbCat.setCode(invoiceSubCategory.getCode());
+     	                    headerSUbCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+     	                    headerSUbCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+     	                   headerSubCategories.put(invoiceSubCategory.getCode(), headerSUbCat);
+     	                }
+                    }
+	        }
+	        return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
+    }
+    
+    public String getNetToPay() throws BusinessException{
+    	  BigDecimal balance =customerAccountService.customerAccountBalanceDue(null,entity.getBillingAccount().getCustomerAccount().getCode(), entity.getDueDate());
+
+          if (balance == null) {
+              throw new BusinessException("account balance calculation failed");
+          }
+          BigDecimal netToPay=BigDecimal.ZERO;
+          if (entity.getProvider().isEntreprise()) {
+              netToPay = entity.getAmountWithTax();
+          } else {
+              netToPay = entity.getAmountWithTax().add(balance);
+          }
+    	return netToPay.setScale(2, RoundingMode.HALF_UP).toString();
+    }
+    
 
 }

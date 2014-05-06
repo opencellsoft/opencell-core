@@ -243,11 +243,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	public String saveOrUpdate(boolean killConversation, String objectName,
 			Long objectId) {
 		String outcome = saveOrUpdate(killConversation);
-		
+
 		if (killConversation) {
 			endConversation();
 		}
-		
+
 		return objectId == null ? outcome : (outcome + "&" + objectName + "="
 				+ objectId + "&cid=" + conversation.getId());
 	}
@@ -757,4 +757,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected String getDefaultSort() {
 		return "";
 	}
+
+	public String getBackView() {
+		return backView.get();
+	}
+
 }

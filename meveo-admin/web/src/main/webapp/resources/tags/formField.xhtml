@@ -50,9 +50,9 @@
 	<cc:attribute name="popup" default="false" />
 	<cc:attribute name="popupId" default="popup" />
 	<cc:attribute name="listenerUpdate" default=""></cc:attribute>
-	<cc:attribute name="converter" default="" />
-    <cc:attribute name="style" default="" />
-    <cc:attribute name="panelStyle" default="" />  
+	<cc:attribute name="converter" required="false" />
+	<cc:attribute name="style" default="" />
+	<cc:attribute name="panelStyle" default="" />
 	<cc:attribute name="show"
 		default="#{((not cc.attrs.showOnlyOnNew) or (cc.attrs.showOnlyOnNew and cc.attrs.edit and cc.entityFromBackingBeanOrAttribute.id==null)) or ((not cc.attrs.showOnlyOnConsult) or (cc.attrs.showOnlyOnConsult and cc.attrs.edit== false))}" />
 </cc:interface>
@@ -258,7 +258,6 @@
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				required="#{cc.attrs.required}" size="5"
 				maxlength="#{cc.attrs.maxlength}">
-
 				<c:if test="#{not empty cc.attrs.converter}">
 					<f:converter converterId="#{cc.attrs.converter}" />
 				</c:if>
@@ -267,7 +266,9 @@
 			<h:outputText rendered="#{not cc.attrs.edit}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 				styleClass="field-value">
-				<f:converter converterId="bigDecimal4DigitsConverter" />
+				<c:if test="#{not empty cc.attrs.converter}">
+					<f:converter converterId="#{cc.attrs.converter}" />
+				</c:if>
 			</h:outputText>
 			<cc:insertChildren />
 		</p:panelGrid>
@@ -358,7 +359,8 @@
 			<p:selectOneMenu rendered="#{cc.attrs.edit}" id="#{cc.attrs.id}_enum"
 				disabled="#{cc.attrs.disabled}"
 				value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-				 required="#{cc.attrs.required}" style="#{cc.attrs.style}" panelStyle="#{cc.attrs.panelStyle}">
+				required="#{cc.attrs.required}" style="#{cc.attrs.style}"
+				panelStyle="#{cc.attrs.panelStyle}">
 				<f:selectItem itemLabel="" itemValue="" />
 				<f:selectItems value="#{cc.getEnumConstants(cc.attrs.field)}"
 					var="enumElement" itemLabel="#{messages[enumElement.label]}" />

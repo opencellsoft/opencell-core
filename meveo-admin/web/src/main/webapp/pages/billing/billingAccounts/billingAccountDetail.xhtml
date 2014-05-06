@@ -309,7 +309,6 @@
 														field="address" childField="country"
 														labelField="descriptionEn" valueField="countryCode"
 														listBean="#{countryBean}"></hf:formEntityField>
-
 												</hftl:panelGroup>
 											</hftl:fieldset>
 											<p:panelGrid columns="1" id="bankCoordinatePanel">
@@ -326,12 +325,10 @@
 															field="paymentTerm" required="false" />
 													</hftl:panelGroup>
 													<hftl:panelGroup columns="2">
-														<p:outputPanel id="electronicBillingField">
-															<hf:formField
-																label="#{messages['billingAccount.electronicBilling']}"
-																field="electronicBilling" isMessage="true"
-																listenerUpdate=":parentTab:formBillingAccountPanel:formId:childTab:emailField" />
-														</p:outputPanel>
+														<hf:formField
+															label="#{messages['billingAccount.electronicBilling']}"
+															field="electronicBilling" isMessage="true"
+															listenerUpdate=":parentTab:formBillingAccountPanel:formId:childTab:emailField" />
 
 														<p:panelGrid columns="2" id="emailField">
 															<p:outputLabel for="email_select"

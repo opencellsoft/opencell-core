@@ -96,22 +96,20 @@
 					field="startRatingDate" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-					field="amountWithoutTax" converterParam="#{getConverter.forType('4digits')}" />
+					field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
 				<hf:formField label="#{messages['pricePlanMatrix.endRatingDate']}"
 					field="endRatingDate" />
 				<hf:formField label="#{messages['pricePlanMatrix.amountWithTax']}"
-					field="amountWithTax" converterParam="#{getConverter.forType('4digits')}" />
+					field="amountWithTax" converter="bigDecimal4DigitsConverter" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.minSubscriptionAgeInMonth']}"
 					field="minSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
 				<hf:formField
 					label="#{messages['pricePlanMatrix.maxSubscriptionAgeInMonth']}"
-					field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4"/>
-				<hf:formField
-					label="#{messages['pricePlanMatrix.priority']}"
-					field="priority"/>
+					field="maxSubscriptionAgeInMonth" maxValue="9999" maxlength="4" />
+				<hf:formField label="#{messages['pricePlanMatrix.priority']}"
+					field="priority" />
 			</p:panelGrid>
-
 
 		</hf:formPanel>
 

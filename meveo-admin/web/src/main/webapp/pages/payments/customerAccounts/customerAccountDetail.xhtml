@@ -280,9 +280,6 @@
 							</hf:formPanel>
 						</p:tab>
 						<p:tab id="ops" title="#{messages['customerAccount.operations']}">
-							<!-- 							onclick="#{accountOperationBean.filters.put('customerAccount',customerAccountBean.entity)}"> -->
-							<!-- 							<a:param name="sortField" value="transactionDate" /> -->
-							<!-- 							<a:param name="sortOrder" value="desc" /> -->
 							<hf:searchPanel renderNewButton="false"
 								label="#{messages['accountOperation.search']}" columns="1"
 								backingBean="#{accountOperationBean}" ajax="true"
@@ -308,24 +305,27 @@
 							</hf:searchPanel>
 							<br />
 							<h:form id="addOperationForm">
-								<p:button value="#{messages['customerAccount.addOperation']}"
-									outcome="addNewOperation"
-									rendered="#{customerAccountBean.isActiveAccount()}"
-									includeViewParams="true">
-									<f:param name="cid" value="#{conversation.id}" />
-								</p:button>
-								<p:commandButton
-									value="#{messages['customerAccount.addPaymentCheck']}"
-									action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
-									rendered="#{customerAccountBean.isActiveAccount()}" />
-								<p:button outcome="transferAccount"
-									value="#{messages['customerAccount.buttonTransfert']}"
-									rendered="#{customerAccountBean.isActiveAccount()}">
-									<f:param name="objectId"
-										value="#{customerAccountBean.entity.id}" />
-									<f:param name="cid" value="#{conversation.id}" />
-								</p:button>
+								<p:panelGrid columns="3" styleClass="form-panel-actions">
+									<p:button value="#{messages['customerAccount.addOperation']}"
+										outcome="addNewOperation"
+										rendered="#{customerAccountBean.isActiveAccount()}"
+										includeViewParams="true">
+										<f:param name="cid" value="#{conversation.id}" />
+									</p:button>
+									<p:commandButton
+										value="#{messages['customerAccount.addPaymentCheck']}"
+										action="#{otherCreditAndChargeBean.loadFromTemplatePaymentCheck(customerAccountBean.entity.id)}"
+										rendered="#{customerAccountBean.isActiveAccount()}" />
+									<p:button outcome="transferAccount"
+										value="#{messages['customerAccount.buttonTransfert']}"
+										rendered="#{customerAccountBean.isActiveAccount()}">
+										<f:param name="objectId"
+											value="#{customerAccountBean.entity.id}" />
+										<f:param name="cid" value="#{conversation.id}" />
+									</p:button>
+								</p:panelGrid>
 							</h:form>
+
 							<hftl:dataList backingBean="#{accountOperationBean}"
 								label="#{messages['accountOperation.title']}" disabled="true"
 								checkMany="true">
@@ -352,7 +352,6 @@
 									<h:outputText value="#{entity.occDescription}" />
 								</p:column>
 
-
 								<p:column style="width:20%">
 									<f:facet name="header">
 										<h:outputText
@@ -370,19 +369,17 @@
 
 								<hftl:column label="#{messages['accountOperation.debit']}"
 									field="amount"
-									show="#{entity.transactionCategory.toString() == 'DEBIT'}" />
+									show="#{entity.transactionCategory.toString() == 'DEBIT'}"
+									converterParam="4digits" />
+
 								<hftl:column label="#{messages['accountOperation.credit']}"
 									field="amount"
-									show="#{entity.transactionCategory.toString() == 'CREDIT'}" />
+									show="#{entity.transactionCategory.toString() == 'CREDIT'}"
+									converterParam="4digits" />
 
-
-								<p:column style="width:15%">
-									<f:facet name="header">
-										<h:outputText
-											value="#{messages['accountOperation.unMatchingAmount']}" />
-									</f:facet>
-									<h:outputText value="#{entity.unMatchingAmount}" />
-								</p:column>
+								<hftl:column
+									label="#{messages['accountOperation.unMatchingAmount']}"
+									field="unMatchingAmount" converterParam="4digits" />
 
 								<hftl:column
 									label="#{messages['accountOperation.matchingStatus']}"
@@ -390,17 +387,21 @@
 
 								<hftl:actionsColumn
 									editView="#{accountOperationBean.displayOperation(entity.getId())}" />
+
 								<ui:define name="add-on-buttons">
-									<p:commandButton
-										action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
-										value="#{messages['customerAccount.buttonLettrage']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />
-									<p:commandButton
-										action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}"
-										value="#{messages['customerAccount.buttonConsultMatching']}"
-										rendered="#{customerAccountBean.isActiveAccount()}" />
+									<p:panelGrid columns="2" styleClass="form-panel-actions">
+										<p:commandButton
+											action="#{accountOperationBean.matching(customerAccountBean.entity.id)}"
+											value="#{messages['customerAccount.buttonLettrage']}"
+											rendered="#{customerAccountBean.isActiveAccount()}" />
+										<p:commandButton
+											action="#{accountOperationBean.consultMatching(customerAccountBean.entity.id)}"
+											value="#{messages['customerAccount.buttonConsultMatching']}"
+											rendered="#{customerAccountBean.isActiveAccount()}" />
+									</p:panelGrid>
 								</ui:define>
 							</hftl:dataList>
+
 							<h:form>
 								<hf:formButtons columns="3" backingBean="#{customerAccountBean}"
 									edit="#{customerAccountBean.edit}" ajaxSubmit="false"

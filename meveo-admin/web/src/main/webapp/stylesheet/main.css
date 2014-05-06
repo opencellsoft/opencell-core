@@ -384,3 +384,4 @@ input[type="submit"],
 /* .custom-grid { overflow: auto; } */
 
 /* td { border: 1px solid red !important; } */
+.ui-selectonemenu .ui-selectonemenu-label { width: 130px !important; }

@@ -196,7 +196,6 @@
 								</hf:formPanel>
 
 								<br />
-								<br />
 
 								<h:outputText
 									value="#{messages['subscription.subscribedServices']}:" />
@@ -256,7 +255,6 @@
 								</p:outputPanel>
 
 								<br />
-								<br />
 
 								<h:outputText
 									value="#{messages['subscription.subscribableServices']}:" />
@@ -274,8 +272,9 @@
 												field="description" />
 										</p:dataTable>
 									</p:outputPanel>
+
 									<br />
-									<br />
+
 									<div style="text-align: center;">
 										<p:panelGrid columns="3">
 											<p:outputLabel for="quantity"
@@ -363,7 +362,6 @@
 										</hftl:panelGroup>
 									</hf:formPanel>
 									<br />
-									<br />
 									<p:outputPanel id="oneShotDataPanel">
 										<h:form id="OS_oneShot_results_form" prependId="false">
 											<p:dataTable
@@ -413,7 +411,6 @@
 												onclick="document.getElementById('oneShotChgDiv').style.display='';" />
 										</h:form>
 										<br />
-										<br />
 										<div id="oneShotChgDiv" style="display: none">
 											<div id="oneShotChgSdiv">
 												<hf:formPanel id="oneShotChargeFormPanel" edit="true"
@@ -428,6 +425,7 @@
 															value="#{messages['businessEntity.code']}" />
 														<p:panelGrid styleClass="inner-table" columns="3">
 															<p:inputText id="chargeTemplateSelectId_text"
+																required="true"
 																value="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.code}"
 																disabled="true" />
 															<p:commandButton id="chargeTemplateSelectId_selectLink"
@@ -438,15 +436,10 @@
 															value="#{messages['commons.search']}" />
 													</p:panelGrid>
 
-													<!-- 													<hf:formEntityField id="chargeTemplateSelectId" -->
-													<!-- 														label="#{messages['businessEntity.code']}" -->
-													<!-- 														field="chargeTemplate" childField="code" popup="true" -->
-													<!-- 														popupId="oneShotChargeTmpPopup" edit="true" /> -->
 													<hf:formField id="oneshot_description"
 														label="#{messages['businessEntity.description']}"
 														field="description" size="50" maxlength="50"
-														textArea="true" rows="4" disabled="true"
-														edit="true" />
+														textArea="true" rows="4" disabled="true" edit="true" />
 													<hf:formField
 														label="#{messages['oneShotChargeInstance.chargeDate']}"
 														field="chargeDate" edit="true" />
@@ -662,7 +655,6 @@
 															<a:ajax event="click" render="OS_oneShot_results_form"
 																onsubmit="return validation();"
 																oncomplete="document.getElementById('oneShotChgDiv').style.display='none';" />
-
 														</h:commandButton>
 
 														<p:commandButton
@@ -709,7 +701,6 @@
 											field="terminationDate" />
 									</hftl:panelGroup>
 								</hf:formPanel>
-								<br />
 								<br />
 								<p:outputPanel id="recurringChargeDataPanel" autoUpdate="true">
 									<h:form id="OS_recurring_results_form" prependId="false">
@@ -775,7 +766,6 @@
 									</hftl:panelGroup>
 								</hf:formPanel>
 								<br />
-								<br />
 								<p:outputPanel id="usageChargeDataPanel" autoUpdate="true">
 									<h:form id="OS_usage_results_form" prependId="false">
 										<p:dataTable value="#{subscriptionBean.usageChargeInstances}"
@@ -828,7 +818,6 @@
 											field="terminationDate" />
 									</hftl:panelGroup>
 								</hf:formPanel>
-								<br />
 								<br />
 								<h:form>
 									<p:outputPanel id="medinaAccessPanel">
