@@ -18,6 +18,7 @@ public class CustomerHeirarchyDto extends BaseDto {
 	String countryCode;
 	String lastName;
 	String languageCode;
+	String billingCycleCode;
 
 	public String getCustomerId() {
 		return customerId;
@@ -81,6 +82,14 @@ public class CustomerHeirarchyDto extends BaseDto {
 
 	public void setLanguageCode(String languageCode) {
 		this.languageCode = languageCode;
+	}
+
+	public String getBillingCycleCode() {
+		return billingCycleCode;
+	}
+
+	public void setBillingCycleCode(String billingCycleCode) {
+		this.billingCycleCode = billingCycleCode;
 	}
 
 }
