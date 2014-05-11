@@ -191,7 +191,7 @@ public class RealtimeChargingService {
 		if (serviceTemplate.getSubscriptionCharges() != null) {
 			for (OneShotChargeTemplate charge : serviceTemplate
 					.getSubscriptionCharges()) {
-				result.add(getApplicationPrice(em, ba, charge,
+				result=result.add(getApplicationPrice(em, ba, charge,
 						subscriptionDate, quantity, param1, param2, param3,
 						priceWithoutTax));
 			}
@@ -201,7 +201,7 @@ public class RealtimeChargingService {
 			for (RecurringChargeTemplate charge : serviceTemplate
 					.getRecurringCharges()) {
 				if (charge.getApplyInAdvance()) {
-					result.add(getFirstRecurringPrice(ba, charge,
+					result=result.add(getFirstRecurringPrice(ba, charge,
 							subscriptionDate, quantity, param1, param2, param3,
 							priceWithoutTax));
 				}
