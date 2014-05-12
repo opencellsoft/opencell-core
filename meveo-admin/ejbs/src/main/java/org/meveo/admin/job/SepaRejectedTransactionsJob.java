@@ -57,7 +57,7 @@ public class SepaRejectedTransactionsJob
 
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
   
-  String importDir = param.getProperty("SepaRejectedTransactionsJob.importDir",
+  String importDir = param.getProperty("sepaRejectedTransactionsJob.importDir",
 			"/tmp/meveo/SepaRejectedTransactions");
   
   @PostConstruct
@@ -78,9 +78,9 @@ public class SepaRejectedTransactionsJob
 			+ File.separator + "rejectedSepaTransactions" + File.separator + "output";
 	String dirKO = importDir + File.separator + provider.getCode()
 			+ File.separator + "rejectedSepaTransactions" + File.separator + "reject";
-	String prefix = param.getProperty("SepaRejectedTransactionsJob.file.prefix",
+	String prefix = param.getProperty("sepaRejectedTransactionsJob.file.prefix",
 			"Pain002_");
-	String ext = param.getProperty("SepaRejectedTransactionsJob.file.extension",
+	String ext = param.getProperty("sepaRejectedTransactionsJob.file.extension",
 			"xml");
     
     JobExecutionResultImpl result = new JobExecutionResultImpl();
