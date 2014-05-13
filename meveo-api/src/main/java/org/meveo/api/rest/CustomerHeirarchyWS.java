@@ -3,6 +3,7 @@ package org.meveo.api.rest;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -30,9 +31,19 @@ public class CustomerHeirarchyWS {
 	@Inject
 	private CustomerHeirarchyApi customerHeirarchyApi;
 
+	@GET
+	@Path("/index")
+	public ActionStatus index() {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
+				"MEVEO API Rest Web Service");
+
+		return result;
+	}
+
 	@POST
-	@Path("/")
+	@Path("/create")
 	public ActionStatus create(CustomerHeirarchyDto customerHeirarchyDto) {
+		log.info("Creating Customer Heirarchy...");
 		log.debug("customerHeirarchy.create={}", customerHeirarchyDto);
 
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");

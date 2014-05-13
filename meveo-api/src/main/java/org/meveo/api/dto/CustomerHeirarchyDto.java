@@ -92,4 +92,14 @@ public class CustomerHeirarchyDto extends BaseDto {
 		this.billingCycleCode = billingCycleCode;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomerHeirarchyDto [customerId = " + customerId
+				+ ",sellerCode = " + sellerCode + ", customerBrandCode = "
+				+ customerBrandCode + ", customerCategoryCode = "
+				+ customerCategoryCode + ",currencyCode = " + currencyCode
+				+ ", countryCode = " + countryCode + ", lastName = " + lastName
+				+ ", languageCode = " + languageCode + ",billingCycleCode = "
+				+ billingCycleCode + "]";
+	}
 }
