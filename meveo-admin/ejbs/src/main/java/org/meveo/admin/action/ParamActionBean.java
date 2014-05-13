@@ -2,6 +2,7 @@ package org.meveo.admin.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -57,11 +58,14 @@ public class ParamActionBean implements Serializable {
 		if(keys!=null){
 			for(Object key:keys){
 				ParamProperty paramProp=new ParamProperty(log);
-				paramProp.setKey(key.toString());
-				paramProp.setValue(paramBean.getProperties().getProperty(key.toString()));
+				String strKey=(String) key;
+				paramProp.setKey(strKey);
+				paramProp.setValue(paramBean.getProperties().getProperty(strKey));
+				paramProp.setCategory(bundle.getString("property."+strKey.substring(0,strKey.lastIndexOf("."))));
 				properties.add(paramProp);
 			}
 		}
+		Collections.sort(properties);
 	}
 	
 	public List<ParamProperty> getProperties(){
@@ -79,7 +83,7 @@ public class ParamActionBean implements Serializable {
 		log.info("update and save paramBean properties "+properties.size());
 		for(ParamProperty property:properties){
 			log.info(property.getKey()+"->"+property.getValue());
-			paramBean.setProperty(property.getKey(), property.getValue());
+			paramBean.setProperty(property.getKey(), property.getValue(),property.getCategory());
 		}
 		paramBean.saveProperties();
 		reset();
