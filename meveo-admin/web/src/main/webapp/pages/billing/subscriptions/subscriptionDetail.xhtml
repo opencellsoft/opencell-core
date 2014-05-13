@@ -10,9 +10,10 @@
 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
-	
+
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{subscriptionBean.preRenderView}" />
+			<f:event type="preRenderView"
+				listener="#{subscriptionBean.preRenderView}" />
 
 			<f:viewParam name="subscriptionId"
 				value="#{subscriptionBean.objectId}" />
@@ -144,7 +145,7 @@
 							<p:commandButton action="#{subscriptionBean.terminateService()}"
 								value="#{messages['button.terminateButton']}"
 								onclick="dlg_serviceTerminationPopup.hide()"
-								update=":#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages" />
+								update=":subscriptionTab:headerInfo1Form:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :#{p:component('operationFrm')} :subscriptionTab:headerInfo1Form:headerInfo1:messages" />
 							<p:commandButton immediate="true"
 								onclick="dlg_serviceTerminationPopup.hide()"
 								value="#{messages['management.close']}" />
@@ -240,7 +241,7 @@
 											<p:commandButton
 												value="#{messages['button.terminateButton']}"
 												oncomplete="dlg_serviceTerminationPopup.show()"
-												disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
+												disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
 										</p:panel>
 										<!-- 										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}" -->
 										<!-- 											value="#{messages['button.cancelButton']}" -->
@@ -275,19 +276,17 @@
 
 									<br />
 
-									<div style="text-align: center;">
-										<p:panelGrid columns="3">
-											<p:outputLabel for="quantity"
-												value="#{messages['serviceInstance.quantity']}:"></p:outputLabel>
-											<p:inputText id="quantity"
-												value="#{subscriptionBean.quantity}" size="5" maxlength="3" />
-											<p:commandButton id="cbutton"
-												action="#{subscriptionBean.instanciateManyServices}"
-												value="#{messages['button.instanciateButton']}" ajax="true"
-												update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form" />
-											<!-- update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" -->
-										</p:panelGrid>
-									</div>
+									<p:panelGrid columns="3" id="instantiatePanelActions">
+										<p:outputLabel for="quantity"
+											value="#{messages['serviceInstance.quantity']}:"></p:outputLabel>
+										<p:inputText id="quantity"
+											value="#{subscriptionBean.quantity}" size="5" maxlength="3" />
+										<p:commandButton id="cbutton"
+											action="#{subscriptionBean.instanciateManyServices}"
+											value="#{messages['button.instanciateButton']}" ajax="true"
+											update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form"
+											disabled="#{subscriptionBean.entity.status != 'ACTIVE' and subscriptionBean.entity.status != 'CREATED'}" />
+									</p:panelGrid>
 								</h:form>
 							</p:tab>
 							<p:tab id="accInfoTab"
@@ -392,10 +391,6 @@
 														update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
 														icon="ui-icon-document">
 													</p:commandButton>
-													<!-- <p:commandLink id="editOneShotChgInsLink" render="oneShotChgSdiv" update=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1"
-													onclick="document.getElementById('oneShotChgDiv').style.display='';" action="#{subscriptionBean.editOneShotChargeIns(entity)}">
-													<h:graphicImage value="/img/edit.gif" style="border:0" />
-												</p:commandLink> -->
 													<p:tooltip for="editOneShotChgInsLink"
 														value="#{messages['commons.edit']}" showEffect="slide"
 														hideEffect="slide" />
@@ -407,12 +402,14 @@
 										<h:form>
 											<p:commandButton
 												value="#{messages['subscription.oneShotChgButton']}"
-												action="#{subscriptionBean.newOneShotChargeInstance}"
-												onclick="document.getElementById('oneShotChgDiv').style.display='';" />
+												actionListener="#{subscriptionBean.newOneShotChargeInstance}"
+												update=":#{p:component('oneShotChargeFormMainPanel')}"
+												oncomplete="oneShotChgDivWgt.show()" />
 										</h:form>
 										<br />
-										<div id="oneShotChgDiv" style="display: none">
-											<div id="oneShotChgSdiv">
+										<div id="oneShotChgDiv" style="">
+											<p:panel id="oneShotChargeFormMainPanel"
+												widgetVar="oneShotChgDivWgt" style="display: none">
 												<hf:formPanel id="oneShotChargeFormPanel" edit="true"
 													label="#{messages['subscription.tab.oneShotChg']}"
 													backingBean="#{subscriptionBean}"
@@ -668,7 +665,7 @@
 															onclick="document.getElementById('oneShotChgDiv').style.display='none';return false;" />
 													</h:panelGrid>
 												</hf:formPanel>
-											</div>
+											</p:panel>
 										</div>
 									</p:panel>
 								</p:outputPanel>
@@ -716,11 +713,11 @@
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" isMessage="true" />
 											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria2']}"
-												field="criteria2" isMessage="true" />
+												label="#{messages['oneShotChargeInstance.chargeDate']}"
+												field="chargeDate" />
 											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria3']}"
-												field="criteria3" isMessage="true" />
+												label="#{messages['recurringChargeInstance.nextChargeDate']}"
+												field="nextChargeDate" />
 
 											<p:column styleClass="actions-column">
 												<f:facet name="header">
@@ -952,6 +949,14 @@
 							<p:spinner required="true" id="quantityRecCH" min="1"
 								value="#{subscriptionBean.recurringChargeServiceInstanceQuantity}" />
 						</p:panelGrid>
+						<h:outputLabel value="" />
+						<hf:formField
+							label="#{messages['oneShotChargeInstance.chargeDate']}"
+							field="chargeDate" edit="false" />
+						<hf:formField
+							label="#{messages['recurringChargeInstance.nextChargeDate']}"
+							field="nextChargeDate" edit="false" />
+
 					</p:panelGrid>
 					<script type="text/javascript">
     //<![CDATA[
