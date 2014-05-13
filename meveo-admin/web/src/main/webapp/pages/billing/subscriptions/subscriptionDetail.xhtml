@@ -716,11 +716,11 @@
 												label="#{messages['oneShotChargeInstance.criteria1']}"
 												field="criteria1" isMessage="true" />
 											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria2']}"
-												field="criteria2" isMessage="true" />
+												label="#{messages['oneShotChargeInstance.chargeDate']}"
+												field="chargeDate" />
 											<hftl:column
-												label="#{messages['oneShotChargeInstance.criteria3']}"
-												field="criteria3" isMessage="true" />
+												label="#{messages['recurringChargeInstance.nextChargeDate']}"
+												field="nextChargeDate" />
 
 											<p:column styleClass="actions-column">
 												<f:facet name="header">
@@ -952,6 +952,14 @@
 							<p:spinner required="true" id="quantityRecCH" min="1"
 								value="#{subscriptionBean.recurringChargeServiceInstanceQuantity}" />
 						</p:panelGrid>
+						<h:outputLabel value="" />
+						<hf:formField
+							label="#{messages['oneShotChargeInstance.chargeDate']}"
+							field="chargeDate" edit="false" />
+						<hf:formField
+							label="#{messages['recurringChargeInstance.nextChargeDate']}"
+							field="nextChargeDate" edit="false" />
+						
 					</p:panelGrid>
 					<script type="text/javascript">
     //<![CDATA[
