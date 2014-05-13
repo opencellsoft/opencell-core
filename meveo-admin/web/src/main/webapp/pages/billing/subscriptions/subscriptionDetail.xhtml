@@ -240,7 +240,7 @@
 											<p:commandButton
 												value="#{messages['button.terminateButton']}"
 												oncomplete="dlg_serviceTerminationPopup.show()"
-												disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE'}" />
+												disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status=='INACTIVE' || subscriptionBean.selectedServiceInstance.status=='TERMINATED'}" />
 										</p:panel>
 										<!-- 										<p:commandButton ajax="false" action="#{subscriptionBean.cancelService}" -->
 										<!-- 											value="#{messages['button.cancelButton']}" -->
