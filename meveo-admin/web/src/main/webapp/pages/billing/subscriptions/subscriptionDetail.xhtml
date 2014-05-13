@@ -284,7 +284,8 @@
 											<p:commandButton id="cbutton"
 												action="#{subscriptionBean.instanciateManyServices}"
 												value="#{messages['button.instanciateButton']}" ajax="true"
-												update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form" />
+												update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:OS_oneShot_results_form :subscriptionTab:OS_recurring_results_form"
+												disabled="#{subscriptionBean.entity.status != 'ACTIVE' and subscriptionBean.entity.status != 'CREATED'}" />
 											<!-- update="SI_results2_panel,SI_results1_panel,datatable,oneShotDataPanel,recurringChargeDataPanel" -->
 										</p:panelGrid>
 									</div>
