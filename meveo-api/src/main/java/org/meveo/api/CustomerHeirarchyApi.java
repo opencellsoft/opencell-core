@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,24 +13,33 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomerHeirarchyDto;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.CalendarTypeEnum;
+import org.meveo.model.catalog.DayInYear;
+import org.meveo.model.catalog.MonthEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CreditCategoryEnum;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.shared.Name;
+import org.meveo.model.payments.CustomerAccountStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
@@ -40,6 +50,8 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -94,6 +106,14 @@ public class CustomerHeirarchyApi extends BaseApi {
 
 	@Inject
 	private CustomerService customerService;
+
+	@Inject
+	private CalendarService calendarService;
+
+	@Inject
+	private TaxService taxService;
+
+	ParamBean paramBean = ParamBean.getInstance();
 
 	public void createCustomerHeirarchy(
 			CustomerHeirarchyDto customerHeirarchyDto) throws BusinessException {
@@ -240,6 +260,14 @@ public class CustomerHeirarchyApi extends BaseApi {
 						currentUser, provider);
 			}
 
+			int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.paymentMethod", "1"));
+			int creditCategory = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.creditCategory", "5"));
+
+			int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.paymentMethod", "1"));
+
 			Auditable auditable = new Auditable();
 			auditable.setCreated(new Date());
 			auditable.setCreator(currentUser);
@@ -258,44 +286,104 @@ public class CustomerHeirarchyApi extends BaseApi {
 			customer.setCode(customerHeirarchyDto.getCustomerId());
 			customer.setCustomerBrand(customerBrand);
 			customer.setCustomerCategory(customerCategory);
+			customer.setSeller(newSeller);
+
+			customerService.create(em, customer, currentUser, provider);
 
 			CustomerAccount customerAccount = new CustomerAccount();
+			customerAccount.setCustomer(customer);
 			customerAccount.setCode(customerHeirarchyDto.getCustomerId());
-			Name name = new Name();
-			name.setLastName(customerHeirarchyDto.getLastName());
-			customerAccount.setName(name);
-
-			customer.getCustomerAccounts().add(customerAccount);
-
-			BillingAccount billingAccount = new BillingAccount();
-			billingAccount.setCustomerAccount(customerAccount);
-			billingAccount.setCode(customerHeirarchyDto.getCustomerId());
-
-			billingAccount.setTradingCountry(tradingCountry);
-			billingAccount.setTradingLanguage(tradingLanguage);
-
-			UserAccount userAccount = new UserAccount();
-			userAccount.setCode(customerHeirarchyDto.getCustomerId());
-
-			userAccountService.create(em, userAccount, currentUser, provider);
-			
-			BillingCycle billingCycle = billingCycleService
-					.findByBillingCycleCode(em,
-							customerHeirarchyDto.getBillingCycleCode(),
-							provider);
-
-			billingAccount.setBillingCycle(billingCycle);
-			billingAccount.getUsersAccounts().add(userAccount);
-
-			billingAccountService.create(em, billingAccount, currentUser,
+			customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
+			customerAccount.setPaymentMethod(PaymentMethodEnum
+					.getValue(caPaymentMethod));
+			customerAccount.setCreditCategory(CreditCategoryEnum
+					.getValue(creditCategory));
+			customerAccount.setTradingCurrency(tradingCurrency);
+			customerAccountService.create(em, customerAccount, currentUser,
 					provider);
-
-			customerAccount.getBillingAccounts().add(billingAccount);
 
 			customerAccountService.create(em, customerAccount, currentUser,
 					provider);
 
-			customerService.create(em, customer, currentUser, provider);
+			BillingCycle billingCycle = billingCycleService
+					.findByBillingCycleCode(em,
+							customerHeirarchyDto.getBillingCycleCode(),
+							currentUser, provider);
+
+			if (billingCycle == null) {
+				billingCycle = billingCycleService.findByBillingCycleCode(em,
+						paramBean.getProperty("default.billingCycleCode",
+								"DEFAULT"), provider);
+				if (billingCycle == null) {
+					Calendar imputationCalendar = new Calendar();
+					imputationCalendar
+							.setType(CalendarTypeEnum.CHARGE_IMPUTATION);
+					imputationCalendar.setName(paramBean.getProperty(
+							"default.imputationCalendar.Name", "DEF_IMP_CAL"));
+
+					for (MonthEnum month : MonthEnum.values()) {
+						DayInYear day = new DayInYear();
+						day.setDay(1);
+						day.setMonth(month);
+						imputationCalendar.getDays().add(day);
+					}
+					calendarService.create(em, imputationCalendar, currentUser,
+							provider);
+
+					Calendar cycleCalendar = new Calendar();
+					cycleCalendar.setType(CalendarTypeEnum.BILLING);
+					cycleCalendar.setName(paramBean.getProperty(
+							"default.cycleCalendar.Name", "DEF_CYC_CAL"));
+
+					for (MonthEnum month : MonthEnum.values()) {
+						DayInYear day = new DayInYear();
+						day.setDay(1);
+						day.setMonth(month);
+						cycleCalendar.getDays().add(day);
+					}
+					calendarService.create(em, cycleCalendar, currentUser,
+							provider);
+
+					Tax tax = new Tax();
+					tax.setCode(paramBean.getProperty("default.taxCode",
+							"DEF_TAX"));
+					tax.setPercent(new BigDecimal(5));
+
+					billingCycle = new BillingCycle();
+					billingCycle.setCode(paramBean.getProperty(
+							"default.billingCycleCode", "DEFAULT"));
+					billingCycle.setActive(true);
+					billingCycle.setBillingTemplateName(paramBean.getProperty(
+							"default.billingTemplateName", "DEFAULT"));
+					billingCycle.setInvoiceDateDelay(0);
+					billingCycleService.create(em, billingCycle, currentUser,
+							provider);
+				}
+			}
+
+			BillingAccount billingAccount = new BillingAccount();
+			billingAccount.setCode(customerHeirarchyDto.getCustomerId());
+			billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+			billingAccount.setCustomerAccount(customerAccount);
+			billingAccount.setPaymentMethod(PaymentMethodEnum
+					.getValue(baPaymentMethod));
+			billingAccount
+					.setElectronicBilling(Boolean.valueOf(paramBean
+							.getProperty(
+									"customerHeirarchy.billingAccount.electronicBilling",
+									"true")));
+			billingAccount.setTradingCountry(tradingCountry);
+			billingAccount.setTradingLanguage(tradingLanguage);
+			billingAccount.setBillingCycle(billingCycle);
+			billingAccountService.createBillingAccount(em, billingAccount,
+					currentUser, provider);
+
+			UserAccount userAccount = new UserAccount();
+			userAccount.setStatus(AccountStatusEnum.ACTIVE);
+			userAccount.setBillingAccount(billingAccount);
+			userAccount.setCode(customerHeirarchyDto.getCustomerId());
+			userAccountService.createUserAccount(em, billingAccount,
+					userAccount, currentUser);
 
 		} else {
 
