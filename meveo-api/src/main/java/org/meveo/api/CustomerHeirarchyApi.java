@@ -1,6 +1,5 @@
 package org.meveo.api;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,15 +22,11 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
-import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CalendarTypeEnum;
-import org.meveo.model.catalog.DayInYear;
-import org.meveo.model.catalog.MonthEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -51,7 +46,6 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -109,9 +103,6 @@ public class CustomerHeirarchyApi extends BaseApi {
 
 	@Inject
 	private CalendarService calendarService;
-
-	@Inject
-	private TaxService taxService;
 
 	ParamBean paramBean = ParamBean.getInstance();
 
@@ -247,6 +238,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 				customerBrand = new CustomerBrand();
 				customerBrand.setCode(customerHeirarchyDto
 						.getCustomerBrandCode());
+				customerBrand.setDescription(customerHeirarchyDto
+						.getCustomerBrandCode());
 				customerBrandService.create(em, customerBrand, currentUser,
 						provider);
 			}
@@ -255,7 +248,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 				customerCategory = new CustomerCategory();
 				customerCategory.setCode(customerHeirarchyDto
 						.getCustomerCategoryCode());
-
+				customerCategory.setDescription(customerHeirarchyDto
+						.getCustomerCategoryCode());
 				customerCategoryService.create(em, customerCategory,
 						currentUser, provider);
 			}
@@ -315,39 +309,31 @@ public class CustomerHeirarchyApi extends BaseApi {
 						paramBean.getProperty("default.billingCycleCode",
 								"DEFAULT"), provider);
 				if (billingCycle == null) {
-					Calendar imputationCalendar = new Calendar();
-					imputationCalendar
-							.setType(CalendarTypeEnum.CHARGE_IMPUTATION);
-					imputationCalendar.setName(paramBean.getProperty(
-							"default.imputationCalendar.Name", "DEF_IMP_CAL"));
+					Calendar imputationCalendar = calendarService.findByName(
+							em, paramBean.getProperty(
+									"default.imputationCalendar.Name",
+									"DEF_IMP_CAL"));
 
-					for (MonthEnum month : MonthEnum.values()) {
-						DayInYear day = new DayInYear();
-						day.setDay(1);
-						day.setMonth(month);
-						imputationCalendar.getDays().add(day);
+					Calendar cycleCalendar = calendarService.findByName(em,
+							paramBean.getProperty("default.cycleCalendar.Name",
+									"DEF_CYC_CAL"));
+
+					if (imputationCalendar == null) {
+						throw new BusinessException(
+								"Cannot find calendar with name "
+										+ paramBean
+												.getProperty(
+														"default.imputationCalendar.Name",
+														"DEF_IMP_CAL"));
 					}
-					calendarService.create(em, imputationCalendar, currentUser,
-							provider);
+					if (cycleCalendar == null) {
+						throw new BusinessException(
+								"Cannot find calendar with name "
+										+ paramBean.getProperty(
+												"default.cycleCalendar.Name",
+												"DEF_CYC_CAL"));
 
-					Calendar cycleCalendar = new Calendar();
-					cycleCalendar.setType(CalendarTypeEnum.BILLING);
-					cycleCalendar.setName(paramBean.getProperty(
-							"default.cycleCalendar.Name", "DEF_CYC_CAL"));
-
-					for (MonthEnum month : MonthEnum.values()) {
-						DayInYear day = new DayInYear();
-						day.setDay(1);
-						day.setMonth(month);
-						cycleCalendar.getDays().add(day);
 					}
-					calendarService.create(em, cycleCalendar, currentUser,
-							provider);
-
-					Tax tax = new Tax();
-					tax.setCode(paramBean.getProperty("default.taxCode",
-							"DEF_TAX"));
-					tax.setPercent(new BigDecimal(5));
 
 					billingCycle = new BillingCycle();
 					billingCycle.setCode(paramBean.getProperty(
@@ -356,6 +342,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 					billingCycle.setBillingTemplateName(paramBean.getProperty(
 							"default.billingTemplateName", "DEFAULT"));
 					billingCycle.setInvoiceDateDelay(0);
+					billingCycle.setCalendar(cycleCalendar);
+
 					billingCycleService.create(em, billingCycle, currentUser,
 							provider);
 				}
