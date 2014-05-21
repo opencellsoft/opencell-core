@@ -61,16 +61,6 @@ public class CalendarService extends PersistenceService<Calendar> {
 		return query.getResultList();
 	}
 
-	/**
-	 * @see org.meveo.service.catalog.local.CalendarServiceLocal#listDurationTermCalendars()
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Calendar> listDurationTermCalendars() {
-		Query query = new QueryBuilder(Calendar.class, "c", null,
-				getCurrentProvider()).addCriterionEnum("type",
-				CalendarTypeEnum.DURATION_TERM).getQuery(getEntityManager());
-		return query.getResultList();
-	}
 
 	/**
 	 * @see org.meveo.service.catalog.local.CalendarServiceLocal#listBillingCalendars()

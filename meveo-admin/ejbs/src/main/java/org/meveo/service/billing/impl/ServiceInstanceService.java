@@ -704,8 +704,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 						updater);
 			}
 			recurringChargeInstance.setTerminationDate(terminationDate);
-			chargeApplicationService.chargeTermination(recurringChargeInstance,
-					updater);
+			//FIXME : 
+			//chargeApplicationService.chargeTermination(recurringChargeInstance,
+				//	updater);
 
 		}
 

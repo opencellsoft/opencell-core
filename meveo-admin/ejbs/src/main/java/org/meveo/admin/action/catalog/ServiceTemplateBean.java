@@ -250,21 +250,6 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 		this.terminationCharges = terminationCharges;
 	}
 
-	// /**
-	// * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
-	// */
-	// protected List<String> getListFieldsToFetch() {
-	// return Arrays.asList("recurringCharges", "subscriptionCharges",
-	// "terminationCharges", "durationTermCalendar");
-	// }
-	//
-	// /**
-	// * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
-	// */
-	// protected List<String> getFormFieldsToFetch() {
-	// return Arrays.asList("recurringCharges", "subscriptionCharges",
-	// "terminationCharges", "durationTermCalendar");
-	// }
 	@Override
 	protected String getDefaultSort() {
 		return "code";
