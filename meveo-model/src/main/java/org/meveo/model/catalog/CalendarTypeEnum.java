@@ -19,7 +19,6 @@ public enum CalendarTypeEnum {
 
     CHARGE_IMPUTATION(1, "calendarTypeEnum.chargeImputation"),
     BILLING(2, "calendarTypeEnum.billing"),
-    DURATION_TERM(3, "calendarTypeEnum.durationTerm"),
     COUNTER(4, "calendarTypeEnum.counter");
 
     private Integer id;

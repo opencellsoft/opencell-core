@@ -27,9 +27,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -108,31 +106,11 @@ public class ReccuringRatingJob implements Job {
 
 					applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
 
-					ServiceTemplate serviceTemplate = activeRecurringChargeInstance
-							.getServiceInstance().getServiceTemplate();
-					Calendar durationTermCalendar = null;
-					Date nextDurationDate = null;
-					try {
-						durationTermCalendar = serviceTemplate.getDurationTermCalendar();
-						if(durationTermCalendar==null){
-							durationTermCalendar = recurringChargeTemplate.getCalendar();
-						}
-						nextDurationDate = durationTermCalendar.nextCalendarDate(applicationDate);
-						log.info("nextDurationDate=" + nextDurationDate);
-					} catch (Exception e) {
-						log.error("Cannot find duration term nor recurring charge calendar for serviceTemplate.id="
-								+ serviceTemplate.getId());
-					}
 					if (!recurringChargeTemplate.getApplyInAdvance()) {
 						walletOperationService
 								.applyNotAppliedinAdvanceReccuringCharge(
 										activeRecurringChargeInstance, false,
 										recurringChargeTemplate, null);
-					} else if (nextDurationDate != null
-							&& nextDurationDate.getTime() >= applicationDate.getTime()) {
-						walletOperationService.applyReccuringCharge(activeRecurringChargeInstance,
-								false, recurringChargeTemplate, null);
-
 					} else {
 						Date previousapplicationDate = recurringChargeTemplate.getCalendar()
 								.previousCalendarDate(DateUtils.addDaysToDate(applicationDate, -1));

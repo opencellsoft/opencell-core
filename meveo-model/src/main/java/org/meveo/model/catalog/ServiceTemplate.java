@@ -23,7 +23,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -52,10 +51,6 @@ public class ServiceTemplate extends BusinessEntity {
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceUsageChargeTemplate> serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplate>();
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DURATION_TERM_CALENDAR")
-	private Calendar durationTermCalendar;
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
@@ -102,14 +97,6 @@ public class ServiceTemplate extends BusinessEntity {
 	public void setServiceUsageCharges(
 			List<ServiceUsageChargeTemplate> serviceUsageCharges) {
 		this.serviceUsageCharges = serviceUsageCharges;
-	}
-
-	public Calendar getDurationTermCalendar() {
-		return durationTermCalendar;
-	}
-
-	public void setDurationTermCalendar(Calendar durationTermCalendar) {
-		this.durationTermCalendar = durationTermCalendar;
 	}
 
 	@Override
