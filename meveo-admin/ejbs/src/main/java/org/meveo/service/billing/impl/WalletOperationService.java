@@ -1093,8 +1093,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					.getServiceInstance().getSubscriptionDate());
 
 			create(em, chargeApplication, creator, chargeInstance.getProvider());
-			em.flush();
-			em.refresh(chargeInstance);
+			//em.flush();
+			//em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
 		}
