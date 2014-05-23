@@ -162,7 +162,7 @@ public class ReccuringRatingJob implements Job {
 										activeRecurringChargeInstance.getCriteria3(),
 										previousapplicationDate, DateUtils.addDaysToDate(
 												applicationDate, -1), null);
-						log.info("set application date to "
+						log.info("set subscription date to "
 								+ activeRecurringChargeInstance.getServiceInstance()
 										.getSubscriptionDate());
 						walletOperation.setSubscriptionDate(activeRecurringChargeInstance
