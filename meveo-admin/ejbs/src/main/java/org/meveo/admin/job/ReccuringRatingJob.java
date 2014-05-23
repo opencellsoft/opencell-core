@@ -102,7 +102,7 @@ public class ReccuringRatingJob implements Job {
 						applicationDate = activeRecurringChargeInstance.getChargeDate();
 					}
 
-					log.info("nextapplicationDate=" + applicationDate);
+					log.info("applicationDate=" + applicationDate);
 
 					applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
 
@@ -111,71 +111,9 @@ public class ReccuringRatingJob implements Job {
 								.applyNotAppliedinAdvanceReccuringCharge(
 										activeRecurringChargeInstance, false,
 										recurringChargeTemplate, null);
+						result.registerSucces();
 					} else {
-						Date previousapplicationDate = recurringChargeTemplate.getCalendar()
-								.previousCalendarDate(DateUtils.addDaysToDate(applicationDate, -1));
-						InvoiceSubCategory invoiceSubCat = activeRecurringChargeInstance
-								.getRecurringChargeTemplate().getInvoiceSubCategory();
-						InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-								.findInvoiceSubCategoryCountry(invoiceSubCat.getId(),
-										activeRecurringChargeInstance.getSubscription()
-												.getUserAccount().getBillingAccount()
-												.getTradingCountry().getId());
-						Tax tax = invoiceSubcategoryCountry.getTax();
-
-						// FIXME: put currency in charge instance
-						TradingCurrency currency = activeRecurringChargeInstance.getSubscription()
-								.getUserAccount().getBillingAccount().getCustomerAccount()
-								.getTradingCurrency();
-						if (currency == null) {
-							throw new IncorrectChargeTemplateException(
-									"no currency exists for customerAccount id="
-											+ activeRecurringChargeInstance.getSubscription()
-													.getUserAccount().getBillingAccount()
-													.getCustomerAccount().getId());
-						}
-
-						// FIXME: put country in charge instance
-						TradingCountry country = activeRecurringChargeInstance.getSubscription()
-								.getUserAccount().getBillingAccount().getTradingCountry();
-						if (country == null) {
-							throw new IncorrectChargeTemplateException(
-									"no country exists for billingAccount id="
-											+ activeRecurringChargeInstance.getSubscription()
-													.getUserAccount().getBillingAccount().getId());
-						}
-						Long countryId = country.getId();
-
-						WalletOperation walletOperation = chargeApplicationRatingService
-								.rateChargeApplication(activeRecurringChargeInstance.getCode(),
-										activeRecurringChargeInstance.getServiceInstance()
-												.getSubscription(), activeRecurringChargeInstance,
-										ApplicationTypeEnum.RECURRENT, previousapplicationDate,
-										activeRecurringChargeInstance.getAmountWithoutTax(),
-										activeRecurringChargeInstance.getAmountWithTax(),
-										new BigDecimal(activeRecurringChargeInstance
-												.getServiceInstance().getQuantity()), currency,
-										countryId, tax.getPercent(), null, applicationDate,
-										invoiceSubCat,
-										activeRecurringChargeInstance.getCriteria1(),
-										activeRecurringChargeInstance.getCriteria2(),
-										activeRecurringChargeInstance.getCriteria3(),
-										previousapplicationDate, DateUtils.addDaysToDate(
-												applicationDate, -1), null);
-						log.info("set subscription date to "
-								+ activeRecurringChargeInstance.getServiceInstance()
-										.getSubscriptionDate());
-						walletOperation.setSubscriptionDate(activeRecurringChargeInstance
-								.getServiceInstance().getSubscriptionDate());
-						walletOperationService.create(walletOperation, null,
-								activeRecurringChargeInstance.getRecurringChargeTemplate()
-										.getProvider());
-
-						Date nextApplicationDate = recurringChargeTemplate.getCalendar()
-								.nextCalendarDate(applicationDate);
-						activeRecurringChargeInstance.setChargeDate(applicationDate);
-						activeRecurringChargeInstance.setNextChargeDate(nextApplicationDate);
-						recurringChargeInstanceService.update(activeRecurringChargeInstance);
+						walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, null);
 						result.registerSucces();
 					}
 				} catch (Exception e) {
