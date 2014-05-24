@@ -15,7 +15,6 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -39,11 +38,6 @@ import org.slf4j.Logger;
 @Singleton
 public class ReccuringRatingJob implements Job {
 
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
-
 	@Resource
 	TimerService timerService;
 
@@ -53,12 +47,9 @@ public class ReccuringRatingJob implements Job {
 	@Inject
 	JobExecutionService jobExecutionService;
 
-	@Inject
-	private RecurringChargeInstanceService recurringChargeInstanceService;
-
-	@Inject
-	private WalletOperationService walletOperationService;
-
+	@Inject 
+	RecurringRatingJobBean recurringRatingJobBean;
+	
     @Inject
     protected Logger log;
     
@@ -71,49 +62,7 @@ public class ReccuringRatingJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute RecurringRatingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		try {
-			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
-					.findByStatus(InstanceStatusEnum.ACTIVE, DateUtils.addDaysToDate(new Date(), 1));
-
-			log.info("# charge to rate:" + activeRecurringChargeInstances.size());
-			for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
-				try {
-					RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
-							.getRecurringChargeTemplate();
-					if (recurringChargeTemplate.getCalendar() == null) {
-						// FIXME : should not stop the method execution
-						throw new IncorrectChargeTemplateException(
-								"Recurring charge template has no calendar: code="
-										+ recurringChargeTemplate.getCode());
-					}
-					Date applicationDate = null;
-					if (recurringChargeTemplate.getApplyInAdvance()) {
-						applicationDate = activeRecurringChargeInstance.getNextChargeDate();
-					} else {
-						applicationDate = activeRecurringChargeInstance.getChargeDate();
-					}
-
-					log.info("applicationDate=" + applicationDate);
-
-					applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
-
-					if (!recurringChargeTemplate.getApplyInAdvance()) {
-						walletOperationService
-								.applyNotAppliedinAdvanceReccuringCharge(em,
-										activeRecurringChargeInstance, false,
-										recurringChargeTemplate, null);
-						result.registerSucces();
-					} else {
-						walletOperationService.applyReccuringCharge(em,activeRecurringChargeInstance, false, recurringChargeTemplate, null);
-						result.registerSucces();
-					}
-				} catch (Exception e) {
-					result.registerError(e.getMessage());
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		recurringRatingJobBean.execute(result);
 		result.close("");
 		return result;
 	}

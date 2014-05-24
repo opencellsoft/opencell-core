@@ -25,6 +25,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -1097,6 +1099,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			//em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
 			chargeInstance.getWalletOperations().add(walletOperation);
+			if(!em.contains(walletOperation)){
+				log.error("wtf wallet operation is already detached");
+			}
+			if(!em.contains(chargeInstance)){
+				log.error("wow chargeInstance is detached");
+				em.merge(chargeInstance);
+			}
 			applicationDate = nextapplicationDate;
 		}
 
