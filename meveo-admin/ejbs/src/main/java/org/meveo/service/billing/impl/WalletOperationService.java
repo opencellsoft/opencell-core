@@ -1063,7 +1063,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity = quantity.negate();
 			}
 
-			WalletOperation chargeApplication = chargeApplicationRatingService
+			WalletOperation walletOperation = chargeApplicationRatingService
 					.rateChargeApplication(
 							em,
 							chargeInstance.getCode(),
@@ -1089,13 +1089,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							DateUtils.addDaysToDate(nextapplicationDate, -1),
 							reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT
 									: ChargeApplicationModeEnum.SUBSCRIPTION);
-			chargeApplication.setSubscriptionDate(chargeInstance
+			walletOperation.setSubscriptionDate(chargeInstance
 					.getServiceInstance().getSubscriptionDate());
 
-			create(em, chargeApplication, creator, chargeInstance.getProvider());
+			create(em, walletOperation, creator, chargeInstance.getProvider());
 			//em.flush();
 			//em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
+			chargeInstance.getWalletOperations().add(walletOperation);
 			applicationDate = nextapplicationDate;
 		}
 
