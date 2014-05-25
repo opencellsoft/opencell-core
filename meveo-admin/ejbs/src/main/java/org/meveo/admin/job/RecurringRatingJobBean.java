@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -16,11 +17,16 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
 public class RecurringRatingJobBean {
-
+	
+	@Inject 
+	@MeveoJpaForJobs
+	private EntityManager em;
+	
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
@@ -34,9 +40,9 @@ public class RecurringRatingJobBean {
 	public void execute(JobExecutionResultImpl result){
 		try {
 			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
-					.findByStatus(InstanceStatusEnum.ACTIVE, DateUtils.addDaysToDate(new Date(), 1));
+					.findByStatus(em,InstanceStatusEnum.ACTIVE, DateUtils.addDaysToDate(new Date(), 1));
 
-			log.info("# charge to rate:" + activeRecurringChargeInstances.size());
+			log.info("# charges to rate:" + activeRecurringChargeInstances.size());
 			for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
 				try {
 					RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
@@ -60,12 +66,12 @@ public class RecurringRatingJobBean {
 
 					if (!recurringChargeTemplate.getApplyInAdvance()) {
 						walletOperationService
-								.applyNotAppliedinAdvanceReccuringCharge(
+								.applyNotAppliedinAdvanceReccuringCharge(em,
 										activeRecurringChargeInstance, false,
 										recurringChargeTemplate, null);
 						result.registerSucces();
 					} else {
-						walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false, recurringChargeTemplate, null);
+						walletOperationService.applyReccuringCharge(em,activeRecurringChargeInstance, false, recurringChargeTemplate, null);
 						result.registerSucces();
 					}
 				} catch (Exception e) {

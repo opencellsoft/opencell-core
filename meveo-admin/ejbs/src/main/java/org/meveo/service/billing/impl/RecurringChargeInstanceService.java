@@ -46,7 +46,7 @@ public class RecurringChargeInstanceService extends
 	// recurringChargeTemplateService;
 
 	@SuppressWarnings("unchecked")
-	public List<RecurringChargeInstance> findByStatus(
+	public List<RecurringChargeInstance> findByStatus(EntityManager em,
 			InstanceStatusEnum status, Date maxChargeDate) {
 		List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
 		try {
@@ -57,7 +57,7 @@ public class RecurringChargeInstanceService extends
 			qb.addCriterion("c.status", "=", status, true);
 			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate",
 					maxChargeDate);
-			recurringChargeInstances = qb.getQuery(getEntityManager())
+			recurringChargeInstances = qb.getQuery(em)
 					.getResultList();
 			log.debug(
 					"end of find {} by status (status={}). Result size found={}.",
