@@ -25,6 +25,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -1063,7 +1065,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity = quantity.negate();
 			}
 
-			WalletOperation chargeApplication = chargeApplicationRatingService
+			WalletOperation walletOperation = chargeApplicationRatingService
 					.rateChargeApplication(
 							em,
 							chargeInstance.getCode(),
@@ -1089,13 +1091,21 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							DateUtils.addDaysToDate(nextapplicationDate, -1),
 							reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT
 									: ChargeApplicationModeEnum.SUBSCRIPTION);
-			chargeApplication.setSubscriptionDate(chargeInstance
+			walletOperation.setSubscriptionDate(chargeInstance
 					.getServiceInstance().getSubscriptionDate());
 
-			create(em, chargeApplication, creator, chargeInstance.getProvider());
-			em.flush();
-			em.refresh(chargeInstance);
+			create(em, walletOperation, creator, chargeInstance.getProvider());
+			//em.flush();
+			//em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
+			chargeInstance.getWalletOperations().add(walletOperation);
+			if(!em.contains(walletOperation)){
+				log.error("wtf wallet operation is already detached");
+			}
+			if(!em.contains(chargeInstance)){
+				log.error("wow chargeInstance is detached");
+				em.merge(chargeInstance);
+			}
 			applicationDate = nextapplicationDate;
 		}
 

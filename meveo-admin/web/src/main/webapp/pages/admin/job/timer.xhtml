@@ -134,8 +134,8 @@
 
 			<p:outputPanel id="jobExecutions">
 				<hftl:dataList backingBean="#{timerBean}"
-					resultsId="timerBean_results">
-					<p:column>
+					resultsId="timerBean_results" sortBy="#{entity.startDate}" sortOrder="descending">
+					<p:column sortBy="startDate">
 						<f:facet name="header">
 							<h:outputText value="#{messages['jobExecution.startDate']}" />
 						</f:facet>

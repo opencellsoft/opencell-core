@@ -1100,6 +1100,32 @@
 							<p:column>
 								<f:facet name="header">
 									<h:outputText
+										value="#{messages['walletOperation.startDate']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.startDate}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['walletOperation.endDate']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.endDate}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText
+										value="#{messages['walletOperation.quantity']}" />
+								</f:facet>
+								<h:outputText value="#{shotApplication.quantity}">
+								</h:outputText>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText
 										value="#{messages['walletOperation.description']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.description}">
