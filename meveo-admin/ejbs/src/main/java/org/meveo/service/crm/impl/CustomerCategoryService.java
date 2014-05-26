@@ -17,6 +17,7 @@ package org.meveo.service.crm.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.model.crm.CustomerCategory;
@@ -27,13 +28,27 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @LocalBean
-public class CustomerCategoryService extends PersistenceService<CustomerCategory> {
+public class CustomerCategoryService extends
+		PersistenceService<CustomerCategory> {
 
 	public CustomerCategory findByCode(String code) {
 		try {
 			return (CustomerCategory) getEntityManager()
 					.createQuery(
-							"from " + CustomerCategory.class.getSimpleName() + " where code=:code")
+							"from " + CustomerCategory.class.getSimpleName()
+									+ " where code=:code")
+					.setParameter("code", code).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public CustomerCategory findByCode(EntityManager em, String code) {
+		try {
+			return (CustomerCategory) em
+					.createQuery(
+							"from " + CustomerCategory.class.getSimpleName()
+									+ " where code=:code")
 					.setParameter("code", code).getSingleResult();
 		} catch (NoResultException e) {
 			return null;

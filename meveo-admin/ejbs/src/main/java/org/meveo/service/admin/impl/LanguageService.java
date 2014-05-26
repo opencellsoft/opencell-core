@@ -18,6 +18,7 @@ package org.meveo.service.admin.impl;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -38,6 +39,20 @@ public class LanguageService extends PersistenceService<Language> {
 
 		try {
 			return (Language) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Language findByCode(EntityManager em, String code) {
+		if (code == null) {
+			return null;
+		}
+		QueryBuilder qb = new QueryBuilder(Language.class, "c");
+		qb.addCriterion("languageCode", "=", code, false);
+
+		try {
+			return (Language) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}
