@@ -112,7 +112,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			entity.setName(jobName+"_auto");
 			entity.setJobName(jobName);
 			String[] values = scheduleProperty.split(" ");
-			if(values!=null && values.length==7){
+			if(values!=null && (values.length==7||values.length==8)){
 				entity.setYear(values[6]);
 				entity.setMonth(values[5]);
 				entity.setDayOfMonth(values[4]);
@@ -121,6 +121,9 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 				entity.setMinute(values[1]);
 				entity.setSecond(values[0]);
 				entity.setInfo(new TimerInfo());
+				if(values.length==8){
+					entity.getInfo().setParametres(values[7]);
+				}
 				entity.setProvider(providerService.findById(defaultProviderId));
 				create(entity);
 				log.warn("Timer as no instance and was started automatically.");

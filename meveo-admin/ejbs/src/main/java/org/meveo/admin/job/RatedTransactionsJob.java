@@ -94,6 +94,7 @@ public class RatedTransactionsJob implements Job {
 	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
+		timerConfig.setPersistent(false);
 		Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
 		return timer.getHandle();
 	}

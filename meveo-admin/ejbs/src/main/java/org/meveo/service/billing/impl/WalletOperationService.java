@@ -690,6 +690,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						nextapplicationDate, previousapplicationDate);
 			}
 
+			//FIXME i18n
 			String param2 = " "
 					+ str_tooPerceived
 					+ " "

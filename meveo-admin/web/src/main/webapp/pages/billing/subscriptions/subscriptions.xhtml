@@ -33,12 +33,12 @@
 			<hftl:column label="#{messages['businessEntity.description']}"
 				field="description" />
 			<hftl:column label="#{messages['subscription.status']}"
-				field="status" childField="label" isMessage="true" />
+				field="status" childField="label" isMessage="true" sortByField="true"/>
 			<hftl:column label="#{messages['subscription.userAccount']}"
 				field="userAccount" childField="code"/>
 			<hftl:column label="#{messages['subscription.serviceInstances']}"
 				field="serviceInstances" isList="true" childField="description"
-				childFieldId="id"
+				childFieldId="id"  sort="false"
 				view="/pages/resource/serviceInstances/serviceInstanceDetail.xhtml"
 				backView="subscriptions" />
 
