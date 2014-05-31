@@ -25,6 +25,16 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.0.1</version>
+			     <configuration>
+			       <webResources>
+			         <resource>
+			         <directory>src/main/resources</directory>
+			           <excludes>
+			                <exclude>**/import*.sql</exclude>
+			           </excludes>
+			         </resource>
+			       </webResources>
+			     </configuration>
 				<executions>
 					<execution>
 						<id>prepare-war</id>
@@ -78,18 +88,9 @@
 	</build>
 
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>com.ocpsoft</groupId> -->
-		<!-- <artifactId>prettyfaces-jsf2</artifactId> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-admin-ejbs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.manaty</groupId>
-			<artifactId>meveo-admin-config</artifactId>
-			<classifier>${env}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.meveo</groupId>
@@ -104,8 +105,6 @@
 			<groupId>com.ocpsoft</groupId>
 			<artifactId>prettyfaces-jsf2</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.primefaces.themes</groupId> <artifactId>south-street</artifactId> 
-			<version>1.0.9</version> </dependency> -->
 
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>

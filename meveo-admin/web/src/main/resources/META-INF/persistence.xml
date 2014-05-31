@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://java.sun.com/xml/ns/persistence
+        http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+	<persistence-unit name="MeveoAdmin">
+		<jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<properties>
+    		<property name="hibernate.archive.autodetection" value="class"/>
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> -->
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.cache.use_second_level_cache" value="true" />
+			<property name="hibernate.cache.use_minimal_puts" value="true" />
+			<property name="hibernate.connection.release_mode" value="AFTER_TRANSACTION" />
+			<!-- <property name="hibernate.cache.provider_configuration_file_resource_path" 
+				value="ehcache.xml"></property> -->
+			<!-- <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" 
+				/> -->
+		</properties>
+	</persistence-unit>
+
+</persistence>
