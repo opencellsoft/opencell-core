@@ -10,7 +10,6 @@
 	<artifactId>meveo-admin</artifactId>
 	<packaging>pom</packaging>
 	<name>MEVEO Admin Web Application</name>
-	<url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
 	<modules>
 		<module>ejbs</module>
@@ -34,17 +33,6 @@
 			<dependency>
 				<groupId>org.manaty</groupId>
 				<artifactId>meveo-admin-ejbs</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.manaty</groupId>
-				<artifactId>meveo-admin-ejbs</artifactId>
-				<type>ejb</type>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.parent.groupId}</groupId>
-				<artifactId>meveo-admin-web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

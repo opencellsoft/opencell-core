@@ -7,10 +7,9 @@
 
 	<persistence-unit name="MeveoAdmin">
 		<jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
-		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<jar-file>lib/meveo-model-3.2.jar</jar-file>
 		<properties>
-    		<property name="hibernate.archive.autodetection" value="class"/>
-			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> -->
+    		<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> -->
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.cache.use_second_level_cache" value="true" />
