@@ -17,7 +17,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.slf4j.Logger;
 
 @Stateless
-@Path("/customerHeirarchy")
+@Path("/customer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class CustomerHeirarchyWS {
