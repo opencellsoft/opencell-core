@@ -71,13 +71,14 @@ public class ReccuringRatingJob implements Job {
 	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
+		timerConfig.setPersistent(false);
 		Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
 		return timer.getHandle();
 	}
 
 	boolean running = false;
 
-	@Timeout
+	@Timeout()
 	public void trigger(Timer timer) {
 		TimerInfo info = (TimerInfo) timer.getInfo();
 		if (!running && info.isActive()) {

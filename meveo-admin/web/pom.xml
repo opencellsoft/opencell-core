@@ -16,6 +16,9 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/import*.sql</exclude>
+				</excludes>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
@@ -25,6 +28,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.0.1</version>
+				<configuration>
+					<packagingExcludes>**/import*.sql</packagingExcludes>
+				</configuration>
 				<executions>
 					<execution>
 						<id>prepare-war</id>
@@ -78,18 +84,13 @@
 	</build>
 
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>com.ocpsoft</groupId> -->
-		<!-- <artifactId>prettyfaces-jsf2</artifactId> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.manaty</groupId>
-			<artifactId>meveo-admin-ejbs</artifactId>
+			<artifactId>meveo-model</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.manaty</groupId>
-			<artifactId>meveo-admin-config</artifactId>
-			<classifier>${env}</classifier>
+			<artifactId>meveo-admin-ejbs</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.meveo</groupId>
@@ -104,8 +105,6 @@
 			<groupId>com.ocpsoft</groupId>
 			<artifactId>prettyfaces-jsf2</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.primefaces.themes</groupId> <artifactId>south-street</artifactId> 
-			<version>1.0.9</version> </dependency> -->
 
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
@@ -117,6 +116,24 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.5</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections-maven</artifactId>
+			<version>0.9.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.seam.security</groupId>
+			<artifactId>seam-security</artifactId>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>

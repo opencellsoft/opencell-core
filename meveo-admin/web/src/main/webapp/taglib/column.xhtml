@@ -109,7 +109,14 @@
 		<!-- If childField parameter is provided that means fieldValue is entity, enum or list. -->
 		<c:if test="#{not empty childField}">
 			<c:if test="#{sort}">
-				<f:attribute name="sortBy" value="#{field}.#{childField}" />
+			   <c:choose>
+			   		<c:when test="${sortByField}">
+						<f:attribute name="sortBy" value="#{field}" />
+					</c:when>    
+			    	<c:otherwise>
+						<f:attribute name="sortBy" value="#{field}.#{childField}" />
+					</c:otherwise>
+			   </c:choose>
 			</c:if>
 			<!-- If field is not list, then it means it is either another entity or enum. -->
 			<c:if test="#{not isList}">

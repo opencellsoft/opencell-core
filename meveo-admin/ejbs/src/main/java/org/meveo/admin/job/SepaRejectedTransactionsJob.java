@@ -129,6 +129,7 @@ public class SepaRejectedTransactionsJob
   {
     TimerConfig timerConfig = new TimerConfig();
     timerConfig.setInfo(infos);
+	timerConfig.setPersistent(false);
     Timer timer = this.timerService.createCalendarTimer(scheduleExpression, timerConfig);
     return timer.getHandle();
   }

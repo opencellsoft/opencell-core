@@ -249,7 +249,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 		<!-- For testing -->
 		<dependency>
 			<groupId>hsqldb</groupId>

@@ -17,6 +17,7 @@ package org.meveo.service.admin.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -66,6 +67,20 @@ public class CurrencyService extends PersistenceService<Currency> {
 
 		try {
 			return (Currency) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public Currency findByCode(EntityManager em, String currencyCode) {
+		if (currencyCode == null) {
+			return null;
+		}
+		QueryBuilder qb = new QueryBuilder(Currency.class, "c");
+		qb.addCriterion("currencyCode", "=", currencyCode, false);
+
+		try {
+			return (Currency) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}

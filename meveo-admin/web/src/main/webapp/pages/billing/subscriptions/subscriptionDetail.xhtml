@@ -77,21 +77,6 @@
 			updateField=":subscriptionTab:subscriptionFormPanel:formId:offerSelectId:offerSelectId">
 		</hftl:entityPopup>
 
-		<hftl:entityPopup id="oneShotChargeTmpPopup"
-			header="#{messages['oneShotChargeTmp.popup.header']}"
-			backingBean="#{oneShotChargeTemplateBean}"
-			searchField1Label="#{messages['chargeTemplate.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['chargeTemplate.description']}"
-			searchField2="description"
-			column1Label="#{messages['chargeTemplate.description']}"
-			column1="code"
-			column2Label="#{messages['chargeTemplate.description']}"
-			column2="description"
-			selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"
-			updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId_text :subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:oneshot_description:oneshot_description_textArea">
-		</hftl:entityPopup>
-
 		<hftl:entityPopup id="chargeTemplatePopup"
 			header="#{messages['chargeTemplate.popup.header']}"
 			backingBean="#{oneShotChargeTemplateBean}"
@@ -404,12 +389,28 @@
 												value="#{messages['subscription.oneShotChgButton']}"
 												actionListener="#{subscriptionBean.newOneShotChargeInstance}"
 												update=":#{p:component('oneShotChargeFormMainPanel')}"
-												oncomplete="oneShotChgDivWgt.show()" />
+												onclick="document.getElementById('oneShotChgDiv').style.display='';" />
 										</h:form>
 										<br />
-										<div id="oneShotChgDiv" style="">
+										<div id="oneShotChgDiv" style="display: none;">
 											<p:panel id="oneShotChargeFormMainPanel"
-												widgetVar="oneShotChgDivWgt" style="display: none">
+												widgetVar="oneShotChgDivWgt">
+
+												<hftl:entityPopup id="oneShotChargeTmpPopup"
+													header="#{messages['oneShotChargeTmp.popup.header']}"
+													backingBean="#{oneShotChargeTemplateBean}"
+													searchField1Label="#{messages['chargeTemplate.code']}"
+													searchField1="code"
+													searchField2Label="#{messages['chargeTemplate.description']}"
+													searchField2="description"
+													column1Label="#{messages['chargeTemplate.description']}"
+													column1="code"
+													column2Label="#{messages['chargeTemplate.description']}"
+													column2="description"
+													selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"
+													updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId_text :subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:oneshot_description:oneshot_description_textArea">
+												</hftl:entityPopup>
+
 												<hf:formPanel id="oneShotChargeFormPanel" edit="true"
 													label="#{messages['subscription.tab.oneShotChg']}"
 													backingBean="#{subscriptionBean}"
@@ -1099,8 +1100,7 @@
 							</p:column>
 							<p:column>
 								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.startDate']}" />
+									<h:outputText value="#{messages['walletOperation.startDate']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.startDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
@@ -1108,8 +1108,7 @@
 							</p:column>
 							<p:column>
 								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.endDate']}" />
+									<h:outputText value="#{messages['walletOperation.endDate']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.endDate}">
 									<f:convertDateTime pattern="dd/MM/yyyy" />
@@ -1117,8 +1116,7 @@
 							</p:column>
 							<p:column>
 								<f:facet name="header">
-									<h:outputText
-										value="#{messages['walletOperation.quantity']}" />
+									<h:outputText value="#{messages['walletOperation.quantity']}" />
 								</f:facet>
 								<h:outputText value="#{shotApplication.quantity}">
 								</h:outputText>

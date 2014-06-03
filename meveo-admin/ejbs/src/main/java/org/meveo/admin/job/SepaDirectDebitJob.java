@@ -108,6 +108,7 @@ public class SepaDirectDebitJob
   {
     TimerConfig timerConfig = new TimerConfig();
     timerConfig.setInfo(infos);
+	timerConfig.setPersistent(false);
     Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
     return timer.getHandle();
   }
