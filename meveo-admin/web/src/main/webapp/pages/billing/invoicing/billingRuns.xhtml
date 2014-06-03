@@ -6,8 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a="http://richfaces.org/a4j"
 	xmlns:e="http://jboss.com/products/seam/excel"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
@@ -47,18 +46,22 @@
 				<f:facet name="header">
 					<h:outputText value="#{messages['commons.actions']}" />
 				</f:facet>
-			    <p:button id="preReportLink" outcome="preInvoicingReports"
-					rendered="#{entity.status.toString() == 'WAITING'}" value="#{messages['button.preInvoicingRepport']}">
+				<p:button id="preReportLink" outcome="preInvoicingReports"
+					rendered="#{entity.status.toString() == 'WAITING'}"
+					value="#{messages['button.preInvoicingRepport']}">
 					<f:param name="objectId" value="#{entity.id}" />
 					<f:param name="preReport" value="true" />
-					<f:param name="cid" value="#{conversation.id}" />
-				</p:button>	
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
 				<p:button id="postReportLink" outcome="postInvoicingReports"
-					rendered="#{entity.status.toString() == 'TERMINATED'}" value="#{messages['button.postInvoicingRepport']}">
+					rendered="#{entity.status.toString() == 'TERMINATED'}"
+					value="#{messages['button.postInvoicingRepport']}">
 					<f:param name="objectId" value="#{entity.id}" />
 					<f:param name="postReport" value="true" />
-					<f:param name="cid" value="#{conversation.id}" />
-				</p:button>	
+					<f:param name="cid"
+						value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
 			</p:column>
 		</hftl:dataList>
 

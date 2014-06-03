@@ -194,7 +194,7 @@ public class InvoicingJob implements Job {
 			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		timerConfig.setPersistent(false);
+		timerConfig.setPersistent(true);
 		Timer timer = timerService.createCalendarTimer(scheduleExpression,
 				timerConfig);
 		return timer.getHandle();
