@@ -182,7 +182,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CONFIRMED);
 			billingRunService.update(entity);
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+			endConversation();
+			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -194,7 +195,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.update(entity);
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+			endConversation();
+			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
@@ -206,9 +208,9 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.cleanBillingRun(entity);
-
 			billingRunService.update(entity);
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
+			endConversation();
+			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
