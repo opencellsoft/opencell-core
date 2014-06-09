@@ -324,6 +324,9 @@ public class UsageRatingService {
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), countryId);
+		if(invoiceSubcategoryCountry==null){
+			throw new BusinessException("nos tax defined for countryId="+countryId+" in invoice Sub-Category="+invoiceSubCat.getCode());
+		}
 		TradingCurrency currency = edr.getSubscription().getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();

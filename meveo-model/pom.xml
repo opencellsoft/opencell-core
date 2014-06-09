@@ -8,17 +8,27 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-model</artifactId>
+	<organization>Manaty</organization>
+	
 	<packaging>jar</packaging>
 	<name>MEVEO Model</name>
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>org.apache.maven.plugins</artifactId>
-				<groupId>maven-compiler-plugin</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
 				<version>3.0</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<version>2.4</version>
+				<configuration>
+					<finalName>meveo-model</finalName>
 				</configuration>
 			</plugin>
 			<plugin>
