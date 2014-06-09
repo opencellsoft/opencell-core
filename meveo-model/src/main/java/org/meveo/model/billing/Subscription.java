@@ -73,12 +73,6 @@ public class Subscription extends BusinessEntity {
 	private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
 
 	@OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
-	private List<OneShotChargeInstance> oneShotChargeInstances = new ArrayList<OneShotChargeInstance>();
-
-	@OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
-	private List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
-
-	@OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
 	private List<Access> accessPoints = new ArrayList<Access>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -162,14 +156,6 @@ public class Subscription extends BusinessEntity {
 		this.terminationDate = terminationDate;
 	}
 
-	public List<OneShotChargeInstance> getOneShotChargeInstances() {
-		return oneShotChargeInstances;
-	}
-
-	public void setOneShotChargeInstances(List<OneShotChargeInstance> oneShotChargeInstances) {
-		this.oneShotChargeInstances = oneShotChargeInstances;
-	}
-
 	public SubscriptionTerminationReason getSubscriptionTerminationReason() {
 		return subscriptionTerminationReason;
 	}
@@ -179,13 +165,6 @@ public class Subscription extends BusinessEntity {
 		this.subscriptionTerminationReason = subscriptionTerminationReason;
 	}
 
-	public List<RecurringChargeInstance> getRecurringChargeInstances() {
-		return recurringChargeInstances;
-	}
-
-	public void setRecurringChargeInstances(List<RecurringChargeInstance> recurringChargeInstances) {
-		this.recurringChargeInstances = recurringChargeInstances;
-	}
 
 	public List<Access> getAccessPoints() {
 		return accessPoints;
