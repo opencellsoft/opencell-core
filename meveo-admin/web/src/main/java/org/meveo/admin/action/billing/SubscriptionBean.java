@@ -260,7 +260,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				oneShotChargeInstance.setId(id);
 				oneShotChargeInstance.setProvider(oneShotChargeInstance
 						.getChargeTemplate().getProvider());
-				entity.getOneShotChargeInstances().add(oneShotChargeInstance);
 			}
 			messages.info(new BundleKey("messages", "save.successful"));
 
@@ -317,8 +316,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 					recurringChargeInstance.setId(id);
 					recurringChargeInstance.setProvider(recurringChargeInstance
 							.getChargeTemplate().getProvider());
-					entity.getRecurringChargeInstances().add(
-							recurringChargeInstance);
 				}
 				messages.info(new BundleKey("messages", "save.successful"));
 				recurringChargeInstance = new RecurringChargeInstance();
