@@ -36,10 +36,6 @@ public class OneShotChargeInstance extends ChargeInstance {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
-	private Subscription subscription;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUBS_SERV_INST_ID")
 	private ServiceInstance subscriptionServiceInstance;
 
@@ -65,14 +61,6 @@ public class OneShotChargeInstance extends ChargeInstance {
 
 	public OneShotChargeInstance() {
 
-	}
-
-	public Subscription getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
 	}
 
 	public ServiceInstance getSubscriptionServiceInstance() {

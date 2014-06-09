@@ -93,6 +93,10 @@ public class ChargeInstance extends BusinessEntity {
 	@JoinColumn(name = "SELLER_ID")
 	private Seller seller;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SUBSCRIPTION_ID")
+	protected Subscription subscription;
+
 	@Column(name = "PR_DESCRIPTION", length = 100)
 	protected String prDescription;
 	
@@ -210,7 +214,15 @@ public class ChargeInstance extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
+	
+	public Subscription getSubscription() {
+		return subscription;
+	}
 
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+	
 	public TradingCurrency getCurrency() {
 		return currency;
 	}
