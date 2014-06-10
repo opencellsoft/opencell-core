@@ -35,10 +35,6 @@ public class UsageChargeInstance extends ChargeInstance {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
-	private Subscription subscription;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SERVICE_INSTANCE_ID")
 	private ServiceInstance serviceInstance;
 
@@ -75,14 +71,6 @@ public class UsageChargeInstance extends ChargeInstance {
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
-	}
-
-	public Subscription getSubscription() {
-		return subscription;
-	}
-
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
 	}
 
 }
