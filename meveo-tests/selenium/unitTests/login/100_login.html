@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>store</td>
-	<td>http://meveo.asg.env-integration.com/meveo-admin-web-3.0-SNAPSHOT/loginInternal.jsf;jsessionid=IjomKUepk4z+LbZMQ9YFldYd</td>
+	<td>http://demo.meveo.info/meveo</td>
 	<td>url</td>
 </tr>
 <tr>
@@ -32,14 +32,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
+	<td>waitForElementPresent</td>
+	<td>id=loginForm:username</td>
 	<td></td>
-	<td>2000</td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>id=loginForm:username</td>
 	<td>${username}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=loginForm:password</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
