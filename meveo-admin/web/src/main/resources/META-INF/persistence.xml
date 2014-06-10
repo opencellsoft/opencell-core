@@ -7,7 +7,7 @@
 
 	<persistence-unit name="MeveoAdmin">
 		<jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
-		<jar-file>lib/meveo-model.jar</jar-file>
+		<jar-file>lib/meveo-model-@VERSION_NUMBER@.jar</jar-file>
 		<properties>
     		<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> -->
 			<property name="hibernate.hbm2ddl.auto" value="update" />

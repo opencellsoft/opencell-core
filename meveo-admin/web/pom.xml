@@ -44,7 +44,7 @@
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
 				<artifactId>replacer</artifactId>
-				<version>1.5.2</version>
+				<version>1.5.3</version>
 				<executions>
 					<execution>
 						<phase>prepare-package</phase>
@@ -55,7 +55,8 @@
 				</executions>
 				<configuration>
 					<includes>
-						<include>target/meveo/layout/*.xhtml</include>
+						<include>${project.build.directory}/**/persistence.xml</include>
+						<include>${project.build.directory}/**/layout/*.xhtml</include>
 					</includes>
 					<replacements>
 						<replacement>

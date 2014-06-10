@@ -659,7 +659,7 @@ public class ImportCustomersJob implements Job {
 			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		timerConfig.setPersistent(false);
+		//timerConfig.setPersistent(false);
 		Timer timer = timerService.createCalendarTimer(scheduleExpression,
 				timerConfig);
 		return timer.getHandle();
