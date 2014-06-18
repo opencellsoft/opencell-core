@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -400,8 +401,9 @@ public class UsageRatingService {
 			log.info("value to deduce " + edr.getQuantity() + "*"
 					+ charge.getUnityMultiplicator() + "=" + countedValue);
 			if (charge.getUnityNbDecimal() > 0) {
+				int rounding = (charge.getUnityNbDecimal()>BaseEntity.NB_DECIMALS)?BaseEntity.NB_DECIMALS:charge.getUnityNbDecimal();
 				countedValue = countedValue.setScale(
-						charge.getUnityNbDecimal(), RoundingMode.HALF_UP);
+						rounding, RoundingMode.HALF_UP);
 			}
 			if (periodCache.getValue().compareTo(BigDecimal.ZERO) > 0) {
 				if (periodCache.getValue().compareTo(countedValue) < 0) {

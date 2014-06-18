@@ -20,7 +20,7 @@ import org.reflections.Reflections;
 
 @Singleton
 @Startup
-public class ModuleLoader  implements Integrator {
+public class  ModuleLoader  implements Integrator {
 
 	
 	@Inject 
