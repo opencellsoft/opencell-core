@@ -19,6 +19,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -39,11 +42,12 @@ import org.meveo.model.admin.Seller;
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "OPERATION_TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("W")
 public class WalletOperation extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
-	
 
 	/**
 	 * The wallet on which the account operation is applied.
@@ -312,11 +316,13 @@ public class WalletOperation extends BusinessEntity {
 	}
 
 	public String toString() {
-		return wallet + "," + operationDate + "," + type + "," + chargeInstance + "," + currency
-				+ "," + taxPercent + "," + unitAmountWithoutTax + "," + unitAmountWithTax + ","
-				+ unitAmountTax + "," + counter + "," + parameter1 + "," + parameter2 + ","
-				+ parameter3 + "," + startDate + "," + endDate + "," + subscriptionDate + ","
-				+ status + "," + seller;
+		return wallet + "," + operationDate + "," + type + "," + chargeInstance
+				+ "," + currency + "," + taxPercent + ","
+				+ unitAmountWithoutTax + "," + unitAmountWithTax + ","
+				+ unitAmountTax + "," + counter + "," + parameter1 + ","
+				+ parameter2 + "," + parameter3 + "," + startDate + ","
+				+ endDate + "," + subscriptionDate + "," + status + ","
+				+ seller;
 	}
 
 }
