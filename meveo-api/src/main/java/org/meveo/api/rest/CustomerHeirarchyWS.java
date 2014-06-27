@@ -59,7 +59,6 @@ public class CustomerHeirarchyWS {
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			e.printStackTrace();
 		}
 
 		return result;
