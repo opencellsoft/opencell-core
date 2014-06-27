@@ -64,4 +64,28 @@ public class CustomerHeirarchyWS {
 		return result;
 	}
 
+	@POST
+	@Path("/update")
+	public ActionStatus update(CustomerHeirarchyDto customerHeirarchyDto) {
+		log.info("Updating Customer Heirarchy...");
+		log.debug("customerHeirarchy.update={}", customerHeirarchyDto);
+
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			customerHeirarchyDto.setCurrentUserId(Long.valueOf(paramBean
+					.getProperty("asp.api.userId", "1")));
+			customerHeirarchyDto.setProviderId(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")));
+
+			customerHeirarchyApi.updateCustomerHeirarchy(customerHeirarchyDto);
+
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
 }

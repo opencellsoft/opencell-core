@@ -420,4 +420,343 @@ public class CustomerHeirarchyApi extends BaseApi {
 		}
 
 	}
+
+	public void updateCustomerHeirarchy(
+			CustomerHeirarchyDto customerHeirarchyDto) throws BusinessException {
+
+		log.info("Updating Customer Heirarchy with code : "
+				+ customerHeirarchyDto.getCustomerId());
+		Provider provider = em.find(Provider.class,
+				customerHeirarchyDto.getProviderId());
+		User currentUser = em.find(User.class,
+				customerHeirarchyDto.getCurrentUserId());
+
+		if (!StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())
+				&& !StringUtils.isEmpty(customerHeirarchyDto
+						.getCustomerBrandCode())
+				&& !StringUtils.isEmpty(customerHeirarchyDto
+						.getCustomerCategoryCode())
+				&& !StringUtils.isEmpty(customerHeirarchyDto.getSellerCode())
+				&& !StringUtils.isEmpty(customerHeirarchyDto.getCurrencyCode())
+				&& !StringUtils.isEmpty(customerHeirarchyDto.getCountryCode())
+				&& !StringUtils.isEmpty(customerHeirarchyDto.getLastName())
+				&& !StringUtils.isEmpty(customerHeirarchyDto.getLanguageCode())
+				&& !StringUtils.isEmpty(customerHeirarchyDto
+						.getBillingCycleCode())) {
+
+			Seller seller = sellerService.findByCode(em,
+					customerHeirarchyDto.getSellerCode(), provider);
+
+			if (seller != null) {
+				throw new BusinessException("Seller with code "
+						+ customerHeirarchyDto.getSellerCode()
+						+ " already exists.");
+			}
+
+			Auditable auditableTrading = new Auditable();
+			auditableTrading.setCreated(new Date());
+			auditableTrading.setCreator(currentUser);
+
+			TradingCountry tradingCountry = tradingCountryService
+					.findByTradingCountryCode(em,
+							customerHeirarchyDto.getCountryCode(), provider);
+
+			if (tradingCountry == null) {
+				Country country = countryService.findByCode(em,
+						customerHeirarchyDto.getCountryCode());
+
+				if (country == null) {
+					throw new BusinessException("Invalid country code "
+							+ customerHeirarchyDto.getCountryCode());
+				} else {
+					// create tradingCountry
+					tradingCountry = new TradingCountry();
+					tradingCountry.setCountry(country);
+					tradingCountry.setProvider(provider);
+					tradingCountry.setActive(true);
+					tradingCountry.setPrDescription(country.getDescriptionEn());
+					tradingCountry.setAuditable(auditableTrading);
+					tradingCountryService.create(em, tradingCountry,
+							currentUser, provider);
+				}
+			}
+
+			TradingCurrency tradingCurrency = tradingCurrencyService
+					.findByTradingCurrencyCode(em,
+							customerHeirarchyDto.getCurrencyCode(), provider);
+
+			if (tradingCurrency == null) {
+				Currency currency = currencyService.findByCode(em,
+						customerHeirarchyDto.getCurrencyCode());
+
+				if (currency == null) {
+					throw new BusinessException("Currency with code "
+							+ customerHeirarchyDto.getCurrencyCode()
+							+ " does not exist.");
+				} else {
+					// create tradingCountry
+					tradingCurrency = new TradingCurrency();
+					tradingCurrency.setCurrencyCode(customerHeirarchyDto
+							.getCurrencyCode());
+					tradingCurrency.setCurrency(currency);
+					tradingCurrency.setProvider(provider);
+					tradingCurrency.setActive(true);
+					tradingCurrency.setPrDescription(currency
+							.getDescriptionEn());
+					tradingCurrency.setAuditable(auditableTrading);
+					tradingCurrencyService.create(em, tradingCurrency,
+							currentUser, provider);
+				}
+			}
+
+			TradingLanguage tradingLanguage = tradingLanguageService
+					.findByTradingLanguageCode(em,
+							customerHeirarchyDto.getLanguageCode(), provider);
+
+			if (tradingLanguage == null) {
+				Language language = languageService.findByCode(em,
+						customerHeirarchyDto.getLanguageCode());
+
+				if (language == null) {
+					throw new BusinessException("Language with code "
+							+ customerHeirarchyDto.getLanguageCode()
+							+ " does not exist.");
+				} else {
+					// create tradingCountry
+					tradingLanguage = new TradingLanguage();
+					tradingLanguage.setLanguageCode(customerHeirarchyDto
+							.getLanguageCode());
+					tradingLanguage.setLanguage(language);
+					tradingLanguage.setProvider(provider);
+					tradingLanguage.setActive(true);
+					tradingLanguage.setPrDescription(language
+							.getDescriptionEn());
+					tradingLanguage.setAuditable(auditableTrading);
+					tradingLanguageService.create(em, tradingLanguage,
+							currentUser, provider);
+				}
+			}
+
+			CustomerBrand customerBrand = customerBrandService.findByCode(em,
+					customerHeirarchyDto.getCustomerBrandCode());
+
+			if (StringUtils.isEmpty(customerHeirarchyDto
+					.getCustomerCategoryCode())) {
+				throw new BusinessException("Missing Customer Category Code "
+						+ customerHeirarchyDto.getCustomerCategoryCode());
+			}
+
+			CustomerCategory customerCategory = customerCategoryService
+					.findByCode(em,
+							customerHeirarchyDto.getCustomerCategoryCode());
+
+			if (customerBrand == null) {
+				customerBrand = new CustomerBrand();
+				customerBrand.setCode(customerHeirarchyDto
+						.getCustomerBrandCode());
+				customerBrand.setDescription(customerHeirarchyDto
+						.getCustomerBrandCode());
+				customerBrandService.create(em, customerBrand, currentUser,
+						provider);
+			}
+
+			if (customerCategory == null) {
+				customerCategory = new CustomerCategory();
+				customerCategory.setCode(customerHeirarchyDto
+						.getCustomerCategoryCode());
+				customerCategory.setDescription(customerHeirarchyDto
+						.getCustomerCategoryCode());
+				customerCategoryService.create(em, customerCategory,
+						currentUser, provider);
+			}
+
+			int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.paymentMethod", "1"));
+			int creditCategory = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.creditCategory", "5"));
+
+			int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
+					"asp.api.default.customerAccount.paymentMethod", "1"));
+
+			Auditable auditable = new Auditable();
+			auditable.setCreated(new Date());
+			auditable.setCreator(currentUser);
+
+			Seller newSeller = sellerService.findByCode(em,
+					customerHeirarchyDto.getSellerCode(), provider);
+			if (newSeller == null) {
+				newSeller = new Seller();
+			}
+			newSeller.setActive(true);
+			newSeller.setCode(customerHeirarchyDto.getSellerCode());
+			newSeller.setAuditable(auditable);
+			newSeller.setProvider(provider);
+			newSeller.setTradingCountry(tradingCountry);
+			newSeller.setTradingCurrency(tradingCurrency);
+
+			sellerService.create(em, newSeller, currentUser, provider);
+
+			Customer customer = customerService.findByCode(em,
+					customerHeirarchyDto.getCustomerId(), provider);
+			if (customer == null) {
+				throw new BusinessException("Customer with code "
+						+ customerHeirarchyDto.getCustomerId()
+						+ " does not exist.");
+			}
+			customer.setCode(customerHeirarchyDto.getCustomerId());
+			customer.setCustomerBrand(customerBrand);
+			customer.setCustomerCategory(customerCategory);
+			customer.setSeller(newSeller);
+
+			customerService.update(em, customer, currentUser);
+
+			CustomerAccount customerAccount = customerAccountService
+					.findByCode(em, customerHeirarchyDto.getCustomerId(),
+							provider);
+			if (customerAccount == null) {
+
+				throw new BusinessException("Customer Account with code "
+						+ customerHeirarchyDto.getCustomerId()
+						+ " does not exist.");
+
+			}
+			customerAccount.setCustomer(customer);
+			customerAccount.setCode(customerHeirarchyDto.getCustomerId());
+			customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
+			customerAccount.setPaymentMethod(PaymentMethodEnum
+					.getValue(caPaymentMethod));
+			customerAccount.setCreditCategory(CreditCategoryEnum
+					.getValue(creditCategory));
+			customerAccount.setTradingCurrency(tradingCurrency);
+			customerAccountService.update(em, customerAccount, currentUser);
+
+			BillingCycle billingCycle = billingCycleService
+					.findByBillingCycleCode(em,
+							customerHeirarchyDto.getBillingCycleCode(),
+							currentUser, provider);
+
+			if (billingCycle == null) {
+				billingCycle = billingCycleService.findByBillingCycleCode(em,
+						paramBean.getProperty("default.billingCycleCode",
+								"DEFAULT"), provider);
+				if (billingCycle == null) {
+					Calendar imputationCalendar = calendarService.findByName(
+							em, paramBean.getProperty(
+									"default.imputationCalendar.Name",
+									"DEF_IMP_CAL"));
+
+					Calendar cycleCalendar = calendarService.findByName(em,
+							paramBean.getProperty("default.cycleCalendar.Name",
+									"DEF_CYC_CAL"));
+
+					if (imputationCalendar == null) {
+						throw new BusinessException(
+								"Cannot find calendar with name "
+										+ paramBean
+												.getProperty(
+														"default.imputationCalendar.Name",
+														"DEF_IMP_CAL"));
+					}
+					if (cycleCalendar == null) {
+						throw new BusinessException(
+								"Cannot find calendar with name "
+										+ paramBean.getProperty(
+												"default.cycleCalendar.Name",
+												"DEF_CYC_CAL"));
+
+					}
+
+					billingCycle = new BillingCycle();
+					billingCycle.setCode(paramBean.getProperty(
+							"default.billingCycleCode", "DEFAULT"));
+					billingCycle.setActive(true);
+					billingCycle.setBillingTemplateName(paramBean.getProperty(
+							"default.billingTemplateName", "DEFAULT"));
+					billingCycle.setInvoiceDateDelay(0);
+					billingCycle.setCalendar(cycleCalendar);
+
+					billingCycleService.create(em, billingCycle, currentUser,
+							provider);
+				}
+			}
+
+			BillingAccount billingAccount = billingAccountService.findByCode(
+					em, customerHeirarchyDto.getCustomerId(), provider);
+			if (billingAccount == null) {
+				billingAccount = new BillingAccount();
+			}
+			billingAccount.setCode(customerHeirarchyDto.getCustomerId());
+			billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+			billingAccount.setCustomerAccount(customerAccount);
+			billingAccount.setPaymentMethod(PaymentMethodEnum
+					.getValue(baPaymentMethod));
+			billingAccount
+					.setElectronicBilling(Boolean.valueOf(paramBean
+							.getProperty(
+									"customerHeirarchy.billingAccount.electronicBilling",
+									"true")));
+			billingAccount.setTradingCountry(tradingCountry);
+			billingAccount.setTradingLanguage(tradingLanguage);
+			billingAccount.setBillingCycle(billingCycle);
+			billingAccountService.createBillingAccount(em, billingAccount,
+					currentUser, provider);
+
+			UserAccount userAccount = userAccountService.findByCode(em,
+					customerHeirarchyDto.getCustomerId(), provider);
+			if (userAccount == null) {
+				userAccount = new UserAccount();
+			}
+			userAccount.setStatus(AccountStatusEnum.ACTIVE);
+			userAccount.setBillingAccount(billingAccount);
+			userAccount.setCode(customerHeirarchyDto.getCustomerId());
+			userAccountService.createUserAccount(em, billingAccount,
+					userAccount, currentUser);
+
+		} else {
+
+			StringBuilder sb = new StringBuilder(
+					"Missing value for the following parameters ");
+			List<String> missingFields = new ArrayList<String>();
+			if (StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())) {
+				missingFields.add("Customer ID");
+			}
+			if (StringUtils
+					.isEmpty(customerHeirarchyDto.getCustomerBrandCode())) {
+				missingFields.add("Customer Brand Code");
+			}
+			if (StringUtils.isEmpty(customerHeirarchyDto
+					.getCustomerCategoryCode())) {
+				missingFields.add("Customer Category Code");
+			}
+			if (StringUtils.isEmpty(customerHeirarchyDto.getSellerCode())) {
+				missingFields.add("Seller Code");
+			}
+			if (StringUtils.isEmpty(customerHeirarchyDto.getCurrencyCode())) {
+				missingFields.add("Currency Code");
+			}
+			if (StringUtils.isEmpty(customerHeirarchyDto.getCountryCode())) {
+				missingFields.add("Country Code");
+			}
+			if (StringUtils.isEmpty(customerHeirarchyDto.getLastName())) {
+				missingFields.add("Last Name");
+			}
+			if (StringUtils.isEmpty(customerHeirarchyDto.getLanguageCode())) {
+				missingFields.add("Language Code");
+			}
+			if (StringUtils.isEmpty(customerHeirarchyDto.getBillingCycleCode())) {
+				missingFields.add("Billing Cycle Code");
+			}
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new BusinessException(sb.toString());
+
+		}
+
+	}
 }
