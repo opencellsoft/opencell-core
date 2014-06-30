@@ -28,6 +28,8 @@ public class CustomerHeirarchyDto extends BaseDto {
 	private String address2;
 	private Date birthDate;
 	private String phoneNumber;
+	private String city;
+	private String titleCode;
 	
 
 	public String getCustomerId() {
@@ -159,6 +161,24 @@ public class CustomerHeirarchyDto extends BaseDto {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
+	
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getTitleCode() {
+		return titleCode;
+	}
+
+	public void setTitleCode(String titleCode) {
+		this.titleCode = titleCode;
+	}
 
 	@Override
 	public String toString() {
@@ -177,6 +197,8 @@ public class CustomerHeirarchyDto extends BaseDto {
 				+ ", address1 = " + address1
 				+ ", address2 = " + address2
 				+ ",birthDate = " + birthDate
-				+ ", phoneNumber= " +phoneNumber+"]";
+				+ ", phoneNumber= " +phoneNumber
+				+ ",city = "+ city
+				+ ",titleCode = "+ titleCode +"]";
 	}
 }
