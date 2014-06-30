@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerHeirarchyApi;
@@ -80,7 +81,7 @@ public class CustomerHeirarchyWS {
 
 			customerHeirarchyApi.updateCustomerHeirarchy(customerHeirarchyDto);
 
-		} catch (Exception e) {
+		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
