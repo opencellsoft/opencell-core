@@ -931,3 +931,200 @@ INSERT INTO CAT_DAY_IN_YEAR(ID, VERSION, MONTH, DAY, PROVIDER_ID) VALUES (1131, 
 
 DROP SEQUENCE CAT_DAY_IN_YEAR_SEQ;
 CREATE SEQUENCE CAT_DAY_IN_YEAR_SEQ start with 367 increment by 1;
+
+--Customer Category
+INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (1, false, 0, now(), 'PROSPECT', 'Prospect', 1, 1);
+INSERT INTO CRM_CUSTOMER_CATEGORY (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (2, false, 0, now(), 'CLIENT', 'Client', 1, 1);
+
+DROP SEQUENCE CRM_CUSTOMER_CATEGORY_SEQ;
+CREATE SEQUENCE CRM_CUSTOMER_CATEGORY_SEQ start with 3 increment by 1;
+
+--Customer Brand
+INSERT INTO CRM_CUSTOMER_BRAND (id, disabled, version, created, code, description, provider_id, creator_id) VALUES (1, false, 0, now(), 'DEFAULT', 'Demo Product and Services', 1, 1);
+
+DROP SEQUENCE CRM_CUSTOMER_BRAND_SEQ;
+CREATE SEQUENCE CRM_CUSTOMER_BRAND_SEQ start with 3 increment by 1;
+
+--Trading Language
+insert into billing_trading_language (id, version, disabled, created, provider_id, creator_id, language_id, pr_description) values (1, 0, false, now(), 1, 1, 2, 'English');
+insert into billing_trading_language (id, version, disabled, created, provider_id, creator_id, language_id, pr_description) values (2, 0, false, now(), 1, 1, 12, 'French');
+
+DROP SEQUENCE billing_trading_language_SEQ;
+CREATE SEQUENCE billing_trading_language_SEQ start with 3 increment by 1;
+
+--Trading Currency
+insert into billing_trading_currency (id, version, disabled, created, provider_id, creator_id, currency_id, pr_description) values (1, 0, false, now(), 1, 1, 49, 'US Dollar');
+insert into billing_trading_currency (id, version, disabled, created, provider_id, creator_id, currency_id, pr_description) values (2, 0, false, now(), 1, 1, 5, 'France');
+
+DROP SEQUENCE billing_trading_currency_SEQ;
+CREATE SEQUENCE billing_trading_currency_SEQ start with 3 increment by 1;
+
+--Trading Country
+insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description) values (1, 0, false, now(), 1, 1, 220, 'United States');
+insert into billing_trading_country (id, version, disabled, created, provider_id, creator_id, country_id, pr_description) values (2, 0, false, now(), 1, 1, 70, 'France');
+
+DROP SEQUENCE billing_trading_country_SEQ;
+CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
+
+--Counter Calendar
+insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar', 'COUNTER');
+insert into cat_calendar_days (calendar_id, day_id) values (1, 1);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 101);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 201);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 301);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 401);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 501);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 601);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 701);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 801);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 901);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 1001);
+insert into cat_calendar_days (calendar_id, day_id) values (1, 1101);
+
+--Billing Calendar
+insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (2, 0, false, now(), 1, 1, 'CAL_INV_MONTHLY', 'Billing Calendar', 'BILLING');
+insert into cat_calendar_days (calendar_id, day_id) values (2, 1);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 101);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 201);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 301);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 401);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 501);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 601);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 701);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 801);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 901);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 1001);
+insert into cat_calendar_days (calendar_id, day_id) values (2, 1101);
+
+--Charge Imputation
+insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (3, 0, false, now(), 1, 1, 'CAL_VAL_MONTHLY', 'Charge Imputation Calendar', 'CHARGE_IMPUTATION');
+insert into cat_calendar_days (calendar_id, day_id) values (3, 1);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 101);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 201);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 301);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 401);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 501);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 601);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 701);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 801);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 901);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 1001);
+insert into cat_calendar_days (calendar_id, day_id) values (3, 1101);
+
+DROP SEQUENCE cat_calendar_SEQ;
+CREATE SEQUENCE cat_calendar_SEQ start with 4 increment by 1;
+
+--Tax
+insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (1, 0, false, now(), 1, 1, 'TAX_05', '0 Percent Tax', 0);
+insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (2, 0, false, now(), 1, 1, 'TAX_00', '5 Percent Tax', 5);
+insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (3, 0, false, now(), 1, 1, 'TAX_18', '18 Percent Tax', 18);
+
+DROP SEQUENCE billing_tax_SEQ;
+CREATE SEQUENCE billing_tax_SEQ start with 4 increment by 1;
+
+--Invoice Category
+insert into BILLING_INVOICE_CAT (id, version, disabled, created, provider_id, creator_id, code, description, sort_index) values (1, 0, false, now(), 1, 1, 'CONSUMPTION', 'Consumption', 1);
+insert into BILLING_INVOICE_CAT (id, version, disabled, created, provider_id, creator_id, code, description, sort_index) values (2, 0, false, now(), 1, 1, 'SUBSCRIPTION', 'Subscription', 2);
+
+DROP SEQUENCE BILLING_INVOICE_CAT_SEQ;
+CREATE SEQUENCE BILLING_INVOICE_CAT_SEQ start with 3 increment by 1;
+
+--Invoice Sub Category
+insert into BILLING_INVOICE_SUB_CAT (id, version, disabled, created, provider_id, creator_id, code, description, accounting_code, discount, invoice_category_id) values (1, 0, false, now(), 1, 1, 'CMP_DATA', 'Consumption Data', '120.121.21.2', 0, 1);
+insert into BILLING_INVOICE_SUB_CAT (id, version, disabled, created, provider_id, creator_id, code, description, accounting_code, discount, invoice_category_id) values (2, 0, false, now(), 1, 1, 'SUB_DATA', 'Subscription Data', '120.121.21.4', 0, 2);
+
+DROP SEQUENCE BILLING_INVOICE_SUB_CAT_SEQ;
+CREATE SEQUENCE BILLING_INVOICE_SUB_CAT_SEQ start with 3 increment by 1;
+
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (1, 0, false, now(), 1, 1, '', 1, 1, 1);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (2, 0, false, now(), 1, 1, '', 1, 2, 2);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (3, 0, false, now(), 1, 1, '', 2, 1, 1);
+insert into BILLING_INV_SUB_CAT_COUNTRY (id, version, disabled, created, provider_id, creator_id, discount_code, invoice_sub_category_id, tax_id, trading_country_id) values (4, 0, false, now(), 1, 1, '', 2, 2, 2);
+
+DROP SEQUENCE BILLING_INV_SUB_CAT_COUNTRY_SEQ;
+CREATE SEQUENCE BILLING_INV_SUB_CAT_COUNTRY_SEQ start with 5 increment by 1;
+
+--Billing Cycle
+insert into BILLING_CYCLE (id, version, disabled, created, provider_id, creator_id, code, description, billing_template_name, due_date_delay, invoice_date_delay, calendar) values (1, 0, false, now(), 1, 1, 'CYC_INV_MT_1', 'Monthly Invoice Cycle 1', '1', 2, 4, 2);
+insert into BILLING_CYCLE (id, version, disabled, created, provider_id, creator_id, code, description, billing_template_name, due_date_delay, invoice_date_delay, calendar) values (2, 0, false, now(), 1, 1, 'CYC_INV_MT_2', 'Monthly Invoice Cycle 2', '1', 2, 4, 2);
+
+DROP SEQUENCE BILLING_CYCLE_SEQ;
+CREATE SEQUENCE BILLING_CYCLE_SEQ start with 3 increment by 1;
+
+--Primary Contact
+insert into CRM_PROVIDER_CONTACT (id, version, disabled, created, provider_id, creator_id, code, description, lastname, firstname, email, phone, address_zipcode, address_city) values (1, 0, false, now(), 1, 1, 'DEMO_ADMIN', 'Demo Administrator', 'Admin', 'Admin', 'contact@manaty.net', '09152154716', '21000', 'DIJON');
+
+DROP SEQUENCE CRM_PROVIDER_CONTACT_SEQ;
+CREATE SEQUENCE CRM_PROVIDER_CONTACT_SEQ start with 2 increment by 1;
+
+--Seller
+insert into crm_seller (id, version, disabled, created, provider_id, creator_id, code, description, parent_seller_id, trading_currency_id, trading_language_id) values (1, 0, false, now(), 1, 1, 'MAIN_SELLER', 'Demo Distributor', null, 1, 1);
+insert into crm_seller (id, version, disabled, created, provider_id, creator_id, code, description, parent_seller_id, trading_currency_id, trading_language_id) values (2, 0, false, now(), 1, 1, 'SELLER_US', 'US Seller',1, 1, 1);
+insert into crm_seller (id, version, disabled, created, provider_id, creator_id, code, description, parent_seller_id, trading_currency_id, trading_language_id) values (3, 0, false, now(), 1, 1, 'SELLER_FR', 'France Seller',1, 2, 2);
+
+DROP SEQUENCE crm_seller_SEQ;
+CREATE SEQUENCE crm_seller_SEQ start with 4 increment by 1;
+
+--Termination Reasons
+insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (1, 0, 1, 'TERM_REASON_1', 'Agreement Reimbursement Charge', true, true, true);
+insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (2, 0, 1, 'TERM_REASON_2', 'Agreement', true, false, false);
+insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, description, apply_agreement, apply_reimbursment, apply_termination_charges) values (3, 0, 1, 'TERM_REASON_3', 'Charge', false, true, false);
+
+DROP SEQUENCE BILLING_SUB_TERM_REASON_SEQ;
+CREATE SEQUENCE BILLING_SUB_TERM_REASON_SEQ start with 4 increment by 1;
+
+--Offer Template
+INSERT INTO cat_offer_template (id, version, disabled, created, code, description, provider_id, creator_id) VALUES (1, 0, false, now(), 'OF_DEF', 'Default Offer', 1, 1);
+
+DROP SEQUENCE cat_offer_template_SEQ;
+CREATE SEQUENCE cat_offer_template_SEQ start with 2 increment by 1;
+
+--Service Template
+INSERT INTO cat_service_template (id, version, disabled, created, code, description, provider_id, creator_id) VALUES (1, 0, false, now(), 'SVC_DEF', 'Default Service', 1, 1);
+
+DROP SEQUENCE cat_offer_template_SEQ;
+CREATE SEQUENCE cat_offer_template_SEQ start with 2 increment by 1;
+
+INSERT INTO CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) values (1, 1);
+
+--Price Plan Matrix
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 1, 1, 1);
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 1, 1, 1);
+
+DROP SEQUENCE cat_price_plan_matrix_SEQ;
+CREATE SEQUENCE cat_price_plan_matrix_SEQ start with 3 increment by 1;
+
+
+
+--Account Entity
+insert into ACCOUNT_ENTITY (id, version, disabled, created, code, default_level, lastname, provider_id, creator_id, primary_contact) values (1, 0, false, now(), 'CUST_DEFAULT', true, '', 1, 1, null);
+insert into ACCOUNT_ENTITY (id, version, disabled, created, code, default_level, lastname, provider_id, creator_id, primary_contact) values (2, 0, false, now(), 'CA_DEFAULT', true, 'Legaspi', 1, 1, 1);
+insert into ACCOUNT_ENTITY (id, version, disabled, created, code, default_level, lastname, provider_id, creator_id, primary_contact) values (3, 0, false, now(), 'UA_DEFAULT', true, '', 1, 1, null);
+insert into ACCOUNT_ENTITY (id, version, disabled, created, code, default_level, lastname, provider_id, creator_id, primary_contact) values (4, 0, false, now(), 'BA_DEFAULT', true, '', 1, 1, null);
+
+DROP SEQUENCE ACCOUNT_ENTITY_SEQ;
+CREATE SEQUENCE ACCOUNT_ENTITY_SEQ start with 5 increment by 1;
+
+--Customer, CustomerAccount, Billing and Billing User Account
+insert into CRM_CUSTOMER (id, customer_brand_id, customer_category_id, seller_id) values (1, 1, 1, 2);
+insert into AR_CUSTOMER_ACCOUNT (date_dunning_level, dunning_level, password, status, id, customer_id, trading_currency_id) values (now(), 'RO', 'bDGtBrEn', 'ACTIVE', 2, 1, 1);
+insert into BILLING_BILLING_ACCOUNT (electronic_billing, next_invoice_date, payment_method, status, status_date, subscription_date, id, billing_cycle, customer_account_id, trading_country_id, trading_language_id) values (false, (select now() + '30 days'::interval), 'CHECK', 'ACTIVE', now(), now(), 3, 1, 2, 1, 1);
+insert into BILLING_USER_ACCOUNT (status, status_date, subscription_date, id, billing_account_id) values ('ACTIVE', now(), now(), 4, 3);
+
+DROP SEQUENCE CRM_CUSTOMER_SEQ;
+DROP SEQUENCE CRM_AR_CUSTOMER_ACCOUNT_SEQ;
+DROP SEQUENCE BILLING_BILLING_ACCOUNT_SEQ;
+DROP SEQUENCE BILLING_USER_ACCOUNT_SEQ;
+
+CREATE SEQUENCE CRM_CUSTOMER_SEQ start with 2 increment by 1;
+CREATE SEQUENCE CRM_AR_CUSTOMER_ACCOUNT_SEQ start with 2 increment by 1;
+CREATE SEQUENCE BILLING_BILLING_ACCOUNT_SEQ start with 2 increment by 1;
+CREATE SEQUENCE BILLING_USER_ACCOUNT_SEQ start with 2 increment by 1;
+
+--Billing Wallet
+insert into billing_wallet (id, version, disabled, created, code, provider_id, creator_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 1, 1, 4);
+
+DROP SEQUENCE billing_wallet_SEQ;
+CREATE SEQUENCE billing_wallet_SEQ start with 2 increment by 1;
+
+update BILLING_USER_ACCOUNT set wallet_id=1 where id=1;
