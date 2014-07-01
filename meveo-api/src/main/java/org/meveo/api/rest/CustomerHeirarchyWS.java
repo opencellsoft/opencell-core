@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerHeirarchyApi;
@@ -59,7 +60,30 @@ public class CustomerHeirarchyWS {
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	@POST
+	@Path("/update")
+	public ActionStatus update(CustomerHeirarchyDto customerHeirarchyDto) {
+		log.info("Updating Customer Heirarchy...");
+		log.debug("customerHeirarchy.update={}", customerHeirarchyDto);
+
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			customerHeirarchyDto.setCurrentUserId(Long.valueOf(paramBean
+					.getProperty("asp.api.userId", "1")));
+			customerHeirarchyDto.setProviderId(Long.valueOf(paramBean
+					.getProperty("asp.api.providerId", "1")));
+
+			customerHeirarchyApi.updateCustomerHeirarchy(customerHeirarchyDto);
+
+		} catch (BusinessException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		}
 
 		return result;

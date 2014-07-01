@@ -98,6 +98,11 @@ public class UserAccountService extends AccountService<UserAccount> {
 		update(userAccount, updater);
 	}
 
+	public void updateUserAccount(EntityManager em, UserAccount userAccount,
+			User updater) throws BusinessException {
+		update(em, userAccount, updater);
+	}
+
 	public void userAccountTermination(UserAccount userAccount,
 			Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User updater)

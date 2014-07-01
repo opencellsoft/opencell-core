@@ -90,6 +90,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		update(billingAccount, updater);
 	}
 
+	public void updateBillingAccount(EntityManager em,
+			BillingAccount billingAccount, User updater) {
+		update(em, billingAccount, updater);
+	}
+
 	public void updateElectronicBilling(BillingAccount billingAccount,
 			Boolean electronicBilling, User updater, Provider provider)
 			throws BusinessException {
