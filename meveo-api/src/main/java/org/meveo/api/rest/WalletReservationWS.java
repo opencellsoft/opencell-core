@@ -34,7 +34,7 @@ public class WalletReservationWS extends BaseWS {
 	private WalletReservationApi walletReservationApi;
 
 	@POST
-	@Path("/create")
+	@Path("/")
 	public ActionStatus create(WalletReservationDto walletReservation)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
@@ -50,7 +50,7 @@ public class WalletReservationWS extends BaseWS {
 	}
 
 	@PUT
-	@Path("/update")
+	@Path("/")
 	public ActionStatus update(WalletReservationDto walletReservation)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
@@ -66,7 +66,7 @@ public class WalletReservationWS extends BaseWS {
 	}
 
 	@DELETE
-	@Path("/{reservationId}")
+	@Path("/{reservationId:[0-9]+}")
 	public ActionStatus cancel(@PathParam("reservationId") Long reservationId) {
 		ActionStatus result = new ActionStatus();
 

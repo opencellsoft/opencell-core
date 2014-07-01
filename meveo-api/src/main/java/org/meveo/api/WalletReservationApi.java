@@ -1,5 +1,7 @@
 package org.meveo.api;
 
+import java.math.BigDecimal;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -83,6 +85,14 @@ public class WalletReservationApi extends BaseApi {
 	public void cancel(Long reservationId) throws MeveoApiException {
 		try {
 			reservationService.cancelReservation(em, reservationId);
+		} catch (BusinessException e) {
+			throw new MeveoApiException(e.getMessage());
+		}
+	}
+
+	public BigDecimal confirm(Long reservationId) throws MeveoApiException {
+		try {
+			return reservationService.confirmReservation(em, reservationId);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}

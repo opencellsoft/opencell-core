@@ -309,4 +309,9 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 	}
 
+	public BigDecimal confirmReservation(EntityManager em, Long reservationId)
+			throws BusinessException {
+		return null;
+	}
+
 }
