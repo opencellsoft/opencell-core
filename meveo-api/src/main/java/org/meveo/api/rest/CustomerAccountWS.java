@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerAccountApi;
 import org.meveo.api.rest.response.CustomerAccountResponse;
@@ -23,22 +22,13 @@ import org.slf4j.Logger;
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class CustomerAccountWS {
+public class CustomerAccountWS extends BaseWS {
 
 	@Inject
 	private Logger log;
 
 	@Inject
 	private CustomerAccountApi customerAccountapi;
-
-	@GET
-	@Path("/index")
-	public ActionStatus index() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
-				"MEVEO API Rest Web Service");
-
-		return result;
-	}
 
 	@GET
 	@Path("/")
@@ -62,5 +52,5 @@ public class CustomerAccountWS {
 
 		return result;
 	}
-	
+
 }

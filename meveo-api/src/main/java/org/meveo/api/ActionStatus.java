@@ -25,6 +25,7 @@ public class ActionStatus {
 	private String message;
 
 	public ActionStatus() {
+		status = ActionStatusEnum.SUCCESS;
 	}
 
 	public ActionStatus(ActionStatusEnum status, String message) {

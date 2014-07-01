@@ -13,7 +13,6 @@ import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.InvoiceApi;
 import org.meveo.api.dto.InvoiceDto;
-import org.meveo.commons.utils.ParamBean;
 import org.slf4j.Logger;
 
 /**
@@ -24,13 +23,10 @@ import org.slf4j.Logger;
 @Path("/invoice")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class InvoiceWS {
+public class InvoiceWS extends BaseWS {
 
 	@Inject
 	private Logger log;
-
-	private ParamBean paramBean = ParamBean
-			.getInstance("meveo-admin.properties");
 
 	@Inject
 	private InvoiceApi invoiceApi;

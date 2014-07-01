@@ -9,43 +9,31 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerInvoiceApi;
 import org.meveo.api.rest.response.CustomerInvoicesResponse;
- 
+
 @Path("/customerInvoice")
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class CustomerInvoiceWS {
+public class CustomerInvoiceWS extends BaseWS {
 
 	@Inject
 	private CustomerInvoiceApi customerInvoiceApi;
 
 	@GET
-	@Path("/index")
-	public ActionStatus index() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
-				"MEVEO API Rest Web Service");
-
-		return result;
-	}
-
-	@GET
 	@Path("/")
 	public CustomerInvoicesResponse getInvoiceList(
-			@QueryParam("customerAccountCode") String customerAccountCode, 
+			@QueryParam("customerAccountCode") String customerAccountCode,
 			@QueryParam("providerCode") String providerCode) throws Exception {
 
-		
-		
 		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
 			result.setCustomerInvoiceDtoList(customerInvoiceApi.getInvoiceList(
-					customerAccountCode,providerCode));
+					customerAccountCode, providerCode));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
@@ -53,7 +41,5 @@ public class CustomerInvoiceWS {
 
 		return result;
 	}
-
-	
 
 }

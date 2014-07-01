@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class CountryWS {
+public class CountryWS extends BaseWS {
 
 	@Inject
 	private Logger log;
@@ -45,15 +45,6 @@ public class CountryWS {
 
 	@Inject
 	private CountryServiceApi countryServiceApi;
-
-	@GET
-	@Path("/index")
-	public ActionStatus index() {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
-				"MEVEO API Rest Web Service");
-
-		return result;
-	}
 
 	@POST
 	@Path("/")
