@@ -27,7 +27,7 @@ public class WalletReservationApi extends BaseApi {
 	@Inject
 	private ReservationService reservationService;
 
-	public void create(WalletReservationDto walletReservation)
+	public Long create(WalletReservationDto walletReservation)
 			throws MeveoApiException {
 		Provider provider = providerService.findByCode(walletReservation
 				.getProviderCode());
@@ -38,7 +38,7 @@ public class WalletReservationApi extends BaseApi {
 					+ walletReservation.getProviderCode() + " does not exists.");
 		} else {
 			try {
-				reservationService.createReservation(em, provider,
+				return reservationService.createReservation(em, provider,
 						walletReservation.getSellerCode(),
 						walletReservation.getOfferCode(),
 						walletReservation.getUserAccountCode(),
@@ -90,11 +90,29 @@ public class WalletReservationApi extends BaseApi {
 		}
 	}
 
-	public BigDecimal confirm(Long reservationId) throws MeveoApiException {
-		try {
-			return reservationService.confirmReservation(em, reservationId);
-		} catch (BusinessException e) {
-			throw new MeveoApiException(e.getMessage());
+	public BigDecimal confirm(WalletReservationDto walletReservation)
+			throws MeveoApiException {
+		Provider provider = providerService.findByCode(walletReservation
+				.getProviderCode());
+		if (provider == null) {
+			log.error("Provider with code="
+					+ walletReservation.getProviderCode() + " does not exists.");
+			throw new MeveoApiException("Provider with code="
+					+ walletReservation.getProviderCode() + " does not exists.");
+		} else {
+			try {
+				return reservationService.confirmReservation(em,
+						walletReservation.getReservationId(), provider,
+						walletReservation.getSellerCode(),
+						walletReservation.getOfferCode(),
+						walletReservation.getSubscriptionDate(),
+						walletReservation.getTerminationDate(),
+						walletReservation.getParam1(),
+						walletReservation.getParam2(),
+						walletReservation.getParam3());
+			} catch (BusinessException e) {
+				throw new MeveoApiException(e.getMessage());
+			}
 		}
 	}
 

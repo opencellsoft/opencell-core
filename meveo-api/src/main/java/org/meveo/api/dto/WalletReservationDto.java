@@ -20,6 +20,7 @@ public class WalletReservationDto {
 	private String userAccountCode;
 	private Date subscriptionDate;
 	private Date expirationDate;
+	private Date terminationDate;
 	private BigDecimal creditLimit;
 	private String param1;
 	private String param2;
@@ -111,5 +112,13 @@ public class WalletReservationDto {
 
 	public void setReservationId(Long reservationId) {
 		this.reservationId = reservationId;
+	}
+
+	public Date getTerminationDate() {
+		return terminationDate;
+	}
+
+	public void setTerminationDate(Date terminationDate) {
+		this.terminationDate = terminationDate;
 	}
 }

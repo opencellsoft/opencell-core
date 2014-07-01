@@ -40,7 +40,8 @@ public class WalletReservationWS extends BaseWS {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletReservationApi.create(walletReservation);
+			result.setMessage(""
+					+ walletReservationApi.create(walletReservation));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -82,8 +83,16 @@ public class WalletReservationWS extends BaseWS {
 
 	@POST
 	@Path("/confirm")
-	public ActionStatus confirm(Long reservationId) {
+	public ActionStatus confirm(WalletReservationDto walletReservation) {
 		ActionStatus result = new ActionStatus();
+
+		try {
+			result.setMessage(""
+					+ walletReservationApi.confirm(walletReservation));
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
 
 		return result;
 	}
