@@ -17,7 +17,11 @@ package org.meveo.service.billing.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
 
@@ -27,7 +31,21 @@ import org.meveo.service.base.PersistenceService;
  * @author Ignas
  * @created 2009.09.03
  */
-@Stateless @LocalBean
+@Stateless
+@LocalBean
 public class WalletService extends PersistenceService<WalletInstance> {
+
+	public WalletInstance findByUserAccount(EntityManager em,
+			UserAccount userAccount) {
+		QueryBuilder qb = new QueryBuilder(WalletInstance.class, "w");
+		try {
+			qb.addCriterionEntity("userAccount", userAccount);
+
+			return (WalletInstance) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 
 }

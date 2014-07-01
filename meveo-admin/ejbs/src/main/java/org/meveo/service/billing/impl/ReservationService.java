@@ -16,6 +16,7 @@ import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.OfferTemplate;
@@ -42,10 +43,13 @@ public class ReservationService extends PersistenceService<Reservation> {
 	@Inject
 	private SellerService sellerService;
 
+	@Inject
+	private WalletService walletService;
+
 	public Long createReservation(EntityManager em, Provider provider,
 			String sellerCode, String offerCode, String userAccountCode,
 			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
-			String param1, String param2, String param3)
+			String param1, String param2, String param3, boolean amountWithTax)
 			throws BusinessException {
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
@@ -100,6 +104,9 @@ public class ReservationService extends PersistenceService<Reservation> {
 							+ seller.getCode());
 		}
 
+		WalletInstance wallet = walletService
+				.findByUserAccount(em, userAccount);
+
 		// #2 Create a reservation (store UA), status=OPEN.
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
@@ -109,8 +116,12 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setUserAccount(userAccount);
 		reservation.setReservationDate(new Date());
 		reservation.setExpiryDate(expiryDate);
-		reservation.setWallet(userAccount.getWallet());
-		reservation.setAmountWithoutTax(spentCredit);
+		reservation.setWallet(wallet);
+		if (amountWithTax) {
+			reservation.setAmountWithTax(spentCredit);
+		} else {
+			reservation.setAmountWithoutTax(spentCredit);
+		}
 
 		// #3 Create the reserved wallet operation. Not associated to charge,
 		// status=RESERVED, associated to the reservation, amount=servicesSum.
@@ -121,7 +132,6 @@ public class ReservationService extends PersistenceService<Reservation> {
 				+ offerCode);
 		walletReservation.setReservation(reservation);
 		walletReservation.setStatus(WalletOperationStatusEnum.RESERVED);
-
 		walletReservation.setSubscriptionDate(null);
 		walletReservation.setOperationDate(new Date());
 		walletReservation.setParameter1(param1);
@@ -130,12 +140,13 @@ public class ReservationService extends PersistenceService<Reservation> {
 		walletReservation.setChargeInstance(null);
 		walletReservation.setSeller(userAccount.getBillingAccount()
 				.getCustomerAccount().getCustomer().getSeller());
-		walletReservation.setWallet(userAccount.getWallet());
+		walletReservation.setWallet(wallet);
 		walletReservation.setQuantity(new BigDecimal(1));
 		walletReservation.setStartDate(null);
 		walletReservation.setEndDate(null);
 		walletReservation.setCurrency(currency.getCurrency());
 		walletReservation.setProvider(provider);
+		walletReservation.setAmountWithoutTax(spentCredit);
 		walletReservationService.create(em, walletReservation, null, provider);
 
 		// #4 Return the reservationId.
@@ -145,8 +156,8 @@ public class ReservationService extends PersistenceService<Reservation> {
 	public void updateReservation(EntityManager em, Long reservationId,
 			Provider provider, String sellerCode, String offerCode,
 			String userAccountCode, Date subscriptionDate, Date expiryDate,
-			BigDecimal creditLimit, String param1, String param2, String param3)
-			throws BusinessException {
+			BigDecimal creditLimit, String param1, String param2,
+			String param3, boolean amountWithTax) throws BusinessException {
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
@@ -208,13 +219,24 @@ public class ReservationService extends PersistenceService<Reservation> {
 					+ " does not exists.");
 		}
 
+		WalletInstance wallet = walletService
+				.findByUserAccount(em, userAccount);
+
 		reservation.getAuditable().setUpdated(new Date());
 		reservation.setStatus(ReservationStatus.OPEN);
 		reservation.setUserAccount(userAccount);
 		reservation.setReservationDate(new Date());
 		reservation.setExpiryDate(expiryDate);
-		reservation.setWallet(userAccount.getWallet());
-		reservation.setAmountWithoutTax(spentCredit);
+		reservation.setWallet(wallet);
+		if (amountWithTax) {
+			reservation.setAmountWithTax(spentCredit);
+			walletReservationService.updateSpendCredit(em, reservationId,
+					spentCredit, true);
+		} else {
+			reservation.setAmountWithoutTax(spentCredit);
+			walletReservationService.updateSpendCredit(em, reservationId,
+					spentCredit, false);
+		}
 	}
 
 	public void cancelReservation(EntityManager em, Reservation reservation)

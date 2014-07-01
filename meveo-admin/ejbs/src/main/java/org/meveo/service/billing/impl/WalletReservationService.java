@@ -248,4 +248,24 @@ public class WalletReservationService extends
 		return spentCredit;
 	}
 
+	public void updateSpendCredit(EntityManager em, Long reservationId,
+			BigDecimal amount, boolean amountWithTax) {
+		StringBuilder sb = new StringBuilder();
+
+		if (amountWithTax) {
+			sb.append("UPDATE WalletReservation w SET w.amountWithTax=:amount, w.auditable.updated=:updated WHERE w.reservation.id=:reservationId");
+		} else {
+			sb.append("UPDATE WalletReservation w SET w.amountWithoutTax=:amount, w.auditable.updated=:updated WHERE w.reservation.id=:reservationId");
+		}
+
+		try {
+			em.createQuery(sb.toString()).setParameter("updated", new Date())
+					.setParameter("amount", amount)
+					.setParameter("reservationId", reservationId)
+					.executeUpdate();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+
 }

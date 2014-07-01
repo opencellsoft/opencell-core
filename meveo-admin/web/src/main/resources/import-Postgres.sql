@@ -1107,8 +1107,6 @@ insert into cat_price_plan_matrix (id, version, disabled, created, amount_withou
 DROP SEQUENCE cat_price_plan_matrix_SEQ;
 CREATE SEQUENCE cat_price_plan_matrix_SEQ start with 3 increment by 1;
 
-
-
 --Account Entity
 insert into ACCOUNT_ENTITY (id, version, disabled, created, code, default_level, lastname, provider_id, creator_id, primary_contact) values (1, 0, false, now(), 'CUST_DEFAULT', true, '', 1, 1, null);
 insert into ACCOUNT_ENTITY (id, version, disabled, created, code, default_level, lastname, provider_id, creator_id, primary_contact) values (2, 0, false, now(), 'CA_DEFAULT', true, 'Legaspi', 1, 1, 1);
@@ -1140,4 +1138,4 @@ insert into billing_wallet (id, version, disabled, created, code, provider_id, c
 DROP SEQUENCE billing_wallet_SEQ;
 CREATE SEQUENCE billing_wallet_SEQ start with 2 increment by 1;
 
-update BILLING_USER_ACCOUNT set wallet_id=1 where id=1;
+update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;

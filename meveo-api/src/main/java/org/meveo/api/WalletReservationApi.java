@@ -62,7 +62,8 @@ public class WalletReservationApi extends BaseApi {
 							walletReservation.getCreditLimit(),
 							walletReservation.getParam1(),
 							walletReservation.getParam2(),
-							walletReservation.getParam3());
+							walletReservation.getParam3(),
+							walletReservation.isAmountWithTax());
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
@@ -134,7 +135,8 @@ public class WalletReservationApi extends BaseApi {
 							walletReservation.getCreditLimit(),
 							walletReservation.getParam1(),
 							walletReservation.getParam2(),
-							walletReservation.getParam3());
+							walletReservation.getParam3(),
+							walletReservation.isAmountWithTax());
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}

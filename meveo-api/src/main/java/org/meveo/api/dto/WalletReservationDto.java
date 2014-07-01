@@ -25,6 +25,7 @@ public class WalletReservationDto {
 	private String param1;
 	private String param2;
 	private String param3;
+	private boolean amountWithTax;
 
 	public String getProviderCode() {
 		return providerCode;
@@ -120,5 +121,13 @@ public class WalletReservationDto {
 
 	public void setTerminationDate(Date terminationDate) {
 		this.terminationDate = terminationDate;
+	}
+
+	public boolean isAmountWithTax() {
+		return amountWithTax;
+	}
+
+	public void setAmountWithTax(boolean amountWithTax) {
+		this.amountWithTax = amountWithTax;
 	}
 }
