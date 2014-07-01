@@ -144,18 +144,26 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		return findById(id, fetchFields, false);
 	}
 
+	public E findById(Long id, boolean refresh) {
+		return findById(getEntityManager(), id, refresh);
+	}
+
+	public E findById(EntityManager em, Long id) {
+		return findById(em, id, false);
+	}
+
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long,
 	 *      boolean)
 	 */
-	public E findById(Long id, boolean refresh) {
+	public E findById(EntityManager em, Long id, boolean refresh) {
 		log.debug("start of find {} by id (id={}) ..", getEntityClass()
 				.getSimpleName(), id);
 		final Class<? extends E> productClass = getEntityClass();
-		E e = getEntityManager().find(productClass, id);
+		E e = em.find(productClass, id);
 		if (refresh) {
 			log.debug("refreshing loaded entity");
-			getEntityManager().refresh(e);
+			em.refresh(e);
 		}
 		log.debug("end of find {} by id (id={}). Result found={}.",
 				getEntityClass().getSimpleName(), id, e != null);

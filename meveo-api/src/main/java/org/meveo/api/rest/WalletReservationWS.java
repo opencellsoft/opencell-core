@@ -12,13 +12,10 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
+import org.meveo.api.WalletReservationApi;
 import org.meveo.api.dto.WalletReservationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.billing.impl.ReservationService;
-import org.meveo.service.crm.impl.ProviderService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -31,44 +28,35 @@ import org.slf4j.Logger;
 public class WalletReservationWS extends BaseWS {
 
 	@Inject
-	private Logger log;
-
-	@Inject
-	private ReservationService reservationService;
-
-	@Inject
-	private ProviderService providerService;
+	private WalletReservationApi walletReservationApi;
 
 	@POST
-	@Path("/reserve")
-	public ActionStatus reserve(WalletReservationDto walletReservation)
+	@Path("/create")
+	public ActionStatus create(WalletReservationDto walletReservation)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
 
-		Provider provider = providerService.findByCode(walletReservation
-				.getProviderCode());
-		if (provider == null) {
+		try {
+			walletReservationApi.create(walletReservation);
+		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage("Provider with code="
-					+ walletReservation.getProviderCode() + " does not exists.");
-			log.error("Provider with code="
-					+ walletReservation.getProviderCode() + " does not exists.");
-		} else {
-			try {
-				reservationService.reserveCredit(provider,
-						walletReservation.getSellerCode(),
-						walletReservation.getOfferCode(),
-						walletReservation.getUserAccountCode(),
-						walletReservation.getSubscriptionDate(),
-						walletReservation.getExpirationDate(),
-						walletReservation.getCreditLimit(),
-						walletReservation.getParam1(),
-						walletReservation.getParam2(),
-						walletReservation.getParam3());
-			} catch (BusinessException e) {
-				result.setStatus(ActionStatusEnum.FAIL);
-				result.setMessage(e.getMessage());
-			}
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+	
+	@POST
+	@Path("/update")
+	public ActionStatus update(WalletReservationDto walletReservation)
+			throws MeveoApiException, BusinessException {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			walletReservationApi.update(walletReservation);
+		} catch (MeveoApiException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
 		}
 
 		return result;
@@ -80,8 +68,8 @@ public class WalletReservationWS extends BaseWS {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			reservationService.cancelCredit(reservationId);
-		} catch (BusinessException e) {
+			walletReservationApi.cancel(reservationId);
+		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}

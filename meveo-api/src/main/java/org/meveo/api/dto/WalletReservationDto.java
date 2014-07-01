@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "walletReservation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WalletReservationDto {
+	private Long reservationId;
 	private String providerCode;
 	private String sellerCode;
 	private String offerCode;
@@ -102,5 +103,13 @@ public class WalletReservationDto {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public Long getReservationId() {
+		return reservationId;
+	}
+
+	public void setReservationId(Long reservationId) {
+		this.reservationId = reservationId;
 	}
 }

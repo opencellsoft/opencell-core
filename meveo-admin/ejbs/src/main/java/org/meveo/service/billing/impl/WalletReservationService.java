@@ -17,15 +17,10 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.util.MeveoJpa;
 
 @Stateless
 public class WalletReservationService extends
 		PersistenceService<WalletReservation> {
-
-	@Inject
-	@MeveoJpa
-	protected EntityManager entityManager;
 
 	@Inject
 	private WalletOperationService walletOperationService;
@@ -66,15 +61,14 @@ public class WalletReservationService extends
 		return getOpenBalanceWithTax().add(getCurrentBalanceWithTax());
 	}
 
-	public void updateReservationStatus(Long reservationId,
+	public void updateReservationStatus(EntityManager em, Long reservationId,
 			WalletOperationStatusEnum status) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("UPDATE WalletReservation w SET w.status=:status, w.auditable.updated=:updated WHERE w.reservation.id=:reservationId");
 
 		try {
-			getEntityManager().createQuery(sb.toString())
-					.setParameter("updated", new Date())
+			em.createQuery(sb.toString()).setParameter("updated", new Date())
 					.setParameter("status", status)
 					.setParameter("reservationId", reservationId)
 					.executeUpdate();
@@ -83,18 +77,19 @@ public class WalletReservationService extends
 		}
 	}
 
-	public BigDecimal getSpentCredit(Provider provider, Seller seller,
-			OfferTemplate offerTemplate, UserAccount userAccount,
-			Date subscriptionDate, String param1, String param2, String param3)
-			throws BusinessException {
-		return getSpentCredit(provider, seller, offerTemplate, userAccount,
+	public BigDecimal getSpentCredit(EntityManager em, Provider provider,
+			Seller seller, OfferTemplate offerTemplate,
+			UserAccount userAccount, Date subscriptionDate, String param1,
+			String param2, String param3) throws BusinessException {
+		return getSpentCredit(em, provider, seller, offerTemplate, userAccount,
 				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 	}
 
-	public BigDecimal getSpentCredit(Provider provider, Seller seller,
-			OfferTemplate offerTemplate, UserAccount userAccount,
-			Date subscriptionDate, String param1, String param2, String param3,
-			BigDecimal quantity) throws BusinessException {
+	public BigDecimal getSpentCredit(EntityManager em, Provider provider,
+			Seller seller, OfferTemplate offerTemplate,
+			UserAccount userAccount, Date subscriptionDate, String param1,
+			String param2, String param3, BigDecimal quantity)
+			throws BusinessException {
 		BigDecimal servicesSum = new BigDecimal(0);
 		Date startDate = null;
 		Date endDate = null;
@@ -127,17 +122,16 @@ public class WalletReservationService extends
 			}
 
 			servicesSum = servicesSum.add(realtimeChargingService
-					.getActivationServicePrice(entityManager,
+					.getActivationServicePrice(em,
 							userAccount.getBillingAccount(), st,
 							subscriptionDate, new BigDecimal(1), param1,
 							param2, param3, true));
 
 		}
 
-		BigDecimal ratedAmount = walletOperationService
-				.getRatedAmount(entityManager, provider, seller, null, null,
-						userAccount.getBillingAccount(), null, startDate,
-						endDate, true);
+		BigDecimal ratedAmount = walletOperationService.getRatedAmount(em,
+				provider, seller, null, null, userAccount.getBillingAccount(),
+				null, startDate, endDate, true);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 

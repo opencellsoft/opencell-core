@@ -1087,9 +1087,22 @@ CREATE SEQUENCE cat_offer_template_SEQ start with 2 increment by 1;
 
 INSERT INTO CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) values (1, 1);
 
+--Charge Template
+insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (1, 0, false, now(), 'RC_DEFAULT', 'Default Recurring Charge', false, 1, 1, 1);
+insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (2, 0, false, now(), 'SUB_DEFAULT', 'Default Subscription Charge', false, 1, 1, 1);
+
+DROP SEQUENCE CAT_CHARGE_TEMPLATE_SEQ;
+CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 2 increment by 1;
+
+insert into CAT_RECURRING_CHARGE_TEMPL (apply_in_advance, recurrence_type, subscription_prorate, termination_prorate, id, calendar_id) values (false, 'CALENDAR', false, false, 1, 3);
+insert into CAT_ONE_SHOT_CHARGE_TEMPL (immediate_invoicing, type, id) values (true, 'SUBSCRIPTION', 2);
+
+insert into CAT_SERV_RECCHARGE_TEMPLATES (service_template_id, charge_template_id) values (1, 1);
+insert into CAT_SERV_ONECHARGE_S_TEMPLATES (service_template_id, charge_template_id) values (1, 2);
+
 --Price Plan Matrix
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 1, 1, 1);
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 1, 1, 1);
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1);
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1);
 
 DROP SEQUENCE cat_price_plan_matrix_SEQ;
 CREATE SEQUENCE cat_price_plan_matrix_SEQ start with 3 increment by 1;
