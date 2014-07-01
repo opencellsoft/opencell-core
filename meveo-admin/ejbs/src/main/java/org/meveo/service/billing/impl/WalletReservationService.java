@@ -16,6 +16,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -28,37 +29,146 @@ public class WalletReservationService extends
 	@Inject
 	private RealtimeChargingService realtimeChargingService;
 
-	public BigDecimal getCurrentBalanceWithoutTax() {
-		return null;
+	@Inject
+	private UserAccountService userAccountService;
+
+	@Inject
+	private SellerService sellerService;
+
+	public BigDecimal getCurrentBalanceWithoutTax(EntityManager em,
+			Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
+		UserAccount userAccount = userAccountService.findByCode(
+				userAccountCode, provider);
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code="
+					+ userAccountCode + " does not exists.");
+		}
+
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode
+					+ " does not exists.");
+		}
+
+		return walletOperationService.getBalanceAmount(em, provider, seller,
+				null, null, userAccount.getBillingAccount(), null, startDate,
+				endDate, false, 1);
 	}
 
-	public BigDecimal getCurrentBalanceWithTax() {
-		return null;
+	public BigDecimal getCurrentBalanceWithTax(EntityManager em,
+			Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
+		UserAccount userAccount = userAccountService.findByCode(
+				userAccountCode, provider);
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code="
+					+ userAccountCode + " does not exists.");
+		}
+
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode
+					+ " does not exists.");
+		}
+
+		return walletOperationService.getBalanceAmount(em, provider, seller,
+				null, null, userAccount.getBillingAccount(), null, startDate,
+				endDate, true, 1);
 	}
 
-	public BigDecimal getReservedBalanceWithoutTax() {
+	public BigDecimal getReservedBalanceWithoutTax(EntityManager em,
+			Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
+		UserAccount userAccount = userAccountService.findByCode(
+				userAccountCode, provider);
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code="
+					+ userAccountCode + " does not exists.");
+		}
 
-		return null;
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode
+					+ " does not exists.");
+		}
+
+		return walletOperationService.getBalanceAmount(em, provider, seller,
+				null, null, userAccount.getBillingAccount(), null, startDate,
+				endDate, false, 2);
 	}
 
-	public BigDecimal getReservedBalanceWithTax() {
-		return null;
+	public BigDecimal getReservedBalanceWithTax(EntityManager em,
+			Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
+		UserAccount userAccount = userAccountService.findByCode(
+				userAccountCode, provider);
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code="
+					+ userAccountCode + " does not exists.");
+		}
+
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode
+					+ " does not exists.");
+		}
+
+		return walletOperationService.getBalanceAmount(em, provider, seller,
+				null, null, userAccount.getBillingAccount(), null, startDate,
+				endDate, true, 2);
 	}
 
-	public BigDecimal getOpenBalanceWithoutTax() {
-		return null;
+	public BigDecimal getOpenBalanceWithoutTax(EntityManager em,
+			Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
+		UserAccount userAccount = userAccountService.findByCode(
+				userAccountCode, provider);
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code="
+					+ userAccountCode + " does not exists.");
+		}
+
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode
+					+ " does not exists.");
+		}
+
+		return walletOperationService.getBalanceAmount(em, provider, seller,
+				null, null, userAccount.getBillingAccount(), null, startDate,
+				endDate, false, 3);
 	}
 
-	public BigDecimal getOpenBalanceWithTax() {
-		return null;
+	public BigDecimal getOpenBalanceWithTax(EntityManager em,
+			Provider provider, String sellerCode, String userAccountCode,
+			Date startDate, Date endDate) throws BusinessException {
+		UserAccount userAccount = userAccountService.findByCode(
+				userAccountCode, provider);
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code="
+					+ userAccountCode + " does not exists.");
+		}
+
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode
+					+ " does not exists.");
+		}
+
+		return walletOperationService.getBalanceAmount(em, provider, seller,
+				null, null, userAccount.getBillingAccount(), null, startDate,
+				endDate, true, 3);
 	}
 
 	public BigDecimal getCurrentAmountWithoutTax() {
-		return getOpenBalanceWithoutTax().add(getCurrentBalanceWithoutTax());
+		// return getOpenBalanceWithoutTax().add(getCurrentBalanceWithoutTax());
+		return null;
 	}
 
 	public BigDecimal getCurrentAmountWithTax() {
-		return getOpenBalanceWithTax().add(getCurrentBalanceWithTax());
+		// return getOpenBalanceWithTax().add(getCurrentBalanceWithTax());
+		return null;
 	}
 
 	public void updateReservationStatus(EntityManager em, Long reservationId,

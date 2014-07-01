@@ -217,24 +217,19 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setAmountWithoutTax(spentCredit);
 	}
 
-	public void cancelReservation(EntityManager em, Long reservationId)
+	public void cancelReservation(EntityManager em, Reservation reservation)
 			throws BusinessException {
-		Reservation reservation = findById(reservationId);
-		if (reservation == null) {
-			throw new BusinessException("Reservation with id=" + reservationId
-					+ " does not exists.");
-		}
 
 		// #1 Check that the reservation is OPEN, else KO.
 		if (reservation.getStatus() != ReservationStatus.OPEN) {
-			throw new BusinessException("Reservation with id=" + reservationId
-					+ " is not " + ReservationStatus.OPEN);
+			throw new BusinessException("Reservation with id="
+					+ reservation.getId() + " is not " + ReservationStatus.OPEN);
 		}
 
 		// #2 Set to CANCELLED the status of all the walletOperations linked to
 		// reservation.
-		walletReservationService.updateReservationStatus(em, reservationId,
-				WalletOperationStatusEnum.CANCELED);
+		walletReservationService.updateReservationStatus(em,
+				reservation.getId(), WalletOperationStatusEnum.CANCELED);
 
 		// #3 Set to CANCELLED the status of reservation.
 		reservation.setStatus(ReservationStatus.CANCELLED);
