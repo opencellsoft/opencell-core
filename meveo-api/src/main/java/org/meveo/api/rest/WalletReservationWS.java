@@ -4,8 +4,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -45,8 +48,8 @@ public class WalletReservationWS extends BaseWS {
 
 		return result;
 	}
-	
-	@POST
+
+	@PUT
 	@Path("/update")
 	public ActionStatus update(WalletReservationDto walletReservation)
 			throws MeveoApiException, BusinessException {
@@ -62,9 +65,9 @@ public class WalletReservationWS extends BaseWS {
 		return result;
 	}
 
-	@POST
-	@Path("/cancel")
-	public ActionStatus cancel(Long reservationId) {
+	@DELETE
+	@Path("/{reservationId}")
+	public ActionStatus cancel(@PathParam("reservationId") Long reservationId) {
 		ActionStatus result = new ActionStatus();
 
 		try {

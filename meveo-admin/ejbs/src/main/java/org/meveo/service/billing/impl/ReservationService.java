@@ -118,7 +118,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 				.getCustomerAccount().getTradingCurrency();
 		WalletReservation walletReservation = new WalletReservation();
 		walletReservation.setCode(sellerCode + "_" + userAccountCode + "_"
-				+ offerCode + "_" + reservation.getId());
+				+ offerCode);
 		walletReservation.setReservation(reservation);
 		walletReservation.setStatus(WalletOperationStatusEnum.RESERVED);
 
@@ -208,9 +208,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 					+ " does not exists.");
 		}
 
-		Auditable auditable = new Auditable();
-		auditable.setUpdated(new Date());
-		reservation.setAuditable(auditable);
+		reservation.getAuditable().setUpdated(new Date());
 		reservation.setStatus(ReservationStatus.OPEN);
 		reservation.setUserAccount(userAccount);
 		reservation.setReservationDate(new Date());
