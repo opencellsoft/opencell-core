@@ -26,6 +26,10 @@ public class Reservation extends AuditableEntity {
 
 	@Column(name = "INPUT_MESSAGE")
 	private String inputMessage;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "RESERVATION_DATE")
+	private Date reservationDate;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "EXPIRY_DATE")
@@ -115,6 +119,14 @@ public class Reservation extends AuditableEntity {
 
 	public void setAmountWithTax(BigDecimal amountWithTax) {
 		this.amountWithTax = amountWithTax;
+	}
+
+	public Date getReservationDate() {
+		return reservationDate;
+	}
+
+	public void setReservationDate(Date reservationDate) {
+		this.reservationDate = reservationDate;
 	}
 
 }

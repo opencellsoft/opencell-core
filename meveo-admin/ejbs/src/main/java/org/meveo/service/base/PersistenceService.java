@@ -60,9 +60,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	private EntityManager emfForJobs;
 
 	// TODO move to places where it is needed
-	/*@Inject
-	@MeveoDWHJpa
-	protected EntityManager dwhEntityManager;*/
+	/*
+	 * @Inject
+	 * 
+	 * @MeveoDWHJpa protected EntityManager dwhEntityManager;
+	 */
 
 	@Inject
 	private Conversation conversation;
@@ -508,6 +510,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		this.provider = provider;
 	}
 
+	@SuppressWarnings("unchecked")
+	public BaseEntity attach(BaseEntity e) {
+		return (BaseEntity) getEntityManager().merge(e);
+	}
+
 	protected EntityManager getEntityManager() {
 		EntityManager result = emfForJobs;
 		if (conversation != null) {
@@ -517,7 +524,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			} catch (Exception e) {
 			}
 		}
-		log.debug("return em:"+result);
+		log.debug("return em:" + result);
 		return result;
 	}
 }

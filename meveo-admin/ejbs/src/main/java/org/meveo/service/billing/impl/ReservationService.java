@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.ejb.Stateless;
@@ -10,14 +11,14 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
@@ -31,21 +32,18 @@ public class ReservationService extends PersistenceService<Reservation> {
 	private OfferTemplateService offerTemplateService;
 
 	@Inject
-	private RealtimeChargingService realtimeChargingService;
-
-	@Inject
 	private UserAccountService userAccountService;
 
 	@Inject
-	private ReservationService reservationService;
+	private SubscriptionService subscriptionService;
 
 	@Inject
-	private WalletOperationService walletOperationService;
+	private SellerService sellerService;
 
-	public Long reserveCredit(Provider provider, Seller seller,
+	public Long reserveCredit(Provider provider, String sellerCode,
 			String offerCode, String userAccountCode, Date subscriptionDate,
-			BigDecimal creditLimit, String param1, String param2, String param3)
-			throws BusinessException {
+			Date expiryDate, BigDecimal creditLimit, String param1,
+			String param2, String param3) throws BusinessException {
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
@@ -57,6 +55,12 @@ public class ReservationService extends PersistenceService<Reservation> {
 		if (userAccount == null) {
 			throw new BusinessException("UserAccount with code="
 					+ userAccountCode + " does not exists.");
+		}
+
+		Seller seller = sellerService.findByCode(sellerCode, provider);
+		if (seller == null) {
+			throw new BusinessException("Seller with code=" + sellerCode
+					+ " does not exists.");
 		}
 
 		if (userAccount.getBillingAccount() == null) {
@@ -75,48 +79,15 @@ public class ReservationService extends PersistenceService<Reservation> {
 					"OfferTemplate doesn't have linked serviceTemplate.");
 		}
 
-		BigDecimal servicesSum = new BigDecimal(0);
-		Date startDate = null;
-		Date endDate = null;
-		for (ServiceTemplate st : offerTemplate.getServiceTemplates()) {
-			if (st.getRecurringCharges() != null
-					&& st.getRecurringCharges().size() > 0) {
-				for (RecurringChargeTemplate ct : st.getRecurringCharges()) {
-					try {
-						if (startDate == null
-								|| ct.getCalendar()
-										.previousCalendarDate(subscriptionDate)
-										.before(startDate)) {
-							startDate = ct.getCalendar().previousCalendarDate(
-									subscriptionDate);
-						}
-						if (endDate == null
-								|| ct.getCalendar()
-										.nextCalendarDate(subscriptionDate)
-										.after(endDate)) {
-							endDate = ct.getCalendar().nextCalendarDate(
-									subscriptionDate);
-						}
-					} catch (NullPointerException e) {
-						log.debug(
-								"Next or Previous calendar value is null for recurringChargeTemplate with code={}",
-								ct.getCode());
-					}
-				}
-			}
-
-			servicesSum = servicesSum.add(realtimeChargingService
-					.getActivationServicePrice(userAccount.getBillingAccount(),
-							st, subscriptionDate, new BigDecimal(1), param1,
-							param2, param3, true));
-
+		if (expiryDate == null) {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 30);
+			expiryDate = cal.getTime();
 		}
 
-		BigDecimal ratedAmount = walletOperationService.getRatedAmount(
-				provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, true);
-
-		BigDecimal spentCredit = servicesSum.add(ratedAmount);
+		BigDecimal spentCredit = walletReservationService.getSpentCredit(
+				provider, seller, offerTemplate, userAccount, subscriptionDate,
+				param1, param2, param3);
 
 		if (spentCredit.compareTo(creditLimit) > 0) {
 			log.debug("Credit limit exceeded for seller code={}",
@@ -130,15 +101,22 @@ public class ReservationService extends PersistenceService<Reservation> {
 		Reservation reservation = new Reservation();
 		reservation.setStatus(ReservationStatus.OPEN);
 		reservation.setUserAccount(userAccount);
-		reservationService.create(reservation);
+		reservation.setReservationDate(new Date());
+		reservation.setExpiryDate(expiryDate);
+		reservation.setWallet(userAccount.getWallet());
+		reservation.setAmountWithoutTax(spentCredit);
+		create(reservation);
 
 		// #3 Create the reserved wallet operation. Not associated to charge,
 		// status=RESERVED, associated to the reservation, amount=servicesSum.
 		TradingCurrency currency = userAccount.getBillingAccount()
 				.getCustomerAccount().getTradingCurrency();
 		WalletReservation walletReservation = new WalletReservation();
+		walletReservation.setCode(sellerCode + "_" + userAccountCode + "_"
+				+ offerCode + "_" + reservation.getId());
 		walletReservation.setReservation(reservation);
 		walletReservation.setStatus(WalletOperationStatusEnum.RESERVED);
+		walletReservation.setReservation(reservation);
 
 		walletReservation.setSubscriptionDate(null);
 		walletReservation.setOperationDate(new Date());
@@ -146,10 +124,8 @@ public class ReservationService extends PersistenceService<Reservation> {
 		walletReservation.setParameter2(param2);
 		walletReservation.setParameter3(param3);
 		walletReservation.setChargeInstance(null);
-		walletReservation.setCode(null);
 		walletReservation.setSeller(userAccount.getBillingAccount()
 				.getCustomerAccount().getCustomer().getSeller());
-		// FIXME: get the wallet from the ServiceUsageChargeTemplate
 		walletReservation.setWallet(userAccount.getWallet());
 		walletReservation.setQuantity(new BigDecimal(1));
 		walletReservation.setStartDate(null);
@@ -160,19 +136,103 @@ public class ReservationService extends PersistenceService<Reservation> {
 		// if (chargeInstance.getCounter() != null) {
 		// walletOperation.setCounter(chargeInstance.getCounter());
 		// }
-
+		reservation = (Reservation) walletReservationService
+				.attach(reservation);
+		walletReservation.setReservation(reservation);
 		walletReservationService.create(walletReservation, null, provider);
 
 		// #4 Return the reservationId.
 		return reservation.getId();
 	}
 
-	public void cancelCredit() {
+	public void cancelCredit(Long reservationId) throws BusinessException {
+		Reservation reservation = findById(reservationId);
+		if (reservation == null) {
+			throw new BusinessException("Reservation with id=" + reservationId
+					+ " does not exists.");
+		}
 
+		// #1 Check that the reservation is OPEN, else KO.
+		if (reservation.getStatus() != ReservationStatus.OPEN) {
+			throw new BusinessException("Reservation with id=" + reservationId
+					+ " is not " + ReservationStatus.OPEN);
+		}
+
+		// #2 Set to CANCELLED the status of all the walletOperations linked to
+		// reservation.
+		walletReservationService.updateReservationStatus(reservationId,
+				WalletOperationStatusEnum.CANCELED);
+
+		// #3 Set to CANCELLED the status of reservation.
+		reservation.setStatus(ReservationStatus.CANCELLED);
 	}
 
-	public void confirmCredit() {
+	public BigDecimal confirmCredit(Provider provider, Seller seller,
+			Long reservationId, String offerId, String userAccountCode,
+			Date subscriptionDate, Date terminationDate, String param1,
+			String param2, String param3) throws BusinessException {
+		Reservation reservation = findById(reservationId);
+		if (reservation == null) {
+			throw new BusinessException("Reservation with id=" + reservationId
+					+ " does not exists.");
+		}
 
+		UserAccount userAccount = userAccountService.findByCode(
+				userAccountCode, provider);
+		if (userAccount == null) {
+			throw new BusinessException("UserAccount with code="
+					+ userAccountCode + " does not exists.");
+		}
+
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerId,
+				provider);
+		if (offerTemplate == null) {
+			throw new BusinessException("OfferTemplate with id=" + offerId
+					+ " does not exists.");
+		}
+
+		// #1 Check that the reservation is OPEN, else KO.
+		if (reservation.getStatus() != ReservationStatus.OPEN) {
+			throw new BusinessException("Reservation with id=" + reservationId
+					+ " is not " + ReservationStatus.OPEN);
+		}
+
+		// #2 Set to TREATED all the walletOperations linked to reservation.
+		walletReservationService.updateReservationStatus(reservationId,
+				WalletOperationStatusEnum.TREATED);
+
+		// #3 Set to CONFIRMED the reservation.
+		reservation.setStatus(ReservationStatus.CONFIRMED);
+
+		// #4 Create the subscription, set subscriptionId in reservation.
+		Subscription subscription = new Subscription();
+		subscription.setOffer(offerTemplate);
+		subscription.setUserAccount(userAccount);
+		subscription.setStatusDate(new Date());
+		subscription.setSubscriptionDate(subscriptionDate);
+		subscription.setTerminationDate(terminationDate);
+		subscriptionService.create(subscription);
+
+		reservation.setSubscription(subscription);
+
+		// #5 Return for info, servicesSum - reservedAmount. Basically the
+		// difference in amount when the credit is reserved and on the actual
+		// date of the subscription.
+		BigDecimal spentCredit = walletReservationService.getSpentCredit(
+				provider, seller, offerTemplate, userAccount, subscriptionDate,
+				param1, param2, param3);
+
+		if (reservation.getAmountWithoutTax() != null && spentCredit != null) {
+			return spentCredit.subtract(spentCredit);
+		} else {
+			if (reservation.getAmountWithoutTax() != null) {
+				return reservation.getAmountWithoutTax();
+			}
+			if (spentCredit != null) {
+				return spentCredit;
+			}
+			return new BigDecimal(0);
+		}
 	}
 
 }

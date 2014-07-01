@@ -25,8 +25,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -391,7 +389,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + country.getCountryCode());
+							+ " and trading country="
+							+ country.getCountryCode());
 		}
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
@@ -427,8 +426,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				nextapplicationDate, "dd/MM/yyyy");
 		return nextapplicationDate;
 	}
-
-
 
 	public WalletOperation prerateSubscription(Date subscriptionDate,
 			RecurringChargeInstance chargeInstance, Date nextapplicationDate)
@@ -538,7 +535,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + country.getCountryCode());
+							+ " and trading country="
+							+ country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -607,7 +605,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
 				.getRecurringChargeTemplate();
 		Date nextapplicationDate = getNextApplicationDate(chargeInstance);
-		
+
 		if (recurringChargeTemplate.getApplyInAdvance()) {
 			WalletOperation chargeApplication = rateSubscription(em,
 					chargeInstance, nextapplicationDate);
@@ -690,7 +688,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						nextapplicationDate, previousapplicationDate);
 			}
 
-			//FIXME i18n
+			// FIXME i18n
 			String param2 = " "
 					+ str_tooPerceived
 					+ " "
@@ -739,7 +737,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				throw new IncorrectChargeTemplateException(
 						"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 								+ invoiceSubCategory.getCode()
-								+ " and trading country=" + country.getCountryCode());
+								+ " and trading country="
+								+ country.getCountryCode());
 			}
 
 			Tax tax = invoiceSubcategoryCountry.getTax();
@@ -821,11 +820,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Date nextApplicationDate = reimbursement ? chargeInstance
-					.getNextChargeDate() : recurringChargeTemplate.getCalendar()
-					.nextCalendarDate(applicationDate);
-		
-		log.debug("reimbursement={},applicationDate={}",
-				reimbursement, applicationDate);
+				.getNextChargeDate() : recurringChargeTemplate.getCalendar()
+				.nextCalendarDate(applicationDate);
+
+		log.debug("reimbursement={},applicationDate={}", reimbursement,
+				applicationDate);
 
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate
 				.getInvoiceSubCategory();
@@ -860,7 +859,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + country.getCountryCode());
+							+ " and trading country="
+							+ country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -956,7 +956,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Date nextChargeDate = reimbursement ? chargeInstance.getChargeDate()
 				: chargeInstance.getNextChargeDate();
-		
+
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate
 				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
@@ -990,7 +990,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + country.getCountryCode());
+							+ " and trading country="
+							+ country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -1096,14 +1097,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					.getServiceInstance().getSubscriptionDate());
 
 			create(em, walletOperation, creator, chargeInstance.getProvider());
-			//em.flush();
-			//em.refresh(chargeInstance);
+			// em.flush();
+			// em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
 			chargeInstance.getWalletOperations().add(walletOperation);
-			if(!em.contains(walletOperation)){
+			if (!em.contains(walletOperation)) {
 				log.error("wtf wallet operation is already detached");
 			}
-			if(!em.contains(chargeInstance)){
+			if (!em.contains(chargeInstance)) {
 				log.error("wow chargeInstance is detached");
 				em.merge(chargeInstance);
 			}
@@ -1111,10 +1112,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Date nextapplicationDate = recurringChargeTemplate.getCalendar()
-					.nextCalendarDate(applicationDate);
+				.nextCalendarDate(applicationDate);
 		chargeInstance.setNextChargeDate(nextapplicationDate);
 		chargeInstance.setChargeDate(applicationDate);
-		
 
 	}
 
@@ -1177,7 +1177,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
-							+ " and trading country=" + country.getCountryCode());
+							+ " and trading country="
+							+ country.getCountryCode());
 		}
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -1246,7 +1247,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status) {
 		List<WalletOperation> walletOperations = null;

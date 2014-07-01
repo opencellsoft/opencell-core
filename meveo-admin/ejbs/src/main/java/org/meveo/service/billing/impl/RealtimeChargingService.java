@@ -51,7 +51,6 @@ public class RealtimeChargingService {
 				quantity, param1, param2, param3, priceWithoutTax);
 	}
 
-	
 	public BigDecimal getApplicationPrice(EntityManager em, BillingAccount ba,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
 			BigDecimal quantity, String param1, String param2, String param3,
@@ -63,7 +62,6 @@ public class RealtimeChargingService {
 					"no currency exists for customerAccount id="
 							+ ba.getCustomerAccount().getId());
 		}
-		
 
 		TradingCountry tradingCountry = ba.getTradingCountry();
 		if (tradingCountry == null) {
@@ -72,16 +70,17 @@ public class RealtimeChargingService {
 		}
 
 		Provider provider = ba.getProvider();
-		
+
 		Seller seller = ba.getCustomerAccount().getCustomer().getSeller();
-		
-		return getApplicationPrice(em,provider,seller, currency, tradingCountry,chargeTemplate, subscriptionDate,
-				quantity, param1, param2, param3, priceWithoutTax);
+
+		return getApplicationPrice(em, provider, seller, currency,
+				tradingCountry, chargeTemplate, subscriptionDate, quantity,
+				param1, param2, param3, priceWithoutTax);
 	}
-	
-	
-	public BigDecimal getApplicationPrice(EntityManager em,Provider provider,Seller seller,
-	TradingCurrency currency,TradingCountry tradingCountry,
+
+	public BigDecimal getApplicationPrice(EntityManager em, Provider provider,
+			Seller seller, TradingCurrency currency,
+			TradingCountry tradingCountry,
 			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
 			BigDecimal quantity, String param1, String param2, String param3,
 			boolean priceWithoutTax) throws BusinessException {
@@ -191,7 +190,7 @@ public class RealtimeChargingService {
 		if (serviceTemplate.getSubscriptionCharges() != null) {
 			for (OneShotChargeTemplate charge : serviceTemplate
 					.getSubscriptionCharges()) {
-				result=result.add(getApplicationPrice(em, ba, charge,
+				result = result.add(getApplicationPrice(em, ba, charge,
 						subscriptionDate, quantity, param1, param2, param3,
 						priceWithoutTax));
 			}
@@ -201,7 +200,7 @@ public class RealtimeChargingService {
 			for (RecurringChargeTemplate charge : serviceTemplate
 					.getRecurringCharges()) {
 				if (charge.getApplyInAdvance()) {
-					result=result.add(getFirstRecurringPrice(ba, charge,
+					result = result.add(getFirstRecurringPrice(ba, charge,
 							subscriptionDate, quantity, param1, param2, param3,
 							priceWithoutTax));
 				}
