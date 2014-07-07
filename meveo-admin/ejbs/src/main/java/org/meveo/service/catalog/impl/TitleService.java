@@ -17,6 +17,7 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
@@ -37,9 +38,27 @@ public class TitleService extends PersistenceService<Title> {
 		}
 		try {
 			title = (Title) getEntityManager()
-					.createQuery("from Title t where t.code=:code and t.provider=:provider")
-					.setParameter("code", code).setParameter("provider", provider)
-					.getSingleResult();
+					.createQuery(
+							"from Title t where t.code=:code and t.provider=:provider")
+					.setParameter("code", code)
+					.setParameter("provider", provider).getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+		return title;
+	}
+
+	public Title findByCode(EntityManager em, Provider provider, String code) {
+		Title title = null;
+		if (StringUtils.isBlank(code)) {
+			return null;
+		}
+		try {
+			title = (Title) em
+					.createQuery(
+							"from Title t where t.code=:code and t.provider=:provider")
+					.setParameter("code", code)
+					.setParameter("provider", provider).getSingleResult();
 		} catch (Exception e) {
 			return null;
 		}
