@@ -37,6 +37,7 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
@@ -48,6 +49,7 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -106,8 +108,20 @@ public class CustomerHeirarchyApi extends BaseApi {
 	@Inject
 	private CalendarService calendarService;
 
+	@Inject
+	private TitleService titleService;
+
 	ParamBean paramBean = ParamBean.getInstance();
 
+	/*
+	 * Creates the customer heirarchy including : - Trading Country - Trading
+	 * Currency - Trading Language - Customer Brand - Customer Category - Seller
+	 * - Customer - Customer Account - Billing Account - User Account
+	 * 
+	 * Required Parameters :customerId, customerBrandCode,customerCategoryCode,
+	 * sellerCode
+	 * ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
+	 */
 	public void createCustomerHeirarchy(
 			CustomerHeirarchyDto customerHeirarchyDto) throws BusinessException {
 
@@ -302,11 +316,15 @@ public class CustomerHeirarchyApi extends BaseApi {
 				contactInformation.setPhone(customerHeirarchyDto
 						.getPhoneNumber());
 
+				Title title = titleService.findByCode(em, provider,
+						customerHeirarchyDto.getTitleCode());
+
 				Customer customer = new Customer();
 				customer.getName().setLastName(
 						customerHeirarchyDto.getLastName());
 				customer.getName().setFirstName(
 						customerHeirarchyDto.getFirstName());
+				customer.getName().setTitle(title);
 				customer.setContactInformation(contactInformation);
 				customer.setAddress(address);
 				customer.setCode(customerHeirarchyDto.getCustomerId());
@@ -324,6 +342,7 @@ public class CustomerHeirarchyApi extends BaseApi {
 						customerHeirarchyDto.getFirstName());
 				customerAccount.getName().setLastName(
 						customerHeirarchyDto.getLastName());
+				customerAccount.getName().setTitle(title);
 				customerAccount.setCode(customerHeirarchyDto.getCustomerId());
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 				customerAccount.setPaymentMethod(PaymentMethodEnum
@@ -677,10 +696,13 @@ public class CustomerHeirarchyApi extends BaseApi {
 			contactInformation.setEmail(customerHeirarchyDto.getEmail());
 			contactInformation.setPhone(customerHeirarchyDto.getPhoneNumber());
 
+			Title title = titleService.findByCode(em, provider,
+					customerHeirarchyDto.getTitleCode());
+
 			customer.getName().setLastName(customerHeirarchyDto.getLastName());
 			customer.getName()
 					.setFirstName(customerHeirarchyDto.getFirstName());
-
+			customer.getName().setTitle(title);
 			customer.setAddress(address);
 			customer.setCode(customerHeirarchyDto.getCustomerId());
 			customer.setCustomerBrand(customerBrand);
@@ -705,7 +727,7 @@ public class CustomerHeirarchyApi extends BaseApi {
 					customerHeirarchyDto.getFirstName());
 			customerAccount.getName().setLastName(
 					customerHeirarchyDto.getLastName());
-
+			customerAccount.getName().setTitle(title);
 			customerAccount.setCode(customerHeirarchyDto.getCustomerId());
 			customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 			customerAccount.setPaymentMethod(PaymentMethodEnum

@@ -27,6 +27,23 @@ public class CustomerHeirarchyWS extends BaseWS {
 	@Inject
 	private CustomerHeirarchyApi customerHeirarchyApi;
 
+	/*
+	 * Creates the customer heirarchy including :
+	 * - Trading Country
+	 * - Trading Currency
+	 * - Trading Language
+	 * - Customer Brand
+	 * - Customer Category
+	 * - Seller
+	 * - Customer
+	 * - Customer Account
+	 * - Billing Account
+	 * - User Account
+	 * 
+	 * Required Parameters :customerId, customerBrandCode,customerCategoryCode,
+	 * sellerCode,currencyCode,countryCode,lastName,languageCode,billingCycleCode
+	 * 
+	 */
 	@POST
 	@Path("/create")
 	public ActionStatus create(CustomerHeirarchyDto customerHeirarchyDto) {
