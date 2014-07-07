@@ -325,8 +325,10 @@ public class UsageRatingService {
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), countryId);
-		if(invoiceSubcategoryCountry==null){
-			throw new BusinessException("nos tax defined for countryId="+countryId+" in invoice Sub-Category="+invoiceSubCat.getCode());
+		if (invoiceSubcategoryCountry == null) {
+			throw new BusinessException("nos tax defined for countryId="
+					+ countryId + " in invoice Sub-Category="
+					+ invoiceSubCat.getCode());
 		}
 		TradingCurrency currency = edr.getSubscription().getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency();
@@ -401,11 +403,14 @@ public class UsageRatingService {
 			log.info("value to deduce " + edr.getQuantity() + "*"
 					+ charge.getUnityMultiplicator() + "=" + countedValue);
 			if (charge.getUnityNbDecimal() > 0) {
-				int rounding = (charge.getUnityNbDecimal()>BaseEntity.NB_DECIMALS)?BaseEntity.NB_DECIMALS:charge.getUnityNbDecimal();
-				countedValue = countedValue.setScale(
-						rounding, RoundingMode.HALF_UP);
+				int rounding = (charge.getUnityNbDecimal() > BaseEntity.NB_DECIMALS) ? BaseEntity.NB_DECIMALS
+						: charge.getUnityNbDecimal();
+				countedValue = countedValue.setScale(rounding,
+						RoundingMode.HALF_UP);
 			}
-			if (periodCache.getValue().compareTo(BigDecimal.ZERO) > 0) {
+			if (periodCache.getLevel() == null) {
+				deducedQuantity = countedValue;
+			} else if (periodCache.getValue().compareTo(BigDecimal.ZERO) > 0) {
 				if (periodCache.getValue().compareTo(countedValue) < 0) {
 					deducedQuantity = periodCache.getValue();
 					periodCache.setValue(BigDecimal.ZERO);
