@@ -1,5 +1,6 @@
 package org.meveo.api;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -122,6 +123,20 @@ public class CustomerHeirarchyApi extends BaseApi {
 	 * sellerCode
 	 * ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
 	 */
+
+	public static String enleverAccent(String value) {
+		if (StringUtils.isBlank(value)) {
+			return value;
+		}
+
+		String newValue = Normalizer.normalize(value, Normalizer.Form.NFD)
+				.replaceAll("[\u0300-\u036F]", "_");
+
+		newValue = newValue.replaceAll("[^A-Za-z0-9]", "_");
+		return newValue;
+	}
+
+	@SuppressWarnings("null")
 	public void createCustomerHeirarchy(
 			CustomerHeirarchyDto customerHeirarchyDto) throws BusinessException {
 
@@ -266,8 +281,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 
 				if (customerBrand == null) {
 					customerBrand = new CustomerBrand();
-					customerBrand.setCode(customerHeirarchyDto
-							.getCustomerBrandCode());
+					customerBrand.setCode(enleverAccent(customerHeirarchyDto
+							.getCustomerBrandCode()));
 					customerBrand.setDescription(customerHeirarchyDto
 							.getCustomerBrandCode());
 					customerBrandService.create(em, customerBrand, currentUser,
@@ -276,8 +291,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 
 				if (customerCategory == null) {
 					customerCategory = new CustomerCategory();
-					customerCategory.setCode(customerHeirarchyDto
-							.getCustomerCategoryCode());
+					customerCategory.setCode(enleverAccent(customerHeirarchyDto
+							.getCustomerCategoryCode()));
 					customerCategory.setDescription(customerHeirarchyDto
 							.getCustomerCategoryCode());
 					customerCategoryService.create(em, customerCategory,
@@ -296,15 +311,15 @@ public class CustomerHeirarchyApi extends BaseApi {
 				auditable.setCreated(new Date());
 				auditable.setCreator(currentUser);
 
-				Seller newSeller = new Seller();
-				newSeller.setActive(true);
-				newSeller.setCode(customerHeirarchyDto.getSellerCode());
-				newSeller.setAuditable(auditable);
-				newSeller.setProvider(provider);
-				newSeller.setTradingCountry(tradingCountry);
-				newSeller.setTradingCurrency(tradingCurrency);
+				seller.setActive(true);
+				seller.setCode(enleverAccent(customerHeirarchyDto
+						.getSellerCode()));
+				seller.setAuditable(auditable);
+				seller.setProvider(provider);
+				seller.setTradingCountry(tradingCountry);
+				seller.setTradingCurrency(tradingCurrency);
 
-				sellerService.create(em, newSeller, currentUser, provider);
+				sellerService.update(em, seller, currentUser);
 
 				Address address = new Address();
 				address.setAddress1(customerHeirarchyDto.getAddress1());
@@ -317,7 +332,7 @@ public class CustomerHeirarchyApi extends BaseApi {
 						.getPhoneNumber());
 
 				Title title = titleService.findByCode(em, provider,
-						customerHeirarchyDto.getTitleCode());
+						enleverAccent(customerHeirarchyDto.getTitleCode()));
 
 				Customer customer = new Customer();
 				customer.getName().setLastName(
@@ -327,10 +342,11 @@ public class CustomerHeirarchyApi extends BaseApi {
 				customer.getName().setTitle(title);
 				customer.setContactInformation(contactInformation);
 				customer.setAddress(address);
-				customer.setCode(customerHeirarchyDto.getCustomerId());
+				customer.setCode(enleverAccent(customerHeirarchyDto
+						.getCustomerId()));
 				customer.setCustomerBrand(customerBrand);
 				customer.setCustomerCategory(customerCategory);
-				customer.setSeller(newSeller);
+				customer.setSeller(seller);
 
 				customerService.create(em, customer, currentUser, provider);
 
@@ -343,7 +359,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 				customerAccount.getName().setLastName(
 						customerHeirarchyDto.getLastName());
 				customerAccount.getName().setTitle(title);
-				customerAccount.setCode(customerHeirarchyDto.getCustomerId());
+				customerAccount.setCode(enleverAccent(customerHeirarchyDto
+						.getCustomerId()));
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 				customerAccount.setPaymentMethod(PaymentMethodEnum
 						.getValue(caPaymentMethod));
@@ -355,8 +372,9 @@ public class CustomerHeirarchyApi extends BaseApi {
 
 				BillingCycle billingCycle = billingCycleService
 						.findByBillingCycleCode(em,
-								customerHeirarchyDto.getBillingCycleCode(),
-								currentUser, provider);
+								enleverAccent(customerHeirarchyDto
+										.getBillingCycleCode()), currentUser,
+								provider);
 
 				if (billingCycle == null) {
 					billingCycle = billingCycleService.findByBillingCycleCode(
@@ -408,7 +426,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 				}
 
 				BillingAccount billingAccount = new BillingAccount();
-				billingAccount.setCode(customerHeirarchyDto.getCustomerId());
+				billingAccount.setCode(enleverAccent(customerHeirarchyDto
+						.getCustomerId()));
 				billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 				billingAccount.setCustomerAccount(customerAccount);
 				billingAccount.setPaymentMethod(PaymentMethodEnum
@@ -427,7 +446,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 				UserAccount userAccount = new UserAccount();
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
-				userAccount.setCode(customerHeirarchyDto.getCustomerId());
+				userAccount.setCode(enleverAccent(customerHeirarchyDto
+						.getCustomerId()));
 				userAccountService.createUserAccount(em, billingAccount,
 						userAccount, currentUser);
 
@@ -630,7 +650,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 				customerBrand = new CustomerBrand();
 			}
 
-			customerBrand.setCode(customerHeirarchyDto.getCustomerBrandCode());
+			customerBrand.setCode(enleverAccent(customerHeirarchyDto
+					.getCustomerBrandCode()));
 			customerBrand.setDescription(customerHeirarchyDto
 					.getCustomerBrandCode());
 
@@ -645,8 +666,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 				customerCategory = new CustomerCategory();
 			}
 
-			customerCategory.setCode(customerHeirarchyDto
-					.getCustomerCategoryCode());
+			customerCategory.setCode(enleverAccent(customerHeirarchyDto
+					.getCustomerCategoryCode()));
 			customerCategory.setDescription(customerHeirarchyDto
 					.getCustomerCategoryCode());
 
@@ -704,7 +725,7 @@ public class CustomerHeirarchyApi extends BaseApi {
 					.setFirstName(customerHeirarchyDto.getFirstName());
 			customer.getName().setTitle(title);
 			customer.setAddress(address);
-			customer.setCode(customerHeirarchyDto.getCustomerId());
+			customer.setCode(enleverAccent(customerHeirarchyDto.getCustomerId()));
 			customer.setCustomerBrand(customerBrand);
 			customer.setCustomerCategory(customerCategory);
 			customer.setContactInformation(contactInformation);
@@ -728,7 +749,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 			customerAccount.getName().setLastName(
 					customerHeirarchyDto.getLastName());
 			customerAccount.getName().setTitle(title);
-			customerAccount.setCode(customerHeirarchyDto.getCustomerId());
+			customerAccount.setCode(enleverAccent(customerHeirarchyDto
+					.getCustomerId()));
 			customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 			customerAccount.setPaymentMethod(PaymentMethodEnum
 					.getValue(caPaymentMethod));
@@ -797,7 +819,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 			if (billingAccount == null) {
 				billingAccount = new BillingAccount();
 			}
-			billingAccount.setCode(customerHeirarchyDto.getCustomerId());
+			billingAccount.setCode(enleverAccent(customerHeirarchyDto
+					.getCustomerId()));
 			billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setPaymentMethod(PaymentMethodEnum
@@ -825,7 +848,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 			}
 			userAccount.setStatus(AccountStatusEnum.ACTIVE);
 			userAccount.setBillingAccount(billingAccount);
-			userAccount.setCode(customerHeirarchyDto.getCustomerId());
+			userAccount.setCode(enleverAccent(customerHeirarchyDto
+					.getCustomerId()));
 
 			if (userAccount.isTransient()) {
 				userAccountService.createUserAccount(em, billingAccount,
