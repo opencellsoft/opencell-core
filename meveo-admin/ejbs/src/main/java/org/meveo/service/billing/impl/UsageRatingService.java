@@ -455,7 +455,7 @@ public class UsageRatingService {
 			// if the counter has been decremented by the full quantity we stop
 			// the rating
 			deducedQuantity = deduceCounter(edr, charge);
-			if (edr.getQuantity().equals(deducedQuantity)) {
+			if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
 				stopEDRRating = true;
 			}
 		} else {
