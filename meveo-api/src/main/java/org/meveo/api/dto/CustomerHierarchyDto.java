@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "customerHeirarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerHeirarchyDto extends BaseDto {
+public class CustomerHierarchyDto extends BaseDto {
 
 	private static final long serialVersionUID = -8469973066490541924L;
 

@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.CustomerHeirarchyDto;
+import org.meveo.api.dto.CustomerHierarchyDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -59,7 +59,7 @@ import org.slf4j.Logger;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class CustomerHeirarchyApi extends BaseApi {
+public class CustomerHierarchyApi extends BaseApi {
 
 	@Inject
 	private Logger log;
@@ -136,9 +136,8 @@ public class CustomerHeirarchyApi extends BaseApi {
 		return newValue;
 	}
 
-	@SuppressWarnings("null")
 	public void createCustomerHeirarchy(
-			CustomerHeirarchyDto customerHeirarchyDto) throws BusinessException {
+			CustomerHierarchyDto customerHeirarchyDto) throws BusinessException {
 
 		Provider provider = em.find(Provider.class,
 				customerHeirarchyDto.getProviderId());
@@ -311,6 +310,7 @@ public class CustomerHeirarchyApi extends BaseApi {
 				auditable.setCreated(new Date());
 				auditable.setCreator(currentUser);
 
+				seller = new Seller();
 				seller.setActive(true);
 				seller.setCode(enleverAccent(customerHeirarchyDto
 						.getSellerCode()));
@@ -319,7 +319,7 @@ public class CustomerHeirarchyApi extends BaseApi {
 				seller.setTradingCountry(tradingCountry);
 				seller.setTradingCurrency(tradingCurrency);
 
-				sellerService.update(em, seller, currentUser);
+				sellerService.create(em, seller, currentUser, provider);
 
 				Address address = new Address();
 				address.setAddress1(customerHeirarchyDto.getAddress1());
@@ -502,7 +502,7 @@ public class CustomerHeirarchyApi extends BaseApi {
 	}
 
 	public void updateCustomerHeirarchy(
-			CustomerHeirarchyDto customerHeirarchyDto) throws BusinessException {
+			CustomerHierarchyDto customerHeirarchyDto) throws BusinessException {
 
 		log.info("Updating Customer Heirarchy with code : "
 				+ customerHeirarchyDto.getCustomerId());
