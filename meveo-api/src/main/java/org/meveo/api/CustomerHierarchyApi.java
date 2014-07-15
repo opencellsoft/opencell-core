@@ -149,7 +149,7 @@ public class CustomerHierarchyApi extends BaseApi {
 			throw new BusinessException("Customer with code "
 					+ customerHeirarchyDto.getCustomerId() + " already exists.");
 		} else {
-			log.info("Creating Customer Heirarchy...");
+
 			if (!StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())
 					&& !StringUtils.isEmpty(customerHeirarchyDto
 							.getCustomerBrandCode())
@@ -167,14 +167,10 @@ public class CustomerHierarchyApi extends BaseApi {
 					&& !StringUtils.isEmpty(customerHeirarchyDto
 							.getBillingCycleCode())) {
 
+				log.info("Creating Customer Heirarchy...");
+
 				Seller seller = sellerService.findByCode(em,
 						customerHeirarchyDto.getSellerCode(), provider);
-
-				if (seller != null) {
-					throw new BusinessException("Seller with code "
-							+ customerHeirarchyDto.getSellerCode()
-							+ " already exists.");
-				}
 
 				Auditable auditableTrading = new Auditable();
 				auditableTrading.setCreated(new Date());
@@ -310,16 +306,18 @@ public class CustomerHierarchyApi extends BaseApi {
 				auditable.setCreated(new Date());
 				auditable.setCreator(currentUser);
 
-				seller = new Seller();
-				seller.setActive(true);
-				seller.setCode(enleverAccent(customerHeirarchyDto
-						.getSellerCode()));
-				seller.setAuditable(auditable);
-				seller.setProvider(provider);
-				seller.setTradingCountry(tradingCountry);
-				seller.setTradingCurrency(tradingCurrency);
+				if (seller == null) {
+					seller = new Seller();
+					seller.setActive(true);
+					seller.setCode(enleverAccent(customerHeirarchyDto
+							.getSellerCode()));
+					seller.setAuditable(auditable);
+					seller.setProvider(provider);
+					seller.setTradingCountry(tradingCountry);
+					seller.setTradingCurrency(tradingCurrency);
 
-				sellerService.create(em, seller, currentUser, provider);
+					sellerService.create(em, seller, currentUser, provider);
+				}
 
 				Address address = new Address();
 				address.setAddress1(customerHeirarchyDto.getAddress1());
@@ -535,12 +533,6 @@ public class CustomerHierarchyApi extends BaseApi {
 			Seller seller = sellerService.findByCode(em,
 					customerHeirarchyDto.getSellerCode(), provider);
 
-			if (seller == null) {
-				throw new BusinessException("Seller with code "
-						+ customerHeirarchyDto.getSellerCode()
-						+ " does not exist.");
-			}
-
 			Auditable auditableTrading = new Auditable();
 			auditableTrading.setCreated(new Date());
 			auditableTrading.setCreator(currentUser);
@@ -691,23 +683,17 @@ public class CustomerHierarchyApi extends BaseApi {
 			auditable.setCreated(new Date());
 			auditable.setCreator(currentUser);
 
-			Seller newSeller = sellerService.findByCode(em,
-					customerHeirarchyDto.getSellerCode(), provider);
-			if (newSeller == null) {
-				newSeller = new Seller();
-				newSeller.setAuditable(auditable);
+			if (seller == null) {
+				seller = new Seller();
+				seller.setAuditable(auditable);
+				seller.setActive(true);
+				seller.setCode(customerHeirarchyDto.getSellerCode());
+				seller.setProvider(provider);
+				seller.setTradingCountry(tradingCountry);
+				seller.setTradingCurrency(tradingCurrency);
+				sellerService.create(em, seller, currentUser, provider);
 			}
-			newSeller.setActive(true);
-			newSeller.setCode(customerHeirarchyDto.getSellerCode());
-			newSeller.setProvider(provider);
-			newSeller.setTradingCountry(tradingCountry);
-			newSeller.setTradingCurrency(tradingCurrency);
 
-			if (newSeller.isTransient()) {
-				sellerService.create(em, newSeller, currentUser, provider);
-			} else {
-				sellerService.update(em, newSeller, currentUser);
-			}
 			Address address = new Address();
 			address.setAddress1(customerHeirarchyDto.getAddress1());
 			address.setAddress2(customerHeirarchyDto.getAddress2());
@@ -729,7 +715,7 @@ public class CustomerHierarchyApi extends BaseApi {
 			customer.setCustomerBrand(customerBrand);
 			customer.setCustomerCategory(customerCategory);
 			customer.setContactInformation(contactInformation);
-			customer.setSeller(newSeller);
+			customer.setSeller(seller);
 
 			customerService.update(em, customer, currentUser);
 
