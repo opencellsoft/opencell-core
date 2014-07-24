@@ -9,16 +9,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @XmlRootElement(name = "customerInvoice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerInvoiceDto extends BaseDto {
 
 	private static final long serialVersionUID = 1072382628068718580L;
 
+	private String billingAccount;
 
-	private String billingAccount; 
-	  
 	private Date invoiceDate;
 
 	private Date dueDate;
@@ -30,28 +28,24 @@ public class CustomerInvoiceDto extends BaseDto {
 	private BigDecimal amountWithoutTax;
 
 	private BigDecimal amountTax;
-	
+
 	private BigDecimal amountWithTax;
 
-	private String invoiceNumber; 
- 
-	private Date productDate;
-  
-	private BigDecimal netToPay;
-	 
-	private String paymentMethod; 
-	
-	private String iban;
- 
-	private String alias;
- 
-	private byte[] pdf;
-	 
-	private String invoiceType;
-	
-	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
+	private String invoiceNumber;
 
- 
+	private Date productDate;
+
+	private BigDecimal netToPay;
+
+	private String paymentMethod;
+
+	private String iban;
+
+	private String alias;
+
+	private String invoiceType;
+
+	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 
 	public Date getInvoiceDate() {
 		return invoiceDate;
@@ -116,7 +110,6 @@ public class CustomerInvoiceDto extends BaseDto {
 	public void setBillingAccount(String billingAccount) {
 		this.billingAccount = billingAccount;
 	}
- 
 
 	public String getInvoiceNumber() {
 		return invoiceNumber;
@@ -166,14 +159,6 @@ public class CustomerInvoiceDto extends BaseDto {
 		this.alias = alias;
 	}
 
-	public byte[] getPdf() {
-		return pdf;
-	}
-
-	public void setPdf(byte[] pdf) {
-		this.pdf = pdf;
-	}
-
 	public String getInvoiceType() {
 		return invoiceType;
 	}
@@ -191,14 +176,12 @@ public class CustomerInvoiceDto extends BaseDto {
 		this.subCategoryInvoiceAgregates = subCategoryInvoiceAgregates;
 	}
 
-	public void addSubCategoryInvoiceAgregates(SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregate) {
-		if(subCategoryInvoiceAgregates==null){
-			subCategoryInvoiceAgregates=new ArrayList<SubCategoryInvoiceAgregateDto>();
+	public void addSubCategoryInvoiceAgregates(
+			SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregate) {
+		if (subCategoryInvoiceAgregates == null) {
+			subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 		}
 		this.subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
 	}
 
-
-
-	
 }
