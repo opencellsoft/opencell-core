@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -20,9 +21,9 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerHierarchyApi;
 import org.meveo.api.dto.CustomerHierarchyDto;
 import org.meveo.api.dto.service.CustomerDtoService;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.crm.impl.CustomerService;
-import org.slf4j.Logger;
 
 /**
  * 
@@ -33,10 +34,8 @@ import org.slf4j.Logger;
 @Path("/customer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Interceptors({ LoggingInterceptor.class })
 public class CustomerHierarchyWS extends BaseWS {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CustomerHierarchyApi customerHierarchyApi;
@@ -105,9 +104,6 @@ public class CustomerHierarchyWS extends BaseWS {
 	@POST
 	@Path("/create")
 	public ActionStatus create(CustomerHierarchyDto customerHeirarchyDto) {
-		log.info("Creating Customer Heirarchy...");
-		log.debug("customerHeirarchy.create={}", customerHeirarchyDto);
-
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -129,9 +125,6 @@ public class CustomerHierarchyWS extends BaseWS {
 	@POST
 	@Path("/update")
 	public ActionStatus update(CustomerHierarchyDto customerHeirarchyDto) {
-		log.info("Updating Customer Heirarchy...");
-		log.debug("customerHeirarchy.update={}", customerHeirarchyDto);
-
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

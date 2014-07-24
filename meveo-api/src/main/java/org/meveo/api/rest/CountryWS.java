@@ -2,6 +2,7 @@ package org.meveo.api.rest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,9 +24,9 @@ import org.meveo.api.exception.CurrencyDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.CountryResponse;
 import org.meveo.commons.utils.ParamBean;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -35,10 +36,8 @@ import org.slf4j.Logger;
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Interceptors({ LoggingInterceptor.class })
 public class CountryWS extends BaseWS {
-
-	@Inject
-	private Logger log;
 
 	private ParamBean paramBean = ParamBean
 			.getInstance("meveo-admin.properties");
@@ -49,8 +48,6 @@ public class CountryWS extends BaseWS {
 	@POST
 	@Path("/")
 	public ActionStatus create(CountryDto countryDto) {
-		log.debug("createCountry={}", countryDto);
-
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
@@ -83,8 +80,6 @@ public class CountryWS extends BaseWS {
 	@GET
 	@Path("/")
 	public CountryResponse find(@QueryParam("countryCode") String countryCode) {
-		log.debug("country.find countryCode={}", countryCode);
-
 		CountryResponse result = new CountryResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
@@ -102,9 +97,6 @@ public class CountryWS extends BaseWS {
 	@Path("/{countryCode}/{currencyCode}")
 	public ActionStatus remove(@PathParam("countryCode") String countryCode,
 			@PathParam("currencyCode") String currencyCode) {
-		log.debug("country.remove countryCode={}, currencyCode={}",
-				countryCode, currencyCode);
-
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Long providerId = Long.valueOf(paramBean.getProperty(
 				"asp.api.providerId", "1"));
@@ -134,8 +126,6 @@ public class CountryWS extends BaseWS {
 	@PUT
 	@Path("/")
 	public ActionStatus update(CountryDto countryDto) {
-		log.debug("country.update={}", countryDto);
-
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {

@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -54,10 +55,9 @@ import org.meveo.service.base.PersistenceService;
 public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
-	
 
-
-    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
+	private ParamBean paramBean = ParamBean
+			.getInstance("meveo-admin.properties");
 
 	@Override
 	@UserCreate
@@ -84,7 +84,8 @@ public class UserService extends PersistenceService<User> {
 
 		user.setUserName(user.getUserName().toUpperCase());
 		if (!StringUtils.isBlank(user.getNewPassword())) {
-			String encryptedPassword = Sha1Encrypt.encodePassword(user.getPassword());
+			String encryptedPassword = Sha1Encrypt.encodePassword(user
+					.getPassword());
 			user.setPassword(encryptedPassword);
 		}
 
@@ -131,9 +132,20 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User findByUsernameAndPassword(String username, String password) {
+		return findByUsernameAndPassword(getEntityManager(), username, password);
+	}
+
+	public User findByUsernameAndPassword(EntityManager em, String username,
+			String password) {
+		return findByUsernameAndPassword(em, username, password,
+				Arrays.asList("roles", "provider", "providers"));
+	}
+
+	public User findByUsernameAndPassword(EntityManager em, String username,
+			String password, List<String> fetchFields) {
 		try {
 			password = Sha1Encrypt.encodePassword(password);
-			return (User) getEntityManager()
+			return (User) em
 					.createQuery(
 							"from User as u where u.userName=:userName and u.password=:password")
 					.setParameter("userName", username.toUpperCase())
@@ -145,8 +157,10 @@ public class UserService extends PersistenceService<User> {
 
 	public User findByUsername(String username) {
 		try {
-			return (User) getEntityManager().createQuery("from User where userName = :userName")
-					.setParameter("userName", username.toUpperCase()).getSingleResult();
+			return (User) getEntityManager()
+					.createQuery("from User where userName = :userName")
+					.setParameter("userName", username.toUpperCase())
+					.getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
@@ -154,14 +168,16 @@ public class UserService extends PersistenceService<User> {
 
 	public User findByEmail(String email) {
 		try {
-			return (User) getEntityManager().createQuery("from User where email = :email")
+			return (User) getEntityManager()
+					.createQuery("from User where email = :email")
 					.setParameter("email", email).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
 	}
 
-	public User changePassword(User user, String newPassword) throws BusinessException {
+	public User changePassword(User user, String newPassword)
+			throws BusinessException {
 		getEntityManager().refresh(user);
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
@@ -172,21 +188,32 @@ public class UserService extends PersistenceService<User> {
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRolesExcept(String rolename1, String rolename2) {
 		return getEntityManager()
-				.createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
-				.setParameter("name1", rolename1).setParameter("name2", rolename2).getResultList();
+				.createQuery(
+						"from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
+				.setParameter("name1", rolename1)
+				.setParameter("name2", rolename2).getResultList();
 	}
 
 	public Role getRoleByName(String name) {
-		return (Role) getEntityManager().createQuery("from MeveoRole as r where r.name=:name")
+		return (Role) getEntityManager()
+				.createQuery("from MeveoRole as r where r.name=:name")
 				.setParameter("name", name).getSingleResult();
 	}
 
-	public User loginChecks(String username, String password) throws LoginException {
+	public User loginChecks(String username, String password)
+			throws LoginException {
 		return loginChecks(username, password, false);
 	}
 
-	public User loginChecks(String username, String password, boolean skipPasswordExpiracy)
-			throws LoginException {
+	public User loginChecks(EntityManager em, String username, String password,
+			boolean skipPasswordExpiracy) throws UnknownUserException,
+			PasswordExpiredException, LoginException {
+		User user = findByUsernameAndPassword(em, username, password);
+		return loginChecks(user, skipPasswordExpiracy);
+	}
+
+	public User loginChecks(String username, String password,
+			boolean skipPasswordExpiracy) throws LoginException {
 		User user = findByUsernameAndPassword(username, password);
 		if (skipPasswordExpiracy) {
 			// log.debug("[UserService] Skipping expiry check asked");
@@ -196,7 +223,8 @@ public class UserService extends PersistenceService<User> {
 		return loginChecks(user, skipPasswordExpiracy);
 	}
 
-	public User loginChecks(User user, boolean skipPasswordExpiracy) throws LoginException {
+	public User loginChecks(User user, boolean skipPasswordExpiracy)
+			throws LoginException {
 		// check if the user exists
 		if (user == null) {
 			throw new UnknownUserException(null);
@@ -205,27 +233,32 @@ public class UserService extends PersistenceService<User> {
 		// Check if the user is active
 		if (!user.isActive()) {
 			log.info("The user #" + user.getId() + " is not active");
-			throw new InactiveUserException("The user #" + user.getId() + " is not active");
+			throw new InactiveUserException("The user #" + user.getId()
+					+ " is not active");
 		}
 
 		// Check if the user password has expired
-		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "90");
+		String passwordExpiracy = paramBean.getProperty("password.Expiracy",
+				"90");
 
-		if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
+		if (!skipPasswordExpiracy
+				&& user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
 			log.info("The password of user #" + user.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user #" + user.getId()
-					+ " has expired.");
+			throw new PasswordExpiredException("The password of user #"
+					+ user.getId() + " has expired.");
 		}
 
 		// Check the roles
 		if (user.getRoles() == null || user.getRoles().isEmpty()) {
 			log.info("The user #" + user.getId() + " has no role!");
-			throw new NoRoleException("The user #" + user.getId() + " has no role!");
+			throw new NoRoleException("The user #" + user.getId()
+					+ " has no role!");
 		}
 
 		// TODO needed to overcome lazy loading issue. Remove once solved
 		for (Role role : user.getRoles()) {
-			for (org.meveo.model.security.Permission permission : role.getPermissions()) {
+			for (org.meveo.model.security.Permission permission : role
+					.getPermissions()) {
 				permission.getName();
 			}
 		}
@@ -262,7 +295,8 @@ public class UserService extends PersistenceService<User> {
 
 		User newUser = new User();
 
-		newUser.setName(new org.meveo.model.shared.Name(title, firstName, lastName));
+		newUser.setName(new org.meveo.model.shared.Name(title, firstName,
+				lastName));
 
 		newUser.setDisabled(newUser.isDisabled());
 		newUser.setUserName(user.getUserName() + "_NEW");
@@ -273,9 +307,11 @@ public class UserService extends PersistenceService<User> {
 		return newUser;
 	}
 
-	public void saveActivity(User user, String objectId, String action, String uri) {
+	public void saveActivity(User user, String objectId, String action,
+			String uri) {
 		// String sequenceValue = "ADM_USER_LOG_SEQ.nextval";
-		String sequenceValueTest = paramBean.getProperty("sequence.test","false");
+		String sequenceValueTest = paramBean.getProperty("sequence.test",
+				"false");
 		if (!sequenceValueTest.equals("true")) {
 
 			String stringQuery = "INSERT INTO ADM_USER_LOG (USER_NAME, USER_ID, DATE_EXECUTED, ACTION, URL, OBJECT_ID) VALUES ( ?, ?, ?, ?, ?, ?)";
