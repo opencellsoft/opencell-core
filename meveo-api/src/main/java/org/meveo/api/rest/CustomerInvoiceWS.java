@@ -2,6 +2,7 @@ package org.meveo.api.rest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,12 +12,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerInvoiceApi;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.CustomerInvoicesResponse;
 
 @Path("/customerInvoice")
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Interceptors({ LoggingInterceptor.class })
 public class CustomerInvoiceWS extends BaseWS {
 
 	@Inject

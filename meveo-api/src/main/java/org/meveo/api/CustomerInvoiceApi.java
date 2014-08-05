@@ -80,7 +80,7 @@ public class CustomerInvoiceApi extends BaseApi {
 							.getPaymentMethod().toString() : null);
 					customerInvoiceDto.setIban(invoices.getIban());
 					customerInvoiceDto.setAlias(invoices.getAlias());
-					customerInvoiceDto.setPdf(invoices.getPdf());
+					/*customerInvoiceDto.setPdf(invoices.getPdf());*/
 					customerInvoiceDto
 							.setInvoiceType(invoices.getInvoiceType());
 					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();

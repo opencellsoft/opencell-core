@@ -19,6 +19,9 @@ public class InvoiceDto extends BaseDto {
 
 	private static final long serialVersionUID = 1072382628068718580L;
 
+	private String invoiceNumber;
+	private String invoiceName;
+	private String invoiceStatus;
 	private String billingAccountCode;
 	private Date invoiceDate;
 	private Date dueDate;
@@ -30,6 +33,30 @@ public class InvoiceDto extends BaseDto {
 	private String comment;
 
 	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
+
+	public String getInvoiceNumber() {
+		return invoiceNumber;
+	}
+
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
+	}
+
+	public String getInvoiceName() {
+		return invoiceName;
+	}
+
+	public void setInvoiceName(String invoiceName) {
+		this.invoiceName = invoiceName;
+	}
+
+	public String getInvoiceStatus() {
+		return invoiceStatus;
+	}
+
+	public void setInvoiceStatus(String invoiceStatus) {
+		this.invoiceStatus = invoiceStatus;
+	}
 
 	public String getBillingAccountCode() {
 		return billingAccountCode;
@@ -103,7 +130,6 @@ public class InvoiceDto extends BaseDto {
 	public void setAmountWithTax(BigDecimal amountWithTax) {
 		this.amountWithTax = amountWithTax;
 	}
-	
 
 	public String getComment() {
 		return comment;
@@ -115,13 +141,14 @@ public class InvoiceDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "InvoiceDto [billingAccountCode=" + billingAccountCode
+		return "InvoiceDto [invoiceNumber =" + invoiceNumber + ", invoiceName="
+				+ invoiceName + ",invoiceStatus = " + invoiceStatus
+				+ ", billingAccountCode=" + billingAccountCode
 				+ ", invoiceDate=" + invoiceDate + ", dueDate=" + dueDate
 				+ ", amount=" + amount + ", discount=" + discount
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
-				+ amountTax + ", amountWithTax=" + amountWithTax+", comment=" + comment
-				+ ", subCategoryInvoiceAgregates="
+				+ amountTax + ", amountWithTax=" + amountWithTax + ", comment="
+				+ comment + ", subCategoryInvoiceAgregates="
 				+ subCategoryInvoiceAgregates + "]";
 	}
-
 }

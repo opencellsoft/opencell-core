@@ -70,15 +70,15 @@
 		<location>/toomanysessionserror.html</location>
 	</error-page>
 
-	<servlet>
-		<servlet-name>javax.ws.rs.core.Application</servlet-name>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+<!-- 	<servlet> -->
+<!-- 		<servlet-name>javax.ws.rs.core.Application</servlet-name> -->
+<!-- 		<load-on-startup>1</load-on-startup> -->
+<!-- 	</servlet> -->
 
-	<servlet-mapping>
-		<servlet-name>javax.ws.rs.core.Application</servlet-name>
-		<url-pattern>/api/rest/*</url-pattern>
-	</servlet-mapping>
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>javax.ws.rs.core.Application</servlet-name> -->
+<!-- 		<url-pattern>/api/rest/*</url-pattern> -->
+<!-- 	</servlet-mapping> -->
 
 	<!-- Primefaces theme <context-param> <param-name>primefaces.THEME</param-name> 
 		<param-value>south-street</param-value> </context-param> Security <security-constraint> 
