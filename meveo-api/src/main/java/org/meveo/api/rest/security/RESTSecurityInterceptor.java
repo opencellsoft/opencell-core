@@ -1,4 +1,4 @@
-package org.meveo.api.rest;
+package org.meveo.api.rest.security;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -142,6 +143,12 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 	public Response toResponse(Exception exception) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Produces
+	@WSUser
+	public User getCurrentUser() {
+		return currentUser;
 	}
 
 }
