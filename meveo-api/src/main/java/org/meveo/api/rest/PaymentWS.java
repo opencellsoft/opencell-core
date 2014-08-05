@@ -3,9 +3,11 @@ package org.meveo.api.rest;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
@@ -13,6 +15,7 @@ import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.PaymentApi;
 import org.meveo.api.dto.PaymentDto;
+import org.meveo.api.rest.response.CustomerPaymentsResponse;
 import org.slf4j.Logger;
 
 /**
@@ -58,4 +61,22 @@ public class PaymentWS extends BaseWS {
 		return result;
 	}
 
+	@GET
+	@Path("/")
+	public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
+		log.debug("payment.list={}", customerAccountCode);
+
+		CustomerPaymentsResponse result = new CustomerPaymentsResponse();
+		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		try {
+			result.setCustomerPaymentDtoList(paymentApi.getPaymentList(
+					customerAccountCode));
+		} catch (Exception e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
 }

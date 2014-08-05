@@ -163,6 +163,12 @@ public class PaymentApi extends BaseApi {
 					throw new MissingParameterException(sb.toString());
 				}
 			
-			  }  
+			  }
+
+
+	public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}  
 	
 }
