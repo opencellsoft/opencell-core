@@ -18,6 +18,7 @@ public class CustomerPaymentsResponse {
 	private ActionStatus actionStatus = new ActionStatus(
 			ActionStatusEnum.SUCCESS, "");
 	private List<PaymentDto> customerPaymentDtoList;
+	private double balance;
 
 	public CustomerPaymentsResponse() {
 
@@ -38,6 +39,14 @@ public class CustomerPaymentsResponse {
 	public void setCustomerPaymentDtoList(
 			List<PaymentDto> customerPaymentDtoList) {
 		this.customerPaymentDtoList = customerPaymentDtoList;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
 	}
 
 	

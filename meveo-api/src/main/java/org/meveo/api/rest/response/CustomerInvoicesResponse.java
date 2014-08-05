@@ -8,20 +8,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
-import org.meveo.api.dto.CustomerInvoiceDto;
+import org.meveo.api.dto.InvoiceDto;
 
 
-/**
- * @author R.AITYAAZZA
- *
- */
 @XmlRootElement(name = "customerInvoicesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerInvoicesResponse {
 
 	private ActionStatus actionStatus = new ActionStatus(
 			ActionStatusEnum.SUCCESS, "");
-	private List<CustomerInvoiceDto> CustomerInvoiceDtoList;
+	private List<InvoiceDto> CustomerInvoiceDtoList;
 
 	public CustomerInvoicesResponse() {
 
@@ -35,12 +31,12 @@ public class CustomerInvoicesResponse {
 		this.actionStatus = actionStatus;
 	}
 
-	public List<CustomerInvoiceDto> getCustomerInvoiceDtoList() {
+	public List<InvoiceDto> getCustomerInvoiceDtoList() {
 		return CustomerInvoiceDtoList;
 	}
 
 	public void setCustomerInvoiceDtoList(
-			List<CustomerInvoiceDto> customerInvoiceDtoList) {
+			List<InvoiceDto> customerInvoiceDtoList) {
 		CustomerInvoiceDtoList = customerInvoiceDtoList;
 	}
 

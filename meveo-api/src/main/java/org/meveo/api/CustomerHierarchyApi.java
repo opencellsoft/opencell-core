@@ -12,7 +12,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CustomerHierarchyDto;
+import org.meveo.api.dto.service.CustomerDtoService;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -111,6 +113,9 @@ public class CustomerHierarchyApi extends BaseApi {
 
 	@Inject
 	private TitleService titleService;
+	
+	@Inject 
+	private CustomerDtoService customerDTOService;
 
 	ParamBean paramBean = ParamBean.getInstance();
 
@@ -139,10 +144,8 @@ public class CustomerHierarchyApi extends BaseApi {
 	public void createCustomerHeirarchy(
 			CustomerHierarchyDto customerHeirarchyDto) throws BusinessException {
 
-		Provider provider = em.find(Provider.class,
-				customerHeirarchyDto.getProviderId());
-		User currentUser = em.find(User.class,
-				customerHeirarchyDto.getCurrentUserId());
+		User currentUser = customerHeirarchyDto.getCurrentUser();
+		Provider provider = currentUser.getProvider();
 
 		if (customerService.findByCode(em,
 				customerHeirarchyDto.getCustomerId(), provider) != null) {
@@ -504,10 +507,8 @@ public class CustomerHierarchyApi extends BaseApi {
 
 		log.info("Updating Customer Heirarchy with code : "
 				+ customerHeirarchyDto.getCustomerId());
-		Provider provider = em.find(Provider.class,
-				customerHeirarchyDto.getProviderId());
-		User currentUser = em.find(User.class,
-				customerHeirarchyDto.getCurrentUserId());
+		User currentUser = customerHeirarchyDto.getCurrentUser();
+		Provider provider = currentUser.getProvider(); 
 
 		Customer customer = customerService.findByCode(em,
 				customerHeirarchyDto.getCustomerId(), provider);
@@ -890,5 +891,20 @@ public class CustomerHierarchyApi extends BaseApi {
 			throw new BusinessException(sb.toString());
 
 		}
+	}
+
+	public List<CustomerHierarchyDto> select(CustomerHierarchyDto customerDto,
+			int limit, int index, String sortField) throws BusinessException {
+		List<CustomerHierarchyDto> result = new ArrayList<CustomerHierarchyDto>();
+		Customer customerFilter = customerDTOService.getCustomer(customerDto);
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
+				index, limit, null, null, sortField, null);
+
+		List<Customer> customers = customerService.findByValues(em,customerFilter, paginationConfiguration);
+		for (Customer customer : customers) {
+			result.add(
+					customerDTOService.getCustomerDTO(customer));
+		}
+		return null;
 	}
 }

@@ -39,12 +39,8 @@ public class PaymentWS extends BaseWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			paymentDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			paymentDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
-			paymentApi.createPayment(paymentDto);
+			paymentDto.setCurrentUser(currentUser);
+			paymentApi.createPayment(paymentDto,currentUser);
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -66,7 +62,8 @@ public class PaymentWS extends BaseWS {
 
 		try {
 			result.setCustomerPaymentDtoList(paymentApi.getPaymentList(
-					customerAccountCode));
+					customerAccountCode,currentUser));
+			result.setBalance(paymentApi.getBalance(customerAccountCode,currentUser));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

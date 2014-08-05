@@ -51,11 +51,7 @@ public class CountryWS extends BaseWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			countryDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
+			countryDto.setCurrentUser(currentUser);
 			countryServiceApi.create(countryDto);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
@@ -129,11 +125,7 @@ public class CountryWS extends BaseWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			countryDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
+			countryDto.setCurrentUser(currentUser);
 			countryServiceApi.update(countryDto);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
