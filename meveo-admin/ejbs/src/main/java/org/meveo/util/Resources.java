@@ -17,7 +17,9 @@ package org.meveo.util;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 import org.jboss.solder.core.ExtensionManaged;
@@ -31,18 +33,27 @@ public class Resources {
 	@MeveoJpa
 	private EntityManagerFactory emf;
 
-	@ExtensionManaged
+	// @ExtensionManaged
+	// @Produces
+	// @PersistenceUnit(unitName = "MeveoAdmin")
+	// @MeveoJpaForJobs
+	// private EntityManagerFactory emfForJobs;
 	@Produces
-	@PersistenceUnit(unitName = "MeveoAdmin")
+	@PersistenceContext(unitName = "MeveoAdmin")
 	@MeveoJpaForJobs
-	private EntityManagerFactory emfForJobs;
+	private EntityManager emfForJobs;
 
-/*	@ExtensionManaged
-	@ConversationScoped
-	@Produces
-	@PersistenceUnit(unitName = "MeveoDWH")
-	@MeveoDWHJpa
-	private EntityManagerFactory emfDwh;*/
+	/*
+	 * @ExtensionManaged
+	 * 
+	 * @ConversationScoped
+	 * 
+	 * @Produces
+	 * 
+	 * @PersistenceUnit(unitName = "MeveoDWH")
+	 * 
+	 * @MeveoDWHJpa private EntityManagerFactory emfDwh;
+	 */
 
 	// @Produces
 	// @MeveoJpa
