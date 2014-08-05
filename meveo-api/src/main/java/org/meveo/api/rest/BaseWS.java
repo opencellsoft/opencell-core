@@ -17,6 +17,10 @@ public abstract class BaseWS {
 
 	protected ParamBean paramBean = ParamBean.getInstance();
 
+	@Inject
+	@WSUser
+	private User currentUser;
+
 	protected final String RESPONSE_DELIMITER = " - ";
 
 	
@@ -29,6 +33,15 @@ public abstract class BaseWS {
 	public ActionStatus index() {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
 				"MEVEO API Rest Web Service V1.0");
+
+		return result;
+	}
+
+	@GET
+	@Path("/user")
+	public ActionStatus user() {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
+				"WS User is=" + currentUser.toString());
 
 		return result;
 	}
