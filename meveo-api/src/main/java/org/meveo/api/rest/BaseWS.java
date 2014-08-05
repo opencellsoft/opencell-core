@@ -19,14 +19,9 @@ public abstract class BaseWS {
 
 	@Inject
 	@WSUser
-	private User currentUser;
+	protected User currentUser;
 
 	protected final String RESPONSE_DELIMITER = " - ";
-
-	
-	@Inject
-	@WSUser
-	protected User currentUser;
 	
 	@GET
 	@Path("/version")
