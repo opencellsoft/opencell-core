@@ -34,7 +34,7 @@ public class InvoiceWS extends BaseWS {
 	private InvoiceApi invoiceApi;
 
 	@POST
-	@Path("/")
+	@Path("/create")
 	public ActionStatus create(InvoiceDto invoiceDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -49,11 +49,12 @@ public class InvoiceWS extends BaseWS {
 
 		return result;
 	}
-	
+
 	@GET
-	@Path("/")
+	@Path("/customerInvoice")
 	public CustomerInvoicesResponse getInvoiceList(
-			@QueryParam("customerAccountCode") String customerAccountCode) throws Exception {
+			@QueryParam("customerAccountCode") String customerAccountCode)
+			throws Exception {
 
 		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);

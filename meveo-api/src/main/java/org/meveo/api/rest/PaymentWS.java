@@ -34,13 +34,13 @@ public class PaymentWS extends BaseWS {
 	private PaymentApi paymentApi;
 
 	@POST
-	@Path("/")
+	@Path("/create")
 	public ActionStatus create(PaymentDto paymentDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
 			paymentDto.setCurrentUser(currentUser);
-			paymentApi.createPayment(paymentDto,currentUser);
+			paymentApi.createPayment(paymentDto, currentUser);
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -55,15 +55,17 @@ public class PaymentWS extends BaseWS {
 	}
 
 	@GET
-	@Path("/")
-	public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
+	@Path("/customerPayment")
+	public CustomerPaymentsResponse list(
+			@QueryParam("customerAccountCode") String customerAccountCode) {
 		CustomerPaymentsResponse result = new CustomerPaymentsResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
 			result.setCustomerPaymentDtoList(paymentApi.getPaymentList(
-					customerAccountCode,currentUser));
-			result.setBalance(paymentApi.getBalance(customerAccountCode,currentUser));
+					customerAccountCode, currentUser));
+			result.setBalance(paymentApi.getBalance(customerAccountCode,
+					currentUser));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
