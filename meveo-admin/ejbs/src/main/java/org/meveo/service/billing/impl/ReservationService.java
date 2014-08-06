@@ -1,3 +1,18 @@
+/*
+ * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * Licensed under the GNU Public Licence, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
@@ -25,6 +40,9 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
+/**
+ * @author Edward P. Legaspi
+ **/
 @Stateless
 public class ReservationService extends PersistenceService<Reservation> {
 
@@ -92,9 +110,14 @@ public class ReservationService extends PersistenceService<Reservation> {
 			expiryDate = cal.getTime();
 		}
 
-		BigDecimal spentCredit = walletReservationService.getSpentCredit(em,
-				provider, seller, offerTemplate, userAccount, subscriptionDate,
-				param1, param2, param3);
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(
+				em, offerTemplate, userAccount, subscriptionDate, param1,
+				param2, param3, new BigDecimal(1));
+
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(
+				em, provider, seller, userAccount, subscriptionDate);
+
+		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
 		if (spentCredit.compareTo(creditLimit) > 0) {
 			log.debug("Credit limit exceeded for seller code={}",
@@ -146,7 +169,12 @@ public class ReservationService extends PersistenceService<Reservation> {
 		walletReservation.setEndDate(null);
 		walletReservation.setCurrency(currency.getCurrency());
 		walletReservation.setProvider(provider);
-		walletReservation.setAmountWithoutTax(spentCredit);
+		if (amountWithTax) {
+			walletReservation.setAmountWithTax(servicesSum);
+		} else {
+			walletReservation.setAmountWithoutTax(servicesSum);
+		}
+
 		walletReservationService.create(em, walletReservation, null, provider);
 
 		// #4 Return the reservationId.
@@ -199,9 +227,14 @@ public class ReservationService extends PersistenceService<Reservation> {
 			expiryDate = cal.getTime();
 		}
 
-		BigDecimal spentCredit = walletReservationService.getSpentCredit(em,
-				provider, seller, offerTemplate, userAccount, subscriptionDate,
-				param1, param2, param3);
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(
+				em, offerTemplate, userAccount, subscriptionDate, param1,
+				param2, param3, new BigDecimal(1));
+
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(
+				em, provider, seller, userAccount, subscriptionDate);
+
+		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
 		if (spentCredit.compareTo(creditLimit) > 0) {
 			log.debug("Credit limit exceeded for seller code={}",
@@ -231,11 +264,11 @@ public class ReservationService extends PersistenceService<Reservation> {
 		if (amountWithTax) {
 			reservation.setAmountWithTax(spentCredit);
 			walletReservationService.updateSpendCredit(em, reservationId,
-					spentCredit, true);
+					servicesSum, true);
 		} else {
 			reservation.setAmountWithoutTax(spentCredit);
 			walletReservationService.updateSpendCredit(em, reservationId,
-					spentCredit, false);
+					servicesSum, false);
 		}
 	}
 

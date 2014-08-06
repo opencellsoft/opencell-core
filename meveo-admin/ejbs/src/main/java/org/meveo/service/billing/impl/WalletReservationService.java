@@ -207,31 +207,50 @@ public class WalletReservationService extends
 			UserAccount userAccount, Date subscriptionDate, String param1,
 			String param2, String param3, BigDecimal quantity)
 			throws BusinessException {
-		BigDecimal servicesSum = new BigDecimal(0);
+
+		BigDecimal servicesSum = computeServicesSum(em, offerTemplate,
+				userAccount, subscriptionDate, param1, param2, param3, quantity);
+
+		BigDecimal ratedAmount = computeRatedAmount(em, provider, seller,
+				userAccount, subscriptionDate);
+
+		BigDecimal spentCredit = servicesSum.add(ratedAmount);
+
+		return spentCredit;
+	}
+
+	public BigDecimal computeRatedAmount(EntityManager em, Provider provider,
+			Seller seller, UserAccount userAccount, Date subscriptionDate) {
 		Date startDate = null;
 		Date endDate = null;
 
-		for (ServiceTemplate st : offerTemplate.getServiceTemplates()) {
-			Calendar cal = calendarService.findByName(em, paramBean
-					.getProperty("default.calendar.monthly", "MONTHLY"));
-			startDate = cal.previousCalendarDate(subscriptionDate);
-			endDate = cal.nextCalendarDate(subscriptionDate);
-
-			servicesSum = servicesSum.add(realtimeChargingService
-					.getActivationServicePrice(em,
-							userAccount.getBillingAccount(), st,
-							subscriptionDate, new BigDecimal(1), param1,
-							param2, param3, true));
-
-		}
+		Calendar cal = calendarService.findByName(em,
+				paramBean.getProperty("default.calendar.monthly", "MONTHLY"));
+		startDate = cal.previousCalendarDate(subscriptionDate);
+		endDate = cal.nextCalendarDate(subscriptionDate);
 
 		BigDecimal ratedAmount = walletOperationService.getRatedAmount(em,
 				provider, seller, null, null, userAccount.getBillingAccount(),
 				null, startDate, endDate, true);
 
-		BigDecimal spentCredit = servicesSum.add(ratedAmount);
+		return ratedAmount;
+	}
 
-		return spentCredit;
+	public BigDecimal computeServicesSum(EntityManager em,
+			OfferTemplate offerTemplate, UserAccount userAccount,
+			Date subscriptionDate, String param1, String param2, String param3,
+			BigDecimal quantity) throws BusinessException {
+		BigDecimal servicesSum = new BigDecimal(0);
+
+		for (ServiceTemplate st : offerTemplate.getServiceTemplates()) {
+			servicesSum = servicesSum.add(realtimeChargingService
+					.getActivationServicePrice(em,
+							userAccount.getBillingAccount(), st,
+							subscriptionDate, quantity, param1, param2, param3,
+							true));
+		}
+
+		return servicesSum;
 	}
 
 	public void updateSpendCredit(EntityManager em, Long reservationId,
