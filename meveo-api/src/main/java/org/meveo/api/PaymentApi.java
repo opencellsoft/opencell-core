@@ -17,6 +17,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -24,6 +25,7 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.crm.impl.ProviderService;
@@ -62,14 +64,13 @@ public class PaymentApi extends BaseApi {
 	ParamBean paramBean=ParamBean.getInstance();
 	
 
-	 public void createPayment(PaymentDto paymentDto)
+	 public void createPayment(PaymentDto paymentDto,User currentUser)
 			    throws Exception
 			  {
 			    log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() +
 			    		" isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 			    
-				Provider provider=em.find(Provider.class,paymentDto.getProviderId());
-				User currentUser = em.find(User.class,paymentDto.getCurrentUserId());
+				Provider provider=currentUser.getProvider();
 				CustomerAccount customerAccount=customerAccountService.findByCode(em,paymentDto.getCustomerAccountCode(), provider);
 				if(customerAccount==null){
 					throw new BusinessException("Cannot find customer account with code="+paymentDto.getCustomerAccountCode());
@@ -163,6 +164,41 @@ public class PaymentApi extends BaseApi {
 					throw new MissingParameterException(sb.toString());
 				}
 			
-			  }  
+			  }
+
+
+	public List<PaymentDto> getPaymentList(String customerAccountCode, User currentUser) throws Exception {
+		List<PaymentDto> result= new ArrayList<PaymentDto>();
+		Provider provider=currentUser.getProvider();
+		CustomerAccount customerAccount=customerAccountService.findByCode(em,customerAccountCode, provider);
+		List<AccountOperation> ops= customerAccount.getAccountOperations();
+		for(AccountOperation op:ops){
+			if(op instanceof Payment){
+				Payment p = (Payment)op;
+				PaymentDto paymentDto = new PaymentDto();
+				paymentDto.setAmount(p.getAmount());
+				paymentDto.setDueDate(p.getDueDate());
+				paymentDto.setOccTemplateCode(p.getOccCode());
+				paymentDto.setPaymentMethod(p.getPaymentMethod().name());
+				paymentDto.setReference(p.getReference());
+				paymentDto.setTransactionDate(p.getTransactionDate());
+				if(p instanceof AutomatedPayment){
+					AutomatedPayment ap = (AutomatedPayment)p;
+					paymentDto.setBankCollectionDate(ap.getBankCollectionDate());
+					paymentDto.setBankLot(ap.getBankLot());
+					paymentDto.setDepositDate(ap.getDepositDate());
+				}
+				result.add(paymentDto);
+			}
+		}
+		return result;
+	}
+
+
+	public double getBalance(String customerAccountCode, User currentUser) throws BusinessException {
+		Provider provider=currentUser.getProvider();
+		CustomerAccount customerAccount=customerAccountService.findByCode(em,customerAccountCode, provider);
+		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
+	}  
 	
 }

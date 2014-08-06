@@ -19,10 +19,10 @@ public abstract class BaseWS {
 
 	@Inject
 	@WSUser
-	private User currentUser;
+	protected User currentUser;
 
 	protected final String RESPONSE_DELIMITER = " - ";
-
+	
 	@GET
 	@Path("/version")
 	public ActionStatus index() {

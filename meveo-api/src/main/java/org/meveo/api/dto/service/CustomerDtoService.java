@@ -19,7 +19,6 @@ import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * 
@@ -37,16 +36,12 @@ public class CustomerDtoService {
 	@Inject
 	private CurrencyService currencyService;
 
-	@Inject
-	private ProviderService providerService;
-
 	@PersistenceContext
 	private EntityManager em;
 
 	public Customer getCustomer(CustomerHierarchyDto customerDto)
 			throws BusinessException {
-		Provider provider = providerService.findById(em,
-				customerDto.getProviderId());
+		Provider provider = customerDto.getCurrentUser().getProvider();
 		Customer customer = new Customer();
 		Country country = null;
 		if (!StringUtils.isEmpty(customerDto.getCountryCode())) {

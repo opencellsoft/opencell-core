@@ -1,6 +1,8 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -11,6 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.InvoiceDto;
 import org.meveo.api.dto.RatedTransactionDTO;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -19,6 +22,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -27,6 +31,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -81,9 +86,8 @@ public class InvoiceApi extends BaseApi {
 
     ParamBean paramBean=ParamBean.getInstance();
     public void createInvoice(InvoiceDto invoiceDTO) throws BusinessException{
-
-        Provider provider=em.find(Provider.class,invoiceDTO.getProviderId());
-        User currentUser = em.find(User.class,invoiceDTO.getCurrentUserId());
+		User currentUser = invoiceDTO.getCurrentUser();
+		Provider provider = currentUser.getProvider();
         if (invoiceDTO.getSubCategoryInvoiceAgregates().size()>0
 				&& !StringUtils
 						.isBlank(invoiceDTO.getBillingAccountCode())
@@ -200,10 +204,92 @@ public class InvoiceApi extends BaseApi {
   		  throw new BusinessException("these invoice fields are mandatory: AmountTax,AmountWithoutTax,AmountWithTax,dueDate,billingAccountCode,SubCategoryInvoiceAgregates");
         }
         
-       
-
-
-
     }
 
+    public List<InvoiceDto> getInvoiceList(String customerAccountCode,
+			User currentUser) throws Exception {
+		List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
+
+		if (!StringUtils.isBlank(customerAccountCode)) {
+			Provider provider = currentUser.getProvider();
+			CustomerAccount customerAccount = customerAccountService
+					.findByCode(em, customerAccountCode, provider);
+			if (customerAccount == null) {
+				throw new BusinessException(
+						"Cannot find customer account with code="
+								+ customerAccountCode);
+			}
+
+			for (BillingAccount billingAccount : customerAccount
+					.getBillingAccounts()) {
+				List<Invoice> invoiceList = billingAccount.getInvoices();
+
+				for (Invoice invoices : invoiceList) {
+					InvoiceDto customerInvoiceDto = new InvoiceDto();
+					customerInvoiceDto.setBillingAccountCode(billingAccount
+							.getCode());
+					customerInvoiceDto
+							.setInvoiceDate(invoices.getInvoiceDate());
+					customerInvoiceDto.setDueDate(invoices.getDueDate());
+					customerInvoiceDto.setAmount(invoices.getAmount());
+					customerInvoiceDto.setAmount(invoices.getAmount());
+					customerInvoiceDto.setAmountWithoutTax(invoices
+							.getAmountWithoutTax());
+					customerInvoiceDto.setInvoiceNumber(invoices
+							.getInvoiceNumber());
+					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+
+					for (InvoiceAgregate invoiceAgregate : invoices
+							.getInvoiceAgregates()) {
+						subCategoryInvoiceAgregateDto
+								.setItemNumber(invoiceAgregate.getItemNumber());
+						subCategoryInvoiceAgregateDto
+								.setAccountingCode(invoiceAgregate
+										.getAccountingCode());
+						subCategoryInvoiceAgregateDto
+								.setDescription(invoiceAgregate
+										.getDescription());
+						subCategoryInvoiceAgregateDto
+								.setQuantity(invoiceAgregate.getQuantity());
+						subCategoryInvoiceAgregateDto
+								.setDiscount(invoiceAgregate.getDiscount());
+						subCategoryInvoiceAgregateDto
+								.setAmountWithoutTax(invoiceAgregate
+										.getAmountWithoutTax());
+						subCategoryInvoiceAgregateDto
+								.setAmountTax(invoiceAgregate.getAmountTax());
+						subCategoryInvoiceAgregateDto
+								.setAmountWithTax(invoiceAgregate
+										.getAmountWithTax());
+						customerInvoiceDto
+								.getSubCategoryInvoiceAgregates().add(subCategoryInvoiceAgregateDto);
+					}
+
+					customerInvoiceDtos.add(customerInvoiceDto);
+				}
+			}
+
+		} else {
+			StringBuilder sb = new StringBuilder(
+					"The following parameters are required ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (StringUtils.isBlank(customerAccountCode)) {
+				missingFields.add("CustomerAccountCode");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			} else {
+				sb.append(missingFields.get(0));
+			}
+			sb.append(".");
+
+			throw new MissingParameterException(sb.toString());
+
+		}
+
+		return customerInvoiceDtos;
+	}
 }

@@ -111,6 +111,7 @@ public class CustomerService extends PersistenceService<Customer> {
 				qb.addCriterion("c.name.lastName","=", c.getName().getLastName(), true);
 			}
 		}
+		qb.addCriterionEntity("c.provider", c.getProvider());
 		qb.addPaginationConfiguration(paginationConfiguration);
 		result=qb.getQuery(em).getResultList();
 		return result;

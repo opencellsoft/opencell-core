@@ -27,9 +27,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * @author Edward P. Legaspi
@@ -49,12 +47,6 @@ public class CountryServiceApi extends BaseApi {
 	private CurrencyService currencyService;
 
 	@Inject
-	private ProviderService providerService;
-
-	@Inject
-	private UserService userService;
-
-	@Inject
 	private TradingCurrencyService tradingCurrencyService;
 
 	public void create(CountryDto countryDto) throws MeveoApiException {
@@ -64,10 +56,9 @@ public class CountryServiceApi extends BaseApi {
 
 			// If countryCode exist in the trading country table
 			// ("billing_trading_country"), return error.
-			Provider provider = providerService.findById(countryDto
-					.getProviderId());
-			User currentUser = userService.findById(countryDto
-					.getCurrentUserId());
+
+			User currentUser = countryDto.getCurrentUser();
+			Provider provider = currentUser.getProvider();
 			TradingCountry tradingCountry = tradingCountryService
 					.findByTradingCountryCode(countryDto.getCountryCode(),
 							provider);
@@ -265,10 +256,8 @@ public class CountryServiceApi extends BaseApi {
 	}
 
 	public void update(CountryDto countryDto) throws MeveoApiException {
-		Provider provider = providerService
-				.findById(countryDto.getProviderId());
-		User currentUser = userService.findById(countryDto.getCurrentUserId());
-
+		User currentUser = countryDto.getCurrentUser();
+		Provider provider = currentUser.getProvider();
 		if (!StringUtils.isBlank(countryDto.getCountryCode())
 				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
 

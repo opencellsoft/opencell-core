@@ -40,14 +40,6 @@ public class CustomerHierarchyWS extends BaseWS {
 	@Inject
 	private CustomerHierarchyApi customerHierarchyApi;
 
-	@Inject
-	private CustomerDtoService customerDTOService;
-
-	@Inject
-	private CustomerService customerService;
-
-	@PersistenceContext
-	private EntityManager em;
 
 	/**
 	 * 
@@ -68,27 +60,13 @@ public class CustomerHierarchyWS extends BaseWS {
 			@QueryParam("sortField") String sortField) {
 		CustomerListResponse result = new CustomerListResponse();
 		try {
-			customerDto.setCurrentUserId(Long.valueOf(paramBean.getProperty(
-					"asp.api.userId", "1")));
-			customerDto.setProviderId(Long.valueOf(paramBean.getProperty(
-					"asp.api.providerId", "1")));
-
-			Customer customerFilter = customerDTOService
-					.getCustomer(customerDto);
-			PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
-					index, limit, null, null, sortField, null);
-			List<Customer> customers = customerService.findByValues(em,
-					customerFilter, paginationConfiguration);
-			for (Customer customer : customers) {
-				result.getCustomerDtoList().add(
-						customerDTOService.getCustomerDTO(customer));
-			}
-
+			customerDto.setCurrentUser(currentUser);
+			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+			result.setCustomerDtoList(customerHierarchyApi.select(customerDto,limit, index,sortField));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
-
 		return result;
 	}
 
@@ -107,11 +85,7 @@ public class CustomerHierarchyWS extends BaseWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerHeirarchyDto.setCurrentUserId(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")));
-			customerHeirarchyDto.setProviderId(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")));
-
+			customerHeirarchyDto.setCurrentUser(currentUser);
 			customerHierarchyApi.createCustomerHeirarchy(customerHeirarchyDto);
 
 		} catch (Exception e) {
@@ -128,13 +102,8 @@ public class CustomerHierarchyWS extends BaseWS {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerHeirarchyDto.setCurrentUserId(Long.valueOf(paramBean
-					.getProperty("asp.api.userId", "1")));
-			customerHeirarchyDto.setProviderId(Long.valueOf(paramBean
-					.getProperty("asp.api.providerId", "1")));
-
+			customerHeirarchyDto.setCurrentUser(currentUser);
 			customerHierarchyApi.updateCustomerHeirarchy(customerHeirarchyDto);
-
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

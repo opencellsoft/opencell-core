@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 
 /**
  * @author Edward P. Legaspi
@@ -12,24 +13,15 @@ import org.meveo.commons.utils.StringUtils;
 public abstract class BaseDto implements Serializable {
 
 	private static final long serialVersionUID = 4456089256601996946L;
-	private Long providerId;
-	private Long currentUserId;
+	private User currentUser;
 	private String requestId;
 
-	public Long getProviderId() {
-		return providerId;
+	public User getCurrentUser() {
+		return currentUser;
 	}
 
-	public void setProviderId(Long providerId) {
-		this.providerId = providerId;
-	}
-
-	public Long getCurrentUserId() {
-		return currentUserId;
-	}
-
-	public void setCurrentUserId(Long currentUserId) {
-		this.currentUserId = currentUserId;
+	public void setCurrentUser(User currentUser) {
+		this.currentUser = currentUser;
 	}
 
 	public String getRequestId() {
@@ -47,8 +39,8 @@ public abstract class BaseDto implements Serializable {
 	}
 
 	protected String innerString() {
-		return StringUtils.concat("providerId=", providerId,
-				", currentUserId=", currentUserId, ", requestId=", requestId);
+		return StringUtils.concat("providerId=", currentUser.getProvider().getId(),
+				", currentUserId=", currentUser.getId(), ", requestId=", requestId);
 	}
 
 	public void validate() throws InvalidDTOException {
