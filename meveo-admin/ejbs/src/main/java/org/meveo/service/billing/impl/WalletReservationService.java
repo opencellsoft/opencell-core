@@ -8,20 +8,24 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.CalendarService;
 
 @Stateless
 public class WalletReservationService extends
 		PersistenceService<WalletReservation> {
+
+	private ParamBean paramBean = ParamBean.getInstance();
 
 	@Inject
 	private WalletOperationService walletOperationService;
@@ -34,6 +38,9 @@ public class WalletReservationService extends
 
 	@Inject
 	private SellerService sellerService;
+
+	@Inject
+	private CalendarService calendarService;
 
 	public BigDecimal getCurrentBalanceWithoutTax(EntityManager em,
 			Provider provider, String sellerCode, String userAccountCode,
@@ -205,31 +212,10 @@ public class WalletReservationService extends
 		Date endDate = null;
 
 		for (ServiceTemplate st : offerTemplate.getServiceTemplates()) {
-			if (st.getRecurringCharges() != null
-					&& st.getRecurringCharges().size() > 0) {
-				for (RecurringChargeTemplate ct : st.getRecurringCharges()) {
-					try {
-						if (startDate == null
-								|| ct.getCalendar()
-										.previousCalendarDate(subscriptionDate)
-										.before(startDate)) {
-							startDate = ct.getCalendar().previousCalendarDate(
-									subscriptionDate);
-						}
-						if (endDate == null
-								|| ct.getCalendar()
-										.nextCalendarDate(subscriptionDate)
-										.after(endDate)) {
-							endDate = ct.getCalendar().nextCalendarDate(
-									subscriptionDate);
-						}
-					} catch (NullPointerException e) {
-						log.debug(
-								"Next or Previous calendar value is null for recurringChargeTemplate with code={}",
-								ct.getCode());
-					}
-				}
-			}
+			Calendar cal = calendarService.findByName(em, paramBean
+					.getProperty("default.calendar.monthly", "MONTHLY"));
+			startDate = cal.previousCalendarDate(subscriptionDate);
+			endDate = cal.nextCalendarDate(subscriptionDate);
 
 			servicesSum = servicesSum.add(realtimeChargingService
 					.getActivationServicePrice(em,
