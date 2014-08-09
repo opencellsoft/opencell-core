@@ -1,6 +1,6 @@
 package org.meveo.api.rest;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
@@ -16,14 +16,14 @@ import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.PaymentApi;
 import org.meveo.api.dto.PaymentDto;
-import org.meveo.api.rest.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.rest.response.CustomerPaymentsResponse;
 
 /**
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
+@RequestScoped
 @Path("/payment")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

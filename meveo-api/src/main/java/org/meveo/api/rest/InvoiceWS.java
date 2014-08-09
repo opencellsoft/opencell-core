@@ -1,6 +1,6 @@
 package org.meveo.api.rest;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
@@ -23,8 +23,8 @@ import org.meveo.api.rest.response.CustomerInvoicesResponse;
  * @author R.AITYAAZZA
  * 
  */
-@Stateless
 @Path("/invoice")
+@RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
