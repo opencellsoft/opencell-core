@@ -3,7 +3,7 @@
 	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.25.xsd">
 
 	<api-classes>
-		<include pattern="org.meveo.api.rest.**" />
+		<include pattern="org.meveo.api.**" />
 	</api-classes>
 
 	<modules>

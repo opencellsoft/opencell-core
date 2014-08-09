@@ -129,6 +129,8 @@
 									<goal>docs</goal>
 								</goals>
 								<configuration>
+									<javacSourceVersion>1.6</javacSourceVersion>
+									<javacTargetVersion>1.6</javacTargetVersion>
 									<docsDir>${project.build.directory}/docs</docsDir>
 									<configFile>src/main/resources/enunciate.xml</configFile>
 								</configuration>
