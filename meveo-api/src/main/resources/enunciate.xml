@@ -3,10 +3,13 @@
 	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.25.xsd">
 
 	<api-classes>
-		<include pattern="org.meveo.**" />
+		<include pattern="org.meveo.api.rest.**" />
 	</api-classes>
 
 	<modules>
 		<docs docsDir="restapi" title="MEVEO REST API" />
+		<c disabled="true" />
+		<csharp disabled="true" />
+		<obj-c disabled="true" />
 	</modules>
 </enunciate>
