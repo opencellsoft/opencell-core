@@ -2,6 +2,8 @@ package org.meveo.api.dto;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -16,6 +18,7 @@ public abstract class BaseDto implements Serializable {
 	private User currentUser;
 	private String requestId;
 
+	@XmlTransient
 	public User getCurrentUser() {
 		return currentUser;
 	}
@@ -39,8 +42,9 @@ public abstract class BaseDto implements Serializable {
 	}
 
 	protected String innerString() {
-		return StringUtils.concat("providerId=", currentUser.getProvider().getId(),
-				", currentUserId=", currentUser.getId(), ", requestId=", requestId);
+		return StringUtils.concat("providerId=", currentUser.getProvider()
+				.getId(), ", currentUserId=", currentUser.getId(),
+				", requestId=", requestId);
 	}
 
 	public void validate() throws InvalidDTOException {
