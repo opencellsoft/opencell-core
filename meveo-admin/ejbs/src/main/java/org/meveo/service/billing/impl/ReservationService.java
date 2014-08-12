@@ -347,20 +347,24 @@ public class ReservationService extends PersistenceService<Reservation> {
 		// #5 Return for info, servicesSum - reservedAmount. Basically the
 		// difference in amount when the credit is reserved and on the actual
 		// date of the subscription.
-		BigDecimal spentCredit = walletReservationService.getSpentCredit(em,
-				provider, seller, offerTemplate, reservation.getUserAccount(),
-				subscriptionDate, param1, param2, param3);
+		BigDecimal servicesSum = walletReservationService.computeServicesSum(
+				em, offerTemplate, reservation.getUserAccount(),
+				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		if (reservation.getAmountWithoutTax() != null && spentCredit != null) {
-			return spentCredit.subtract(spentCredit);
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(
+				em, provider, seller, reservation.getUserAccount(),
+				subscriptionDate);
+
+		if (servicesSum != null && ratedAmount != null) {
+			return servicesSum.subtract(ratedAmount);
 		} else {
-			if (reservation.getAmountWithoutTax() != null) {
-				return reservation.getAmountWithoutTax();
+			if (servicesSum != null && ratedAmount == null) {
+				return servicesSum;
+			} else if (servicesSum == null && ratedAmount != null) {
+				return ratedAmount;
+			} else {
+				return new BigDecimal(0);
 			}
-			if (spentCredit != null) {
-				return spentCredit;
-			}
-			return new BigDecimal(0);
 		}
 	}
 
