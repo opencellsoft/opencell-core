@@ -229,9 +229,9 @@ public class WalletReservationService extends
 		startDate = cal.previousCalendarDate(subscriptionDate);
 		endDate = cal.nextCalendarDate(subscriptionDate);
 
-		BigDecimal ratedAmount = walletOperationService.getRatedAmount(em,
-				provider, seller, null, null, userAccount.getBillingAccount(),
-				null, startDate, endDate, true);
+		BigDecimal ratedAmount = walletOperationService.getBalanceAmount(em,
+				provider, seller, null, null, null, userAccount, startDate,
+				endDate, false, 1);
 
 		return ratedAmount;
 	}
