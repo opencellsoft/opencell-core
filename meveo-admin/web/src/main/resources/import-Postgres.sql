@@ -1094,7 +1094,7 @@ insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, descripti
 DROP SEQUENCE CAT_CHARGE_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 2 increment by 1;
 
-insert into CAT_RECURRING_CHARGE_TEMPL (apply_in_advance, recurrence_type, subscription_prorate, termination_prorate, id, calendar_id) values (false, 'CALENDAR', false, false, 1, 3);
+insert into CAT_RECURRING_CHARGE_TEMPL (apply_in_advance, recurrence_type, subscription_prorata, termination_prorata, id, calendar_id) values (false, 'CALENDAR', false, false, 1, 3);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (immediate_invoicing, type, id) values (true, 'SUBSCRIPTION', 2);
 
 insert into CAT_SERV_RECCHARGE_TEMPLATES (service_template_id, charge_template_id) values (1, 1);
@@ -1121,11 +1121,6 @@ insert into CRM_CUSTOMER (id, customer_brand_id, customer_category_id, seller_id
 insert into AR_CUSTOMER_ACCOUNT (date_dunning_level, dunning_level, password, status, id, customer_id, trading_currency_id) values (now(), 'R0', 'bDGtBrEn', 'ACTIVE', 2, 1, 1);
 insert into BILLING_BILLING_ACCOUNT (electronic_billing, next_invoice_date, payment_method, status, status_date, subscription_date, id, billing_cycle, customer_account_id, trading_country_id, trading_language_id) values (false, (select now() + '30 days'::interval), 'CHECK', 'ACTIVE', now(), now(), 3, 1, 2, 1, 1);
 insert into BILLING_USER_ACCOUNT (status, status_date, subscription_date, id, billing_account_id) values ('ACTIVE', now(), now(), 4, 3);
-
-DROP SEQUENCE CRM_CUSTOMER_SEQ;
-DROP SEQUENCE CRM_AR_CUSTOMER_ACCOUNT_SEQ;
-DROP SEQUENCE BILLING_BILLING_ACCOUNT_SEQ;
-DROP SEQUENCE BILLING_USER_ACCOUNT_SEQ;
 
 CREATE SEQUENCE CRM_CUSTOMER_SEQ start with 2 increment by 1;
 CREATE SEQUENCE CRM_AR_CUSTOMER_ACCOUNT_SEQ start with 2 increment by 1;
