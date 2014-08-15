@@ -35,6 +35,7 @@ import org.slf4j.Logger;
  * 
  *         http://java.dzone.com/articles/java-ee-7-and-jax-rs-20
  **/
+@WSSecured
 @Provider
 public class RESTSecurityInterceptor implements ContainerRequestFilter,
 		ExceptionMapper<Exception> {

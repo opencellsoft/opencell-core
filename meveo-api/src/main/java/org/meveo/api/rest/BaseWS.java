@@ -22,7 +22,7 @@ public abstract class BaseWS {
 	protected User currentUser;
 
 	protected final String RESPONSE_DELIMITER = " - ";
-	
+
 	@GET
 	@Path("/version")
 	public ActionStatus index() {

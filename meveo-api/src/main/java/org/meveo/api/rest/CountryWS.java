@@ -26,6 +26,7 @@ import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.CountryResponse;
+import org.meveo.api.rest.security.WSSecured;
 import org.meveo.commons.utils.ParamBean;
 
 /**
@@ -37,6 +38,7 @@ import org.meveo.commons.utils.ParamBean;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class CountryWS extends BaseWS {
 
 	private ParamBean paramBean = ParamBean
