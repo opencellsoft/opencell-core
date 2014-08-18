@@ -14,6 +14,7 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.PdfInvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.PdfInvoiceResponse;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author R.AITYAAZZA
@@ -25,6 +26,7 @@ import org.meveo.api.rest.response.PdfInvoiceResponse;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class PdfInvoiceWS extends BaseWS {
 
 	@Inject

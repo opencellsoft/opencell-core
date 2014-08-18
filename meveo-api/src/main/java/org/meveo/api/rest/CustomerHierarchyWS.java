@@ -17,6 +17,7 @@ import org.meveo.api.CustomerHierarchyApi;
 import org.meveo.api.dto.CustomerHierarchyDto;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.CustomerListResponse;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * 
@@ -28,6 +29,7 @@ import org.meveo.api.rest.response.CustomerListResponse;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class CustomerHierarchyWS extends BaseWS {
 
 	@Inject

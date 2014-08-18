@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.OneShotChargeTemplateServiceApi;
 import org.meveo.api.dto.OneShotChargeTemplateListDto;
 import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -24,6 +25,7 @@ import org.meveo.api.logging.LoggingInterceptor;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class OneShotChargeTemplateWS extends BaseWS {
 
 	@Inject

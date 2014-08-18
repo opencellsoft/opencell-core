@@ -16,6 +16,7 @@ import org.meveo.api.WalletBalanceApi;
 import org.meveo.api.dto.WalletBalanceDTO;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -25,6 +26,7 @@ import org.meveo.api.logging.LoggingInterceptor;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class WalletBalanceWS extends BaseWS {
 
 	@Inject

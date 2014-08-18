@@ -14,6 +14,7 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerAccountApi;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.CustomerAccountResponse;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author R.AITYAAZZA
@@ -24,6 +25,7 @@ import org.meveo.api.rest.response.CustomerAccountResponse;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class CustomerAccountWS extends BaseWS {
 
 	@Inject

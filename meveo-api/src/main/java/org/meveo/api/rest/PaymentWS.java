@@ -18,6 +18,7 @@ import org.meveo.api.PaymentApi;
 import org.meveo.api.dto.PaymentDto;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.CustomerPaymentsResponse;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author R.AITYAAZZA
@@ -28,6 +29,7 @@ import org.meveo.api.rest.response.CustomerPaymentsResponse;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class PaymentWS extends BaseWS {
 
 	@Inject

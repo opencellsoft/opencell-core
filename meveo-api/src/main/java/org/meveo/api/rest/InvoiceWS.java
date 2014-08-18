@@ -18,6 +18,7 @@ import org.meveo.api.InvoiceApi;
 import org.meveo.api.dto.InvoiceDto;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.response.CustomerInvoicesResponse;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author R.AITYAAZZA
@@ -28,6 +29,7 @@ import org.meveo.api.rest.response.CustomerInvoicesResponse;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
+@WSSecured
 public class InvoiceWS extends BaseWS {
 
 	@Inject
