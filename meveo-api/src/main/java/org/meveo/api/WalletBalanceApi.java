@@ -31,20 +31,10 @@ public class WalletBalanceApi extends BaseApi {
 	@Inject
 	private WalletReservationService walletReservationService;
 
-	public BigDecimal getCurrentAmount(WalletBalanceDTO walletBalance)
+	public BigDecimal getCurrentAmount(WalletBalanceDTO walletBalance, Provider provider)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(walletBalance.getProviderCode())
-				&& !StringUtils.isBlank(walletBalance.getSellerCode())
+		if (!StringUtils.isBlank(walletBalance.getSellerCode())
 				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
-			Provider provider = providerService.findByCode(walletBalance
-					.getProviderCode());
-			if (provider == null) {
-				log.error("Provider with code="
-						+ walletBalance.getProviderCode() + " does not exists.");
-				throw new MeveoApiException("Provider with code="
-						+ walletBalance.getProviderCode() + " does not exists.");
-			}
-
 			try {
 				if (walletBalance.isAmountWithTax()) {
 					return walletReservationService.getCurrentBalanceWithTax(
@@ -67,10 +57,6 @@ public class WalletBalanceApi extends BaseApi {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
-
-			if (StringUtils.isBlank(walletBalance.getProviderCode())) {
-				missingFields.add("providerCode");
-			}
 			if (StringUtils.isBlank(walletBalance.getSellerCode())) {
 				missingFields.add("sellerCode");
 			}
@@ -89,20 +75,10 @@ public class WalletBalanceApi extends BaseApi {
 		}
 	}
 
-	public BigDecimal getReservedAmount(WalletBalanceDTO walletBalance)
+	public BigDecimal getReservedAmount(WalletBalanceDTO walletBalance, Provider provider)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(walletBalance.getProviderCode())
-				&& !StringUtils.isBlank(walletBalance.getSellerCode())
+		if (!StringUtils.isBlank(walletBalance.getSellerCode())
 				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
-			Provider provider = providerService.findByCode(walletBalance
-					.getProviderCode());
-			if (provider == null) {
-				log.error("Provider with code="
-						+ walletBalance.getProviderCode() + " does not exists.");
-				throw new MeveoApiException("Provider with code="
-						+ walletBalance.getProviderCode() + " does not exists.");
-			}
-
 			try {
 				if (walletBalance.isAmountWithTax()) {
 					return walletReservationService.getReservedBalanceWithTax(
@@ -125,10 +101,6 @@ public class WalletBalanceApi extends BaseApi {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
-
-			if (StringUtils.isBlank(walletBalance.getProviderCode())) {
-				missingFields.add("providerCode");
-			}
 			if (StringUtils.isBlank(walletBalance.getSellerCode())) {
 				missingFields.add("sellerCode");
 			}
@@ -147,19 +119,10 @@ public class WalletBalanceApi extends BaseApi {
 		}
 	}
 
-	public BigDecimal getOpenAmount(WalletBalanceDTO walletBalance)
+	public BigDecimal getOpenAmount(WalletBalanceDTO walletBalance, Provider provider)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(walletBalance.getProviderCode())
-				&& !StringUtils.isBlank(walletBalance.getSellerCode())
+		if (!StringUtils.isBlank(walletBalance.getSellerCode())
 				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
-			Provider provider = providerService.findByCode(walletBalance
-					.getProviderCode());
-			if (provider == null) {
-				log.error("Provider with code="
-						+ walletBalance.getProviderCode() + " does not exists.");
-				throw new MeveoApiException("Provider with code="
-						+ walletBalance.getProviderCode() + " does not exists.");
-			}
 
 			try {
 				if (walletBalance.isAmountWithTax()) {
@@ -183,9 +146,6 @@ public class WalletBalanceApi extends BaseApi {
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(walletBalance.getProviderCode())) {
-				missingFields.add("providerCode");
-			}
 			if (StringUtils.isBlank(walletBalance.getSellerCode())) {
 				missingFields.add("sellerCode");
 			}

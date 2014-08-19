@@ -17,7 +17,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.ReservationService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -27,31 +26,18 @@ import org.slf4j.Logger;
 public class WalletReservationApi extends BaseApi {
 
 	@Inject
-	private Logger log;
-
-	@Inject
 	private ReservationService reservationService;
 
-	public Long create(WalletReservationDto walletReservation)
+	public Long create(WalletReservationDto walletReservation, Provider provider)
 			throws MeveoApiException {
 
-		if (!StringUtils.isBlank(walletReservation.getProviderCode())
-				&& !StringUtils.isBlank(walletReservation.getSellerCode())
+		if (!StringUtils.isBlank(walletReservation.getSellerCode())
 				&& !StringUtils.isBlank(walletReservation.getOfferCode())
 				&& !StringUtils.isBlank(walletReservation.getUserAccountCode())
 				&& walletReservation.getSubscriptionDate() != null
 				&& walletReservation.getCreditLimit() != null) {
 
-			Provider provider = providerService.findByCode(walletReservation
-					.getProviderCode());
-			if (provider == null) {
-				log.error("Provider with code="
-						+ walletReservation.getProviderCode()
-						+ " does not exists.");
-				throw new MeveoApiException("Provider with code="
-						+ walletReservation.getProviderCode()
-						+ " does not exists.");
-			} else {
+			
 				try {
 					return reservationService.createReservation(em, provider,
 							walletReservation.getSellerCode(),
@@ -67,15 +53,11 @@ public class WalletReservationApi extends BaseApi {
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
-			}
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isBlank(walletReservation.getProviderCode())) {
-				missingFields.add("providerCode");
-			}
 			if (StringUtils.isBlank(walletReservation.getSellerCode())) {
 				missingFields.add("sellerCode");
 			}
@@ -104,26 +86,15 @@ public class WalletReservationApi extends BaseApi {
 		}
 	}
 
-	public void update(WalletReservationDto walletReservation)
+	public void update(WalletReservationDto walletReservation, Provider provider)
 			throws MeveoApiException {
-		if (walletReservation.getReservationId() != null
-				&& !StringUtils.isBlank(walletReservation.getProviderCode())
+		if (!StringUtils.isBlank(walletReservation.getProviderCode())
 				&& !StringUtils.isBlank(walletReservation.getSellerCode())
 				&& !StringUtils.isBlank(walletReservation.getOfferCode())
 				&& !StringUtils.isBlank(walletReservation.getUserAccountCode())
 				&& walletReservation.getSubscriptionDate() != null
 				&& walletReservation.getCreditLimit() != null) {
 
-			Provider provider = providerService.findByCode(walletReservation
-					.getProviderCode());
-			if (provider == null) {
-				log.error("Provider with code="
-						+ walletReservation.getProviderCode()
-						+ " does not exists.");
-				throw new MeveoApiException("Provider with code="
-						+ walletReservation.getProviderCode()
-						+ " does not exists.");
-			} else {
 				try {
 					reservationService.updateReservation(em,
 							walletReservation.getReservationId(), provider,
@@ -140,7 +111,7 @@ public class WalletReservationApi extends BaseApi {
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
-			}
+			
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -148,9 +119,6 @@ public class WalletReservationApi extends BaseApi {
 
 			if (walletReservation.getReservationId() == null) {
 				missingFields.add("reservationId");
-			}
-			if (StringUtils.isBlank(walletReservation.getProviderCode())) {
-				missingFields.add("providerCode");
 			}
 			if (StringUtils.isBlank(walletReservation.getSellerCode())) {
 				missingFields.add("sellerCode");
@@ -180,11 +148,14 @@ public class WalletReservationApi extends BaseApi {
 		}
 	}
 
-	public void cancel(Long reservationId) throws MeveoApiException {
+	public void cancel(Long reservationId, Provider provider) throws MeveoApiException {
 		Reservation reservation = reservationService.findById(reservationId);
 		if (reservation == null) {
 			throw new MeveoApiException("Reservation with id=" + reservationId
 					+ " does not exists.");
+		} else if(!reservation.getProvider().getCode().equals(provider.getCode())){
+			throw new MeveoApiException("Reservation with id=" + reservationId
+					+ " does not belong to current provider.");
 		}
 
 		try {
@@ -194,7 +165,7 @@ public class WalletReservationApi extends BaseApi {
 		}
 	}
 
-	public BigDecimal confirm(WalletReservationDto walletReservation)
+	public BigDecimal confirm(WalletReservationDto walletReservation, Provider provider)
 			throws MeveoApiException {
 		if (walletReservation.getReservationId() != null
 				&& !StringUtils.isBlank(walletReservation.getProviderCode())
@@ -203,16 +174,6 @@ public class WalletReservationApi extends BaseApi {
 				&& walletReservation.getSubscriptionDate() != null
 				&& walletReservation.getCreditLimit() != null) {
 
-			Provider provider = providerService.findByCode(walletReservation
-					.getProviderCode());
-			if (provider == null) {
-				log.error("Provider with code="
-						+ walletReservation.getProviderCode()
-						+ " does not exists.");
-				throw new MeveoApiException("Provider with code="
-						+ walletReservation.getProviderCode()
-						+ " does not exists.");
-			} else {
 				try {
 					return reservationService.confirmReservation(em,
 							walletReservation.getReservationId(), provider,
@@ -226,7 +187,7 @@ public class WalletReservationApi extends BaseApi {
 				} catch (BusinessException e) {
 					throw new MeveoApiException(e.getMessage());
 				}
-			}
+			
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -234,9 +195,6 @@ public class WalletReservationApi extends BaseApi {
 
 			if (walletReservation.getReservationId() == null) {
 				missingFields.add("reservationId");
-			}
-			if (StringUtils.isBlank(walletReservation.getProviderCode())) {
-				missingFields.add("providerCode");
 			}
 			if (StringUtils.isBlank(walletReservation.getSellerCode())) {
 				missingFields.add("sellerCode");

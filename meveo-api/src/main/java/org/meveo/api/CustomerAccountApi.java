@@ -16,6 +16,7 @@ import org.meveo.api.dto.CustomerAccountDto;
 import org.meveo.api.dto.MatchingAmountDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -30,12 +31,12 @@ public class CustomerAccountApi extends BaseApi {
 	private CustomerAccountService customerAccountService;
 
 	public CustomerAccountDto getCustomerAccount(String customerAccountCode,
-			String providerCode) throws Exception {
+			User currentUser) throws Exception {
 
 		CustomerAccountDto customerAccountDto = new CustomerAccountDto();
 		if (!StringUtils.isBlank(customerAccountCode)
-				&& !StringUtils.isBlank(providerCode)) {
-			Provider provider = providerService.findByCode(em, providerCode);
+			) {
+			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService
 					.findByCode(em, customerAccountCode, provider);
 			if (customerAccount == null) {
@@ -136,10 +137,6 @@ public class CustomerAccountApi extends BaseApi {
 
 			if (StringUtils.isBlank(customerAccountCode)) {
 				missingFields.add("CustomerAccountCode");
-			}
-
-			if (StringUtils.isBlank(providerCode)) {
-				missingFields.add("providerCode");
 			}
 			if (missingFields.size() > 1) {
 				sb.append(org.apache.commons.lang.StringUtils.join(

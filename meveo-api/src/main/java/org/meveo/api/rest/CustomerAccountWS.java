@@ -34,14 +34,14 @@ public class CustomerAccountWS extends BaseWS {
 	@GET
 	@Path("/")
 	public CustomerAccountResponse getCustomerAccount(
-			@QueryParam("customerAccountCode") String customerAccountCode,
-			@QueryParam("providerCode") String providerCode) throws Exception {
+			@QueryParam("customerAccountCode") String customerAccountCode
+		) throws Exception {
 		CustomerAccountResponse result = new CustomerAccountResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
 			result.setCustomerAccountDto(customerAccountapi.getCustomerAccount(
-					customerAccountCode, providerCode));
+					customerAccountCode, currentUser));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

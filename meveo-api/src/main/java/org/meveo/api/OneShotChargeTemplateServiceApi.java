@@ -13,6 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.OneShotChargeTemplateDto;
 import org.meveo.api.dto.OneShotChargeTemplateListDto;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
@@ -58,8 +59,8 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 
 	public OneShotChargeTemplateListDto getOneShotChargeTemplates(
 			String languageCode, String countryCode, String currencyCode,
-			String providerCode, String sellerCode, Date date) {
-		Provider provider = providerService.findByCode(em, providerCode);
+			String sellerCode, Date date,User currentUser) {
+		Provider provider = currentUser.getProvider();
 		Seller seller = sellerService.findByCode(em, sellerCode, provider);
 		TradingCurrency currency = tradingCurrencyService
 				.findByTradingCurrencyCode(em, currencyCode, provider);

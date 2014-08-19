@@ -57,7 +57,7 @@ public class CustomerHierarchyWS extends BaseWS {
 			customerDto.setCurrentUser(currentUser);
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			result.setCustomerDtoList(customerHierarchyApi.select(customerDto,
-					limit, index, sortField));
+					limit, index, sortField,currentUser));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

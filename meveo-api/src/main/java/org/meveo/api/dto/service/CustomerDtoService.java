@@ -39,9 +39,8 @@ public class CustomerDtoService {
 	@PersistenceContext
 	private EntityManager em;
 
-	public Customer getCustomer(CustomerHierarchyDto customerDto)
+	public Customer getCustomer(CustomerHierarchyDto customerDto,Provider provider)
 			throws BusinessException {
-		Provider provider = customerDto.getCurrentUser().getProvider();
 		Customer customer = new Customer();
 		Country country = null;
 		if (!StringUtils.isEmpty(customerDto.getCountryCode())) {

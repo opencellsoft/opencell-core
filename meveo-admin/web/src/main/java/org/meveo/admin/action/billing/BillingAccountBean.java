@@ -361,6 +361,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			billingRun.setStatus(BillingRunStatusEnum.NEW);
 			billingRun.setProcessDate(new Date());
 			billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
+			billingRun.setProvider(getCurrentProvider());
 			String selectedBillingAccounts = "";
 			String sep = "";
 			boolean isBillable = false;

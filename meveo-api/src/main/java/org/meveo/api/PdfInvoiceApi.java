@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
@@ -40,12 +41,12 @@ public class PdfInvoiceApi extends BaseApi {
 	private CustomerAccountService customerAccountService;
 
 	public byte[] getPDFInvoice(String invoiceNumber,
-			String customerAccountCode, String providerCode) throws Exception {
+			String customerAccountCode, User currentUser) throws Exception {
 		Invoice invoice = new Invoice();
 		if (!StringUtils.isBlank(invoiceNumber)
 				&& !StringUtils.isBlank(customerAccountCode)
-				&& !StringUtils.isBlank(providerCode)) {
-			Provider provider = providerService.findByCode(em, providerCode);
+			) {
+			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService
 					.findByCode(em, customerAccountCode, provider);
 			if (customerAccount == null) {
@@ -67,11 +68,6 @@ public class PdfInvoiceApi extends BaseApi {
 			if (StringUtils.isBlank(customerAccountCode)) {
 				missingFields.add("CustomerAccountCode");
 			}
-
-			if (StringUtils.isBlank(providerCode)) {
-				missingFields.add("providerCode");
-			}
-
 			if (missingFields.size() > 1) {
 				sb.append(org.apache.commons.lang.StringUtils.join(
 						missingFields.toArray(), ", "));

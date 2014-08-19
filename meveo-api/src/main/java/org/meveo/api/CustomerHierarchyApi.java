@@ -894,9 +894,9 @@ public class CustomerHierarchyApi extends BaseApi {
 	}
 
 	public List<CustomerHierarchyDto> select(CustomerHierarchyDto customerDto,
-			int limit, int index, String sortField) throws BusinessException {
+			int limit, int index, String sortField,User currentUser) throws BusinessException {
 		List<CustomerHierarchyDto> result = new ArrayList<CustomerHierarchyDto>();
-		Customer customerFilter = customerDTOService.getCustomer(customerDto);
+		Customer customerFilter = customerDTOService.getCustomer(customerDto,currentUser.getProvider());
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
 				index, limit, null, null, sortField, null);
 

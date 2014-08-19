@@ -37,13 +37,12 @@ public class OneShotChargeTemplateWS extends BaseWS {
 			@QueryParam("languageCode") String languageCode,
 			@QueryParam("countryCode") String countryCode,
 			@QueryParam("currencyCode") String currencyCode,
-			@QueryParam("providerCode") String providerCode,
 			@QueryParam("sellerCode") String sellerCode,
 			@QueryParam("date") Date date) {
 
 		return oneShotChargeTemplateServiceApi.getOneShotChargeTemplates(
-				languageCode, countryCode, currencyCode, providerCode,
-				sellerCode, date);
+				languageCode, countryCode, currencyCode,
+				sellerCode, date,currentUser);
 
 	}
 

@@ -36,15 +36,14 @@ public class PdfInvoiceWS extends BaseWS {
 	@Path("/")
 	public PdfInvoiceResponse getPDFInvoice(
 			@QueryParam("invoiceNumber") String invoiceNumber,
-			@QueryParam("customerAccountCode") String customerAccountCode,
-			@QueryParam("providerCode") String providerCode) throws Exception {
+			@QueryParam("customerAccountCode") String customerAccountCode) throws Exception {
 
 		PdfInvoiceResponse result = new PdfInvoiceResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
 			result.setPdfInvoice(pdfInvoiceApi.getPDFInvoice(invoiceNumber,
-					customerAccountCode, providerCode));
+					customerAccountCode,currentUser));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

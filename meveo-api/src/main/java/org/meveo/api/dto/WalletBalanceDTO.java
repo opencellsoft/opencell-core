@@ -12,20 +12,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "walletBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WalletBalanceDTO {
-	private String providerCode;
 	private String sellerCode;
 	private String userAccountCode;
 	private Date startDate;
 	private Date endDate;
 	private boolean amountWithTax;
-
-	public String getProviderCode() {
-		return providerCode;
-	}
-
-	public void setProviderCode(String providerCode) {
-		this.providerCode = providerCode;
-	}
 
 	public String getSellerCode() {
 		return sellerCode;
