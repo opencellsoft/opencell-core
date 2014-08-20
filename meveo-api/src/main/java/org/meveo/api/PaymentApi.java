@@ -25,6 +25,7 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
@@ -200,6 +201,7 @@ public class PaymentApi extends BaseApi {
 		}
 		List<AccountOperation> ops = customerAccount.getAccountOperations();
 		for (AccountOperation op : ops) {
+			
 			if (op instanceof Payment) {
 				Payment p = (Payment) op;
 				PaymentDto paymentDto = new PaymentDto();
@@ -216,6 +218,16 @@ public class PaymentApi extends BaseApi {
 					paymentDto.setBankLot(ap.getBankLot());
 					paymentDto.setDepositDate(ap.getDepositDate());
 				}
+				result.add(paymentDto);
+			}
+			else if (op instanceof OtherCreditAndCharge){
+				OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
+				PaymentDto paymentDto = new PaymentDto();
+				paymentDto.setAmount(occ.getAmount());
+				paymentDto.setDueDate(occ.getDueDate());
+				paymentDto.setOccTemplateCode(occ.getOccCode());
+				paymentDto.setReference(occ.getReference());
+				paymentDto.setTransactionDate(occ.getTransactionDate());
 				result.add(paymentDto);
 			}
 		}
