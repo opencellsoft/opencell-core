@@ -23,6 +23,8 @@ public class PaymentDto extends BaseDto {
 
 	private static final long serialVersionUID = 1L;
 
+	private String type;
+	private String description;
 	private String paymentMethod;
 	private String occTemplateCode;
 	private BigDecimal amount;
@@ -35,6 +37,22 @@ public class PaymentDto extends BaseDto {
 	private Date transactionDate;
 	private List<String> listOCCReferenceforMatching;
 	private boolean isToMatching;
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public String getOccTemplateCode() {
 		return occTemplateCode;

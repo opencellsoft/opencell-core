@@ -201,10 +201,10 @@ public class PaymentApi extends BaseApi {
 		}
 		List<AccountOperation> ops = customerAccount.getAccountOperations();
 		for (AccountOperation op : ops) {
-			
 			if (op instanceof Payment) {
 				Payment p = (Payment) op;
 				PaymentDto paymentDto = new PaymentDto();
+				paymentDto.setType(p.getType());
 				paymentDto.setAmount(p.getAmount());
 				paymentDto.setDueDate(p.getDueDate());
 				paymentDto.setOccTemplateCode(p.getOccCode());
@@ -223,6 +223,8 @@ public class PaymentApi extends BaseApi {
 			else if (op instanceof OtherCreditAndCharge){
 				OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
 				PaymentDto paymentDto = new PaymentDto();
+				paymentDto.setType(occ.getType());
+				paymentDto.setDescription(op.getOccDescription());
 				paymentDto.setAmount(occ.getAmount());
 				paymentDto.setDueDate(occ.getDueDate());
 				paymentDto.setOccTemplateCode(occ.getOccCode());
