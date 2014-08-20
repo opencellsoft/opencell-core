@@ -16,6 +16,7 @@ import org.meveo.api.OneShotChargeTemplateServiceApi;
 import org.meveo.api.dto.OneShotChargeTemplateListDto;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.security.WSSecured;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -38,11 +39,14 @@ public class OneShotChargeTemplateWS extends BaseWS {
 			@QueryParam("countryCode") String countryCode,
 			@QueryParam("currencyCode") String currencyCode,
 			@QueryParam("sellerCode") String sellerCode,
-			@QueryParam("date") Date date) {
+			@QueryParam("date") String date) {
+
+		Date subscriptionDate = DateUtils.parseDateWithPattern(date,
+				"yyyy-MM-dd");
 
 		return oneShotChargeTemplateServiceApi.getOneShotChargeTemplates(
-				languageCode, countryCode, currencyCode,
-				sellerCode, date,currentUser);
+				languageCode, countryCode, currencyCode, sellerCode,
+				subscriptionDate, currentUser);
 
 	}
 
