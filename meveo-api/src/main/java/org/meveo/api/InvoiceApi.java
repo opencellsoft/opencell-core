@@ -44,7 +44,6 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
-
 /**
  * @author R.AITYAAZZA
  */
@@ -52,161 +51,281 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class InvoiceApi extends BaseApi {
 
-    @Inject
-    RecordedInvoiceService recordedInvoiceService;
+	@Inject
+	RecordedInvoiceService recordedInvoiceService;
 
-    @Inject
-    ProviderService providerService;
+	@Inject
+	ProviderService providerService;
 
-    @Inject
-    CustomerAccountService customerAccountService;
+	@Inject
+	CustomerAccountService customerAccountService;
 
-    @Inject
-    BillingAccountService billingAccountService;
-    @Inject
-    BillingRunService billingRunService;
+	@Inject
+	BillingAccountService billingAccountService;
+	@Inject
+	BillingRunService billingRunService;
 
-    @Inject
-    InvoiceSubCategoryService invoiceSubCategoryService;
+	@Inject
+	InvoiceSubCategoryService invoiceSubCategoryService;
 
-    @Inject
-    RatedTransactionService ratedTransactionService;
+	@Inject
+	RatedTransactionService ratedTransactionService;
 
-    @Inject
-    OCCTemplateService  oCCTemplateService;
+	@Inject
+	OCCTemplateService oCCTemplateService;
 
-    @Inject
-    private InvoiceAgregateService invoiceAgregateService;
+	@Inject
+	private InvoiceAgregateService invoiceAgregateService;
 
-    @Inject
-    InvoiceService invoiceService;
+	@Inject
+	InvoiceService invoiceService;
 
-    @Inject
-    TaxService taxService;
+	@Inject
+	TaxService taxService;
 
-    ParamBean paramBean=ParamBean.getInstance();
-    public void createInvoice(InvoiceDto invoiceDTO) throws BusinessException{
+	ParamBean paramBean = ParamBean.getInstance();
+
+	public void createInvoice(InvoiceDto invoiceDTO) throws BusinessException {
 		User currentUser = invoiceDTO.getCurrentUser();
 		Provider provider = currentUser.getProvider();
-        if (invoiceDTO.getSubCategoryInvoiceAgregates().size()>0
-				&& !StringUtils
-						.isBlank(invoiceDTO.getBillingAccountCode())
+		if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0
+				&& !StringUtils.isBlank(invoiceDTO.getBillingAccountCode())
 				&& !StringUtils.isBlank(invoiceDTO.getDueDate())
 				&& !StringUtils.isBlank(invoiceDTO.getAmountTax())
 				&& !StringUtils.isBlank(invoiceDTO.getAmountWithoutTax())
 				&& !StringUtils.isBlank(invoiceDTO.getAmountWithTax())) {
-        	 BillingAccount billingAccount=billingAccountService.findByCode(em,invoiceDTO.getBillingAccountCode(), provider);
-             
-        	 //FIXME : store that in SubCategoryInvoiceAgregateDto
-        	 String invoiceSubCategoryCode=paramBean.getProperty("invoiceSubCategory.code.default","");
-        	
-        	 //FIXME : store that in SubCategoryInvoiceAgregateDto
-        	 String taxCode=paramBean.getProperty("tax.code.default","");
-             
-        	 Tax tax=taxService.findByCode(em, taxCode);
-             InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findByCode(em,invoiceSubCategoryCode);
-             BillingRun br=new BillingRun();
-             br.setStartDate(new Date());
-             br.setProvider(provider);
-             br.setStatus(BillingRunStatusEnum.VALIDATED);
-             billingRunService.create(em, br, currentUser, provider);
+			BillingAccount billingAccount = billingAccountService.findByCode(
+					em, invoiceDTO.getBillingAccountCode(), provider);
 
-               Invoice invoice = new Invoice();
-               invoice.setBillingAccount(billingAccount);
-               invoice.setBillingRun(br);
-               invoice.setAuditable(br.getAuditable());
-               invoice.setProvider(provider);
-               Date invoiceDate = new Date();
-               invoice.setInvoiceDate(invoiceDate);
-               invoice.setDueDate(invoiceDTO.getDueDate());
-               invoice.setPaymentMethod(billingAccount.getPaymentMethod());
-               invoice.setAmount(invoiceDTO.getAmount());
-               invoice.setAmountTax(invoiceDTO.getAmountTax());
-               invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
-               invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
-               invoice.setDiscount(invoiceDTO.getDiscount());
-               invoice.setComment(invoiceDTO.getComment());
+			// FIXME : store that in SubCategoryInvoiceAgregateDto
+			String invoiceSubCategoryCode = paramBean.getProperty(
+					"invoiceSubCategory.code.default", "");
 
-               invoiceService.create(em, invoice, currentUser, provider);
-             UserAccount userAccount=billingAccount.getDefaultUserAccount();
+			// FIXME : store that in SubCategoryInvoiceAgregateDto
+			String taxCode = paramBean.getProperty("tax.code.default", "");
 
-             for(SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO.getSubCategoryInvoiceAgregates()){
-            	  if (subCategoryInvoiceAgregateDTO.getRatedTransactions().size()==0
-          				|| StringUtils.isBlank(subCategoryInvoiceAgregateDTO.getItemNumber())
-          				|| StringUtils.isBlank(subCategoryInvoiceAgregateDTO.getAmountTax())
-          				|| StringUtils.isBlank(subCategoryInvoiceAgregateDTO.getAmountWithoutTax())
-          				|| StringUtils.isBlank(subCategoryInvoiceAgregateDTO.getAmountWithTax())
-          				|| StringUtils.isBlank(subCategoryInvoiceAgregateDTO.getAmountWithoutTax())) {
-            		  throw new BusinessException("these category fields are mandatory: ItemNumber,AmountTax,AmountWithoutTax,AmountWithTax,RatedTransactions");
-            	  }
-                 SubCategoryInvoiceAgregate subCategoryInvoiceAgregate=new SubCategoryInvoiceAgregate();
-                 subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregateDTO.getAmountWithoutTax());
-                 subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregateDTO.getAmountWithTax());
-                 subCategoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregateDTO.getAmountTax());
-                 subCategoryInvoiceAgregate.setAccountingCode(subCategoryInvoiceAgregateDTO.getAccountingCode());
-                 subCategoryInvoiceAgregate.setBillingAccount(billingAccount);
-                 subCategoryInvoiceAgregate.setUserAccount(userAccount);
-                 subCategoryInvoiceAgregate.setBillingRun(br);
-                 subCategoryInvoiceAgregate.setInvoice(invoice);
-                 subCategoryInvoiceAgregate.setSubCategoryTax(tax);
-                 subCategoryInvoiceAgregate.setItemNumber(subCategoryInvoiceAgregateDTO.getItemNumber());
-                 subCategoryInvoiceAgregate.setInvoiceSubCategory(invoiceSubCategory);
-                 subCategoryInvoiceAgregate.setWallet(userAccount.getWallet());
+			Tax tax = taxService.findByCode(em, taxCode);
+			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
+					.findByCode(em, invoiceSubCategoryCode);
+			BillingRun br = new BillingRun();
+			br.setStartDate(new Date());
+			br.setProvider(provider);
+			br.setStatus(BillingRunStatusEnum.VALIDATED);
+			billingRunService.create(em, br, currentUser, provider);
 
-                 CategoryInvoiceAgregate categoryInvoiceAgregate=new CategoryInvoiceAgregate();
-                 categoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregateDTO.getAmountWithTax());
-                 categoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregateDTO.getAmountWithoutTax());
-                 categoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregateDTO.getAmountTax());
-                 categoryInvoiceAgregate.setBillingAccount(billingAccount);
-                 categoryInvoiceAgregate.setBillingRun(br);
-                 categoryInvoiceAgregate.setInvoice(invoice);
-                 categoryInvoiceAgregate.setItemNumber(subCategoryInvoiceAgregateDTO.getItemNumber());
-                 categoryInvoiceAgregate.setUserAccount(billingAccount.getDefaultUserAccount());
-                 categoryInvoiceAgregate.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
-                 invoiceAgregateService.create(em, categoryInvoiceAgregate, currentUser, provider);
+			Invoice invoice = new Invoice();
+			invoice.setBillingAccount(billingAccount);
+			invoice.setBillingRun(br);
+			invoice.setAuditable(br.getAuditable());
+			invoice.setProvider(provider);
+			Date invoiceDate = new Date();
+			invoice.setInvoiceDate(invoiceDate);
+			invoice.setDueDate(invoiceDTO.getDueDate());
+			invoice.setPaymentMethod(billingAccount.getPaymentMethod());
+			invoice.setAmount(invoiceDTO.getAmount());
+			invoice.setAmountTax(invoiceDTO.getAmountTax());
+			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
+			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
+			invoice.setDiscount(invoiceDTO.getDiscount());
+			invoice.setComment(invoiceDTO.getComment());
 
+			invoiceService.create(em, invoice, currentUser, provider);
+			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 
-                 TaxInvoiceAgregate taxInvoiceAgregate=new TaxInvoiceAgregate();
-                 taxInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregateDTO.getAmountWithoutTax());
-                 taxInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregateDTO.getAmountTax());
-                 taxInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregateDTO.getAmountWithTax());
-                 taxInvoiceAgregate.setTaxPercent(subCategoryInvoiceAgregateDTO.getTaxPercent());
-                 taxInvoiceAgregate.setBillingAccount(billingAccount);
-                 taxInvoiceAgregate.setBillingRun(br);
-                 taxInvoiceAgregate.setInvoice(invoice);
-                 taxInvoiceAgregate.setUserAccount(billingAccount.getDefaultUserAccount());
-                 taxInvoiceAgregate.setItemNumber(subCategoryInvoiceAgregateDTO.getItemNumber());
-                 taxInvoiceAgregate.setTax(tax);
-                 invoiceAgregateService.create(em,taxInvoiceAgregate, currentUser, provider);
+			for (SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO
+					.getSubCategoryInvoiceAgregates()) {
+				if (subCategoryInvoiceAgregateDTO.getRatedTransactions().size() > 0
+						&& !StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+								.getItemNumber())
+						&& !StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+								.getAmountTax())
+						&& !StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+								.getAmountWithoutTax())
+						&& !StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+								.getAmountWithTax())) {
 
+					SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate();
+					subCategoryInvoiceAgregate
+							.setAmountWithoutTax(subCategoryInvoiceAgregateDTO
+									.getAmountWithoutTax());
+					subCategoryInvoiceAgregate
+							.setAmountWithTax(subCategoryInvoiceAgregateDTO
+									.getAmountWithTax());
+					subCategoryInvoiceAgregate
+							.setAmountTax(subCategoryInvoiceAgregateDTO
+									.getAmountTax());
+					subCategoryInvoiceAgregate
+							.setAccountingCode(subCategoryInvoiceAgregateDTO
+									.getAccountingCode());
+					subCategoryInvoiceAgregate
+							.setBillingAccount(billingAccount);
+					subCategoryInvoiceAgregate.setUserAccount(userAccount);
+					subCategoryInvoiceAgregate.setBillingRun(br);
+					subCategoryInvoiceAgregate.setInvoice(invoice);
+					subCategoryInvoiceAgregate.setSubCategoryTax(tax);
+					subCategoryInvoiceAgregate
+							.setItemNumber(subCategoryInvoiceAgregateDTO
+									.getItemNumber());
+					subCategoryInvoiceAgregate
+							.setInvoiceSubCategory(invoiceSubCategory);
+					subCategoryInvoiceAgregate.setWallet(userAccount
+							.getWallet());
 
-                 subCategoryInvoiceAgregate.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
-                 subCategoryInvoiceAgregate.setTaxInvoiceAgregate(taxInvoiceAgregate);
-                 invoiceAgregateService.create(em,subCategoryInvoiceAgregate, currentUser, provider);
+					CategoryInvoiceAgregate categoryInvoiceAgregate = new CategoryInvoiceAgregate();
+					categoryInvoiceAgregate
+							.setAmountWithTax(subCategoryInvoiceAgregateDTO
+									.getAmountWithTax());
+					categoryInvoiceAgregate
+							.setAmountWithoutTax(subCategoryInvoiceAgregateDTO
+									.getAmountWithoutTax());
+					categoryInvoiceAgregate
+							.setAmountTax(subCategoryInvoiceAgregateDTO
+									.getAmountTax());
+					categoryInvoiceAgregate.setBillingAccount(billingAccount);
+					categoryInvoiceAgregate.setBillingRun(br);
+					categoryInvoiceAgregate.setInvoice(invoice);
+					categoryInvoiceAgregate
+							.setItemNumber(subCategoryInvoiceAgregateDTO
+									.getItemNumber());
+					categoryInvoiceAgregate.setUserAccount(billingAccount
+							.getDefaultUserAccount());
+					categoryInvoiceAgregate
+							.setInvoiceCategory(invoiceSubCategory
+									.getInvoiceCategory());
+					invoiceAgregateService.create(em, categoryInvoiceAgregate,
+							currentUser, provider);
 
-                 for(RatedTransactionDTO ratedTransaction:subCategoryInvoiceAgregateDTO.getRatedTransactions()){
-                     RatedTransaction meveoRatedTransaction=new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
-                             ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(),
-                             ratedTransaction.getAmountTax(),RatedTransactionStatusEnum.BILLED, provider, null, billingAccount, invoiceSubCategory,null,null,null);
-                     meveoRatedTransaction.setCode(ratedTransaction.getCode());
-                     meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
-                     meveoRatedTransaction.setBillingRun(br);
-                     meveoRatedTransaction.setInvoice(invoice);
-                     meveoRatedTransaction.setWallet(userAccount.getWallet());
-                     ratedTransactionService.create(em,meveoRatedTransaction, currentUser, provider);
+					TaxInvoiceAgregate taxInvoiceAgregate = new TaxInvoiceAgregate();
+					taxInvoiceAgregate
+							.setAmountWithoutTax(subCategoryInvoiceAgregateDTO
+									.getAmountWithoutTax());
+					taxInvoiceAgregate
+							.setAmountTax(subCategoryInvoiceAgregateDTO
+									.getAmountTax());
+					taxInvoiceAgregate
+							.setAmountWithTax(subCategoryInvoiceAgregateDTO
+									.getAmountWithTax());
+					taxInvoiceAgregate
+							.setTaxPercent(subCategoryInvoiceAgregateDTO
+									.getTaxPercent());
+					taxInvoiceAgregate.setBillingAccount(billingAccount);
+					taxInvoiceAgregate.setBillingRun(br);
+					taxInvoiceAgregate.setInvoice(invoice);
+					taxInvoiceAgregate.setUserAccount(billingAccount
+							.getDefaultUserAccount());
+					taxInvoiceAgregate
+							.setItemNumber(subCategoryInvoiceAgregateDTO
+									.getItemNumber());
+					taxInvoiceAgregate.setTax(tax);
+					invoiceAgregateService.create(em, taxInvoiceAgregate,
+							currentUser, provider);
 
-                 }
+					subCategoryInvoiceAgregate
+							.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
+					subCategoryInvoiceAgregate
+							.setTaxInvoiceAgregate(taxInvoiceAgregate);
+					invoiceAgregateService.create(em,
+							subCategoryInvoiceAgregate, currentUser, provider);
 
+					for (RatedTransactionDTO ratedTransaction : subCategoryInvoiceAgregateDTO
+							.getRatedTransactions()) {
+						RatedTransaction meveoRatedTransaction = new RatedTransaction(
+								null, ratedTransaction.getUsageDate(),
+								ratedTransaction.getUnitAmountWithoutTax(),
+								ratedTransaction.getUnitAmountWithTax(),
+								ratedTransaction.getUnitAmountTax(),
+								ratedTransaction.getQuantity(),
+								ratedTransaction.getAmountWithoutTax(),
+								ratedTransaction.getAmountWithTax(),
+								ratedTransaction.getAmountTax(),
+								RatedTransactionStatusEnum.BILLED, provider,
+								null, billingAccount, invoiceSubCategory, null,
+								null, null);
+						meveoRatedTransaction.setCode(ratedTransaction
+								.getCode());
+						meveoRatedTransaction.setDescription(ratedTransaction
+								.getDescription());
+						meveoRatedTransaction.setBillingRun(br);
+						meveoRatedTransaction.setInvoice(invoice);
+						meveoRatedTransaction
+								.setWallet(userAccount.getWallet());
+						ratedTransactionService.create(em,
+								meveoRatedTransaction, currentUser, provider);
 
-             }
-        }else{
+					}
+				} else {
+					StringBuilder sb = new StringBuilder(
+							"Missing value for the following parameters ");
+					List<String> missingFields = new ArrayList<String>();
 
-  		  throw new BusinessException("these invoice fields are mandatory: AmountTax,AmountWithoutTax,AmountWithTax,dueDate,billingAccountCode,SubCategoryInvoiceAgregates");
-        }
-        
-    }
+					if (subCategoryInvoiceAgregateDTO.getRatedTransactions()
+							.size() <= 0) {
+						missingFields.add("Rated Transactions");
+					}
+					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+							.getItemNumber())) {
+						missingFields.add("Item Number");
+					}
+					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+							.getAmountTax())) {
+						missingFields.add("Tax Amount");
+					}
+					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+							.getAmountWithoutTax())) {
+						missingFields.add("Amount Without Tax");
+					}
+					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
+							.getAmountWithTax())) {
+						missingFields.add("Amount With Tax");
+					}
 
-    public List<InvoiceDto> getInvoiceList(String customerAccountCode,
+					if (missingFields.size() > 1) {
+						sb.append(org.apache.commons.lang.StringUtils.join(
+								missingFields.toArray(), ", "));
+					}
+					sb.append(".");
+
+					throw new BusinessException(sb.toString());
+				}
+
+			}
+		} else {
+
+			StringBuilder sb = new StringBuilder(
+					"Missing value for the following parameters ");
+			List<String> missingFields = new ArrayList<String>();
+
+			if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0) {
+				missingFields.add("Subcategory Invoice Agregates");
+			}
+			if (StringUtils.isBlank(invoiceDTO.getBillingAccountCode())) {
+				missingFields.add("Billing Account Code");
+			}
+			if (StringUtils.isBlank(invoiceDTO.getDueDate())) {
+				missingFields.add("Due Date");
+			}
+			if (StringUtils.isBlank(invoiceDTO.getAmountTax())) {
+				missingFields.add("Amount Tax");
+			}
+			if (StringUtils.isBlank(invoiceDTO.getAmountWithoutTax())) {
+				missingFields.add("Amount Without Tax");
+			}
+			if (StringUtils.isBlank(invoiceDTO.getAmountWithTax())) {
+				missingFields.add("Amount With Tax");
+			}
+
+			if (missingFields.size() > 1) {
+				sb.append(org.apache.commons.lang.StringUtils.join(
+						missingFields.toArray(), ", "));
+			}
+			sb.append(".");
+
+			throw new BusinessException(sb.toString());
+		}
+
+	}
+
+	public List<InvoiceDto> getInvoiceList(String customerAccountCode,
 			User currentUser) throws Exception {
 		List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
 
@@ -261,8 +380,8 @@ public class InvoiceApi extends BaseApi {
 						subCategoryInvoiceAgregateDto
 								.setAmountWithTax(invoiceAgregate
 										.getAmountWithTax());
-						customerInvoiceDto
-								.getSubCategoryInvoiceAgregates().add(subCategoryInvoiceAgregateDto);
+						customerInvoiceDto.getSubCategoryInvoiceAgregates()
+								.add(subCategoryInvoiceAgregateDto);
 					}
 
 					customerInvoiceDtos.add(customerInvoiceDto);
