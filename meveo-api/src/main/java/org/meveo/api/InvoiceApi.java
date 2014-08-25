@@ -357,10 +357,11 @@ public class InvoiceApi extends BaseApi {
 					customerInvoiceDto.setInvoiceNumber(invoices
 							.getInvoiceNumber());
 					customerInvoiceDto.setPDFpresent(invoices.getPdf()!=null);
-					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
 
 					for (InvoiceAgregate invoiceAgregate : invoices
 							.getInvoiceAgregates()) {
+						subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
 						subCategoryInvoiceAgregateDto
 								.setItemNumber(invoiceAgregate.getItemNumber());
 						subCategoryInvoiceAgregateDto
