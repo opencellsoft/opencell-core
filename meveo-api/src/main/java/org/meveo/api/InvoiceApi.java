@@ -237,6 +237,7 @@ public class InvoiceApi extends BaseApi {
 							.getAmountWithoutTax());
 					customerInvoiceDto.setInvoiceNumber(invoices
 							.getInvoiceNumber());
+					customerInvoiceDto.setPDFpresent(invoices.getPdf()!=null);
 					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
 
 					for (InvoiceAgregate invoiceAgregate : invoices

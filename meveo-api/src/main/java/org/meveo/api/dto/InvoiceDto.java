@@ -30,6 +30,7 @@ public class InvoiceDto extends BaseDto {
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
+	private boolean PDFpresent;
 	private String comment;
 
 	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
@@ -133,6 +134,14 @@ public class InvoiceDto extends BaseDto {
 
 	public String getComment() {
 		return comment;
+	}
+	
+	public boolean isPDFpresent() {
+		return PDFpresent;
+	}
+
+	public void setPDFpresent(boolean pDFpresent) {
+		PDFpresent = pDFpresent;
 	}
 
 	public void setComment(String comment) {
