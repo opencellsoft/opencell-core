@@ -292,6 +292,11 @@
 			<artifactId>commons-collections</artifactId>
 			<version>3.2</version>
 		</dependency>
+		<dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.7.6</version>
+        </dependency>
 
 		<!-- <dependency> -->
 		<!-- <groupId>batik</groupId> -->
