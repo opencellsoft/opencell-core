@@ -361,7 +361,17 @@ public class InvoiceApi extends BaseApi {
 
 					for (InvoiceAgregate invoiceAgregate : invoices
 							.getInvoiceAgregates()) {
+						
 						subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
+						
+						if(invoiceAgregate instanceof CategoryInvoiceAgregate){
+							subCategoryInvoiceAgregateDto.setType("R");
+						}else if(invoiceAgregate instanceof SubCategoryInvoiceAgregate){
+							subCategoryInvoiceAgregateDto.setType("F");
+						}else if(invoiceAgregate instanceof TaxInvoiceAgregate){
+							subCategoryInvoiceAgregateDto.setType("T");
+						}
+						
 						subCategoryInvoiceAgregateDto
 								.setItemNumber(invoiceAgregate.getItemNumber());
 						subCategoryInvoiceAgregateDto

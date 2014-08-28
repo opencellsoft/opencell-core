@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public  class SubCategoryInvoiceAgregateDto {
 
-    
+	private String type;
+	
 	private Integer itemNumber;
 
 	private String accountingCode;
@@ -150,6 +151,16 @@ public  class SubCategoryInvoiceAgregateDto {
 
 	public void setRatedTransactions(List<RatedTransactionDTO> ratedTransactions) {
 		this.ratedTransactions = ratedTransactions;
+	}
+
+
+	public String getType() {
+		return type;
+	}
+
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 
