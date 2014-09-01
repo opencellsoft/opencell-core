@@ -122,12 +122,10 @@ public class InvoiceApi extends BaseApi {
 			invoice.setInvoiceDate(invoiceDate);
 			invoice.setDueDate(invoiceDTO.getDueDate());
 			invoice.setPaymentMethod(billingAccount.getPaymentMethod());
-			invoice.setAmount(invoiceDTO.getAmount());
 			invoice.setAmountTax(invoiceDTO.getAmountTax());
 			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
-			invoice.setComment(invoiceDTO.getComment());
 
 			invoiceService.create(em, invoice, currentUser, provider);
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
@@ -343,23 +341,25 @@ public class InvoiceApi extends BaseApi {
 					.getBillingAccounts()) {
 				List<Invoice> invoiceList = billingAccount.getInvoices();
 
-				for (Invoice invoices : invoiceList) {
+				for (Invoice invoice : invoiceList) {
 					InvoiceDto customerInvoiceDto = new InvoiceDto();
 					customerInvoiceDto.setBillingAccountCode(billingAccount
 							.getCode());
 					customerInvoiceDto
-							.setInvoiceDate(invoices.getInvoiceDate());
-					customerInvoiceDto.setDueDate(invoices.getDueDate());
-					customerInvoiceDto.setAmount(invoices.getAmount());
-					customerInvoiceDto.setAmount(invoices.getAmount());
-					customerInvoiceDto.setAmountWithoutTax(invoices
+							.setInvoiceDate(invoice.getInvoiceDate());
+					customerInvoiceDto.setDueDate(invoice.getDueDate());
+					
+					customerInvoiceDto.setAmountWithoutTax(invoice
 							.getAmountWithoutTax());
-					customerInvoiceDto.setInvoiceNumber(invoices
+					customerInvoiceDto.setAmountTax(invoice.getAmountTax());
+					customerInvoiceDto.setAmountWithTax(invoice.getAmountWithTax());
+					customerInvoiceDto.setInvoiceNumber(invoice
 							.getInvoiceNumber());
-					customerInvoiceDto.setPDFpresent(invoices.getPdf()!=null);
+					customerInvoiceDto.setPaymentMathod(invoice.getPaymentMethod().toString());
+					customerInvoiceDto.setPDFpresent(invoice.getPdf()!=null);
 					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
 
-					for (InvoiceAgregate invoiceAgregate : invoices
+					for (InvoiceAgregate invoiceAgregate : invoice
 							.getInvoiceAgregates()) {
 						
 						subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();

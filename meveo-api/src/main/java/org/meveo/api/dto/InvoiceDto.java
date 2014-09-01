@@ -20,18 +20,15 @@ public class InvoiceDto extends BaseDto {
 	private static final long serialVersionUID = 1072382628068718580L;
 
 	private String invoiceNumber;
-	private String invoiceName;
-	private String invoiceStatus;
 	private String billingAccountCode;
 	private Date invoiceDate;
 	private Date dueDate;
-	private BigDecimal amount;
 	private BigDecimal discount;
 	private BigDecimal amountWithoutTax;
 	private BigDecimal amountTax;
 	private BigDecimal amountWithTax;
+	private String paymentMathod;
 	private boolean PDFpresent;
-	private String comment;
 
 	private List<SubCategoryInvoiceAgregateDto> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregateDto>();
 
@@ -43,21 +40,6 @@ public class InvoiceDto extends BaseDto {
 		this.invoiceNumber = invoiceNumber;
 	}
 
-	public String getInvoiceName() {
-		return invoiceName;
-	}
-
-	public void setInvoiceName(String invoiceName) {
-		this.invoiceName = invoiceName;
-	}
-
-	public String getInvoiceStatus() {
-		return invoiceStatus;
-	}
-
-	public void setInvoiceStatus(String invoiceStatus) {
-		this.invoiceStatus = invoiceStatus;
-	}
 
 	public String getBillingAccountCode() {
 		return billingAccountCode;
@@ -92,13 +74,7 @@ public class InvoiceDto extends BaseDto {
 		this.dueDate = dueDate;
 	}
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
-
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+	
 
 	public BigDecimal getDiscount() {
 		return discount;
@@ -132,9 +108,7 @@ public class InvoiceDto extends BaseDto {
 		this.amountWithTax = amountWithTax;
 	}
 
-	public String getComment() {
-		return comment;
-	}
+	
 	
 	public boolean isPDFpresent() {
 		return PDFpresent;
@@ -144,20 +118,24 @@ public class InvoiceDto extends BaseDto {
 		PDFpresent = pDFpresent;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+
+	public String getPaymentMathod() {
+		return paymentMathod;
+	}
+
+	public void setPaymentMathod(String paymentMathod) {
+		this.paymentMathod = paymentMathod;
 	}
 
 	@Override
 	public String toString() {
-		return "InvoiceDto [invoiceNumber =" + invoiceNumber + ", invoiceName="
-				+ invoiceName + ",invoiceStatus = " + invoiceStatus
+		return "InvoiceDto [invoiceNumber =" + invoiceNumber + "," 
 				+ ", billingAccountCode=" + billingAccountCode
 				+ ", invoiceDate=" + invoiceDate + ", dueDate=" + dueDate
-				+ ", amount=" + amount + ", discount=" + discount
+				+ ", discount=" + discount
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
-				+ amountTax + ", amountWithTax=" + amountWithTax + ", comment="
-				+ comment + ", subCategoryInvoiceAgregates="
+				+ amountTax + ", amountWithTax=" + amountWithTax
+				+ ", subCategoryInvoiceAgregates="
 				+ subCategoryInvoiceAgregates + "]";
 	}
 }
