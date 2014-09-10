@@ -44,6 +44,10 @@ public class PricePlanMatrix extends AuditableEntity {
 	@Column(name = "EVENT_CODE", length = 100, nullable = false)
 	@Size(min = 1, max = 100)
 	private String eventCode;
+	
+	@Column(name = "OFFER_CODE", length = 35)
+	@Size(max = 35, min = 1)
+	protected String offerCode;
 
 	@Column(name = "START_SUBSCRIPTION_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -105,6 +109,14 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	public void setEventCode(String eventCode) {
 		this.eventCode = eventCode;
+	}
+
+	public String getOfferCode() {
+		return offerCode;
+	}
+
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
 	}
 
 	public Date getStartSubscriptionDate() {

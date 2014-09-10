@@ -99,7 +99,7 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 					BigDecimal unitPrice = realtimeChargingService
 							.getApplicationPrice(em, provider, seller,
 									currency, country, oneShotChargeTemplate,
-									date, BigDecimal.ONE, null, null, null,
+									date,null, BigDecimal.ONE, null, null, null,
 									true);
 					if (unitPrice != null) {
 						oneShotChargeDto.setUnitPriceWithoutTax(unitPrice

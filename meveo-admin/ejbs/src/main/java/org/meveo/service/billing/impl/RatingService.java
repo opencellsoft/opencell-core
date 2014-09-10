@@ -142,7 +142,7 @@ public class RatingService {
 	}
 
 	public WalletOperation prerateChargeApplication(String code,
-			Date subscriptionDate, ChargeInstance chargeInstance,
+			Date subscriptionDate, String offerCode,ChargeInstance chargeInstance,
 			ApplicationTypeEnum applicationType, Date applicationDate,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
 			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
@@ -151,7 +151,7 @@ public class RatingService {
 			String criteria1, String criteria2, String criteria3,
 			Date startdate, Date endDate, ChargeApplicationModeEnum mode)
 			throws BusinessException {
-		return prerateChargeApplication(entityManager, code, subscriptionDate,
+		return prerateChargeApplication(entityManager, code, subscriptionDate,offerCode,
 				chargeInstance, applicationType, applicationDate,
 				amountWithoutTax, amountWithTax, quantity, tCurrency,
 				countryId, taxPercent, discountPercent, nextApplicationDate,
@@ -161,7 +161,7 @@ public class RatingService {
 
 	// used to prerate a oneshot or recurring charge
 	public WalletOperation prerateChargeApplication(EntityManager em,
-			String code, Date subscriptionDate, ChargeInstance chargeInstance,
+			String code, Date subscriptionDate,String offerCode, ChargeInstance chargeInstance,
 			ApplicationTypeEnum applicationType, Date applicationDate,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
 			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
@@ -191,6 +191,7 @@ public class RatingService {
 		result.setCurrency(tCurrency.getCurrency());
 		result.setStartDate(startdate);
 		result.setEndDate(endDate);
+		result.setOfferCode(offerCode);
 		result.setStatus(WalletOperationStatusEnum.OPEN);
 		result.setSeller(chargeInstance.getSeller());
 
@@ -245,7 +246,7 @@ public class RatingService {
 		}
 
 		WalletOperation result = prerateChargeApplication(em, code,
-				subscriptionDate, chargeInstance, applicationType,
+				subscriptionDate,subscription.getOffer().getCode(), chargeInstance, applicationType,
 				applicationDate, amountWithoutTax, amountWithTax, quantity,
 				tCurrency, countryId, taxPercent, discountPercent,
 				nextApplicationDate, invoiceSubCategory, criteria1, criteria2,
@@ -533,13 +534,21 @@ public class RatingService {
 							bareOperation.getParameter3());
 			// log.info("criteria3SameInPricePlan(" +
 			// pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
-			if (criteria3SameInPricePlan) {
-				log.debug("criteria3SameInPricePlan");
+			if (!criteria3SameInPricePlan) {
+				log.debug("The operation param3 " + bareOperation.getParameter3()
+						+ " is not compatible with price plan criteria 3: "
+						+ pricePlan.getCriteria3Value());
+				continue;
+			}
+			boolean offerCodeSameInPricePlan = pricePlan.getOfferCode() == null
+					|| pricePlan.getOfferCode().equals(bareOperation.getOfferCode());
+			if (offerCodeSameInPricePlan) {
+				log.debug("offerCodeSameInPricePlan");
 				return pricePlan;
 			}
-			log.debug("The operation param3 " + bareOperation.getParameter3()
-					+ " is not compatible with price plan criteria 3: "
-					+ pricePlan.getCriteria3Value());
+			log.debug("The operation offerCode " + bareOperation.getOfferCode()
+					+ " is not compatible with price plan offerCode: "
+					+ pricePlan.getOfferCode());
 		}
 		return null;
 	}

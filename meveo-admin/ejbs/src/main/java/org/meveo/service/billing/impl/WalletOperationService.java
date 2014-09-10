@@ -697,7 +697,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							nextapplicationDate, -1), null);
 		} else {
 			result = chargeApplicationRatingService.prerateChargeApplication(
-					em, chargeInstance.getCode(), subscriptionDate,
+					em, chargeInstance.getCode(), subscriptionDate,chargeInstance
+					.getServiceInstance().getSubscription().getOffer().getCode(),
 					chargeInstance, ApplicationTypeEnum.PRORATA_SUBSCRIPTION,
 					applicationDate, chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), quantity, currency,

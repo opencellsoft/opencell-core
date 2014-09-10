@@ -44,15 +44,15 @@ public class RealtimeChargingService {
 	private WalletOperationService walletOperationService;
 
 	public BigDecimal getApplicationPrice(BillingAccount ba,
-			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,String offerCode,
 			BigDecimal quantity, String param1, String param2, String param3,
 			boolean priceWithoutTax) throws BusinessException {
-		return getApplicationPrice(null, ba, chargeTemplate, subscriptionDate,
+		return getApplicationPrice(null, ba, chargeTemplate, subscriptionDate,offerCode,
 				quantity, param1, param2, param3, priceWithoutTax);
 	}
 
 	public BigDecimal getApplicationPrice(EntityManager em, BillingAccount ba,
-			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,String offerCode,
 			BigDecimal quantity, String param1, String param2, String param3,
 			boolean priceWithoutTax) throws BusinessException {
 
@@ -74,14 +74,14 @@ public class RealtimeChargingService {
 		Seller seller = ba.getCustomerAccount().getCustomer().getSeller();
 
 		return getApplicationPrice(em, provider, seller, currency,
-				tradingCountry, chargeTemplate, subscriptionDate, quantity,
+				tradingCountry, chargeTemplate, subscriptionDate,offerCode, quantity,
 				param1, param2, param3, priceWithoutTax);
 	}
 
 	public BigDecimal getApplicationPrice(EntityManager em, Provider provider,
 			Seller seller, TradingCurrency currency,
 			TradingCountry tradingCountry,
-			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,String offerCode,
 			BigDecimal quantity, String param1, String param2, String param3,
 			boolean priceWithoutTax) throws BusinessException {
 
@@ -135,6 +135,7 @@ public class RealtimeChargingService {
 		op.setCurrency(currency.getCurrency());
 		op.setStartDate(null);
 		op.setEndDate(null);
+		op.setOfferCode(offerCode);
 		op.setStatus(WalletOperationStatusEnum.OPEN);
 		op.setSeller(seller);
 
@@ -168,11 +169,11 @@ public class RealtimeChargingService {
 	}
 
 	public BigDecimal getActivationServicePrice(BillingAccount ba,
-			ServiceTemplate serviceTemplate, Date subscriptionDate,
+			ServiceTemplate serviceTemplate, Date subscriptionDate,String offerCode,
 			BigDecimal quantity, String param1, String param2, String param3,
 			boolean priceWithoutTax) throws BusinessException {
 		return getActivationServicePrice(null, ba, serviceTemplate,
-				subscriptionDate, quantity, param1, param2, param3,
+				subscriptionDate,offerCode, quantity, param1, param2, param3,
 				priceWithoutTax);
 	}
 
@@ -181,7 +182,7 @@ public class RealtimeChargingService {
 	 */
 	public BigDecimal getActivationServicePrice(EntityManager em,
 			BillingAccount ba, ServiceTemplate serviceTemplate,
-			Date subscriptionDate, BigDecimal quantity, String param1,
+			Date subscriptionDate,String offerCode, BigDecimal quantity, String param1,
 			String param2, String param3, boolean priceWithoutTax)
 			throws BusinessException {
 
@@ -191,7 +192,7 @@ public class RealtimeChargingService {
 			for (OneShotChargeTemplate charge : serviceTemplate
 					.getSubscriptionCharges()) {
 				result = result.add(getApplicationPrice(em, ba, charge,
-						subscriptionDate, quantity, param1, param2, param3,
+						subscriptionDate,offerCode, quantity, param1, param2, param3,
 						priceWithoutTax));
 			}
 		}

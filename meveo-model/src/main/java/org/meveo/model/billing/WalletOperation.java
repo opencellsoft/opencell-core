@@ -34,6 +34,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Currency;
@@ -124,6 +125,10 @@ public class WalletOperation extends BusinessEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "SUBSCRIPTION_DATE")
 	private Date subscriptionDate;
+	
+	@Column(name = "OFFER_CODE", length = 35)
+	@Size(max = 35, min = 1)
+	protected String offerCode;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
@@ -315,14 +320,23 @@ public class WalletOperation extends BusinessEntity {
 		this.seller = seller;
 	}
 
+	public String getOfferCode() {
+		return offerCode;
+	}
+
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
+	}
+
 	public String toString() {
 		return wallet + "," + operationDate + "," + type + "," + chargeInstance
 				+ "," + currency + "," + taxPercent + ","
 				+ unitAmountWithoutTax + "," + unitAmountWithTax + ","
 				+ unitAmountTax + "," + counter + "," + parameter1 + ","
 				+ parameter2 + "," + parameter3 + "," + startDate + ","
-				+ endDate + "," + subscriptionDate + "," + status + ","
+				+ endDate + "," + subscriptionDate + "," + offerCode + "," + status + ","
 				+ seller;
 	}
+
 
 }

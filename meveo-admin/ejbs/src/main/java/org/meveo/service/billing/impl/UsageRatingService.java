@@ -353,6 +353,7 @@ public class UsageRatingService {
 		if (chargeInstance.getCounter() != null) {
 			walletOperation.setCounter(chargeInstance.getCounter());
 		}
+		walletOperation.setOfferCode(edr.getSubscription().getOffer().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 		log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, null, null,
