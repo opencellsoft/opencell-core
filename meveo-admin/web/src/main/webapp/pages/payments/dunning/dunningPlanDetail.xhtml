@@ -117,11 +117,11 @@
 									entity="#{dunningPlanTransition}" showFormButtons="false"
 									ajaxSubmit="true">
                           
-			                <hf:formField label="#{messages['dunningPlanTransition.dunningLevelFrom']}" style="width: 100px" panelStyle="width: 100px"  field="dunningLevelFrom" required="true" isMessage="true"  />
-							<hf:formField label="#{messages['dunningPlanTransition.dunningLevelTo']}" style="width: 100px" panelStyle="width: 100px" field="dunningLevelTo" required="true" isMessage="true"  />
-							<hf:formField label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" required="true"/>
-							<hf:formField label="#{messages['dunningPlanTransition.thresholdAmount']}" field="thresholdAmount" required="true" />
-							<hf:formField label="#{messages['dunningPlanTransition.waitDuration']}" field="waitDuration" required="true"/>
+			                <hf:formField label="#{messages['dunningPlanTransition.dunningLevelFrom']}" style="width: 100px" panelStyle="width: 100px"  field="dunningLevelFrom" required="true" isMessage="true"  edit="#{dunningPlanBean.edit}"/>
+							<hf:formField label="#{messages['dunningPlanTransition.dunningLevelTo']}" style="width: 100px" panelStyle="width: 100px" field="dunningLevelTo" required="true" isMessage="true"   edit="#{dunningPlanBean.edit}"/>
+							<hf:formField label="#{messages['dunningPlanTransition.delayBeforeProcess']}" field="delayBeforeProcess" required="true"  edit="#{dunningPlanBean.edit}"/>
+							<hf:formField label="#{messages['dunningPlanTransition.thresholdAmount']}" field="thresholdAmount" required="true"  edit="#{dunningPlanBean.edit}"/>
+							<hf:formField label="#{messages['dunningPlanTransition.waitDuration']}" field="waitDuration" required="true" edit="#{dunningPlanBean.edit}"/>
 									<p:panelGrid columns="3">
 										<p:commandButton
 											rendered="#{dunningPlanTransition.id==null}"
@@ -239,10 +239,10 @@
 									entity="#{actionPlanItem}" showFormButtons="false"
 									ajaxSubmit="true">
                           
-							 <hf:formField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" style="width: 100px" panelStyle="width: 100px" required="true" isMessage="true"/>
-							<hf:formField label="#{messages['actionPlanItem.actionType']}" field="actionType" style="width: 100px" panelStyle="width: 100px" required="true" event="onchange" render="amountOrTemplate" />
-							<hf:formField label="#{messages['actionPlanItem.order']}" field="itemOrder" required="true"/>
-							<hf:formField label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" required="true"/>
+							 <hf:formField label="#{messages['actionPlanItem.dunningLevel']}" field="dunningLevel" style="width: 100px" panelStyle="width: 100px" required="true" isMessage="true" edit="#{dunningPlanBean.edit}"/>
+							<hf:formField label="#{messages['actionPlanItem.actionType']}" field="actionType" style="width: 100px" panelStyle="width: 100px" required="true" event="onchange" render="amountOrTemplate"  edit="#{dunningPlanBean.edit}" />
+							<hf:formField label="#{messages['actionPlanItem.order']}" field="itemOrder" required="true" edit="#{dunningPlanBean.edit}"/>
+							<hf:formField label="#{messages['actionPlanItem.thresholdAmount']}" field="thresholdAmount" required="true" edit="#{dunningPlanBean.edit}"/>
 							<p:outputPanel id="amountOrTemplate">
 							   <h:panelGroup style="display:block;" rendered="#{actionPlanItem.actionType.toString() != 'CHARGE'}">
 								<hf:formField label="#{messages['actionPlanItem.letterTemplate']}" field="letterTemplate" size="50"  required="false" />
