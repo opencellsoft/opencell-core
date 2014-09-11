@@ -31,6 +31,8 @@
 			backingBean="#{pricePlanMatrixBean}">
 			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
+			<hf:searchField label="#{messages['pricePlanMatrix.offerCode']}"
+				field="offerCode" />
 			<hf:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" childField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
@@ -58,12 +60,12 @@
 				field="tradingCountry" childField="countryCode" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
-			<hftl:column
+			<!-- <hftl:column
 				label="#{messages['pricePlanMatrix.table.startSubscriptionDate']}"
 				field="startSubscriptionDate" isDate="true" />
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.endSubscriptionDate']}"
-				field="endSubscriptionDate" isDate="true" />
+				field="endSubscriptionDate" isDate="true" /> -->
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.startRatingDate']}"
 				field="startRatingDate" wrapHeader="true" isDate="true" />
@@ -85,6 +87,9 @@
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.criteria3Value']}"
 				field="criteria3Value" /> -->
+			<hftl:column
+				label="#{messages['pricePlanMatrix.offerCode']}"
+				field="offerCode" />
 			<hftl:column label="#{messages['pricePlanMatrix.priority']}"
 				field="priority" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"
