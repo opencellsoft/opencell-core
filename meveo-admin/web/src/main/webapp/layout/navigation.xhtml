@@ -129,6 +129,10 @@
 				outcome="terminationReasons"
 				value="#{messages['menu.terminationReason']}" />
 
+			<p:menuitem id="fileExplorerMenu"
+				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
+				outcome="fileExplorer" value="#{messages['menu.fileExplorer']}" />
+
 			<p:menuitem id="meveoProperties"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}"
 				outcome="meveoProperties" value="#{messages['menu.properties']}" />

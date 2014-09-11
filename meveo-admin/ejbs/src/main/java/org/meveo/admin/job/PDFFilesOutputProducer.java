@@ -79,13 +79,14 @@ public class PDFFilesOutputProducer{
 		    	ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
 		    	logger.info("PDFInvoiceGenerationJob is invoice key exists="+parameters!=null?parameters.containsKey(PdfGenratorConstants.INVOICE)+"":"parameters is null");
 		    	Invoice invoice=(Invoice)parameters.get(PdfGenratorConstants.INVOICE);
-		        String meveoDir = paramBean.getProperty("meveo.dir","/tmp/meveo");
-		        String pdfDirectory =  meveoDir + File.separator +invoice.getProvider().getCode()+File.separator+"invoices"+File.separator+"pdf";
+		    	String meveoDir= paramBean.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + invoice.getProvider().getCode()
+						+ File.separator;
+		        String pdfDirectory =meveoDir+"invoices"+ File.separator+"pdf" + File.separator ;
+
 		        (new File(pdfDirectory)).mkdirs();
 		        String INVOICE_TAG_NAME = "invoice";
-		        Provider provider=invoice.getProvider();
 
-			    File billingRundir = new File(meveoDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+invoice.getBillingRun().getId());
+			    File billingRundir = new File(meveoDir +"invoices"+File.separator+"xml"+File.separator+invoice.getBillingRun().getId());
 		        String invoiceXmlFileName=billingRundir + File.separator + invoice.getInvoiceNumber()+ ".xml";
 		        File invoiceXmlFile=new File(invoiceXmlFileName);
 		        if(!invoiceXmlFile.exists()){
@@ -95,7 +96,7 @@ public class PDFFilesOutputProducer{
                 BillingAccount billingAccount=invoice.getBillingAccount();
                 String billingTemplate =billingCycle!=null && billingCycle.getBillingTemplateName()!=null?
                       billingCycle.getBillingTemplateName():"default";
-                String resDir = meveoDir + File.separator +provider.getCode()+ File.separator +"jasper";
+                String resDir = meveoDir +"jasper";
       		    File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod());
                 logger.info(String.format("Jasper template used: %s", jasperFile.getCanonicalPath()));
                 InputStream reportTemplate = new FileInputStream(jasperFile);

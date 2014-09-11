@@ -87,8 +87,6 @@ public class ImportSubscriptionsJob implements Job {
 	private SubscriptionImportService subscriptionImportService;
 
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-	String importDir = param.getProperty("connectorCRM.importDir",
-			"/tmp/meveo/crm");
 
 	Subscriptions subscriptionsError;
 	Subscriptions subscriptionsWarning;
@@ -108,14 +106,13 @@ public class ImportSubscriptionsJob implements Job {
 	@Override
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute ImportSubscriptionsJob.");
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
+				+ File.separator+"imports"+ File.separator+"subscriptions" + File.separator ;
 
-		String dirIN = importDir + File.separator + provider.getCode()
-				+ File.separator + "subscriptions" + File.separator + "input";
+		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
-		String dirOK = importDir + File.separator + provider.getCode()
-				+ File.separator + "subscriptions" + File.separator + "output";
-		String dirKO = importDir + File.separator + provider.getCode()
-				+ File.separator + "subscriptions" + File.separator + "reject";
+		String dirOK = importDir +  "output";
+		String dirKO = importDir + "reject";
 		String prefix = param.getProperty(
 				"connectorCRM.importSubscriptions.prefix", "SUB_");
 		String ext = param.getProperty(
@@ -247,10 +244,10 @@ public class ImportSubscriptionsJob implements Job {
 
 	private void generateReport(String fileName, Provider provider)
 			throws Exception {
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
+				+ File.separator+"imports"+ File.separator+"subscriptions" + File.separator ;
 		if (subscriptionsWarning.getWarnings() != null) {
-			String warningDir = importDir + File.separator + provider.getCode()
-					+ File.separator + "subscriptions" + File.separator
-					+ "output" + File.separator + "warnings";
+			String warningDir = importDir + "output" + File.separator + "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -260,9 +257,7 @@ public class ImportSubscriptionsJob implements Job {
 		}
 
 		if (subscriptionsError.getErrors() != null) {
-			String errorDir = importDir + File.separator + provider.getCode()
-					+ File.separator + "subscriptions" + File.separator
-					+ "output" + File.separator + "errors";
+			String errorDir = importDir + "output" + File.separator + "errors";
 			File dir = new File(errorDir);
 			if (!dir.exists()) {
 				dir.mkdirs();

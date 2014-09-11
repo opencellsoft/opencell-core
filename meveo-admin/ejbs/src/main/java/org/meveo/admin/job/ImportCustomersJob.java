@@ -111,9 +111,6 @@ public class ImportCustomersJob implements Job {
 
 	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 
-	String importDir = param.getProperty("connectorCRM.importDir",
-			"/tmp/meveo/crm");
-
 	int nbCustomers;
 	int nbCustomersError;
 	int nbCustomersWarning;
@@ -142,13 +139,12 @@ public class ImportCustomersJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute ImportCustomersJob.");
 
-		String dirIN = importDir + File.separator + provider.getCode()
-				+ File.separator + "customers" + File.separator + "input";
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
+				+ File.separator+"imports"+ File.separator+"customers" + File.separator ;
+		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
-		String dirOK = importDir + File.separator + provider.getCode()
-				+ File.separator + "customers" + File.separator + "output";
-		String dirKO = importDir + File.separator + provider.getCode()
-				+ File.separator + "customers" + File.separator + "reject";
+		String dirOK = importDir + "output";
+		String dirKO = importDir + "reject";
 		String prefix = param.getProperty(
 				"connectorCRM.importCustomers.prefix", "CUSTOMER_");
 		String ext = param.getProperty(
@@ -436,9 +432,10 @@ public class ImportCustomersJob implements Job {
 
 	private void generateReport(String fileName, Provider provider)
 			throws Exception {
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
+				+ File.separator+"imports"+ File.separator+"customers" + File.separator ;
 		if (sellersWarning.getWarnings() != null) {
-			String warningDir = importDir + File.separator + provider.getCode()
-					+ File.separator + "customers" + File.separator + "output"
+			String warningDir = importDir+ "output"
 					+ File.separator + "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
@@ -448,8 +445,7 @@ public class ImportCustomersJob implements Job {
 					+ File.separator + "WARN_" + fileName));
 		}
 		if (sellersError.getErrors() != null) {
-			String errorDir = importDir + File.separator + provider.getCode()
-					+ File.separator + "customers" + File.separator + "output"
+			String errorDir = importDir + "output"
 					+ File.separator + "errors";
 
 			File dir = new File(errorDir);

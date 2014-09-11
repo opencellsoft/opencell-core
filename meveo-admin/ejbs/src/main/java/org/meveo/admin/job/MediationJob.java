@@ -83,16 +83,15 @@ public class MediationJob implements Job {
 		try {
 
 			ParamBean parambean = ParamBean.getInstance("meveo-admin.properties");
+			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
+					+ File.separator+"imports"+ File.separator+"metering" + File.separator ;
 
-			inputDir = parambean.getProperty("mediation.inputDirectory",
-					"/tmp/meveo/metering/input");
+			inputDir = meteringDir+"input";
 			String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
 			ArrayList<String> cdrExtensions = new ArrayList<String>();
 			cdrExtensions.add(cdrExtension);
-			outputDir = parambean.getProperty("mediation.outputDirectory",
-					"/tmp/meveo/metering/output");
-			rejectDir = parambean.getProperty("mediation.rejectDirectory",
-					"/tmp/meveo/metering/output");
+			outputDir =  meteringDir+"output";
+			rejectDir =  meteringDir+"reject";
 			report = "";
 			CDRParsingService.resetAccessPointCache();
 			cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);

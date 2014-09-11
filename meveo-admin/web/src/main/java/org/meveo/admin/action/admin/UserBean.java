@@ -15,19 +15,30 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
@@ -36,7 +47,11 @@ import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +67,9 @@ public class UserBean extends BaseBean<User> {
 
 	private static final long serialVersionUID = 1L;
 
+	@Inject
+	Conversation conversation;
+	
 	/** Injected @{link User} service. Extends {@link PersistenceService}. */
 	@Inject
 	private UserService userService;
@@ -88,12 +106,27 @@ public class UserBean extends BaseBean<User> {
 	 */
 	private String repeatedPassword;
 
+	ParamBean param = ParamBean.getInstance();
+	private String providerFilePath = param.getProperty("providers.rootDir", "/tmp/meveo/");
+	private String selectedFolder;
+	private String selectedFileName;
+	private ArrayList<File> fileList;
+    private UploadedFile file;
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
 	public UserBean() {
 		super(User.class);
+	}
+	
+	@PostConstruct
+	public void init() {
+		if(conversation.isTransient()){
+			conversation.begin(); 
+			createMissingDirectories();
+			setSelectedFolder(null);
+		}
 	}
 	
 	public String saveOrUpdate(boolean killConversation, String objectName,
@@ -231,4 +264,192 @@ public class UserBean extends BaseBean<User> {
 	protected String getDefaultSort() {
 		return "userName";
 	}
+	
+	public String getFilePath(){
+		return providerFilePath+File.separator+getCurrentProvider().getCode();
+	}
+	
+	public void createMissingDirectories() {
+		//log.info("Creating required dirs in "+getFilePath());
+		String importDir = getFilePath() + File.separator+"imports"+ File.separator+"customers" + File.separator ;
+		String customerDirIN = importDir + "input";
+		String customerDirOUT = importDir + "output";
+		String customerDirERR = customerDirOUT + "errors";
+		String customerDirWARN = customerDirOUT + "warnings";
+		String customerDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator+"imports"+ File.separator+"accounts" + File.separator ;
+		String accountDirIN = importDir + "input";
+		String accountDirOUT = importDir + "output";
+		String accountDirERR = accountDirOUT + "errors";
+		String accountDirWARN = accountDirOUT + "warnings";
+		String accountDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator+"imports"+ File.separator+"subscriptions" + File.separator ;
+		String subDirIN = importDir + "input";
+		String subDirOUT = importDir + "output";
+		String subDirERR = subDirOUT + "errors";
+		String subDirWARN = subDirOUT + "warnings";
+		String subDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator+"imports"+ File.separator+"metering" + File.separator ;
+		String meterDirIN = importDir + "input";
+		String meterDirOUT = importDir + "output";
+		String meterDirKO = importDir + "reject";
+		String invoicePdfDir=getFilePath() + File.separator+"invoices"+ File.separator+"pdf";
+		String invoiceXmlDir=getFilePath() + File.separator+"invoices"+ File.separator+"xml";
+		String jasperDir=getFilePath() + File.separator+"jasper";
+		List<String> filePaths = Arrays.asList(""
+				,customerDirIN,customerDirOUT,customerDirERR, customerDirWARN, customerDirKO
+				,accountDirIN,accountDirOUT,accountDirERR, accountDirWARN, accountDirKO
+				,subDirIN,subDirOUT,subDirERR, subDirWARN, subDirKO
+				,meterDirIN,meterDirOUT,meterDirKO
+				,invoicePdfDir,invoiceXmlDir,jasperDir);
+		for (String custDirs : filePaths) {
+				File subDir = new File(custDirs);
+				if (!subDir.exists()) {
+						subDir.mkdirs();
+				}
+		}
+	}
+	
+
+    public UploadedFile getFile() {
+        return file;
+    }
+ 
+    public void setFile(UploadedFile file) {
+        this.file = file;
+        log.info("set file to"+file.getFileName());
+    }
+    
+    public void deleteSelectedFile(){
+		String folder = getFilePath()+File.separator+(this.selectedFolder==null?"":this.selectedFolder);
+		log.info("delete file"+folder+File.separator+selectedFileName);
+    	File file = new File(folder+File.separator+selectedFileName);
+		if(file.exists()){
+			file.delete();
+		}
+		this.selectedFileName=null;
+		buildFileList();
+    }
+    
+    public StreamedContent getSelectedFile() {
+    	StreamedContent result=null;
+        try {
+        	String folder = getFilePath()+File.separator+(this.selectedFolder==null?"":this.selectedFolder);
+			result= new DefaultStreamedContent(new FileInputStream(new File(folder+File.separator+selectedFileName)),null, selectedFileName);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return result;
+    }
+    
+	public String getSelectedFolder() {
+		return selectedFolder;
+	}
+
+	public void setSelectedFolder(String selectedFolder) {
+		setSelectedFileName(null);
+		if(selectedFolder==null){
+			log.info("setSelectedFolder to null");
+			this.selectedFolder = null;
+		} else if("..".equals(selectedFolder)){
+			if(this.selectedFolder.lastIndexOf(File.separator)>0){
+				log.info("setSelectedFolder to parent "+this.selectedFolder+" -> "+this.selectedFolder.substring(0,this.selectedFolder.lastIndexOf(File.separator)));
+				this.selectedFolder = this.selectedFolder.substring(0,this.selectedFolder.lastIndexOf(File.separator));
+			} else {
+				this.selectedFolder = null;
+			}
+		} else {
+			log.info("setSelectedFolder "+selectedFolder);
+			if(this.selectedFolder==null){
+				this.selectedFolder =  File.separator+selectedFolder;
+			} else {
+				this.selectedFolder += File.separator+selectedFolder;
+			}
+		}
+		buildFileList();
+	}
+	
+	private void buildFileList(){
+		String folder = getFilePath()+File.separator+(this.selectedFolder==null?"":this.selectedFolder);
+		File file = new File(folder);
+		log.info("getFileList "+folder);
+		fileList =  file.listFiles()==null?new ArrayList<File>():new ArrayList<File>(Arrays.asList(file.listFiles()));
+		if(this.selectedFolder!=null){
+			File parent = new File("..");
+			fileList.add(0,parent);
+		}
+	}
+
+	public String getSelectedFileName() {
+		return selectedFileName;
+	}
+
+	public void setSelectedFileName(String selectedFileName) {
+		log.info("setSelectedFileName "+selectedFileName);
+		this.selectedFileName = selectedFileName;
+	}
+
+	public List<File> getFileList() {
+		return fileList;
+	}
+
+
+	public void handleFileUpload(FileUploadEvent event) {
+		log.debug("upload file={}", event.getFile());
+			//FIXME: use resource bundle
+		try {
+				copyFile(event.getFile().getFileName(), event.getFile()
+						.getInputstream());
+				messages.info(event.getFile().getFileName()
+							+ " is uploaded to " + selectedFolder);
+		} catch (IOException e) {
+				e.printStackTrace();
+				messages.error("error while uploading "+event.getFile().getFileName());
+		}
+	}
+
+	public void upload(ActionEvent event) {
+		if(file!=null){
+		log.info("upload file={}", file);
+		try {
+				copyFile(file.getFileName(), file.getInputstream());
+				messages.info(file.getFileName()
+							+ " is uploaded to " + selectedFolder);
+		} catch (IOException e) {
+				e.printStackTrace();
+				messages.error("error while uploading "+file.getFileName());
+		}
+		}
+		else {
+			log.info("upload file is null");
+			
+		}
+	}
+	
+	public void copyFile(String fileName, InputStream in) {
+		try {
+
+			// write the inputStream to a FileOutputStream
+			OutputStream out = new FileOutputStream(new File(
+					getFilePath() + File.separator + selectedFolder
+							+ File.separator + fileName));
+
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			while ((read = in.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+
+			in.close();
+			out.flush();
+			out.close();
+
+			System.out.println("New file created!");
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
 }

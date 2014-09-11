@@ -112,8 +112,6 @@ public class ImportAccountsJob implements Job {
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
 
-	String importDir = param.getProperty("connectorCRM.importDir",
-			"/tmp/meveo/crm");
 
 	@PostConstruct
 	public void init() {
@@ -123,14 +121,12 @@ public class ImportAccountsJob implements Job {
 	@Override
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute ImportAccountsJob.");
-
-		String dirIN = importDir + File.separator + provider.getCode()
-				+ File.separator + "accounts" + File.separator + "input";
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
+				+ File.separator+"imports"+ File.separator+"accounts" + File.separator ;
+		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
-		String dirOK = importDir + File.separator + provider.getCode()
-				+ File.separator + "accounts" + File.separator + "output";
-		String dirKO = importDir + File.separator + provider.getCode()
-				+ File.separator + "accounts" + File.separator + "reject";
+		String dirOK = importDir + "output";
+		String dirKO = importDir + "reject";
 		String prefix = param.getProperty("connectorCRM.importAccounts.prefix",
 				"ACCOUNT_");
 		String ext = param.getProperty("connectorCRM.importAccounts.extension",
@@ -420,9 +416,10 @@ public class ImportAccountsJob implements Job {
 
 	private void generateReport(String fileName, Provider provider)
 			throws Exception {
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
+				+ File.separator+"imports"+ File.separator+"accounts" + File.separator ;
 		if (billingAccountsWarning.getWarnings() != null) {
-			String warningDir = importDir + File.separator + provider.getCode()
-					+ File.separator + "accounts" + File.separator + "output"
+			String warningDir = importDir + "output"
 					+ File.separator + "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
@@ -432,8 +429,7 @@ public class ImportAccountsJob implements Job {
 					+ File.separator + "WARN_" + fileName));
 		}
 		if (billingAccountsError.getErrors() != null) {
-			String errorDir = importDir + File.separator + provider.getCode()
-					+ File.separator + "accounts" + File.separator + "output"
+			String errorDir = importDir  + "output"
 					+ File.separator + "errors";
 
 			File dir = new File(errorDir);

@@ -189,7 +189,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 
 				@Override
 				public List<JobExecutionResultImpl> load(int first, int pageSize, String sortField,
-						SortOrder sortOrder, Map<String, String> loadingFilters) {
+						SortOrder sortOrder, Map<String, Object> loadingFilters) {
 					Map<String, Object> copyOfFilters = new HashMap<String, Object>();
 					copyOfFilters.putAll(filters);
 					setRowCount((int) jobExecutionService.count(timerEntity.getJobName(),

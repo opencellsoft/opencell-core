@@ -37,6 +37,12 @@
 		</navigation-case>
 
 		<navigation-case>
+			<from-outcome>fileExplorer</from-outcome>
+			<to-view-id>/pages/admin/files/files.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
 			<from-outcome>meveoProperties</from-outcome>
 			<to-view-id>/pages/admin/properties/properties.xhtml</to-view-id>
 			<redirect />
