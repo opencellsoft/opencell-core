@@ -104,6 +104,16 @@
 										labelField="descriptionEn" valueField="countryCode"
 										listBean="#{countryBean}"></hf:formEntityField>
 								</p:fieldset>
+								<hftl:fieldset name="#{messages['customerAccount.sepaDebit']}" columns="1">
+												<hftl:panelGroup columns="1">
+													<hf:formField
+														label="#{messages['customerAccount.mandateIdentification']}"
+														field="mandateIdentification" />
+													<hf:formField
+														label="#{messages['customerAccount.mandateDate']}"
+														field="mandateDate" isDate="true" />
+												</hftl:panelGroup>
+											</hftl:fieldset>
 							</p:tab>
 						</p:tabView>
 

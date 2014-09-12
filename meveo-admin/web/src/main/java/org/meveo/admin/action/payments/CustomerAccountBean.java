@@ -321,6 +321,8 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 			entity.setProvider(customer.getProvider());
 			entity.setPrimaryContact(customer.getPrimaryContact());
 			entity.setContactInformation(customer.getContactInformation());
+			entity.setMandateIdentification(customer.getMandateIdentification());
+			entity.setMandateDate(customer.getMandateDate());
 		}
 	}
 
