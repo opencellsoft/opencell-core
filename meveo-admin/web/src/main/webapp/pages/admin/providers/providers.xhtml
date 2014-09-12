@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{providerBean.preRenderView}" />
+	</f:metadata>
+	
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:entityPopup id="searchProviderPopup"
+			header="#{messages['provider.search']}"
+			selection="#{providerBean.filters['provider']}"
+			backingBean="#{providerBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<hf:searchPanel id="searchPanel" backingBean="#{providerBean}"
+			label="#{messages['provider.search']}">
+			<hf:searchField label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			<hf:searchField id="provider"
+				label="#{messages['BusinessEntity.code']}" field="provider"
+				childField="code" popup="true" popupId="searchProviderPopup"
+				clearButton="true" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['provider.title']}"
+			backingBean="#{providerBean}">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['BusinessEntity.description']}"
+				field="description" />
+			<hftl:column label="#{messages['provider.enterprise']}" field="entreprise"/>
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
+		</hftl:dataList>
+	</ui:define>
+
+</ui:composition>
