@@ -60,14 +60,14 @@
    </p:panel>
 	</h:form>
 	
-	<h:form enctype="multipart/form-data" rendered="#{userBean.selectedFileName==null}">
+	<!-- <h:form enctype="multipart/form-data" rendered="#{userBean.selectedFileName==null}">
     	<p:fileUpload value="#{userBean.file}" mode="simple"/> 
     	<p:commandButton value="#{messages['fileExplorer.upload']}" actionListener="#{userBean.upload}"/>
-    	
+    	 -->
        <!--<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}" mode="advanced" dragDropSupport="false"
            update=":#{p:component('messages')}" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" /> -->
-       
-	</h:form>
+       <!-- 
+	</h:form> -->
 	</p:panel>
 	</ui:define>
 
