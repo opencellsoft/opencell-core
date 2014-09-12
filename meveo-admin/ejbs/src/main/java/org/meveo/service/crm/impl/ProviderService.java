@@ -115,6 +115,12 @@ public class ProviderService extends PersistenceService<Provider> {
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
+	
+	public void update(Provider e) {
+		((AuditableEntity) e).updateAudit(getCurrentUser());
+		em.merge(e);
+		log.info("updated provider");
+	}
 
 	public void create(Provider e) {
 		log.info("start of create provider");
