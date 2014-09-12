@@ -53,7 +53,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	@Inject
 	@MeveoJpa
-	private EntityManager em;
+	protected EntityManager em;
 
 	@Inject
 	@MeveoJpaForJobs

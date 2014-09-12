@@ -342,12 +342,12 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>providers</from-outcome>
-			<to-view-id>/pages/crm/providers/providers.xhtml</to-view-id>
+			<to-view-id>/pages/admin/providers/providers.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>providerDetail</from-outcome>
-			<to-view-id>/pages/crm/providers/providerDetail.xhtml</to-view-id>
+			<to-view-id>/pages/admin/providers/providerDetail.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>

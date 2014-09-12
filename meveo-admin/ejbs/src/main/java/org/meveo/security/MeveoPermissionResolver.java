@@ -54,6 +54,31 @@ public class MeveoPermissionResolver implements Serializable, PermissionResolver
 		return cachedPermissions.get(cacheKey);
 	}
 
+	public boolean hasRole(String roleName){
+		if (!identity.isLoggedIn()) {
+			return false;
+		}
+
+		String cacheKey =  "role_" + roleName;
+		if (!cachedPermissions.containsKey(cacheKey)) {
+
+			boolean has = false;
+			if (((MeveoUser) identity.getUser()) != null
+					&& ((MeveoUser) identity.getUser()).getUser() != null
+					&& ((MeveoUser) identity.getUser()).getUser().getRoles() != null) {
+				for (Role role : ((MeveoUser) identity.getUser()).getUser().getRoles()) {
+					if (role.getName().equals(roleName)) {
+						has = true;
+						break;
+					}
+				}
+			}
+			cachedPermissions.put(cacheKey, has);
+		}
+
+		return cachedPermissions.get(cacheKey);	
+	}
+	
 	public void filterSetByAction(Set<Object> resources, String permission) {
 	}
 }

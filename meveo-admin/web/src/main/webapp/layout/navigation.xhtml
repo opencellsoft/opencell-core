@@ -98,13 +98,10 @@
 
 			<p:submenu id="provider" label="#{messages['menu.provider']}"
 				rendered="#{identity.hasPermission('administration','administrationVisualization')}">
-				<!--
-				<rich:menuItem id="providers" rendered="#{identity.hasPermission('administration','providerManagement')}">
-					<h:link outcome="providers">
-						<h:outputText value="#{messages['menu.providers']}" />
-					</h:link>
-				</rich:menuItem>
-				-->
+
+				<p:menuitem id="providers" outcome="providers"
+					value="#{messages['menu.providers']}"
+					rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
 
 				<p:menuitem id="providerContacts" outcome="providerContacts"
 					value="#{messages['menu.providerContacts']}" />

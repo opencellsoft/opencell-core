@@ -587,7 +587,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 				@Override
 				public List<T> load(int first, int pageSize, String sortField,
-						SortOrder sortOrder, Map<String, Object> loadingFilters) {
+						SortOrder sortOrder, Map<String, String> loadingFilters) {
 
 					if (!StringUtils.isBlank(getDefaultSort())
 							&& StringUtils.isBlank(sortField)) {
