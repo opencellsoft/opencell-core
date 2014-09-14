@@ -15,11 +15,6 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
-	<h:outputScript library="primefaces" name="jquery/jquery.js"
-		target="head" />
-	<h:outputScript target="head">
-    $ = jQuery;
-	</h:outputScript>
 
 	<ui:define name="body">
 
@@ -80,16 +75,8 @@
 				</p:panel>
 			</h:form>
 
-			<h:form enctype="multipart/form-data"
-				rendered="#{userBean.selectedFileName==null}">
-				<p:fileUpload value="#{userBean.file}" mode="simple" />
-				<p:commandButton value="#{messages['fileExplorer.upload']}"
-					actionListener="#{userBean.upload}" ajax="false" />
-
-				<!-- 				<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}" -->
-				<!-- 					mode="advanced" dragDropSupport="false" -->
-				<!-- 					update=":#{p:component('messages')}" sizeLimit="100000" -->
-				<!-- 					fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" /> -->
+			<h:form rendered="#{userBean.selectedFileName==null}">
+				 <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}" mode="advanced" dragDropSupport="true"/>
 
 			</h:form>
 		</p:panel>
