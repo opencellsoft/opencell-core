@@ -3,72 +3,96 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui"
-	template="/layout/template.xhtml">
-	
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{userBean.init}"/>
+			<f:event type="preRenderView" listener="#{userBean.init}" />
 		</f:metadata>
-	</ui:define>	
-	
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 
+	<h:outputScript library="primefaces" name="jquery/jquery.js"
+		target="head" />
+	<h:outputScript target="head">
+    $ = jQuery;
+	</h:outputScript>
+
 	<ui:define name="body">
-	<h:outputStylesheet library="css" name="stylesheet/main.css" />
-   
-    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
-    	<p:graphicImage name="/img/ajaxloadingbar.gif" />
-	</p:dialog>
-	
-	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-    </p:confirmDialog>
- 	
-	<h1 style="text-align: left">#{messages['menu.fileExplorer']}</h1>
-	
-	<p:panel  id="fileExplorer">
-	<h:form >
-	<p:growl id="messages" showDetail="true" />
-	<p:dataList value="#{userBean.fileList}" var="file" styleClass="align-left">
-        <f:facet name="header" >
-           <p:button value="home"  action="#{userBean.setSelectedFolder(null)}" rendered="#{userBean.getSelectedFolder()!=null}"/>
-            <br/>
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage name="/img/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<h1 style="text-align: left">#{messages['menu.fileExplorer']}</h1>
+
+		<p:panel id="fileExplorer">
+			<h:form>
+				<p:growl id="messages" showDetail="true" />
+				<p:dataList value="#{userBean.fileList}" var="file"
+					styleClass="align-left">
+					<f:facet name="header">
+						<p:button value="home"
+							action="#{userBean.setSelectedFolder(null)}"
+							rendered="#{userBean.getSelectedFolder()!=null}" />
+						<br />
             #{userBean.selectedFolder}
         </f:facet>
-        <p:commandLink action="#{userBean.setSelectedFolder(file.name)}" value='#{file.name}/'
-						rendered="#{file.isDirectory()}" update=":#{p:component('fileExplorer')}">
-		</p:commandLink>
-        <p:commandLink action="#{userBean.setSelectedFileName(file.name)}" value='#{file.name}'
-						rendered="#{!file.isDirectory()}" update=":#{p:component('fileExplorer')}">
-		</p:commandLink>
-    </p:dataList>
-	
-	<p:panel rendered="#{userBean.selectedFileName!=null}" id="fileManageForm">
+					<p:commandLink action="#{userBean.setSelectedFolder(file.name)}"
+						value='#{file.name}/' rendered="#{file.isDirectory()}"
+						update=":#{p:component('fileExplorer')}">
+					</p:commandLink>
+					<p:commandLink action="#{userBean.setSelectedFileName(file.name)}"
+						value='#{file.name}' rendered="#{!file.isDirectory()}"
+						update=":#{p:component('fileExplorer')}">
+					</p:commandLink>
+				</p:dataList>
+
+				<p:panel rendered="#{userBean.selectedFileName!=null}"
+					id="fileManageForm">
 		#{userBean.selectedFileName}
-	    <p:commandButton value="#{messages['fileExplorer.download']}"  icon="ui-icon-arrowthick-1-s" ajax="false">
-	        <p:fileDownload value="#{userBean.selectedFile}" />
-	        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-	    </p:commandButton>
-	    <p:commandButton value="#{messages['fileExplorer.delete']}"   icon="ui-icon-trash"  action="#{userBean.deleteSelectedFile()}" update=":#{p:component('fileExplorer')}">
-	       <p:confirm header="Confirmation" message="#{messages['fileExplorer.deleteConfirm']}" icon="ui-icon-alert" />
-	        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-	    </p:commandButton>
-   </p:panel>
-	</h:form>
-	
-	 <h:form enctype="multipart/form-data" rendered="#{userBean.selectedFileName==null}">
-    	<p:fileUpload value="#{userBean.file}" mode="simple"/> 
-    	<p:commandButton value="#{messages['fileExplorer.upload']}" actionListener="#{userBean.upload}"/>
-    	 
-       <!--<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}" mode="advanced" dragDropSupport="false"
-           update=":#{p:component('messages')}" sizeLimit="100000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" /> -->
-       
-	</h:form> 
-	</p:panel>
+	    <p:commandButton value="#{messages['fileExplorer.download']}"
+						icon="ui-icon-arrowthick-1-s" ajax="false">
+						<p:fileDownload value="#{userBean.selectedFile}" />
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</p:commandButton>
+					<p:commandButton value="#{messages['fileExplorer.delete']}"
+						icon="ui-icon-trash" action="#{userBean.deleteSelectedFile()}"
+						update=":#{p:component('fileExplorer')}">
+						<p:confirm header="Confirmation"
+							message="#{messages['fileExplorer.deleteConfirm']}"
+							icon="ui-icon-alert" />
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</p:commandButton>
+				</p:panel>
+			</h:form>
+
+			<h:form enctype="multipart/form-data"
+				rendered="#{userBean.selectedFileName==null}">
+				<p:fileUpload value="#{userBean.file}" mode="simple" />
+				<p:commandButton value="#{messages['fileExplorer.upload']}"
+					actionListener="#{userBean.upload}" ajax="false" />
+
+				<!-- 				<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}" -->
+				<!-- 					mode="advanced" dragDropSupport="false" -->
+				<!-- 					update=":#{p:component('messages')}" sizeLimit="100000" -->
+				<!-- 					fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" /> -->
+
+			</h:form>
+		</p:panel>
 	</ui:define>
 
 </ui:composition>
