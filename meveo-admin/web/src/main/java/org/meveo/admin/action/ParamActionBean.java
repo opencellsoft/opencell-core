@@ -61,7 +61,9 @@ public class ParamActionBean implements Serializable {
 				String strKey=(String) key;
 				paramProp.setKey(strKey);
 				paramProp.setValue(paramBean.getProperties().getProperty(strKey));
+				if(strKey.lastIndexOf(".")>0){
 				paramProp.setCategory(bundle.getString("property."+strKey.substring(0,strKey.lastIndexOf("."))));
+				}
 				properties.add(paramProp);
 			}
 		}

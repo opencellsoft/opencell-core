@@ -2,6 +2,7 @@ package org.meveo.admin.job;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -63,7 +64,20 @@ public class BillingRunJob implements Job {
 		log.info("execute BillingRunJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
-			if(!StringUtils.isEmpty(parameter)){
+			List<BillingRun>  billruns = billingRunService.getbillingRuns(null);
+			boolean notTerminatedBillRun=false;
+			if(billruns!=null){
+				for(BillingRun billrun:billruns){
+					if(billrun.getStatus()==BillingRunStatusEnum.CONFIRMED || 
+							billrun.getStatus()==BillingRunStatusEnum.NEW ||
+							billrun.getStatus()==BillingRunStatusEnum.ON_GOING ||
+							billrun.getStatus()==BillingRunStatusEnum.WAITING){
+						notTerminatedBillRun=true;
+						break;
+					}
+				}
+			}
+			if(!notTerminatedBillRun && !StringUtils.isEmpty(parameter)){
 				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(parameter, provider);
 				if(billingCycle!=null){
 					BillingRun billingRun = new BillingRun();

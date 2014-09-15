@@ -192,6 +192,10 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 						SortOrder sortOrder, Map<String, String> loadingFilters) {
 					Map<String, Object> copyOfFilters = new HashMap<String, Object>();
 					copyOfFilters.putAll(filters);
+					if(sortField==null){
+						sortField="startDate";
+						sortOrder=SortOrder.DESCENDING;
+					}
 					setRowCount((int) jobExecutionService.count(timerEntity.getJobName(),
 							new PaginationConfiguration(first, pageSize, copyOfFilters,
 									getListFieldsToFetch(), sortField, sortOrder)));
