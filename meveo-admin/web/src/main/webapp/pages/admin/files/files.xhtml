@@ -53,9 +53,9 @@
 						update=":#{p:component('fileExplorer')}">
 					</p:commandLink>
 				</p:dataList>
-
 				<p:panel rendered="#{userBean.selectedFileName!=null}"
 					id="fileManageForm">
+					<br />
 		#{userBean.selectedFileName}
 	    <p:commandButton value="#{messages['fileExplorer.download']}"
 						icon="ui-icon-arrowthick-1-s" ajax="false">
@@ -76,8 +76,9 @@
 			</h:form>
 
 			<h:form rendered="#{userBean.selectedFileName==null}">
-				 <p:fileUpload fileUploadListener="#{userBean.handleFileUpload}" mode="advanced" dragDropSupport="true"/>
-
+				<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
+					multiple="true" mode="advanced" dragDropSupport="true"
+					fileLimit="5" update=":fileExplorer" />
 			</h:form>
 		</p:panel>
 	</ui:define>
