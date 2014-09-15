@@ -419,9 +419,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				getCurrentProvider());
 		qb.startOrClause();
+		if(status!=null){
 		for (int i = 0; i < status.length; i++) {
 			bRStatus = status[i];
 			qb.addCriterionEnum("c.status", bRStatus);
+		}
 		}
 		qb.endOrClause();
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
