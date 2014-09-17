@@ -231,6 +231,7 @@ public class SepaService
     Pain008 document=new Pain008();
 	CstmrDrctDbtInitn Message =new CstmrDrctDbtInitn();
 	document.setCstmrDrctDbtInitn(Message);
+	document.setXmlns("urn:iso:std:iso:20022:tech:xsd:pain.008.001.02");
     sepaFileBuilder.addHeader(Message, ddRequestLot);
     for (DDRequestItem ddrequestItem : ddrequestItems) {
     	sepaFileBuilder.addPaymentInformation(Message, ddrequestItem);

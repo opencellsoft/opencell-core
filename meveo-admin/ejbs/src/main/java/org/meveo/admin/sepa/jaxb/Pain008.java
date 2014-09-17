@@ -493,6 +493,8 @@ public class Pain008 {
 
     @XmlElement(name = "CstmrDrctDbtInitn", required = true)
     protected Pain008.CstmrDrctDbtInitn cstmrDrctDbtInitn;
+    @XmlAttribute
+    protected String xmlns;
 
     /**
      * Gets the value of the cstmrDrctDbtInitn property.
@@ -518,7 +520,29 @@ public class Pain008 {
         this.cstmrDrctDbtInitn = value;
     }
 
+    /**
+     * Gets the value of the xmlns property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getXmlns() {
+        return xmlns;
+    }
 
+    /**
+     * Sets the value of the xmlns property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setXmlns(String value) {
+        this.xmlns = value;
+    }
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -964,6 +988,7 @@ public class Pain008 {
      *           &lt;/complexType>
      *         &lt;/element>
      *       &lt;/sequence>
+     *       &lt;attribute name="xmlns" type="{http://www.w3.org/2001/XMLSchema}string" />
      *     &lt;/restriction>
      *   &lt;/complexContent>
      * &lt;/complexType>

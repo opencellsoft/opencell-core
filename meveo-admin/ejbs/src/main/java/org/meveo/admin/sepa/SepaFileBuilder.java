@@ -16,6 +16,7 @@
 package org.meveo.admin.sepa;
 
 //import java.text.Normalizer;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -69,7 +70,7 @@ public class SepaFileBuilder {
 		groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference()+"-"+ddRequestLOT.getId());
 		groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
 		groupHeader.setNbOfTxs(ddRequestLOT.getInvoicesNumber());
-		groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount());
+		groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2, RoundingMode.HALF_UP));
 		InitgPty initgPty=new InitgPty();
 		initgPty.setNm(ddRequestLOT.getProvider().getDescription());
 		groupHeader.setInitgPty(initgPty);
@@ -86,7 +87,7 @@ public class SepaFileBuilder {
 		PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference()+"-"+dDRequestItem.getId());
 		PaymentInformation.setPmtMtd("DD");
 		PaymentInformation.setNbOfTxs(dDRequestItem.getInvoices().size());
-		PaymentInformation.setCtrlSum(dDRequestItem.getAmountInvoices());
+		PaymentInformation.setCtrlSum(dDRequestItem.getAmountInvoices().setScale(2, RoundingMode.HALF_UP));
 		PmtTpInf PaymentTypeInformation=new PmtTpInf();
 		PaymentInformation.setPmtTpInf(PaymentTypeInformation);
 		SvcLvl ServiceLevel=new SvcLvl();
@@ -144,13 +145,13 @@ public class SepaFileBuilder {
 		PaymentIdentification.setEndToEndId(invoice.getReference());
 		InstdAmt InstructedAmount=new InstdAmt();
 		DirectDebitTransactionInformation.setInstdAmt(InstructedAmount);
-		InstructedAmount.setValue(invoice.getAmount());
+		InstructedAmount.setValue(invoice.getAmount().setScale(2, RoundingMode.HALF_UP));
 		InstructedAmount.setCcy("EUR");
 		DrctDbtTx DirectDebitTransaction=new DrctDbtTx();
 		DirectDebitTransactionInformation.setDrctDbtTx(DirectDebitTransaction);
 		MndtRltdInf MandateRelatedInformation=new MndtRltdInf();
 		DirectDebitTransaction.setMndtRltdInf(MandateRelatedInformation);
-		MandateRelatedInformation.setAmdmntInd(ca.getMandateIdentification());
+		MandateRelatedInformation.setMndtId(ca.getMandateIdentification());
 		MandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(ca.getMandateDate()));
 		
 		DbtrAgt DebtorAgent=new DbtrAgt();
