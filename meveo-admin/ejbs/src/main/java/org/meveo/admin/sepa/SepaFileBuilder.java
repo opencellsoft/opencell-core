@@ -102,8 +102,9 @@ public class SepaFileBuilder {
 		
 		BankCoordinates providerBC=provider.getBankCoordinates();
 		Cdtr Creditor=new Cdtr();
+		Creditor.setNm(provider.getDescription());
 		PaymentInformation.setCdtr(Creditor);
-		Creditor.setNm(Creditor.getNm());
+		
 		CdtrAcct CreditorAccount=new CdtrAcct();
 		PaymentInformation.setCdtrAcct(CreditorAccount);
 		Id Identification=new Id();
