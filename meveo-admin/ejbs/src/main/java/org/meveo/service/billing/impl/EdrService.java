@@ -17,10 +17,14 @@ package org.meveo.service.billing.impl;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.BoundedHashMap;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -29,6 +33,35 @@ import org.meveo.service.base.PersistenceService;
 @LocalBean
 public class EdrService extends PersistenceService<EDR> {
 
+	@Inject
+	ParamBean paramBean;
+	
+
+	static boolean useInMemoryDeduplication=true;
+	static int maxDuplicateRecords = 100000;
+	static BoundedHashMap<String,Integer> duplicateCache;
+	
+	private void loadCacheFromDB(){
+		synchronized(duplicateCache){
+			duplicateCache = loadDeduplicationInfo(maxDuplicateRecords);
+		}
+	}
+	
+	@PostConstruct
+	private void init(){
+		useInMemoryDeduplication=paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
+		if(useInMemoryDeduplication){
+			int newMaxDuplicateRecords=Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
+			if(newMaxDuplicateRecords!=maxDuplicateRecords && duplicateCache!=null){
+				duplicateCache.setMaxSize(newMaxDuplicateRecords);
+			}
+			maxDuplicateRecords=newMaxDuplicateRecords;
+			if(duplicateCache==null){
+				loadCacheFromDB();
+			}
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<EDR> getEDRToRate() {
 		Query query = getEntityManager().createQuery("from EDR e where e.status=:status")
@@ -48,6 +81,40 @@ public class EdrService extends PersistenceService<EDR> {
 		} catch (Exception e) {
 		}
 		return result;
+	}
+
+	public BoundedHashMap<String, Integer> loadDeduplicationInfo(
+			int maxDuplicateRecords) {
+		BoundedHashMap<String, Integer> result = new BoundedHashMap<String, Integer>(maxDuplicateRecords);
+		Query query = getEntityManager().createQuery("CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
+				.setParameter("status", EDRStatusEnum.OPEN)
+				.setMaxResults(maxDuplicateRecords);
+		@SuppressWarnings("unchecked")
+		List<String> results=query.getResultList();
+		for(String edrHash:results){
+			result.put(edrHash,0);
+		}
+		return null;
+	}
+
+	public boolean duplicateFound(String originBatch, String originRecord) {
+		boolean result = false;
+		if(useInMemoryDeduplication){
+			result = duplicateCache.containsKey(originBatch+originRecord);
+		} else {
+			result = findByBatchAndRecordId( originBatch,  originRecord) != null;
+		}
+		return result;
+	}
+	
+
+	public void create(EDR e) {
+		super.create(e);
+		if(useInMemoryDeduplication){
+			synchronized(duplicateCache){
+				duplicateCache.put(e.getOriginBatch()+e.getOriginRecord(),0);
+			}
+		}
 	}
 
 }

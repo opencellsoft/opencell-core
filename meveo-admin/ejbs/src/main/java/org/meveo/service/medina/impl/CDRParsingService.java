@@ -28,7 +28,7 @@ public class CDRParsingService {
 
 	@Inject
 	AccessService accessService;
-
+	
 	public void init(File CDRFile) {
 		cdrParser.init(CDRFile);
 	}
@@ -100,8 +100,7 @@ public class CDRParsingService {
 	}
 	
 	private void deduplicate(Serializable cdr) throws DuplicateException{
-		EDR edr=edrService.findByBatchAndRecordId(cdrParser.getOriginBatch(),cdrParser.getOriginRecord(cdr));
-		if(edr!=null){
+		if(edrService.duplicateFound(cdrParser.getOriginBatch(),cdrParser.getOriginRecord(cdr))){
 			throw new DuplicateException(cdr);
 		}
 	}
