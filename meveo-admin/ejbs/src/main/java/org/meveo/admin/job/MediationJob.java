@@ -77,7 +77,7 @@ public class MediationJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, Provider provider) {
-		log.info("execute ASGMediationJob.");
+		log.info("execute MediationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		BufferedReader cdrReader = null;
 		try {
