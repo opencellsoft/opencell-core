@@ -29,7 +29,7 @@ public class RatedCDRgenerator implements Runnable {
 				long i3=i%3;
 				sb.setLength(0);
 				sb.append(new Date(time));
-				sb.append(";A;");
+				sb.append(";MSISDN1;");
 				sb.append(i%500000L+";");
 				sb.append((i3==0?"SMS;":(i3==1?"VOICE;":"DATA;")));
 				sb.append(Math.random()*10);
@@ -52,7 +52,7 @@ public class RatedCDRgenerator implements Runnable {
 		long nbThread = Long.parseLong(args[0]);
 		long time = System.currentTimeMillis();
 		for(int i=0;i<nbThread;i++){
-			RatedCDRgenerator generator= new RatedCDRgenerator("/tmp/cdr/ratedCDR"+i+".csv",nbCDR/nbThread,i*nbCDR/nbThread,time);
+			RatedCDRgenerator generator= new RatedCDRgenerator("/tmp/ratedCDR"+i+".csv",nbCDR/nbThread,i*nbCDR/nbThread,time);
 			Thread t = new Thread(generator);
 			t.start();
 		}
