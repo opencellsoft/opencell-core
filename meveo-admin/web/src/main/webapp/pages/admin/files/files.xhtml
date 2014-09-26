@@ -30,9 +30,10 @@
 				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 		</p:confirmDialog>
 
-		<h1 style="text-align: left">#{messages['menu.fileExplorer']}</h1>
-
 		<p:panel id="fileExplorer">
+		<f:facet name="header">
+				<h:outputText value="#{messages['menu.fileExplorer']}" />
+			</f:facet>
 			<h:form>
 				<p:growl id="messages" showDetail="true" />
 				<p:dataList value="#{userBean.fileList}" var="file"
