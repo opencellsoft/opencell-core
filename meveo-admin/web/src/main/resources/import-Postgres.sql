@@ -558,6 +558,7 @@ insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 8);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 9);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 10);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (1, 11);
+insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (2, 1);
 insert into ADM_ROLE_PERMISSION (role_id, permission_id) values (2, 12);
 
 /*------INSERTS OF TABLE CAT_DAY_IN_YEAR----*/
