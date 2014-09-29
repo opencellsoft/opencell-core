@@ -77,9 +77,9 @@
 			</h:form>
 
 			<h:form rendered="#{userBean.selectedFileName==null}">
-				<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
-					multiple="true" mode="advanced" dragDropSupport="true"
-					fileLimit="5" update=":fileExplorer" />
+				<p:fileUpload 
+					value="#{userBean.file}" mode="simple" />
+    <p:commandButton value="Submit" actionListener="#{userBean.upload}"  />
 			</h:form>
 		</p:panel>
 	</ui:define>

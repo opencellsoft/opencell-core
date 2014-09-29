@@ -414,6 +414,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<BillingRun> getbillingRuns(Provider provider, String code) {
+		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
+				provider);
+		qb.startOrClause();
+		if(code!=null){
+			qb.addCriterion("c.code", "=",code, false);
+		}
+		qb.endOrClause();
+		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
+				.getResultList();
+		return billingRuns;
+
+	}	
+	
+	@SuppressWarnings("unchecked")
 	public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
 		BillingRunStatusEnum bRStatus;
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,

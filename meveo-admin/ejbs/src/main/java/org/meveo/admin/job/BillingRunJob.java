@@ -64,7 +64,7 @@ public class BillingRunJob implements Job {
 		log.info("execute BillingRunJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
-			List<BillingRun>  billruns = billingRunService.getbillingRuns(null);
+			List<BillingRun>  billruns = billingRunService.getbillingRuns(provider,parameter);
 			boolean notTerminatedBillRun=false;
 			if(billruns!=null){
 				for(BillingRun billrun:billruns){

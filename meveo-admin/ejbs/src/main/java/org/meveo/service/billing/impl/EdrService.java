@@ -20,7 +20,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.BoundedHashMap;
@@ -33,13 +32,12 @@ import org.meveo.service.base.PersistenceService;
 @LocalBean
 public class EdrService extends PersistenceService<EDR> {
 
-	@Inject
-	ParamBean paramBean;
+	ParamBean paramBean=ParamBean.getInstance();
 	
 
 	static boolean useInMemoryDeduplication=true;
 	static int maxDuplicateRecords = 100000;
-	static BoundedHashMap<String,Integer> duplicateCache;
+	static BoundedHashMap<String,Integer> duplicateCache= new BoundedHashMap<String, Integer>(1);
 	
 	private void loadCacheFromDB(){
 		synchronized(duplicateCache){

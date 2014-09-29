@@ -92,6 +92,19 @@ public class MediationJob implements Job {
 			cdrExtensions.add(cdrExtension);
 			outputDir =  meteringDir+"output";
 			rejectDir =  meteringDir+"reject";
+			//TODO creer les reps
+			File f=new File(inputDir);
+			if(!f.exists()){
+				f.mkdirs();
+			}
+			f=new File(outputDir);
+			if(!f.exists()){
+				f.mkdirs();
+			}
+			f=new File(rejectDir);
+			if(!f.exists()){
+				f.mkdirs();
+			}
 			report = "";
 			CDRParsingService.resetAccessPointCache();
 			cdrFile = FileUtils.getFileForParsing(inputDir, cdrExtensions);
