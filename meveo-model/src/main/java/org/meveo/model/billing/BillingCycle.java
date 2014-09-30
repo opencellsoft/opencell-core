@@ -27,7 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessEntity;
@@ -43,9 +42,8 @@ public class BillingCycle extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "BILLING_TEMPLATE_NAME", nullable = false)
+	@Column(name = "BILLING_TEMPLATE_NAME", nullable = true)
 	@Size(max = 50, min = 1)
-	@NotNull
 	private String billingTemplateName;
 
 	@ManyToOne(fetch = FetchType.LAZY)

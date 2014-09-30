@@ -4,8 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -14,16 +14,26 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel edit ="#{billingCycleBean.edit}" label="#{messages['billingCycle.panel']}" backingBean="#{billingCycleBean}">
-    			<hf:formField label="#{messages['billingCycle.code']}" field="code" validateUnique="true" required="true"/>
-    			<hf:formField label="#{messages['billingCycle.description']}" id="description" field="description" useConverter="false" size="50" maxlength="50" required="true"/>
-    			<hf:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" size="20" maxlength="20" required="true"/>
-				<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}" field="invoiceDateDelay" required="true"/>
-				<hf:formField label="#{messages['billingCycle.dueDateDelay']}" field="dueDateDelay" required="true" />
-				<hftl:panelGroup columns="2">	
-					<hf:formEntityField label="#{messages['billingCycle.calendar']}" field="calendar" childField="name" required="true" popup="false"
-										listElements="#{calendarService.listBillingCalendars()}" />
-				</hftl:panelGroup>
+		<hf:formPanel edit="#{billingCycleBean.edit}"
+			label="#{messages['billingCycle.panel']}"
+			backingBean="#{billingCycleBean}">
+			<hf:formField label="#{messages['billingCycle.code']}" field="code"
+				validateUnique="true" required="true" />
+			<hf:formField label="#{messages['billingCycle.description']}"
+				id="description" field="description" useConverter="false" size="50"
+				maxlength="50" required="true" />
+			<hf:formField label="#{messages['billingCycle.billingTemplateName']}"
+				field="billingTemplateName" size="20" maxlength="20"
+				required="false" />
+			<hf:formField label="#{messages['billingCycle.invoiceDateDelay']}"
+				field="invoiceDateDelay" required="true" />
+			<hf:formField label="#{messages['billingCycle.dueDateDelay']}"
+				field="dueDateDelay" required="true" />
+			<hftl:panelGroup columns="2">
+				<hf:formEntityField label="#{messages['billingCycle.calendar']}"
+					field="calendar" childField="name" required="true" popup="false"
+					listElements="#{calendarService.listBillingCalendars()}" />
+			</hftl:panelGroup>
 		</hf:formPanel>
 
 	</ui:define>
