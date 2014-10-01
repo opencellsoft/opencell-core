@@ -37,11 +37,11 @@ public class EdrService extends PersistenceService<EDR> {
 
 	static boolean useInMemoryDeduplication=true;
 	static int maxDuplicateRecords = 100000;
-	static BoundedHashMap<String,Integer> duplicateCache= new BoundedHashMap<String, Integer>(1);
+	static BoundedHashMap<String,Integer> duplicateCache;
 	
 	private void loadCacheFromDB(){
 		synchronized(duplicateCache){
-			duplicateCache = loadDeduplicationInfo(maxDuplicateRecords);
+			loadDeduplicationInfo(maxDuplicateRecords);
 		}
 	}
 	
@@ -55,6 +55,7 @@ public class EdrService extends PersistenceService<EDR> {
 			}
 			maxDuplicateRecords=newMaxDuplicateRecords;
 			if(duplicateCache==null){
+				duplicateCache= new BoundedHashMap<String, Integer>(1);
 				loadCacheFromDB();
 			}
 		}
@@ -81,18 +82,17 @@ public class EdrService extends PersistenceService<EDR> {
 		return result;
 	}
 
-	public BoundedHashMap<String, Integer> loadDeduplicationInfo(
+	public void loadDeduplicationInfo(
 			int maxDuplicateRecords) {
-		BoundedHashMap<String, Integer> result = new BoundedHashMap<String, Integer>(maxDuplicateRecords);
-		Query query = getEntityManager().createQuery("CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
+		duplicateCache.clear();
+		Query query = getEntityManager().createQuery("select CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
 				.setParameter("status", EDRStatusEnum.OPEN)
 				.setMaxResults(maxDuplicateRecords);
 		@SuppressWarnings("unchecked")
 		List<String> results=query.getResultList();
 		for(String edrHash:results){
-			result.put(edrHash,0);
+			duplicateCache.put(edrHash,0);
 		}
-		return null;
 	}
 
 	public boolean duplicateFound(String originBatch, String originRecord) {
