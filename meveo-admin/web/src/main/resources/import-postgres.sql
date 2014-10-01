@@ -1159,7 +1159,7 @@ CREATE SEQUENCE BILLING_CHARGE_INSTANCE_SEQ start with 4 increment by 1;
 
 
 --Billing Wallet
-insert into billing_wallet (id, version, disabled, created, code, provider_id, creator_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 1, 1, 4);
+insert into BILLING_WALLET (id, version, disabled, created, code, provider_id, creator_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 1, 1, 4);
 
 DROP SEQUENCE billing_wallet_SEQ;
 CREATE SEQUENCE billing_wallet_SEQ start with 2 increment by 1;
@@ -1172,3 +1172,11 @@ insert into BILLING_WALLET_OPERATION values ('W', 1, 0, false, '2014-10-01 14:16
 
 DROP SEQUENCE billing_wallet_operation_SEQ;
 CREATE SEQUENCE billing_wallet_operation_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE rating_edr_SEQ;
+CREATE SEQUENCE rating_edr_SEQ start with 2 increment by 1;
+
+insert into RATING_EDR values (1, 0, '2014-10-01 16:20:24.417', '2014-03-29 21:50:40.144', NULL, 'ASG_RatedCDR_100.csv', 'MSISDN1_SVC_DEF_1396126240144', 'SVC_DEF', 'MSISDN1', 'DATA', 'KBYTE', 44.00, NULL, 'OPEN', 1, 1);
+
+DROP SEQUENCE rating_edr_SEQ;
+CREATE SEQUENCE rating_edr_SEQ start with 2 increment by 1;
