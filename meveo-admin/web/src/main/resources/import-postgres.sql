@@ -454,7 +454,7 @@ CREATE SEQUENCE ADM_COUNTRY_SEQ start with 238 increment by 1;
 
 /*------INSERTS OF TABLE CRM PROVIDER----*/
 
-INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (1, 1, false, now(), NULL, 'ASG', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'PROV1', false, false, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1);
+INSERT INTO CRM_PROVIDER (id, version, disabled, created, updated, code, description, multicountry_flag, multicurrency_flag, multilanguage_flag, payment_methods, logo, invoice_prefix, current_invoice_nb, rating_rounding, bank_code, branch_code, account_number, hash_key, iban, bic, account_owner, bank_name, bank_id, issuer_number, issuer_name, entreprise, automatic_invoicing, display_free_tx_in_invoice, nne, address_1, address_2, address_3, address_zipcode, address_city, address_country, address_state, amount_validation, level_duplication, email, country_id, provider_id, currency_id, updater_id,creator_id,language_id) VALUES (1, 1, false, now(), NULL, 'DEMO', NULL, true, true, true, NULL, NULL, NULL, NULL, NULL, 'SGMB', '12345', '33333333333', '11', '11', '11', 'owner', 'SGMB', '11', '1111', 'DEMO', false, false, true, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false, NULL, 1, NULL, 1, NULL,NULL, 1);
 
 DROP SEQUENCE CRM_PROVIDER_SEQ;
 CREATE SEQUENCE CRM_PROVIDER_SEQ start with 2 increment by 1;
@@ -520,8 +520,6 @@ CREATE SEQUENCE ADM_ROLE_SEQ start with 3 increment by 1;
 /*------INSERTS OF TABLE ADM_USER_ROLE----*/
 
 INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (1, 1);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (1, 2);
-INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (2, 1);
 INSERT INTO ADM_USER_ROLE (USER_ID, ROLE_ID) VALUES (2, 2);
 
 INSERT INTO ADM_USER_PROVIDER (PROVIDER_ID, USER_ID) VALUES (1, 1);
