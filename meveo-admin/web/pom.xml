@@ -178,6 +178,9 @@
 					<value>dev</value>
 				</property>
 			</activation>
+			<properties>
+				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+			</properties>
 		</profile>
 
 		<profile>
@@ -188,6 +191,9 @@
 					<value>integr</value>
 				</property>
 			</activation>
+			<properties>
+				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+			</properties>
 		</profile>
 
 		<profile>
@@ -198,6 +204,9 @@
 					<value>prod</value>
 				</property>
 			</activation>
+			<properties>
+				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+			</properties>
 		</profile>
 	</profiles>
 </project>
