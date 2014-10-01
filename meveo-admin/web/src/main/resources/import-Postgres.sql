@@ -1123,9 +1123,16 @@ insert into AR_CUSTOMER_ACCOUNT (date_dunning_level, dunning_level, password, st
 insert into BILLING_BILLING_ACCOUNT (electronic_billing, next_invoice_date, payment_method, status, status_date, subscription_date, id, billing_cycle, customer_account_id, trading_country_id, trading_language_id) values (false, (select now() + '30 days'::interval), 'CHECK', 'ACTIVE', now(), now(), 3, 1, 2, 1, 1);
 insert into BILLING_USER_ACCOUNT (status, status_date, subscription_date, id, billing_account_id) values ('ACTIVE', now(), now(), 4, 3);
 
+DROP SEQUENCE CRM_CUSTOMER_SEQ;
 CREATE SEQUENCE CRM_CUSTOMER_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE CRM_AR_CUSTOMER_ACCOUNT_SEQ;
 CREATE SEQUENCE CRM_AR_CUSTOMER_ACCOUNT_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE BILLING_BILLING_ACCOUNT_SEQ;
 CREATE SEQUENCE BILLING_BILLING_ACCOUNT_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE BILLING_USER_ACCOUNT_SEQ;
 CREATE SEQUENCE BILLING_USER_ACCOUNT_SEQ start with 2 increment by 1;
 
 --Billing Wallet
