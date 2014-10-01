@@ -48,10 +48,9 @@
 				paginator="true" rows="10"
 				selection="#{backingBean.selectedEntities}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-				rowsPerPageTemplate="5,10,15" lazy="true"
+				rowsPerPageTemplate="1,5,10,15" lazy="true"
 				binding="#{backingBean.dataTable}" styleClass="custom-grid">
-				<p:ajax event="page" onstart="PF('blockUIWidgetDataTable').block()"
-					oncomplete="PF('blockUIWidgetDataTable').unblock()" />
+				<p:ajax event="page" />
 				<p:column selectionMode="multiple" style="width:2%"
 					rendered="#{checkMany}" exportable="false" />
 				<ui:insert />
@@ -74,8 +73,10 @@
 				<ui:insert name="add-on-buttons" />
 			</p:panel>
 
-			<pe:blockUI target="datatable" content="blockUIContentDataTable"
-				widgetVar="blockUIWidgetDataTable" />
+			<p:blockUI block="datatable" trigger="datatable">
+        		LOADING<br />
+				<p:graphicImage name="ajax-loader1.gif" library="img" />
+			</p:blockUI>
 
 			<p:panelGrid id="blockUIContentDataTable" columns="2"
 				style="display:none;">
