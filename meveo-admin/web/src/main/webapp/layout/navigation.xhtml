@@ -120,6 +120,9 @@
 			<p:submenu id="adminJobs" label="#{messages['menu.jobs']}">
 				<p:menuitem id="jobs" outcome="jobTimers"
 					value="#{messages['menu.settings']}" />
+
+				<p:menuitem id="timers" outcome="timers"
+					value="#{messages['menu.activeTimers']}" />
 			</p:submenu>
 
 			<p:menuitem id="emailTemplates"
@@ -448,9 +451,9 @@
 				value="#{messages['menu.billingRuns']}" />
 
 		</p:submenu>
-		<p:submenu id="billing"
-			rendered="#{identity.hasPermission('billing','billingVisualization')}"
-			label="#{messages['menu.billing']}">
+<!-- 		<p:submenu id="billing" -->
+<!-- 			rendered="#{identity.hasPermission('billing','billingVisualization')}" -->
+<!-- 			label="#{messages['menu.billing']}"> -->
 
 			<!-- 
 			<p:submenu id="crmConnectors"
@@ -520,8 +523,8 @@
 
 			</p:submenu> -->
 
-			<p:menuitem id="timers" outcome="timers"
-				value="#{messages['menu.activeTimers']}" />
+			<!-- 			<p:menuitem id="timers" outcome="timers" -->
+			<!-- 				value="#{messages['menu.activeTimers']}" /> -->
 
 			<!--
 			<rich:dropDownMenu value="#{messages['menu.payments']}" rendered="#{identity.hasPermission('billing','billingManagement')}">
@@ -557,7 +560,7 @@
 			</rich:dropDownMenu>
 			-->
 
-		</p:submenu>
+<!-- 		</p:submenu> -->
 
 		<p:submenu id="payment" label="#{messages['menu.payments']}"
 			rendered="#{identity.hasPermission('billing','billingManagement')}">
