@@ -17,7 +17,7 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<excludes>
-					<exclude>**/import*.sql</exclude>
+					<exclude>**/import-*.sql</exclude>
 				</excludes>
 				<filtering>true</filtering>
 			</resource>
@@ -66,6 +66,24 @@
 					</replacements>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<configuration>
+							<target>
+								<copy file="src/main/resources/import-${dbtype}.sql"
+									tofile="${project.build.directory}/meveo/WEB-INF/classes/import.sql" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<!-- <plugin> -->
 		<!-- <artifactId>maven-war-plugin</artifactId> -->
@@ -106,7 +124,7 @@
 		<!-- <groupId>com.ocpsoft</groupId> -->
 		<!-- <artifactId>prettyfaces-jsf2</artifactId> -->
 		<!-- </dependency> -->
-		 <dependency>
+		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
 			<artifactId>primefaces-extensions</artifactId>
 			<version>2.1.0</version>
@@ -180,6 +198,7 @@
 			</activation>
 			<properties>
 				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+				<dbtype>postgres</dbtype>
 			</properties>
 		</profile>
 
@@ -193,6 +212,7 @@
 			</activation>
 			<properties>
 				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+				<dbtype>postgres</dbtype>
 			</properties>
 		</profile>
 
@@ -206,6 +226,7 @@
 			</activation>
 			<properties>
 				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+				<dbtype>postgres</dbtype>
 			</properties>
 		</profile>
 	</profiles>
