@@ -2,7 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui" >
+	xmlns:p="http://primefaces.org/ui">
 
 	<p:tooltip for="users">#{help['menu.users']}</p:tooltip>
 	<p:tooltip for="tradingLanguages">#{help['menu.tradingLanguages']}</p:tooltip>
@@ -115,6 +115,11 @@
 				<p:menuitem id="sellers" outcome="sellers"
 					value="#{messages['menu.sellers']}" />
 
+			</p:submenu>
+
+			<p:submenu id="adminJobs" label="#{messages['menu.jobs']}">
+				<p:menuitem id="jobs" outcome="jobTimers"
+					value="#{messages['menu.settings']}" />
 			</p:submenu>
 
 			<p:menuitem id="emailTemplates"
@@ -463,7 +468,7 @@
 
 			</p:submenu>
  			-->
- 
+
 			<!--
 			<rich:menuItem id="invoices" rendered="#{identity.hasPermission('billing','billingVisualization')}">
 				<h:link outcome="invoices">
@@ -514,10 +519,6 @@
 					outcome="documents" value="#{messages['menu.documents']}" />
 
 			</p:submenu> -->
-
-
-			<p:menuitem id="jobs" outcome="jobTimers"
-				value="#{messages['menu.jobs']}" />
 
 			<p:menuitem id="timers" outcome="timers"
 				value="#{messages['menu.activeTimers']}" />
