@@ -1089,15 +1089,17 @@ INSERT INTO CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) va
 --Charge Template
 insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (1, 0, false, now(), 'RC_DEFAULT', 'Default Recurring Charge', false, 1, 1, 1);
 insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (2, 0, false, now(), 'SUB_DEFAULT', 'Default Subscription Charge', false, 1, 1, 1);
+insert into CAT_CHARGE_TEMPLATE values (3, 0, false, '2014-10-01 14:13:42.764', NULL, 'UC_DEFAULT', ‘Default usage charge', false, NULL, 1, 1, NULL, 1);
 
 DROP SEQUENCE CAT_CHARGE_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 2 increment by 1;
+CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 4 increment by 1;
 
 insert into CAT_RECURRING_CHARGE_TEMPL (apply_in_advance, recurrence_type, subscription_prorata, termination_prorata, id, calendar_id) values (false, 'CALENDAR', false, false, 1, 3);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (immediate_invoicing, type, id) values (true, 'SUBSCRIPTION', 2);
 
 insert into CAT_SERV_RECCHARGE_TEMPLATES (service_template_id, charge_template_id) values (1, 1);
 insert into CAT_SERV_ONECHARGE_S_TEMPLATES (service_template_id, charge_template_id) values (1, 2);
+insert into CAT_USAGE_CHARGE_TEMPLATE values (NULL, NULL, NULL, NULL, NULL, 1, 'KBYTE', 'INTEGER', 1.000000000000, 0, 1);
 
 --Price Plan Matrix
 insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1);
@@ -1120,6 +1122,9 @@ insert into CRM_CUSTOMER (id, customer_brand_id, customer_category_id, seller_id
 insert into AR_CUSTOMER_ACCOUNT (date_dunning_level, dunning_level, password, status, id, customer_id, trading_currency_id) values (now(), 'R0', 'bDGtBrEn', 'ACTIVE', 2, 1, 1);
 insert into BILLING_BILLING_ACCOUNT (electronic_billing, next_invoice_date, payment_method, status, status_date, subscription_date, id, billing_cycle, customer_account_id, trading_country_id, trading_language_id) values (false, (select now() + '30 days'::interval), 'CHECK', 'ACTIVE', now(), now(), 3, 1, 2, 1, 1);
 insert into BILLING_USER_ACCOUNT (status, status_date, subscription_date, id, billing_account_id) values ('ACTIVE', now(), now(), 4, 3);
+insert into BILLING_SUBSCRIPTION values (1, 0, false, '2014-10-01 14:16:12.101', NULL, 'SUB_DEFAULT', NULL, true, NULL, 'CREATED', '2014-10-01 14:15:54.058', '2014-10-01 00:00:00', NULL, 1, 1, NULL, 1, NULL, 4);
+insert into MEDINA_ACCESS values (2, 0, false, 'MSISDN1', NULL, NULL, 1, 1);
+
 
 DROP SEQUENCE CRM_CUSTOMER_SEQ;
 CREATE SEQUENCE CRM_CUSTOMER_SEQ start with 2 increment by 1;
@@ -1133,6 +1138,26 @@ CREATE SEQUENCE BILLING_BILLING_ACCOUNT_SEQ start with 2 increment by 1;
 DROP SEQUENCE BILLING_USER_ACCOUNT_SEQ;
 CREATE SEQUENCE BILLING_USER_ACCOUNT_SEQ start with 2 increment by 1;
 
+DROP SEQUENCE BILLING_SUBSCRIPTION_SEQ;
+CREATE SEQUENCE BILLING_USER_ACCOUNT_SEQ start with 2 increment by 1;
+
+DROP SEQUENCE MEDINA_ACCESS_SEQ;
+CREATE SEQUENCE MEDINA_ACCESS_SEQ start with 2 increment by 1;
+
+
+—-Billing charge instance
+insert into BILLING_CHARGE_INSTANCE values (1, 1, false, '2014-10-01 14:16:43.116', '2014-10-01 14:16:48.67', 'RC_DEFAULT', 'Default Recurring Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.67', NULL, 1, 1, 1, 1, 1, 1, 2, 1);
+insert into BILLING_CHARGE_INSTANCE values (2, 1, false, '2014-10-01 14:16:43.118', '2014-10-01 14:16:48.721', 'SUB_DEFAULT', 'Default Subscription Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'CLOSED', '2014-10-01 14:16:48.721', NULL, 1, 1, 1, 2, 1, 1, 2, 1);
+insert into BILLING_CHARGE_INSTANCE values (3, 1, false, '2014-10-01 14:16:43.124', '2014-10-01 14:16:48.722', 'UC_DEFAULT', 'Usage charge default', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.722', NULL, 1, 1, 1, 3, 1, 1, 2, 1);
+
+INSERT INTO billing_one_shot_charge_inst VALUES (2, 1, NULL);
+INSERT INTO billing_recurring_charge_inst VALUES ('2014-11-01 00:00:00', '2014-10-01 00:00:00', 1, 1, 1);
+INSERT INTO billing_usage_charge_inst VALUES (NULL, 3, NULL, 1);
+
+DROP SEQUENCE BILLING_CHARGE_INSTANCE_SEQ;
+CREATE SEQUENCE BILLING_CHARGE_INSTANCE_SEQ start with 4 increment by 1;
+
+
 --Billing Wallet
 insert into billing_wallet (id, version, disabled, created, code, provider_id, creator_id, user_account_id) values (1, 0, false, now(), 'PRINCIPAL', 1, 1, 4);
 
@@ -1140,3 +1165,10 @@ DROP SEQUENCE billing_wallet_SEQ;
 CREATE SEQUENCE billing_wallet_SEQ start with 2 increment by 1;
 
 update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;
+
+
+—-billing_wallet_operation
+insert into BILLING_WALLET_OPERATION values ('W', 1, 0, false, '2014-10-01 14:16:48.718', NULL, 'SUB_DEFAULT', 'Default Subscription Charge', 0.000000000000, 2.000000000000, 2.000000000000, NULL, 'OF_DEF', '2014-10-01 00:00:00', NULL, NULL, NULL, 1.000000000000, NULL, 'OPEN', NULL, 0.000000000000, NULL, NULL, NULL, 2.000000000000, 1, 1, NULL, 2, NULL, 49, 2, NULL, NULL);
+
+DROP SEQUENCE billing_wallet_operation_SEQ;
+CREATE SEQUENCE billing_wallet_operation_SEQ start with 2 increment by 1;
