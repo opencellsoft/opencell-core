@@ -1089,7 +1089,7 @@ INSERT INTO CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) va
 --Charge Template
 insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (1, 0, false, now(), 'RC_DEFAULT', 'Default Recurring Charge', false, 1, 1, 1);
 insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (2, 0, false, now(), 'SUB_DEFAULT', 'Default Subscription Charge', false, 1, 1, 1);
-insert into CAT_CHARGE_TEMPLATE values (3, 0, false, '2014-10-01 14:13:42.764', NULL, 'UC_DEFAULT', ‘Default usage charge', false, NULL, 1, 1, NULL, 1);
+insert into CAT_CHARGE_TEMPLATE values (3, 0, false, '2014-10-01 14:13:42.764', NULL, 'UC_DEFAULT', 'Default usage charge', false, NULL, 1, 1, NULL, 1);
 
 DROP SEQUENCE CAT_CHARGE_TEMPLATE_SEQ;
 CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 4 increment by 1;
