@@ -1123,7 +1123,7 @@ insert into AR_CUSTOMER_ACCOUNT (date_dunning_level, dunning_level, password, st
 insert into BILLING_BILLING_ACCOUNT (electronic_billing, next_invoice_date, payment_method, status, status_date, subscription_date, id, billing_cycle, customer_account_id, trading_country_id, trading_language_id) values (false, (select now() + '30 days'::interval), 'CHECK', 'ACTIVE', now(), now(), 3, 1, 2, 1, 1);
 insert into BILLING_USER_ACCOUNT (status, status_date, subscription_date, id, billing_account_id) values ('ACTIVE', now(), now(), 4, 3);
 insert into BILLING_SUBSCRIPTION values (1, 0, false, '2014-10-01 14:16:12.101', NULL, 'SUB_DEFAULT', NULL, true, NULL, 'CREATED', '2014-10-01 14:15:54.058', '2014-10-01 00:00:00', NULL, 1, 1, NULL, 1, NULL, 4);
-insert into MEDINA_ACCESS values (2, 0, false, 'MSISDN1', NULL, NULL, 1, 1);
+insert into MEDINA_ACCESS values (1, 0, false, 'MSISDN1', NULL, NULL, 1, 1);
 
 
 DROP SEQUENCE CRM_CUSTOMER_SEQ;
