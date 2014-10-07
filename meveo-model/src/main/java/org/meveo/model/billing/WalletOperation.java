@@ -42,7 +42,7 @@ import org.meveo.model.admin.Seller;
 
 @Entity
 @Table(name = "BILLING_WALLET_OPERATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_OPERATION_SEQ")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_OPERATION_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "OPERATION_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
