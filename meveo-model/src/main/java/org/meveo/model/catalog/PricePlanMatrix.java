@@ -65,6 +65,14 @@ public class PricePlanMatrix extends AuditableEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date endRatingDate;
 
+	@Column(name = "MIN_QUANTITY")
+	@Digits(integer = 23, fraction = 12)
+	private BigDecimal minQuantity;
+
+	@Column(name = "MAX_QUANTITY")
+	@Digits(integer = 23, fraction = 12)
+	private BigDecimal maxQuantity;
+	
 	@Column(name = "MIN_SUBSCR_AGE")
 	private Long minSubscriptionAgeInMonth;
 
@@ -149,6 +157,22 @@ public class PricePlanMatrix extends AuditableEntity {
 
 	public void setEndRatingDate(Date endRatingDate) {
 		this.endRatingDate = endRatingDate;
+	}
+
+	public BigDecimal getMinQuantity() {
+		return minQuantity;
+	}
+
+	public void setMinQuantity(BigDecimal minQuantity) {
+		this.minQuantity = minQuantity;
+	}
+
+	public BigDecimal getMaxQuantity() {
+		return maxQuantity;
+	}
+
+	public void setMaxQuantity(BigDecimal maxQuantity) {
+		this.maxQuantity = maxQuantity;
 	}
 
 	public Long getMinSubscriptionAgeInMonth() {

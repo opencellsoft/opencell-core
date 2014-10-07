@@ -542,13 +542,29 @@ public class RatingService {
 			}
 			boolean offerCodeSameInPricePlan = pricePlan.getOfferCode() == null
 					|| pricePlan.getOfferCode().equals(bareOperation.getOfferCode());
-			if (offerCodeSameInPricePlan) {
+			if (!offerCodeSameInPricePlan) {
 				log.debug("offerCodeSameInPricePlan");
-				return pricePlan;
+				continue;
 			}
 			log.debug("The operation offerCode " + bareOperation.getOfferCode()
 					+ " is not compatible with price plan offerCode: "
 					+ pricePlan.getOfferCode());
+			boolean quantityMaxOk = pricePlan.getMaxQuantity() == null ||
+					pricePlan.getMaxQuantity().compareTo(bareOperation.getQuantity())>0;
+			if (!quantityMaxOk) {
+				log.debug("the quantity "+bareOperation.getQuantity()+" is strictly greater than "+pricePlan.getMaxQuantity());
+				continue;
+			} else {
+				log.debug("quantityMaxOkInPricePlan");
+			}
+			boolean quantityMinOk = pricePlan.getMinQuantity() == null ||
+					pricePlan.getMinQuantity().compareTo(bareOperation.getQuantity())<=0;
+			if (quantityMinOk) {
+				log.debug("quantityMaxOkInPricePlan");
+				return pricePlan;
+			} else {
+				log.debug("the quantity "+bareOperation.getQuantity()+" is less than "+pricePlan.getMinQuantity());
+			}
 		}
 		return null;
 	}
