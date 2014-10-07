@@ -72,10 +72,35 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+		</dependency>
+
+		<!-- Import the EJB API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the JPA API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-model</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.jboss.weld</groupId>
@@ -255,7 +280,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- For testing -->
 		<dependency>
 			<groupId>hsqldb</groupId>
@@ -293,10 +318,10 @@
 			<version>3.2</version>
 		</dependency>
 		<dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>1.7.6</version>
-        </dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>1.7.6</version>
+		</dependency>
 
 		<!-- <dependency> -->
 		<!-- <groupId>batik</groupId> -->

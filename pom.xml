@@ -102,6 +102,23 @@
 			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Optional, but highly recommended -->
+		<!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) 
+			JPA from JUnit/TestNG -->
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<version>1.1.5.Final</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.protocol</groupId>
+			<artifactId>arquillian-protocol-servlet</artifactId>
+			<version>1.1.5.Final</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -144,7 +161,8 @@
 				</property>
 			</activation>
 			<properties>
-				<maven.test.skip>true</maven.test.skip>
+				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+				<dbtype>postgres</dbtype>
 			</properties>
 		</profile>
 		<profile>
@@ -155,7 +173,12 @@
 					<value>integr</value>
 				</property>
 			</activation>
+			<properties>
+				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+				<dbtype>postgres</dbtype>
+			</properties>
 		</profile>
+
 		<profile>
 			<id>production</id>
 			<activation>
@@ -164,6 +187,57 @@
 					<value>prod</value>
 				</property>
 			</activation>
+			<properties>
+				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+				<dbtype>postgres</dbtype>
+			</properties>
+
+			<!-- We add the JBoss repository as we need the JBoss AS connectors for 
+				Arquillian -->
+			<repositories>
+				<!-- The JBoss Community public repository is a composite repository 
+					of several major repositories -->
+				<!-- see http://community.jboss.org/wiki/MavenGettingStarted-Users -->
+				<repository>
+					<id>jboss-public-repository</id>
+					<name>JBoss Repository</name>
+					<url>http://repository.jboss.org/nexus/content/groups/public</url>
+					<!-- These optional flags are designed to speed up your builds by reducing 
+						remote server calls -->
+					<releases>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+
+			<pluginRepositories>
+				<pluginRepository>
+					<id>jboss-public-repository</id>
+					<name>JBoss Repository</name>
+					<url>http://repository.jboss.org/nexus/content/groups/public</url>
+					<releases>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+
+			<!-- An optional Arquillian testing profile that executes tests in your 
+				JBoss AS instance -->
+			<!-- This profile will start a new JBoss AS instance, and execute the 
+				test, shutting it down when done -->
+			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<version>7.1.0.Beta1b</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
 		</profile>
 
 	</profiles>

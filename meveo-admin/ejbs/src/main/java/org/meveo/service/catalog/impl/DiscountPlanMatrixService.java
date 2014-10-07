@@ -15,19 +15,57 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.Set;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
+import org.meveo.model.admin.User;
 import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.RatingService;
 
-/**
- * @author Ignas Lelys
- * @created Nov 29, 2010
- * 
- */
+
 @Stateless @LocalBean
 public class DiscountPlanMatrixService extends
 		PersistenceService<DiscountPlanMatrix> {
+	public void create(DiscountPlanMatrix e) {
+		super.create(e);
+		RatingService.setDiscountPlanDirty();
+	}
 
+	public void update(DiscountPlanMatrix e) {
+		super.update(e);
+		RatingService.setDiscountPlanDirty();
+	}
+
+	public void remove(Long id) {
+		super.remove(id);
+		RatingService.setDiscountPlanDirty();
+	}
+
+	public void disable(Long id) {
+		super.disable(id);
+		RatingService.setDiscountPlanDirty();
+	}
+
+	public void remove(DiscountPlanMatrix e) {
+		super.remove(e);
+		RatingService.setDiscountPlanDirty();
+	}
+
+	public void remove(Set<Long> ids) {
+		super.remove(ids);
+		RatingService.setDiscountPlanDirty();
+	}
+
+	public void update(DiscountPlanMatrix e, User updater) {
+		super.update(e, updater);
+		RatingService.setDiscountPlanDirty();
+	}
+
+	public void create(DiscountPlanMatrix e, User creator) {
+		super.create(e, creator);
+		RatingService.setDiscountPlanDirty();
+	}
 }

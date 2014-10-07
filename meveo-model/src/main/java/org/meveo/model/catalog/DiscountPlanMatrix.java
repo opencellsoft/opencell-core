@@ -50,6 +50,10 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	@Size(max = 20, min = 1)
 	private String eventCode;
 
+	@Column(name = "OFFER_CODE", length = 35)
+	@Size(max = 35, min = 1)
+	protected String offerCode;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "START_SUBSCRIPTION_DATE")
 	private Date startSubscriptionDate;
@@ -84,6 +88,14 @@ public class DiscountPlanMatrix extends AuditableEntity {
 
 	public void setEventCode(String eventCode) {
 		this.eventCode = eventCode;
+	}
+
+	public String getOfferCode() {
+		return offerCode;
+	}
+
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
 	}
 
 	public Date getStartSubscriptionDate() {
@@ -151,7 +163,7 @@ public class DiscountPlanMatrix extends AuditableEntity {
 
 	@AssertTrue(message = "start date should be before end date")
 	public boolean isValidDate() {
-		return this.startSubscriptionDate.before(this.endSubscriptionDate);
+		return (this.startSubscriptionDate==null)||(this.endSubscriptionDate==null)||(this.startSubscriptionDate.before(this.endSubscriptionDate));
 	}
 
 }

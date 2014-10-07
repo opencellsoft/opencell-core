@@ -104,6 +104,32 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+		</dependency>
+
+		<!-- Import the CDI API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the EJB API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.spec.javax.el</groupId>
+			<artifactId>jboss-el-api_2.2_spec</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.manaty</groupId>
 			<artifactId>meveo-model</artifactId>
 		</dependency>
@@ -196,10 +222,6 @@
 					<value>dev</value>
 				</property>
 			</activation>
-			<properties>
-				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
-				<dbtype>postgres</dbtype>
-			</properties>
 		</profile>
 
 		<profile>
@@ -210,10 +232,6 @@
 					<value>integr</value>
 				</property>
 			</activation>
-			<properties>
-				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
-				<dbtype>postgres</dbtype>
-			</properties>
 		</profile>
 
 		<profile>
@@ -224,10 +242,6 @@
 					<value>prod</value>
 				</property>
 			</activation>
-			<properties>
-				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-				<dbtype>postgres</dbtype>
-			</properties>
 		</profile>
 	</profiles>
 </project>

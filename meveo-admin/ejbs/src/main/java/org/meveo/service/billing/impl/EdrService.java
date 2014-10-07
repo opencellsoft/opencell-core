@@ -55,7 +55,7 @@ public class EdrService extends PersistenceService<EDR> {
 			}
 			maxDuplicateRecords=newMaxDuplicateRecords;
 			if(duplicateCache==null){
-				duplicateCache= new BoundedHashMap<String, Integer>(1);
+				duplicateCache= new BoundedHashMap<String, Integer>(newMaxDuplicateRecords);
 				loadCacheFromDB();
 			}
 		}
