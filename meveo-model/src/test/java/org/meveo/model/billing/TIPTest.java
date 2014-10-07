@@ -46,7 +46,7 @@ public class TIPTest {
 	private Date invoiceDueDate=null;
 	private BigDecimal netToPay= null;
 
-	@Test(groups = { "unit" })
+	//@Test(groups = { "unit" })
     public void testTIP() {
 		coordonneesBancaires.setAccountOwner("Sebastien Michea");
 		coordonneesBancaires.setBankCode("12345");
