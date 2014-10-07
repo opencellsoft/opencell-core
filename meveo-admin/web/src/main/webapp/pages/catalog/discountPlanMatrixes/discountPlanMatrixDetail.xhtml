@@ -25,7 +25,23 @@
 			<!-- 			selection="#{chargeTemplateBean.entity}" -->
 		</hftl:entityPopup>
 		
-	<hftl:entityPopup id="sellerParentPopup" 
+	   <hftl:entityPopup id="offerPopup"
+			header="#{messages['offer.popup.header']}"
+			backingBean="#{offerTemplateBean}"
+			eventBackingBean="#{discountPlanMatrixBean}"
+			searchField1Label="#{messages['offerTemplate.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['offerTemplate.description']}"
+			searchField2="description"
+			column1Label="#{messages['offerTemplate.code']}" column1="code"
+			column2Label="#{messages['offerTemplate.description']}"
+			column2="description" 
+			selection="#{discountPlanMatrixBean.entity.offerTemplate}"
+			lazy="false" dataModel="#{offerTemplateBean.listActive}"
+			updateField=":discountFormPanel:formDiscountPlan:offerSelectId:offerSelectId">
+		</hftl:entityPopup>
+		
+	    <hftl:entityPopup id="sellerParentPopup" 
 			header="#{messages['seller.title']}"
 			backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -40,7 +56,7 @@
     			<hf:formField id="chargeSelectId" required="true"
 					label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode"
 					popup="true" popupId="discountPlanMatChargePopup" disabled="true" />
-				<hf:formField label="#{messages['pricePlanMatrix.offerCode']}" field="offerCode" />
+				<hf:formEntityField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate"  childField="code" popup="true" popupId="offerPopup"/>
     			<hf:formField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
     			<hf:formEntityField id="parentSelectId" label="#{messages['seller.title']}" field="seller" childField="description" popup="true" popupId="sellerParentPopup" />
 				<hf:formField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />

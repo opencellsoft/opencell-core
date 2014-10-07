@@ -12,7 +12,22 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+	   <hftl:entityPopup id="offerPopup"
+			header="#{messages['offer.popup.header']}"
+			backingBean="#{offerTemplateBean}"
+			eventBackingBean="#{pricePlanMatrixBean}"
+			searchField1Label="#{messages['offerTemplate.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['offerTemplate.description']}"
+			searchField2="description"
+			column1Label="#{messages['offerTemplate.code']}" column1="code"
+			column2Label="#{messages['offerTemplate.description']}"
+			column2="description" 
+			selection="#{pricePlanMatrixBean.entity.offerTemplate}"
+			lazy="false" dataModel="#{offerTemplateBean.listActive}"
+			updateField=":formPricePlanPanel:formPricePlan:offerSelectId:offerSelectId">
+		</hftl:entityPopup>
+		
 		<hftl:entityPopup id="pricPlanMatChargePopup"
 			header="#{messages['charge.popup.header']}"
 			backingBean="#{chargeTemplateBean}"
@@ -84,8 +99,10 @@
 					field="minQuantity" />
 				<hf:formField label="#{messages['pricePlanMatrix.maxQuantity']}"
 					field="maxQuantity" />
-				<hf:formField label="#{messages['pricePlanMatrix.offerCode']}"
-					field="offerCode" />
+				<hf:formEntityField id="offerSelectId" 
+				  label="#{messages['pricePlanMatrix.offerCode']}"
+					field="offerTemplate" childField="code"
+					popup="true" popupId="offerPopup"/>
 				<hf:formField label="#{messages['pricePlanMatrix.criteria1Value']}"
 					field="criteria1Value" />
 				<hf:formField

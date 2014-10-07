@@ -22,7 +22,6 @@ import javax.inject.Named;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlanMatrix;
-import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.DiscountPlanMatrixService;

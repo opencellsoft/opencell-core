@@ -14,7 +14,19 @@
 	</ui:define>
 
 	<ui:define name="body">
-
+		<hftl:entityPopup id="offerPopup"
+			header="#{messages['offer.popup.header']}"
+			backingBean="#{offerTemplateBean}"
+			searchField1Label="#{messages['offerTemplate.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['offerTemplate.description']}"
+			searchField2="description"
+			column1Label="#{messages['offerTemplate.code']}" column1="code"
+			column2Label="#{messages['offerTemplate.description']}"
+			column2="description" selection="#{pricePlanMatrixBean.filters['offerTemplate']}"
+			lazy="false" dataModel="#{offerTemplateBean.listActive}"
+			updateField=":searchPanel:searchForm:offer:offer_child">
+		</hftl:entityPopup>
 		<hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}" backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
@@ -31,8 +43,9 @@
 			backingBean="#{pricePlanMatrixBean}">
 			<hf:searchField label="#{messages['pricePlanMatrix.eventCode']}"
 				field="eventCode" />
-			<hf:searchField label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerCode" />
+			<hf:searchField id="offer" label="#{messages['pricePlanMatrix.offerCode']}"
+				field="offerTemplate"  childField="code" popup="true" 
+				popupId="offerPopup" clearButton="true" />
 			<hf:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" childField="description" popup="true"
 				popupId="searchSellerPopup" clearButton="true" />
@@ -87,9 +100,8 @@
 			<hftl:column
 				label="#{messages['pricePlanMatrix.table.criteria3Value']}"
 				field="criteria3Value" /> -->
-			<hftl:column
-				label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerCode" />
+			<hftl:column label="#{messages['pricePlanMatrix.offerCode']}" 
+			field="offerTemplate" childfield="code" />
 			<hftl:column label="#{messages['pricePlanMatrix.priority']}"
 				field="priority" />
 			<hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}"

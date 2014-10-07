@@ -13,6 +13,19 @@
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
 	<ui:define name="body">
+		<hftl:entityPopup id="offerPopup"
+			header="#{messages['offer.popup.header']}"
+			backingBean="#{offerTemplateBean}"
+			searchField1Label="#{messages['offerTemplate.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['offerTemplate.description']}"
+			searchField2="description"
+			column1Label="#{messages['offerTemplate.code']}" column1="code"
+			column2Label="#{messages['offerTemplate.description']}"
+			column2="description" selection="#{discountPlanMatrixBean.filters['offerTemplate']}"
+			lazy="false" dataModel="#{offerTemplateBean.listActive}"
+			updateField=":searchPanel:searchForm:offer:offer_child">
+		</hftl:entityPopup>
 	     <hftl:entityPopup id="searchSellerPopup" header="#{messages['customer.popup.header']}" backingBean="#{sellerBean}"
 			searchField1Label="#{messages['customer.code']}" searchField1="code" column1Label="#{messages['customer.code']}" column1="code"
 			column2Label="#{messages['BusinessEntity.description']}"
@@ -21,7 +34,7 @@
 		    </hftl:entityPopup>
 		<hf:searchPanel  id="searchPanel" label="#{messages['discountPlanMatrix.search']}" backingBean="#{discountPlanMatrixBean}">
 			<hf:searchField label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" />
-			<hf:searchField label="#{messages['pricePlanMatrix.offerCode']}" field="offerCode" />
+			<hf:searchField id="offer" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate"  childField="description" popup="true" popupId="searchOfferPopup" clearButton="true"/>
 			<hf:searchField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
 			<hf:searchField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
 			<hf:searchField label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />
@@ -32,7 +45,7 @@
 		<hftl:dataList label="#{messages['discountPlanMatrix.title']}" backingBean="#{discountPlanMatrixBean}">
 			<hftl:column label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" />
 			<hftl:column label="#{messages['seller.title']}" field="seller" childField="description" />
-			<hftl:column label="#{messages['pricePlanMatrix.offerCode']}" field="offerCode" />
+			<hftl:column label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" childfield="code" />
 			<!--  <hftl:column label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
 			<hftl:column label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />-->
 			<hftl:column label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />

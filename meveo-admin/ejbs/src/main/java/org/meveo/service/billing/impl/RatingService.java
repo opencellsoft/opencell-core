@@ -478,15 +478,15 @@ public class RatingService {
 			}
 
 			
-			boolean offerCodeSameInPricePlan = discountPlan.getOfferCode() == null
-					|| discountPlan.getOfferCode().equals(bareOperation.getOfferCode());
+			boolean offerCodeSameInPricePlan = discountPlan.getOfferTemplate()==null
+					|| discountPlan.getOfferTemplate().getCode().equals(bareOperation.getOfferCode());
 			if (offerCodeSameInPricePlan) {
 				log.debug("offerCodeSameInDiscountPlan");
 				return discountPlan;
 			} else {
 				log.debug("The operation offerCode " + bareOperation.getOfferCode()
 						+ " is not compatible with discount plan offerCode: "
-						+ discountPlan.getOfferCode());
+						+ discountPlan.getOfferTemplate()==null?"null":discountPlan.getOfferTemplate().getCode());
 				continue;
 			}
 
@@ -649,15 +649,15 @@ public class RatingService {
 						+ pricePlan.getCriteria3Value());
 				continue;
 			}
-			boolean offerCodeSameInPricePlan = pricePlan.getOfferCode() == null
-					|| pricePlan.getOfferCode().equals(bareOperation.getOfferCode());
+			boolean offerCodeSameInPricePlan = pricePlan.getOfferTemplate() == null
+					|| pricePlan.getOfferTemplate().getCode().equals(bareOperation.getOfferCode());
 			if (!offerCodeSameInPricePlan) {
 				log.debug("offerCodeSameInPricePlan");
 				continue;
 			}
 			log.debug("The operation offerCode " + bareOperation.getOfferCode()
 					+ " is not compatible with price plan offerCode: "
-					+ pricePlan.getOfferCode());
+					+ pricePlan.getOfferTemplate()==null?"null":pricePlan.getOfferTemplate().getCode());
 			boolean quantityMaxOk = pricePlan.getMaxQuantity() == null ||
 					pricePlan.getMaxQuantity().compareTo(bareOperation.getQuantity())>0;
 			if (!quantityMaxOk) {
