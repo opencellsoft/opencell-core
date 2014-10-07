@@ -1102,8 +1102,8 @@ insert into CAT_SERV_ONECHARGE_S_TEMPLATES (service_template_id, charge_template
 insert into CAT_USAGE_CHARGE_TEMPLATE values (NULL, NULL, NULL, NULL, NULL, 1, 'KBYTE', 'INTEGER', 1.000000000000, 0, 1);
 
 --Price Plan Matrix
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL);
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL);
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL);
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL);
 
 DROP SEQUENCE cat_price_plan_matrix_SEQ;
 CREATE SEQUENCE cat_price_plan_matrix_SEQ start with 3 increment by 1;
