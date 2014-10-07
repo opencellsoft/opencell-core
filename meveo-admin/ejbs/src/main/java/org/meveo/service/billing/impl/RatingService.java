@@ -26,6 +26,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -51,11 +52,17 @@ public class RatingService {
 
 	private static boolean isPricePlanDirty;
 	private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
+	private static boolean isDiscountPlanDirty;
+	private static HashMap<String, HashMap<String, List<DiscountPlanMatrix>>> allDiscountPlan;
 
 	private static final BigDecimal HUNDRED = new BigDecimal("100");
 
 	public static void setPricePlanDirty() {
 		isPricePlanDirty = true;
+	}
+
+	public static void setDiscountPlanDirty() {
+		isDiscountPlanDirty = true;
 	}
 
 	public int getSharedQuantity(LevelEnum level, Provider provider,
@@ -288,6 +295,7 @@ public class RatingService {
 			throws BusinessException {
 
 		PricePlanMatrix ratePrice = null;
+		DiscountPlanMatrix rateDiscount = null;
 		String providerCode = provider.getCode();
 
 		if (unitPriceWithoutTax == null) {
@@ -324,6 +332,31 @@ public class RatingService {
 						+ ratePrice.getAmountWithTax());
 				unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
 				unitPriceWithTax = ratePrice.getAmountWithTax();
+			}
+			
+			if (allDiscountPlan == null) {
+				loadDiscountPlan(em);
+			} else if (isDiscountPlanDirty) {
+				reloadDiscountPlan();
+			}
+			if (allDiscountPlan.containsKey(providerCode) && allDiscountPlan.get(providerCode).containsKey(
+					bareWalletOperation.getCode())) {
+				rateDiscount = discountPrice(allDiscountPlan.get(providerCode).get(
+								bareWalletOperation.getCode()),
+						bareWalletOperation,
+						countryId,
+						tcurrency,
+						bareWalletOperation.getSeller() != null ? bareWalletOperation
+								.getSeller().getId() : null);
+				if(rateDiscount!=null){
+					log.info("found rateDiscount :" + rateDiscount.getId() + " percent="
+							+ rateDiscount.getPercent());
+					BigDecimal factor = BigDecimal.ONE.subtract(rateDiscount.getPercent().divide(HUNDRED));
+					unitPriceWithoutTax = unitPriceWithoutTax.multiply(factor);
+					if(unitPriceWithTax!=null){
+						unitPriceWithTax = unitPriceWithTax.multiply(factor);
+					}
+				}
 			}
 		}
 		// if the wallet operation correspond to a recurring charge that is
@@ -364,6 +397,8 @@ public class RatingService {
 					.getTaxPercent().divide(HUNDRED));
 		}
 		if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
+			unitPriceWithTax = unitPriceWithoutTax.multiply(bareWalletOperation
+					.getTaxPercent().divide(HUNDRED));
 			priceWithTax = priceWithoutTax.add(amountTax);
 		} else {
 			priceWithTax = bareWalletOperation.getQuantity().multiply(
@@ -383,6 +418,80 @@ public class RatingService {
 		bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
 		bareWalletOperation.setAmountWithTax(priceWithTax);
 		bareWalletOperation.setAmountTax(amountTax);
+
+	}
+
+	private DiscountPlanMatrix discountPrice(List<DiscountPlanMatrix> listDiscountPlan,
+			WalletOperation bareOperation, Long countryId,
+			TradingCurrency tcurrency, Long sellerId) {
+		log.info("rate " + bareOperation);
+		for (DiscountPlanMatrix discountPlan : listDiscountPlan) {
+			boolean sellerAreEqual = discountPlan.getSeller() == null
+					|| discountPlan.getSeller().getId().equals(sellerId);
+			if (!sellerAreEqual) {
+				log.debug("The seller of the customer " + sellerId
+						+ " is not the same as discountPlan seller "
+						+ discountPlan.getSeller().getId() + " ("
+						+ discountPlan.getSeller().getCode() + ")");
+				continue;
+			}
+
+			boolean subscriptionDateInPricePlanPeriod = bareOperation
+					.getSubscriptionDate() == null
+					|| ((discountPlan.getStartSubscriptionDate() == null
+							|| bareOperation.getSubscriptionDate().after(
+									discountPlan.getStartSubscriptionDate()) || bareOperation
+							.getSubscriptionDate().equals(
+									discountPlan.getStartSubscriptionDate())) && (discountPlan
+							.getEndSubscriptionDate() == null || bareOperation
+							.getSubscriptionDate().before(
+									discountPlan.getEndSubscriptionDate())));
+			if (!subscriptionDateInPricePlanPeriod) {
+				log.debug("The subscription date "
+						+ bareOperation.getSubscriptionDate()
+						+ "is not in the priceplan subscription range");
+				continue;
+			}
+
+			int subscriptionAge = 0;
+			if (bareOperation.getSubscriptionDate() != null
+					&& bareOperation.getOperationDate() != null) {
+				// logger.info("subscriptionDate=" +
+				// bareOperation.getSubscriptionDate() + "->" +
+				// DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(),
+				// -1));
+				subscriptionAge = DateUtils.monthsBetween(
+						bareOperation.getOperationDate(),
+						DateUtils.addDaysToDate(
+								bareOperation.getSubscriptionDate(), -1));
+			}
+			
+			boolean subscriptionAgeOk = discountPlan.getNbPeriod() == null
+					|| discountPlan.getNbPeriod() == 0
+					|| subscriptionAge < discountPlan.getNbPeriod();
+			if (!subscriptionAgeOk) {
+				log.debug("The subscription age "
+						+ subscriptionAge
+						+ " is greater than the discount plan number of period :"
+						+ discountPlan.getNbPeriod());
+				continue;
+			}
+
+			
+			boolean offerCodeSameInPricePlan = discountPlan.getOfferCode() == null
+					|| discountPlan.getOfferCode().equals(bareOperation.getOfferCode());
+			if (offerCodeSameInPricePlan) {
+				log.debug("offerCodeSameInDiscountPlan");
+				return discountPlan;
+			} else {
+				log.debug("The operation offerCode " + bareOperation.getOfferCode()
+						+ " is not compatible with discount plan offerCode: "
+						+ discountPlan.getOfferCode());
+				continue;
+			}
+
+		}
+		return null;
 
 	}
 
@@ -626,5 +735,49 @@ public class RatingService {
 			}
 		}
 		allPricePlan = result;
+	}
+	
+	// synchronized to avoid different threads to reload the discountplan
+	// concurrently
+	protected synchronized void reloadDiscountPlan() {
+		if (isDiscountPlanDirty) {
+			log.info("Reload discountplan");
+			loadDiscountPlan();
+			isDiscountPlanDirty = false;
+		}
+	}
+
+	protected void loadDiscountPlan() {
+		loadDiscountPlan(entityManager);
+	}
+
+	// FIXME : call this method when discountplan is edited (or more precisely add
+	// a button to reload the priceplan)
+	@SuppressWarnings("unchecked")
+	protected void loadDiscountPlan(EntityManager em) {
+		HashMap<String, HashMap<String, List<DiscountPlanMatrix>>> result = new HashMap<String, HashMap<String, List<DiscountPlanMatrix>>>();
+		List<DiscountPlanMatrix> allDiscountPlans = (List<DiscountPlanMatrix>) em
+				.createQuery(
+						"from DiscountPlanMatrix where disabled=false")
+				.getResultList();
+		if (allDiscountPlans != null & allDiscountPlans.size() > 0) {
+			for (DiscountPlanMatrix discountPlan : allDiscountPlans) {
+				if (!result.containsKey(discountPlan.getProvider().getCode())) {
+					result.put(discountPlan.getProvider().getCode(),
+							new HashMap<String, List<DiscountPlanMatrix>>());
+				}
+				HashMap<String, List<DiscountPlanMatrix>> providerDiscountPlans = result
+						.get(discountPlan.getProvider().getCode());
+				if (!providerDiscountPlans.containsKey(discountPlan.getEventCode())) {
+					providerDiscountPlans.put(discountPlan.getEventCode(),
+							new ArrayList<DiscountPlanMatrix>());
+				}
+				log.info("Add discountPlan for provider="
+						+ discountPlan.getProvider().getCode() + "; chargeCode="
+						+ discountPlan.getEventCode());
+				providerDiscountPlans.get(discountPlan.getEventCode()).add(discountPlan);
+			}
+		}
+		allDiscountPlan = result;
 	}
 }
