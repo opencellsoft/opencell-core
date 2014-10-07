@@ -216,6 +216,9 @@ public class ParamBean {
 	 */
 	public void setProperty(String property_p, String vNewValue) {
 		log.info("setProperty "+property_p+"->"+vNewValue);
+		if(vNewValue==null){
+			vNewValue="";
+		}
 		getProperties().setProperty(property_p, vNewValue);
 	}
 
