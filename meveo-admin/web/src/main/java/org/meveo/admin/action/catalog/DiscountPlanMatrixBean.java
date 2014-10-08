@@ -77,7 +77,7 @@ public class DiscountPlanMatrixBean extends BaseBean<DiscountPlanMatrix> {
      */
     @Override
     protected String getListViewName() {
-    	 return "pricePlanMatrixes";
+    	 return "discountPlanMatrixes";
     }
     
     @Override
