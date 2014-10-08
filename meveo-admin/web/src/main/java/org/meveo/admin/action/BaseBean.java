@@ -248,8 +248,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			endConversation();
 		}
 
-		return objectId == null ? outcome : (outcome + "&" + objectName + "="
-				+ objectId + "&cid=" + conversation.getId());
+		// return objectId == null ? outcome : (outcome + "&" + objectName + "="
+		// + objectId + "&cid=" + conversation.getId());
+		return outcome;
 	}
 
 	public String saveOrUpdate(boolean killConversation) {
