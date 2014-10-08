@@ -42,13 +42,15 @@ import org.meveo.model.billing.Subscription;
 public class EDR extends BaseEntity {
 
 	private static final long serialVersionUID = 1278336655583933747L;
+	
+	public static String EDR_TABLE_ORIGIN="EDR_TABLE";
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "SUBSCRIPTION_ID")
 	private Subscription subscription;
 
 	/**
-	 * the origin batch the EDR comes from (like a CDR file name)
+	 * the origin batch the EDR comes from (like a CDR file name or EDR table)
 	 */
 	@Column(name = "ORIGIN_BATCH")
 	private String originBatch;
