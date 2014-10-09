@@ -1145,6 +1145,12 @@ CREATE SEQUENCE BILLING_SUBSCRIPTION_SEQ start with 2 increment by 1;
 DROP SEQUENCE IF EXISTS MEDINA_ACCESS_SEQ;
 CREATE SEQUENCE MEDINA_ACCESS_SEQ start with 2 increment by 1;
 
+--billing_service_instance
+
+INSERT INTO billing_service_instance VALUES (1, 1, false, '2014-10-01 13:27:01.921', '2014-10-01 13:27:07.63', 'SVC_DEF', 'Default Service', NULL, 1, 'ACTIVE', '2014-10-01 13:27:07.63', '2014-10-01 00:00:00', NULL, 1, 1, 1, 1, 1, NULL);
+
+DROP SEQUENCE IF EXISTS BILLING_SERVICE_INSTANCE_SEQ;
+CREATE SEQUENCE BILLING_SERVICE_INSTANCE_SEQ start with 2 increment by 1;
 
 --Billing charge instance
 insert into BILLING_CHARGE_INSTANCE values (1, 1, false, '2014-10-01 14:16:43.116', '2014-10-01 14:16:48.67', 'RC_DEFAULT', 'Default Recurring Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.67', NULL, 1, 1, 1, 1, 1, 1, 2, 1);
