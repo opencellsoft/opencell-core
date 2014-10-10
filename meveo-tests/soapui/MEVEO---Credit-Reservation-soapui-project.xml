@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response xmlns="http://localhost/meveo/api/rest/walletBalance/open">
+   <errorCode>0</errorCode>
+   <message>0</message>
+   <status>SUCCESS</status>
+</Response>
