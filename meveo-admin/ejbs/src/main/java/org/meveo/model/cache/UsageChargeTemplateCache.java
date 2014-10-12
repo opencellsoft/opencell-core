@@ -6,7 +6,6 @@ import java.util.Set;
 
 public class UsageChargeTemplateCache {
 
-	
 	private Date lastUpdate;
 	private int priority;
 	private String filterExpression;
@@ -14,6 +13,12 @@ public class UsageChargeTemplateCache {
 	private String filter2;
 	private String filter3;
 	private String filter4;
+	private boolean edrTemplate;
+	private String quantityEL;
+	private String param1EL;
+	private String param2EL;
+	private String param3EL;
+	private String param4EL;
 	private Set<Long> subscriptionIds= new HashSet<Long>();
 
 	public Date getLastUpdate() {
@@ -58,13 +63,48 @@ public class UsageChargeTemplateCache {
 	public void setFilter4(String filter4) {
 		this.filter4 = filter4;
 	}
+	public boolean isEdrTemplate() {
+		return edrTemplate;
+	}
+	public void setEdrTemplate(boolean edrTemplate) {
+		this.edrTemplate = edrTemplate;
+	}
+	public String getQuantityEL() {
+		return quantityEL;
+	}
+	public void setQuantityEL(String quantityEL) {
+		this.quantityEL = quantityEL;
+	}
+	public String getParam1EL() {
+		return param1EL;
+	}
+	public void setParam1EL(String param1el) {
+		param1EL = param1el;
+	}
+	public String getParam2EL() {
+		return param2EL;
+	}
+	public void setParam2EL(String param2el) {
+		param2EL = param2el;
+	}
+	public String getParam3EL() {
+		return param3EL;
+	}
+	public void setParam3EL(String param3el) {
+		param3EL = param3el;
+	}
+	public String getParam4EL() {
+		return param4EL;
+	}
+	public void setParam4EL(String param4el) {
+		param4EL = param4el;
+	}
 	public Set<Long> getSubscriptionIds() {
 		return subscriptionIds;
 	}
 	public void setSubscriptionIds(Set<Long> subscriptionIds) {
 		this.subscriptionIds = subscriptionIds;
 	}
-
 	public String toString(){
 		return 	lastUpdate+","+priority+","+filterExpression+","+filter1+","+filter2+","+filter3+","+filter4;
 	}

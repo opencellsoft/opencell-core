@@ -23,7 +23,7 @@ import javax.inject.Named;
 public class TimerInfo implements Serializable {
 
 	private static final long serialVersionUID = 5572229725635504448L;
-	private boolean active = true;
+	private boolean active = false;
 	private String jobName;
 	private String parametres;
 	private Long providerId;

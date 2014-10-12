@@ -38,7 +38,7 @@ import org.meveo.model.billing.TradingCurrency;
 @Entity
 @Table(name = "CAT_PRICE_PLAN_MATRIX")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
-public class PricePlanMatrix extends AuditableEntity {
+public class PricePlanMatrix extends AuditableEntity implements Comparable<PricePlanMatrix> {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "EVENT_CODE", length = 100, nullable = false)
@@ -365,4 +365,8 @@ public class PricePlanMatrix extends AuditableEntity {
 		return true;
 	}
 
+	@Override
+	public int compareTo(PricePlanMatrix o) {
+		return this.getPriority()-o.getPriority();
+	}
 }

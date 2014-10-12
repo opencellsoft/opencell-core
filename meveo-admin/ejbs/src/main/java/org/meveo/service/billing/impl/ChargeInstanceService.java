@@ -66,14 +66,14 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		P chargeInstance = null;
 		try {
 			log.debug("start of find {} by code (code={}) ..",
-					"OneShotChargeInstance", code);
+					"ChargeInstance", code);
 			QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 			chargeInstance = (P) qb.getQuery(em).getSingleResult();
 			log.debug(
 					"end of find {} by code (code={}). Result found={}.",
-					new Object[] { "OCCTemplate", code, chargeInstance != null });
+					new Object[] { "ChargeInstance", code, chargeInstance != null });
 
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndService : aucune charge n'a ete trouvee");

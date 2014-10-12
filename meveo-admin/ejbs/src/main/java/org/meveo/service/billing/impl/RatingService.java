@@ -3,6 +3,7 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -652,12 +653,12 @@ public class RatingService {
 			boolean offerCodeSameInPricePlan = pricePlan.getOfferTemplate() == null
 					|| pricePlan.getOfferTemplate().getCode().equals(bareOperation.getOfferCode());
 			if (!offerCodeSameInPricePlan) {
-				log.debug("offerCodeSameInPricePlan");
+				log.debug("The operation offerCode " + bareOperation.getOfferCode()
+						+ " is not compatible with price plan offerCode: "
+						+ ((pricePlan.getOfferTemplate()==null)?"null":pricePlan.getOfferTemplate().getCode()));
 				continue;
 			}
-			log.debug("The operation offerCode " + bareOperation.getOfferCode()
-					+ " is not compatible with price plan offerCode: "
-					+ pricePlan.getOfferTemplate()==null?"null":pricePlan.getOfferTemplate().getCode());
+			log.debug("offerCodeSameInPricePlan");
 			boolean quantityMaxOk = pricePlan.getMaxQuantity() == null ||
 					pricePlan.getMaxQuantity().compareTo(bareOperation.getQuantity())>0;
 			if (!quantityMaxOk) {
@@ -731,7 +732,9 @@ public class RatingService {
 						+ "; criteria1=" + pricePlan.getCriteria1Value()
 						+ "; criteria2=" + pricePlan.getCriteria2Value()
 						+ "; criteria3=" + pricePlan.getCriteria3Value());
-				providerPricePlans.get(pricePlan.getEventCode()).add(pricePlan);
+				List<PricePlanMatrix> chargePriceList =providerPricePlans.get(pricePlan.getEventCode());
+				chargePriceList.add(pricePlan);
+				Collections.sort(chargePriceList);
 			}
 		}
 		allPricePlan = result;

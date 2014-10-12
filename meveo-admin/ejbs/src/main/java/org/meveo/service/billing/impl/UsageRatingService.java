@@ -35,6 +35,7 @@ import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
 import org.meveo.model.cache.UsageChargeTemplateCache;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.UsageChargeEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
@@ -64,6 +65,9 @@ public class UsageRatingService {
 	private static HashMap<Long, CounterInstanceCache> counterCache;
 
 	private static boolean cacheLoaded = false;
+	
+	@Inject
+	private EdrService edrService;
 
 	@EJB
 	private UsageChargeInstanceService usageChargeInstanceService;
@@ -149,6 +153,57 @@ public class UsageRatingService {
 				log.info("set filter4 to "
 						+ usageChargeTemplate.getFilterParam4());
 				cachedValue.setFilter4(usageChargeTemplate.getFilterParam4());
+			}
+			if (usageChargeTemplate.getEdrTemplate() == null) {
+				log.info("set erdTemplate to false");
+				cachedValue.setEdrTemplate(false);
+			} else {
+				log.info("set erdTemplate to true"
+						+ usageChargeTemplate.getFilterParam4());
+				cachedValue.setEdrTemplate(true);
+				UsageChargeEDRTemplate edrTemplate = usageChargeTemplate.getEdrTemplate();
+				if (edrTemplate.getQuantityEl() == null
+						|| (edrTemplate.getQuantityEl().equals(""))) {
+					log.error("edrTemplate QuantityEL must be set for usageChargeTemplate="+usageChargeTemplate.getId());
+					cachedValue.setEdrTemplate(false);
+				} else {
+					cachedValue.setQuantityEL(edrTemplate.getQuantityEl());
+				}
+				if (edrTemplate.getParam1El() == null
+						|| (edrTemplate.getParam1El().equals(""))) {
+					log.error("edrTemplate param1El must be set for usageChargeTemplate="+usageChargeTemplate.getId());
+					cachedValue.setEdrTemplate(false);
+				} else {
+					cachedValue.setParam1EL(edrTemplate.getParam1El());
+				}
+
+				if (edrTemplate.getParam2El() == null
+						|| (edrTemplate.getParam2El().equals(""))) {
+					log.info("set param2El to null");
+					cachedValue.setParam2EL(null);
+				} else {
+					log.info("set param2El to "+edrTemplate.getParam2El());
+					cachedValue.setParam2EL(edrTemplate.getParam2El());
+				}
+
+				if (edrTemplate.getParam3El() == null
+						|| (edrTemplate.getParam3El().equals(""))) {
+					log.info("set param3El to null");
+					cachedValue.setParam3EL(null);
+				} else {
+					log.info("set param3El to "+edrTemplate.getParam3El());
+					cachedValue.setParam3EL(edrTemplate.getParam3El());
+				}
+
+				if (edrTemplate.getParam4El() == null
+						|| (edrTemplate.getParam4El().equals(""))) {
+					log.info("set param4El to null");
+					cachedValue.setParam4EL(null);
+				} else {
+					log.info("set param4El to "+edrTemplate.getParam4El());
+					cachedValue.setParam4EL(edrTemplate.getParam4El());
+				}
+				
 			}
 			if (cachedValue.getPriority() != usageChargeTemplate.getPriority()) {
 				log.info("set priority to " + usageChargeTemplate.getPriority());
@@ -254,8 +309,9 @@ public class UsageRatingService {
 					.getUnityNbDecimal());
 			cachedValue.setLastUpdate(new Date());
 			if (!cacheContainsCharge) {
-				log.info("charge added");
 				charges.add(cachedValue);
+				log.info("charge added, we order it");
+				Collections.sort(charges);
 			}
 			if (!cacheContainsKey) {
 				log.info("key added to charge cache");
@@ -478,6 +534,24 @@ public class UsageRatingService {
 				walletOperation.setQuantity(deducedQuantity);
 			}
 			walletOperationService.create(walletOperation, null, provider);
+			//handle associated edr creation
+			if(charge.getTemplateCache().isEdrTemplate()){
+				//TODO: implement EL parser
+				EDR newEdr = new EDR();
+				newEdr.setCreated(new Date());
+				newEdr.setEventDate(edr.getEventDate());
+				newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
+				newEdr.setOriginRecord(""+walletOperation.getId());
+				newEdr.setParameter1(charge.getTemplateCache().getParam1EL());
+				newEdr.setParameter2(charge.getTemplateCache().getParam2EL());
+				newEdr.setParameter3(charge.getTemplateCache().getParam3EL());
+				newEdr.setParameter4(charge.getTemplateCache().getParam4EL());
+				newEdr.setProvider(edr.getProvider());
+				newEdr.setQuantity("amount".equalsIgnoreCase(charge.getTemplateCache().getQuantityEL())?walletOperation.getAmountWithoutTax():edr.getQuantity());
+				newEdr.setStatus(EDRStatusEnum.OPEN);
+				newEdr.setSubscription(edr.getSubscription());
+				edrService.create(newEdr);
+			}
 		}
 		return stopEDRRating;
 	}
@@ -502,6 +576,7 @@ public class UsageRatingService {
 					// TODO:order charges by priority and id
 					List<UsageChargeInstanceCache> charges = chargeCache
 							.get(edr.getSubscription().getId());
+					
 					for (UsageChargeInstanceCache charge : charges) {
 						UsageChargeTemplateCache templateCache = charge
 								.getTemplateCache();
