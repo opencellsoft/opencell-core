@@ -246,8 +246,8 @@ public class WalletReservationService extends
 			servicesSum = servicesSum.add(realtimeChargingService
 					.getActivationServicePrice(em,
 							userAccount.getBillingAccount(), st,
-							subscriptionDate,offerTemplate.getCode(), quantity, param1, param2, param3,
-							true));
+							subscriptionDate, offerTemplate.getCode(),
+							quantity, param1, param2, param3, true));
 		}
 
 		return servicesSum;

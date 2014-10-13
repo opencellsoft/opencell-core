@@ -369,4 +369,22 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 	}
 
+	public int updateExpiredReservation(Provider provider) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UPDATE "
+				+ Reservation.class.getName()
+				+ " r SET r.status=:expiredStatus WHERE r.status=:openStatus AND r.expiryDate<:expiryDate");
+
+		try {
+			return getEntityManager().createQuery(sb.toString())
+					.setParameter("expiredStatus", ReservationStatus.EXPIRED)
+					.setParameter("openStatus", ReservationStatus.OPEN)
+					.setParameter("expiryDate", new Date()).executeUpdate();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return 0;
+		}
+	}
+
 }
