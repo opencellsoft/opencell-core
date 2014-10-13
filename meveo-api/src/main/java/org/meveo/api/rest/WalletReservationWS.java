@@ -59,7 +59,8 @@ public class WalletReservationWS extends BaseWS {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletReservationApi.update(walletReservation,currentUser.getProvider());
+			walletReservationApi.update(walletReservation,
+					currentUser.getProvider());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
