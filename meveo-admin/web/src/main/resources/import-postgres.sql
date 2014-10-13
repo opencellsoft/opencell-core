@@ -1010,8 +1010,23 @@ insert into cat_calendar_days (calendar_id, day_id) values (3, 901);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1101);
 
+--Monthly Counter Calendar
+insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (4, 0, false, now(), 1, 1, 'MONTHLY', 'Monthly Calendar', 'COUNTER');
+insert into cat_calendar_days (calendar_id, day_id) values (4, 1);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 101);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 201);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 301);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 401);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 501);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 601);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 701);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 801);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 901);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 1001);
+insert into cat_calendar_days (calendar_id, day_id) values (4, 1101);
+
 DROP SEQUENCE IF EXISTS cat_calendar_SEQ;
-CREATE SEQUENCE cat_calendar_SEQ start with 4 increment by 1;
+CREATE SEQUENCE cat_calendar_SEQ start with 5 increment by 1;
 
 --Tax
 insert into billing_tax (id, version, disabled, created, provider_id, creator_id, code, description, tax_percentage) values (1, 0, false, now(), 1, 1, 'TAX_00', '0 Percent Tax', 0);
@@ -1090,43 +1105,24 @@ INSERT INTO CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) va
 insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (1, 0, false, now(), 'RC_DEFAULT', 'Default Recurring Charge', false, 1, 1, 1);
 insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (2, 0, false, now(), 'SUB_DEFAULT', 'Default Subscription Charge', false, 1, 1, 1);
 insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (3, 0, false, now(), 'UC_DEFAULT', 'Default usage charge', false, 1, 1, 1);
-insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (4, 0, false, now(), 'UC_SUPPORT_FREE', 'support included', false, 1, 1, 1);
-insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (5, 0, false, now(), 'RC_SUPPORT', 'support Minimal Charge', false, 1, 1, 1);
-insert into CAT_CHARGE_TEMPLATE (id, version, disabled, created, code, description, amount_editable, provider_id, creator_id, invoice_sub_category) values (6, 0, false, now(), 'UC_SUPPORT_XTRA', 'support usage charge', false, 1, 1, 1);
 
 DROP SEQUENCE IF EXISTS CAT_CHARGE_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 7 increment by 1;
-
-INSERT INTO CAT_COUNTER_TEMPLATE(id, version, disabled, created, code, description, counter_type,level_num, unity_description, provider_id, creator_id,calendar_id) VALUES (1, 0, false, now(), 'COUNTER_SUPPORT', 'support minimal usage counter', 'QUANTITY',4.0, null, 1, 1, 1);
-
-DROP SEQUENCE IF EXISTS CAT_COUNTER_TEMPLATE_SEQ;
-CREATE SEQUENCE CAT_COUNTER_TEMPLATE_SEQ start with 2 increment by 1;
+CREATE SEQUENCE CAT_CHARGE_TEMPLATE_SEQ start with 4 increment by 1;
 
 insert into CAT_RECURRING_CHARGE_TEMPL (apply_in_advance, recurrence_type, subscription_prorata, termination_prorata, id, calendar_id) values (false, 'CALENDAR', false, false, 1, 3);
-insert into CAT_RECURRING_CHARGE_TEMPL (apply_in_advance, recurrence_type, subscription_prorata, termination_prorata, id, calendar_id) values (false, 'CALENDAR', false, false, 5, 3);
 insert into CAT_ONE_SHOT_CHARGE_TEMPL (immediate_invoicing, type, id) values (true, 'SUBSCRIPTION', 2);
-INSERT INTO CAT_USAGE_CHARGE_TEMPLATE (param_1_el, param_2_el, param_3_el, param_4_el, quantity_el, filter_expression, filter_param_1, filter_param_2, filter_param_3, filter_param_4, priority, unity_description, unity_formatter, unity_multiplicator, unity_nb_decimal, id) VALUES ('SUPPORT', null, null, null, 'amount', null, null, null, null,null,3, 'KBYTE', 'INTEGER', 1.0, 5, 3);
-INSERT INTO CAT_USAGE_CHARGE_TEMPLATE (param_1_el, param_2_el, param_3_el, param_4_el, quantity_el, filter_expression, filter_param_1, filter_param_2, filter_param_3, filter_param_4, priority, unity_description, unity_formatter, unity_multiplicator, unity_nb_decimal, id) VALUES (null, null, null, null, null, null,'SUPPORT', null, null,null,1, 'KBYTE', 'INTEGER', 1.0, 5, 4);
-INSERT INTO CAT_USAGE_CHARGE_TEMPLATE (param_1_el, param_2_el, param_3_el, param_4_el, quantity_el, filter_expression, filter_param_1, filter_param_2, filter_param_3, filter_param_4, priority, unity_description, unity_formatter, unity_multiplicator, unity_nb_decimal, id) VALUES (null, null, null, null, null, null, 'SUPPORT', null, null,null,2, 'KBYTE', 'INTEGER', 1.0, 5, 6);
-
-
+INSERT INTO CAT_USAGE_CHARGE_TEMPLATE (param_1_el, param_2_el, param_3_el, param_4_el, quantity_el, filter_expression, filter_param_1, filter_param_2, filter_param_3, filter_param_4, priority, unity_description, unity_formatter, unity_multiplicator, unity_nb_decimal, id) VALUES ('"SUPPORT"', null, null, null, 'walletOperation.amountWithoutTax', null, null, null, null,null,1, 'KBYTE', 'INTEGER', 1.0, 5, 3);
+            
 insert into CAT_SERV_RECCHARGE_TEMPLATES (service_template_id, charge_template_id) values (1, 1);
-insert into CAT_SERV_RECCHARGE_TEMPLATES (service_template_id, charge_template_id) values (1, 5);
 insert into CAT_SERV_ONECHARGE_S_TEMPLATES (service_template_id, charge_template_id) values (1, 2);
 insert into CAT_SERV_USAGE_CHARGE_TEMPLATE (id,version,provider_id,service_template_id, charge_template_id) values (3,0,1,1,3);
-insert into CAT_SERV_USAGE_CHARGE_TEMPLATE (id,version,provider_id,service_template_id, counter_template_id, charge_template_id) values (4,0,1,1,1,4);
-insert into CAT_SERV_USAGE_CHARGE_TEMPLATE (id,version,provider_id,service_template_id, charge_template_id) values (6,0,1,1,6);
 
 --Price Plan Matrix
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL);
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (2, 0, false, now(), 5, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL);
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (3, 0, false, now(), 0.1, 'UC_DEFAULT', 9999, 0, 3, 1, 1, 2, 1, 1, NULL, NULL);
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity,criteria_1) values (4, 0, false, now(), 0, 'UC_SUPPORT_FREE', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL,'SUPPORT');
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity) values (5, 0, false, now(), 4.0, 'RC_SUPPORT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL);
-insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity,criteria_1) values (6, 0, false, now(), 0.3, 'UC_SUPPORT_XTRA', 9999, 0, 2, 1, 1, 2, 1, 1, NULL, NULL,'SUPPORT');
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
+insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
 
 DROP SEQUENCE IF EXISTS cat_price_plan_matrix_SEQ;
-CREATE SEQUENCE cat_price_plan_matrix_SEQ start with 7 increment by 1;
+CREATE SEQUENCE cat_price_plan_matrix_SEQ start with 3 increment by 1;
 
 --Account Entity
 insert into ACCOUNT_ENTITY (id, version, disabled, created, code, default_level, lastname, provider_id, creator_id, primary_contact) values (1, 0, false, now(), 'CUST_DEFAULT', true, '', 1, 1, null);
@@ -1156,7 +1152,7 @@ DROP SEQUENCE IF EXISTS BILLING_BILLING_ACCOUNT_SEQ;
 CREATE SEQUENCE BILLING_BILLING_ACCOUNT_SEQ start with 2 increment by 1;
 
 DROP SEQUENCE IF EXISTS BILLING_USER_ACCOUNT_SEQ;
-CREATE SEQUENCE BILLING_USER_ACCOUNT_SEQ start with 5 increment by 1;
+CREATE SEQUENCE BILLING_USER_ACCOUNT_SEQ start with 2 increment by 1;
 
 DROP SEQUENCE IF EXISTS BILLING_SUBSCRIPTION_SEQ;
 CREATE SEQUENCE BILLING_SUBSCRIPTION_SEQ start with 2 increment by 1;
@@ -1166,33 +1162,22 @@ CREATE SEQUENCE MEDINA_ACCESS_SEQ start with 2 increment by 1;
 
 --billing_service_instance
 
-INSERT INTO billing_service_instance (id, version, disabled, created, updated, code, description, end_agrement_date, quantity, status, status_date, subscription_date, termination_date, provider_id, creator_id, updater_id, service_template_id, subscription_id, sub_termin_reason_id) VALUES (1, 1, false, '2014-10-01 13:27:01.921', '2014-10-01 13:27:07.63', 'SVC_DEF', 'Default Service', NULL, 1, 'ACTIVE', '2014-10-01 13:27:07.63', '2014-10-01 00:00:00', NULL, 1, 1, 1, 1, 1, NULL);
+INSERT INTO billing_service_instance VALUES (1, 1, false, '2014-10-01 13:27:01.921', '2014-10-01 13:27:07.63', 'SVC_DEF', 'Default Service', NULL, 1, 'ACTIVE', '2014-10-01 13:27:07.63', '2014-10-01 00:00:00', NULL, 1, 1, 1, 1, 1, NULL);
 
 DROP SEQUENCE IF EXISTS BILLING_SERVICE_INSTANCE_SEQ;
 CREATE SEQUENCE BILLING_SERVICE_INSTANCE_SEQ start with 2 increment by 1;
 
-INSERT INTO billing_counter(id, version, disabled, created, updated, code, description, provider_id, creator_id, updater_id, counter_template_id, user_account_id) VALUES (1, 0, false, now(), NULL, 'COUNTER_SUPPORT', 'support minimal usage counter', 1, 1, 1, 1, 4);
-DROP SEQUENCE IF EXISTS	billing_counter_instance_seq;
-CREATE SEQUENCE billing_counter_instance_seq start with 2 increment by 1;
-
 --Billing charge instance
-insert into BILLING_CHARGE_INSTANCE (id, version, disabled, created, updated, code, description, amount_with_tax, amount_without_tax, charge_date, criteria_1, criteria_2, criteria_3, pr_description, status, status_date, termination_date, provider_id, creator_id, updater_id, charge_template_id, trading_country, trading_currency, seller_id, subscription_id) values (1, 1, false, '2014-10-01 14:16:43.116', '2014-10-01 14:16:48.67', 'RC_DEFAULT', 'Default Recurring Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.67', NULL, 1, 1, 1, 1, 1, 1, 2, 1);
-insert into BILLING_CHARGE_INSTANCE (id, version, disabled, created, updated, code, description, amount_with_tax, amount_without_tax, charge_date, criteria_1, criteria_2, criteria_3, pr_description, status, status_date, termination_date, provider_id, creator_id, updater_id, charge_template_id, trading_country, trading_currency, seller_id, subscription_id) values (2, 1, false, '2014-10-01 14:16:43.118', '2014-10-01 14:16:48.721', 'SUB_DEFAULT', 'Default Subscription Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'CLOSED', '2014-10-01 14:16:48.721', NULL, 1, 1, 1, 2, 1, 1, 2, 1);
-insert into BILLING_CHARGE_INSTANCE (id, version, disabled, created, updated, code, description, amount_with_tax, amount_without_tax, charge_date, criteria_1, criteria_2, criteria_3, pr_description, status, status_date, termination_date, provider_id, creator_id, updater_id, charge_template_id, trading_country, trading_currency, seller_id, subscription_id) values (3, 1, false, '2014-10-01 14:16:43.124', '2014-10-01 14:16:48.722', 'UC_DEFAULT', 'Usage charge default', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.722', NULL, 1, 1, 1, 3, 1, 1, 2, 1);
-insert into BILLING_CHARGE_INSTANCE (id, version, disabled, created, updated, code, description, amount_with_tax, amount_without_tax, charge_date, criteria_1, criteria_2, criteria_3, pr_description, status, status_date, termination_date, provider_id, creator_id, updater_id, charge_template_id, trading_country, trading_currency, seller_id, subscription_id) values (4, 1, false, '2014-10-01 14:16:43.124', '2014-10-01 14:16:48.722', 'UC_SUPPORT_FREE', 'Usage support free', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.722', NULL, 1, 1, 1, 4, 1, 1, 2, 1);
-insert into BILLING_CHARGE_INSTANCE (id, version, disabled, created, updated, code, description, amount_with_tax, amount_without_tax, charge_date, criteria_1, criteria_2, criteria_3, pr_description, status, status_date, termination_date, provider_id, creator_id, updater_id, charge_template_id, trading_country, trading_currency, seller_id, subscription_id) values (5, 1, false, '2014-10-01 14:16:43.124', '2014-10-01 14:16:48.722', 'RC_SUPPORT', 'support minimal charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.722', NULL, 1, 1, 1, 5, 1, 1, 2, 1);
-insert into BILLING_CHARGE_INSTANCE (id, version, disabled, created, updated, code, description, amount_with_tax, amount_without_tax, charge_date, criteria_1, criteria_2, criteria_3, pr_description, status, status_date, termination_date, provider_id, creator_id, updater_id, charge_template_id, trading_country, trading_currency, seller_id, subscription_id) values (6, 1, false, '2014-10-01 14:16:43.124', '2014-10-01 14:16:48.722', 'UC_SUPPORT_XTRA', 'Usage support extra', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.722', NULL, 1, 1, 1, 6, 1, 1, 2, 1);
+insert into BILLING_CHARGE_INSTANCE values (1, 1, false, '2014-10-01 14:16:43.116', '2014-10-01 14:16:48.67', 'RC_DEFAULT', 'Default Recurring Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.67', NULL, 1, 1, 1, 1, 1, 1, 2, 1);
+insert into BILLING_CHARGE_INSTANCE values (2, 1, false, '2014-10-01 14:16:43.118', '2014-10-01 14:16:48.721', 'SUB_DEFAULT', 'Default Subscription Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'CLOSED', '2014-10-01 14:16:48.721', NULL, 1, 1, 1, 2, 1, 1, 2, 1);
+insert into BILLING_CHARGE_INSTANCE values (3, 1, false, '2014-10-01 14:16:43.124', '2014-10-01 14:16:48.722', 'UC_DEFAULT', 'Usage charge default', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.722', NULL, 1, 1, 1, 3, 1, 1, 2, 1);
 
-INSERT INTO billing_one_shot_charge_inst (id, subs_serv_inst_id, term_serv_inst_id) VALUES (2, 1, NULL);
-INSERT INTO billing_recurring_charge_inst (next_charge_date, subscription_date, id, recurring_chrg_tmpl_id,service_instance_id) VALUES ('2014-09-01 00:00:00', '2014-08-01 00:00:00', 1, 1, 1);
-INSERT INTO billing_usage_charge_inst (last_update, id, counter_id, service_instance_id) VALUES (NULL, 3, NULL, 1);
-INSERT INTO billing_usage_charge_inst (last_update, id, counter_id, service_instance_id) VALUES (NULL, 4, 1, 1);
-INSERT INTO billing_recurring_charge_inst (next_charge_date, subscription_date, id, recurring_chrg_tmpl_id,service_instance_id)  VALUES ('2014-09-01 00:00:00', '2014-08-01 00:00:00', 5, 5, 1);
-INSERT INTO billing_usage_charge_inst (last_update, id, counter_id, service_instance_id) VALUES (NULL, 6, NULL, 1);
+--INSERT INTO billing_one_shot_charge_inst VALUES (2, 1, NULL);
+--INSERT INTO billing_recurring_charge_inst VALUES ('2014-11-01 00:00:00', '2014-10-01 00:00:00', 1, 1, 1);
+--INSERT INTO billing_usage_charge_inst VALUES (NULL, 3, NULL, 1);
 
 DROP SEQUENCE IF EXISTS BILLING_CHARGE_INSTANCE_SEQ;
-CREATE SEQUENCE BILLING_CHARGE_INSTANCE_SEQ start with 7 increment by 1;
-
+CREATE SEQUENCE BILLING_CHARGE_INSTANCE_SEQ start with 4 increment by 1;
 
 
 --Billing Wallet
@@ -1215,5 +1200,5 @@ CREATE SEQUENCE billing_wallet_operation_SEQ start with 2 increment by 1;
 
 --insert into RATING_EDR values (1, 0, '2014-10-01 16:20:24.417', '2014-03-29 21:50:40.144', NULL, 'ASG_RatedCDR_100.csv', 'MSISDN1_SVC_DEF_1396126240144', 'SVC_DEF', 'MSISDN1', 'DATA', 'KBYTE', 44.00, NULL, 'OPEN', 1, 1);
 
---DROP SEQUENCE IF EXISTS rating_edr_SEQ;
---CREATE SEQUENCE rating_edr_SEQ start with 2 increment by 1;
+DROP SEQUENCE IF EXISTS rating_edr_SEQ;
+CREATE SEQUENCE rating_edr_SEQ start with 2 increment by 1;

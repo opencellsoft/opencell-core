@@ -3,6 +3,7 @@ package org.meveo.api.rest;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -20,6 +21,9 @@ import org.meveo.api.dto.WalletReservationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.security.WSSecured;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * @author Edward P. Legaspi
@@ -35,15 +39,25 @@ public class WalletReservationWS extends BaseWS {
 	@Inject
 	private WalletReservationApi walletReservationApi;
 
+	@Inject
+	private ProviderService providerService;
+
+	@MeveoJpaForJobs
+	@Inject
+	private EntityManager em;
+
 	@POST
 	@Path("/")
 	public ActionStatus create(WalletReservationDto walletReservation)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
 
+		Provider provider = providerService.findByCode(em,
+				paramBean.getProperty("default.provider.code", "DEMO"));
+
 		try {
 			result.setMessage(""
-					+ walletReservationApi.create(walletReservation,currentUser.getProvider()));
+					+ walletReservationApi.create(walletReservation, provider));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -59,7 +73,8 @@ public class WalletReservationWS extends BaseWS {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletReservationApi.update(walletReservation,currentUser.getProvider());
+			walletReservationApi.update(walletReservation,
+					currentUser.getProvider());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -74,7 +89,8 @@ public class WalletReservationWS extends BaseWS {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletReservationApi.cancel(reservationId,currentUser.getProvider());
+			walletReservationApi.cancel(reservationId,
+					currentUser.getProvider());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -90,7 +106,8 @@ public class WalletReservationWS extends BaseWS {
 
 		try {
 			result.setMessage(""
-					+ walletReservationApi.confirm(walletReservation,currentUser.getProvider()));
+					+ walletReservationApi.confirm(walletReservation,
+							currentUser.getProvider()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

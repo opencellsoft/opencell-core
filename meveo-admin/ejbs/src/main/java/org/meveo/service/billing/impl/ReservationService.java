@@ -134,6 +134,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		Reservation reservation = new Reservation();
+		reservation.setProvider(provider);
 		reservation.setAuditable(auditable);
 		reservation.setStatus(ReservationStatus.OPEN);
 		reservation.setUserAccount(userAccount);
