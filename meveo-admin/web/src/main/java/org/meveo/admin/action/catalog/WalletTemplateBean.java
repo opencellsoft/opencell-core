@@ -24,14 +24,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.CountryComService;
+import org.meveo.service.catalog.impl.WalletTemplateService;
 
 @Named
 @ConversationScoped
-public class CountryComBean extends BaseBean<TradingCountry> {
+public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -40,14 +40,14 @@ public class CountryComBean extends BaseBean<TradingCountry> {
 	 * {@link PersistenceService}.
 	 */
 	@Inject
-	private CountryComService countryComService;
+	private WalletTemplateService walletTemplateService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
 	 */
-	public CountryComBean() {
-		super(TradingCountry.class);
+	public WalletTemplateBean() {
+		super(WalletTemplate.class);
 
 	}
 
@@ -59,8 +59,8 @@ public class CountryComBean extends BaseBean<TradingCountry> {
 	 * @throws InstantiationException
 	 */
 	@Produces
-	@Named("countryCom")
-	public TradingCountry init() {
+	@Named("walletTemplate")
+	public WalletTemplate init() {
 		initEntity();
 		return entity;
 	}
@@ -73,15 +73,15 @@ public class CountryComBean extends BaseBean<TradingCountry> {
 	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
 	 */
 	protected String getDefaultViewName() {
-		return "comCountries";
+		return "walletTemplates";
 	}
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
 	@Override
-	protected IPersistenceService<TradingCountry> getPersistenceService() {
-		return countryComService;
+	protected IPersistenceService<WalletTemplate> getPersistenceService() {
+		return walletTemplateService;
 	}
 
 	public void test() throws BatchUpdateException {

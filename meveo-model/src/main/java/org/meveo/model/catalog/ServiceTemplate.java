@@ -19,86 +19,66 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.ServiceInstance;
 
-@Entity
-@Table(name = "CAT_SERVICE_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
+@MappedSuperclass
 public class ServiceTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_SERV_RECCHARGE_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
-	private List<RecurringChargeTemplate> recurringCharges = new ArrayList<RecurringChargeTemplate>();
+	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	private List<ServiceChargeTemplate<RecurringChargeTemplate>> recurringCharges = new ArrayList<ServiceChargeTemplate<RecurringChargeTemplate>>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_SERV_ONECHARGE_S_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
-	private List<OneShotChargeTemplate> subscriptionCharges = new ArrayList<OneShotChargeTemplate>();
+	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	private List<ServiceChargeTemplate<OneShotChargeTemplate>> subscriptionCharges = new ArrayList<ServiceChargeTemplate<OneShotChargeTemplate>>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_SERV_ONECHARGE_T_TEMPLATES", joinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "CHARGE_TEMPLATE_ID"))
-	private List<OneShotChargeTemplate> terminationCharges = new ArrayList<OneShotChargeTemplate>();
+	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
+	private List<ServiceChargeTemplate<OneShotChargeTemplate>> terminationCharges = new ArrayList<ServiceChargeTemplate<OneShotChargeTemplate>>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
-	private List<ServiceUsageChargeTemplate> serviceUsageCharges = new ArrayList<ServiceUsageChargeTemplate>();
+	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
-	private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
-
-	public List<RecurringChargeTemplate> getRecurringCharges() {
+	public List<ServiceChargeTemplate<RecurringChargeTemplate>> getRecurringCharges() {
 		return recurringCharges;
 	}
 
 	public void setRecurringCharges(
-			List<RecurringChargeTemplate> recurringCharges) {
+			List<ServiceChargeTemplate<RecurringChargeTemplate>> recurringCharges) {
 		this.recurringCharges = recurringCharges;
 	}
 
-	public List<OneShotChargeTemplate> getSubscriptionCharges() {
+	public List<ServiceChargeTemplate<OneShotChargeTemplate>> getSubscriptionCharges() {
 		return subscriptionCharges;
 	}
 
 	public void setSubscriptionCharges(
-			List<OneShotChargeTemplate> subscriptionCharges) {
+			List<ServiceChargeTemplate<OneShotChargeTemplate>> subscriptionCharges) {
 		this.subscriptionCharges = subscriptionCharges;
 	}
 
-	public List<OneShotChargeTemplate> getTerminationCharges() {
+	public List<ServiceChargeTemplate<OneShotChargeTemplate>> getTerminationCharges() {
 		return terminationCharges;
 	}
 
 	public void setTerminationCharges(
-			List<OneShotChargeTemplate> terminationCharges) {
+			List<ServiceChargeTemplate<OneShotChargeTemplate>> terminationCharges) {
 		this.terminationCharges = terminationCharges;
 	}
 
-	public List<ServiceInstance> getServiceInstances() {
-		return serviceInstances;
-	}
 
-	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
-		this.serviceInstances = serviceInstances;
-	}
-
-	public List<ServiceUsageChargeTemplate> getServiceUsageCharges() {
+	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
 		return serviceUsageCharges;
 	}
 
 	public void setServiceUsageCharges(
-			List<ServiceUsageChargeTemplate> serviceUsageCharges) {
+			List<ServiceChargeTemplateUsage> serviceUsageCharges) {
 		this.serviceUsageCharges = serviceUsageCharges;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {

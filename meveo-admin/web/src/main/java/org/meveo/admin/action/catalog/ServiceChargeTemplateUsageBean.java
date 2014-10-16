@@ -21,28 +21,26 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.ServiceUsageChargeTemplateService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 
-/** 
- * MBAREK
- */
+
 @Named
 @ConversationScoped
-public class ServiceUsageChargeTemplateBean extends BaseBean<ServiceUsageChargeTemplate> {
+public class ServiceChargeTemplateUsageBean extends BaseBean<ServiceChargeTemplateUsage> {
 
     private static final long serialVersionUID = 1L;
 
    
     @Inject
-    private ServiceUsageChargeTemplateService serviceUsageChargeTemplateService;
+    private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public ServiceUsageChargeTemplateBean() {
-        super(ServiceUsageChargeTemplate.class);
+    public ServiceChargeTemplateUsageBean() {
+        super(ServiceChargeTemplateUsage.class);
     }
 
     /**
@@ -52,7 +50,7 @@ public class ServiceUsageChargeTemplateBean extends BaseBean<ServiceUsageChargeT
      * @throws InstantiationException
      */
    
-    public ServiceUsageChargeTemplate initEntity() {
+    public ServiceChargeTemplateUsage initEntity() {
         return super.initEntity();
     }
 
@@ -62,20 +60,20 @@ public class ServiceUsageChargeTemplateBean extends BaseBean<ServiceUsageChargeT
      * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
      */
     protected String getDefaultViewName() {
-        return "serviceUsageChargeTemplates";
+        return "serviceChargeTemplatesUsage";
     }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()
      */
     @Override
-    protected IPersistenceService<ServiceUsageChargeTemplate> getPersistenceService() {
-        return serviceUsageChargeTemplateService;
+    protected IPersistenceService<ServiceChargeTemplateUsage> getPersistenceService() {
+        return serviceChargeTemplateUsageService;
     }
     
     @Override
     protected String getListViewName() {
-    	 return "serviceUsageChargeTemplates";
+    	 return "serviceChargeTemplatesUsage";
     }
 
 }

@@ -23,6 +23,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
@@ -189,19 +190,19 @@ public class RealtimeChargingService {
 		BigDecimal result = BigDecimal.ZERO;
 
 		if (serviceTemplate.getSubscriptionCharges() != null) {
-			for (OneShotChargeTemplate charge : serviceTemplate
+			for (ServiceChargeTemplate<OneShotChargeTemplate> charge : serviceTemplate
 					.getSubscriptionCharges()) {
-				result = result.add(getApplicationPrice(em, ba, charge,
+				result = result.add(getApplicationPrice(em, ba, charge.getChargeTemplate(),
 						subscriptionDate,offerCode, quantity, param1, param2, param3,
 						priceWithoutTax));
 			}
 		}
 
 		if (serviceTemplate.getRecurringCharges() != null) {
-			for (RecurringChargeTemplate charge : serviceTemplate
+			for (ServiceChargeTemplate<RecurringChargeTemplate> charge : serviceTemplate
 					.getRecurringCharges()) {
-				if (charge.getApplyInAdvance()) {
-					result = result.add(getFirstRecurringPrice(ba, charge,
+				if (charge.getChargeTemplate().getApplyInAdvance()) {
+					result = result.add(getFirstRecurringPrice(ba, charge.getChargeTemplate(),
 							subscriptionDate, quantity, param1, param2, param3,
 							priceWithoutTax));
 				}

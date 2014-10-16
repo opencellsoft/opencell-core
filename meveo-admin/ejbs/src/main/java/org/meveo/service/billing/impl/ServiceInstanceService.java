@@ -47,8 +47,10 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.ServiceUsageChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -86,6 +88,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@EJB
 	private RatedTransactionService ratedTransactionService;
+	
+	@EJB
+	private WalletService walletService;
 
 	public ServiceInstance findByCodeAndSubscription(String code,
 			Subscription subscription) {
@@ -114,7 +119,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		return chargeInstance;
 	}
-
+    
+    
 	public void serviceInstanciation(ServiceInstance serviceInstance,
 			User creator) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
@@ -136,6 +142,23 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstanciation(getEntityManager(), serviceInstance, creator);
 	}
 
+	public WalletInstance getWalletInstance(UserAccount userAccount, String walletCode,WalletTemplate walletTemplate,  User creator ,Provider provider){
+		if(!WalletTemplate.PRINCIPAL.equals(walletCode)){
+			if(!userAccount.getPrepaidWallets().containsKey(walletCode)){
+				WalletInstance wallet = new WalletInstance();
+				wallet.setCode(walletCode);
+				wallet.setWalletTemplate(walletTemplate);
+				wallet.setUserAccount(userAccount);
+				walletService.create(em, wallet, creator, provider);
+				userAccount.getPrepaidWallets().put(walletCode,wallet);
+			}
+			return userAccount.getPrepaidWallets().get(walletCode);
+		} 
+		else {
+			return userAccount.getWallet();
+		}
+	}
+	
 	public void serviceInstanciation(EntityManager em,
 			ServiceInstance serviceInstance, User creator,
 			BigDecimal subscriptionAmount, BigDecimal terminationAmount)
@@ -162,7 +185,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 							+ subscription.getCode());
 		}
 
-		Seller seller = subscription.getUserAccount().getBillingAccount()
+		UserAccount userAccount = subscription.getUserAccount();
+
+		Seller seller = userAccount.getBillingAccount()
 				.getCustomerAccount().getCustomer().getSeller();
 
 		if (serviceInstance.getSubscriptionDate() == null) {
@@ -176,38 +201,68 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
-		for (RecurringChargeTemplate recurringChargeTemplate : serviceTemplate
+		for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate
 				.getRecurringCharges()) {
-			chargeInstanceService.recurringChargeInstanciation(em,
-					serviceInstance, recurringChargeTemplate.getCode(),
+			RecurringChargeInstance chargeInstance=chargeInstanceService.recurringChargeInstanciation(em,
+					serviceInstance, serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), seller, creator);
+			serviceInstance.getRecurringChargeInstances().add(chargeInstance);
+			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
 		}
 
-		for (OneShotChargeTemplate subscriptionChargeTemplate : serviceTemplate
+		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
 				.getSubscriptionCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(em,
+			OneShotChargeInstance chargeInstance=oneShotChargeInstanceService.oneShotChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
-					subscriptionChargeTemplate,
+					serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), subscriptionAmount,
 					null, 1, seller, creator);
+			serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
+			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
 		}
 
-		for (OneShotChargeTemplate terminationChargeTemplate : serviceTemplate
+		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
 				.getTerminationCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(em,
+			
+			OneShotChargeInstance chargeInstance=oneShotChargeInstanceService.oneShotChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
-					terminationChargeTemplate,
+					serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), terminationAmount,
 					null, 1, seller, creator);
+			serviceInstance.getTerminationChargeInstances().add(chargeInstance);
+			if(serviceChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
 		}
 
-		for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceTemplate
+		for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate
 				.getServiceUsageCharges()) {
-			usageChargeInstanceService.usageChargeInstanciation(em,
+			UsageChargeInstance chargeInstance=usageChargeInstanceService.usageChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
 					serviceUsageChargeTemplate,
 					serviceInstance.getSubscriptionDate(), seller, creator);
+			serviceInstance.getUsageChargeInstances().add(chargeInstance);
+			if(serviceUsageChargeTemplate.getWalletTemplates().size()!=0){
+				for(WalletTemplate walletTemplate:serviceUsageChargeTemplate.getWalletTemplates()){
+					WalletInstance walletInstance=getWalletInstance(userAccount,walletTemplate.getCode(),walletTemplate,creator,subscription.getProvider());
+					chargeInstance.getWalletInstances().add(walletInstance);
+				}
+			}
 		}
+		
 	}
 
 	public void serviceActivation(ServiceInstance serviceInstance,
@@ -676,8 +731,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	 * serviceInstance.setStatusDate(new Date()); update(serviceInstance,
 	 * updater); }
 	 */
-
-	@SuppressWarnings("deprecation")
+	
 	public void serviceTermination(ServiceInstance serviceInstance,
 			Date terminationDate, User updater)
 			throws IncorrectSusbcriptionException,

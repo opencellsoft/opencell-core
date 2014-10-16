@@ -38,7 +38,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletTemplate;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
 @Stateless
@@ -71,7 +71,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		userAccount.setBillingAccount(billingAccount);
 		create(em, userAccount, creator, billingAccount.getProvider());
 		WalletInstance wallet = new WalletInstance();
-		wallet.setCode("PRINCIPAL");
+		wallet.setCode(WalletTemplate.PRINCIPAL);
 		wallet.setUserAccount(userAccount);
 		walletService.create(em, wallet, creator, billingAccount.getProvider());
 		userAccount.setWallet(wallet);

@@ -5,8 +5,8 @@
 	<parent>
 		<artifactId>meveo-admin</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>3.2</version>
 		<relativePath>../pom.xml</relativePath>
+		<version>4.0</version>
 	</parent>
 	<artifactId>meveo-admin-ejbs</artifactId>
 	<name>MEVEO Admin Web Application - EJBs Module</name>

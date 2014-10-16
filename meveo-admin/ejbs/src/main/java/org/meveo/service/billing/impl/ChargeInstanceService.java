@@ -84,15 +84,8 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		return chargeInstance;
 	}
 
-	public void recurringChargeInstanciation(ServiceInstance serviceInst,
-			String chargeCode, Date subscriptionDate, Seller seller,
-			User creator) throws BusinessException {
-		recurringChargeInstanciation(getEntityManager(), serviceInst,
-				chargeCode, subscriptionDate, seller, creator);
-	}
-
-	public void recurringChargeInstanciation(EntityManager em,
-			ServiceInstance serviceInst, String chargeCode,
+	public RecurringChargeInstance recurringChargeInstanciation(EntityManager em,
+			ServiceInstance serviceInst, RecurringChargeTemplate recurringChargeTemplate,
 			Date subscriptionDate, Seller seller, User creator)
 			throws BusinessException {
 
@@ -107,7 +100,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 					+ serviceInst.getStatus() + ". code="
 					+ serviceInst.getCode());
 		}
-
+		String chargeCode = recurringChargeTemplate.getCode();
 		RecurringChargeInstance chargeInst = (RecurringChargeInstance) recurringChargeInstanceService
 				.findByCodeAndService(em, chargeCode, serviceInst.getId());
 
@@ -116,8 +109,6 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 					"charge instance code already exists. code=" + chargeCode);
 		}
 
-		RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
-				.findByCode(em, chargeCode, serviceInst.getProvider());
 		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
 		chargeInstance.setCode(chargeCode);
 		chargeInstance.setDescription(recurringChargeTemplate.getDescription());
@@ -137,6 +128,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 
 		recurringChargeInstanceService.create(em, chargeInstance, creator,
 				recurringChargeTemplate.getProvider());
+		return chargeInstance;
 	}
 
 	public void recurringChargeDeactivation(long recurringChargeInstanId,
