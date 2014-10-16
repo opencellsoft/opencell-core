@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2009-2013 Manaty SARL (http://manaty.net/) and contributors.
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
