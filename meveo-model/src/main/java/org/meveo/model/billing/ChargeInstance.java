@@ -46,7 +46,6 @@ import javax.persistence.TemporalType;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.WalletTemplate;
 
 @Entity
 @Table(name = "BILLING_CHARGE_INSTANCE")
@@ -117,7 +116,7 @@ public class ChargeInstance extends BusinessEntity {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_CHRGINST_WALLET", joinColumns = @JoinColumn(name = "CHRG_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_INSTANCE_ID"))
-	@OrderColumn(name="INDEX")
+	@OrderColumn(name="INDX")
 	private List<WalletInstance> walletInstances;
 	
 	

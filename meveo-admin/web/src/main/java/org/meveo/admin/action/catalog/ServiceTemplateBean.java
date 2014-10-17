@@ -116,8 +116,8 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
 
-		List<ServiceChargeTemplate<RecurringChargeTemplate>> recurringCharges = entity.getRecurringCharges();
-		for (ServiceChargeTemplate<RecurringChargeTemplate> recurringCharge : recurringCharges) {
+		List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
+		for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
 			if (!recurringCharge.getChargeTemplate().getApplyInAdvance()) {
 				break;
 			}
@@ -131,7 +131,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 		try {
 			if (serviceChargeTemplateSubscription != null) {
-				for (ServiceChargeTemplate<OneShotChargeTemplate> inc : entity.getSubscriptionCharges()) {
+				for (ServiceChargeTemplateSubscription inc : entity.getServiceSubscriptionCharges()) {
 					if (inc.getChargeTemplate()
 							.getCode()
 							.equalsIgnoreCase(
@@ -146,7 +146,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 				} else {
 					serviceChargeTemplateSubscription.setServiceTemplate(entity);
 					serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription);
-					entity.getSubscriptionCharges().add(serviceChargeTemplateSubscription);
+					entity.getServiceSubscriptionCharges().add(serviceChargeTemplateSubscription);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
@@ -160,7 +160,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	public void deleteServiceSubscriptionChargeTemplate(
 			ServiceChargeTemplateSubscription serviceSubscriptionChargeTemplate) {
 		serviceChargeTemplateSubscriptionService.remove(serviceSubscriptionChargeTemplate);
-		entity.getSubscriptionCharges().remove(serviceSubscriptionChargeTemplate);
+		entity.getServiceSubscriptionCharges().remove(serviceSubscriptionChargeTemplate);
 	}
 
 	public void editServiceSubscriptionChargeTemplate(ServiceChargeTemplateSubscription serviceSubscriptionChargeTemplate) {
@@ -172,7 +172,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 		try {
 			if (serviceChargeTemplateTermination != null) {
-				for (ServiceChargeTemplate<OneShotChargeTemplate> inc : entity.getTerminationCharges()) {
+				for (ServiceChargeTemplateTermination inc : entity.getServiceTerminationCharges()) {
 					if (inc.getChargeTemplate()
 							.getCode()
 							.equalsIgnoreCase(
@@ -187,7 +187,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 				} else {
 					serviceChargeTemplateTermination.setServiceTemplate(entity);
 					serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination);
-					entity.getTerminationCharges().add(serviceChargeTemplateTermination);
+					entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
@@ -201,7 +201,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	public void deleteServiceTerminationChargeTemplate(
 			ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
 		serviceChargeTemplateTerminationService.remove(serviceTerminationChargeTemplate);
-		entity.getTerminationCharges().remove(serviceTerminationChargeTemplate);
+		entity.getServiceTerminationCharges().remove(serviceTerminationChargeTemplate);
 	}
 
 	public void editServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
@@ -213,7 +213,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 		try {
 			if (serviceChargeTemplateRecurring != null) {
-				for (ServiceChargeTemplate<RecurringChargeTemplate> inc : entity.getRecurringCharges()) {
+				for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
 					if (inc.getChargeTemplate()
 							.getCode()
 							.equalsIgnoreCase(
@@ -228,7 +228,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 				} else {
 					serviceChargeTemplateRecurring.setServiceTemplate(entity);
 					serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring);
-					entity.getRecurringCharges().add(serviceChargeTemplateRecurring);
+					entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
@@ -242,7 +242,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	public void deleteServiceRecurringChargeTemplate(
 			ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
 		serviceChargeTemplateRecurringService.remove(serviceRecurringChargeTemplate);
-		entity.getRecurringCharges().remove(serviceRecurringChargeTemplate);
+		entity.getServiceRecurringCharges().remove(serviceRecurringChargeTemplate);
 	}
 
 	public void editServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {

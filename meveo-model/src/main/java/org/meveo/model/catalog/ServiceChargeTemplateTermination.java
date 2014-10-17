@@ -16,14 +16,20 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
 @Entity
-@Table(name = "CAT_SERV_SUB_CHARGE_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_SUBCHRG_TEMPLT_SEQ")
+@Table(name = "CAT_SERV_TRM_CHARGE_TEMPLATE")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_TRMCHRG_TEMPLT_SEQ")
 public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneShotChargeTemplate> {
 
 	/**
@@ -31,5 +37,17 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 	 */
 	private static final long serialVersionUID = 7811269692204342428L;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_SERV_TRM_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_TRM_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
+	@OrderColumn(name="INDX")
+	private List<WalletTemplate> walletTemplates;
+	
 
+	public List<WalletTemplate> getWalletTemplates() {
+		return walletTemplates;
+	}
+
+	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+		this.walletTemplates = walletTemplates;
+	}
 }

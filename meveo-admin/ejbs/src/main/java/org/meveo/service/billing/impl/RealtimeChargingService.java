@@ -189,18 +189,18 @@ public class RealtimeChargingService {
 
 		BigDecimal result = BigDecimal.ZERO;
 
-		if (serviceTemplate.getSubscriptionCharges() != null) {
+		if (serviceTemplate.getServiceSubscriptionCharges() != null) {
 			for (ServiceChargeTemplate<OneShotChargeTemplate> charge : serviceTemplate
-					.getSubscriptionCharges()) {
+					.getServiceSubscriptionCharges()) {
 				result = result.add(getApplicationPrice(em, ba, charge.getChargeTemplate(),
 						subscriptionDate,offerCode, quantity, param1, param2, param3,
 						priceWithoutTax));
 			}
 		}
 
-		if (serviceTemplate.getRecurringCharges() != null) {
+		if (serviceTemplate.getServiceRecurringCharges() != null) {
 			for (ServiceChargeTemplate<RecurringChargeTemplate> charge : serviceTemplate
-					.getRecurringCharges()) {
+					.getServiceRecurringCharges()) {
 				if (charge.getChargeTemplate().getApplyInAdvance()) {
 					result = result.add(getFirstRecurringPrice(ba, charge.getChargeTemplate(),
 							subscriptionDate, quantity, param1, param2, param3,

@@ -16,10 +16,15 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -35,6 +40,12 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 	@JoinColumn(name = "COUNTER_TEMPLATE_ID")
 	private CounterTemplate counterTemplate;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_SERV_USAGE_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_USAGE_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
+	@OrderColumn(name="INDX")
+	private List<WalletTemplate> walletTemplates;
+	
+
 	public CounterTemplate getCounterTemplate() {
 		return counterTemplate;
 	}
@@ -42,7 +53,14 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 	public void setCounterTemplate(CounterTemplate counterTemplate) {
 		this.counterTemplate = counterTemplate;
 	}
+	public List<WalletTemplate> getWalletTemplates() {
+		return walletTemplates;
+	}
 
+	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+		this.walletTemplates = walletTemplates;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

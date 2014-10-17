@@ -19,56 +19,61 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 
-@MappedSuperclass
+@Entity
+@Table(name = "CAT_SERVICE_TEMPLATE")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
 public class ServiceTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
-	private List<ServiceChargeTemplate<RecurringChargeTemplate>> recurringCharges = new ArrayList<ServiceChargeTemplate<RecurringChargeTemplate>>();
+	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<ServiceChargeTemplateRecurring>();
 
 	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
-	private List<ServiceChargeTemplate<OneShotChargeTemplate>> subscriptionCharges = new ArrayList<ServiceChargeTemplate<OneShotChargeTemplate>>();
+	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<ServiceChargeTemplateSubscription>();
 
 	@OneToMany(mappedBy = "serviceTemplate",fetch = FetchType.LAZY)
-	private List<ServiceChargeTemplate<OneShotChargeTemplate>> terminationCharges = new ArrayList<ServiceChargeTemplate<OneShotChargeTemplate>>();
+	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<ServiceChargeTemplateTermination>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
-	public List<ServiceChargeTemplate<RecurringChargeTemplate>> getRecurringCharges() {
-		return recurringCharges;
+	
+
+	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
+		return serviceRecurringCharges;
 	}
 
-	public void setRecurringCharges(
-			List<ServiceChargeTemplate<RecurringChargeTemplate>> recurringCharges) {
-		this.recurringCharges = recurringCharges;
+	public void setServiceRecurringCharges(
+			List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
+		this.serviceRecurringCharges = serviceRecurringCharges;
 	}
 
-	public List<ServiceChargeTemplate<OneShotChargeTemplate>> getSubscriptionCharges() {
-		return subscriptionCharges;
+	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
+		return serviceSubscriptionCharges;
 	}
 
-	public void setSubscriptionCharges(
-			List<ServiceChargeTemplate<OneShotChargeTemplate>> subscriptionCharges) {
-		this.subscriptionCharges = subscriptionCharges;
+	public void setServiceSubscriptionCharges(
+			List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
+		this.serviceSubscriptionCharges = serviceSubscriptionCharges;
 	}
 
-	public List<ServiceChargeTemplate<OneShotChargeTemplate>> getTerminationCharges() {
-		return terminationCharges;
+	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
+		return serviceTerminationCharges;
 	}
 
-	public void setTerminationCharges(
-			List<ServiceChargeTemplate<OneShotChargeTemplate>> terminationCharges) {
-		this.terminationCharges = terminationCharges;
+	public void setServiceTerminationCharges(
+			List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
+		this.serviceTerminationCharges = serviceTerminationCharges;
 	}
-
 
 	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
 		return serviceUsageCharges;

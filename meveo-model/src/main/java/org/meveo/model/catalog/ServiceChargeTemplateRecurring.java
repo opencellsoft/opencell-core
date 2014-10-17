@@ -16,7 +16,14 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,5 +37,19 @@ public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<Recurr
 	 * 
 	 */
 	private static final long serialVersionUID = -5599952620149127436L;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_SERV_REC_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_REC_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
+	@OrderColumn(name="INDX")
+	private List<WalletTemplate> walletTemplates;
+	
+
+	public List<WalletTemplate> getWalletTemplates() {
+		return walletTemplates;
+	}
+
+	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+		this.walletTemplates = walletTemplates;
+	}
 
 }

@@ -27,8 +27,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 
 @Entity
-@Table(name = "BILLING_WALLET_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_TEMPLATE_SEQ")
+@Table(name = "CAT_WALLET_TEMPLATE")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_WALLET_TEMPLATE_SEQ")
 public class WalletTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

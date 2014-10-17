@@ -202,7 +202,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
 		for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate
-				.getRecurringCharges()) {
+				.getServiceRecurringCharges()) {
 			RecurringChargeInstance chargeInstance=chargeInstanceService.recurringChargeInstanciation(em,
 					serviceInstance, serviceChargeTemplate.getChargeTemplate(),
 					serviceInstance.getSubscriptionDate(), seller, creator);
@@ -216,7 +216,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
-				.getSubscriptionCharges()) {
+				.getServiceSubscriptionCharges()) {
 			OneShotChargeInstance chargeInstance=oneShotChargeInstanceService.oneShotChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
 					serviceChargeTemplate.getChargeTemplate(),
@@ -232,7 +232,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
-				.getTerminationCharges()) {
+				.getServiceTerminationCharges()) {
 			
 			OneShotChargeInstance chargeInstance=oneShotChargeInstanceService.oneShotChargeInstanciation(em,
 					serviceInstance.getSubscription(), serviceInstance,
