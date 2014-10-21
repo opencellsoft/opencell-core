@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -25,14 +26,12 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
@@ -40,6 +39,8 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.WalletTemplateService;
+import org.primefaces.model.DualListModel;
 
 @Named
 @ConversationScoped
@@ -54,7 +55,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	public void newServiceChargeTemplateRecurring() {
 		this.serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
 	}
-	
+
 	@Produces
 	@Named
 	private ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
@@ -62,7 +63,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	public void newServiceChargeTemplateSubscription() {
 		this.serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 	}
-	
+
 	@Produces
 	@Named
 	private ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
@@ -70,13 +71,14 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	public void newServiceChargeTemplateTermination() {
 		this.serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
 	}
-	
+
 	@Produces
 	@Named
 	private ServiceChargeTemplateUsage serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
 
 	public void newServiceChargeTemplateUsage() {
 		this.serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
+		serviceChargeTemplateUsage.setProvider(getCurrentProvider());
 	}
 
 	@Inject
@@ -96,8 +98,15 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
+	@Inject
+	private WalletTemplateService walletTemplateService;
 
 
+	private DualListModel<WalletTemplate> usageWallets;
+    private DualListModel<WalletTemplate> recurringWallets;
+    private DualListModel<WalletTemplate> subscriptionWallets;
+    private DualListModel<WalletTemplate> terminationWallets;
+	
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -108,6 +117,75 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	}
 
 
+	public DualListModel<WalletTemplate> getUsageDualListModel() {
+		if (usageWallets == null) {
+			List<WalletTemplate> perksSource = walletTemplateService.list();
+			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+			if (getEntity().getCode() != null) {
+				perksTarget.addAll(serviceChargeTemplateUsage.getWalletTemplates());
+			}
+			perksSource.removeAll(perksTarget);
+			usageWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
+		}
+		return usageWallets;
+	}
+
+	public void setUsageDualListModel(DualListModel<WalletTemplate> perks) {
+		serviceChargeTemplateUsage.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+	}
+	
+	public DualListModel<WalletTemplate> getSubscriptionDualListModel() {
+		if (subscriptionWallets == null) {
+			List<WalletTemplate> perksSource = walletTemplateService.list();
+			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+			if (getEntity().getCode() != null) {
+				perksTarget.addAll(serviceChargeTemplateSubscription.getWalletTemplates());
+			}
+			perksSource.removeAll(perksTarget);
+			subscriptionWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
+		}
+		return subscriptionWallets;
+	}
+
+	public void setSubscriptionDualListModel(DualListModel<WalletTemplate> perks) {
+		serviceChargeTemplateSubscription.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+	}
+	
+	public DualListModel<WalletTemplate> getTerminationDualListModel() {
+		if (terminationWallets == null) {
+			List<WalletTemplate> perksSource = walletTemplateService.list();
+			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+			if (getEntity().getCode() != null) {
+				perksTarget.addAll(serviceChargeTemplateTermination.getWalletTemplates());
+			}
+			perksSource.removeAll(perksTarget);
+			terminationWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
+		}
+		return terminationWallets;
+	}
+
+	public void setTerminationDualListModel(DualListModel<WalletTemplate> perks) {
+		serviceChargeTemplateTermination.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+	}
+	
+	public DualListModel<WalletTemplate> getRecurringDualListModel() {
+		if (recurringWallets == null) {
+			List<WalletTemplate> perksSource = walletTemplateService.list();
+			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+			if (getEntity().getCode() != null) {
+				perksTarget.addAll(serviceChargeTemplateRecurring.getWalletTemplates());
+			}
+			perksSource.removeAll(perksTarget);
+			recurringWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
+		}
+		return recurringWallets;
+	}
+
+	public void setRecurringDualListModel(DualListModel<WalletTemplate> perks) {
+		serviceChargeTemplateRecurring.setWalletTemplates((List<WalletTemplate>) perks.getTarget());
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -154,7 +232,7 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 			log.error("exception when applying one serviceUsageChargeTemplate !", e);
 			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
 		}
-		serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
+		serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
 	}
 
 	public void deleteServiceSubscriptionChargeTemplate(
@@ -251,7 +329,8 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 
 	
 	public void saveServiceChargeTemplateUsage() {
-		log.info("saveServiceChargeTemplateUsage getObjectId=#0", getObjectId());
+		log.info("saveServiceChargeTemplateUsage getObjectId="+
+	getObjectId());
 
 		try {
 			if (serviceChargeTemplateUsage != null) {

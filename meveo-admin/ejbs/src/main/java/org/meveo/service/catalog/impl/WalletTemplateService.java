@@ -26,7 +26,6 @@ import javax.persistence.NoResultException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.WalletStatusEnum;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.PersistenceService;
 
