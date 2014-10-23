@@ -143,8 +143,12 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 			List<WalletTemplate> perksSource = walletTemplateService.list();
 			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
 			if (getEntity().getCode() != null) {
-				perksTarget.addAll(serviceChargeTemplateSubscription
-						.getWalletTemplates());
+
+				List<WalletTemplate> walletTemplates = serviceChargeTemplateSubscription
+						.getWalletTemplates();
+				if (walletTemplates != null) {
+					perksTarget.addAll(walletTemplates);
+				}
 			}
 			perksSource.removeAll(perksTarget);
 			subscriptionWallets = new DualListModel<WalletTemplate>(
@@ -163,8 +167,11 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 			List<WalletTemplate> perksSource = walletTemplateService.list();
 			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
 			if (getEntity().getCode() != null) {
-				perksTarget.addAll(serviceChargeTemplateTermination
-						.getWalletTemplates());
+				List<WalletTemplate> walletTemplates = serviceChargeTemplateTermination
+						.getWalletTemplates();
+				if (walletTemplates != null) {
+					perksTarget.addAll(walletTemplates);
+				}
 			}
 			perksSource.removeAll(perksTarget);
 			terminationWallets = new DualListModel<WalletTemplate>(perksSource,
@@ -183,8 +190,11 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 			List<WalletTemplate> perksSource = walletTemplateService.list();
 			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
 			if (getEntity().getCode() != null) {
-				perksTarget.addAll(serviceChargeTemplateRecurring
-						.getWalletTemplates());
+				List<WalletTemplate> walletTemplates = serviceChargeTemplateRecurring
+						.getWalletTemplates();
+				if (walletTemplates != null) {
+					perksTarget.addAll(walletTemplates);
+				}
 			}
 			perksSource.removeAll(perksTarget);
 			recurringWallets = new DualListModel<WalletTemplate>(perksSource,

@@ -33,16 +33,6 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
 
-/**
- * Standard backing bean for {@link OneShotChargeTemplate} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Nov 18, 2010
- * 
- */
 @Named
 @ConversationScoped
 public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {

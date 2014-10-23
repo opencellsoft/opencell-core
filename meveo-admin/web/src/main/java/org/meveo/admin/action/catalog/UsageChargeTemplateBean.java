@@ -32,12 +32,6 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
 
-/**
- * 
- * 
- * @author MBAREK
- * 
- */
 @Named
 @ConversationScoped
 public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
