@@ -1096,8 +1096,8 @@ CREATE SEQUENCE cat_offer_template_SEQ start with 2 increment by 1;
 --Service Template
 INSERT INTO cat_service_template (id, version, disabled, created, code, description, provider_id, creator_id) VALUES (1, 0, false, now(), 'SVC_DEF', 'Default Service', 1, 1);
 
-DROP SEQUENCE IF EXISTS cat_offer_template_SEQ;
-CREATE SEQUENCE cat_offer_template_SEQ start with 2 increment by 1;
+DROP SEQUENCE IF EXISTS cat_service_template_SEQ;
+CREATE SEQUENCE cat_service_template_SEQ start with 2 increment by 1;
 
 INSERT INTO CAT_OFFER_SERV_TEMPLATES (offer_template_id, service_template_id) values (1, 1);
 
