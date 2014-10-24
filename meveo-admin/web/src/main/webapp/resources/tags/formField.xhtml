@@ -74,17 +74,19 @@
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					required="#{cc.attrs.required}" size="#{cc.attrs.size}"
 					disabled="true" />
-				<h:inputHidden id="#{cc.attrs.id}_notext"
-					rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" />
-				<p:inputText
-					rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					value="" size="#{cc.attrs.size}" required="#{cc.attrs.required}"
-					disabled="true" />
+				<p:panelGrid columns="3" styleClass="no-padding">
+					<p:inputText id="#{cc.attrs.id}_placeholder"
+						rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						value="" size="#{cc.attrs.size}" required="#{cc.attrs.required}"
+						disabled="true" />
+					<p:commandButton rendered="#{cc.attrs.edit and cc.attrs.popup}"
+						id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
+						icon="ui-icon-search" />
+					<h:inputHidden id="#{cc.attrs.id}_notext"
+						rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						required="#{cc.attrs.required}" />
+				</p:panelGrid>
 
-				<p:commandButton rendered="#{cc.attrs.edit and cc.attrs.popup}"
-					id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
-					icon="ui-icon-search" />
 				<h:outputText rendered="#{!cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					styleClass="field-value" />

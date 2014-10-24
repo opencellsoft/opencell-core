@@ -386,3 +386,5 @@ input[type="submit"],
 
 /* td { border: 1px solid red !important; } */
 /*.ui-selectonemenu .ui-selectonemenu-label { width: 130px !important; }*/
+
+.no-padding td:first-child { padding: 0 0 0 2px; }
