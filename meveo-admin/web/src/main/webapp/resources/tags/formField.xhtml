@@ -69,26 +69,38 @@
 				<p:outputLabel for="#{cc.attrs.id}_notext" value="#{cc.attrs.label}"
 					rendered="#{empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}" />
 
-				<p:inputText id="#{cc.attrs.id}_text"
-					rendered="#{cc.attrs.edit and not empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" size="#{cc.attrs.size}"
-					disabled="true" />
-				<h:inputHidden id="#{cc.attrs.id}_notext"
-					rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					required="#{cc.attrs.required}" />
-				<p:inputText
-					rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
-					value="" size="#{cc.attrs.size}" required="#{cc.attrs.required}"
-					disabled="true" />
-
-				<p:commandButton rendered="#{cc.attrs.edit and cc.attrs.popup}"
-					id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
-					icon="ui-icon-search" />
+				<p:panelGrid columns="2" styleClass="no-padding"
+					rendered="#{cc.attrs.edit and not empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}">
+					<p:inputText id="#{cc.attrs.id}_text"
+						rendered="#{cc.attrs.edit and not empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						required="#{cc.attrs.required}" size="#{cc.attrs.size}"
+						disabled="true" />
+					<p:commandButton
+						rendered="#{cc.attrs.edit and cc.attrs.popup and not empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						id="selectLink_text" onclick="dlg_#{cc.attrs.popupId}.show()"
+						icon="ui-icon-search" />
+				</p:panelGrid>
+				<p:panelGrid columns="3" styleClass="no-padding">
+					<p:inputText id="#{cc.attrs.id}_placeholder"
+						rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						value="" size="#{cc.attrs.size}" required="#{cc.attrs.required}"
+						disabled="true" />
+					<p:commandButton
+						rendered="#{cc.attrs.edit and cc.attrs.popup and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						id="selectLink_notext" onclick="dlg_#{cc.attrs.popupId}.show()"
+						icon="ui-icon-search" />
+					<h:inputHidden id="#{cc.attrs.id}_notext"
+						rendered="#{cc.attrs.edit and empty cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
+						required="#{cc.attrs.required}" />
+				</p:panelGrid>
 				<h:outputText rendered="#{!cc.attrs.edit}"
 					value="#{cc.entityFromBackingBeanOrAttribute[cc.attrs.field]}"
 					styleClass="field-value" />
-				<p:tooltip for="selectLink" value="#{messages['commons.search']}" />
+				<p:tooltip for="selectLink_text"
+					value="#{messages['commons.search']}" />
+				<p:tooltip for="selectLink_notext"
+					value="#{messages['commons.search']}" />
 			</p:panelGrid>
 		</ui:fragment>
 
