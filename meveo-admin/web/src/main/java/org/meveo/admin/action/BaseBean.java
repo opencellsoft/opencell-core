@@ -170,7 +170,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public void preRenderView() {
-		log.debug("start conversation");
 		beginConversation();
 	}
 

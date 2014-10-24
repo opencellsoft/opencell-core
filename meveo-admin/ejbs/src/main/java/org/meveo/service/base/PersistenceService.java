@@ -519,7 +519,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		this.provider = provider;
 	}
 
-	@SuppressWarnings("unchecked")
 	public BaseEntity attach(BaseEntity e) {
 		return (BaseEntity) getEntityManager().merge(e);
 	}
@@ -533,7 +532,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			} catch (Exception e) {
 			}
 		}
-		//log.debug("return em:" + result);
+		// log.debug("return em:" + result);
 		return result;
 	}
 }
