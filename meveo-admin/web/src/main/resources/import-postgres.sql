@@ -1180,40 +1180,43 @@ CREATE SEQUENCE BILLING_SUBSCRIPTION_SEQ start with 2 increment by 1;
 DROP SEQUENCE IF EXISTS MEDINA_ACCESS_SEQ;
 CREATE SEQUENCE MEDINA_ACCESS_SEQ start with 2 increment by 1;
 
---billing_service_instance
 
+—billing_service_instance
 INSERT INTO billing_service_instance VALUES (1, 1, false, '2014-10-01 13:27:01.921', '2014-10-01 13:27:07.63', 'SVC_DEF', 'Default Service', NULL, 1, 'ACTIVE', '2014-10-01 13:27:07.63', '2014-10-01 00:00:00', NULL, 1, 1, 1, 1, 1, NULL);
 
 DROP SEQUENCE IF EXISTS BILLING_SERVICE_INSTANCE_SEQ;
 CREATE SEQUENCE BILLING_SERVICE_INSTANCE_SEQ start with 2 increment by 1;
 
---Billing charge instance
+
+—billing charge instance
 insert into BILLING_CHARGE_INSTANCE values (1, 1, false, '2014-10-01 14:16:43.116', '2014-10-01 14:16:48.67', 'RC_DEFAULT', 'Default Recurring Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.67', NULL, 1, 1, 1, 1, 1, 1, 2, 1);
 insert into BILLING_CHARGE_INSTANCE values (2, 1, false, '2014-10-01 14:16:43.118', '2014-10-01 14:16:48.721', 'SUB_DEFAULT', 'Default Subscription Charge', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'CLOSED', '2014-10-01 14:16:48.721', NULL, 1, 1, 1, 2, 1, 1, 2, 1);
 insert into BILLING_CHARGE_INSTANCE values (3, 1, false, '2014-10-01 14:16:43.124', '2014-10-01 14:16:48.722', 'UC_DEFAULT', 'Usage charge default', NULL, NULL, '2014-10-01', NULL, NULL, NULL, NULL, 'ACTIVE', '2014-10-01 14:16:48.722', NULL, 1, 1, 1, 3, 1, 1, 2, 1);
 
---INSERT INTO billing_one_shot_charge_inst VALUES (2, 1, NULL);
---INSERT INTO billing_recurring_charge_inst VALUES ('2014-11-01 00:00:00', '2014-10-01 00:00:00', 1, 1, 1);
---INSERT INTO billing_usage_charge_inst VALUES (NULL, 3, NULL, 1);
+INSERT INTO billing_one_shot_charge_inst (id, subs_serv_inst_id, term_serv_inst_id) values (2, 1, NULL);
+INSERT INTO billing_recurring_charge_inst (next_charge_date, subscription_date, id, recurring_chrg_tmpl_id, service_instance_id) values ('2014-11-01 00:00:00', '2014-10-01 00:00:00', 1, 1, 1);
+INSERT INTO billing_usage_charge_inst (last_update, id, counter_id, service_instance_id ) values (NULL, 3, NULL, 1);
 
 DROP SEQUENCE IF EXISTS BILLING_CHARGE_INSTANCE_SEQ;
 CREATE SEQUENCE BILLING_CHARGE_INSTANCE_SEQ start with 4 increment by 1;
 
 
---Billing Wallet instance
+—billing Wallet instance
 insert into BILLING_WALLET_INSTANCE (id, version, disabled, created, code, provider_id, creator_id, user_account_id,CAT_WALLET_TEMPLATE_ID) values (1, 0, false, now(), 'PRINCIPAL', 1, 1, 4,1);
 insert into BILLING_WALLET_INSTANCE (id, version, disabled, created, code, provider_id, creator_id, user_account_id,CAT_WALLET_TEMPLATE_ID) values (2, 0, false, now(), 'PREPAID', 1, 1, 4,2);
 
 DROP SEQUENCE IF EXISTS billing_wallet_instance_SEQ;
 CREATE SEQUENCE billing_wallet_instance_SEQ start with 3 increment by 1;
 
+
 --associate wallet instances to charge instance
 INSERT INTO billing_chrginst_wallet (chrg_instance_id, wallet_instance_id, indx) VALUES (3, 1, 1);
 INSERT INTO billing_chrginst_wallet (chrg_instance_id, wallet_instance_id, indx) VALUES (3, 2, 2);
 
 
-update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;
 -- update with prepaid wallet instance
+update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;
+
 
 --billing_wallet_operation
 --insert into BILLING_WALLET_OPERATION values ('W', 1, 0, false, '2014-10-01 14:16:48.718', NULL, 'SUB_DEFAULT', 'Default Subscription Charge', 0.000000000000, 2.000000000000, 2.000000000000, NULL, 'OF_DEF', '2014-10-01 00:00:00', NULL, NULL, NULL, 1.000000000000, NULL, 'OPEN', NULL, 0.000000000000, NULL, NULL, NULL, 2.000000000000, 1, 1, NULL, 2, NULL, 49, 2, NULL, NULL);
