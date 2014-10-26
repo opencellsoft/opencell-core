@@ -1138,6 +1138,8 @@ INSERT INTO CAT_SERV_USAGE_WALLET_TEMPLATE (service_usage_templt_id, wallet_temp
 --Price Plan Matrix
 insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
 insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
+INSERT INTO cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (3, 1, false, now(), 2, ‘UC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
+
 
 DROP SEQUENCE IF EXISTS cat_price_plan_matrix_SEQ;
 CREATE SEQUENCE cat_price_plan_matrix_SEQ start with 3 increment by 1;
@@ -1214,15 +1216,13 @@ update BILLING_USER_ACCOUNT set wallet_id=1 where id=4;
 -- update with prepaid wallet instance
 
 --billing_wallet_operation
-insert into BILLING_WALLET_OPERATION values ('W', 1, 0, false, '2014-10-01 14:16:48.718', NULL, 'SUB_DEFAULT', 'Default Subscription Charge', 0.000000000000, 2.000000000000, 2.000000000000, NULL, 'OF_DEF', '2014-10-01 00:00:00', NULL, NULL, NULL, 1.000000000000, NULL, 'OPEN', NULL, 0.000000000000, NULL, NULL, NULL, 2.000000000000, 1, 1, NULL, 2, NULL, 49, 2, NULL, NULL);
+--insert into BILLING_WALLET_OPERATION values ('W', 1, 0, false, '2014-10-01 14:16:48.718', NULL, 'SUB_DEFAULT', 'Default Subscription Charge', 0.000000000000, 2.000000000000, 2.000000000000, NULL, 'OF_DEF', '2014-10-01 00:00:00', NULL, NULL, NULL, 1.000000000000, NULL, 'OPEN', NULL, 0.000000000000, NULL, NULL, NULL, 2.000000000000, 1, 1, NULL, 2, NULL, 49, 2, NULL, NULL);
 
 DROP SEQUENCE IF EXISTS billing_wallet_operation_SEQ;
-CREATE SEQUENCE billing_wallet_operation_SEQ start with 2 increment by 1;
+CREATE SEQUENCE billing_wallet_operation_SEQ start with 1 increment by 1;
 
---DROP SEQUENCE IF EXISTS rating_edr_SEQ;
---CREATE SEQUENCE rating_edr_SEQ start with 2 increment by 1;
 
 --insert into RATING_EDR values (1, 0, '2014-10-01 16:20:24.417', '2014-03-29 21:50:40.144', NULL, 'ASG_RatedCDR_100.csv', 'MSISDN1_SVC_DEF_1396126240144', 'SVC_DEF', 'MSISDN1', 'DATA', 'KBYTE', 44.00, NULL, 'OPEN', 1, 1);
 
 DROP SEQUENCE IF EXISTS rating_edr_SEQ;
-CREATE SEQUENCE rating_edr_SEQ start with 2 increment by 1;
+CREATE SEQUENCE rating_edr_SEQ start with 1 increment by 1;
