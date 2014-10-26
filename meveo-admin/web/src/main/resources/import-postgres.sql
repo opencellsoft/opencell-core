@@ -1138,7 +1138,7 @@ INSERT INTO CAT_SERV_USAGE_WALLET_TEMPLATE (service_usage_templt_id, wallet_temp
 --Price Plan Matrix
 insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (1, 0, false, now(), 2, 'RC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
 insert into cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (2, 0, false, now(), 2, 'SUB_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
-INSERT INTO cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (3, 1, false, now(), 2, ‘UC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
+INSERT INTO cat_price_plan_matrix (id, version, disabled, created, amount_without_tax, event_code, max_subscr_age, min_subscr_age, priority, provider_id, creator_id, seller_id, trading_country_id, trading_currency_id, max_quantity, min_quantity, offer_id) values (3, 1, false, now(), 2, 'UC_DEFAULT', 9999, 0, 1, 1, 1, 2, 1, 1, NULL, NULL, 1);
 
 
 DROP SEQUENCE IF EXISTS cat_price_plan_matrix_SEQ;
