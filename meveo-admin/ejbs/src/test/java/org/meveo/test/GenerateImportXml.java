@@ -45,9 +45,9 @@ public class GenerateImportXml {
     private static String providerCode="DEMO";
     private static String customerBrand="DEMO";
     private static String customerCategory="Business";
-    private static String serviceCode="EXCH20101";
+    private static String serviceCode="ORANGE_SRV";
     private static String creditCategory="VIP";
-    private static String offerCode="EXCH20101";
+    private static String offerCode="ORANGE_OFF";
 
 
     /***********************************************************************/
@@ -211,7 +211,7 @@ public class GenerateImportXml {
               JAXBUtils.marshaller(billingAccounts, new File(accountsFile));
               JAXBUtils.marshaller(subscriptions, new File(subscriptionsFile));
 
-              System.out.println("Import effetué avec succes");
+              System.out.println("Import effectué avec succes");
             }catch(Exception e){
                 e.printStackTrace();
 
