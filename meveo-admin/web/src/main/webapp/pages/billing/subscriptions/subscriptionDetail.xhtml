@@ -408,7 +408,7 @@
 													column2Label="#{messages['chargeTemplate.description']}"
 													column2="description"
 													selection="#{subscriptionBean.oneShotChargeInstance.chargeTemplate}"
-													updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId_text :subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:oneshot_description:oneshot_description_textArea">
+													updateField=":subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1:chargeTemplateSelectId_text :subscriptionTab:oneShotChargeFormPanel:oneShotChgForm1">
 												</hftl:entityPopup>
 
 												<hf:formPanel id="oneShotChargeFormPanel" edit="true"
@@ -444,14 +444,12 @@
 													<h:panelGrid columns="2">
 														<p:outputLabel for="amountWithoutTax2"
 															value="#{messages['oneShotChargeInstance.amountWithoutTax']}" />
-														<h:inputText rendered="#{subscriptionBean.edit}"
-															id="amountWithoutTax2"
+														<p:inputText id="amountWithoutTax2"
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
 															size="5" converter="bigDecimalConverter"
 															onkeyup="validateAmounts();"
 															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
-
-														</h:inputText>
+														</p:inputText>
 														<h:outputText rendered="#{!subscriptionBean.edit}"
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
 															style="font-weight:bold;" converter="bigDecimalConverter" />
@@ -460,13 +458,12 @@
 													<h:panelGrid columns="2">
 														<p:outputLabel for="amountWithTax"
 															value="#{messages['oneShotChargeInstance.amountWithTax']}" />
-														<h:inputText rendered="#{subscriptionBean.edit}"
-															id="amountWithTax"
+														<p:inputText id="amountWithTax"
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 															size="5" converter="bigDecimalConverter"
 															onkeyup="validateAmounts();"
 															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
-														</h:inputText>
+														</p:inputText>
 														<h:outputText rendered="#{!subscriptionBean.edit}"
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 															style="font-weight:bold;" converter="bigDecimalConverter" />
