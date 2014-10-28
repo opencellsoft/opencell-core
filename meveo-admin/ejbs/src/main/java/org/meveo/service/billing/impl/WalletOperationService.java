@@ -1422,7 +1422,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ " AND w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "
 					+ " AND w.status=:status "
-					+ " AND TYPE(w.chargeInstance)=:usageChargeInstanceClass"
+					+ " AND NOT(w.counter IS NULL) "
+					//+ " AND TYPE(w.chargeInstance)=:usageChargeInstanceClass"
 					+ " AND w.chargeInstance.serviceInstance = :serviceInstance";
 			if(walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate){
 				strQuery+= " AND w.chargeInstance.chargeTemplate.filterParam1 = :serviceType";
@@ -1432,15 +1433,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			query.setParameter("status", WalletOperationStatusEnum.OPEN);
-			query.setParameter("usageChargeInstanceClass", UsageChargeInstance.class);
+			//query.setParameter("usageChargeInstanceClass", UsageChargeInstance.class);
 			query.setParameter("serviceInstance",((UsageChargeInstance)walletOperation.getChargeInstance()).getServiceInstance());
 			if(walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate){
 				query.setParameter("serviceType",((UsageChargeTemplate)walletOperation.getChargeInstance().getChargeTemplate()).getFilterParam1());
 			}
-			int result = query.executeUpdate();
-			log.debug(
-					"updatePriceForSameServiceAndType : updated {} wallet operations",
-					result);
+			query.executeUpdate();
 		}
 	}
 
