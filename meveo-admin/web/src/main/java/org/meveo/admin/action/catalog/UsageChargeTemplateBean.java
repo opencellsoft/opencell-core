@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,12 +36,6 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
 
-/**
- * 
- * 
- * @author MBAREK
- * 
- */
 @Named
 @ConversationScoped
 public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
@@ -78,7 +75,13 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 						msg.getDescription());
 			}
 		}
+
 		return usageChargeTemplate;
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("edrTemplate");
 	}
 
 	@Override
@@ -170,9 +173,9 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	public void toggleEdrPanel() {
 		if (showEdrPanel) {
-			entity.setEdrTemplate(new UsageChargeEDRTemplate());
-		} else {
-			entity.setEdrTemplate(null);
+			if (entity.getEdrTemplate() == null) {
+				entity.setEdrTemplate(new UsageChargeEDRTemplate());
+			}
 		}
 	}
 
