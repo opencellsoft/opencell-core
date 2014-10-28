@@ -63,12 +63,11 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	private String filterExpression = null;
 
 	@Embedded
-	UsageChargeEDRTemplate edrTemplate;
-	
+	private UsageChargeEDRTemplate edrTemplate = new UsageChargeEDRTemplate();
+
 	@Column(name = "PRIORITY", columnDefinition = "int default 1")
 	private int priority = 1;
 
-	
 	public BigDecimal getUnityMultiplicator() {
 		return unityMultiplicator;
 	}
