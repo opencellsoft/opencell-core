@@ -63,7 +63,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
 	private String filterExpression = null;
 
 	@Embedded
-	private UsageChargeEDRTemplate edrTemplate = new UsageChargeEDRTemplate();
+	private UsageChargeEDRTemplate edrTemplate;
 
 	@Column(name = "PRIORITY", columnDefinition = "int default 1")
 	private int priority = 1;
