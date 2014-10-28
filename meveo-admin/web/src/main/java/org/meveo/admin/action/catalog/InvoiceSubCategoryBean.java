@@ -92,45 +92,60 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		this.invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 	}
 
-	public void saveInvoiceSubCategoryCountry() {
+	public String saveInvoiceSubCategoryCountry() {
 		log.info("saveOneShotChargeIns getObjectId=#0", getObjectId());
 
 		try {
 			if (invoiceSubcategoryCountry != null) {
-				for (InvoiceSubcategoryCountry inc : entity.getInvoiceSubcategoryCountries()) {
+				for (InvoiceSubcategoryCountry inc : entity
+						.getInvoiceSubcategoryCountries()) {
 					if (inc.getTradingCountry()
 							.getCountry()
 							.getCountryCode()
 							.equalsIgnoreCase(
-									invoiceSubcategoryCountry.getTradingCountry().getCountry()
+									invoiceSubcategoryCountry
+											.getTradingCountry().getCountry()
 											.getCountryCode())
-							&& !inc.getId().equals(invoiceSubcategoryCountry.getId())) {
+							&& !inc.getId().equals(
+									invoiceSubcategoryCountry.getId())) {
 						throw new Exception();
 					}
 				}
 				if (invoiceSubcategoryCountry.getId() != null) {
-					invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
+					invoiceSubCategoryCountryService
+							.update(invoiceSubcategoryCountry);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
 					invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
-					invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
-					entity.getInvoiceSubcategoryCountries().add(invoiceSubcategoryCountry);
+					invoiceSubCategoryCountryService
+							.create(invoiceSubcategoryCountry);
+					entity.getInvoiceSubcategoryCountries().add(
+							invoiceSubcategoryCountry);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
 			}
 		} catch (Exception e) {
-			log.error("exception when applying one invoiceSubCategoryCountry !", e);
-			messages.error(new BundleKey("messages", "invoiceSubCategory.uniqueTaxFlied"));
+			log.error(
+					"exception when applying one invoiceSubCategoryCountry !",
+					e);
+			messages.error(new BundleKey("messages",
+					"invoiceSubCategory.uniqueTaxFlied"));
 		}
+
 		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+		
+		return getListViewName();
 	}
 
-	public void deleteInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+	public void deleteInvoiceSubcategoryCountry(
+			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
 		invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
-		entity.getInvoiceSubcategoryCountries().remove(invoiceSubcategoryCountry);
+		entity.getInvoiceSubcategoryCountries().remove(
+				invoiceSubcategoryCountry);
 	}
 
-	public void editInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+	public void editInvoiceSubcategoryCountry(
+			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
 		this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
 	}
 
@@ -153,13 +168,16 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		InvoiceSubCategory invoiceCatSub = super.initEntity();
 		languageMessagesMap.clear();
 		if (invoiceCatSub.getId() != null) {
-			for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceSubCategory.class
-					.getSimpleName() + "_" + invoiceCatSub.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			for (CatMessages msg : catMessagesService
+					.getCatMessagesList(InvoiceSubCategory.class
+							.getSimpleName() + "_" + invoiceCatSub.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(),
+						msg.getDescription());
 			}
 		}
 		if (invoiceCategoryId.get() != null) {
-			entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId.get()));
+			entity.setInvoiceCategory(invoiceCategoryService
+					.findById(invoiceCategoryId.get()));
 		}
 		return invoiceCatSub;
 	}
@@ -186,14 +204,16 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(entity.getClass()
-						.getSimpleName() + "_" + entity.getId(), msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(entity
+						.getClass().getSimpleName() + "_" + entity.getId(),
+						msgKey);
 				if (catMsg != null) {
 					catMsg.setDescription(description);
 					catMessagesService.update(catMsg);
 				} else {
-					CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName()
-							+ "_" + entity.getId(), msgKey, description);
+					CatMessages catMessages = new CatMessages(entity.getClass()
+							.getSimpleName() + "_" + entity.getId(), msgKey,
+							description);
 					catMessagesService.create(catMessages);
 				}
 			}
@@ -207,8 +227,9 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 			}
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_"
-						+ entity.getId(), msgKey, description);
+				CatMessages catMessages = new CatMessages(entity.getClass()
+						.getSimpleName() + "_" + entity.getId(), msgKey,
+						description);
 				catMessagesService.create(catMessages);
 			}
 

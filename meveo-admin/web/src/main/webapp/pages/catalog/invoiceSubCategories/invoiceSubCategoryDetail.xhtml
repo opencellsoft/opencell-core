@@ -66,8 +66,7 @@
 
 						<hf:formField label="#{messages['invoiceSubCategory.code']}"
 							field="code" required="true" validateUnique="true"
-							useConverter="false"
-							disabled="#{invoiceSubCategoryBean.entity.id!=null}" />
+							useConverter="false" />
 
 						<hf:languageFields />
 
@@ -142,7 +141,6 @@
 									action="#{invoiceSubCategoryBean.deleteInvoiceSubcategoryCountry(entity)}"
 									icon="ui-icon-trash" ajax="true"
 									update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax" />
-
 
 							</p:column>
 						</hftl:dataList>
