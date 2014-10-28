@@ -92,7 +92,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		this.invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 	}
 
-	public void saveInvoiceSubCategoryCountry() {
+	public String saveInvoiceSubCategoryCountry() {
 		log.info("saveOneShotChargeIns getObjectId=#0", getObjectId());
 
 		try {
@@ -122,7 +122,10 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 			log.error("exception when applying one invoiceSubCategoryCountry !", e);
 			messages.error(new BundleKey("messages", "invoiceSubCategory.uniqueTaxFlied"));
 		}
+		
 		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+		
+		return getListViewName();
 	}
 
 	public void deleteInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {

@@ -58,7 +58,8 @@
 				field="description" />
 			<hftl:column label="#{messages['invoiceSubCategory.accountingCode']}"
 				field="accountingCode" />
-			<hftl:actionsColumn
+
+			<hftl:actionsColumn renderDeleteLink="false"
 				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
 		</hftl:dataList>
 
