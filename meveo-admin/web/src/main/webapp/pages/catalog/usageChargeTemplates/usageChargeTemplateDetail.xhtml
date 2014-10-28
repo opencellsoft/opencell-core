@@ -70,60 +70,77 @@
 				childField="code" required="true" popup="true"
 				popupId="searchInvoiceSubCategoryPopup" />
 
-			<p:panelGrid columns="2">
-				<p:outputLabel for="quantityEl"
-					value="#{messages['usageChargeTemplate.edrTemplate.quantityEl']}"></p:outputLabel>
-				<p:inputText id="quantityEl"
-					rendered="#{usageChargeTemplateBean.edit}"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.quantityEl}"></p:inputText>
-				<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
-					styleClass="field-value"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.quantityEl}" />
-			</p:panelGrid>
+			<p:panel>
+				<div style="float: left;">
+					<h3>Triggered EDR</h3>
+				</div>
+				<div style="float: left; margin-left: 20px; margin-top: 10px;">
+					<p:selectBooleanCheckbox
+						value="#{usageChargeTemplateBean.showEdrPanel}">
+						<p:ajax update="edrTemplatePanel"></p:ajax>
+					</p:selectBooleanCheckbox>
+				</div>
 
-			<p:panelGrid columns="2">
-				<p:outputLabel for="param1El"
-					value="#{messages['usageChargeTemplate.edrTemplate.param1El']}"></p:outputLabel>
-				<p:inputText id="param1El"
-					rendered="#{usageChargeTemplateBean.edit}"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param1El}"></p:inputText>
-				<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
-					styleClass="field-value"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param1El}" />
-			</p:panelGrid>
+				<p:outputPanel id="edrTemplatePanel" autoUpdate="false">
+					<p:panelGrid columns="1"
+						rendered="#{usageChargeTemplateBean.showEdrPanel and usageChargeTemplateBean.entity.edrTemplate ne null}">
+						<p:panelGrid columns="2">
+							<p:outputLabel for="quantityEl"
+								value="#{messages['usageChargeTemplate.edrTemplate.quantityEl']}"></p:outputLabel>
+							<p:inputText id="quantityEl"
+								rendered="#{usageChargeTemplateBean.edit}"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.quantityEl}"></p:inputText>
+							<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
+								styleClass="field-value"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.quantityEl}" />
+						</p:panelGrid>
 
-			<p:panelGrid columns="2">
-				<p:outputLabel for="param2El"
-					value="#{messages['usageChargeTemplate.edrTemplate.param2El']}"></p:outputLabel>
-				<p:inputText id="param2El"
-					rendered="#{usageChargeTemplateBean.edit}"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param2El}"></p:inputText>
-				<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
-					styleClass="field-value"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param2El}" />
-			</p:panelGrid>
+						<p:panelGrid columns="2">
+							<p:outputLabel for="param1El"
+								value="#{messages['usageChargeTemplate.edrTemplate.param1El']}"></p:outputLabel>
+							<p:inputText id="param1El"
+								rendered="#{usageChargeTemplateBean.edit}"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param1El}"></p:inputText>
+							<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
+								styleClass="field-value"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param1El}" />
+						</p:panelGrid>
 
-			<p:panelGrid columns="2">
-				<p:outputLabel for="param3El"
-					value="#{messages['usageChargeTemplate.edrTemplate.param3El']}"></p:outputLabel>
-				<p:inputText id="param3El"
-					rendered="#{usageChargeTemplateBean.edit}"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param3El}"></p:inputText>
-				<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
-					styleClass="field-value"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param3El}" />
-			</p:panelGrid>
+						<p:panelGrid columns="2">
+							<p:outputLabel for="param2El"
+								value="#{messages['usageChargeTemplate.edrTemplate.param2El']}"></p:outputLabel>
+							<p:inputText id="param2El"
+								rendered="#{usageChargeTemplateBean.edit}"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param2El}"></p:inputText>
+							<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
+								styleClass="field-value"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param2El}" />
+						</p:panelGrid>
 
-			<p:panelGrid columns="2">
-				<p:outputLabel for="param4El"
-					value="#{messages['usageChargeTemplate.edrTemplate.param4El']}"></p:outputLabel>
-				<p:inputText id="param4El"
-					rendered="#{usageChargeTemplateBean.edit}"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param4El}"></p:inputText>
-				<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
-					styleClass="field-value"
-					value="#{usageChargeTemplateBean.entity.edrTemplate.param4El}" />
-			</p:panelGrid>
+						<p:panelGrid columns="2">
+							<p:outputLabel for="param3El"
+								value="#{messages['usageChargeTemplate.edrTemplate.param3El']}"></p:outputLabel>
+							<p:inputText id="param3El"
+								rendered="#{usageChargeTemplateBean.edit}"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param3El}"></p:inputText>
+							<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
+								styleClass="field-value"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param3El}" />
+						</p:panelGrid>
+
+						<p:panelGrid columns="2">
+							<p:outputLabel for="param4El"
+								value="#{messages['usageChargeTemplate.edrTemplate.param4El']}"></p:outputLabel>
+							<p:inputText id="param4El"
+								rendered="#{usageChargeTemplateBean.edit}"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param4El}"></p:inputText>
+							<h:outputText rendered="#{!usageChargeTemplateBean.edit}"
+								styleClass="field-value"
+								value="#{usageChargeTemplateBean.entity.edrTemplate.param4El}" />
+						</p:panelGrid>
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:panel>
 
 		</hf:formPanel>
 

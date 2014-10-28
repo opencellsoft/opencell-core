@@ -54,6 +54,8 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	@Inject
 	private CatMessagesService catMessagesService;
+	
+	private boolean showEdrPanel;
 
 	private String descriptionFr;
 
@@ -148,5 +150,13 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	public boolean isShowEdrPanel() {
+		return showEdrPanel;
+	}
+
+	public void setShowEdrPanel(boolean showEdrPanel) {
+		this.showEdrPanel = showEdrPanel;
 	}
 }

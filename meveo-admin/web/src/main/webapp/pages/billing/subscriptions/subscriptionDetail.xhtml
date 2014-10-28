@@ -844,7 +844,10 @@
 									<p:panel>
 										<p:commandButton value="#{messages['access.new']}" ajax="true"
 											update=":accessDialog" oncomplete="accessWidget.show()"
-											actionListener="#{accessBean.resetEntity()}"></p:commandButton>
+											actionListener="#{accessBean.resetEntity()}">
+											<f:param name="subscriptionId"
+												value="#{subscriptionBean.entity.id}"></f:param>
+										</p:commandButton>
 									</p:panel>
 								</h:form>
 							</p:tab>
