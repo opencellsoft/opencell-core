@@ -35,6 +35,7 @@ import org.meveo.model.cache.CounterPeriodCache;
 import org.meveo.model.cache.UsageChargeInstanceCache;
 import org.meveo.model.cache.UsageChargeTemplateCache;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.model.catalog.UsageChargeEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
@@ -414,6 +415,24 @@ public class UsageRatingService {
 		log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, null, null,
 				countryId, currency, provider);
+		//for DURATION counter we update the price of the previous wallet Operation to the current price
+		if(chargeInstance.getCounter() != null && (chargeInstance.getCounter().getCounterTemplate()!=null) 
+				&& CounterTypeEnum.DURATION==chargeInstance.getCounter().getCounterTemplate().getCounterType()){
+			CounterInstanceCache counterInstanceCache = counterCache.get(chargeCache
+					.getCounter().getKey());
+			if (counterInstanceCache.getCounterPeriods() != null) {
+				for (CounterPeriodCache itemPeriodCache : counterInstanceCache
+						.getCounterPeriods()) {
+					if ((itemPeriodCache.getStartDate().before(edr.getEventDate()) || itemPeriodCache
+							.getStartDate().equals(edr.getEventDate()))
+							&& itemPeriodCache.getEndDate().after(
+									edr.getEventDate())) {
+						walletOperationService.updatePriceForSameServiceAndType(walletOperation,itemPeriodCache.getStartDate(),itemPeriodCache.getEndDate());
+						break;
+					}
+				}
+			}
+		}
 		return walletOperation;
 	}
 
