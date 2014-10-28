@@ -66,7 +66,9 @@ public class AccessBean extends BaseBean<Access> {
 		Access access = super.initEntity();
 
 		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService.findById(subscriptionId.get());
+			Subscription subscription = subscriptionService
+					.findById(subscriptionId.get());
+			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
 
@@ -101,24 +103,26 @@ public class AccessBean extends BaseBean<Access> {
 
 	public String saveOrUpdate() {
 		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService.findById(subscriptionId.get());
+			Subscription subscription = subscriptionService
+					.findById(subscriptionId.get());
 			entity.setSubscription(subscription);
 		}
 
 		saveOrUpdate(false);
-		
+
 		return "";
 	}
 
 	public String saveOrUpdate(boolean killConversation) {
-		String result="";
-		Subscription subscription = subscriptionService.findById(entity.getSubscription().getId());
+		String result = "";
+		Subscription subscription = subscriptionService.findById(entity
+				.getSubscription().getId());
 		entity.setSubscription(subscription);
 		if (accessService.isDuplicate(entity)) {
 			messages.error(new BundleKey("messages", "access.duplicate"));
 		} else {
-			 result=super.saveOrUpdate(killConversation);
-			 CDRParsingService.resetAccessPointCache(entity);
+			result = super.saveOrUpdate(killConversation);
+			CDRParsingService.resetAccessPointCache(entity);
 		}
 
 		return result;
@@ -126,5 +130,12 @@ public class AccessBean extends BaseBean<Access> {
 
 	public void resetEntity() {
 		entity = new Access();
+
+		if (subscriptionId.get() != null) {
+			Subscription subscription = subscriptionService
+					.findById(subscriptionId.get());
+			entity.setStartDate(subscription.getSubscriptionDate());
+			entity.setSubscription(subscription);
+		}
 	}
 }
