@@ -77,7 +77,8 @@
 				<div style="float: left; margin-left: 20px; margin-top: 10px;">
 					<p:selectBooleanCheckbox
 						value="#{usageChargeTemplateBean.showEdrPanel}">
-						<p:ajax update="edrTemplatePanel"></p:ajax>
+						<p:ajax update="edrTemplatePanel"
+							listener="#{usageChargeTemplateBean.toggleEdrPanel()}"></p:ajax>
 					</p:selectBooleanCheckbox>
 				</div>
 

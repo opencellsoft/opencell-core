@@ -24,6 +24,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.UsageChargeEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -54,7 +55,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	@Inject
 	private CatMessagesService catMessagesService;
-	
+
 	private boolean showEdrPanel;
 
 	private String descriptionFr;
@@ -70,9 +71,11 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	public UsageChargeTemplate initEntity() {
 		UsageChargeTemplate usageChargeTemplate = super.initEntity();
 		if (usageChargeTemplate.getId() != null) {
-			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
-					.getSimpleName() + "_" + usageChargeTemplate.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			for (CatMessages msg : catMessagesService
+					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
+							+ "_" + usageChargeTemplate.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(),
+						msg.getDescription());
 			}
 		}
 		return usageChargeTemplate;
@@ -97,8 +100,10 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 		String back = null;
 
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null
-				|| recurringChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null) {
+		if (oneShotChargeTemplateService.findByCode(entity.getCode(),
+				entity.getProvider()) != null
+				|| recurringChargeTemplateService.findByCode(entity.getCode(),
+						entity.getProvider()) != null) {
 			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
 			return null;
 		}
@@ -107,13 +112,15 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
 				CatMessages catMsg = catMessagesService.getCatMessages(
-						ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
+						ChargeTemplate.class.getSimpleName() + "_"
+								+ entity.getId(), msgKey);
 				if (catMsg != null) {
 					catMsg.setDescription(description);
 					catMessagesService.update(catMsg);
 				} else {
-					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-							+ "_" + entity.getId(), msgKey, description);
+					CatMessages catMessages = new CatMessages(
+							ChargeTemplate.class.getSimpleName() + "_"
+									+ entity.getId(), msgKey, description);
 					catMessagesService.create(catMessages);
 				}
 			}
@@ -123,8 +130,9 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 			back = super.saveOrUpdate(killConversation);
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-						+ "_" + entity.getId(), msgKey, description);
+				CatMessages catMessages = new CatMessages(
+						ChargeTemplate.class.getSimpleName() + "_"
+								+ entity.getId(), msgKey, description);
 				catMessagesService.create(catMessages);
 			}
 		}
@@ -159,4 +167,13 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	public void setShowEdrPanel(boolean showEdrPanel) {
 		this.showEdrPanel = showEdrPanel;
 	}
+
+	public void toggleEdrPanel() {
+		if (showEdrPanel) {
+			entity.setEdrTemplate(new UsageChargeEDRTemplate());
+		} else {
+			entity.setEdrTemplate(null);
+		}
+	}
+
 }
