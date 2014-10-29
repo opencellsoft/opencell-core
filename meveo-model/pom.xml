@@ -8,9 +8,9 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-model</artifactId>
-
 	<packaging>jar</packaging>
 	<name>MEVEO Model</name>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -46,6 +46,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -83,6 +84,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>cn.guoyukun.jdbc</groupId>
