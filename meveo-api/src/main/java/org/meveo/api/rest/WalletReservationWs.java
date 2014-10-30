@@ -34,7 +34,7 @@ import org.meveo.util.MeveoJpaForJobs;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
 @WSSecured
-public class WalletReservationWS extends BaseWS {
+public class WalletReservationWs extends BaseWs {
 
 	@Inject
 	private WalletReservationApi walletReservationApi;

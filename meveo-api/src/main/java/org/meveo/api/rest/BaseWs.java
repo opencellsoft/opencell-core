@@ -13,7 +13,7 @@ import org.meveo.model.admin.User;
 /**
  * @author Edward P. Legaspi
  **/
-public abstract class BaseWS {
+public abstract class BaseWs {
 
 	protected ParamBean paramBean = ParamBean.getInstance();
 

@@ -13,7 +13,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.WalletBalanceApi;
-import org.meveo.api.dto.WalletBalanceDTO;
+import org.meveo.api.dto.WalletBalanceDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.security.WSSecured;
@@ -27,14 +27,14 @@ import org.meveo.api.rest.security.WSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
 @WSSecured
-public class WalletBalanceWS extends BaseWS {
+public class WalletBalanceWs extends BaseWs {
 
 	@Inject
 	private WalletBalanceApi walletBalanceApi;
 
 	@POST
 	@Path("/current")
-	public ActionStatus currentBalance(WalletBalanceDTO walletBalance)
+	public ActionStatus currentBalance(WalletBalanceDto walletBalance)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
 
@@ -51,7 +51,7 @@ public class WalletBalanceWS extends BaseWS {
 
 	@POST
 	@Path("/reserved")
-	public ActionStatus reservedBalance(WalletBalanceDTO walletBalance)
+	public ActionStatus reservedBalance(WalletBalanceDto walletBalance)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
 
@@ -68,7 +68,7 @@ public class WalletBalanceWS extends BaseWS {
 
 	@POST
 	@Path("/open")
-	public ActionStatus openBalance(WalletBalanceDTO walletBalance)
+	public ActionStatus openBalance(WalletBalanceDto walletBalance)
 			throws MeveoApiException, BusinessException {
 		ActionStatus result = new ActionStatus();
 

@@ -11,37 +11,39 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.ActionStatusEnum;
-import org.meveo.api.CustomerAccountApi;
+import org.meveo.api.PdfInvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.response.CustomerAccountResponse;
+import org.meveo.api.rest.response.PdfInvoiceResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author R.AITYAAZZA
- * 
+ *
  */
-@Path("/customerAccount")
+
+@Path("/PdfInvoice")
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
 @WSSecured
-public class CustomerAccountWS extends BaseWS {
+public class PdfInvoiceWs extends BaseWs {
 
 	@Inject
-	private CustomerAccountApi customerAccountapi;
+	private PdfInvoiceApi pdfInvoiceApi;
 
 	@GET
 	@Path("/")
-	public CustomerAccountResponse getCustomerAccount(
-			@QueryParam("customerAccountCode") String customerAccountCode
-		) throws Exception {
-		CustomerAccountResponse result = new CustomerAccountResponse();
+	public PdfInvoiceResponse getPDFInvoice(
+			@QueryParam("invoiceNumber") String invoiceNumber,
+			@QueryParam("customerAccountCode") String customerAccountCode) throws Exception {
+
+		PdfInvoiceResponse result = new PdfInvoiceResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCustomerAccountDto(customerAccountapi.getCustomerAccount(
-					customerAccountCode, currentUser));
+			result.setPdfInvoice(pdfInvoiceApi.getPDFInvoice(invoiceNumber,
+					customerAccountCode,currentUser));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

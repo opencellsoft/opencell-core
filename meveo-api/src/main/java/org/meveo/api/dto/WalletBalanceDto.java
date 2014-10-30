@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "walletBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WalletBalanceDTO {
+public class WalletBalanceDto {
 	private String sellerCode;
 	private String userAccountCode;
 	private Date startDate;

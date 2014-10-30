@@ -27,7 +27,7 @@ import org.meveo.model.shared.DateUtils;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
 @WSSecured
-public class OneShotChargeTemplateWS extends BaseWS {
+public class OneShotChargeTemplateWs extends BaseWs {
 
 	@Inject
 	private OneShotChargeTemplateServiceApi oneShotChargeTemplateServiceApi;

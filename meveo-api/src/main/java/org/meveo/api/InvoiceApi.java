@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.InvoiceDto;
-import org.meveo.api.dto.RatedTransactionDTO;
+import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
@@ -225,7 +225,7 @@ public class InvoiceApi extends BaseApi {
 					invoiceAgregateService.create(em,
 							subCategoryInvoiceAgregate, currentUser, provider);
 
-					for (RatedTransactionDTO ratedTransaction : subCategoryInvoiceAgregateDTO
+					for (RatedTransactionDto ratedTransaction : subCategoryInvoiceAgregateDTO
 							.getRatedTransactions()) {
 						RatedTransaction meveoRatedTransaction = new RatedTransaction(
 								null, ratedTransaction.getUsageDate(),

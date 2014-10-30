@@ -30,7 +30,7 @@ import org.meveo.api.rest.security.WSSecured;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
 @WSSecured
-public class CustomerHierarchyWS extends BaseWS {
+public class CustomerHierarchyWs extends BaseWs {
 
 	@Inject
 	private CustomerHierarchyApi customerHierarchyApi;

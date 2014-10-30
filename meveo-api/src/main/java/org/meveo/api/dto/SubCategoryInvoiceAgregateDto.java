@@ -51,7 +51,7 @@ public  class SubCategoryInvoiceAgregateDto {
 
 	private BigDecimal amountWithTax;
 
-	private List<RatedTransactionDTO> ratedTransactions = new ArrayList<RatedTransactionDTO>();
+	private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
 
 
 	public Integer getItemNumber() {
@@ -145,12 +145,12 @@ public  class SubCategoryInvoiceAgregateDto {
 	}
 
 
-	public List<RatedTransactionDTO> getRatedTransactions() {
+	public List<RatedTransactionDto> getRatedTransactions() {
 		return ratedTransactions;
 	}
 
 
-	public void setRatedTransactions(List<RatedTransactionDTO> ratedTransactions) {
+	public void setRatedTransactions(List<RatedTransactionDto> ratedTransactions) {
 		this.ratedTransactions = ratedTransactions;
 	}
 

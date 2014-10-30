@@ -30,8 +30,8 @@ import org.meveo.api.rest.security.WSSecured;
 import org.meveo.commons.utils.ParamBean;
 
 /**
+ * <p></p>
  * @author Edward P. Legaspi
- * @since Oct 7, 2013
  **/
 @Path("/country")
 @RequestScoped
@@ -39,7 +39,7 @@ import org.meveo.commons.utils.ParamBean;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
 @WSSecured
-public class CountryWS extends BaseWS {
+public class CountryWs extends BaseWs {
 
 	private ParamBean paramBean = ParamBean
 			.getInstance("meveo-admin.properties");
