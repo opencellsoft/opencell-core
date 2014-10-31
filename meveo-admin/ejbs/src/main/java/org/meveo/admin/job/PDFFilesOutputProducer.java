@@ -77,7 +77,7 @@ public class PDFFilesOutputProducer{
      */
      public void producePdf(Map<String, Object> parameters) throws Exception{
 
-		    	ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
+		    	ParamBean paramBean = ParamBean.getInstance();
 		    	logger.info("PDFInvoiceGenerationJob is invoice key exists="+parameters!=null?parameters.containsKey(PdfGenratorConstants.INVOICE)+"":"parameters is null");
 		    	Invoice invoice=(Invoice)parameters.get(PdfGenratorConstants.INVOICE);
 		    	String meveoDir= paramBean.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + invoice.getProvider().getCode()

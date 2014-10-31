@@ -48,6 +48,12 @@ public class CountryWs extends BaseWs {
 	@Inject
 	private CountryServiceApi countryServiceApi;
 
+	/***
+	 * Creates an instance of @see TradingCountry base on @see Country.
+	 * 
+	 * @param countryDto
+	 * @return @see ActionStatus
+	 */
 	@POST
 	@Path("/")
 	public ActionStatus create(CountryDto countryDto) {

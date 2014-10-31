@@ -77,7 +77,7 @@ public class AccountOperationsGenerationJob implements Job {
 	@Override
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute XMLInvoiceGenerationJob.");
-		ParamBean paramBan=ParamBean.getInstance("meveo-admin.properties");
+		ParamBean paramBan=ParamBean.getInstance();
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		List<Invoice> invoices=invoiceService.getInvoicesWithNoAccountOperation(null);
 		Provider providerForHistory=null;

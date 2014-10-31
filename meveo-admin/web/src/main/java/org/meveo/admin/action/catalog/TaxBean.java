@@ -62,7 +62,7 @@ public class TaxBean extends BaseBean<Tax> {
 	 */
 	public TaxBean() {
 		super(Tax.class);
-		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+		ParamBean param = ParamBean.getInstance();
 		separator = param.getProperty("reporting.accountingCode.separator", ",");
 	}
 

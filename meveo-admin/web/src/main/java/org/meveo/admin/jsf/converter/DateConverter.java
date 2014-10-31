@@ -31,7 +31,7 @@ import org.meveo.commons.utils.ParamBean;
 public class DateConverter implements Converter {
 
 
-    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
+    private ParamBean paramBean=ParamBean.getInstance();
 
 	@Override
 	public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {

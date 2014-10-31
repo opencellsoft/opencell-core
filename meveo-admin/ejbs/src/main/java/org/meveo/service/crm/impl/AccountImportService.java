@@ -58,7 +58,7 @@ public class AccountImportService {
 	@Inject
 	TradingLanguageService tradingLanguageService;
 
-	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+	ParamBean param = ParamBean.getInstance();
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public org.meveo.model.billing.BillingAccount importBillingAccount(

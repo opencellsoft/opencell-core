@@ -345,7 +345,7 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 	public String launchExceptionalInvoicing() {
 		log.info("launchExceptionelInvoicing...");
 		try {
-			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+			ParamBean param = ParamBean.getInstance();
 			String allowManyInvoicing = param.getProperty(
 					"billingRun.allowManyInvoicing", "true");
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);

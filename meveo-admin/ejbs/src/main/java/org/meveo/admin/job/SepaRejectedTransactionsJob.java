@@ -55,7 +55,7 @@ public class SepaRejectedTransactionsJob
   SepaService sepaService;
   
 
-	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+	ParamBean param = ParamBean.getInstance();
   
   String importDir = param.getProperty("sepaRejectedTransactionsJob.importDir",
 			"/tmp/meveo/SepaRejectedTransactions");

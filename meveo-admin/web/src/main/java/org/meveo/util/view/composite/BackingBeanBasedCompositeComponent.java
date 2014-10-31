@@ -24,7 +24,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 	@SuppressWarnings("rawtypes")
 	private Class entityClass;
 
-	ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
+	ParamBean paramBean = ParamBean.getInstance();
 
 	/**
 	 * Get backing bean attribute either from parent component (search panel,

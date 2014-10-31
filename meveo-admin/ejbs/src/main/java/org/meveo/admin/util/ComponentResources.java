@@ -41,7 +41,7 @@ public class ComponentResources implements Serializable {
 	@Named
 	@MeveoParamBean
 	public ParamBean getParamBean() {
-		return ParamBean.getInstance("meveo-admin.properties");
+		return ParamBean.getInstance();
 	}
 
 	@Produces

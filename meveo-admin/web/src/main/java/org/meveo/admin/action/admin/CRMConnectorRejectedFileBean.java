@@ -70,7 +70,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
     private static String allertPath = null;
     private static String tmpPath = null;
     static {
-        ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+        ParamBean param = ParamBean.getInstance();
         //TODO: set correct default path
         errorPath = param.getProperty("connectorCRM.importCustomers.ouputDir.error","");
         allertPath = param.getProperty("connectorCRM.importCustomers.ouputDir.alert","");

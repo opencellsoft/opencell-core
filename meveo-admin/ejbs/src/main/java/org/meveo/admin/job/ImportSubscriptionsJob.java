@@ -86,7 +86,7 @@ public class ImportSubscriptionsJob implements Job {
 	@Inject
 	private SubscriptionImportService subscriptionImportService;
 
-	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+	ParamBean param = ParamBean.getInstance();
 
 	Subscriptions subscriptionsError;
 	Subscriptions subscriptionsWarning;

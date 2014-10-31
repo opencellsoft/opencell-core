@@ -106,7 +106,7 @@ public class ParamBean {
 	}
 
 	public static ParamBean getInstance() {
-		return getInstance("meveo-admin.properties");
+		return getInstance();
 	}
 
 	/*

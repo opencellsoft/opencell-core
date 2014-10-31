@@ -97,7 +97,7 @@ public class ImportAccountsJob implements Job {
 	
 	BillingAccounts billingAccountsWarning;
 	BillingAccounts billingAccountsError;
-	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+	ParamBean param = ParamBean.getInstance();
 
 	int nbBillingAccounts;
 	int nbBillingAccountsError;

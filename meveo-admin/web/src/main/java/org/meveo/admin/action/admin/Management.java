@@ -45,7 +45,7 @@ public class Management implements Serializable {
 	protected Logger log;
 
 
-    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
+    private ParamBean paramBean=ParamBean.getInstance();
 
 	/**
 	 * Application name for daemon to know what application info to send back.

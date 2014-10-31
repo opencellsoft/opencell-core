@@ -86,7 +86,7 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 	public void sendPassword(String email) throws BusinessException, EmailNotFoundException {
 
 		log.info("start sendPassword with email:#0", email);
-		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+		ParamBean param = ParamBean.getInstance();
 		String from = param.getProperty("selfcare.email.from","selfcare@manaty.net");
 		String sendpasswordSubject = resourceMessages
 				.getString("selfcareemail.sendpassword.subject");// "Your password to log into Seflcare!";
@@ -240,7 +240,7 @@ public class SelfcareService extends PersistenceService<CustomerAccount> impleme
 	public void sendEmailCreationSpace(String email) throws BusinessException,
 			EmailNotFoundException {
 		log.info("start sendEmailCreationSpace with email:#0", email);
-		ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+		ParamBean param = ParamBean.getInstance();
 		String from = param.getProperty("selfcare.email.from","selfcare@manaty.net");
 		String sendpasswordSubject = resourceMessages
 				.getString("selfcareemail.creationSpace.subject");

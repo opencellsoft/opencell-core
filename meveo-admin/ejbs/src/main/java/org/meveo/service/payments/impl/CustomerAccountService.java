@@ -72,7 +72,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	@Inject
 	private ResourceBundle recourceMessages;
 
-    private ParamBean paramBean=ParamBean.getInstance("meveo-admin.properties");
+    private ParamBean paramBean=ParamBean.getInstance();
 
 	/**
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#isCustomerAccountWithIdExists(java.lang.Long)
@@ -150,7 +150,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 				balanceCredit = BigDecimal.ZERO;
 			}
 			balance = balanceDebit.subtract(balanceCredit);
-			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+			ParamBean param = ParamBean.getInstance();
 			int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
 			balance = balance.multiply(new BigDecimal(balanceFlag));
 			log.info(
@@ -362,7 +362,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		}
 		try {
 			log.debug("closeCustomerAccount  update customerAccount ok");
-			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+			ParamBean param = ParamBean.getInstance();
 			String codeOCCTemplate = param.getProperty("occ.codeOccCloseAccount","CLOSE_ACC");
 			BigDecimal balanceDue = customerAccountBalanceDue(customerAccount, new Date());
 			if (balanceDue == null) {
@@ -427,7 +427,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		}
 
 		try {
-			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+			ParamBean param = ParamBean.getInstance();
 			String occTransferAccountCredit = param
 					.getProperty("occ.templateTransferAccountCredit","TRANS_CRED");
 			String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit","TRANS_DEB");

@@ -60,7 +60,7 @@ public class SubscriptionImportService {
 	AccessService accessService;
 	
 
-	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+	ParamBean param = ParamBean.getInstance();
 	
 	//return 1 if a subscription has been created, 0 else
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

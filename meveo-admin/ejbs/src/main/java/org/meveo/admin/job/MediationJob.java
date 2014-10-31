@@ -82,7 +82,7 @@ public class MediationJob implements Job {
 		BufferedReader cdrReader = null;
 		try {
 
-			ParamBean parambean = ParamBean.getInstance("meveo-admin.properties");
+			ParamBean parambean = ParamBean.getInstance();
 			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
 					+ File.separator+"imports"+ File.separator+"metering" + File.separator ;
 

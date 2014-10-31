@@ -109,7 +109,7 @@ public class ImportCustomersJob implements Job {
 	Sellers sellersWarning;
 	Sellers sellersError;
 
-	ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+	ParamBean param = ParamBean.getInstance();
 
 	int nbCustomers;
 	int nbCustomersError;
