@@ -15,7 +15,8 @@ import org.meveo.model.admin.User;
  **/
 public abstract class BaseWs {
 
-	protected ParamBean paramBean = ParamBean.getInstance();
+	@Inject
+	protected ParamBean paramBean;
 
 	@Inject
 	@WSUser

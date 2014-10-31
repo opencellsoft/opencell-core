@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.PaymentDto;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
@@ -60,8 +59,6 @@ public class PaymentApi extends BaseApi {
 
 	@Inject
 	OCCTemplateService oCCTemplateService;
-
-	ParamBean paramBean = ParamBean.getInstance();
 
 	public void createPayment(PaymentDto paymentDto, User currentUser)
 			throws Exception {
@@ -219,8 +216,7 @@ public class PaymentApi extends BaseApi {
 					paymentDto.setDepositDate(ap.getDepositDate());
 				}
 				result.add(paymentDto);
-			}
-			else if (op instanceof OtherCreditAndCharge){
+			} else if (op instanceof OtherCreditAndCharge) {
 				OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
 				PaymentDto paymentDto = new PaymentDto();
 				paymentDto.setType(occ.getType());

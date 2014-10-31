@@ -16,7 +16,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.WalletReservationService;
-import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
@@ -26,13 +25,10 @@ import org.slf4j.Logger;
 public class WalletBalanceApi extends BaseApi {
 
 	@Inject
-	private Logger log;
-
-	@Inject
 	private WalletReservationService walletReservationService;
 
-	public BigDecimal getCurrentAmount(WalletBalanceDto walletBalance, Provider provider)
-			throws MeveoApiException {
+	public BigDecimal getCurrentAmount(WalletBalanceDto walletBalance,
+			Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(walletBalance.getSellerCode())
 				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
 			try {
@@ -75,8 +71,8 @@ public class WalletBalanceApi extends BaseApi {
 		}
 	}
 
-	public BigDecimal getReservedAmount(WalletBalanceDto walletBalance, Provider provider)
-			throws MeveoApiException {
+	public BigDecimal getReservedAmount(WalletBalanceDto walletBalance,
+			Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(walletBalance.getSellerCode())
 				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
 			try {
@@ -119,8 +115,8 @@ public class WalletBalanceApi extends BaseApi {
 		}
 	}
 
-	public BigDecimal getOpenAmount(WalletBalanceDto walletBalance, Provider provider)
-			throws MeveoApiException {
+	public BigDecimal getOpenAmount(WalletBalanceDto walletBalance,
+			Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(walletBalance.getSellerCode())
 				&& !StringUtils.isBlank(walletBalance.getUserAccountCode())) {
 

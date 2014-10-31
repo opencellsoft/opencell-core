@@ -1,4 +1,4 @@
-package org.meveo.api.rest.response;
+package org.meveo.api.response;
 
 import java.util.ArrayList;
 import java.util.List;

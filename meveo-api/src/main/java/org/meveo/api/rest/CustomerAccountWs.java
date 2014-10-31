@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerAccountApi;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.response.CustomerAccountResponse;
+import org.meveo.api.response.CustomerAccountResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**

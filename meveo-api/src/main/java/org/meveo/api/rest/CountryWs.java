@@ -25,12 +25,13 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.exception.TradingCountryAlreadyExistsException;
 import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.response.CountryResponse;
+import org.meveo.api.response.GetCountryResponse;
 import org.meveo.api.rest.security.WSSecured;
 import org.meveo.commons.utils.ParamBean;
 
 /**
- * <p></p>
+ * Web service for country management.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/country")
@@ -41,8 +42,8 @@ import org.meveo.commons.utils.ParamBean;
 @WSSecured
 public class CountryWs extends BaseWs {
 
-	private ParamBean paramBean = ParamBean
-			.getInstance("meveo-admin.properties");
+	@Inject
+	private ParamBean paramBean;
 
 	@Inject
 	private CountryServiceApi countryServiceApi;
@@ -77,12 +78,12 @@ public class CountryWs extends BaseWs {
 
 	@GET
 	@Path("/")
-	public CountryResponse find(@QueryParam("countryCode") String countryCode) {
-		CountryResponse result = new CountryResponse();
+	public GetCountryResponse find(@QueryParam("countryCode") String countryCode) {
+		GetCountryResponse result = new GetCountryResponse();
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCountryDto(countryServiceApi.find(countryCode));
+			result.setCountry(countryServiceApi.find(countryCode));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

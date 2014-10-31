@@ -1,4 +1,4 @@
-package org.meveo.api.rest.response;
+package org.meveo.api.response;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -6,25 +6,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
+import org.meveo.api.dto.CustomerAccountDto;
 
 
 /**
  * @author R.AITYAAZZA
  *
  */
-@XmlRootElement(name = "pdfInvoiceResponse")
+@XmlRootElement(name = "customerAccountResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PdfInvoiceResponse {
+public class CustomerAccountResponse {
 
 	private ActionStatus actionStatus = new ActionStatus(
 			ActionStatusEnum.SUCCESS, "");
-	
-	private byte[] pdfInvoice;
+	private CustomerAccountDto customerAccountDto;
 
-	public PdfInvoiceResponse() {
+	public CustomerAccountResponse() {
 
 	}
- 
 
 	public ActionStatus getActionStatus() {
 		return actionStatus;
@@ -34,21 +33,14 @@ public class PdfInvoiceResponse {
 		this.actionStatus = actionStatus;
 	}
 
+	public CustomerAccountDto getCustomerAccountDto() {
+		return customerAccountDto;
+	}
 
-	public byte[] getPdfInvoice() {
-		return pdfInvoice;
+	public void setCustomerAccountDto(CustomerAccountDto customerAccountDto) {
+		this.customerAccountDto = customerAccountDto;
 	}
 
 
-	public void setPdfInvoice(byte[] pdfInvoice) {
-		this.pdfInvoice = pdfInvoice;
-	}
-
-
-	
-
-	
-
-	
 
 }

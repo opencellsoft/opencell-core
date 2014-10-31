@@ -117,7 +117,8 @@ public class CustomerHierarchyApi extends BaseApi {
 	@Inject 
 	private CustomerDtoService customerDTOService;
 
-	ParamBean paramBean = ParamBean.getInstance();
+	@Inject
+	private ParamBean paramBean;
 
 	/*
 	 * Creates the customer heirarchy including : - Trading Country - Trading

@@ -17,7 +17,7 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.InvoiceApi;
 import org.meveo.api.dto.InvoiceDto;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.response.CustomerInvoicesResponse;
+import org.meveo.api.response.CustomerInvoicesResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**

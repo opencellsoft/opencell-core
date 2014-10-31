@@ -142,7 +142,6 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 
 	@Override
 	public Response toResponse(Exception exception) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

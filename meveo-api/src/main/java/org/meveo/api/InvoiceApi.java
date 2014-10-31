@@ -83,7 +83,8 @@ public class InvoiceApi extends BaseApi {
 	@Inject
 	TaxService taxService;
 
-	ParamBean paramBean = ParamBean.getInstance();
+	@Inject
+	private ParamBean paramBean;
 
 	public void createInvoice(InvoiceDto invoiceDTO) throws BusinessException {
 		User currentUser = invoiceDTO.getCurrentUser();

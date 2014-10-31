@@ -16,7 +16,7 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerHierarchyApi;
 import org.meveo.api.dto.CustomerHierarchyDto;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.response.CustomerListResponse;
+import org.meveo.api.response.CustomerListResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**

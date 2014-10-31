@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.PdfInvoiceApi;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.response.PdfInvoiceResponse;
+import org.meveo.api.response.PdfInvoiceResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**

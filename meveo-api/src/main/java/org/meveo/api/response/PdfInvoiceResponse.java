@@ -1,4 +1,4 @@
-package org.meveo.api.rest.response;
+package org.meveo.api.response;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -6,23 +6,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.ActionStatus;
 import org.meveo.api.ActionStatusEnum;
-import org.meveo.api.dto.CountryDto;
+
 
 /**
- * @author Edward P. Legaspi
- * @since Oct 7, 2013
- **/
-@XmlRootElement(name = "countryResponse")
+ * @author R.AITYAAZZA
+ *
+ */
+@XmlRootElement(name = "pdfInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryResponse {
+public class PdfInvoiceResponse {
 
 	private ActionStatus actionStatus = new ActionStatus(
 			ActionStatusEnum.SUCCESS, "");
-	private CountryDto countryDto;
+	
+	private byte[] pdfInvoice;
 
-	public CountryResponse() {
+	public PdfInvoiceResponse() {
 
 	}
+ 
 
 	public ActionStatus getActionStatus() {
 		return actionStatus;
@@ -32,12 +34,21 @@ public class CountryResponse {
 		this.actionStatus = actionStatus;
 	}
 
-	public CountryDto getCountryDto() {
-		return countryDto;
+
+	public byte[] getPdfInvoice() {
+		return pdfInvoice;
 	}
 
-	public void setCountryDto(CountryDto countryDto) {
-		this.countryDto = countryDto;
+
+	public void setPdfInvoice(byte[] pdfInvoice) {
+		this.pdfInvoice = pdfInvoice;
 	}
+
+
+	
+
+	
+
+	
 
 }

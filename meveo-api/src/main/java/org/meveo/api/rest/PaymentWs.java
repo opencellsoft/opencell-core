@@ -17,7 +17,7 @@ import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.PaymentApi;
 import org.meveo.api.dto.PaymentDto;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.response.CustomerPaymentsResponse;
+import org.meveo.api.response.CustomerPaymentsResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**
