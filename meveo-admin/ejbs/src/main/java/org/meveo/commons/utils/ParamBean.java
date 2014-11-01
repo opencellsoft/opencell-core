@@ -40,17 +40,16 @@ import org.slf4j.LoggerFactory;
 public class ParamBean {
 
 	private static final Logger log = LoggerFactory.getLogger(ParamBean.class);
-	private static final char[] hexDigit = {
-		        '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
-		        };
+	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6',
+			'7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 	private String _propertyFile;
 
 	/**
 	 * Save properties imported from the file
 	 */
-	private Properties properties=new Properties();
+	private Properties properties = new Properties();
 
-	private HashMap<String,String> categories = new HashMap<String, String>();
+	private HashMap<String, String> categories = new HashMap<String, String>();
 	/**
 	 * Initialisation du Bean correcte.
 	 */
@@ -73,7 +72,7 @@ public class ParamBean {
 	 */
 	private ParamBean(String name) {
 		super();
-		_propertyFile=name;
+		_propertyFile = name;
 		if (System.getProperty(name) != null) {
 			_propertyFile = System.getProperty(name);
 		} else {
@@ -87,7 +86,7 @@ public class ParamBean {
 						+ File.separator + name;
 			}
 		}
-		log.info("Created Parambean for file:"+_propertyFile);
+		log.info("Created Parambean for file:" + _propertyFile);
 		setValid(initialize());
 	}
 
@@ -106,7 +105,7 @@ public class ParamBean {
 	}
 
 	public static ParamBean getInstance() {
-		return getInstance();
+		return getInstance("meveo-admin.properties");
 	}
 
 	/*
@@ -130,8 +129,6 @@ public class ParamBean {
 	public Properties getProperties() {
 		return properties;
 	}
-
-
 
 	/**
 	 * 
@@ -158,7 +155,7 @@ public class ParamBean {
 		Properties pr = new Properties();
 		File file = new File(_propertyFile);
 		try {
-			if(file.createNewFile()){
+			if (file.createNewFile()) {
 				setProperties(pr);
 				saveProperties(file);
 				result = true;
@@ -168,7 +165,7 @@ public class ParamBean {
 				result = true;
 			}
 		} catch (IOException e1) {
-			log.error("Impossible to create :"+_propertyFile);
+			log.error("Impossible to create :" + _propertyFile);
 			e1.printStackTrace();
 		} finally {
 			if (propertyFile != null) {
@@ -216,17 +213,17 @@ public class ParamBean {
 	 * @return String
 	 */
 	public void setProperty(String property_p, String vNewValue) {
-		log.info("setProperty "+property_p+"->"+vNewValue);
-		if(vNewValue==null){
-			vNewValue="";
+		log.info("setProperty " + property_p + "->" + vNewValue);
+		if (vNewValue == null) {
+			vNewValue = "";
 		}
 		getProperties().setProperty(property_p, vNewValue);
 	}
 
 	public void setProperty(String key, String value, String category) {
-		setProperty(key,value);
-		if(category!=null){
-			categories.put(key,category);
+		setProperty(key, value);
+		if (category != null) {
+			categories.put(key, category);
 		}
 	}
 
@@ -249,7 +246,7 @@ public class ParamBean {
 	public boolean saveProperties(File file) {
 		boolean result = false;
 		String fileName = file.getAbsolutePath();
-		log.info("saveProperties to "+fileName);
+		log.info("saveProperties to " + fileName);
 		OutputStream propertyFile = null;
 		BufferedWriter bw = null;
 		try {
@@ -257,28 +254,29 @@ public class ParamBean {
 			bw = new BufferedWriter(new OutputStreamWriter(propertyFile));
 			bw.write("#" + new Date().toString());
 			bw.newLine();
-			String lastCategory="";
+			String lastCategory = "";
 			synchronized (this) {
 				List<String> keys = new ArrayList<String>();
 				Enumeration<Object> keysEnum = properties.keys();
-			    while(keysEnum.hasMoreElements()){
-			       keys.add((String)keysEnum.nextElement());
-			     }
+				while (keysEnum.hasMoreElements()) {
+					keys.add((String) keysEnum.nextElement());
+				}
 				Collections.sort(keys);
-				for (String key:keys) {
-			     key = saveConvert(key,true,true);
-			     String val = saveConvert((String)properties.get(key),true,true);
-			     if(categories.containsKey(key)){
-			    	 if(!lastCategory.equals(categories.get(key))){
-			    		 lastCategory=categories.get(key);
-					     bw.newLine();
-					     bw.write("#" + lastCategory);
-					     bw.newLine();
-			    	 }
-			     }
-			     bw.write(key + "=" + val);
-			     bw.newLine();
-			     }
+				for (String key : keys) {
+					key = saveConvert(key, true, true);
+					String val = saveConvert((String) properties.get(key),
+							true, true);
+					if (categories.containsKey(key)) {
+						if (!lastCategory.equals(categories.get(key))) {
+							lastCategory = categories.get(key);
+							bw.newLine();
+							bw.write("#" + lastCategory);
+							bw.newLine();
+						}
+					}
+					bw.write(key + "=" + val);
+					bw.newLine();
+				}
 			}
 			bw.flush();
 			result = true;
@@ -292,7 +290,7 @@ public class ParamBean {
 					e.printStackTrace();
 				}
 			}
-			if(bw!=null){
+			if (bw != null) {
 				try {
 					bw.close();
 				} catch (Exception e) {
@@ -300,14 +298,14 @@ public class ParamBean {
 				}
 			}
 		}
-		//setInstance(new ParamBean(fileName));
+		// setInstance(new ParamBean(fileName));
 		// log.info("-Fin saveProperties , result:" + result);
 		return result;
 	}
 
 	public String getProperty(String key, String defaultValue) {
 		String result = null;
-		if(properties.containsKey(key)){
+		if (properties.containsKey(key)) {
 			result = properties.getProperty(key);
 		} else {
 			result = defaultValue;
@@ -322,65 +320,74 @@ public class ParamBean {
 		setInstance(new ParamBean(propertiesName));
 	}
 
-	private String saveConvert(String theString,
-			                                boolean escapeSpace,
-			                                boolean escapeUnicode) {
-			         int len = theString.length();
-			         int bufLen = len * 2;
-			         if (bufLen < 0) {
-			             bufLen = Integer.MAX_VALUE;
-			         }
-			         StringBuffer outBuffer = new StringBuffer(bufLen);
-			 
-			         for(int x=0; x<len; x++) {
-			             char aChar = theString.charAt(x);
-			             // Handle common case first, selecting largest block that
-			             // avoids the specials below
-			             if ((aChar > 61) && (aChar < 127)) {
-			                 if (aChar == '\\') {
-			                     outBuffer.append('\\'); outBuffer.append('\\');
-			                     continue;
-			                 }
-			                 outBuffer.append(aChar);
-			                 continue;
-			             }
-			             switch(aChar) {
-			                 case ' ':
-			                     if (x == 0 || escapeSpace)
-			                         outBuffer.append('\\');
-			                     outBuffer.append(' ');
-			                     break;
-			                 case '\t':outBuffer.append('\\'); outBuffer.append('t');
-			                           break;
-			                 case '\n':outBuffer.append('\\'); outBuffer.append('n');
-			                           break;
-			                 case '\r':outBuffer.append('\\'); outBuffer.append('r');
-			                           break;
-			                 case '\f':outBuffer.append('\\'); outBuffer.append('f');
-			                           break;
-			                 case '=': // Fall through
-			                 case ':': // Fall through
-			                 case '#': // Fall through
-			                 case '!':
-			                     outBuffer.append('\\'); outBuffer.append(aChar);
-			                     break;
-			                 default:
-			                     if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode ) {
-			                         outBuffer.append('\\');
-			                         outBuffer.append('u');
-			                         outBuffer.append(toHex((aChar >> 12) & 0xF));
-			                         outBuffer.append(toHex((aChar >>  8) & 0xF));
-			                         outBuffer.append(toHex((aChar >>  4) & 0xF));
-			                         outBuffer.append(toHex( aChar        & 0xF));
-			                     } else {
-			                         outBuffer.append(aChar);
-			                     }
-			             }
-			         }
-			         return outBuffer.toString();
-			     }
-	
+	private String saveConvert(String theString, boolean escapeSpace,
+			boolean escapeUnicode) {
+		int len = theString.length();
+		int bufLen = len * 2;
+		if (bufLen < 0) {
+			bufLen = Integer.MAX_VALUE;
+		}
+		StringBuffer outBuffer = new StringBuffer(bufLen);
+
+		for (int x = 0; x < len; x++) {
+			char aChar = theString.charAt(x);
+			// Handle common case first, selecting largest block that
+			// avoids the specials below
+			if ((aChar > 61) && (aChar < 127)) {
+				if (aChar == '\\') {
+					outBuffer.append('\\');
+					outBuffer.append('\\');
+					continue;
+				}
+				outBuffer.append(aChar);
+				continue;
+			}
+			switch (aChar) {
+			case ' ':
+				if (x == 0 || escapeSpace)
+					outBuffer.append('\\');
+				outBuffer.append(' ');
+				break;
+			case '\t':
+				outBuffer.append('\\');
+				outBuffer.append('t');
+				break;
+			case '\n':
+				outBuffer.append('\\');
+				outBuffer.append('n');
+				break;
+			case '\r':
+				outBuffer.append('\\');
+				outBuffer.append('r');
+				break;
+			case '\f':
+				outBuffer.append('\\');
+				outBuffer.append('f');
+				break;
+			case '=': // Fall through
+			case ':': // Fall through
+			case '#': // Fall through
+			case '!':
+				outBuffer.append('\\');
+				outBuffer.append(aChar);
+				break;
+			default:
+				if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
+					outBuffer.append('\\');
+					outBuffer.append('u');
+					outBuffer.append(toHex((aChar >> 12) & 0xF));
+					outBuffer.append(toHex((aChar >> 8) & 0xF));
+					outBuffer.append(toHex((aChar >> 4) & 0xF));
+					outBuffer.append(toHex(aChar & 0xF));
+				} else {
+					outBuffer.append(aChar);
+				}
+			}
+		}
+		return outBuffer.toString();
+	}
+
 	private static char toHex(int nibble) {
-		        return hexDigit[(nibble & 0xF)];
-		      }
+		return hexDigit[(nibble & 0xF)];
+	}
 }
