@@ -16,18 +16,12 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author Ignas Lelys
- * @created Dec 6, 2010
- * 
- */
-@Stateless @LocalBean
+@Stateless
 public class DayInYearService extends PersistenceService<DayInYear> {
 
 }

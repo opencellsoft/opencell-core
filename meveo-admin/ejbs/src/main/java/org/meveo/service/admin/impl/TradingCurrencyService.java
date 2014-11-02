@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -29,8 +28,8 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Named
-@LocalBean
 public class TradingCurrencyService extends PersistenceService<TradingCurrency> {
+
 	public TradingCurrency findByTradingCurrencyCode(
 			String tradingCurrencyCode, Provider provider) {
 		return findByTradingCurrencyCode(getEntityManager(),

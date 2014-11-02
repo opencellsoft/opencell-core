@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
@@ -34,7 +33,6 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
 	@EJB

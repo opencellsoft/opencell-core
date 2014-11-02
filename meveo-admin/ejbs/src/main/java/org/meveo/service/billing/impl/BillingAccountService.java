@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -47,7 +46,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.AccountService;
 
 @Stateless
-@LocalBean
 public class BillingAccountService extends AccountService<BillingAccount> {
 
 	@EJB

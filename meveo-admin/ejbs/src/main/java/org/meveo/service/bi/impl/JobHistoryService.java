@@ -16,7 +16,6 @@
  */
 package org.meveo.service.bi.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.bi.JobHistory;
@@ -24,11 +23,8 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Job history service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2010.09.28
  */
-@Stateless @LocalBean
+@Stateless
 public class JobHistoryService extends PersistenceService<JobHistory> {
 
 }

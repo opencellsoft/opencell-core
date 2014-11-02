@@ -16,7 +16,6 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 
@@ -26,13 +25,9 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Tax service implementation.
  * 
- * @author Marouane ALAMI
- * @created 19-03-2013
- * 
  */
 @Stateless
 @Named
-@LocalBean
 public class CountryComService extends PersistenceService<TradingCountry> {
 
 }

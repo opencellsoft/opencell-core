@@ -19,7 +19,6 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -39,7 +38,6 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
 @Stateless
-@LocalBean
 public class ChargeInstanceService<P extends ChargeInstance> extends
 		BusinessService<P> {
 
@@ -72,9 +70,9 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 			chargeInstance = (P) qb.getQuery(em).getSingleResult();
-			log.debug(
-					"end of find {} by code (code={}). Result found={}.",
-					new Object[] { "ChargeInstance", code, chargeInstance != null });
+			log.debug("end of find {} by code (code={}). Result found={}.",
+					new Object[] { "ChargeInstance", code,
+							chargeInstance != null });
 
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndService : aucune charge n'a ete trouvee");

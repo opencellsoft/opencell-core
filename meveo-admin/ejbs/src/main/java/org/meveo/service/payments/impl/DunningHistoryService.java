@@ -16,7 +16,6 @@
  */
 package org.meveo.service.payments.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.DunningHistory;
@@ -25,10 +24,8 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Dunning history service implementation.
  * 
- * @author Gediminas Ubartas
- * @created 2010.09.28
  */
-@Stateless @LocalBean
+@Stateless
 public class DunningHistoryService extends PersistenceService<DunningHistory> {
 
 }

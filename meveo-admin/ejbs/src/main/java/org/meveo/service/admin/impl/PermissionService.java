@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.security.Permission;
@@ -27,7 +26,6 @@ import org.meveo.service.base.PersistenceService;
  * @since Apr 4, 2013
  */
 @Stateless
-@LocalBean
 public class PermissionService extends PersistenceService<Permission> {
 
 }

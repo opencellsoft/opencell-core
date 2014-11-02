@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -46,7 +45,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
-@LocalBean
 public class BillingRunService extends PersistenceService<BillingRun> {
 
 	@EJB
@@ -419,27 +417,27 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				provider);
 		qb.startOrClause();
-		if(code!=null){
-			qb.addCriterion("c.code", "=",code, false);
+		if (code != null) {
+			qb.addCriterion("c.code", "=", code, false);
 		}
 		qb.endOrClause();
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
 				.getResultList();
 		return billingRuns;
 
-	}	
-	
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
 		BillingRunStatusEnum bRStatus;
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				getCurrentProvider());
 		qb.startOrClause();
-		if(status!=null){
-		for (int i = 0; i < status.length; i++) {
-			bRStatus = status[i];
-			qb.addCriterionEnum("c.status", bRStatus);
-		}
+		if (status != null) {
+			for (int i = 0; i < status.length; i++) {
+				bRStatus = status[i];
+				qb.addCriterionEnum("c.status", bRStatus);
+			}
 		}
 		qb.endOrClause();
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())

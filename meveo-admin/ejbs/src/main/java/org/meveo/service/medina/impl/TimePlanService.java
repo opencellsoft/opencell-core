@@ -16,17 +16,12 @@
  */
 package org.meveo.service.medina.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.mediation.TimePlan;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author MBAREK
- * 
- */
-@Stateless @LocalBean
+@Stateless
 public class TimePlanService extends PersistenceService<TimePlan> {
 
 }

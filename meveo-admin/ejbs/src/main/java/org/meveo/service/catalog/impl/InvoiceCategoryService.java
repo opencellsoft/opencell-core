@@ -16,7 +16,6 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -27,13 +26,8 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * InvoiceCategory service implementation.
- * 
- * @author Ignas Lelys
- * @created Dec 15, 2010
- * 
  */
 @Stateless
-@LocalBean
 public class InvoiceCategoryService extends PersistenceService<InvoiceCategory> {
 
 	public InvoiceCategory findByCode(EntityManager em, String code) {

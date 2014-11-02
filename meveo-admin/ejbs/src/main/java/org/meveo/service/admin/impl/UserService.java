@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -52,13 +51,11 @@ import org.meveo.service.base.PersistenceService;
  * User service implementation.
  */
 @Stateless
-@LocalBean
 public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
 
-	private ParamBean paramBean = ParamBean
-			.getInstance();
+	private ParamBean paramBean = ParamBean.getInstance();
 
 	@Override
 	@UserCreate

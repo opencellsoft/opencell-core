@@ -19,7 +19,6 @@ package org.meveo.service.reporting.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -33,12 +32,12 @@ import org.meveo.service.base.PersistenceService;
  * 
  */
 @Stateless
-@LocalBean
 public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getTaxRecodsBetweenDate(String providerCode, Date startDate, Date endDate) {
+	public List<Object> getTaxRecodsBetweenDate(String providerCode,
+			Date startDate, Date endDate) {
 		List<Object> result = null;
 		log.info("getTaxRecodsBetweenDate ( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
@@ -46,7 +45,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 						"select a.taxCode, a.taxDescription, a.taxPercent, sum(amountWithoutTax) as amountWithoutTax,  sum(amountTax) as amountTax from "
 								+ getEntityClass().getSimpleName()
 								+ " a where a.providerCode=:providerCode and a.type='T' and a.invoiceDate>=:startDate and a.invoiceDate <=:endDate group by a.taxCode, a.taxDescription, a.taxPercent")
-				.setParameter("providerCode", providerCode).setParameter("startDate", startDate)
+				.setParameter("providerCode", providerCode)
+				.setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
 		log.debug("getTaxRecodsBetweenDate : query={}", query);
 		result = query.getResultList();
@@ -56,7 +56,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getJournalRecords(String providerCode, Date startDate, Date endDate) {
+	public List<Object> getJournalRecords(String providerCode, Date startDate,
+			Date endDate) {
 		List<Object> result = null;
 		log.info("getJournalRecords ( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
@@ -67,7 +68,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 								+ " group by (a.type, a.invoiceDate, a.invoiceNumber,a.customerAccountCode, a.accountingCode)"
 								+ " having sum(a.amountWithoutTax)<>0 or  sum(a.amountTax)<>0 "
 								+ " order by a.invoiceNumber,a.accountingCode desc")
-				.setParameter("providerCode", providerCode).setParameter("startDate", startDate)
+				.setParameter("providerCode", providerCode)
+				.setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
 		log.debug("getJournalRecords : query={}", query);
 		result = query.getResultList();
@@ -77,7 +79,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getSIMPACRecords(String providerCode, Date startDate, Date endDate) {
+	public List<Object> getSIMPACRecords(String providerCode, Date startDate,
+			Date endDate) {
 		List<Object> result = null;
 		log.info("getSIMPACRecords( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
@@ -88,7 +91,8 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 								+ " group by a.accountingCode,a.type"
 								+ " having sum(amountWithoutTax)<>0 or  sum(amountTax)<>0 "
 								+ " order by a.accountingCode desc")
-				.setParameter("providerCode", providerCode).setParameter("startDate", startDate)
+				.setParameter("providerCode", providerCode)
+				.setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
 		log.debug("getSIMPACRecords : query={}", query);
 		result = query.getResultList();

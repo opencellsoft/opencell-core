@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,10 +13,9 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.BayadInvoicingInputHistory;
@@ -24,11 +23,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Bayad invoicing input History service implementation.
- * 
- * @author Ignas
- * @created Apr 11, 2011
  */
-@Stateless @LocalBean
-public class BayadInvoicingInputHistoryService extends PersistenceService<BayadInvoicingInputHistory> {
+@Stateless
+public class BayadInvoicingInputHistoryService extends
+		PersistenceService<BayadInvoicingInputHistory> {
 
 }

@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -34,17 +33,19 @@ import org.meveo.service.base.PersistenceService;
  * 
  */
 @Stateless
-@LocalBean
-public class DWHAccountOperationService extends PersistenceService<DWHAccountOperation> {
+public class DWHAccountOperationService extends
+		PersistenceService<DWHAccountOperation> {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public BigDecimal calculateRecordsBetweenDueMonth(String providerCode, Integer from,
-			Integer to, String category) {
-		log.info("calculateRecordsBetweenDueMonth({},{},{})", new Object[] { from, to, category });
+	public BigDecimal calculateRecordsBetweenDueMonth(String providerCode,
+			Integer from, Integer to, String category) {
+		log.info("calculateRecordsBetweenDueMonth({},{},{})", new Object[] {
+				from, to, category });
 		BigDecimal result = new BigDecimal(0);
 		String queryString = "select sum(unMatchingAmount) from "
-				+ getEntityClass().getSimpleName() + " where providerCode='" + providerCode
-				+ "' and category=" + category + " and (status=0 or status=2)";
+				+ getEntityClass().getSimpleName() + " where providerCode='"
+				+ providerCode + "' and category=" + category
+				+ " and (status=0 or status=2)";
 		;
 		if (from != null) {
 			queryString += " and dueMonth >= " + from;
@@ -52,7 +53,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 		if (to != null) {
 			queryString += " and dueMonth < " + to;
 		}
-		log.debug("calculateRecordsBetweenDueMonth: queryString={}", queryString);
+		log.debug("calculateRecordsBetweenDueMonth: queryString={}",
+				queryString);
 		Query query = getEntityManager().createQuery(queryString);
 		if (query.getSingleResult() != null) {
 			result = (BigDecimal) query.getSingleResult();
@@ -62,12 +64,14 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public int countRecordsBetweenDueMonth(String providerCode, Integer from, Integer to,
-			String category) {
-		log.info("countRecordsBetweenDueMonth({},{},{})", new Object[] { from, to, category });
+	public int countRecordsBetweenDueMonth(String providerCode, Integer from,
+			Integer to, String category) {
+		log.info("countRecordsBetweenDueMonth({},{},{})", new Object[] { from,
+				to, category });
 		int result = 0;
-		String queryString = "select count(*) from " + getEntityClass().getSimpleName()
-				+ " where providerCode='" + providerCode + "' and category=" + category
+		String queryString = "select count(*) from "
+				+ getEntityClass().getSimpleName() + " where providerCode='"
+				+ providerCode + "' and category=" + category
 				+ " and (status=0 or status=2)";
 		if (from != null) {
 			queryString += " and dueMonth >= " + from;
@@ -91,8 +95,9 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 		log.info("totalAmount({})", category);
 		BigDecimal result = new BigDecimal(0);
 		String queryString = "select sum(unMatchingAmount) from "
-				+ getEntityClass().getSimpleName() + " where providerCode='" + providerCode
-				+ "' and category=" + category + " and status=0  or status=2";
+				+ getEntityClass().getSimpleName() + " where providerCode='"
+				+ providerCode + "' and category=" + category
+				+ " and status=0  or status=2";
 		log.debug("totalAmount: queryString={}", queryString);
 		Query query = getEntityManager().createQuery(queryString);
 		log.debug("countRecordsBetweenDueMonth: query={}", query);
@@ -108,8 +113,9 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 	public int totalCount(String providerCode, String category) {
 		log.info("totalCount({})", category);
 		int result = 0;
-		String queryString = "select count(*) from " + getEntityClass().getSimpleName()
-				+ " where providerCode='" + providerCode + "' and category=" + category
+		String queryString = "select count(*) from "
+				+ getEntityClass().getSimpleName() + " where providerCode='"
+				+ providerCode + "' and category=" + category
 				+ " and status=0  or status=2";
 		log.debug("totalCount: queryString={}", queryString);
 		Query query = getEntityManager().createQuery(queryString);
@@ -124,7 +130,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<DWHAccountOperation> getAccountingDetailRecords(String providerCode, Date endDate) {
+	public List<DWHAccountOperation> getAccountingDetailRecords(
+			String providerCode, Date endDate) {
 		List<DWHAccountOperation> result = null;
 		log.info("getAccountingDetailRecords( {} )", endDate);
 		Query query = getEntityManager()
@@ -144,8 +151,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<DWHAccountOperation> getAccountingJournalRecords(String providerCode,
-			Date startDate, Date endDate) {
+	public List<DWHAccountOperation> getAccountingJournalRecords(
+			String providerCode, Date startDate, Date endDate) {
 		List<DWHAccountOperation> result = null;
 		log.info("getAccountingDetailRecords( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
@@ -156,7 +163,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 								+ providerCode
 								+ "'  and a.type<>1 and a.transactionDate>=:startDate and"
 								+ " a.transactionDate <= :endDate order by a.transactionDate,a.accountCode,a.occCode")
-				.setParameter("startDate", startDate).setParameter("endDate", endDate);
+				.setParameter("startDate", startDate)
+				.setParameter("endDate", endDate);
 		log.debug("getAccountingDetailRecords: query={}", query);
 		result = query.getResultList();
 		log.info("getAccountingDetailRecords: {} records", result);
@@ -165,7 +173,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getAccountingSummaryRecords(String providerCode, Date endDate, int category) {
+	public List<Object> getAccountingSummaryRecords(String providerCode,
+			Date endDate, int category) {
 		List<Object> result = null;
 		log.info("getAccountingSummaryRecords( {}, {} )", endDate, category);
 		Query query = getEntityManager()
@@ -175,7 +184,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 								+ " a where a.providerCode='"
 								+ providerCode
 								+ "' and (a.status=0 or a.status=2) and a.category = :category and a.transactionDate <= :endDate  group by a.occCode, a.occDescription order by a.occCode")
-				.setParameter("endDate", endDate).setParameter("category", (byte) category);
+				.setParameter("endDate", endDate)
+				.setParameter("category", (byte) category);
 		log.debug("getAccountingSummaryRecords: query={}", query);
 		result = query.getResultList();
 		log.info("getAccountingSummaryRecords: {} records", result);
@@ -184,7 +194,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getObjectsForSIMPAC(String providerCode, Date startDate, Date endDate) {
+	public List<Object> getObjectsForSIMPAC(String providerCode,
+			Date startDate, Date endDate) {
 		List<Object> result = null;
 		log.info("getObjectsForSIMPAC( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
@@ -196,7 +207,8 @@ public class DWHAccountOperationService extends PersistenceService<DWHAccountOpe
 								+ "' and a.type<>1 "
 								+ "and  a.transactionDate>=:startDate and a.transactionDate <= :endDate  "
 								+ "group by  a.accountingCode,a.accountingCodeClientSide order by a.accountingCode")
-				.setParameter("startDate", startDate).setParameter("endDate", endDate);
+				.setParameter("startDate", startDate)
+				.setParameter("endDate", endDate);
 		log.debug("getObjectsForSIMPAC: query={}", query);
 		result = query.getResultList();
 		log.info("getObjectsForSIMPAC: {} records", result);

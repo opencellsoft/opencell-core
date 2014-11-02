@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -30,7 +29,6 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Named
-@LocalBean
 public class SellerService extends PersistenceService<Seller> {
 
 	public org.meveo.model.admin.Seller findByCode(String code,
@@ -60,7 +58,8 @@ public class SellerService extends PersistenceService<Seller> {
 		return (Seller) query.getResultList().get(0);
 	}
 
-	public boolean hasChildren(EntityManager em, Seller seller, Provider provider) {
+	public boolean hasChildren(EntityManager em, Seller seller,
+			Provider provider) {
 		QueryBuilder qb = new QueryBuilder(Seller.class, "s");
 		qb.addCriterionEntity("provider", provider);
 		qb.addCriterionEntity("seller", seller);

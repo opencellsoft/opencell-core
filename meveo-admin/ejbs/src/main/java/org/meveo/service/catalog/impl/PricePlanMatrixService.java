@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.Set;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -33,7 +32,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.RatingService;
 
 @Stateless
-@LocalBean
 public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> {
 
 	public void create(PricePlanMatrix e) {

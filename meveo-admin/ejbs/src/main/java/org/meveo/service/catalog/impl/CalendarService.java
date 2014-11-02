@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -34,7 +33,6 @@ import org.meveo.service.base.PersistenceService;
  * Calendar service implementation.
  */
 @Stateless
-@LocalBean
 @Named
 public class CalendarService extends PersistenceService<Calendar> {
 
@@ -61,7 +59,6 @@ public class CalendarService extends PersistenceService<Calendar> {
 				.getQuery(getEntityManager());
 		return query.getResultList();
 	}
-
 
 	/**
 	 * @see org.meveo.service.catalog.local.CalendarServiceLocal#listBillingCalendars()

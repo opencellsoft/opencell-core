@@ -16,7 +16,6 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
@@ -27,12 +26,8 @@ import org.meveo.service.base.PersistenceService;
 /**
  * InvoiceSubCategory service implementation.
  * 
- * @author Ignas Lelys
- * @created Dec 15, 2010
- * 
  */
 @Stateless
-@LocalBean
 public class InvoiceSubCategoryService extends
 		PersistenceService<InvoiceSubCategory> {
 
@@ -42,12 +37,13 @@ public class InvoiceSubCategoryService extends
 
 		return (InvoiceSubCategory) qb.getQuery(em).getSingleResult();
 	}
-	
+
 	public InvoiceSubCategory findByCode(String code) {
 		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
 		qb.addCriterion("code", "=", code, false);
 
-		return (InvoiceSubCategory) qb.getQuery(getEntityManager()).getSingleResult();
+		return (InvoiceSubCategory) qb.getQuery(getEntityManager())
+				.getSingleResult();
 	}
 
 }

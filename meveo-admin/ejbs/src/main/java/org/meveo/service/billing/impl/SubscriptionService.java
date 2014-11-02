@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -45,7 +44,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 
 @Stateless
-@LocalBean
 public class SubscriptionService extends BusinessService<Subscription> {
 
 	@EJB
@@ -59,7 +57,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
 	@EJB
 	private AccessService accessService;
-	
+
 	public void updateSubscription(Subscription subscription, User updater) {
 		update(subscription, updater);
 	}
@@ -229,7 +227,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
 				}
 			}
 		}
-		for(Access access:subscription.getAccessPoints()){
+		for (Access access : subscription.getAccessPoints()) {
 			access.setEndDate(terminationDate);
 			accessService.update(access);
 		}

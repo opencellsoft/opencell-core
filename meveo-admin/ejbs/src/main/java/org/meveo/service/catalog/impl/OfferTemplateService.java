@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -34,7 +33,6 @@ import org.meveo.service.base.BusinessService;
  * 
  */
 @Stateless
-@LocalBean
 public class OfferTemplateService extends BusinessService<OfferTemplate> {
 
 	@SuppressWarnings("unchecked")

@@ -16,19 +16,16 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.service.base.PersistenceService;
 
 /**
- * Subscription Import batch History Service
- * 
- * @author anasseh
- * @created 06.01.2011
+ * Subscription Import batch History Service.
  */
-@Stateless @LocalBean
-public class SubscriptionImportHistoService extends PersistenceService<SubscriptionImportHisto> {
+@Stateless
+public class SubscriptionImportHistoService extends
+		PersistenceService<SubscriptionImportHisto> {
 
 }

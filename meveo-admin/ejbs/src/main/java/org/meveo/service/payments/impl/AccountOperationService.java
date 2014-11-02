@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -33,33 +32,36 @@ import org.meveo.service.base.PersistenceService;
  * AccountOperation service implementation.
  */
 @Stateless
-@LocalBean
-public class AccountOperationService extends PersistenceService<AccountOperation> {
+public class AccountOperationService extends
+		PersistenceService<AccountOperation> {
 
 	@SuppressWarnings("unchecked")
-	public List<AccountOperation> getAccountOperations(Date date, String operationCode,
-			Provider provider) {
+	public List<AccountOperation> getAccountOperations(Date date,
+			String operationCode, Provider provider) {
 		Query query = getEntityManager()
 				.createQuery(
 						"from "
 								+ getEntityClass().getSimpleName()
 								+ " a where a.occCode=:operationCode and  a.transactionDate=:date and a.provider=:providerId")
-				.setParameter("date", date).setParameter("operationCode", operationCode)
+				.setParameter("date", date)
+				.setParameter("operationCode", operationCode)
 				.setParameter("providerId", provider);
 
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public AccountOperation getAccountOperation(BigDecimal amount, CustomerAccount customerAccount,
-			String transactionType, Provider provider) {
+	public AccountOperation getAccountOperation(BigDecimal amount,
+			CustomerAccount customerAccount, String transactionType,
+			Provider provider) {
 
 		Query query = getEntityManager()
 				.createQuery(
 						"from "
 								+ getEntityClass().getSimpleName()
 								+ " a where a.amount=:amount and  a.customerAccount=:customerAccount and  a.type=:transactionType and a.provider=:providerId")
-				.setParameter("amount", amount).setParameter("transactionType", transactionType)
+				.setParameter("amount", amount)
+				.setParameter("transactionType", transactionType)
 				.setParameter("customerAccount", customerAccount)
 				.setParameter("providerId", provider);
 		List<AccountOperation> accountOperations = query.getResultList();

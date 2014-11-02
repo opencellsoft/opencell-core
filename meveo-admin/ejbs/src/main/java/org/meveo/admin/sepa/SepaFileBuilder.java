@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.admin.sepa;
 
 //import java.text.Normalizer;
@@ -21,7 +21,6 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
@@ -58,127 +57,137 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 
-
-@Stateless @LocalBean
+@Stateless
 public class SepaFileBuilder {
 
-	private static final Logger logger = Logger.getLogger(SepaFileBuilder.class.getName());
+	private static final Logger logger = Logger.getLogger(SepaFileBuilder.class
+			.getName());
 
-
-	public void addHeader(CstmrDrctDbtInitn Message,  DDRequestLOT ddRequestLOT) throws Exception {
-		GrpHdr  groupHeader=new GrpHdr();
+	public void addHeader(CstmrDrctDbtInitn Message, DDRequestLOT ddRequestLOT)
+			throws Exception {
+		GrpHdr groupHeader = new GrpHdr();
 		Message.setGrpHdr(groupHeader);
-		groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference()+"-"+ddRequestLOT.getId());
-		groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
+		groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + "-"
+				+ ddRequestLOT.getId());
+		groupHeader
+				.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
 		groupHeader.setNbOfTxs(ddRequestLOT.getInvoicesNumber());
-		groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2, RoundingMode.HALF_UP));
-		InitgPty initgPty=new InitgPty();
+		groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2,
+				RoundingMode.HALF_UP));
+		InitgPty initgPty = new InitgPty();
 		initgPty.setNm(ddRequestLOT.getProvider().getDescription());
 		groupHeader.setInitgPty(initgPty);
-		
+
 	}
 
-	public void addPaymentInformation(CstmrDrctDbtInitn Message,DDRequestItem dDRequestItem) throws Exception {
-		
-		logger.info("addPaymentInformation dDRequestItem id="+dDRequestItem.getId());
-		Provider provider=dDRequestItem.getProvider();
-		
-		PmtInf PaymentInformation=new PmtInf();
+	public void addPaymentInformation(CstmrDrctDbtInitn Message,
+			DDRequestItem dDRequestItem) throws Exception {
+
+		logger.info("addPaymentInformation dDRequestItem id="
+				+ dDRequestItem.getId());
+		Provider provider = dDRequestItem.getProvider();
+
+		PmtInf PaymentInformation = new PmtInf();
 		Message.getPmtInf().add(PaymentInformation);
-		PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference()+"-"+dDRequestItem.getId());
+		PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference()
+				+ "-" + dDRequestItem.getId());
 		PaymentInformation.setPmtMtd("DD");
 		PaymentInformation.setNbOfTxs(dDRequestItem.getInvoices().size());
-		PaymentInformation.setCtrlSum(dDRequestItem.getAmountInvoices().setScale(2, RoundingMode.HALF_UP));
-		PmtTpInf PaymentTypeInformation=new PmtTpInf();
+		PaymentInformation.setCtrlSum(dDRequestItem.getAmountInvoices()
+				.setScale(2, RoundingMode.HALF_UP));
+		PmtTpInf PaymentTypeInformation = new PmtTpInf();
 		PaymentInformation.setPmtTpInf(PaymentTypeInformation);
-		SvcLvl ServiceLevel=new SvcLvl();
+		SvcLvl ServiceLevel = new SvcLvl();
 		PaymentTypeInformation.setSvcLvl(ServiceLevel);
 		ServiceLevel.setCd("SEPA");
-		LclInstrm LocalInstrument=new LclInstrm();
+		LclInstrm LocalInstrument = new LclInstrm();
 		PaymentTypeInformation.setLclInstrm(LocalInstrument);
 		LocalInstrument.setCd("CORE");
 		PaymentTypeInformation.setSeqTp("FRST");
-		
-		PaymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); //à revoir
-		
-		BankCoordinates providerBC=provider.getBankCoordinates();
-		Cdtr Creditor=new Cdtr();
+
+		PaymentInformation.setReqdColltnDt(DateUtils
+				.dateToXMLGregorianCalendar(new Date())); // à revoir
+
+		BankCoordinates providerBC = provider.getBankCoordinates();
+		Cdtr Creditor = new Cdtr();
 		Creditor.setNm(provider.getDescription());
 		PaymentInformation.setCdtr(Creditor);
-		
-		CdtrAcct CreditorAccount=new CdtrAcct();
+
+		CdtrAcct CreditorAccount = new CdtrAcct();
 		PaymentInformation.setCdtrAcct(CreditorAccount);
-		Id Identification=new Id();
+		Id Identification = new Id();
 		CreditorAccount.setId(Identification);
 		Identification.setIBAN(providerBC.getIban());
-		
-		CdtrAgt CreditorAgent=new CdtrAgt();
+
+		CdtrAgt CreditorAgent = new CdtrAgt();
 		PaymentInformation.setCdtrAgt(CreditorAgent);
-		FinInstnId FinancialInstitutionIdentification=new FinInstnId();
+		FinInstnId FinancialInstitutionIdentification = new FinInstnId();
 		CreditorAgent.setFinInstnId(FinancialInstitutionIdentification);
 		FinancialInstitutionIdentification.setBIC(providerBC.getBic());
-		CdtrSchmeId CreditorSchemeIdentification=new CdtrSchmeId();
+		CdtrSchmeId CreditorSchemeIdentification = new CdtrSchmeId();
 		PaymentInformation.setCdtrSchmeId(CreditorSchemeIdentification);
-		org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id CdtrSchmeId=new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id();
+		org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id CdtrSchmeId = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id();
 		CreditorSchemeIdentification.setId(CdtrSchmeId);
-		PrvtId privateidentifier=new PrvtId();
+		PrvtId privateidentifier = new PrvtId();
 		CdtrSchmeId.setPrvtId(privateidentifier);
-		Othr other=new Othr();
+		Othr other = new Othr();
 		privateidentifier.setOthr(other);
 		other.setId(providerBC.getIcs());
-		SchmeNm SchemeName=new SchmeNm();
+		SchmeNm SchemeName = new SchmeNm();
 		other.setSchmeNm(SchemeName);
 		SchemeName.setPrtry("SEPA");
-		for(RecordedInvoice invoice:dDRequestItem.getInvoices()){
+		for (RecordedInvoice invoice : dDRequestItem.getInvoices()) {
 			addTransaction(invoice, PaymentInformation);
 		}
-	
-	
+
 	}
 
-	public void addTransaction(RecordedInvoice invoice,PmtInf PaymentInformation) throws Exception {
-		CustomerAccount ca=invoice.getCustomerAccount();
-		
-		DrctDbtTxInf DirectDebitTransactionInformation=new DrctDbtTxInf();
-		PaymentInformation.getDrctDbtTxInf().add(DirectDebitTransactionInformation);
-		PmtId PaymentIdentification=new PmtId();
+	public void addTransaction(RecordedInvoice invoice,
+			PmtInf PaymentInformation) throws Exception {
+		CustomerAccount ca = invoice.getCustomerAccount();
+
+		DrctDbtTxInf DirectDebitTransactionInformation = new DrctDbtTxInf();
+		PaymentInformation.getDrctDbtTxInf().add(
+				DirectDebitTransactionInformation);
+		PmtId PaymentIdentification = new PmtId();
 		DirectDebitTransactionInformation.setPmtId(PaymentIdentification);
 		PaymentIdentification.setInstrId(invoice.getReference());
 		PaymentIdentification.setEndToEndId(invoice.getReference());
-		InstdAmt InstructedAmount=new InstdAmt();
+		InstdAmt InstructedAmount = new InstdAmt();
 		DirectDebitTransactionInformation.setInstdAmt(InstructedAmount);
-		InstructedAmount.setValue(invoice.getAmount().setScale(2, RoundingMode.HALF_UP));
+		InstructedAmount.setValue(invoice.getAmount().setScale(2,
+				RoundingMode.HALF_UP));
 		InstructedAmount.setCcy("EUR");
-		DrctDbtTx DirectDebitTransaction=new DrctDbtTx();
+		DrctDbtTx DirectDebitTransaction = new DrctDbtTx();
 		DirectDebitTransactionInformation.setDrctDbtTx(DirectDebitTransaction);
-		MndtRltdInf MandateRelatedInformation=new MndtRltdInf();
+		MndtRltdInf MandateRelatedInformation = new MndtRltdInf();
 		DirectDebitTransaction.setMndtRltdInf(MandateRelatedInformation);
 		MandateRelatedInformation.setMndtId(ca.getMandateIdentification());
-		MandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(ca.getMandateDate()));
-		
-		DbtrAgt DebtorAgent=new DbtrAgt();
+		MandateRelatedInformation.setDtOfSgntr(DateUtils
+				.dateToXMLGregorianCalendar(ca.getMandateDate()));
+
+		DbtrAgt DebtorAgent = new DbtrAgt();
 		DirectDebitTransactionInformation.setDbtrAgt(DebtorAgent);
-		org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId FinancialInstitutionIdentification=new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId();
+		org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId FinancialInstitutionIdentification = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId();
 		FinancialInstitutionIdentification.setBIC(invoice.getPaymentInfo6());
 		DebtorAgent.setFinInstnId(FinancialInstitutionIdentification);
-		
-		Dbtr Debtor=new Dbtr();
+
+		Dbtr Debtor = new Dbtr();
 		DirectDebitTransactionInformation.setDbtr(Debtor);
 		Debtor.setNm(ca.getDescription());
-		
-		DbtrAcct DebtorAccount=new DbtrAcct();
+
+		DbtrAcct DebtorAccount = new DbtrAcct();
 		DirectDebitTransactionInformation.setDbtrAcct(DebtorAccount);
-		org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id Identification=new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id();
+		org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id Identification = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct.Id();
 		Identification.setIBAN(invoice.getPaymentInfo());
 		DebtorAccount.setId(Identification);
-			
+
 	}
 
-
-	/*private String enleverAccent(String value) {
-		if (StringUtils.isBlank(value)) {
-			return value;
-		}
-		return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
-	}*/
+	/*
+	 * private String enleverAccent(String value) { if
+	 * (StringUtils.isBlank(value)) { return value; } return
+	 * Normalizer.normalize(value,
+	 * Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", ""); }
+	 */
 }

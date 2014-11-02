@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -33,7 +32,6 @@ import org.meveo.model.crm.Provider;
  * Charge Template service implementation.
  */
 @Stateless
-@LocalBean
 public class OneShotChargeTemplateService extends
 		ChargeTemplateService<OneShotChargeTemplate> {
 

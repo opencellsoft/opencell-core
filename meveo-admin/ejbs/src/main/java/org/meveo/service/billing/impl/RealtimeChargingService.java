@@ -3,7 +3,6 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -28,7 +27,6 @@ import org.meveo.model.crm.Provider;
 import org.slf4j.Logger;
 
 @Stateless
-@LocalBean
 public class RealtimeChargingService {
 
 	@Inject
@@ -44,17 +42,19 @@ public class RealtimeChargingService {
 	private WalletOperationService walletOperationService;
 
 	public BigDecimal getApplicationPrice(BillingAccount ba,
-			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,String offerCode,
-			BigDecimal quantity, String param1, String param2, String param3,
-			boolean priceWithoutTax) throws BusinessException {
-		return getApplicationPrice(null, ba, chargeTemplate, subscriptionDate,offerCode,
-				quantity, param1, param2, param3, priceWithoutTax);
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			String offerCode, BigDecimal quantity, String param1,
+			String param2, String param3, boolean priceWithoutTax)
+			throws BusinessException {
+		return getApplicationPrice(null, ba, chargeTemplate, subscriptionDate,
+				offerCode, quantity, param1, param2, param3, priceWithoutTax);
 	}
 
 	public BigDecimal getApplicationPrice(EntityManager em, BillingAccount ba,
-			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,String offerCode,
-			BigDecimal quantity, String param1, String param2, String param3,
-			boolean priceWithoutTax) throws BusinessException {
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			String offerCode, BigDecimal quantity, String param1,
+			String param2, String param3, boolean priceWithoutTax)
+			throws BusinessException {
 
 		TradingCurrency currency = ba.getCustomerAccount().getTradingCurrency();
 		if (currency == null) {
@@ -74,16 +74,17 @@ public class RealtimeChargingService {
 		Seller seller = ba.getCustomerAccount().getCustomer().getSeller();
 
 		return getApplicationPrice(em, provider, seller, currency,
-				tradingCountry, chargeTemplate, subscriptionDate,offerCode, quantity,
-				param1, param2, param3, priceWithoutTax);
+				tradingCountry, chargeTemplate, subscriptionDate, offerCode,
+				quantity, param1, param2, param3, priceWithoutTax);
 	}
 
 	public BigDecimal getApplicationPrice(EntityManager em, Provider provider,
 			Seller seller, TradingCurrency currency,
 			TradingCountry tradingCountry,
-			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,String offerCode,
-			BigDecimal quantity, String param1, String param2, String param3,
-			boolean priceWithoutTax) throws BusinessException {
+			OneShotChargeTemplate chargeTemplate, Date subscriptionDate,
+			String offerCode, BigDecimal quantity, String param1,
+			String param2, String param3, boolean priceWithoutTax)
+			throws BusinessException {
 
 		InvoiceSubCategory invoiceSubCategory = chargeTemplate
 				.getInvoiceSubCategory();
@@ -169,11 +170,12 @@ public class RealtimeChargingService {
 	}
 
 	public BigDecimal getActivationServicePrice(BillingAccount ba,
-			ServiceTemplate serviceTemplate, Date subscriptionDate,String offerCode,
-			BigDecimal quantity, String param1, String param2, String param3,
-			boolean priceWithoutTax) throws BusinessException {
+			ServiceTemplate serviceTemplate, Date subscriptionDate,
+			String offerCode, BigDecimal quantity, String param1,
+			String param2, String param3, boolean priceWithoutTax)
+			throws BusinessException {
 		return getActivationServicePrice(null, ba, serviceTemplate,
-				subscriptionDate,offerCode, quantity, param1, param2, param3,
+				subscriptionDate, offerCode, quantity, param1, param2, param3,
 				priceWithoutTax);
 	}
 
@@ -182,8 +184,8 @@ public class RealtimeChargingService {
 	 */
 	public BigDecimal getActivationServicePrice(EntityManager em,
 			BillingAccount ba, ServiceTemplate serviceTemplate,
-			Date subscriptionDate,String offerCode, BigDecimal quantity, String param1,
-			String param2, String param3, boolean priceWithoutTax)
+			Date subscriptionDate, String offerCode, BigDecimal quantity,
+			String param1, String param2, String param3, boolean priceWithoutTax)
 			throws BusinessException {
 
 		BigDecimal result = BigDecimal.ZERO;
@@ -192,8 +194,8 @@ public class RealtimeChargingService {
 			for (OneShotChargeTemplate charge : serviceTemplate
 					.getSubscriptionCharges()) {
 				result = result.add(getApplicationPrice(em, ba, charge,
-						subscriptionDate,offerCode, quantity, param1, param2, param3,
-						priceWithoutTax));
+						subscriptionDate, offerCode, quantity, param1, param2,
+						param3, priceWithoutTax));
 			}
 		}
 

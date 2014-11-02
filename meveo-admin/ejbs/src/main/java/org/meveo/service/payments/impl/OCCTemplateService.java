@@ -18,7 +18,6 @@ package org.meveo.service.payments.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.ParamBean;
@@ -30,59 +29,78 @@ import org.meveo.service.base.PersistenceService;
  * OCCTemplate service implementation.
  */
 @Stateless
-@LocalBean
 public class OCCTemplateService extends PersistenceService<OCCTemplate> {
 
 	private static final String DUNNING_OCC_CODE = "bayad.dunning.occCode";
 	private static final String DDREQUEST_OCC_CODE = "bayad.ddrequest.occCode";
-	
+
 	public OCCTemplate findByCode(String code, String providerCode) {
-		OCCTemplate occTemplate=null;
+		OCCTemplate occTemplate = null;
 		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
 		try {
 			QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.provider.code", "=", providerCode, true);
-			 occTemplate = (OCCTemplate) qb.getQuery(getEntityManager()).getSingleResult();
-			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] {
-					"OCCTemplate", code, occTemplate != null });
+			occTemplate = (OCCTemplate) qb.getQuery(getEntityManager())
+					.getSingleResult();
+			log.debug("end of find {} by code (code={}). Result found={}.",
+					new Object[] { "OCCTemplate", code, occTemplate != null });
 		} catch (Exception e) {
 			return null;
 		}
-	
+
 		return occTemplate;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<OCCTemplate> getListOccSortedByName(String providerCode) {
-		log.debug("start of find list {} SortedByName for provider (code={}) ..", "OCCTemplate",
-				providerCode);
+		log.debug(
+				"start of find list {} SortedByName for provider (code={}) ..",
+				"OCCTemplate", providerCode);
 		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
 		qb.addCriterion("c.provider.code", "=", providerCode, true);
 		qb.addOrderCriterion("description", true);
-		List<OCCTemplate> occTemplates = (List<OCCTemplate>) qb.getQuery(getEntityManager())
-				.getResultList();
-		log.debug("start of find list {} SortedByName for provider (code={})  result {}",
+		List<OCCTemplate> occTemplates = (List<OCCTemplate>) qb.getQuery(
+				getEntityManager()).getResultList();
+		log.debug(
+				"start of find list {} SortedByName for provider (code={})  result {}",
 				new Object[] { "OCCTemplate", providerCode,
 						occTemplates == null ? "null" : occTemplates.size() });
 		return occTemplates;
 	}
-	
-	public OCCTemplate getDunningOCCTemplate(String providerCode) throws Exception {
-		return (OCCTemplate) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
-				.setParameter("code", ParamBean.getInstance().getProperty(DUNNING_OCC_CODE,"DUNNING")).setParameter("providerCode", providerCode).getSingleResult();
+
+	public OCCTemplate getDunningOCCTemplate(String providerCode)
+			throws Exception {
+		return (OCCTemplate) getEntityManager()
+				.createQuery(
+						"from "
+								+ OCCTemplate.class.getSimpleName()
+								+ " where code=:code and provider.code=:providerCode")
+				.setParameter(
+						"code",
+						ParamBean.getInstance().getProperty(DUNNING_OCC_CODE,
+								"DUNNING"))
+				.setParameter("providerCode", providerCode).getSingleResult();
 
 	}
 
 	public OCCTemplate getDirectDebitOCCTemplate(String providerCode) {
 		@SuppressWarnings("unchecked")
-		List<OCCTemplate> occs= (List<OCCTemplate>) getEntityManager().createQuery("from " + OCCTemplate.class.getSimpleName() + " where code=:code and provider.code=:providerCode")
-				.setParameter("code",ParamBean.getInstance().getProperty(DDREQUEST_OCC_CODE,"DD_OCC")).setParameter("providerCode", providerCode).getResultList();
-		
-		if(occs.size()>0){
+		List<OCCTemplate> occs = (List<OCCTemplate>) getEntityManager()
+				.createQuery(
+						"from "
+								+ OCCTemplate.class.getSimpleName()
+								+ " where code=:code and provider.code=:providerCode")
+				.setParameter(
+						"code",
+						ParamBean.getInstance().getProperty(DDREQUEST_OCC_CODE,
+								"DD_OCC"))
+				.setParameter("providerCode", providerCode).getResultList();
+
+		if (occs.size() > 0) {
 			return occs.get(0);
 		}
-		
+
 		return null;
 
 	}

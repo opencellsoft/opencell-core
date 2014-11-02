@@ -16,7 +16,6 @@
  */
 package org.meveo.service.payments.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.DunningLevelEnum;
@@ -24,31 +23,28 @@ import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
 import org.meveo.service.base.PersistenceService;
 
+@Stateless
+public class DunningPlanTransitionService extends
+		PersistenceService<DunningPlanTransition> {
 
-/**
- * @author AITYAAZZA
- *
- */
-@Stateless @LocalBean
-public class DunningPlanTransitionService extends PersistenceService<DunningPlanTransition> {
-	
-
-
-
-	public DunningPlanTransition getDunningPlanTransition(DunningLevelEnum dunningLevelFrom, DunningLevelEnum dunningLevelTo, DunningPlan dunningPlan) {
+	public DunningPlanTransition getDunningPlanTransition(
+			DunningLevelEnum dunningLevelFrom, DunningLevelEnum dunningLevelTo,
+			DunningPlan dunningPlan) {
 		DunningPlanTransition dunningPlanTransition = null;
 		try {
 			dunningPlanTransition = (DunningPlanTransition) getEntityManager()
 					.createQuery(
-							"from " + DunningPlanTransition.class.getSimpleName()
+							"from "
+									+ DunningPlanTransition.class
+											.getSimpleName()
 									+ " where dunningLevelFrom=:dunningLevelFrom and dunningLevelTo=:dunningLevelTo and dunningPlan.id=:dunningPlanId")
-					.setParameter("dunningLevelFrom", dunningLevelFrom).setParameter("dunningLevelTo", dunningLevelTo)
-					.setParameter("dunningPlanId", dunningPlan.getId()).getSingleResult();
+					.setParameter("dunningLevelFrom", dunningLevelFrom)
+					.setParameter("dunningLevelTo", dunningLevelTo)
+					.setParameter("dunningPlanId", dunningPlan.getId())
+					.getSingleResult();
 		} catch (Exception e) {
 		}
 		return dunningPlanTransition;
 	}
-
-
 
 }

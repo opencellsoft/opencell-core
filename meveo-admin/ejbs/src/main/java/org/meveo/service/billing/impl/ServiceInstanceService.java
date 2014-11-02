@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -57,7 +56,6 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
-@LocalBean
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@EJB
@@ -217,6 +215,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceActivation(getEntityManager(), serviceInstance,
 				amountWithoutTax, amountWithoutTax2, creator);
 	}
+
 	/**
 	 * Activate a service, the subscription charges are applied
 	 */
@@ -225,17 +224,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			BigDecimal amountWithoutTax2, User creator)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
-		serviceActivation(em,serviceInstance, true, amountWithoutTax,
-				 amountWithoutTax2,  creator);
+		serviceActivation(em, serviceInstance, true, amountWithoutTax,
+				amountWithoutTax2, creator);
 	}
-	
+
 	/**
 	 * Activate a service, the subscription charges can be applied or not
 	 */
 	public void serviceActivation(EntityManager em,
-			ServiceInstance serviceInstance, boolean applySubscriptionCharges,BigDecimal amountWithoutTax,
-			BigDecimal amountWithoutTax2, User creator)
-			throws IncorrectSusbcriptionException,
+			ServiceInstance serviceInstance, boolean applySubscriptionCharges,
+			BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2,
+			User creator) throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 		Subscription subscription = serviceInstance.getSubscription();
 
@@ -311,16 +310,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 
 		// apply subscription charges
-		if(applySubscriptionCharges){
+		if (applySubscriptionCharges) {
 			log.debug(
 					"serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}",
 					serviceInstance.getSubscriptionChargeInstances().size());
 			for (OneShotChargeInstance oneShotChargeInstance : serviceInstance
 					.getSubscriptionChargeInstances()) {
-				 oneShotChargeInstanceService.oneShotChargeApplication(em,
-				 subscription, oneShotChargeInstance,
-				 serviceInstance.getSubscriptionDate(),
-				 serviceInstance.getQuantity(), creator);
+				oneShotChargeInstanceService.oneShotChargeApplication(em,
+						subscription, oneShotChargeInstance,
+						serviceInstance.getSubscriptionDate(),
+						serviceInstance.getQuantity(), creator);
 				oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				oneShotChargeInstance.setStatusDate(new Date());
 				oneShotChargeInstanceService.update(em, oneShotChargeInstance);
@@ -331,8 +330,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
-			 usageChargeInstanceService.activateUsageChargeInstance(em,
-			 usageChargeInstance);
+			usageChargeInstanceService.activateUsageChargeInstance(em,
+					usageChargeInstance);
 		}
 
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
@@ -677,7 +676,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	 * updater); }
 	 */
 
-	@SuppressWarnings("deprecation")
 	public void serviceTermination(ServiceInstance serviceInstance,
 			Date terminationDate, User updater)
 			throws IncorrectSusbcriptionException,
@@ -705,9 +703,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 						updater);
 			}
 			recurringChargeInstance.setTerminationDate(terminationDate);
-			//FIXME : 
-			//chargeApplicationService.chargeTermination(recurringChargeInstance,
-				//	updater);
+			// FIXME :
+			// chargeApplicationService.chargeTermination(recurringChargeInstance,
+			// updater);
 
 		}
 

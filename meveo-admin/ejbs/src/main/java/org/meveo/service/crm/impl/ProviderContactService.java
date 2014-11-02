@@ -16,7 +16,6 @@
  */
 package org.meveo.service.crm.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.crm.ProviderContact;
@@ -24,10 +23,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Provider service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2011.10.04
  */
-@Stateless @LocalBean
+@Stateless
 public class ProviderContactService extends PersistenceService<ProviderContact> {
 }

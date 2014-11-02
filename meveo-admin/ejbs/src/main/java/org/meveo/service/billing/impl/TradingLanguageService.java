@@ -16,7 +16,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -28,7 +27,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
 public class TradingLanguageService extends PersistenceService<TradingLanguage> {
 	/**
 	 * Find TradingLanguage by its trading language code.

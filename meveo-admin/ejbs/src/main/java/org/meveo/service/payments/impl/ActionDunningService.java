@@ -16,19 +16,12 @@
  */
 package org.meveo.service.payments.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.ActionDunning;
 import org.meveo.service.base.PersistenceService;
 
-
-/**
- * @author Rachid.AITYAAZZA
- *
- */
-@Stateless @LocalBean
+@Stateless
 public class ActionDunningService extends PersistenceService<ActionDunning> {
-
 
 }

@@ -16,7 +16,6 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -29,7 +28,6 @@ import org.meveo.model.crm.Provider;
  * 
  */
 @Stateless
-@LocalBean
 public class RecurringChargeTemplateService extends
 		ChargeTemplateService<RecurringChargeTemplate> {
 

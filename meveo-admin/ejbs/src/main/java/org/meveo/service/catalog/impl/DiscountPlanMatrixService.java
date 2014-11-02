@@ -18,7 +18,6 @@ package org.meveo.service.catalog.impl;
 
 import java.util.Set;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.User;
@@ -26,8 +25,7 @@ import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.RatingService;
 
-
-@Stateless @LocalBean
+@Stateless
 public class DiscountPlanMatrixService extends
 		PersistenceService<DiscountPlanMatrix> {
 	public void create(DiscountPlanMatrix e) {

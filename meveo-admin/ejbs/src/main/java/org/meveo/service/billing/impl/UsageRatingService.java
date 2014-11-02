@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -45,7 +44,6 @@ import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
 @Stateless
-@LocalBean
 public class UsageRatingService {
 
 	@Inject
@@ -66,7 +64,7 @@ public class UsageRatingService {
 	private static HashMap<Long, CounterInstanceCache> counterCache;
 
 	private static boolean cacheLoaded = false;
-	
+
 	@Inject
 	private EdrService edrService;
 
@@ -162,17 +160,20 @@ public class UsageRatingService {
 				log.info("set erdTemplate to true"
 						+ usageChargeTemplate.getFilterParam4());
 				cachedValue.setEdrTemplate(true);
-				UsageChargeEDRTemplate edrTemplate = usageChargeTemplate.getEdrTemplate();
+				UsageChargeEDRTemplate edrTemplate = usageChargeTemplate
+						.getEdrTemplate();
 				if (edrTemplate.getQuantityEl() == null
 						|| (edrTemplate.getQuantityEl().equals(""))) {
-					log.error("edrTemplate QuantityEL must be set for usageChargeTemplate="+usageChargeTemplate.getId());
+					log.error("edrTemplate QuantityEL must be set for usageChargeTemplate="
+							+ usageChargeTemplate.getId());
 					cachedValue.setEdrTemplate(false);
 				} else {
 					cachedValue.setQuantityEL(edrTemplate.getQuantityEl());
 				}
 				if (edrTemplate.getParam1El() == null
 						|| (edrTemplate.getParam1El().equals(""))) {
-					log.error("edrTemplate param1El must be set for usageChargeTemplate="+usageChargeTemplate.getId());
+					log.error("edrTemplate param1El must be set for usageChargeTemplate="
+							+ usageChargeTemplate.getId());
 					cachedValue.setEdrTemplate(false);
 				} else {
 					cachedValue.setParam1EL(edrTemplate.getParam1El());
@@ -183,7 +184,7 @@ public class UsageRatingService {
 					log.info("set param2El to null");
 					cachedValue.setParam2EL(null);
 				} else {
-					log.info("set param2El to "+edrTemplate.getParam2El());
+					log.info("set param2El to " + edrTemplate.getParam2El());
 					cachedValue.setParam2EL(edrTemplate.getParam2El());
 				}
 
@@ -192,7 +193,7 @@ public class UsageRatingService {
 					log.info("set param3El to null");
 					cachedValue.setParam3EL(null);
 				} else {
-					log.info("set param3El to "+edrTemplate.getParam3El());
+					log.info("set param3El to " + edrTemplate.getParam3El());
 					cachedValue.setParam3EL(edrTemplate.getParam3El());
 				}
 
@@ -201,10 +202,10 @@ public class UsageRatingService {
 					log.info("set param4El to null");
 					cachedValue.setParam4EL(null);
 				} else {
-					log.info("set param4El to "+edrTemplate.getParam4El());
+					log.info("set param4El to " + edrTemplate.getParam4El());
 					cachedValue.setParam4EL(edrTemplate.getParam4El());
 				}
-				
+
 			}
 			if (cachedValue.getPriority() != usageChargeTemplate.getPriority()) {
 				log.info("set priority to " + usageChargeTemplate.getPriority());
@@ -410,24 +411,33 @@ public class UsageRatingService {
 		if (chargeInstance.getCounter() != null) {
 			walletOperation.setCounter(chargeInstance.getCounter());
 		}
-		walletOperation.setOfferCode(edr.getSubscription().getOffer().getCode());
+		walletOperation
+				.setOfferCode(edr.getSubscription().getOffer().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 		log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, null, null,
 				countryId, currency, provider);
-		//for DURATION counter we update the price of the previous wallet Operation to the current price
-		if(chargeInstance.getCounter() != null && (chargeInstance.getCounter().getCounterTemplate()!=null) 
-				&& CounterTypeEnum.DURATION==chargeInstance.getCounter().getCounterTemplate().getCounterType()){
-			CounterInstanceCache counterInstanceCache = counterCache.get(chargeCache
-					.getCounter().getKey());
+		// for DURATION counter we update the price of the previous wallet
+		// Operation to the current price
+		if (chargeInstance.getCounter() != null
+				&& (chargeInstance.getCounter().getCounterTemplate() != null)
+				&& CounterTypeEnum.DURATION == chargeInstance.getCounter()
+						.getCounterTemplate().getCounterType()) {
+			CounterInstanceCache counterInstanceCache = counterCache
+					.get(chargeCache.getCounter().getKey());
 			if (counterInstanceCache.getCounterPeriods() != null) {
 				for (CounterPeriodCache itemPeriodCache : counterInstanceCache
 						.getCounterPeriods()) {
-					if ((itemPeriodCache.getStartDate().before(edr.getEventDate()) || itemPeriodCache
+					if ((itemPeriodCache.getStartDate().before(
+							edr.getEventDate()) || itemPeriodCache
 							.getStartDate().equals(edr.getEventDate()))
 							&& itemPeriodCache.getEndDate().after(
 									edr.getEventDate())) {
-						walletOperationService.updatePriceForSameServiceAndType(walletOperation,itemPeriodCache.getStartDate(),itemPeriodCache.getEndDate());
+						walletOperationService
+								.updatePriceForSameServiceAndType(
+										walletOperation,
+										itemPeriodCache.getStartDate(),
+										itemPeriodCache.getEndDate());
 						break;
 					}
 				}
@@ -553,20 +563,22 @@ public class UsageRatingService {
 				walletOperation.setQuantity(deducedQuantity);
 			}
 			walletOperationService.create(walletOperation, null, provider);
-			//handle associated edr creation
-			if(charge.getTemplateCache().isEdrTemplate()){
-				//TODO: implement EL parser
+			// handle associated edr creation
+			if (charge.getTemplateCache().isEdrTemplate()) {
+				// TODO: implement EL parser
 				EDR newEdr = new EDR();
 				newEdr.setCreated(new Date());
 				newEdr.setEventDate(edr.getEventDate());
 				newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
-				newEdr.setOriginRecord(""+walletOperation.getId());
+				newEdr.setOriginRecord("" + walletOperation.getId());
 				newEdr.setParameter1(charge.getTemplateCache().getParam1EL());
 				newEdr.setParameter2(charge.getTemplateCache().getParam2EL());
 				newEdr.setParameter3(charge.getTemplateCache().getParam3EL());
 				newEdr.setParameter4(charge.getTemplateCache().getParam4EL());
 				newEdr.setProvider(edr.getProvider());
-				newEdr.setQuantity("amount".equalsIgnoreCase(charge.getTemplateCache().getQuantityEL())?walletOperation.getAmountWithoutTax():edr.getQuantity());
+				newEdr.setQuantity("amount".equalsIgnoreCase(charge
+						.getTemplateCache().getQuantityEL()) ? walletOperation
+						.getAmountWithoutTax() : edr.getQuantity());
 				newEdr.setStatus(EDRStatusEnum.OPEN);
 				newEdr.setSubscription(edr.getSubscription());
 				edrService.create(newEdr);
@@ -595,7 +607,7 @@ public class UsageRatingService {
 					// TODO:order charges by priority and id
 					List<UsageChargeInstanceCache> charges = chargeCache
 							.get(edr.getSubscription().getId());
-					
+
 					for (UsageChargeInstanceCache charge : charges) {
 						UsageChargeTemplateCache templateCache = charge
 								.getTemplateCache();

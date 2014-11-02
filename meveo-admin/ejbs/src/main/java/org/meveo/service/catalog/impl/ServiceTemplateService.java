@@ -16,7 +16,6 @@
  */
 package org.meveo.service.catalog.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -30,7 +29,6 @@ import org.meveo.service.base.BusinessService;
  * 
  */
 @Stateless
-@LocalBean
 public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 
 	public void removeByCode(EntityManager em, String code, Provider provider) {

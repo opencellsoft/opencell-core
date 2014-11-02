@@ -18,7 +18,6 @@ package org.meveo.service.billing.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -32,7 +31,6 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Named
-@LocalBean
 public class InvoiceSubCategoryCountryService extends
 		PersistenceService<InvoiceSubcategoryCountry> {
 

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -51,11 +50,10 @@ import org.meveo.service.base.PersistenceService;
  * Provider service implementation.
  */
 @Stateless
-@LocalBean
 public class ProviderService extends PersistenceService<Provider> {
 	@Inject
 	private UserService userService;
-	
+
 	@Inject
 	private RoleService roleService;
 
@@ -101,7 +99,7 @@ public class ProviderService extends PersistenceService<Provider> {
 				"FROM " + Provider.class.getName());
 		return (List<Provider>) query.getResultList();
 	}
-	
+
 	public long count(PaginationConfiguration config) {
 		List<String> fetchFields = config.getFetchFields();
 		config.setFetchFields(null);
@@ -116,7 +114,7 @@ public class ProviderService extends PersistenceService<Provider> {
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
-	
+
 	public void update(Provider e) {
 		((AuditableEntity) e).updateAudit(getCurrentUser());
 		em.merge(e);
@@ -126,37 +124,39 @@ public class ProviderService extends PersistenceService<Provider> {
 	public void create(Provider e) {
 		log.info("start of create provider");
 		if (e instanceof AuditableEntity) {
-				((AuditableEntity) e).updateAudit(getCurrentUser());
+			((AuditableEntity) e).updateAudit(getCurrentUser());
 		}
 		e.setProvider(null);
 		em.persist(e);
 		log.info("created provider id={}. creating default user", e.getId());
-		User user=new User();
+		User user = new User();
 		user.setProvider(e);
 		Set<Provider> providers = new HashSet<Provider>();
 		providers.add(e);
 		user.setProviders(providers);
 		user.setActive(true);
-		Auditable au= new Auditable();
+		Auditable au = new Auditable();
 		au.setCreated(new Date());
 		au.setCreator(getCurrentUser());
 		user.setAuditable(au);
 		user.setDisabled(false);
 		user.setLastPasswordModification(new Date());
-		user.setPassword(Sha1Encrypt.encodePassword(e.getCode()+".password"));
-		Role role = roleService.findById(Long.parseLong(paramBean.getProperty("system.adminRoleid", "1")));
+		user.setPassword(Sha1Encrypt.encodePassword(e.getCode() + ".password"));
+		Role role = roleService.findById(Long.parseLong(paramBean.getProperty(
+				"system.adminRoleid", "1")));
 		Set<Role> roles = new HashSet<Role>();
 		roles.add(role);
 		user.setRoles(roles);
-		user.setUserName(e.getCode()+".ADMIN");
+		user.setUserName(e.getCode() + ".ADMIN");
 		em.persist(user);
 		log.info("created default user id={}.", user.getId());
 	}
 
+	@SuppressWarnings("rawtypes")
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		QueryBuilder queryBuilder = new QueryBuilder(Provider.class, "a",
-				config.getFetchFields(),null);
+				config.getFetchFields(), null);
 
 		Map<String, Object> filters = config.getFilters();
 		if (filters != null) {

@@ -19,7 +19,6 @@ package org.meveo.service.billing.impl;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -30,42 +29,45 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
 public class EdrService extends PersistenceService<EDR> {
 
-	ParamBean paramBean=ParamBean.getInstance();
-	
+	ParamBean paramBean = ParamBean.getInstance();
 
-	static boolean useInMemoryDeduplication=true;
+	static boolean useInMemoryDeduplication = true;
 	static int maxDuplicateRecords = 100000;
-	static BoundedHashMap<String,Integer> duplicateCache;
-	
-	private void loadCacheFromDB(){
-		synchronized(duplicateCache){
+	static BoundedHashMap<String, Integer> duplicateCache;
+
+	private void loadCacheFromDB() {
+		synchronized (duplicateCache) {
 			loadDeduplicationInfo(maxDuplicateRecords);
 		}
 	}
-	
+
 	@PostConstruct
-	private void init(){
-		useInMemoryDeduplication=paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-		if(useInMemoryDeduplication){
-			int newMaxDuplicateRecords=Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
-			if(newMaxDuplicateRecords!=maxDuplicateRecords && duplicateCache!=null){
+	private void init() {
+		useInMemoryDeduplication = paramBean.getProperty(
+				"mediation.deduplicateInMemory", "true").equals("true");
+		if (useInMemoryDeduplication) {
+			int newMaxDuplicateRecords = Integer.parseInt(paramBean
+					.getProperty("mediation.deduplicateCacheSize", "100000"));
+			if (newMaxDuplicateRecords != maxDuplicateRecords
+					&& duplicateCache != null) {
 				duplicateCache.setMaxSize(newMaxDuplicateRecords);
 			}
-			maxDuplicateRecords=newMaxDuplicateRecords;
-			if(duplicateCache==null){
-				duplicateCache= new BoundedHashMap<String, Integer>(newMaxDuplicateRecords);
+			maxDuplicateRecords = newMaxDuplicateRecords;
+			if (duplicateCache == null) {
+				duplicateCache = new BoundedHashMap<String, Integer>(
+						newMaxDuplicateRecords);
 				loadCacheFromDB();
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<EDR> getEDRToRate() {
-		Query query = getEntityManager().createQuery("from EDR e where e.status=:status")
-				.setParameter("status", EDRStatusEnum.OPEN);
+		Query query = getEntityManager().createQuery(
+				"from EDR e where e.status=:status").setParameter("status",
+				EDRStatusEnum.OPEN);
 		return query.getResultList();
 	}
 
@@ -83,35 +85,35 @@ public class EdrService extends PersistenceService<EDR> {
 		return result;
 	}
 
-	public void loadDeduplicationInfo(
-			int maxDuplicateRecords) {
+	public void loadDeduplicationInfo(int maxDuplicateRecords) {
 		duplicateCache.clear();
-		Query query = getEntityManager().createQuery("select CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
+		Query query = getEntityManager()
+				.createQuery(
+						"select CONCAT(e.originBatch,e.originRecord) from EDR e where e.status=:status ORDER BY e.eventDate DESC")
 				.setParameter("status", EDRStatusEnum.OPEN)
 				.setMaxResults(maxDuplicateRecords);
 		@SuppressWarnings("unchecked")
-		List<String> results=query.getResultList();
-		for(String edrHash:results){
-			duplicateCache.put(edrHash,0);
+		List<String> results = query.getResultList();
+		for (String edrHash : results) {
+			duplicateCache.put(edrHash, 0);
 		}
 	}
 
 	public boolean duplicateFound(String originBatch, String originRecord) {
 		boolean result = false;
-		if(useInMemoryDeduplication){
-			result = duplicateCache.containsKey(originBatch+originRecord);
+		if (useInMemoryDeduplication) {
+			result = duplicateCache.containsKey(originBatch + originRecord);
 		} else {
-			result = findByBatchAndRecordId( originBatch,  originRecord) != null;
+			result = findByBatchAndRecordId(originBatch, originRecord) != null;
 		}
 		return result;
 	}
-	
 
 	public void create(EDR e) {
 		super.create(e);
-		if(useInMemoryDeduplication){
-			synchronized(duplicateCache){
-				duplicateCache.put(e.getOriginBatch()+e.getOriginRecord(),0);
+		if (useInMemoryDeduplication) {
+			synchronized (duplicateCache) {
+				duplicateCache.put(e.getOriginBatch() + e.getOriginRecord(), 0);
 			}
 		}
 	}

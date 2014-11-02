@@ -19,7 +19,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
@@ -34,7 +33,6 @@ import org.meveo.service.billing.impl.UsageRatingService;
  * 
  */
 @Stateless
-@LocalBean
 public class UsageChargeTemplateService extends
 		ChargeTemplateService<UsageChargeTemplate> {
 

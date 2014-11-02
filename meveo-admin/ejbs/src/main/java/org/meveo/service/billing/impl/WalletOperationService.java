@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -67,7 +66,6 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.util.MeveoJpa;
 
 @Stateless
-@LocalBean
 public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	@Inject
@@ -700,10 +698,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							nextapplicationDate, -1), null);
 		} else {
 			result = chargeApplicationRatingService.prerateChargeApplication(
-					em, chargeInstance.getCode(), subscriptionDate,chargeInstance
-					.getServiceInstance().getSubscription().getOffer().getCode(),
-					chargeInstance, ApplicationTypeEnum.PRORATA_SUBSCRIPTION,
-					applicationDate, chargeInstance.getAmountWithoutTax(),
+					em, chargeInstance.getCode(), subscriptionDate,
+					chargeInstance.getServiceInstance().getSubscription()
+							.getOffer().getCode(), chargeInstance,
+					ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate,
+					chargeInstance.getAmountWithoutTax(),
 					chargeInstance.getAmountWithTax(), quantity, currency,
 					countryId, tax.getPercent(), null, nextapplicationDate,
 					recurringChargeTemplate.getInvoiceSubCategory(),
@@ -1407,36 +1406,51 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return walletOperations;
 	}
 
-
-	public void updatePriceForSameServiceAndType(WalletOperation walletOperation, Date startDate, Date endDate) {
-		if(walletOperation.getChargeInstance()!=null && walletOperation.getChargeInstance() instanceof UsageChargeInstance
-				&& !walletOperation.getQuantity().equals(BigDecimal.ZERO) && walletOperation.getWallet()!=null){
-			BigDecimal unitPriceWithoutTax = walletOperation.getAmountWithoutTax().divide(walletOperation.getQuantity());
-			BigDecimal unitTax = walletOperation.getAmountTax().divide(walletOperation.getQuantity());
+	public void updatePriceForSameServiceAndType(
+			WalletOperation walletOperation, Date startDate, Date endDate) {
+		if (walletOperation.getChargeInstance() != null
+				&& walletOperation.getChargeInstance() instanceof UsageChargeInstance
+				&& !walletOperation.getQuantity().equals(BigDecimal.ZERO)
+				&& walletOperation.getWallet() != null) {
+			BigDecimal unitPriceWithoutTax = walletOperation
+					.getAmountWithoutTax()
+					.divide(walletOperation.getQuantity());
+			BigDecimal unitTax = walletOperation.getAmountTax().divide(
+					walletOperation.getQuantity());
 			String strQuery = "UPDATE "
 					+ WalletOperation.class.getSimpleName()
-					+ " as w SET  w.amountWithoutTax = w.quantity * "+unitPriceWithoutTax+","
-					+ " w.amountTax = w.quantity * "+unitTax+","
+					+ " as w SET  w.amountWithoutTax = w.quantity * "
+					+ unitPriceWithoutTax
+					+ ","
+					+ " w.amountTax = w.quantity * "
+					+ unitTax
+					+ ","
 					+ " w.amountWithTax = w.amountWithoutTax + w.amountTax"
 					+ " WHERE w.wallet=:wallet "
 					+ " AND w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "
 					+ " AND w.status=:status "
 					+ " AND NOT(w.counter IS NULL) "
-					//+ " AND TYPE(w.chargeInstance)=:usageChargeInstanceClass"
+					// + " AND TYPE(w.chargeInstance)=:usageChargeInstanceClass"
 					+ " AND w.chargeInstance.serviceInstance = :serviceInstance";
-			if(walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate){
-				strQuery+= " AND w.chargeInstance.chargeTemplate.filterParam1 = :serviceType";
+			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
+				strQuery += " AND w.chargeInstance.chargeTemplate.filterParam1 = :serviceType";
 			}
 			Query query = em.createQuery(strQuery);
 			query.setParameter("wallet", walletOperation.getWallet());
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			query.setParameter("status", WalletOperationStatusEnum.OPEN);
-			//query.setParameter("usageChargeInstanceClass", UsageChargeInstance.class);
-			query.setParameter("serviceInstance",((UsageChargeInstance)walletOperation.getChargeInstance()).getServiceInstance());
-			if(walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate){
-				query.setParameter("serviceType",((UsageChargeTemplate)walletOperation.getChargeInstance().getChargeTemplate()).getFilterParam1());
+			// query.setParameter("usageChargeInstanceClass",
+			// UsageChargeInstance.class);
+			query.setParameter("serviceInstance",
+					((UsageChargeInstance) walletOperation.getChargeInstance())
+							.getServiceInstance());
+			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
+				query.setParameter("serviceType",
+						((UsageChargeTemplate) walletOperation
+								.getChargeInstance().getChargeTemplate())
+								.getFilterParam1());
 			}
 			query.executeUpdate();
 		}

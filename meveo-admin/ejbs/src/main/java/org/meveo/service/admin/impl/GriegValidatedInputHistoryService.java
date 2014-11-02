@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.GriegValidatedInvoiceInputHistory;
@@ -24,11 +23,8 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * GriegValidatedInputHistoryService service implementation.
- * 
- * @author Ignas
- * @created Apr 11, 2011
  */
-@Stateless @LocalBean
+@Stateless
 public class GriegValidatedInputHistoryService extends
 		PersistenceService<GriegValidatedInvoiceInputHistory> {
 

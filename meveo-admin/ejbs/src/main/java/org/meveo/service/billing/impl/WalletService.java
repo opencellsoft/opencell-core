@@ -16,7 +16,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -29,11 +28,8 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Wallet service implementation.
  * 
- * @author Ignas
- * @created 2009.09.03
  */
 @Stateless
-@LocalBean
 public class WalletService extends PersistenceService<WalletInstance> {
 
 	public WalletInstance findByUserAccount(EntityManager em,

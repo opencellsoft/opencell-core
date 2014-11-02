@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
@@ -42,7 +41,6 @@ import org.meveo.model.billing.WalletTemplate;
 import org.meveo.service.base.AccountService;
 
 @Stateless
-@LocalBean
 public class UserAccountService extends AccountService<UserAccount> {
 
 	@EJB

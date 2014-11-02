@@ -18,7 +18,6 @@ package org.meveo.service.crm.impl;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.Query;
@@ -32,25 +31,26 @@ import org.meveo.service.base.PersistenceService;
  */
 @Named
 @Stateless
-@LocalBean
 public class SubscriptionTerminationReasonService extends
 		PersistenceService<SubscriptionTerminationReason> {
 
-	public SubscriptionTerminationReason findByCodeReason(String codeReason, String providerCode)
-			throws Exception {
+	public SubscriptionTerminationReason findByCodeReason(String codeReason,
+			String providerCode) throws Exception {
 		return (SubscriptionTerminationReason) getEntityManager()
 				.createQuery(
-						"from " + SubscriptionTerminationReason.class.getSimpleName()
+						"from "
+								+ SubscriptionTerminationReason.class
+										.getSimpleName()
 								+ " where code=:codeReason and provider.code=:providerCode")
-				.setParameter("codeReason", codeReason).setParameter("providerCode", providerCode)
-				.getSingleResult();
+				.setParameter("codeReason", codeReason)
+				.setParameter("providerCode", providerCode).getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<SubscriptionTerminationReason> listReasons() {
 
-		Query query = new QueryBuilder(SubscriptionTerminationReason.class, "c", null,
-				getCurrentProvider()).getQuery(getEntityManager());
+		Query query = new QueryBuilder(SubscriptionTerminationReason.class,
+				"c", null, getCurrentProvider()).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 }

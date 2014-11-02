@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
@@ -37,7 +36,6 @@ import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
-@LocalBean
 public class UsageChargeInstanceService extends
 		BusinessService<UsageChargeInstance> {
 

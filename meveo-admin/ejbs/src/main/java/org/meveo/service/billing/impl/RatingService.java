@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -38,7 +37,6 @@ import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
 @Stateless
-@LocalBean
 public class RatingService {
 
 	@Inject
@@ -150,17 +148,17 @@ public class RatingService {
 	}
 
 	public WalletOperation prerateChargeApplication(String code,
-			Date subscriptionDate, String offerCode,ChargeInstance chargeInstance,
-			ApplicationTypeEnum applicationType, Date applicationDate,
-			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
-			BigDecimal taxPercent, BigDecimal discountPercent,
-			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
-			String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode)
-			throws BusinessException {
-		return prerateChargeApplication(entityManager, code, subscriptionDate,offerCode,
-				chargeInstance, applicationType, applicationDate,
+			Date subscriptionDate, String offerCode,
+			ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
+			Date applicationDate, BigDecimal amountWithoutTax,
+			BigDecimal amountWithTax, BigDecimal quantity,
+			TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
+			BigDecimal discountPercent, Date nextApplicationDate,
+			InvoiceSubCategory invoiceSubCategory, String criteria1,
+			String criteria2, String criteria3, Date startdate, Date endDate,
+			ChargeApplicationModeEnum mode) throws BusinessException {
+		return prerateChargeApplication(entityManager, code, subscriptionDate,
+				offerCode, chargeInstance, applicationType, applicationDate,
 				amountWithoutTax, amountWithTax, quantity, tCurrency,
 				countryId, taxPercent, discountPercent, nextApplicationDate,
 				invoiceSubCategory, criteria1, criteria2, criteria3, startdate,
@@ -169,15 +167,15 @@ public class RatingService {
 
 	// used to prerate a oneshot or recurring charge
 	public WalletOperation prerateChargeApplication(EntityManager em,
-			String code, Date subscriptionDate,String offerCode, ChargeInstance chargeInstance,
-			ApplicationTypeEnum applicationType, Date applicationDate,
-			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-			BigDecimal quantity, TradingCurrency tCurrency, Long countryId,
-			BigDecimal taxPercent, BigDecimal discountPercent,
-			Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory,
-			String criteria1, String criteria2, String criteria3,
-			Date startdate, Date endDate, ChargeApplicationModeEnum mode)
-			throws BusinessException {
+			String code, Date subscriptionDate, String offerCode,
+			ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
+			Date applicationDate, BigDecimal amountWithoutTax,
+			BigDecimal amountWithTax, BigDecimal quantity,
+			TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
+			BigDecimal discountPercent, Date nextApplicationDate,
+			InvoiceSubCategory invoiceSubCategory, String criteria1,
+			String criteria2, String criteria3, Date startdate, Date endDate,
+			ChargeApplicationModeEnum mode) throws BusinessException {
 
 		WalletOperation result = new WalletOperation();
 
@@ -254,11 +252,12 @@ public class RatingService {
 		}
 
 		WalletOperation result = prerateChargeApplication(em, code,
-				subscriptionDate,subscription.getOffer().getCode(), chargeInstance, applicationType,
-				applicationDate, amountWithoutTax, amountWithTax, quantity,
-				tCurrency, countryId, taxPercent, discountPercent,
-				nextApplicationDate, invoiceSubCategory, criteria1, criteria2,
-				criteria3, startdate, endDate, mode);
+				subscriptionDate, subscription.getOffer().getCode(),
+				chargeInstance, applicationType, applicationDate,
+				amountWithoutTax, amountWithTax, quantity, tCurrency,
+				countryId, taxPercent, discountPercent, nextApplicationDate,
+				invoiceSubCategory, criteria1, criteria2, criteria3, startdate,
+				endDate, mode);
 
 		result.setWallet(subscription.getUserAccount().getWallet());
 		String chargeInstnceLabel = null;
@@ -334,27 +333,30 @@ public class RatingService {
 				unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
 				unitPriceWithTax = ratePrice.getAmountWithTax();
 			}
-			
+
 			if (allDiscountPlan == null) {
 				loadDiscountPlan(em);
 			} else if (isDiscountPlanDirty) {
 				reloadDiscountPlan();
 			}
-			if (allDiscountPlan.containsKey(providerCode) && allDiscountPlan.get(providerCode).containsKey(
-					bareWalletOperation.getCode())) {
-				rateDiscount = discountPrice(allDiscountPlan.get(providerCode).get(
+			if (allDiscountPlan.containsKey(providerCode)
+					&& allDiscountPlan.get(providerCode).containsKey(
+							bareWalletOperation.getCode())) {
+				rateDiscount = discountPrice(
+						allDiscountPlan.get(providerCode).get(
 								bareWalletOperation.getCode()),
 						bareWalletOperation,
 						countryId,
 						tcurrency,
 						bareWalletOperation.getSeller() != null ? bareWalletOperation
 								.getSeller().getId() : null);
-				if(rateDiscount!=null){
-					log.info("found rateDiscount :" + rateDiscount.getId() + " percent="
-							+ rateDiscount.getPercent());
-					BigDecimal factor = BigDecimal.ONE.subtract(rateDiscount.getPercent().divide(HUNDRED));
+				if (rateDiscount != null) {
+					log.info("found rateDiscount :" + rateDiscount.getId()
+							+ " percent=" + rateDiscount.getPercent());
+					BigDecimal factor = BigDecimal.ONE.subtract(rateDiscount
+							.getPercent().divide(HUNDRED));
 					unitPriceWithoutTax = unitPriceWithoutTax.multiply(factor);
-					if(unitPriceWithTax!=null){
+					if (unitPriceWithTax != null) {
 						unitPriceWithTax = unitPriceWithTax.multiply(factor);
 					}
 				}
@@ -422,7 +424,8 @@ public class RatingService {
 
 	}
 
-	private DiscountPlanMatrix discountPrice(List<DiscountPlanMatrix> listDiscountPlan,
+	private DiscountPlanMatrix discountPrice(
+			List<DiscountPlanMatrix> listDiscountPlan,
 			WalletOperation bareOperation, Long countryId,
 			TradingCurrency tcurrency, Long sellerId) {
 		log.info("rate " + bareOperation);
@@ -466,7 +469,7 @@ public class RatingService {
 						DateUtils.addDaysToDate(
 								bareOperation.getSubscriptionDate(), -1));
 			}
-			
+
 			boolean subscriptionAgeOk = discountPlan.getNbPeriod() == null
 					|| discountPlan.getNbPeriod() == 0
 					|| subscriptionAge < discountPlan.getNbPeriod();
@@ -478,16 +481,18 @@ public class RatingService {
 				continue;
 			}
 
-			
-			boolean offerCodeSameInPricePlan = discountPlan.getOfferTemplate()==null
-					|| discountPlan.getOfferTemplate().getCode().equals(bareOperation.getOfferCode());
+			boolean offerCodeSameInPricePlan = discountPlan.getOfferTemplate() == null
+					|| discountPlan.getOfferTemplate().getCode()
+							.equals(bareOperation.getOfferCode());
 			if (offerCodeSameInPricePlan) {
 				log.debug("offerCodeSameInDiscountPlan");
 				return discountPlan;
 			} else {
-				log.debug("The operation offerCode " + bareOperation.getOfferCode()
+				log.debug("The operation offerCode "
+						+ bareOperation.getOfferCode()
 						+ " is not compatible with discount plan offerCode: "
-						+ discountPlan.getOfferTemplate()==null?"null":discountPlan.getOfferTemplate().getCode());
+						+ discountPlan.getOfferTemplate() == null ? "null"
+						: discountPlan.getOfferTemplate().getCode());
 				continue;
 			}
 
@@ -645,35 +650,44 @@ public class RatingService {
 			// log.info("criteria3SameInPricePlan(" +
 			// pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
 			if (!criteria3SameInPricePlan) {
-				log.debug("The operation param3 " + bareOperation.getParameter3()
+				log.debug("The operation param3 "
+						+ bareOperation.getParameter3()
 						+ " is not compatible with price plan criteria 3: "
 						+ pricePlan.getCriteria3Value());
 				continue;
 			}
 			boolean offerCodeSameInPricePlan = pricePlan.getOfferTemplate() == null
-					|| pricePlan.getOfferTemplate().getCode().equals(bareOperation.getOfferCode());
+					|| pricePlan.getOfferTemplate().getCode()
+							.equals(bareOperation.getOfferCode());
 			if (!offerCodeSameInPricePlan) {
-				log.debug("The operation offerCode " + bareOperation.getOfferCode()
+				log.debug("The operation offerCode "
+						+ bareOperation.getOfferCode()
 						+ " is not compatible with price plan offerCode: "
-						+ ((pricePlan.getOfferTemplate()==null)?"null":pricePlan.getOfferTemplate().getCode()));
+						+ ((pricePlan.getOfferTemplate() == null) ? "null"
+								: pricePlan.getOfferTemplate().getCode()));
 				continue;
 			}
 			log.debug("offerCodeSameInPricePlan");
-			boolean quantityMaxOk = pricePlan.getMaxQuantity() == null ||
-					pricePlan.getMaxQuantity().compareTo(bareOperation.getQuantity())>0;
+			boolean quantityMaxOk = pricePlan.getMaxQuantity() == null
+					|| pricePlan.getMaxQuantity().compareTo(
+							bareOperation.getQuantity()) > 0;
 			if (!quantityMaxOk) {
-				log.debug("the quantity "+bareOperation.getQuantity()+" is strictly greater than "+pricePlan.getMaxQuantity());
+				log.debug("the quantity " + bareOperation.getQuantity()
+						+ " is strictly greater than "
+						+ pricePlan.getMaxQuantity());
 				continue;
 			} else {
 				log.debug("quantityMaxOkInPricePlan");
 			}
-			boolean quantityMinOk = pricePlan.getMinQuantity() == null ||
-					pricePlan.getMinQuantity().compareTo(bareOperation.getQuantity())<=0;
+			boolean quantityMinOk = pricePlan.getMinQuantity() == null
+					|| pricePlan.getMinQuantity().compareTo(
+							bareOperation.getQuantity()) <= 0;
 			if (quantityMinOk) {
 				log.debug("quantityMaxOkInPricePlan");
 				return pricePlan;
 			} else {
-				log.debug("the quantity "+bareOperation.getQuantity()+" is less than "+pricePlan.getMinQuantity());
+				log.debug("the quantity " + bareOperation.getQuantity()
+						+ " is less than " + pricePlan.getMinQuantity());
 			}
 		}
 		return null;
@@ -732,14 +746,15 @@ public class RatingService {
 						+ "; criteria1=" + pricePlan.getCriteria1Value()
 						+ "; criteria2=" + pricePlan.getCriteria2Value()
 						+ "; criteria3=" + pricePlan.getCriteria3Value());
-				List<PricePlanMatrix> chargePriceList =providerPricePlans.get(pricePlan.getEventCode());
+				List<PricePlanMatrix> chargePriceList = providerPricePlans
+						.get(pricePlan.getEventCode());
 				chargePriceList.add(pricePlan);
 				Collections.sort(chargePriceList);
 			}
 		}
 		allPricePlan = result;
 	}
-	
+
 	// synchronized to avoid different threads to reload the discountplan
 	// concurrently
 	protected synchronized void reloadDiscountPlan() {
@@ -754,14 +769,14 @@ public class RatingService {
 		loadDiscountPlan(entityManager);
 	}
 
-	// FIXME : call this method when discountplan is edited (or more precisely add
+	// FIXME : call this method when discountplan is edited (or more precisely
+	// add
 	// a button to reload the priceplan)
 	@SuppressWarnings("unchecked")
 	protected void loadDiscountPlan(EntityManager em) {
 		HashMap<String, HashMap<String, List<DiscountPlanMatrix>>> result = new HashMap<String, HashMap<String, List<DiscountPlanMatrix>>>();
 		List<DiscountPlanMatrix> allDiscountPlans = (List<DiscountPlanMatrix>) em
-				.createQuery(
-						"from DiscountPlanMatrix where disabled=false")
+				.createQuery("from DiscountPlanMatrix where disabled=false")
 				.getResultList();
 		if (allDiscountPlans != null & allDiscountPlans.size() > 0) {
 			for (DiscountPlanMatrix discountPlan : allDiscountPlans) {
@@ -771,14 +786,16 @@ public class RatingService {
 				}
 				HashMap<String, List<DiscountPlanMatrix>> providerDiscountPlans = result
 						.get(discountPlan.getProvider().getCode());
-				if (!providerDiscountPlans.containsKey(discountPlan.getEventCode())) {
+				if (!providerDiscountPlans.containsKey(discountPlan
+						.getEventCode())) {
 					providerDiscountPlans.put(discountPlan.getEventCode(),
 							new ArrayList<DiscountPlanMatrix>());
 				}
 				log.info("Add discountPlan for provider="
-						+ discountPlan.getProvider().getCode() + "; chargeCode="
-						+ discountPlan.getEventCode());
-				providerDiscountPlans.get(discountPlan.getEventCode()).add(discountPlan);
+						+ discountPlan.getProvider().getCode()
+						+ "; chargeCode=" + discountPlan.getEventCode());
+				providerDiscountPlans.get(discountPlan.getEventCode()).add(
+						discountPlan);
 			}
 		}
 		allDiscountPlan = result;

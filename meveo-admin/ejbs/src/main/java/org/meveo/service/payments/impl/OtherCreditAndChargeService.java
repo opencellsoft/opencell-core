@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.transaction.Transactional;
@@ -35,29 +34,24 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * OtherCreditAndCharge service implementation.
- * 
- * @author Ignas
- * @created 2009.09.04
  */
 @Stateless
-@LocalBean
-public class OtherCreditAndChargeService extends PersistenceService<OtherCreditAndCharge> {
-
-	// @EJB
-	// private CustomerAccountService customerAccountService;
+public class OtherCreditAndChargeService extends
+		PersistenceService<OtherCreditAndCharge> {
 
 	@EJB
 	private OCCTemplateService occTemplateService;
 
 	@Transactional
 	public void addOCC(String codeOCCTemplate, String descToAppend,
-			CustomerAccount customerAccount, BigDecimal amount, Date dueDate, User user)
-			throws BusinessException, Exception {
+			CustomerAccount customerAccount, BigDecimal amount, Date dueDate,
+			User user) throws BusinessException, Exception {
 		log.info(
 				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{}",
-				new Object[] { codeOCCTemplate,
-						(customerAccount == null ? "null" : customerAccount.getCode()), amount,
-						dueDate });
+				new Object[] {
+						codeOCCTemplate,
+						(customerAccount == null ? "null" : customerAccount
+								.getCode()), amount, dueDate });
 
 		if (codeOCCTemplate == null) {
 			log.warn("addOCC codeOCCTemplate is null");
@@ -77,11 +71,13 @@ public class OtherCreditAndChargeService extends PersistenceService<OtherCreditA
 			log.warn("addOCC user is null");
 			throw new BusinessException("user is null");
 		}
-		OCCTemplate occTemplate = occTemplateService.findByCode(codeOCCTemplate, customerAccount
-				.getProvider().getCode());
+		OCCTemplate occTemplate = occTemplateService.findByCode(
+				codeOCCTemplate, customerAccount.getProvider().getCode());
 		if (occTemplate == null) {
-			log.warn("addOCC cannot find OCCTemplate by code:" + codeOCCTemplate);
-			throw new BusinessException("cannot find OCCTemplate by code:" + codeOCCTemplate);
+			log.warn("addOCC cannot find OCCTemplate by code:"
+					+ codeOCCTemplate);
+			throw new BusinessException("cannot find OCCTemplate by code:"
+					+ codeOCCTemplate);
 		}
 
 		if (customerAccount.getStatus() == CustomerAccountStatusEnum.CLOSE) {
@@ -93,14 +89,17 @@ public class OtherCreditAndChargeService extends PersistenceService<OtherCreditA
 		otherCreditAndCharge.setCustomerAccount(customerAccount);
 		otherCreditAndCharge.setOccCode(occTemplate.getCode());
 		if (descToAppend != null) {
-			otherCreditAndCharge.setOccDescription(occTemplate.getDescription() + " "
-					+ descToAppend);
+			otherCreditAndCharge.setOccDescription(occTemplate.getDescription()
+					+ " " + descToAppend);
 		} else {
-			otherCreditAndCharge.setOccDescription(occTemplate.getDescription());
+			otherCreditAndCharge
+					.setOccDescription(occTemplate.getDescription());
 		}
 		otherCreditAndCharge.setAccountCode(occTemplate.getAccountCode());
-		otherCreditAndCharge.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
-		otherCreditAndCharge.setTransactionCategory(occTemplate.getOccCategory());
+		otherCreditAndCharge.setAccountCodeClientSide(occTemplate
+				.getAccountCodeClientSide());
+		otherCreditAndCharge.setTransactionCategory(occTemplate
+				.getOccCategory());
 		otherCreditAndCharge.setDueDate(dueDate);
 		otherCreditAndCharge.setTransactionDate(new Date());
 		otherCreditAndCharge.setAmount(amount);
@@ -109,8 +108,10 @@ public class OtherCreditAndChargeService extends PersistenceService<OtherCreditA
 		customerAccount.getAccountOperations().add(otherCreditAndCharge);
 		create(otherCreditAndCharge, user, customerAccount.getProvider());
 
-		log.info("addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
-				new Object[] { codeOCCTemplate, customerAccount.getCode(), amount, dueDate });
+		log.info(
+				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
+				new Object[] { codeOCCTemplate, customerAccount.getCode(),
+						amount, dueDate });
 	}
 
 	// public void addOCCk(String codeOCCTemplate, Long customerAccountId,

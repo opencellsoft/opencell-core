@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -36,7 +35,6 @@ import org.meveo.service.base.PersistenceService;
  * Job service implementation.
  */
 @Stateless
-@LocalBean
 public class JobService extends PersistenceService<Job> {
 	private static final String SELECT_JOB = "SELECT R_JOB.NAME, R_JOBENTRY_ATTRIBUTE.VALUE_NUM, MODIFIED_DATE, R_JOB.JOB_STATUS, R_JOB.ID_JOB FROM R_JOB INNER JOIN R_JOBENTRY_ATTRIBUTE ON R_JOB.ID_JOB=R_JOBENTRY_ATTRIBUTE.ID_JOB where R_JOBENTRY_ATTRIBUTE.CODE = 'schedulerType' and R_JOB.NAME= :name";
 	private static final String SELECT_JOB_INFO = "SELECT CODE, VALUE_NUM FROM R_JOBENTRY_ATTRIBUTE where ID_JOB=:id";
@@ -52,7 +50,8 @@ public class JobService extends PersistenceService<Job> {
 
 	@SuppressWarnings("unchecked")
 	public List<String> getJobNames() {
-		Query query = getEntityManager().createQuery("select name from " + Job.class.getName());
+		Query query = getEntityManager().createQuery(
+				"select name from " + Job.class.getName());
 		return query.getResultList();
 	}
 
@@ -114,12 +113,14 @@ public class JobService extends PersistenceService<Job> {
 			}
 			temp = (BigDecimal) o[4];
 			job.setJobRepositoryId(temp.intValue());
-			job.setLastExecutionDate(DateUtils.addDaysToDate(job.getNextExecutionDate(), -1));
+			job.setLastExecutionDate(DateUtils.addDaysToDate(
+					job.getNextExecutionDate(), -1));
 		}
 		return job;
 	}
 
-	public void createJob(String name, Date nextExecutionDate, boolean active, int jobFrequency) {
+	public void createJob(String name, Date nextExecutionDate, boolean active,
+			int jobFrequency) {
 		Job job = new Job();
 		job.setName(name);
 		job.setNextExecutionDate(nextExecutionDate);

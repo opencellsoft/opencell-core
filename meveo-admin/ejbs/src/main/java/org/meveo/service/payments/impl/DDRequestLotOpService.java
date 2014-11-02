@@ -19,25 +19,25 @@ package org.meveo.service.payments.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
-/**
- * @author anasseh
- */
-@Stateless @LocalBean
+@Stateless
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
-	
+
 	@SuppressWarnings("unchecked")
 	public List<DDRequestLotOp> getDDRequestOps() {
 		List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
 		try {
-			ddrequestOps = (List<DDRequestLotOp>) getEntityManager().createQuery("from " + DDRequestLotOp.class.getSimpleName() + " where status=:status")
-					.setParameter("status", DDRequestOpStatusEnum.WAIT).getResultList();
+			ddrequestOps = (List<DDRequestLotOp>) getEntityManager()
+					.createQuery(
+							"from " + DDRequestLotOp.class.getSimpleName()
+									+ " where status=:status")
+					.setParameter("status", DDRequestOpStatusEnum.WAIT)
+					.getResultList();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

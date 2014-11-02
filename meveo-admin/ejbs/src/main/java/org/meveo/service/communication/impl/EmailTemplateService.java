@@ -16,7 +16,6 @@
  */
 package org.meveo.service.communication.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.communication.email.EmailTemplate;
@@ -24,10 +23,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * EmailTemplate service implementation.
- * 
- * @author Gediminas Ubartas
- * @created 2011.04.26
  */
-@Stateless @LocalBean
+@Stateless
 public class EmailTemplateService extends PersistenceService<EmailTemplate> {
 }

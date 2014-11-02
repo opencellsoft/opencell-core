@@ -19,7 +19,6 @@ package org.meveo.service.catalog.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 
@@ -33,7 +32,6 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @Named
-@LocalBean
 public class CatMessagesService extends PersistenceService<CatMessages> {
 
 	@SuppressWarnings("unchecked")
@@ -41,8 +39,10 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterionWildcard("c.messageCode", messageCode, true);
 		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
-		return catMessages.size() > 0 ? catMessages.get(0).getDescription() : null;
+		List<CatMessages> catMessages = qb.getQuery(getEntityManager())
+				.getResultList();
+		return catMessages.size() > 0 ? catMessages.get(0).getDescription()
+				: null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -50,8 +50,8 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterionWildcard("c.messageCode", messageCode, true);
 		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager())
-				.getResultList();
+		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(
+				getEntityManager()).getResultList();
 		return cats != null && cats.size() > 0 ? cats.get(0) : null;
 	}
 
@@ -63,8 +63,8 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		}
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterion("c.messageCode", "=", messageCode, true);
-		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager())
-				.getResultList();
+		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(
+				getEntityManager()).getResultList();
 		return cats;
 	}
 

@@ -16,18 +16,17 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.service.base.PersistenceService;
 
-@Stateless @LocalBean
+@Stateless
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
 
 	public void create(CounterPeriod e) {
 		super.create(e);
 		getEntityManager().flush();
 	}
-	
+
 }

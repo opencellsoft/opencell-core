@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
@@ -37,8 +36,8 @@ import org.meveo.service.base.PersistenceService;
  * Job history service implementation.
  */
 @Stateless
-@LocalBean
-public class JobExecutionHistoryService extends PersistenceService<JobExecutionHisto> {
+public class JobExecutionHistoryService extends
+		PersistenceService<JobExecutionHisto> {
 	@Override
 	public long count(PaginationConfiguration config) {
 
@@ -67,8 +66,8 @@ public class JobExecutionHistoryService extends PersistenceService<JobExecutionH
 	private QueryBuilder getQuery(PaginationConfiguration config) {
 
 		final Class<? extends JobExecutionHisto> entityClass = getEntityClass();
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(),
-				null);
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a",
+				config.getFetchFields(), null);
 		Map<String, Object> filters = config.getFilters();
 		if (filters != null) {
 			if (!filters.isEmpty()) {
@@ -79,59 +78,76 @@ public class JobExecutionHistoryService extends PersistenceService<JobExecutionH
 						if (key.contains("fromRange-")) {
 							String parsedKey = key.substring(10);
 							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal((Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber,
-										true);
+								BigDecimal rationalNumber = new BigDecimal(
+										(Double) filter);
+								queryBuilder.addCriterion("a." + parsedKey,
+										" >= ", rationalNumber, true);
 							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey, " >= ", filter, true);
+								queryBuilder.addCriterion("a." + parsedKey,
+										" >= ", filter, true);
 							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateRangeFromTruncatedToDay("a."
-										+ parsedKey, (Date) filter);
+								queryBuilder
+										.addCriterionDateRangeFromTruncatedToDay(
+												"a." + parsedKey, (Date) filter);
 							}
 						} else if (key.contains("toRange-")) {
 							String parsedKey = key.substring(8);
 							if (filter instanceof Double) {
-								BigDecimal rationalNumber = new BigDecimal((Double) filter);
-								queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber,
-										true);
+								BigDecimal rationalNumber = new BigDecimal(
+										(Double) filter);
+								queryBuilder.addCriterion("a." + parsedKey,
+										" <= ", rationalNumber, true);
 							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + parsedKey, " <= ", filter, true);
+								queryBuilder.addCriterion("a." + parsedKey,
+										" <= ", filter, true);
 							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateRangeToTruncatedToDay(
-										"a." + parsedKey, (Date) filter);
+								queryBuilder
+										.addCriterionDateRangeToTruncatedToDay(
+												"a." + parsedKey, (Date) filter);
 							}
 						} else if (key.contains("list-")) {
 							// if searching elements from list
 							String parsedKey = key.substring(5);
-							queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a."
-									+ parsedKey + ")", parsedKey, filter);
+							queryBuilder.addSqlCriterion(":" + parsedKey
+									+ " in elements(a." + parsedKey + ")",
+									parsedKey, filter);
 						}
 						// if not ranged search
 						else {
 							if (filter instanceof String) {
 								// if contains dot, that means join is needed
 								String filterString = (String) filter;
-								queryBuilder.addCriterionWildcard("a." + key, filterString, true);
+								queryBuilder.addCriterionWildcard("a." + key,
+										filterString, true);
 							} else if (filter instanceof Date) {
-								queryBuilder.addCriterionDateTruncatedToDay("a." + key,
-										(Date) filter);
+								queryBuilder.addCriterionDateTruncatedToDay(
+										"a." + key, (Date) filter);
 							} else if (filter instanceof Number) {
-								queryBuilder.addCriterion("a." + key, " = ", filter, true);
+								queryBuilder.addCriterion("a." + key, " = ",
+										filter, true);
 							} else if (filter instanceof Boolean) {
-								queryBuilder.addCriterion("a." + key, " is ", filter, true);
+								queryBuilder.addCriterion("a." + key, " is ",
+										filter, true);
 							} else if (filter instanceof Enum) {
 								if (filter instanceof IdentifiableEnum) {
-									String enumIdKey = new StringBuilder(key).append("Id")
-											.toString();
-									queryBuilder.addCriterion("a." + enumIdKey, " = ",
-											((IdentifiableEnum) filter).getId(), true);
+									String enumIdKey = new StringBuilder(key)
+											.append("Id").toString();
+									queryBuilder
+											.addCriterion("a." + enumIdKey,
+													" = ",
+													((IdentifiableEnum) filter)
+															.getId(), true);
 								} else {
-									queryBuilder.addCriterionEnum("a." + key, (Enum) filter);
+									queryBuilder.addCriterionEnum("a." + key,
+											(Enum) filter);
 								}
-							} else if (BaseEntity.class.isAssignableFrom(filter.getClass())) {
-								queryBuilder.addCriterionEntity("a." + key, filter);
+							} else if (BaseEntity.class.isAssignableFrom(filter
+									.getClass())) {
+								queryBuilder.addCriterionEntity("a." + key,
+										filter);
 							} else if (filter instanceof UniqueEntity) {
-								queryBuilder.addCriterionEntity("a." + key, filter);
+								queryBuilder.addCriterionEntity("a." + key,
+										filter);
 							}
 						}
 					}

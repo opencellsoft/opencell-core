@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
@@ -35,7 +34,6 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 @Stateless
-@LocalBean
 public class RecurringChargeInstanceService extends
 		ChargeInstanceService<RecurringChargeInstance> {
 
@@ -58,8 +56,7 @@ public class RecurringChargeInstanceService extends
 			qb.addCriterion("c.status", "=", status, true);
 			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate",
 					maxChargeDate);
-			recurringChargeInstances = qb.getQuery(em)
-					.getResultList();
+			recurringChargeInstances = qb.getQuery(em).getResultList();
 			log.debug(
 					"end of find {} by status (status={}). Result size found={}.",
 					new Object[] {

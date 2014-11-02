@@ -16,7 +16,6 @@
  */
 package org.meveo.service.payments.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.payments.AutomatedPayment;
@@ -24,11 +23,8 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * AutomatedPayment service implementation.
- * 
- * @author Ignas
- * @created 2009.09.04
  */
-@Stateless @LocalBean
+@Stateless
 public class AutomatedPaymentService extends
 		PersistenceService<AutomatedPayment> {
 }

@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.mail.Message.RecipientType;
@@ -48,7 +47,6 @@ import org.slf4j.Logger;
  * Email service implementation.
  */
 @Stateless
-@LocalBean
 public class EmailService extends PersistenceService<Email> {
 
 	// TODO @Resource(mappedName = "java:/Mail")
@@ -57,10 +55,12 @@ public class EmailService extends PersistenceService<Email> {
 	@Inject
 	private static Logger log;
 
-	public void sendEmail(String from, List<String> to, List<String> cc, String subject,
-			String body, List<File> files) throws BusinessException {
-		log.info("start sendEmail details: from:#0,to:#1,cc:#2,subject:#3,body:#4,files:#5", from,
-				to, cc, subject, body, files);
+	public void sendEmail(String from, List<String> to, List<String> cc,
+			String subject, String body, List<File> files)
+			throws BusinessException {
+		log.info(
+				"start sendEmail details: from:#0,to:#1,cc:#2,subject:#3,body:#4,files:#5",
+				from, to, cc, subject, body, files);
 		MimeMessage message = new MimeMessage(mailSession);
 		if (to == null || to.size() == 0) {
 			log.info("null to emails");
@@ -109,17 +109,20 @@ public class EmailService extends PersistenceService<Email> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new BusinessException("Error: " + e.getMessage() + " when send email to " + to);
+			throw new BusinessException("Error: " + e.getMessage()
+					+ " when send email to " + to);
 		}
 		log.info("successfully sendEmail!");
 	}
 
 	@SuppressWarnings("unchecked")
-	public HashMap<MediaEnum, List<MessageSenderConfig>> getMediaConfig(Provider provider) {
+	public HashMap<MediaEnum, List<MessageSenderConfig>> getMediaConfig(
+			Provider provider) {
 		HashMap<MediaEnum, List<MessageSenderConfig>> result = new HashMap<MediaEnum, List<MessageSenderConfig>>();
 		List<MessageSenderConfig> allConfig = (List<MessageSenderConfig>) getEntityManager()
 				.createQuery(
-						"from " + MessageSenderConfig.class.getSimpleName()
+						"from "
+								+ MessageSenderConfig.class.getSimpleName()
 								+ " where provider=:provider and disabled=false")
 				.setParameter("provider", provider).getResultList();
 		if (allConfig != null && allConfig.size() > 0) {

@@ -16,7 +16,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -30,7 +29,6 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 @Named
-@LocalBean
 public class TradingCountryService extends PersistenceService<TradingCountry> {
 	/**
 	 * Find TradingCountry by its trading country code.

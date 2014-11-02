@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.admin.BayadDunningInputHistory;
@@ -24,11 +23,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Bayad dunning input History service implementation.
- * 
- * @author Ignas
- * @created Apr 11, 2011
  */
-@Stateless @LocalBean
-public class BayadDunningInputHistoryService extends PersistenceService<BayadDunningInputHistory> {
+@Stateless
+public class BayadDunningInputHistoryService extends
+		PersistenceService<BayadDunningInputHistory> {
 
 }

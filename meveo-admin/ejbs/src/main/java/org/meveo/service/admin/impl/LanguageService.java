@@ -16,7 +16,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -27,7 +26,6 @@ import org.meveo.model.billing.Language;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
 @Named
 public class LanguageService extends PersistenceService<Language> {
 

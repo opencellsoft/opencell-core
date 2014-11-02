@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -71,11 +70,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-/**
- * @author R.AITYAAZZA
- */
 @Stateless
-@LocalBean
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private static final String dueDateFormat = "dd/MM/yyyy";
