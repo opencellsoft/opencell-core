@@ -332,7 +332,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  // end agregate F
                  
                  if (!entreprise) {
-                     nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add((BigDecimal)object[1]);
+                     nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add((BigDecimal)object[2]);
                  }
 
                  // start agregate T
