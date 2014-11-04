@@ -11,17 +11,17 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.security.WSSecured;
 
 /**
- *  * Web service for managing {@link org.meveo.model.billing.Language} and {@link
- * org.meveo.model.billing.TradingLanguage}.
+ * Web service for managing {@link org.meveo.model.billing.Currency} and {@link
+ * org.meveo.model.billing.TradingCurrency}.
  * 
  * @author Edward P. Legaspi
  **/
-@Path("/language")
+@Path("/currency")
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
 @WSSecured
-public class LanguageWs {
+public class CurrencyWs extends BaseWs {
 
 }
