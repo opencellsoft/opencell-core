@@ -25,13 +25,6 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.jayway.restassured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>2.3.4</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jboss.spec.javax.jms</groupId>
 			<artifactId>jboss-jms-api_1.1_spec</artifactId>
 		</dependency>
@@ -123,6 +116,26 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.13</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.extension</groupId>
+			<artifactId>arquillian-rest-client-impl-3x</artifactId>
+			<version>1.0.0.Alpha3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson-provider</artifactId>
+			<version>${version.resteasy}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.extension</groupId>
+			<artifactId>arquillian-rest-client-impl-jersey</artifactId>
+			<version>1.0.0.Alpha3</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
