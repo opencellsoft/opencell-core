@@ -2,10 +2,6 @@ package org.meveo.api.rest;
 
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
@@ -45,8 +41,7 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 	 * @param countryDto
 	 * @return @see ActionStatus
 	 */
-	@POST
-	@Path("/")
+	@Override
 	public ActionStatus create(CountryDto countryDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -88,8 +83,7 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 		return result;
 	}
 
-	@DELETE
-	@Path("/{countryCode}/{currencyCode}")
+	@Override
 	public ActionStatus remove(@PathParam("countryCode") String countryCode,
 			@PathParam("currencyCode") String currencyCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -118,8 +112,7 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 		return result;
 	}
 
-	@PUT
-	@Path("/")
+	@Override
 	public ActionStatus update(CountryDto countryDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
