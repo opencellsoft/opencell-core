@@ -28,8 +28,6 @@ import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.ext.oracle.OracleDataTypeFactory;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
 
 public class BeforeDBTest {
 
@@ -43,7 +41,7 @@ public class BeforeDBTest {
 	private static final String DB_SHOW_SQL = "hibernate.show_sql";
 
 	@SuppressWarnings("deprecation")
-	//@BeforeGroups(groups = { "db" })
+	// @BeforeGroups(groups = { "db" })
 	public void setUp() throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put(DB_USERNAME, "sa");
@@ -64,7 +62,7 @@ public class BeforeDBTest {
 		tester.onSetup();
 	}
 
-	@Test(groups = { "db" })
+	// @Test(groups = { "db" })
 	public void dummy() {
 
 	}

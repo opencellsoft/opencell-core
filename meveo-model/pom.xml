@@ -84,6 +84,7 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+
 		<dependency>
 			<groupId>cn.guoyukun.jdbc</groupId>
 			<artifactId>oracle-ojdbc6</artifactId>
