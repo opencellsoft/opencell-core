@@ -26,12 +26,15 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
@@ -39,6 +42,8 @@ import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.RejectedBillingAccounts;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
@@ -60,6 +65,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	@EJB
 	InvoiceService invoiceService;
+	
+	@EJB
+	RatedTransactionService ratedTransactionService;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(
 			BillingRun billingRun) throws BusinessException {
@@ -471,5 +479,111 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 		return result;
 	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void processBillingRun(BillingRun billingRun) throws BusinessException, Exception{
+		
+			if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+				BillingCycle billingCycle = billingRun
+						.getBillingCycle();
+
+				boolean entreprise = billingRun.getProvider()
+						.isEntreprise();
+
+				Date startDate = billingRun.getStartDate();
+				Date endDate = billingRun.getEndDate();
+				List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+				if (billingCycle != null) {
+					billingAccounts = billingAccountService
+							.findBillingAccounts(billingCycle,
+									startDate, endDate);
+				} else {
+					String[] baIds = billingRun
+							.getSelectedBillingAccounts().split(",");
+					for (String id : Arrays.asList(baIds)) {
+						Long baId = Long.valueOf(id);
+						billingAccounts.add(billingAccountService
+								.findById(baId));
+					}
+				}
+				if (billingAccounts != null
+						&& billingAccounts.size() > 0) {
+					ratedTransactionService
+							.sumbillingRunAmounts(billingRun,
+									billingAccounts,
+									RatedTransactionStatusEnum.OPEN,
+									entreprise);
+					int billableBA = 0;
+					for (BillingAccount billingAccount : billingAccounts) {
+						if (ratedTransactionService
+								.isBillingAccountBillable(billingRun,
+										billingAccount.getId())) {
+							billingRun = billingAccountService
+									.updateBillingAccountTotalAmounts(
+											billingAccount.getId(),
+											billingRun, entreprise);
+							billableBA++;
+						}
+					}
+					billingRun.setBillingAccountNumber(billingAccounts
+							.size());
+					billingRun
+							.setBillableBillingAcountNumber(billableBA);
+					billingRun.setProcessDate(new Date());
+					billingRun.setStatus(BillingRunStatusEnum.WAITING);
+					update(billingRun);
+					if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+							|| billingRun.getProvider()
+									.isAutomaticInvoicing()) {
+
+						createAgregatesAndInvoice(billingRun);
+					}
+				}
+
+			} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun
+					.getStatus())) {
+				createAgregatesAndInvoice(billingRun);
+			} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun
+					.getStatus())) {
+				for (Invoice invoice : billingRun.getInvoices()) {
+					invoiceService.setInvoiceNumber(invoice);
+					BillingAccount billingAccount = invoice
+							.getBillingAccount();
+					Date nextCalendarDate = billingAccount
+							.getBillingCycle().getNextCalendarDate();
+					billingAccount.setNextInvoiceDate(nextCalendarDate);
+					billingAccountService.update(billingAccount);
+				}
+				billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
+				update(billingRun);
+			}
+		
+	}
+	
+	  public void createAgregatesAndInvoice(BillingRun billingRun)
+				throws BusinessException, Exception {
+			List<BillingAccount> billingAccounts = billingRun
+					.getBillableBillingAccounts();
+
+			for (BillingAccount billingAccount : billingAccounts) {
+				try {
+					Long startDate = System.currentTimeMillis();
+					invoiceService
+							.createAgregatesAndInvoice(billingAccount, billingRun);
+					Long endDate = System.currentTimeMillis();
+					log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId()
+							+ ", BA_ID=" + billingAccount.getId() + ", Time en ms="
+							+ (endDate - startDate));
+				} catch (Exception e) {
+					log.error("Error for BA="+ billingAccount.getCode()+ " : "+e.getMessage());
+					billingRun.addRejectedBillingAccounts(new RejectedBillingAccounts(billingAccount, billingRun, e.getMessage()));
+				}
+				
+			}
+
+			billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
+			update(billingRun);
+
+		}
 
 }

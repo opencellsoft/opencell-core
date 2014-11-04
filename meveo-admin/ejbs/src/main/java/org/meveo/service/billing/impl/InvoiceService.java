@@ -218,6 +218,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			return null;
 		}
+	  
+
 	  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	  public void createAgregatesAndInvoice(BillingAccount billingAccount,BillingRun billingRun) throws BusinessException, Exception {
 			
