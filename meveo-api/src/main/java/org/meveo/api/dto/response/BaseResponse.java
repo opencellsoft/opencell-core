@@ -1,8 +1,8 @@
-package org.meveo.api.response;
+package org.meveo.api.dto.response;
 
 import java.io.Serializable;
 
-import org.meveo.api.ActionStatus;
+import org.meveo.api.dto.ActionStatus;
 
 /**
  * All the MEVEO API web service response must extend this class.

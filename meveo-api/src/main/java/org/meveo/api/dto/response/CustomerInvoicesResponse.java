@@ -1,4 +1,4 @@
-package org.meveo.api.response;
+package org.meveo.api.dto.response;
 
 import java.util.List;
 
