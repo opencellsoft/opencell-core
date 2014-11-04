@@ -6,29 +6,18 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.dto.InvoiceDto;
 
-
-@XmlRootElement(name = "customerInvoicesResponse")
+@XmlRootElement(name = "CustomerInvoicesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerInvoicesResponse {
+public class CustomerInvoicesResponse extends BaseResponse {
 
-	private ActionStatus actionStatus = new ActionStatus(
-			ActionStatusEnum.SUCCESS, "");
+	private static final long serialVersionUID = -954637537391623233L;
+
 	private List<InvoiceDto> CustomerInvoiceDtoList;
 
 	public CustomerInvoicesResponse() {
-
-	}
-
-	public ActionStatus getActionStatus() {
-		return actionStatus;
-	}
-
-	public void setActionStatus(ActionStatus actionStatus) {
-		this.actionStatus = actionStatus;
+		super();
 	}
 
 	public List<InvoiceDto> getCustomerInvoiceDtoList() {
@@ -39,7 +28,5 @@ public class CustomerInvoicesResponse {
 			List<InvoiceDto> customerInvoiceDtoList) {
 		CustomerInvoiceDtoList = customerInvoiceDtoList;
 	}
-
-	
 
 }

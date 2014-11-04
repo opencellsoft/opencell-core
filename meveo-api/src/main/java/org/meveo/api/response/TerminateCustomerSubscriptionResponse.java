@@ -8,9 +8,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
  **/
-@XmlRootElement(name = "terminateCustomerSubscriptionResponse")
+@XmlRootElement(name = "TerminateCustomerSubscriptionResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerminateCustomerSubscriptionResponse {
+public class TerminateCustomerSubscriptionResponse extends BaseResponse {
+
+	private static final long serialVersionUID = 2890315995921193030L;
 
 	private String requestId;
 	private Boolean accepted;

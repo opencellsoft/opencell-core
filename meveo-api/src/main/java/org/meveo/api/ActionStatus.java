@@ -8,19 +8,30 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * Determine the status of the MEVEO API web service response.
+ * 
  * @author Edward P. Legaspi
- * @since Oct 3, 2013
  **/
 @XmlRootElement(name = "actionStatus")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActionStatus {
 
+	/**
+	 * Tells whether the instance of this <code>ActionStatus</code> object ok or
+	 * not.
+	 */
 	@XmlElement(required = true)
 	@Enumerated(EnumType.STRING)
 	private ActionStatusEnum status;
 
+	/**
+	 * {@link https://www.assembla.com/spaces/meveo/wiki/Error_Codes}
+	 */
 	private int errorCode;
 
+	/**
+	 * Customer message.
+	 */
 	@XmlElement(required = true)
 	private String message;
 
@@ -28,6 +39,12 @@ public class ActionStatus {
 		status = ActionStatusEnum.SUCCESS;
 	}
 
+	/**
+	 * Sets status and message.
+	 * 
+	 * @param status
+	 * @param message
+	 */
 	public ActionStatus(ActionStatusEnum status, String message) {
 		this.status = status;
 		this.message = message;

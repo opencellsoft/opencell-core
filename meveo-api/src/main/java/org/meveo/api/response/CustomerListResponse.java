@@ -7,24 +7,18 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.dto.CustomerHierarchyDto;
 
-@XmlRootElement(name = "customerListsResponse")
+@XmlRootElement(name = "CustomerListResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerListResponse {
+public class CustomerListResponse extends BaseResponse {
 
-	private ActionStatus actionStatus = new ActionStatus(
-			ActionStatusEnum.SUCCESS, "");
+	private static final long serialVersionUID = -7840902324622306237L;
+
 	private List<CustomerHierarchyDto> customerDtoList = new ArrayList<CustomerHierarchyDto>();
-
-	public ActionStatus getActionStatus() {
-		return actionStatus;
-	}
-
-	public void setActionStatus(ActionStatus actionStatus) {
-		this.actionStatus = actionStatus;
+	
+	public CustomerListResponse() {
+		super();
 	}
 
 	public List<CustomerHierarchyDto> getCustomerDtoList() {

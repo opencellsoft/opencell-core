@@ -8,9 +8,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
  **/
-@XmlRootElement(name = "subscriptionWithCreditLimitResponse")
+@XmlRootElement(name = "SubscriptionWithCreditLimitResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubscriptionWithCreditLimitResponse {
+public class SubscriptionWithCreditLimitResponse extends BaseResponse {
+
+	private static final long serialVersionUID = 521078357548690693L;
 
 	private String requestId;
 	private Boolean accepted;

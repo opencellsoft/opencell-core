@@ -5,10 +5,7 @@ import java.io.Serializable;
 import org.meveo.api.ActionStatus;
 
 /**
- * <p>
- * The <code>BaseResponse</code> class is the base class of all the response of
- * MEVEO API.
- * </p>
+ * All the MEVEO API web service response must extend this class.
  * 
  * @author Edward P. Legaspi
  **/
@@ -16,6 +13,9 @@ public abstract class BaseResponse implements Serializable {
 
 	private static final long serialVersionUID = -4985814323159091933L;
 
+	/**
+	 * The status response of the web service response.
+	 */
 	private ActionStatus actionStatus;
 
 	public BaseResponse() {

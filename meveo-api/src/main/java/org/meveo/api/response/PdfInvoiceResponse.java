@@ -4,51 +4,28 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
-
-
 /**
  * @author R.AITYAAZZA
  *
  */
-@XmlRootElement(name = "pdfInvoiceResponse")
+@XmlRootElement(name = "PdfInvoiceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PdfInvoiceResponse {
+public class PdfInvoiceResponse extends BaseResponse {
 
-	private ActionStatus actionStatus = new ActionStatus(
-			ActionStatusEnum.SUCCESS, "");
-	
+	private static final long serialVersionUID = 3909724929599303450L;
+
 	private byte[] pdfInvoice;
 
 	public PdfInvoiceResponse() {
-
+		super();
 	}
- 
-
-	public ActionStatus getActionStatus() {
-		return actionStatus;
-	}
-
-	public void setActionStatus(ActionStatus actionStatus) {
-		this.actionStatus = actionStatus;
-	}
-
 
 	public byte[] getPdfInvoice() {
 		return pdfInvoice;
 	}
 
-
 	public void setPdfInvoice(byte[] pdfInvoice) {
 		this.pdfInvoice = pdfInvoice;
 	}
-
-
-	
-
-	
-
-	
 
 }

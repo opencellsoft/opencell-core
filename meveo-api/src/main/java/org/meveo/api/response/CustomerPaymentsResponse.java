@@ -6,30 +6,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.dto.PaymentDto;
 
-
-@XmlRootElement(name = "customerPaymentsResponse")
+@XmlRootElement(name = "CustomerPaymentsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerPaymentsResponse {
+public class CustomerPaymentsResponse extends BaseResponse {
 
-	private ActionStatus actionStatus = new ActionStatus(
-			ActionStatusEnum.SUCCESS, "");
+	private static final long serialVersionUID = -5831455659437348223L;
+	
 	private List<PaymentDto> customerPaymentDtoList;
 	private double balance;
 
 	public CustomerPaymentsResponse() {
-
-	}
-
-	public ActionStatus getActionStatus() {
-		return actionStatus;
-	}
-
-	public void setActionStatus(ActionStatus actionStatus) {
-		this.actionStatus = actionStatus;
+		super();
 	}
 
 	public List<PaymentDto> getCustomerPaymentDtoList() {
@@ -48,7 +37,5 @@ public class CustomerPaymentsResponse {
 	public void setBalance(double balance) {
 		this.balance = balance;
 	}
-
-	
 
 }
