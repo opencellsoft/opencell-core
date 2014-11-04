@@ -243,5 +243,21 @@
 				</property>
 			</activation>
 		</profile>
+
+		<profile>
+			<!-- An optional Arquillian testing profile that executes tests in your 
+				JBoss AS instance -->
+			<!-- This profile will start a new JBoss AS instance, and execute the 
+				test, shutting it down when done -->
+			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
+			<id>arq-jbossas-managed</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.jboss.as</groupId>
+					<artifactId>jboss-as-arquillian-container-managed</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 </project>
