@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Oct 16, 2013
  **/
-@XmlRootElement(name = "description")
+@XmlRootElement(name = "Description")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DescriptionDto {
 	

@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "walletBalance")
+@XmlRootElement(name = "WalletBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WalletBalanceDto {
 	private String sellerCode;

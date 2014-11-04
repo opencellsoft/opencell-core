@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "terminateSubscription")
+@XmlRootElement(name = "TerminateSubscription")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TerminateCustomerSubscriptionDto extends BaseDto {
 

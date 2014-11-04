@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
  **/
-@XmlRootElement(name = "subscriptionWithCreditLimit")
+@XmlRootElement(name = "SubscriptionWithCreditLimit")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubscriptionWithCreditLimitDto extends BaseDto {
 

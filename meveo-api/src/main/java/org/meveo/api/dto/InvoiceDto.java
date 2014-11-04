@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author R.AITYAAZZA
  * 
  */
-@XmlRootElement(name = "invoice")
+@XmlRootElement(name = "Invoice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceDto extends BaseDto {
 

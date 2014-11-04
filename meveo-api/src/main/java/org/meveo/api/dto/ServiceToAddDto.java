@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
  **/
-@XmlRootElement(name = "serviceToAdd")
+@XmlRootElement(name = "ServiceToAdd")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceToAddDto extends BaseDto {
 

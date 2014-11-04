@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author R.AITYAAZZA
  *
  */
-@XmlRootElement(name = "subCategoryInvoiceAgregate")
+@XmlRootElement(name = "SubCategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public  class SubCategoryInvoiceAgregateDto {
 

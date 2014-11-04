@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "oneShotChargeTemplateList")
+@XmlRootElement(name = "OneShotChargeTemplateList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OneShotChargeTemplateListDto {
 	

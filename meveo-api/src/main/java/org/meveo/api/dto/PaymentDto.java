@@ -20,6 +20,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "Payment")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentDto extends BaseDto {
 
 	private static final long serialVersionUID = 1L;

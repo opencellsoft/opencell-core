@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Oct 11, 2013
  **/
-@XmlRootElement(name = "countryTax")
+@XmlRootElement(name = "CountryTax")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CountryTaxDto {
 

@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
  **/
-@XmlRootElement(name = "recurringCharge")
+@XmlRootElement(name = "RecurringCharge")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecurringChargeDto {
 

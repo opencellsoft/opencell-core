@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "actionStatus")
+@XmlRootElement(name = "ActionStatus")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActionStatus {
 

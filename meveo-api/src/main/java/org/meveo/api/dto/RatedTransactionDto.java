@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 
-@XmlRootElement(name = "ratedTransaction")
+@XmlRootElement(name = "RatedTransaction")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RatedTransactionDto extends BaseDto {
 

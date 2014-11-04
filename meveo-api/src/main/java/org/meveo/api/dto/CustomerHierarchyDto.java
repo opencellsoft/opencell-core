@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "customerHeirarchy")
+@XmlRootElement(name = "CustomerHeirarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerHierarchyDto extends BaseDto {
 

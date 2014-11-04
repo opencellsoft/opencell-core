@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "walletReservation")
+@XmlRootElement(name = "WalletReservation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WalletReservationDto {
 	private Long reservationId;

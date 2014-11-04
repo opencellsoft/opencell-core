@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 4, 2013
  **/
-@XmlRootElement(name = "terminationFee")
+@XmlRootElement(name = "TerminationFee")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TerminationFeeDto {
 

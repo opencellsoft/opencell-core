@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Oct 11, 2013
  **/
-@XmlRootElement(name = "offer")
+@XmlRootElement(name = "Offer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferDto extends BaseDto {
 

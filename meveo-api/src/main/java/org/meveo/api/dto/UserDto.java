@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Oct 11, 2013
  **/
-@XmlRootElement(name = "user")
+@XmlRootElement(name = "User")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserDto extends BaseDto {
 

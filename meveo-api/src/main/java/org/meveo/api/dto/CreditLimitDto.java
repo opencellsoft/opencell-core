@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Edward P. Legaspi
  * @since Nov 13, 2013
  **/
-@XmlRootElement(name = "creditLimit")
+@XmlRootElement(name = "CreditLimit")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreditLimitDto extends BaseDto {
 

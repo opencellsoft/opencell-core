@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "oneShotChargeTemplate")
+@XmlRootElement(name = "OneShotChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OneShotChargeTemplateDto {
 	private String chargeCode;

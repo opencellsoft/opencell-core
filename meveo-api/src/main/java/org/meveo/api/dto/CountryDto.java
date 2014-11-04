@@ -11,7 +11,7 @@ import org.meveo.model.billing.Country;
  * @author Edward P. Legaspi
  * @since Oct 4, 2013
  **/
-@XmlRootElement(name = "country")
+@XmlRootElement(name = "Country")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CountryDto extends BaseDto {
 
