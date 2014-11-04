@@ -364,7 +364,7 @@ public class RatedTransactionService extends
 
 				if (!entreprise) {
 					nonEnterprisePriceWithTax = nonEnterprisePriceWithTax
-							.add((BigDecimal) object[1]);
+							.add((BigDecimal) object[2]);
 				}
 
 				// start agregate T
