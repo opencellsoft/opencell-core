@@ -1,4 +1,4 @@
-package org.meveo.api;
+package org.meveo.api.dto;
 
 /**
  * @author Edward P. Legaspi
