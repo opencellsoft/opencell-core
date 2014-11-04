@@ -392,18 +392,22 @@ public class RatingService {
 		BigDecimal priceWithoutTax = bareWalletOperation.getQuantity()
 				.multiply(unitPriceWithoutTax);
 		BigDecimal priceWithTax = null;
+		BigDecimal unitPriceAmountTax = null;
 		BigDecimal amountTax = BigDecimal.ZERO;
 		if (bareWalletOperation.getTaxPercent() != null) {
+			unitPriceAmountTax = unitPriceWithoutTax.multiply(bareWalletOperation
+					.getTaxPercent().divide(HUNDRED));
 			amountTax = priceWithoutTax.multiply(bareWalletOperation
 					.getTaxPercent().divide(HUNDRED));
 		}
 		if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
-			unitPriceWithTax = unitPriceWithoutTax.multiply(bareWalletOperation
-					.getTaxPercent().divide(HUNDRED));
-			priceWithTax = priceWithoutTax.add(amountTax);
+			if(unitPriceAmountTax != null){
+				priceWithTax = priceWithoutTax.add(unitPriceAmountTax);
+			}
 		} else {
-			priceWithTax = bareWalletOperation.getQuantity().multiply(
-					unitPriceWithTax);
+			unitPriceAmountTax=unitPriceWithTax.subtract(unitPriceWithoutTax);
+			priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithTax);
+			amountTax=priceWithTax.subtract(priceWithoutTax);
 		}
 
 		if (provider.getRounding() != null && provider.getRounding() > 0) {
@@ -415,6 +419,7 @@ public class RatingService {
 
 		bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
 		bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
+		bareWalletOperation.setUnitAmountTax(unitPriceAmountTax);
 		bareWalletOperation.setTaxPercent(bareWalletOperation.getTaxPercent());
 		bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
 		bareWalletOperation.setAmountWithTax(priceWithTax);
