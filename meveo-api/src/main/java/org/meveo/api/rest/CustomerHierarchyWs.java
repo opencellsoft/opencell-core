@@ -11,12 +11,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerHierarchyApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomerHierarchyDto;
+import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.response.CustomerListResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**

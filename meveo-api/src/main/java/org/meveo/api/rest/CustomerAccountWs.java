@@ -10,10 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.CustomerAccountApi;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.response.CustomerAccountResponse;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.response.CustomerAccountResponse;
 import org.meveo.api.rest.security.WSSecured;
 
 /**

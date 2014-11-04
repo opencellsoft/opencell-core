@@ -10,9 +10,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.WalletBalanceApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.WalletBalanceDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;

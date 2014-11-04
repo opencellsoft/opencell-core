@@ -14,9 +14,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
 import org.meveo.api.WalletReservationApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.WalletReservationDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;

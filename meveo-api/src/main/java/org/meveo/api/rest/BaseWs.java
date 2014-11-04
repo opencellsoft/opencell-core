@@ -4,8 +4,8 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import org.meveo.api.ActionStatus;
-import org.meveo.api.ActionStatusEnum;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.rest.security.WSUser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
