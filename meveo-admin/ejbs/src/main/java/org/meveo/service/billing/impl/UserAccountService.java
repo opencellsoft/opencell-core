@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
@@ -43,10 +43,7 @@ import org.meveo.service.base.AccountService;
 @Stateless
 public class UserAccountService extends AccountService<UserAccount> {
 
-	@EJB
-	private BillingAccountService billingAccountService;
-
-	@EJB
+	@Inject
 	private WalletService walletService;
 
 	public void createUserAccount(BillingAccount billingAccount,

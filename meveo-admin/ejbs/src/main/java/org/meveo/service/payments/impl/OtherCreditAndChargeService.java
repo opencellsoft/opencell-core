@@ -19,8 +19,8 @@ package org.meveo.service.payments.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
@@ -39,7 +39,7 @@ import org.meveo.service.base.PersistenceService;
 public class OtherCreditAndChargeService extends
 		PersistenceService<OtherCreditAndCharge> {
 
-	@EJB
+	@Inject
 	private OCCTemplateService occTemplateService;
 
 	@Transactional

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -68,19 +67,19 @@ public class UsageRatingService {
 	@Inject
 	private EdrService edrService;
 
-	@EJB
+	@Inject
 	private UsageChargeInstanceService usageChargeInstanceService;
 
-	@EJB
+	@Inject
 	private CounterInstanceService counterInstanceService;
 
-	@EJB
+	@Inject
 	private RatingService ratingService;
 
-	@EJB
+	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
-	@EJB
+	@Inject
 	private WalletOperationService walletOperationService;
 
 	@PostConstruct

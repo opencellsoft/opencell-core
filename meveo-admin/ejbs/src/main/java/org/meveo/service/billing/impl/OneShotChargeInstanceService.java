@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -41,7 +41,7 @@ import org.meveo.service.base.BusinessService;
 public class OneShotChargeInstanceService extends
 		BusinessService<OneShotChargeInstance> {
 
-	@EJB
+	@Inject
 	private WalletOperationService chargeApplicationService;
 
 	public OneShotChargeInstance findByCodeAndSubsription(String code,

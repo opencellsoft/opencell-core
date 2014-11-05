@@ -19,10 +19,10 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -46,13 +46,13 @@ import org.meveo.service.crm.impl.ProviderService;
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
 
-	@EJB
+	@Inject
 	private ProviderService providerService;
 
-	@EJB
+	@Inject
 	private SellerService sellerService;
 
-	@EJB
+	@Inject
 	private RatedTransactionService ratedTransactionService;
 
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode)

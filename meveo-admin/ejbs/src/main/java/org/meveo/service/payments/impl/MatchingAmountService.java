@@ -18,8 +18,8 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
@@ -32,7 +32,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 
-	@EJB
+	@Inject
 	private AccountOperationService accountOperationService;
 
 	@Transactional

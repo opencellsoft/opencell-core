@@ -19,8 +19,8 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
@@ -39,13 +39,10 @@ import org.meveo.service.base.BusinessService;
 public class UsageChargeInstanceService extends
 		BusinessService<UsageChargeInstance> {
 
-	@EJB
-	private WalletOperationService chargeApplicationService;
-
-	@EJB
+	@Inject
 	UsageRatingService usageRatingService;
 
-	@EJB
+	@Inject
 	private CounterInstanceService counterInstanceService;
 
 	public UsageChargeInstance usageChargeInstanciation(

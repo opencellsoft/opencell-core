@@ -22,10 +22,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -48,10 +48,10 @@ import org.meveo.service.base.AccountService;
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
 
-	@EJB
+	@Inject
 	private UserAccountService userAccountService;
 
-	@EJB
+	@Inject
 	RatedTransactionService ratedTransactionService;
 
 	public void createBillingAccount(BillingAccount billingAccount, User creator) {

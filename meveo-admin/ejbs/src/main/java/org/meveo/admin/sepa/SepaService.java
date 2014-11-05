@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.exception.BusinessEntityException;
@@ -56,29 +56,29 @@ public class SepaService extends PersistenceService<DDRequestItem> {
 	private static final java.util.logging.Logger logger = java.util.logging.Logger
 			.getLogger(SepaService.class.getName());
 
-	@EJB
+	@Inject
 	RecordedInvoiceService recordedInvoiceService;
-	@EJB
+	@Inject
 	CustomerAccountService customerAccountService;
-	@EJB
+	@Inject
 	DDRequestLotOpService dDRequestLotOpService;
-	@EJB
+	@Inject
 	DDRequestLOTService dDRequestLOTService;
-	@EJB
+	@Inject
 	OCCTemplateService oCCTemplateService;
-	@EJB
+	@Inject
 	UserService userService;
-	@EJB
+	@Inject
 	AutomatedPaymentService automatedPaymentService;
-	@EJB
+	@Inject
 	AccountOperationService accountOperationService;
-	@EJB
+	@Inject
 	MatchingCodeService matchingCodeService;
-	@EJB
+	@Inject
 	MatchingAmountService matchingAmountService;
-	@EJB
+	@Inject
 	SepaFileBuilder sepaFileBuilder;
-	@EJB
+	@Inject
 	SepaService sepaService;
 
 	public void createDDRquestLot(Date fromDueDate, Date toDueDate, User user,

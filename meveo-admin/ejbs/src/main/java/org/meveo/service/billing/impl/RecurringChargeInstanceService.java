@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
@@ -37,10 +37,10 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 public class RecurringChargeInstanceService extends
 		ChargeInstanceService<RecurringChargeInstance> {
 
-	@EJB
+	@Inject
 	private WalletOperationService chargeApplicationService;
 
-	// @EJB
+	// @Inject
 	// private RecurringChargeTemplateServiceLocal
 	// recurringChargeTemplateService;
 

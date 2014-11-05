@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -65,16 +65,13 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 public class RatedTransactionService extends
 		PersistenceService<RatedTransaction> {
 
-	@EJB
-	private SubscriptionService subscriptionService;
-
-	@EJB
+	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
 
-	@EJB
+	@Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
 
-	@EJB
+	@Inject
 	private CustomerAccountService customerAccountService;
 
 	private Logger logger = Logger.getLogger(RatedTransactionService.class

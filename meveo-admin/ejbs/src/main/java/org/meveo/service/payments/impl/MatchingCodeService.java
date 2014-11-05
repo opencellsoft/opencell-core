@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
@@ -50,10 +50,10 @@ import org.meveo.service.payments.remote.MatchingCodeServiceRemote;
 public class MatchingCodeService extends PersistenceService<MatchingCode>
 		implements MatchingCodeServiceRemote {
 
-	@EJB
+	@Inject
 	private CustomerAccountService customerAccountService;
 
-	@EJB
+	@Inject
 	private AccountOperationService accountOperationService;
 
 	@Transactional

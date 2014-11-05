@@ -18,8 +18,8 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -41,19 +41,11 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 public class ChargeInstanceService<P extends ChargeInstance> extends
 		BusinessService<P> {
 
-	@EJB
-	private SubscriptionService subscriptionService;
-
-	@EJB
-	private ServiceInstanceService serviceInstanceService;
-	@EJB
+	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
-	@EJB
+	@Inject
 	private RecurringChargeTemplateService recurringChargeTemplateService;
-
-	@EJB
-	private WalletOperationService chargeApplicationService;
 
 	public P findByCodeAndService(String code, Long subscriptionId) {
 		return findByCodeAndService(getEntityManager(), code, subscriptionId);

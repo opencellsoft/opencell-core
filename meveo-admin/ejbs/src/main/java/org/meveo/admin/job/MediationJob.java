@@ -12,7 +12,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -34,8 +33,8 @@ import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRParsingException;
+import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -48,7 +47,7 @@ public class MediationJob implements Job {
 
 	@Inject
 	private ProviderService providerService;
-	
+
 	@Inject
 	JobExecutionService jobExecutionService;
 
@@ -58,7 +57,7 @@ public class MediationJob implements Job {
 	@Inject
 	private Logger log;
 
-	@EJB
+	@Inject
 	CDRParsingService cdrParser;
 
 	String cdrFileName;
@@ -83,26 +82,34 @@ public class MediationJob implements Job {
 		try {
 
 			ParamBean parambean = ParamBean.getInstance();
-			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
-					+ File.separator+"imports"+ File.separator+"metering" + File.separator ;
+			String meteringDir = parambean.getProperty("providers.rootDir",
+					"/tmp/meveo/")
+					+ File.separator
+					+ provider.getCode()
+					+ File.separator
+					+ "imports"
+					+ File.separator
+					+ "metering"
+					+ File.separator;
 
-			inputDir = meteringDir+"input";
-			String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
+			inputDir = meteringDir + "input";
+			String cdrExtension = parambean.getProperty("mediation.extensions",
+					"csv");
 			ArrayList<String> cdrExtensions = new ArrayList<String>();
 			cdrExtensions.add(cdrExtension);
-			outputDir =  meteringDir+"output";
-			rejectDir =  meteringDir+"reject";
-			//TODO creer les reps
-			File f=new File(inputDir);
-			if(!f.exists()){
+			outputDir = meteringDir + "output";
+			rejectDir = meteringDir + "reject";
+			// TODO creer les reps
+			File f = new File(inputDir);
+			if (!f.exists()) {
 				f.mkdirs();
 			}
-			f=new File(outputDir);
-			if(!f.exists()){
+			f = new File(outputDir);
+			if (!f.exists()) {
 				f.mkdirs();
 			}
-			f=new File(rejectDir);
-			if(!f.exists()){
+			f = new File(rejectDir);
+			if (!f.exists()) {
 				f.mkdirs();
 			}
 			report = "";
@@ -113,7 +120,8 @@ public class MediationJob implements Job {
 				cdrParser.init(cdrFile);
 				report = "parse " + cdrFileName;
 				cdrFile = FileUtils.addExtension(cdrFile, ".processing");
-				cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
+				cdrReader = new BufferedReader(new InputStreamReader(
+						new FileInputStream(cdrFile)));
 				String line = null;
 				int processed = 0;
 				while ((line = cdrReader.readLine()) != null) {
@@ -132,7 +140,8 @@ public class MediationJob implements Job {
 								+ e.getRejectionCause().name());
 						rejectCDR(e.getCdr(), e.getRejectionCause());
 					} catch (Exception e) {
-						result.registerError("line " + processed + " :" + e.getMessage());
+						result.registerError("line " + processed + " :"
+								+ e.getMessage());
 						rejectCDR(line, CDRRejectionCauseEnum.TECH_ERR);
 					}
 				}
@@ -157,7 +166,8 @@ public class MediationJob implements Job {
 					} catch (Exception e) {
 					}
 					if (!cdrFile.delete()) {
-						report += "\r\n cannot delete " + cdrFile.getAbsolutePath();
+						report += "\r\n cannot delete "
+								+ cdrFile.getAbsolutePath();
 					}
 				}
 				result.setReport(report);
@@ -188,7 +198,8 @@ public class MediationJob implements Job {
 	private void outputCDR(String line) {
 		try {
 			if (outputFileWriter == null) {
-				File outputFile = new File(outputDir + File.separator + cdrFileName + ".processed");
+				File outputFile = new File(outputDir + File.separator
+						+ cdrFileName + ".processed");
 				outputFileWriter = new PrintWriter(outputFile);
 			}
 			outputFileWriter.println(line);
@@ -200,13 +211,15 @@ public class MediationJob implements Job {
 	private void rejectCDR(Serializable cdr, CDRRejectionCauseEnum reason) {
 		try {
 			if (rejectFileWriter == null) {
-				File rejectFile = new File(rejectDir + File.separator + cdrFileName + ".rejected");
+				File rejectFile = new File(rejectDir + File.separator
+						+ cdrFileName + ".rejected");
 				rejectFileWriter = new PrintWriter(rejectFile);
 			}
 			if (cdr instanceof String) {
 				rejectFileWriter.println(cdr + "\t" + reason.name());
 			} else {
-				rejectFileWriter.println(cdrParser.getCDRLine(cdr, reason.name()));
+				rejectFileWriter.println(cdrParser.getCDRLine(cdr,
+						reason.name()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -214,11 +227,13 @@ public class MediationJob implements Job {
 	}
 
 	@Override
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public TimerHandle createTimer(ScheduleExpression scheduleExpression,
+			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		//timerConfig.setPersistent(false);
-		Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
+		// timerConfig.setPersistent(false);
+		Timer timer = timerService.createCalendarTimer(scheduleExpression,
+				timerConfig);
 		return timer.getHandle();
 	}
 
@@ -230,9 +245,11 @@ public class MediationJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-                Provider provider=providerService.findById(info.getProviderId());
-                JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info,provider);
+				Provider provider = providerService.findById(info
+						.getProviderId());
+				JobExecutionResult result = execute(info.getParametres(),
+						provider);
+				jobExecutionService.persistResult(this, result, info, provider);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

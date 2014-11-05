@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
@@ -58,13 +57,13 @@ import org.meveo.service.payments.remote.CustomerAccountServiceRemote;
 public class CustomerAccountService extends AccountService<CustomerAccount>
 		implements CustomerAccountServiceRemote {
 
-	@EJB
+	@Inject
 	private CustomerService customerService;
 
-	@EJB
+	@Inject
 	private OtherCreditAndChargeService otherCreditAndChargeService;
 
-	@EJB
+	@Inject
 	private TitleService titleService;
 
 	@Inject

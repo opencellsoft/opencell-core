@@ -19,8 +19,8 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -46,16 +46,13 @@ import org.meveo.service.medina.impl.AccessService;
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
 
-	@EJB
-	private UserAccountService userAccountService;
-
-	@EJB
+	@Inject
 	private ServiceInstanceService serviceInstanceService;
 
-	@EJB
+	@Inject
 	private OfferTemplateService offerTemplateService;
 
-	@EJB
+	@Inject
 	private AccessService accessService;
 
 	public void updateSubscription(Subscription subscription, User updater) {

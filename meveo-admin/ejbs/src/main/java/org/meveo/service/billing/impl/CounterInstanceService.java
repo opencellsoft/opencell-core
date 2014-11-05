@@ -19,8 +19,8 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
@@ -35,10 +35,10 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
-	@EJB
+	@Inject
 	UserAccountService userAccountService;
 
-	@EJB
+	@Inject
 	CounterPeriodService counterPeriodService;
 
 	public CounterInstance counterInstanciation(UserAccount userAccount,

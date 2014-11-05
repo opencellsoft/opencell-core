@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -42,21 +42,17 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class BillingRunService extends PersistenceService<BillingRun> {
 
-	@EJB
+	@Inject
 	private WalletOperationService walletOperationService;
 
-	@EJB
-	private ProviderService providerService;
-
-	@EJB
+	@Inject
 	private BillingAccountService billingAccountService;
 
-	@EJB
+	@Inject
 	InvoiceService invoiceService;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(

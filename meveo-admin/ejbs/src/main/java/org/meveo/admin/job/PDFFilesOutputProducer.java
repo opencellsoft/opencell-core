@@ -28,8 +28,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -67,7 +67,7 @@ public class PDFFilesOutputProducer {
 
 	private static String DATE_PATERN = "yyyy.MM.dd";
 
-	@EJB
+	@Inject
 	private InvoiceService invoiceService;
 
 	/**

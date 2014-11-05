@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -52,37 +52,33 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
-	@EJB
+	@Inject
 	private SubscriptionService subscriptionService;
 
-	@EJB
-	private ServiceTemplateService serviceTemplateService;
-
-	@EJB
+	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
-	@EJB
+	@Inject
 	private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
-	@EJB
+	@Inject
 	private OneShotChargeInstanceService oneShotChargeInstanceService;
 
-	@EJB
+	@Inject
 	private UsageChargeInstanceService usageChargeInstanceService;
 
-	@EJB
+	@Inject
 	private WalletOperationService chargeApplicationService;
 
-	@EJB
+	@Inject
 	private CustomerAccountService customerAccountService;
 
-	@EJB
+	@Inject
 	private RatedTransactionService ratedTransactionService;
 
 	public ServiceInstance findByCodeAndSubscription(String code,
