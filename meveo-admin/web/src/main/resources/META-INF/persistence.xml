@@ -18,6 +18,7 @@
 				value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="true" />
 			<property name="hibernate.connection.release_mode" value="AFTER_TRANSACTION" />
+			<property name="hibernate.id.new_generator_mappings" value="false" />
 			<!-- <property name="hibernate.cache.provider_configuration_file_resource_path" 
 				value="ehcache.xml"></property> -->
 			<!-- <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" 
