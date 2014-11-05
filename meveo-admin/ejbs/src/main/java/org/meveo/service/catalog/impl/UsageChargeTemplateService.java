@@ -18,8 +18,8 @@ package org.meveo.service.catalog.impl;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -36,7 +36,7 @@ import org.meveo.service.billing.impl.UsageRatingService;
 public class UsageChargeTemplateService extends
 		ChargeTemplateService<UsageChargeTemplate> {
 
-	@Inject
+	@EJB
 	UsageRatingService usageRatingService;
 
 	public void create(UsageChargeTemplate e) {

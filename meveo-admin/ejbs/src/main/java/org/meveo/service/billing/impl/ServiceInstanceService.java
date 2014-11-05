@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -55,15 +57,16 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
+@LocalBean
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
-	@Inject
+	@EJB
 	private SubscriptionService subscriptionService;
 
-	@Inject
+	@EJB
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
-	@Inject
+	@EJB
 	private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
 	@Inject
