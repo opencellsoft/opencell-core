@@ -93,7 +93,7 @@ public class GetConverter {
 			return null;
 		}
 
-		log.debug("Getting converter={} for class={}", param, obj.getClass());
+		//log.debug("Getting converter={} for class={}", param, obj.getClass());
 
 		if (StringUtils.isBlank(param) && obj.getClass() == BigDecimal.class) {
 
