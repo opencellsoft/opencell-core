@@ -40,15 +40,13 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.payments.remote.MatchingCodeServiceRemote;
 
 /**
  * MatchingCode service implementation.
  * 
  */
 @Stateless
-public class MatchingCodeService extends PersistenceService<MatchingCode>
-		implements MatchingCodeServiceRemote {
+public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
 	@Inject
 	private CustomerAccountService customerAccountService;

@@ -48,14 +48,12 @@ import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.payments.remote.CustomerAccountServiceRemote;
 
 /**
  * Customer Account service implementation.
  */
 @Stateless
-public class CustomerAccountService extends AccountService<CustomerAccount>
-		implements CustomerAccountServiceRemote {
+public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 	@Inject
 	private CustomerService customerService;

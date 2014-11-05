@@ -40,11 +40,10 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.EmailService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.selfcare.local.SelfcareServiceLocal;
-import org.meveo.service.selfcare.remote.SelfcareServiceRemote;
 
 @Stateless
 public class SelfcareService extends PersistenceService<CustomerAccount>
-		implements SelfcareServiceLocal, SelfcareServiceRemote {
+		implements SelfcareServiceLocal {
 
 	@Inject
 	private EmailService emailService;
