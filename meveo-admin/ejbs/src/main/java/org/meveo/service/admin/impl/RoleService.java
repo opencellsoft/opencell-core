@@ -19,6 +19,7 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -30,7 +31,7 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class RoleService extends PersistenceService<Role> {
-	
+
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#list()
 	 */
@@ -45,5 +46,16 @@ public class RoleService extends PersistenceService<Role> {
 
 	public List<Role> getAllRoles() {
 		return list();
+	}
+
+	public Role findByName(String role) {
+		QueryBuilder qb = new QueryBuilder(Role.class, "r");
+
+		try {
+			qb.addCriterion("name", "=", role, true);
+			return (Role) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }

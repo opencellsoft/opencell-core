@@ -250,4 +250,17 @@ public class ProviderService extends PersistenceService<Provider> {
 		return queryBuilder;
 	}
 
+	public Provider findByCodeWithFetch(String code, List<String> fetchFields) {
+		QueryBuilder qb = new QueryBuilder(Provider.class, "p", fetchFields,
+				null);
+
+		qb.addCriterion("code", "=", code, true);
+
+		try {
+			return (Provider) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 }

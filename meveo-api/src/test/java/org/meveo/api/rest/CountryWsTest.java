@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.meveo.admin.util.ComponentResources;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.CountryServiceApi;
+import org.meveo.api.CountryApi;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -70,7 +70,7 @@ public class CountryWsTest {
 				ComponentResources.class, TitleService.class);
 
 		result.addClasses(CountryWs.class, CountryWsImpl.class,
-				CountryServiceApi.class, CountryService.class,
+				CountryApi.class, CountryService.class,
 				TradingCountryService.class, CurrencyService.class,
 				TradingCurrencyService.class);
 

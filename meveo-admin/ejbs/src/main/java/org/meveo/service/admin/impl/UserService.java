@@ -35,6 +35,7 @@ import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingLanguage;
@@ -154,11 +155,12 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User findByUsername(String username) {
+		QueryBuilder qb = new QueryBuilder(User.class, "u");
+
+		qb.addCriterion("userName", "=", username, true);
+
 		try {
-			return (User) getEntityManager()
-					.createQuery("from User where userName = :userName")
-					.setParameter("userName", username.toUpperCase())
-					.getSingleResult();
+			return (User) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
@@ -324,4 +326,18 @@ public class UserService extends PersistenceService<User> {
 			query.executeUpdate();
 		}
 	}
+
+	public User findByUsernameWithFetch(String username,
+			List<String> fetchFields) {
+		QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields, null);
+
+		qb.addCriterion("userName", "=", username, true);
+
+		try {
+			return (User) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
 }

@@ -10,12 +10,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.CountryDto;
-import org.meveo.api.exception.CountryDoesNotExistsException;
-import org.meveo.api.exception.CurrencyDoesNotExistsException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.exception.TradingCountryAlreadyExistsException;
-import org.meveo.api.exception.TradingCountryDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -35,7 +33,7 @@ import org.meveo.service.billing.impl.TradingCountryService;
  **/
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-public class CountryServiceApi extends BaseApi {
+public class CountryApi extends BaseApi {
 
 	@Inject
 	private CountryService countryService;
@@ -64,7 +62,7 @@ public class CountryServiceApi extends BaseApi {
 							provider);
 
 			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
-				throw new CurrencyDoesNotExistsException(
+				throw new EntityDoesNotExistsException(Currency.class,
 						countryDto.getCurrencyCode());
 			}
 
@@ -104,7 +102,7 @@ public class CountryServiceApi extends BaseApi {
 					// If currencyCode don't exist in reference table
 					// ("adm_currency"), return error.
 					if (currency == null) {
-						throw new CurrencyDoesNotExistsException(
+						throw new EntityDoesNotExistsException(Currency.class,
 								countryDto.getCurrencyCode());
 					}
 				} else {
@@ -154,7 +152,8 @@ public class CountryServiceApi extends BaseApi {
 							currentUser, provider);
 				}
 			} else {
-				throw new TradingCountryAlreadyExistsException(
+				throw new EntityAlreadyExistsException(
+						TradingCountry.class.getName(),
 						tradingCountry.getCountryCode());
 			}
 
@@ -191,7 +190,7 @@ public class CountryServiceApi extends BaseApi {
 				return new CountryDto(country);
 			}
 
-			throw new CountryDoesNotExistsException(countryCode);
+			throw new EntityDoesNotExistsException(Country.class, countryCode);
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -212,9 +211,9 @@ public class CountryServiceApi extends BaseApi {
 		}
 	}
 
-	public void remove(String countryCode, String currencyCode, Long providerId)
+	public void remove(String countryCode, String currencyCode, User currentUser)
 			throws MeveoApiException {
-		Provider provider = providerService.findById(providerId);
+		Provider provider = currentUser.getProvider();
 
 		if (!StringUtils.isBlank(countryCode)
 				&& !StringUtils.isBlank(currencyCode)) {
@@ -227,9 +226,11 @@ public class CountryServiceApi extends BaseApi {
 				}
 			} else {
 				if (tradingCountry == null) {
-					throw new TradingCountryDoesNotExistsException(countryCode);
+					throw new EntityDoesNotExistsException(
+							TradingCountry.class, countryCode);
 				} else {
-					throw new CurrencyDoesNotExistsException(currencyCode);
+					throw new EntityDoesNotExistsException(Currency.class,
+							currencyCode);
 				}
 			}
 		} else {
@@ -305,12 +306,12 @@ public class CountryServiceApi extends BaseApi {
 
 			} else {
 				if (currency == null) {
-					throw new CurrencyDoesNotExistsException(
+					throw new EntityDoesNotExistsException(Currency.class,
 							countryDto.getCurrencyCode());
 				}
 				if (tradingCountry == null) {
-					throw new TradingCountryDoesNotExistsException(
-							countryDto.getCountryCode());
+					throw new EntityDoesNotExistsException(
+							TradingCountry.class, countryDto.getCountryCode());
 				}
 			}
 		} else {
@@ -335,5 +336,4 @@ public class CountryServiceApi extends BaseApi {
 			throw new MissingParameterException(sb.toString());
 		}
 	}
-
 }

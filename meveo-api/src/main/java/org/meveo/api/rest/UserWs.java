@@ -1,48 +1,47 @@
 package org.meveo.api.rest;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
-import org.meveo.api.CountryApi;
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CountryDto;
-import org.meveo.api.dto.response.GetCountryResponse;
+import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.security.WSSecured;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Country} and
- * {@link org.meveo.model.billing.TradingCountry}.
- * 
  * @author Edward P. Legaspi
  **/
-@Interceptors({ LoggingInterceptor.class })
-@WSSecured
-public class CountryWsImpl extends BaseWs implements CountryWs {
+@Path("/user")
+@RequestScoped
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public class UserWs extends BaseWs {
 
 	@Inject
-	private CountryApi countryApi;
+	private UserApi userApi;
 
-	/***
-	 * Creates an instance of @see TradingCountry base on @see Country.
-	 * 
-	 * @param countryDto
-	 * @return @see ActionStatus
-	 */
-	@Override
-	public ActionStatus create(CountryDto countryDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	@POST
+	@Path("/")
+	public ActionStatus create(UserDto postData) {
+		ActionStatus result = new ActionStatus();
 
 		try {
-			countryDto.setCurrentUser(currentUser);
-			countryApi.create(countryDto);
+			userApi.create(postData, currentUser);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -63,62 +62,63 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 		return result;
 	}
 
-	@Override
-	public GetCountryResponse find(@QueryParam("countryCode") String countryCode) {
-		GetCountryResponse result = new GetCountryResponse();
-		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+	@PUT
+	@Path("/")
+	public ActionStatus update(UserDto postData) {
+		ActionStatus result = new ActionStatus();
 
 		try {
-			result.setCountry(countryApi.find(countryCode));
+			userApi.update(postData, currentUser);
+		} catch (MissingParameterException e) {
+			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (EntityDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@DELETE
+	@Path("/{username}")
+	public ActionStatus remove(@PathParam("username") String username) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			userApi.remove(username);
+		} catch (EntityDoesNotExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (Exception e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@GET
+	@Path("/")
+	public GetUserResponse find(@QueryParam("username") String username) {
+		GetUserResponse result = new GetUserResponse();
+
+		try {
+			result.setUser(userApi.find(username));
+		} catch (EntityDoesNotExistsException e) {
+			result.getActionStatus().setErrorCode(
+					MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
-	@Override
-	public ActionStatus remove(@PathParam("countryCode") String countryCode,
-			@PathParam("currencyCode") String currencyCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			countryApi.remove(countryCode, currencyCode, currentUser);
-		} catch (MissingParameterException e) {
-			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (EntityDoesNotExistsException e) {
-			result.setErrorCode(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
-	@Override
-	public ActionStatus update(CountryDto countryDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			countryDto.setCurrentUser(currentUser);
-			countryApi.update(countryDto);
-		} catch (MissingParameterException e) {
-			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (EntityDoesNotExistsException e) {
-			result.setErrorCode(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
 		}
 
 		return result;

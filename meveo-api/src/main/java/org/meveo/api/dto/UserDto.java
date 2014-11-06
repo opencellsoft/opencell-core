@@ -1,8 +1,16 @@
 package org.meveo.api.dto;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.meveo.model.admin.User;
+import org.meveo.model.security.Role;
 
 /**
  * @author Edward P. Legaspi
@@ -10,35 +18,91 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "User")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserDto extends BaseDto {
+public class UserDto implements Serializable {
 
-	private static final long serialVersionUID = -2956508868089212791L;
-	private String userId;
-	private String name;
-	private String organizationId;
+	private static final long serialVersionUID = -6633504145323452803L;
 
-	public String getName() {
-		return name;
+	private String firstName;
+	private String lastName;
+	private String username;
+	private String password;
+	private String role;
+	private String provider;
+	@XmlTransient
+	private List<String> roles;
+
+	public UserDto() {
+
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public UserDto(User user) {
+		firstName = user.getName().getFirstName();
+		lastName = user.getName().getLastName();
+		username = user.getUserName();
+		provider = user.getProvider().getCode();
+
+		if (user.getRoles() != null) {
+			roles = new ArrayList<String>();
+			for (Role r : user.getRoles()) {
+				roles.add(r.getName());
+			}
+		}
 	}
 
-	public String getOrganizationId() {
-		return organizationId;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getProvider() {
+		return provider;
+	}
+
+	public void setProvider(String provider) {
+		this.provider = provider;
+	}
+
+	public List<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
 	}
 
 }
