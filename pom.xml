@@ -34,6 +34,11 @@
 		<version.resteasy>3.0.1.Final</version.resteasy>
 	</properties>
 
+	<scm>
+		<connection>scm:git:https://git.assembla.com/meveo.git</connection>
+		<url>https://git.assembla.com/meveo.git</url>
+	</scm>
+
 	<repositories>
 		<repository>
 			<id>jboss-repo</id>
