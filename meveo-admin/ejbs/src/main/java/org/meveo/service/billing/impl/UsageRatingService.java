@@ -418,11 +418,11 @@ public class UsageRatingService {
 		log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, null, null,
 				countryId, currency, provider);
-		// for DURATION counter we update the price of the previous wallet
+		// for AGGREGATED counter we update the price of the previous wallet
 		// Operation to the current price
 		if (chargeInstance.getCounter() != null
 				&& (chargeInstance.getCounter().getCounterTemplate() != null)
-				&& CounterTypeEnum.DURATION == chargeInstance.getCounter()
+				&& CounterTypeEnum.AGGREGATED == chargeInstance.getCounter()
 						.getCounterTemplate().getCounterType()) {
 			CounterInstanceCache counterInstanceCache = counterCache
 					.get(chargeCache.getCounter().getKey());
