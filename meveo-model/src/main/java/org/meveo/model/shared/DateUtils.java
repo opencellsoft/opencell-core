@@ -329,6 +329,19 @@ public class DateUtils {
         return result;
     }
 
+
+    public static Integer getHourFromDate(Date date) {
+        Integer result = null;
+
+        if (date != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            result = calendar.get(Calendar.HOUR);
+        }
+
+        return result;
+    }
+    
     public static Integer getDayFromDate(Date date) {
         Integer result = null;
 
