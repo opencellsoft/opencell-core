@@ -73,4 +73,10 @@ public class ActionStatus {
 	public void setErrorCode(int errorCode) {
 		this.errorCode = errorCode;
 	}
+
+	@Override
+	public String toString() {
+		return "ActionStatus [status=" + status + ", errorCode=" + errorCode
+				+ ", message=" + message + "]";
+	}
 }

@@ -47,7 +47,8 @@ public class CountryApi extends BaseApi {
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
 
-	public void create(CountryDto countryDto) throws MeveoApiException {
+	public void create(CountryDto countryDto, User currentUser)
+			throws MeveoApiException {
 		if (!StringUtils.isBlank(countryDto.getCountryCode())
 				&& !StringUtils.isBlank(countryDto.getName())
 				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
@@ -55,7 +56,6 @@ public class CountryApi extends BaseApi {
 			// If countryCode exist in the trading country table
 			// ("billing_trading_country"), return error.
 
-			User currentUser = countryDto.getCurrentUser();
 			Provider provider = currentUser.getProvider();
 			TradingCountry tradingCountry = tradingCountryService
 					.findByTradingCountryCode(countryDto.getCountryCode(),
@@ -114,8 +114,6 @@ public class CountryApi extends BaseApi {
 
 				if (country.isTransient()) {
 					countryService.create(em, country, currentUser, provider);
-				} else {
-					// countryService.update(em, country, currentUser);
 				}
 
 				Auditable auditableTrading = new Auditable();
@@ -256,8 +254,8 @@ public class CountryApi extends BaseApi {
 		}
 	}
 
-	public void update(CountryDto countryDto) throws MeveoApiException {
-		User currentUser = countryDto.getCurrentUser();
+	public void update(CountryDto countryDto, User currentUser)
+			throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
 		if (!StringUtils.isBlank(countryDto.getCountryCode())
 				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
@@ -299,9 +297,7 @@ public class CountryApi extends BaseApi {
 								currentUser, provider);
 					}
 				} else {
-					// throw new CountryDoesNotExistsException(
-					// countryDto.getCountryCode());
-					create(countryDto);
+					create(countryDto, currentUser);
 				}
 
 			} else {

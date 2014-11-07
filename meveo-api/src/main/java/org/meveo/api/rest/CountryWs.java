@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.response.GetCountryResponse;
+import org.meveo.api.rest.security.WSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -23,7 +24,8 @@ import org.meveo.api.dto.response.GetCountryResponse;
 @RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public interface CountryWs {
+@WSSecured
+public interface CountryWs extends IBaseWs {
 
 	@POST
 	@Path("/")

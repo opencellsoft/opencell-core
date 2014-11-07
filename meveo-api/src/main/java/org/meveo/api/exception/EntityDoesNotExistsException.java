@@ -1,6 +1,5 @@
 package org.meveo.api.exception;
 
-import org.meveo.model.admin.User;
 
 /**
  * @author Edward P. Legaspi
@@ -18,7 +17,7 @@ public class EntityDoesNotExistsException extends MeveoApiException {
 				+ " does not exists.");
 	}
 
-	public EntityDoesNotExistsException(Class<User> clazz, String value,
+	public EntityDoesNotExistsException(Class<?> clazz, String value,
 			String field) {
 		super(clazz.getSimpleName() + " with " + field + "=" + value
 				+ " does not exists.");

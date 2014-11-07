@@ -13,7 +13,7 @@ import org.meveo.model.admin.User;
 /**
  * @author Edward P. Legaspi
  **/
-public abstract class BaseWs {
+public abstract class BaseWs implements IBaseWs {
 
 	@Inject
 	protected ParamBean paramBean;

@@ -15,7 +15,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.security.WSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Country} and
@@ -24,7 +23,6 @@ import org.meveo.api.rest.security.WSSecured;
  * @author Edward P. Legaspi
  **/
 @Interceptors({ LoggingInterceptor.class })
-@WSSecured
 public class CountryWsImpl extends BaseWs implements CountryWs {
 
 	@Inject
@@ -41,8 +39,7 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryDto.setCurrentUser(currentUser);
-			countryApi.create(countryDto);
+			countryApi.create(countryDto, currentUser);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -106,8 +103,7 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryDto.setCurrentUser(currentUser);
-			countryApi.update(countryDto);
+			countryApi.update(countryDto, currentUser);
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
