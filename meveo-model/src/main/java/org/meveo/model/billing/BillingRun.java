@@ -147,7 +147,7 @@ public class BillingRun extends AuditableEntity {
 	
 	
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<RejectedBillingAccounts> rejectedBillingAccounts = new ArrayList<RejectedBillingAccounts>();
+	private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
 
 	public Date getProcessDate() {
 		return processDate;
@@ -382,19 +382,19 @@ public class BillingRun extends AuditableEntity {
 		this.xmlInvoiceGenerated = xmlInvoiceGenerated;
 	}
 
-	public List<RejectedBillingAccounts> getRejectedBillingAccounts() {
+	public List<RejectedBillingAccount> getRejectedBillingAccounts() {
 		return rejectedBillingAccounts;
 	}
 
 	public void setRejectedBillingAccounts(
-			List<RejectedBillingAccounts> rejectedBillingAccounts) {
+			List<RejectedBillingAccount> rejectedBillingAccounts) {
 		this.rejectedBillingAccounts = rejectedBillingAccounts;
 	}
 	
 	public void addRejectedBillingAccounts(
-			RejectedBillingAccounts rejectedBillingAccount) {
+			RejectedBillingAccount rejectedBillingAccount) {
 		if(rejectedBillingAccounts==null){
-			rejectedBillingAccounts=new ArrayList<RejectedBillingAccounts>();
+			rejectedBillingAccounts=new ArrayList<RejectedBillingAccount>();
 		}
 		rejectedBillingAccounts.add(rejectedBillingAccount);
 	}

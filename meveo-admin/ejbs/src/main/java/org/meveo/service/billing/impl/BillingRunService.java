@@ -43,7 +43,7 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.RejectedBillingAccounts;
+import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
@@ -576,7 +576,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 							+ (endDate - startDate));
 				} catch (Exception e) {
 					log.error("Error for BA="+ billingAccount.getCode()+ " : "+e.getMessage());
-					billingRun.addRejectedBillingAccounts(new RejectedBillingAccounts(billingAccount, billingRun, e.getMessage()));
+					billingRun.addRejectedBillingAccounts(new RejectedBillingAccount(billingAccount, billingRun, e.getMessage()));
 				}
 				
 			}
