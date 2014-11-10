@@ -35,8 +35,10 @@ public class CustomerBrandService extends PersistenceService<CustomerBrand> {
 			return (CustomerBrand) getEntityManager()
 					.createQuery(
 							"from " + CustomerBrand.class.getSimpleName()
-									+ " where code=:code")
-					.setParameter("code", code).getSingleResult();
+									+ " where code=:code and provider=:provider")
+					.setParameter("code", code)
+					.setParameter("provider", getCurrentProvider())
+					.getSingleResult();
 		} catch (NoResultException e) {
 			return null;
 		}
@@ -47,6 +49,7 @@ public class CustomerBrandService extends PersistenceService<CustomerBrand> {
 
 		try {
 			qb.addCriterion("code", "=", code, true);
+			qb.addCriterion("provider", "=", getCurrentProvider(), true);
 			return (CustomerBrand) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
 			return null;
