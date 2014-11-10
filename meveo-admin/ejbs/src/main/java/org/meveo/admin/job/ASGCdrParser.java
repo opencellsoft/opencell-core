@@ -96,7 +96,7 @@ public class ASGCdrParser implements CSVCDRParser{
 	@Override
 	public String getOriginRecord(Serializable object) {
 		CDR cdr = (CDR)object;
-		return cdr.user_id+"_"+cdr.service_id+"_"+cdr.timestamp;
+		return cdr.user_id+"_"+cdr.service_id+"_"+cdr.id_type+"_"+cdr.timestamp;
 	}
 
 	@Override
