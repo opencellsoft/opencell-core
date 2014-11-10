@@ -62,6 +62,7 @@ public class CalendarDaily extends Calendar {
 	 * @return Next calendar date.
 	 */
 	public Date nextCalendarDate(Date date) {
+		calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		calendar.set(java.util.Calendar.SECOND,0);
 		calendar.set(java.util.Calendar.MILLISECOND,0);	
