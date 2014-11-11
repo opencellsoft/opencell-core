@@ -45,6 +45,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
@@ -1421,7 +1422,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	public void updatePriceForSameServiceAndType(
-			WalletOperation walletOperation, Date startDate, Date endDate) {
+			WalletOperation walletOperation,ServiceInstance serviceInstance, Date startDate, Date endDate) {
 		if (walletOperation.getChargeInstance() != null
 				&& walletOperation.getChargeInstance() instanceof UsageChargeInstance
 				&& !walletOperation.getQuantity().equals(BigDecimal.ZERO)
@@ -1433,35 +1434,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					walletOperation.getQuantity());
 			String strQuery = "UPDATE "
 					+ WalletOperation.class.getSimpleName()
-					+ " as w SET  w.amountWithoutTax = w.quantity * "
-					+ unitPriceWithoutTax
-					+ ","
-					+ " w.amountTax = w.quantity * "
-					+ unitTax
-					+ ","
+					+ " as w SET  w.amountWithoutTax = w.quantity * "+ unitPriceWithoutTax+ ","
+					+ " w.amountTax = w.quantity * "+ unitTax+ ","
 					+ " w.amountWithTax = w.amountWithoutTax + w.amountTax"
-					+ " WHERE w.wallet=:wallet "
-					+ " AND w.operationDate>=:startDate "
+					+ " WHERE  w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "
 					+ " AND w.status=:status "
-					+ " AND NOT(w.counter IS NULL) "
-					// + " AND TYPE(w.chargeInstance)=:usageChargeInstanceClass"
-					+ " AND w.id IN( SELECT select w2 FROM "+ WalletOperation.class.getSimpleName()
-					+" WHERE w2.chargeInstance.serviceInstance = :serviceInstance)";
-			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
-				strQuery += " AND w.id IN( SELECT w3 FROM "+WalletOperation.class.getSimpleName()
-						+" WHERE w3.chargeInstance.chargeTemplate.filterParam1 = :serviceType)";
-			}
+					+ " AND w.aggregatedServiceInstance=:serviceInstance ";
+			log.debug("strQuery="+strQuery);
 			Query query = em.createQuery(strQuery);
-			query.setParameter("wallet", walletOperation.getWallet());
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			query.setParameter("status", WalletOperationStatusEnum.OPEN);
-			// query.setParameter("usageChargeInstanceClass",
-			// UsageChargeInstance.class);
-			query.setParameter("serviceInstance",
-					((UsageChargeInstance) walletOperation.getChargeInstance())
-							.getServiceInstance());
+			query.setParameter("serviceInstance",serviceInstance);
 			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
 				query.setParameter("serviceType",
 						((UsageChargeTemplate) walletOperation

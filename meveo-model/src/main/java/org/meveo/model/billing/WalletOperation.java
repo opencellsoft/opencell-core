@@ -102,6 +102,10 @@ public class WalletOperation extends BusinessEntity {
 	@JoinColumn(name = "COUNTER_ID")
 	private CounterInstance counter;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "AGGREGATE_SERV_ID")
+	private ServiceInstance aggregatedServiceInstance;
+	
 	// @ManyToOne(fetch = FetchType.LAZY)
 	// @JoinColumn(name = "EDR_ID")
 	// private EDR usageEdr;
@@ -251,12 +255,21 @@ public class WalletOperation extends BusinessEntity {
 		this.counter = counter;
 	}
 
+	public ServiceInstance getAggregatedServiceInstance() {
+		return aggregatedServiceInstance;
+	}
+
+	public void setAggregatedServiceInstance(
+			ServiceInstance aggregatedServiceInstance) {
+		this.aggregatedServiceInstance = aggregatedServiceInstance;
+	}
+	
+	
 	/*
 	 * public EDR getUsageEdr() { return usageEdr; }
 	 * 
 	 * public void setUsageEdr(EDR usageEdr) { this.usageEdr = usageEdr; }
 	 */
-
 	public String getParameter1() {
 		return parameter1;
 	}
