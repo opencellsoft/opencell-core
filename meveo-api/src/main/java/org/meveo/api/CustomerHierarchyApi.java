@@ -113,8 +113,8 @@ public class CustomerHierarchyApi extends BaseApi {
 
 	@Inject
 	private TitleService titleService;
-	
-	@Inject 
+
+	@Inject
 	private CustomerDtoService customerDTOService;
 
 	@Inject
@@ -143,9 +143,9 @@ public class CustomerHierarchyApi extends BaseApi {
 	}
 
 	public void createCustomerHeirarchy(
-			CustomerHierarchyDto customerHeirarchyDto) throws BusinessException {
+			CustomerHierarchyDto customerHeirarchyDto, User currentUser)
+			throws BusinessException {
 
-		User currentUser = customerHeirarchyDto.getCurrentUser();
 		Provider provider = currentUser.getProvider();
 
 		if (customerService.findByCode(em,
@@ -504,12 +504,13 @@ public class CustomerHierarchyApi extends BaseApi {
 	}
 
 	public void updateCustomerHeirarchy(
-			CustomerHierarchyDto customerHeirarchyDto) throws BusinessException {
+			CustomerHierarchyDto customerHeirarchyDto, User currentUser)
+			throws BusinessException {
 
 		log.info("Updating Customer Heirarchy with code : "
 				+ customerHeirarchyDto.getCustomerId());
-		User currentUser = customerHeirarchyDto.getCurrentUser();
-		Provider provider = currentUser.getProvider(); 
+
+		Provider provider = currentUser.getProvider();
 
 		Customer customer = customerService.findByCode(em,
 				customerHeirarchyDto.getCustomerId(), provider);
@@ -895,16 +896,18 @@ public class CustomerHierarchyApi extends BaseApi {
 	}
 
 	public List<CustomerHierarchyDto> select(CustomerHierarchyDto customerDto,
-			int limit, int index, String sortField,User currentUser) throws BusinessException {
+			int limit, int index, String sortField, User currentUser)
+			throws BusinessException {
 		List<CustomerHierarchyDto> result = new ArrayList<CustomerHierarchyDto>();
-		Customer customerFilter = customerDTOService.getCustomer(customerDto,currentUser.getProvider());
+		Customer customerFilter = customerDTOService.getCustomer(customerDto,
+				currentUser.getProvider());
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
 				index, limit, null, null, sortField, null);
 
-		List<Customer> customers = customerService.findByValues(em,customerFilter, paginationConfiguration);
+		List<Customer> customers = customerService.findByValues(em,
+				customerFilter, paginationConfiguration);
 		for (Customer customer : customers) {
-			result.add(
-					customerDTOService.getCustomerDTO(customer));
+			result.add(customerDTOService.getCustomerDTO(customer));
 		}
 		return null;
 	}

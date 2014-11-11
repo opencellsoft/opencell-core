@@ -86,8 +86,8 @@ public class InvoiceApi extends BaseApi {
 	@Inject
 	private ParamBean paramBean;
 
-	public void createInvoice(InvoiceDto invoiceDTO) throws BusinessException {
-		User currentUser = invoiceDTO.getCurrentUser();
+	public void createInvoice(InvoiceDto invoiceDTO, User currentUser)
+			throws BusinessException {
 		Provider provider = currentUser.getProvider();
 		if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0
 				&& !StringUtils.isBlank(invoiceDTO.getBillingAccountCode())
@@ -346,33 +346,34 @@ public class InvoiceApi extends BaseApi {
 					InvoiceDto customerInvoiceDto = new InvoiceDto();
 					customerInvoiceDto.setBillingAccountCode(billingAccount
 							.getCode());
-					customerInvoiceDto
-							.setInvoiceDate(invoice.getInvoiceDate());
+					customerInvoiceDto.setInvoiceDate(invoice.getInvoiceDate());
 					customerInvoiceDto.setDueDate(invoice.getDueDate());
-					
+
 					customerInvoiceDto.setAmountWithoutTax(invoice
 							.getAmountWithoutTax());
 					customerInvoiceDto.setAmountTax(invoice.getAmountTax());
-					customerInvoiceDto.setAmountWithTax(invoice.getAmountWithTax());
+					customerInvoiceDto.setAmountWithTax(invoice
+							.getAmountWithTax());
 					customerInvoiceDto.setInvoiceNumber(invoice
 							.getInvoiceNumber());
-					customerInvoiceDto.setPaymentMathod(invoice.getPaymentMethod().toString());
-					customerInvoiceDto.setPDFpresent(invoice.getPdf()!=null);
+					customerInvoiceDto.setPaymentMathod(invoice
+							.getPaymentMethod().toString());
+					customerInvoiceDto.setPDFpresent(invoice.getPdf() != null);
 					SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
 
 					for (InvoiceAgregate invoiceAgregate : invoice
 							.getInvoiceAgregates()) {
-						
+
 						subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-						
-						if(invoiceAgregate instanceof CategoryInvoiceAgregate){
+
+						if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
 							subCategoryInvoiceAgregateDto.setType("R");
-						}else if(invoiceAgregate instanceof SubCategoryInvoiceAgregate){
+						} else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
 							subCategoryInvoiceAgregateDto.setType("F");
-						}else if(invoiceAgregate instanceof TaxInvoiceAgregate){
+						} else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
 							subCategoryInvoiceAgregateDto.setType("T");
 						}
-						
+
 						subCategoryInvoiceAgregateDto
 								.setItemNumber(invoiceAgregate.getItemNumber());
 						subCategoryInvoiceAgregateDto

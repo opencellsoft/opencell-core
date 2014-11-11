@@ -40,7 +40,8 @@ public class WalletBalanceWs extends BaseWs {
 
 		try {
 			result.setMessage(""
-					+ walletBalanceApi.getCurrentAmount(walletBalance,currentUser.getProvider()));
+					+ walletBalanceApi.getCurrentAmount(walletBalance,
+							getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -57,7 +58,8 @@ public class WalletBalanceWs extends BaseWs {
 
 		try {
 			result.setMessage(""
-					+ walletBalanceApi.getReservedAmount(walletBalance,currentUser.getProvider()));
+					+ walletBalanceApi.getReservedAmount(walletBalance,
+							getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -74,7 +76,8 @@ public class WalletBalanceWs extends BaseWs {
 
 		try {
 			result.setMessage(""
-					+ walletBalanceApi.getOpenAmount(walletBalance,currentUser.getProvider()));
+					+ walletBalanceApi.getOpenAmount(walletBalance,
+							getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

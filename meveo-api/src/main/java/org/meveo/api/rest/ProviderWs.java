@@ -39,7 +39,7 @@ public class ProviderWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.create(postData, currentUser);
+			providerApi.create(postData, getCurrentUser());
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -82,7 +82,7 @@ public class ProviderWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.update(postData, currentUser);
+			providerApi.update(postData, getCurrentUser());
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -966,7 +966,7 @@ DROP SEQUENCE IF EXISTS billing_trading_country_SEQ;
 CREATE SEQUENCE billing_trading_country_SEQ start with 3 increment by 1;
 
 --Counter Calendar
-insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar', 'COUNTER');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',1, 0, false, now(), 1, 1, 'CAL_COUNTER', 'Counter Calendar', 'COUNTER');
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 201);
@@ -981,7 +981,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (1, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (1, 1101);
 
 --Billing Calendar
-insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (2, 0, false, now(), 1, 1, 'CAL_INV_MONTHLY', 'Billing Calendar', 'BILLING');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',2, 0, false, now(), 1, 1, 'CAL_INV_MONTHLY', 'Billing Calendar', 'BILLING');
 insert into cat_calendar_days (calendar_id, day_id) values (2, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 201);
@@ -996,7 +996,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (2, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (2, 1101);
 
 --Charge Imputation
-insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (3, 0, false, now(), 1, 1, 'CAL_VAL_MONTHLY', 'Charge Imputation Calendar', 'CHARGE_IMPUTATION');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',3, 0, false, now(), 1, 1, 'CAL_VAL_MONTHLY', 'Charge Imputation Calendar', 'CHARGE_IMPUTATION');
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 201);
@@ -1011,7 +1011,7 @@ insert into cat_calendar_days (calendar_id, day_id) values (3, 1001);
 insert into cat_calendar_days (calendar_id, day_id) values (3, 1101);
 
 --Monthly Counter Calendar
-insert into cat_calendar (id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values (4, 0, false, now(), 1, 1, 'MONTHLY', 'Monthly Calendar', 'COUNTER');
+insert into cat_calendar (cal_type,id, version, disabled, created, provider_id, creator_id, name, description, calendar_type) values ('YEARLY',4, 0, false, now(), 1, 1, 'MONTHLY', 'Monthly Calendar', 'COUNTER');
 insert into cat_calendar_days (calendar_id, day_id) values (4, 1);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 101);
 insert into cat_calendar_days (calendar_id, day_id) values (4, 201);
