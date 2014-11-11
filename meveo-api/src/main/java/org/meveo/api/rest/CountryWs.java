@@ -1,6 +1,5 @@
 package org.meveo.api.rest;
 
-import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,7 +20,6 @@ import org.meveo.api.rest.security.WSSecured;
  * @author Edward P. Legaspi
  **/
 @Path("/country")
-@RequestScoped
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @WSSecured

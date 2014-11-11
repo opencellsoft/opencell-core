@@ -15,6 +15,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.util.ComponentResources;
@@ -57,7 +58,12 @@ public class CountryWsTest {
 	@ArquillianResource
 	private URL deploymentURL;
 
-	private Logger log = Logger.getLogger(CountryWsTest.class.getName());
+	private static Logger log = Logger.getLogger(CountryWsTest.class.getName());
+
+	@BeforeClass
+	public static void init() {
+		log.info("beforeClass");
+	}
 
 	@Deployment
 	public static Archive<?> createTestArchive() {

@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.TradingCountry;
 
 /**
  * @author Edward P. Legaspi
@@ -41,6 +42,17 @@ public class CountryDto implements Serializable {
 
 		if (e.getLanguage() != null) {
 			languageCode = e.getLanguage().getLanguageCode();
+		}
+	}
+
+	public CountryDto(TradingCountry e, Country c) {
+		countryCode = e.getCountryCode();
+		name = e.getPrDescription();
+
+		currencyCode = c.getCurrency().getCurrencyCode();
+
+		if (c.getLanguage() != null) {
+			languageCode = c.getLanguage().getLanguageCode();
 		}
 	}
 

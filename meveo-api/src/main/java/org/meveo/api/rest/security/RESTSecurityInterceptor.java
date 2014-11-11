@@ -105,8 +105,8 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 			// Split username and password tokens
 			final StringTokenizer tokenizer = new StringTokenizer(
 					usernameAndPassword, ":");
-			final String username = tokenizer.nextToken();
-			final String password = tokenizer.nextToken();
+			String username = tokenizer.nextToken();
+			String password = tokenizer.nextToken();
 
 			try {
 				currentUser = userService.loginChecks(em, username, password,
