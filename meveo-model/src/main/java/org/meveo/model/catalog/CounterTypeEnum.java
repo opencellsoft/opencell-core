@@ -5,7 +5,8 @@ public enum CounterTypeEnum {
     MONETARY(1, "counterTypeEnum.monetary"),
     DATA(2, "counterTypeEnum.data"),
     DURATION(3, "counterTypeEnum.duration"),
-    QUANTITY(4, "counterTypeEnum.quantity");
+    QUANTITY(4, "counterTypeEnum.quantity"),
+    AGGREGATED(5,"counterTypeEnum.aggregated");
 
     private Integer id;
     private String label;

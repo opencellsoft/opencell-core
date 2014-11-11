@@ -1432,9 +1432,11 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ " AND w.status=:status "
 					+ " AND NOT(w.counter IS NULL) "
 					// + " AND TYPE(w.chargeInstance)=:usageChargeInstanceClass"
-					+ " AND w.chargeInstance.serviceInstance = :serviceInstance";
+					+ " AND w.id IN( SELECT select w2 FROM "+ WalletOperation.class.getSimpleName()
+					+" WHERE w2.chargeInstance.serviceInstance = :serviceInstance)";
 			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
-				strQuery += " AND w.chargeInstance.chargeTemplate.filterParam1 = :serviceType";
+				strQuery += " AND w.id IN( SELECT w3 FROM "+WalletOperation.class.getSimpleName()
+						+" WHERE w3.chargeInstance.chargeTemplate.filterParam1 = :serviceType)";
 			}
 			Query query = em.createQuery(strQuery);
 			query.setParameter("wallet", walletOperation.getWallet());
