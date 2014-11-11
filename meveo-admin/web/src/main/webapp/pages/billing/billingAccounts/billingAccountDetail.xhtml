@@ -10,8 +10,9 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-		<f:event type="preRenderView" listener="#{billingAccountBean.preRenderView}" />
-		
+			<f:event type="preRenderView"
+				listener="#{billingAccountBean.preRenderView}" />
+
 			<f:viewParam name="billingAccountId"
 				value="#{billingAccountBean.objectId}" />
 			<f:viewParam name="customerAccountId"
@@ -122,9 +123,8 @@
 												<!--Creation window fields-->
 												<hftl:panelGroup columns="2">
 													<hf:formField label="#{messages['businessEntity.code']}"
-														field="code" showOnlyOnNew="true" showOnlyOnConsult="true"
-														validateUnique="true" size="35" maxlength="35"
-														required="true" />
+														field="code" validateUnique="true" size="35"
+														maxlength="35" required="true" />
 													<hf:formEntityField
 														label="#{messages['accountEntity.primaryContact']}"
 														field="primaryContact" childField="code" popup="false"
@@ -312,7 +312,7 @@
 												</hftl:panelGroup>
 											</hftl:fieldset>
 											<p:panelGrid columns="1" id="bankCoordinatePanel">
-											
+
 												<hftl:fieldset name="#{messages['commons.bankCoordinates']}"
 													columns="1">
 													<hftl:panelGroup columns="2">
@@ -320,14 +320,16 @@
 															value="#{messages['billingAccount.paymentMethod']}" />
 														<p:selectOneMenu id="paymentMethod"
 															value="#{billingAccountBean.entity.paymentMethod}"
-															rendered="#{billingAccountBean.edit}" required="true" >
+															rendered="#{billingAccountBean.edit}" required="true">
 															<f:selectItem itemLabel="" itemValue="" />
-															
-														<f:selectItems value="#{cc.getEnumConstants('paymentMethod')}"
-															var="enumElement" itemLabel="#{messages[enumElement.label]}" />
+
+															<f:selectItems
+																value="#{cc.getEnumConstants('paymentMethod')}"
+																var="enumElement"
+																itemLabel="#{messages[enumElement.label]}" />
 															<p:ajax event="valueChange" immediate="false"
 																update=":parentTab:formBillingAccountPanel:formId:childTab" />
-														</p:selectOneMenu>	
+														</p:selectOneMenu>
 													</hftl:panelGroup>
 													<hftl:panelGroup columns="1">
 														<hf:formField id="paymentTerm"
@@ -362,11 +364,11 @@
 													</hftl:panelGroup>
 													<h:panelGrid id="bankCoordinatesPanel" columns="1"
 														rendered="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT' or billingAccountBean.entity.paymentMethod.toString() == 'TIP'}">
-														 <p:panelGrid columns="2" id="bankCoordinatesOutputPanel">
+														<p:panelGrid columns="2" id="bankCoordinatesOutputPanel">
 															<hf:formEntityField
-																label="#{messages['bankCoordinates.bankCode']}" id="bankCode"
-																field="bankCoordinates" childField="bankCode" size="5"
-																maxlength="5"
+																label="#{messages['bankCoordinates.bankCode']}"
+																id="bankCode" field="bankCoordinates"
+																childField="bankCode" size="5" maxlength="5"
 																required="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT'}"
 																validateRib="true" />
 															<hf:formEntityField
@@ -404,10 +406,10 @@
 																field="bankCoordinates" childField="bankName" size="55"
 																maxlength="50" />
 														</hftl:panelGroup>
-														
+
 													</h:panelGrid>
 												</hftl:fieldset>
-												
+
 											</p:panelGrid>
 										</p:tab>
 									</p:tabView>
