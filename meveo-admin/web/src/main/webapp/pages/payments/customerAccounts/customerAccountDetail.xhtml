@@ -10,7 +10,8 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{customerAccountBean.preRenderView}" />
+			<f:event type="preRenderView"
+				listener="#{customerAccountBean.preRenderView}" />
 			<f:viewParam name="customerAccountId"
 				value="#{customerAccountBean.objectId}" />
 			<f:viewParam name="customerId"
@@ -231,8 +232,9 @@
 												</hftl:panelGroup>
 												<hftl:panelGroup columns="2">
 													<hf:formEntityField label="#{messages['address.zipCode']}"
-														size="10" id="zipCode" field="address" childField="zipCode"
-														length="10" popup="false" maxlength="10" />
+														size="10" id="zipCode" field="address"
+														childField="zipCode" length="10" popup="false"
+														maxlength="10" />
 													<hf:formEntityField label="#{messages['address.city']}"
 														id="city" field="address" childField="city" popup="false"
 														maxlength="50" />
@@ -257,7 +259,7 @@
 										</p:tab>
 									</p:tabView>
 
-									<hf:formButtons columns="4" saveId="save_2"
+									<hf:formButtons columns="5"
 										backingBean="#{customerAccountBean}"
 										edit="#{customerAccountBean.edit}" ajaxSubmit="false"
 										killConversationOnSave="false" killConversationOnBack="false"
