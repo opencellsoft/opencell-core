@@ -41,7 +41,7 @@
 				</hftl:panelGroup>
 			</p:outputPanel>
 
-			<p:panelGrid columns="2">
+			<p:panelGrid columns="2" rendered="#{userBean.edit}">
 				<p:outputLabel for="email"
 					value="#{messages['contactInformation.email']}"></p:outputLabel>
 				<p:inputText id="email" value="#{userBean.entity.email}"
