@@ -35,7 +35,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
-import org.meveo.admin.utils.ListItemsSelector;
+import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;

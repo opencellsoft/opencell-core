@@ -23,7 +23,7 @@ import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts;
 import org.meveo.admin.sepa.jaxb.Pain008;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
-import org.meveo.admin.utils.ArConfig;
+import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.model.admin.User;
