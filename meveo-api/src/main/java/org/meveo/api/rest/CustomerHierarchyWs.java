@@ -54,10 +54,9 @@ public class CustomerHierarchyWs extends BaseWs {
 			@QueryParam("sortField") String sortField) {
 		CustomerListResponse result = new CustomerListResponse();
 		try {
-			customerDto.setCurrentUser(currentUser);
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 			result.setCustomerDtoList(customerHierarchyApi.select(customerDto,
-					limit, index, sortField,currentUser));
+					limit, index, sortField, getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
@@ -80,9 +79,8 @@ public class CustomerHierarchyWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerHeirarchyDto.setCurrentUser(currentUser);
-			customerHierarchyApi.createCustomerHeirarchy(customerHeirarchyDto);
-
+			customerHierarchyApi.createCustomerHeirarchy(customerHeirarchyDto,
+					getCurrentUser());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -97,8 +95,8 @@ public class CustomerHierarchyWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerHeirarchyDto.setCurrentUser(currentUser);
-			customerHierarchyApi.updateCustomerHeirarchy(customerHeirarchyDto);
+			customerHierarchyApi.updateCustomerHeirarchy(customerHeirarchyDto,
+					getCurrentUser());
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -106,5 +104,4 @@ public class CustomerHierarchyWs extends BaseWs {
 
 		return result;
 	}
-
 }

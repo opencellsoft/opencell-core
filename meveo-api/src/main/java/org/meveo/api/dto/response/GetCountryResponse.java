@@ -30,4 +30,9 @@ public class GetCountryResponse extends BaseResponse {
 		this.country = country;
 	}
 
+	@Override
+	public String toString() {
+		return "GetCountryResponse [country=" + country + "]";
+	}
+
 }

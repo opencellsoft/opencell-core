@@ -13,14 +13,14 @@ import org.meveo.model.admin.User;
 /**
  * @author Edward P. Legaspi
  **/
-public abstract class BaseWs {
+public abstract class BaseWs implements IBaseWs {
 
 	@Inject
 	protected ParamBean paramBean;
 
 	@Inject
 	@WSUser
-	protected User currentUser;
+	private User currentUser;
 
 	protected final String RESPONSE_DELIMITER = " - ";
 
@@ -37,9 +37,13 @@ public abstract class BaseWs {
 	@Path("/user")
 	public ActionStatus user() {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS,
-				"WS User is=" + currentUser.toString());
+				"WS User is=" + getCurrentUser().toString());
 
 		return result;
+	}
+
+	public User getCurrentUser() {
+		return currentUser;
 	}
 
 }

@@ -41,8 +41,7 @@ public class PaymentWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			paymentDto.setCurrentUser(currentUser);
-			paymentApi.createPayment(paymentDto, currentUser);
+			paymentApi.createPayment(paymentDto, getCurrentUser());
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -65,9 +64,9 @@ public class PaymentWs extends BaseWs {
 
 		try {
 			result.setCustomerPaymentDtoList(paymentApi.getPaymentList(
-					customerAccountCode, currentUser));
+					customerAccountCode, getCurrentUser()));
 			result.setBalance(paymentApi.getBalance(customerAccountCode,
-					currentUser));
+					getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

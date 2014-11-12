@@ -41,6 +41,15 @@
 				</hftl:panelGroup>
 			</p:outputPanel>
 
+			<p:panelGrid columns="2">
+				<p:outputLabel for="email"
+					value="#{messages['contactInformation.email']}"></p:outputLabel>
+				<p:inputText id="email" value="#{userBean.entity.email}"
+					required="true">
+					<f:validator validatorId="emailValidator"></f:validator>
+				</p:inputText>
+			</p:panelGrid>
+
 			<hf:formField label="#{messages['user.roles']}" field="roles"
 				listType="pickUpList" childField="name" required="true"
 				dualListModel="#{userBean.dualListModel}" />

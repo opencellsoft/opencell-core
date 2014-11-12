@@ -41,7 +41,7 @@ public class UserWs extends BaseWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			userApi.create(postData, currentUser);
+			userApi.create(postData, getCurrentUser());
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -68,7 +68,7 @@ public class UserWs extends BaseWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			userApi.update(postData, currentUser);
+			userApi.update(postData, getCurrentUser());
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -57,6 +57,9 @@ public class User extends AuditableEntity {
 	@Column(name = "PASSWORD", length = 50)
 	private String password;
 
+	@Column(name = "EMAIL", length = 100)
+	private String email;
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "ADM_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
 	private Set<Role> roles = new HashSet<Role>();
@@ -122,7 +125,8 @@ public class User extends AuditableEntity {
 		boolean result = true;
 
 		if (lastPasswordModification != null) {
-			long diffMilliseconds = System.currentTimeMillis() - lastPasswordModification.getTime();
+			long diffMilliseconds = System.currentTimeMillis()
+					- lastPasswordModification.getTime();
 			result = (expiracyInDays - diffMilliseconds / (24 * 3600 * 1000L)) < 0;
 		}
 
@@ -217,6 +221,14 @@ public class User extends AuditableEntity {
 		} else {
 			return false;
 		}
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

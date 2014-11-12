@@ -17,6 +17,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.response.GetProviderResponse;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 
@@ -38,13 +39,17 @@ public class ProviderWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.create(postData, currentUser);
+			providerApi.create(postData, getCurrentUser());
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (EntityDoesNotExistsException e) {
 			result.setErrorCode(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+		} catch (EntityAlreadyExistsException e) {
+			result.setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		} catch (Exception e) {
@@ -77,7 +82,7 @@ public class ProviderWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.update(postData, currentUser);
+			providerApi.update(postData, getCurrentUser());
 		} catch (MissingParameterException e) {
 			result.setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 			result.setStatus(ActionStatusEnum.FAIL);

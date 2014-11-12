@@ -7,6 +7,8 @@ package org.meveo.api.exception;
 public class MeveoApiException extends Exception {
 
 	private static final long serialVersionUID = 1L;
+	
+	private int errorCode;
 
 	public MeveoApiException() {
 
@@ -14,6 +16,14 @@ public class MeveoApiException extends Exception {
 
 	public MeveoApiException(String message) {
 		super(message);
+	}
+
+	public int getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(int errorCode) {
+		this.errorCode = errorCode;
 	}
 
 }

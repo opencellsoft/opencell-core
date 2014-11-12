@@ -10,6 +10,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
@@ -54,7 +55,8 @@ public class ProviderApi extends BaseApi {
 	private UserAccountService userAccountService;
 
 	public void create(ProviderDto postData, User currentUser)
-			throws MissingParameterException, EntityDoesNotExistsException {
+			throws MissingParameterException, EntityDoesNotExistsException,
+			EntityAlreadyExistsException {
 		if (!StringUtils.isBlank(postData.getCode())) {
 			Provider provider = new Provider();
 			provider.setCode(postData.getCode());
@@ -104,6 +106,12 @@ public class ProviderApi extends BaseApi {
 				UserAccount ua = userAccountService.findByCode(
 						postData.getUserAccount(), currentUser.getProvider());
 				provider.setUserAccount(ua);
+			}
+
+			// check if provider already exists
+			if (providerService.findByCode(postData.getCode()) != null) {
+				throw new EntityAlreadyExistsException(Provider.class,
+						postData.getCode());
 			}
 
 			providerService.create(provider, currentUser);
@@ -205,7 +213,7 @@ public class ProviderApi extends BaseApi {
 
 				provider.setLanguage(language);
 			}
-			
+
 			if (!StringUtils.isBlank(postData.getUserAccount())) {
 				UserAccount ua = userAccountService.findByCode(
 						postData.getUserAccount(), currentUser.getProvider());

@@ -41,8 +41,7 @@ public class InvoiceWs extends BaseWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceDto.setCurrentUser(currentUser);
-			invoiceApi.createInvoice(invoiceDto);
+			invoiceApi.createInvoice(invoiceDto, getCurrentUser());
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -63,7 +62,7 @@ public class InvoiceWs extends BaseWs {
 
 		try {
 			result.setCustomerInvoiceDtoList(invoiceApi.getInvoiceList(
-					customerAccountCode, currentUser));
+					customerAccountCode, getCurrentUser()));
 		} catch (Exception e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());

@@ -1,11 +1,14 @@
 package org.meveo.api.dto;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.TradingCountry;
 
 /**
  * @author Edward P. Legaspi
@@ -13,7 +16,7 @@ import org.meveo.model.billing.Country;
  **/
 @XmlRootElement(name = "Country")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryDto extends BaseDto {
+public class CountryDto implements Serializable {
 
 	private static final long serialVersionUID = -4175660113940481232L;
 
@@ -36,9 +39,20 @@ public class CountryDto extends BaseDto {
 		countryCode = e.getCountryCode();
 		name = e.getDescriptionEn();
 		currencyCode = e.getCurrency().getCurrencyCode();
-		
+
 		if (e.getLanguage() != null) {
 			languageCode = e.getLanguage().getLanguageCode();
+		}
+	}
+
+	public CountryDto(TradingCountry e, Country c) {
+		countryCode = e.getCountryCode();
+		name = e.getPrDescription();
+
+		currencyCode = c.getCurrency().getCurrencyCode();
+
+		if (c.getLanguage() != null) {
+			languageCode = c.getLanguage().getLanguageCode();
 		}
 	}
 

@@ -46,7 +46,7 @@ public class OneShotChargeTemplateWs extends BaseWs {
 
 		return oneShotChargeTemplateServiceApi.getOneShotChargeTemplates(
 				languageCode, countryCode, currencyCode, sellerCode,
-				subscriptionDate, currentUser);
+				subscriptionDate, getCurrentUser());
 
 	}
 

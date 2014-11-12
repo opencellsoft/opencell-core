@@ -73,8 +73,8 @@ public class WalletReservationWs extends BaseWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletReservationApi.update(walletReservation,
-					currentUser.getProvider());
+			walletReservationApi.update(walletReservation, getCurrentUser()
+					.getProvider());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -89,8 +89,8 @@ public class WalletReservationWs extends BaseWs {
 		ActionStatus result = new ActionStatus();
 
 		try {
-			walletReservationApi.cancel(reservationId,
-					currentUser.getProvider());
+			walletReservationApi.cancel(reservationId, getCurrentUser()
+					.getProvider());
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
@@ -107,7 +107,7 @@ public class WalletReservationWs extends BaseWs {
 		try {
 			result.setMessage(""
 					+ walletReservationApi.confirm(walletReservation,
-							currentUser.getProvider()));
+							getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());

@@ -3,43 +3,32 @@ package org.meveo.api.rest;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 
-import org.meveo.api.CountryApi;
+import org.meveo.api.CurrencyApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CountryDto;
-import org.meveo.api.dto.response.GetCountryResponse;
+import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.response.GetCurrencyResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Country} and
- * {@link org.meveo.model.billing.TradingCountry}.
- * 
  * @author Edward P. Legaspi
  **/
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class CountryWsImpl extends BaseWs implements CountryWs {
+public class CurrencyWsImpl extends BaseWs implements CurrencyWs {
 
 	@Inject
-	private CountryApi countryApi;
+	private CurrencyApi currencyApi;
 
-	/***
-	 * Creates an instance of @see TradingCountry base on @see Country.
-	 * 
-	 * @param countryDto
-	 * @return @see ActionStatus
-	 */
 	@Override
-	public ActionStatus create(CountryDto countryDto) {
+	public ActionStatus create(CurrencyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryApi.create(countryDto, getCurrentUser());
+			currencyApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -54,12 +43,11 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 	}
 
 	@Override
-	public GetCountryResponse find(@QueryParam("countryCode") String countryCode) {
-		GetCountryResponse result = new GetCountryResponse();
-		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+	public GetCurrencyResponse find(String languageCode) {
+		GetCurrencyResponse result = new GetCurrencyResponse();
 
 		try {
-			result.setCountry(countryApi.find(countryCode, getCurrentUser()));
+			result.setCurrency(currencyApi.find(languageCode, getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -75,12 +63,11 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 	}
 
 	@Override
-	public ActionStatus remove(@PathParam("countryCode") String countryCode,
-			@PathParam("currencyCode") String currencyCode) {
+	public ActionStatus remove(String languageCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryApi.remove(countryCode, currencyCode, getCurrentUser());
+			currencyApi.remove(languageCode, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -95,11 +82,11 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 	}
 
 	@Override
-	public ActionStatus update(CountryDto countryDto) {
+	public ActionStatus update(CurrencyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryApi.update(countryDto, getCurrentUser());
+			currencyApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

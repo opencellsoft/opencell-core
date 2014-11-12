@@ -1,5 +1,7 @@
 package org.meveo.api.exception;
 
+import org.meveo.api.MeveoApiErrorCode;
+
 /**
  * @author Edward P. Legaspi
  * @since Nov 11, 2013
@@ -10,6 +12,7 @@ public class MissingParameterException extends MeveoApiException {
 
 	public MissingParameterException(String message) {
 		super(message);
+		setErrorCode(MeveoApiErrorCode.MISSING_PARAMETER);
 	}
 
 }

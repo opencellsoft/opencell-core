@@ -1,6 +1,7 @@
 package org.meveo.api.exception;
 
-import org.meveo.model.admin.User;
+import org.meveo.api.MeveoApiErrorCode;
+
 
 /**
  * @author Edward P. Legaspi
@@ -11,12 +12,19 @@ public class EntityAlreadyExistsException extends MeveoApiException {
 
 	public EntityAlreadyExistsException(String entityName, String code) {
 		super(entityName + " with code=" + code + " already exists.");
+		setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
 	}
 
-	public EntityAlreadyExistsException(Class<User> clazz, String value,
+	public EntityAlreadyExistsException(Class<?> clazz, String code) {
+		super(clazz.getSimpleName() + " with code=" + code + " already exists.");
+		setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
+	}
+
+	public EntityAlreadyExistsException(Class<?> clazz, String value,
 			String field) {
 		super(clazz.getSimpleName() + " with " + field + "=" + value
 				+ " already exists.");
+		setErrorCode(MeveoApiErrorCode.ENTITY_ALREADY_EXISTS_EXCEPTION);
 	}
 
 }
