@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -36,7 +34,6 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class PaymentApi extends BaseApi {
 
 	private static final java.util.logging.Logger log = java.util.logging.Logger

@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,7 +58,6 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class CustomerHierarchyApi extends BaseApi {
 
 	@Inject
@@ -454,7 +451,6 @@ public class CustomerHierarchyApi extends BaseApi {
 						userAccount, currentUser);
 
 			} else {
-
 				StringBuilder sb = new StringBuilder(
 						"Missing value for the following parameters ");
 				List<String> missingFields = new ArrayList<String>();
@@ -497,7 +493,6 @@ public class CustomerHierarchyApi extends BaseApi {
 				sb.append(".");
 
 				throw new BusinessException(sb.toString());
-
 			}
 		}
 
@@ -849,7 +844,6 @@ public class CustomerHierarchyApi extends BaseApi {
 			}
 
 		} else {
-
 			StringBuilder sb = new StringBuilder(
 					"Missing value for the following parameters ");
 			List<String> missingFields = new ArrayList<String>();
@@ -891,7 +885,6 @@ public class CustomerHierarchyApi extends BaseApi {
 			sb.append(".");
 
 			throw new BusinessException(sb.toString());
-
 		}
 	}
 
@@ -909,6 +902,7 @@ public class CustomerHierarchyApi extends BaseApi {
 		for (Customer customer : customers) {
 			result.add(customerDTOService.getCustomerDTO(customer));
 		}
+
 		return null;
 	}
 }

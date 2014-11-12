@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -25,7 +23,6 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * 
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class PdfInvoiceApi extends BaseApi {
 
 	@Inject
@@ -44,8 +41,7 @@ public class PdfInvoiceApi extends BaseApi {
 			String customerAccountCode, User currentUser) throws Exception {
 		Invoice invoice = new Invoice();
 		if (!StringUtils.isBlank(invoiceNumber)
-				&& !StringUtils.isBlank(customerAccountCode)
-			) {
+				&& !StringUtils.isBlank(customerAccountCode)) {
 			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService
 					.findByCode(em, customerAccountCode, provider);

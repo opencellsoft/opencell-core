@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -22,7 +20,6 @@ import org.meveo.service.billing.impl.ReservationService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class WalletReservationApi extends BaseApi {
 
 	@Inject

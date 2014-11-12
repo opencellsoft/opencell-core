@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -33,7 +31,6 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  **/
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class OneShotChargeTemplateServiceApi extends BaseApi {
 
 	@Inject
@@ -59,7 +56,7 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 
 	public OneShotChargeTemplateListDto getOneShotChargeTemplates(
 			String languageCode, String countryCode, String currencyCode,
-			String sellerCode, Date date,User currentUser) {
+			String sellerCode, Date date, User currentUser) {
 		Provider provider = currentUser.getProvider();
 		Seller seller = sellerService.findByCode(em, sellerCode, provider);
 		TradingCurrency currency = tradingCurrencyService
@@ -79,10 +76,9 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 			InvoiceSubCategory invoiceSubCategory = oneShotChargeTemplate
 					.getInvoiceSubCategory();
 
-			if(country == null) {
+			if (country == null) {
 				log.warn("country with code={} does not exists", countryCode);
-			}
-			else {
+			} else {
 				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 						.findInvoiceSubCategoryCountry(em,
 								invoiceSubCategory.getId(), country.getId());
@@ -99,8 +95,8 @@ public class OneShotChargeTemplateServiceApi extends BaseApi {
 					BigDecimal unitPrice = realtimeChargingService
 							.getApplicationPrice(em, provider, seller,
 									currency, country, oneShotChargeTemplate,
-									date,null, BigDecimal.ONE, null, null, null,
-									true);
+									date, null, BigDecimal.ONE, null, null,
+									null, true);
 					if (unitPrice != null) {
 						oneShotChargeDto.setUnitPriceWithoutTax(unitPrice
 								.doubleValue());

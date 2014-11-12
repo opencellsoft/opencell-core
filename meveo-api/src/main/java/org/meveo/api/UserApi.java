@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.util.security.Sha1Encrypt;
@@ -29,7 +27,6 @@ import org.meveo.service.crm.impl.ProviderService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class UserApi extends BaseApi {
 
 	@Inject

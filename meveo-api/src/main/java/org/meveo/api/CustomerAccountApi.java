@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -24,7 +22,6 @@ import org.meveo.model.payments.MatchingAmount;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class CustomerAccountApi extends BaseApi {
 
 	@Inject
@@ -34,8 +31,7 @@ public class CustomerAccountApi extends BaseApi {
 			User currentUser) throws Exception {
 
 		CustomerAccountDto customerAccountDto = new CustomerAccountDto();
-		if (!StringUtils.isBlank(customerAccountCode)
-			) {
+		if (!StringUtils.isBlank(customerAccountCode)) {
 			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService
 					.findByCode(em, customerAccountCode, provider);

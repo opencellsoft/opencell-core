@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.ProviderDto;
@@ -32,7 +30,6 @@ import org.meveo.service.crm.impl.ProviderService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class ProviderApi extends BaseApi {
 
 	@Inject

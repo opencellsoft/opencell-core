@@ -1,4 +1,4 @@
-package org.meveo.api.rest;
+package org.meveo.api.rest.accounts;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -14,6 +14,7 @@ import org.meveo.api.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.CustomerAccountResponse;
 import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.rest.BaseWs;
 import org.meveo.api.rest.security.WSSecured;
 
 /**
