@@ -83,6 +83,13 @@ public abstract class Calendar extends AuditableEntity {
 	 */
 	public abstract Date previousCalendarDate(Date date);
 
+
+	/**
+	 * 
+	 * @return true if the dates used in meveo should have time set to 00:00:00 with this calendar
+	 */
+	public abstract boolean truncDateTime();
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -116,5 +123,6 @@ public abstract class Calendar extends AuditableEntity {
 	public String getDescription() {
 		return description;
 	}
+
 
 }

@@ -143,4 +143,8 @@ public class CalendarDaily extends Calendar {
 		}
 		return result;
 	}
+
+	public boolean truncDateTime() {
+		return false;
+	}
 }

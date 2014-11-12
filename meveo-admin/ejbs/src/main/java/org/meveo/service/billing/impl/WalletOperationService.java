@@ -33,6 +33,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
@@ -44,6 +45,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
@@ -52,6 +54,7 @@ import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -87,11 +90,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	@Inject
 	private RatingService chargeApplicationRatingService;
 
-	private DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	private DateFormat sdf;
 	private String str_tooPerceived = null;
 
 	@PostConstruct
 	private void init() {
+		ParamBean paramBean = ParamBean.getInstance();
+		sdf = new SimpleDateFormat(paramBean.getProperty("walletOperation.dateFormat","dd/MM/yyyy"));
 		str_tooPerceived = resourceMessages.getString("str_tooPerceived");
 	}
 
@@ -549,15 +554,20 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	public Date getNextApplicationDate(RecurringChargeInstance chargeInstance) {
 		Date applicationDate = chargeInstance.getSubscriptionDate();
-		applicationDate = DateUtils.parseDateWithPattern(
-				chargeInstance.getSubscriptionDate(), "dd/MM/yyyy");
-		chargeInstance.setChargeDate(applicationDate);
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
 				.getRecurringChargeTemplate();
+		Calendar cal = recurringChargeTemplate.getCalendar();
+		if(cal.truncDateTime()){
+			applicationDate = DateUtils.parseDateWithPattern(
+					chargeInstance.getSubscriptionDate(), "dd/MM/yyyy");
+		}
+		chargeInstance.setChargeDate(applicationDate);
 		Date nextapplicationDate = recurringChargeTemplate.getCalendar()
 				.nextCalendarDate(applicationDate);
-		nextapplicationDate = DateUtils.parseDateWithPattern(
-				nextapplicationDate, "dd/MM/yyyy");
+		if(cal.truncDateTime()){
+			nextapplicationDate = DateUtils.parseDateWithPattern(
+					nextapplicationDate, "dd/MM/yyyy");
+		}
 		return nextapplicationDate;
 	}
 
@@ -597,10 +607,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
 				.getRecurringChargeTemplate();
 
-		Date previousapplicationDate = recurringChargeTemplate.getCalendar()
-				.previousCalendarDate(applicationDate);
-		previousapplicationDate = DateUtils.parseDateWithPattern(
-				previousapplicationDate, "dd/MM/yyyy");
+		Calendar cal = recurringChargeTemplate.getCalendar();
+		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
+		if(cal.truncDateTime()){
+			previousapplicationDate = DateUtils.parseDateWithPattern(
+					previousapplicationDate, "dd/MM/yyyy");
+		}
 		log.debug(
 				"rateSubscription applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 				applicationDate, nextapplicationDate, previousapplicationDate);
@@ -778,14 +790,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Date applicationDate = chargeInstance.getTerminationDate();
 		applicationDate = DateUtils.addDaysToDate(applicationDate, 1);
-		applicationDate = DateUtils.parseDateWithPattern(applicationDate,
-				"dd/MM/yyyy");
-
-		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
-				: new BigDecimal(chargeInstance.getServiceInstance()
-						.getQuantity());
-
-		Date nextapplicationDate = null;
 
 		RecurringChargeTemplate recurringChargeTemplate = chargeInstance
 				.getRecurringChargeTemplate();
@@ -794,15 +798,26 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"Recurring charge template has no calendar: code="
 							+ recurringChargeTemplate.getCode());
 		}
+		Calendar cal = recurringChargeTemplate.getCalendar();
+		if(cal.truncDateTime()){
+			applicationDate = DateUtils.parseDateWithPattern(applicationDate,
+					"dd/MM/yyyy");
+		}
 
-		nextapplicationDate = recurringChargeTemplate.getCalendar()
-				.nextCalendarDate(applicationDate);
-		nextapplicationDate = DateUtils.parseDateWithPattern(
+		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity() == null ? BigDecimal.ONE
+				: new BigDecimal(chargeInstance.getServiceInstance()
+						.getQuantity());
+
+		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
+		if(cal.truncDateTime()){
+			nextapplicationDate = DateUtils.parseDateWithPattern(
 				nextapplicationDate, "dd/MM/yyyy");
-		Date previousapplicationDate = recurringChargeTemplate.getCalendar()
-				.previousCalendarDate(applicationDate);
-		previousapplicationDate = DateUtils.parseDateWithPattern(
-				previousapplicationDate, "dd/MM/yyyy");
+		}
+		Date previousapplicationDate = cal.previousCalendarDate(applicationDate);
+		if(cal.truncDateTime()){
+			previousapplicationDate = DateUtils.parseDateWithPattern(
+					previousapplicationDate, "dd/MM/yyyy");
+		}
 		log.debug(
 				"applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 				applicationDate, nextapplicationDate, previousapplicationDate);
@@ -1407,7 +1422,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	public void updatePriceForSameServiceAndType(
-			WalletOperation walletOperation, Date startDate, Date endDate) {
+			WalletOperation walletOperation,ServiceInstance serviceInstance, Date startDate, Date endDate) {
 		if (walletOperation.getChargeInstance() != null
 				&& walletOperation.getChargeInstance() instanceof UsageChargeInstance
 				&& !walletOperation.getQuantity().equals(BigDecimal.ZERO)
@@ -1419,35 +1434,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					walletOperation.getQuantity());
 			String strQuery = "UPDATE "
 					+ WalletOperation.class.getSimpleName()
-					+ " as w SET  w.amountWithoutTax = w.quantity * "
-					+ unitPriceWithoutTax
-					+ ","
-					+ " w.amountTax = w.quantity * "
-					+ unitTax
-					+ ","
+					+ " as w SET  w.amountWithoutTax = w.quantity * "+ unitPriceWithoutTax+ ","
+					+ " w.amountTax = w.quantity * "+ unitTax+ ","
 					+ " w.amountWithTax = w.amountWithoutTax + w.amountTax"
-					+ " WHERE w.wallet=:wallet "
-					+ " AND w.operationDate>=:startDate "
+					+ " WHERE  w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "
 					+ " AND w.status=:status "
-					+ " AND NOT(w.counter IS NULL) "
-					// + " AND TYPE(w.chargeInstance)=:usageChargeInstanceClass"
-					+ " AND w.id IN( SELECT select w2 FROM "+ WalletOperation.class.getSimpleName()
-					+" WHERE w2.chargeInstance.serviceInstance = :serviceInstance)";
-			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
-				strQuery += " AND w.id IN( SELECT w3 FROM "+WalletOperation.class.getSimpleName()
-						+" WHERE w3.chargeInstance.chargeTemplate.filterParam1 = :serviceType)";
-			}
+					+ " AND w.aggregatedServiceInstance=:serviceInstance ";
+			log.debug("strQuery="+strQuery);
 			Query query = em.createQuery(strQuery);
-			query.setParameter("wallet", walletOperation.getWallet());
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			query.setParameter("status", WalletOperationStatusEnum.OPEN);
-			// query.setParameter("usageChargeInstanceClass",
-			// UsageChargeInstance.class);
-			query.setParameter("serviceInstance",
-					((UsageChargeInstance) walletOperation.getChargeInstance())
-							.getServiceInstance());
+			query.setParameter("serviceInstance",serviceInstance);
 			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
 				query.setParameter("serviceType",
 						((UsageChargeTemplate) walletOperation

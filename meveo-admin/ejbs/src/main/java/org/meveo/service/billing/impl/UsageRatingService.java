@@ -434,9 +434,10 @@ public class UsageRatingService {
 							.getStartDate().equals(edr.getEventDate()))
 							&& itemPeriodCache.getEndDate().after(
 									edr.getEventDate())) {
+						walletOperation.setAggregatedServiceInstance(chargeInstance.getServiceInstance());
 						walletOperationService
 								.updatePriceForSameServiceAndType(
-										walletOperation,
+										walletOperation,chargeInstance.getServiceInstance(),
 										itemPeriodCache.getStartDate(),
 										itemPeriodCache.getEndDate());
 						break;
