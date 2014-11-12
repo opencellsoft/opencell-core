@@ -1,4 +1,4 @@
-package org.meveo.api.dto;
+package org.meveo.api.dto.account;
 
 import java.util.Date;
 
@@ -6,9 +6,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "CustomerHeirarchy")
+import org.meveo.api.dto.BaseDto;
+
+@XmlRootElement(name = "AccountHierarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomerHierarchyDto extends BaseDto {
+public class AccountHierarchyDto extends BaseDto {
 
 	private static final long serialVersionUID = -8469973066490541924L;
 
@@ -30,7 +32,10 @@ public class CustomerHierarchyDto extends BaseDto {
 	private String phoneNumber;
 	private String city;
 	private String titleCode;
-	
+
+	private int limit;
+	private String sortField;
+	private int index;
 
 	public String getCustomerId() {
 		return customerId;
@@ -143,8 +148,6 @@ public class CustomerHierarchyDto extends BaseDto {
 	public void setAddress2(String address2) {
 		this.address2 = address2;
 	}
-	
-	
 
 	public Date getBirthDate() {
 		return birthDate;
@@ -161,8 +164,6 @@ public class CustomerHierarchyDto extends BaseDto {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
-	
 
 	public String getCity() {
 		return city;
@@ -182,23 +183,41 @@ public class CustomerHierarchyDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "CustomerHeirarchyDto [customerId = " + customerId
-				+ ",sellerCode = " + sellerCode 
-				+ ", customerBrandCode = " + customerBrandCode
-				+ ", customerCategoryCode = " + customerCategoryCode 
-				+ ", currencyCode = " + currencyCode
-				+ ", countryCode = " + countryCode
-				+ " ,firstName = " + firstName
-				+ ", lastName = " + lastName
-				+ ", languageCode = " + languageCode 
-				+ ",billingCycleCode = " + billingCycleCode
-				+ ", email =" + email
-				+ ", zipCode = " + zipCode
-				+ ", address1 = " + address1
-				+ ", address2 = " + address2
-				+ ",birthDate = " + birthDate
-				+ ", phoneNumber= " +phoneNumber
-				+ ",city = "+ city
-				+ ",titleCode = "+ titleCode +"]";
+		return "AccountHierarchyDto [customerId=" + customerId
+				+ ", sellerCode=" + sellerCode + ", customerBrandCode="
+				+ customerBrandCode + ", customerCategoryCode="
+				+ customerCategoryCode + ", currencyCode=" + currencyCode
+				+ ", countryCode=" + countryCode + ", firstName=" + firstName
+				+ ", lastName=" + lastName + ", languageCode=" + languageCode
+				+ ", billingCycleCode=" + billingCycleCode + ", email=" + email
+				+ ", zipCode=" + zipCode + ", address1=" + address1
+				+ ", address2=" + address2 + ", birthDate=" + birthDate
+				+ ", phoneNumber=" + phoneNumber + ", city=" + city
+				+ ", titleCode=" + titleCode + "]";
 	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public String getSortField() {
+		return sortField;
+	}
+
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
 }

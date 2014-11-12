@@ -22,5 +22,6 @@ public class MeveoApiErrorCode {
 	public static int INVALID_PARAMETER = 2001;
 	
 	public static int GENERIC_API_EXCEPTION = 9000;
+	public static int BUSINESS_API_EXCEPTION = 9001;
 
 }

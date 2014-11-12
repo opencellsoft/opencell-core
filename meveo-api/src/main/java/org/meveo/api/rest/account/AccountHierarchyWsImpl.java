@@ -1,40 +1,28 @@
-package org.meveo.api.rest.accounts;
+package org.meveo.api.rest.account;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.CustomerHierarchyApi;
+import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CustomerHierarchyDto;
+import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.response.CustomerListResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.BaseWs;
-import org.meveo.api.rest.security.WSSecured;
 
 /**
- * 
- * @author Luis Alfonso L. Mance
- * 
- */
-@Path("/customer")
+ * @author Edward P. Legaspi
+ **/
 @RequestScoped
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Interceptors({ LoggingInterceptor.class })
-@WSSecured
-public class CustomerHierarchyWs extends BaseWs {
+public class AccountHierarchyWsImpl extends BaseWs implements
+		AccountHierarchyWs {
 
 	@Inject
-	private CustomerHierarchyApi customerHierarchyApi;
+	private AccountHierarchyApi accountHierarchyApi;
 
 	/**
 	 * 
@@ -48,20 +36,19 @@ public class CustomerHierarchyWs extends BaseWs {
 	 *            name of the field used for sorting
 	 * @return list of customer dto satisfying the filter
 	 */
-	@POST
-	@Path("/select")
-	public CustomerListResponse select(CustomerHierarchyDto customerDto,
-			@QueryParam("limit") int limit, @QueryParam("index") int index,
-			@QueryParam("sortField") String sortField) {
+	@Override
+	public CustomerListResponse find(AccountHierarchyDto customerDto) {
 		CustomerListResponse result = new CustomerListResponse();
+
 		try {
-			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-			result.setCustomerDtoList(customerHierarchyApi.select(customerDto,
-					limit, index, sortField, getCurrentUser()));
-		} catch (Exception e) {
+			result.setCustomerDtoList(accountHierarchyApi.find(customerDto,
+					getCurrentUser()));
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}
+
 		return result;
 	}
 
@@ -74,15 +61,15 @@ public class CustomerHierarchyWs extends BaseWs {
 	 * sellerCode
 	 * ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
 	 */
-	@POST
-	@Path("/create")
-	public ActionStatus create(CustomerHierarchyDto customerHeirarchyDto) {
+	@Override
+	public ActionStatus create(AccountHierarchyDto customerHeirarchyDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerHierarchyApi.createCustomerHeirarchy(customerHeirarchyDto,
+			accountHierarchyApi.createAccountHierarchy(customerHeirarchyDto,
 					getCurrentUser());
-		} catch (Exception e) {
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
@@ -90,19 +77,20 @@ public class CustomerHierarchyWs extends BaseWs {
 		return result;
 	}
 
-	@POST
-	@Path("/update")
-	public ActionStatus update(CustomerHierarchyDto customerHeirarchyDto) {
+	@Override
+	public ActionStatus update(AccountHierarchyDto customerHeirarchyDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			customerHierarchyApi.updateCustomerHeirarchy(customerHeirarchyDto,
+			accountHierarchyApi.updateCustomerHeirarchy(customerHeirarchyDto,
 					getCurrentUser());
-		} catch (BusinessException e) {
+		} catch (MeveoApiException e) {
+			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
 		}
 
 		return result;
 	}
+
 }

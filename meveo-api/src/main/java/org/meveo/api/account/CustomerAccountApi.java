@@ -1,4 +1,4 @@
-package org.meveo.api;
+package org.meveo.api.account;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,9 +9,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.BaseApi;
 import org.meveo.api.dto.AccountOperationDto;
-import org.meveo.api.dto.CustomerAccountDto;
 import org.meveo.api.dto.MatchingAmountDto;
+import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;

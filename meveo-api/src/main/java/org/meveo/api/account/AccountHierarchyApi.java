@@ -1,4 +1,4 @@
-package org.meveo.api;
+package org.meveo.api.account;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -9,10 +9,17 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.CustomerHierarchyDto;
-import org.meveo.api.dto.service.CustomerDtoService;
+import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.util.CustomerUtil;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
@@ -58,7 +65,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
 @Stateless
-public class CustomerHierarchyApi extends BaseApi {
+public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private Logger log;
@@ -112,7 +119,7 @@ public class CustomerHierarchyApi extends BaseApi {
 	private TitleService titleService;
 
 	@Inject
-	private CustomerDtoService customerDTOService;
+	private CustomerUtil customerUtil;
 
 	@Inject
 	private ParamBean paramBean;
@@ -139,16 +146,16 @@ public class CustomerHierarchyApi extends BaseApi {
 		return newValue;
 	}
 
-	public void createCustomerHeirarchy(
-			CustomerHierarchyDto customerHeirarchyDto, User currentUser)
-			throws BusinessException {
+	public void createAccountHierarchy(
+			AccountHierarchyDto customerHeirarchyDto, User currentUser)
+			throws MeveoApiException {
 
 		Provider provider = currentUser.getProvider();
 
 		if (customerService.findByCode(em,
 				customerHeirarchyDto.getCustomerId(), provider) != null) {
-			throw new BusinessException("Customer with code "
-					+ customerHeirarchyDto.getCustomerId() + " already exists.");
+			throw new EntityAlreadyExistsException(Customer.class,
+					customerHeirarchyDto.getCustomerId());
 		} else {
 
 			if (!StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())
@@ -186,8 +193,8 @@ public class CustomerHierarchyApi extends BaseApi {
 							customerHeirarchyDto.getCountryCode());
 
 					if (country == null) {
-						throw new BusinessException("Invalid country code "
-								+ customerHeirarchyDto.getCountryCode());
+						throw new EntityDoesNotExistsException(Country.class,
+								customerHeirarchyDto.getCountryCode());
 					} else {
 						// create tradingCountry
 						tradingCountry = new TradingCountry();
@@ -212,9 +219,8 @@ public class CustomerHierarchyApi extends BaseApi {
 							customerHeirarchyDto.getCurrencyCode());
 
 					if (currency == null) {
-						throw new BusinessException("Currency with code "
-								+ customerHeirarchyDto.getCurrencyCode()
-								+ " does not exist.");
+						throw new EntityDoesNotExistsException(Currency.class,
+								customerHeirarchyDto.getCurrencyCode());
 					} else {
 						// create tradingCountry
 						tradingCurrency = new TradingCurrency();
@@ -241,9 +247,8 @@ public class CustomerHierarchyApi extends BaseApi {
 							customerHeirarchyDto.getLanguageCode());
 
 					if (language == null) {
-						throw new BusinessException("Language with code "
-								+ customerHeirarchyDto.getLanguageCode()
-								+ " does not exist.");
+						throw new EntityDoesNotExistsException(Language.class,
+								customerHeirarchyDto.getLanguageCode());
 					} else {
 						// create tradingCountry
 						tradingLanguage = new TradingLanguage();
@@ -265,10 +270,8 @@ public class CustomerHierarchyApi extends BaseApi {
 
 				if (StringUtils.isEmpty(customerHeirarchyDto
 						.getCustomerCategoryCode())) {
-					throw new BusinessException(
-							"Missing Customer Category Code "
-									+ customerHeirarchyDto
-											.getCustomerCategoryCode());
+					throw new MissingParameterException(
+							"CustomerCategorCode is required.");
 				}
 
 				CustomerCategory customerCategory = customerCategoryService
@@ -381,32 +384,24 @@ public class CustomerHierarchyApi extends BaseApi {
 									"default.billingCycleCode", "DEFAULT"),
 							provider);
 					if (billingCycle == null) {
+						String imputationCalendarCode = paramBean.getProperty(
+								"default.imputationCalendar.Name",
+								"DEF_IMP_CAL");
 						Calendar imputationCalendar = calendarService
-								.findByName(em, paramBean.getProperty(
-										"default.imputationCalendar.Name",
-										"DEF_IMP_CAL"));
+								.findByName(em, imputationCalendarCode);
 
+						String cycleCalendarCode = paramBean.getProperty(
+								"default.cycleCalendar.Name", "DEF_CYC_CAL");
 						Calendar cycleCalendar = calendarService.findByName(em,
-								paramBean.getProperty(
-										"default.cycleCalendar.Name",
-										"DEF_CYC_CAL"));
+								cycleCalendarCode);
 
 						if (imputationCalendar == null) {
-							throw new BusinessException(
-									"Cannot find calendar with name "
-											+ paramBean
-													.getProperty(
-															"default.imputationCalendar.Name",
-															"DEF_IMP_CAL"));
+							throw new EntityDoesNotExistsException(
+									Calendar.class, imputationCalendarCode);
 						}
 						if (cycleCalendar == null) {
-							throw new BusinessException(
-									"Cannot find calendar with name "
-											+ paramBean
-													.getProperty(
-															"default.cycleCalendar.Name",
-															"DEF_CYC_CAL"));
-
+							throw new EntityDoesNotExistsException(
+									Calendar.class, cycleCalendarCode);
 						}
 
 						billingCycle = new BillingCycle();
@@ -442,18 +437,25 @@ public class CustomerHierarchyApi extends BaseApi {
 				billingAccountService.createBillingAccount(em, billingAccount,
 						currentUser, provider);
 
+				String userAccountCode = enleverAccent(customerHeirarchyDto
+						.getCustomerId());
 				UserAccount userAccount = new UserAccount();
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
-				userAccount.setCode(enleverAccent(customerHeirarchyDto
-						.getCustomerId()));
-				userAccountService.createUserAccount(em, billingAccount,
-						userAccount, currentUser);
+				userAccount.setCode(userAccountCode);
+				try {
+					userAccountService.createUserAccount(em, billingAccount,
+							userAccount, currentUser);
+				} catch (AccountAlreadyExistsException e) {
+					throw new EntityAlreadyExistsException(UserAccount.class,
+							userAccountCode);
+				}
 
 			} else {
 				StringBuilder sb = new StringBuilder(
 						"Missing value for the following parameters ");
 				List<String> missingFields = new ArrayList<String>();
+
 				if (StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())) {
 					missingFields.add("Customer ID");
 				}
@@ -492,15 +494,14 @@ public class CustomerHierarchyApi extends BaseApi {
 				}
 				sb.append(".");
 
-				throw new BusinessException(sb.toString());
+				throw new MissingParameterException(sb.toString());
 			}
 		}
-
 	}
 
 	public void updateCustomerHeirarchy(
-			CustomerHierarchyDto customerHeirarchyDto, User currentUser)
-			throws BusinessException {
+			AccountHierarchyDto customerHeirarchyDto, User currentUser)
+			throws MeveoApiException {
 
 		log.info("Updating Customer Heirarchy with code : "
 				+ customerHeirarchyDto.getCustomerId());
@@ -511,8 +512,8 @@ public class CustomerHierarchyApi extends BaseApi {
 				customerHeirarchyDto.getCustomerId(), provider);
 
 		if (customer == null) {
-			throw new BusinessException("Customer with code "
-					+ customerHeirarchyDto.getCustomerId() + " does not exist.");
+			throw new EntityAlreadyExistsException(Customer.class,
+					customerHeirarchyDto.getCustomerId());
 		}
 
 		if (!StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())
@@ -539,8 +540,8 @@ public class CustomerHierarchyApi extends BaseApi {
 					customerHeirarchyDto.getCountryCode());
 
 			if (country == null) {
-				throw new BusinessException("Invalid country code "
-						+ customerHeirarchyDto.getCountryCode());
+				throw new EntityDoesNotExistsException(Country.class,
+						customerHeirarchyDto.getCountryCode());
 			}
 
 			TradingCountry tradingCountry = tradingCountryService
@@ -568,9 +569,8 @@ public class CustomerHierarchyApi extends BaseApi {
 					customerHeirarchyDto.getCurrencyCode());
 
 			if (currency == null) {
-				throw new BusinessException("Currency with code "
-						+ customerHeirarchyDto.getCurrencyCode()
-						+ " does not exist.");
+				throw new EntityDoesNotExistsException(Currency.class,
+						customerHeirarchyDto.getCurrencyCode());
 			}
 
 			TradingCurrency tradingCurrency = tradingCurrencyService
@@ -601,9 +601,8 @@ public class CustomerHierarchyApi extends BaseApi {
 					customerHeirarchyDto.getLanguageCode());
 
 			if (language == null) {
-				throw new BusinessException("Language with code "
-						+ customerHeirarchyDto.getLanguageCode()
-						+ " does not exist.");
+				throw new EntityDoesNotExistsException(Language.class,
+						customerHeirarchyDto.getLanguageCode());
 			}
 
 			TradingLanguage tradingLanguage = tradingLanguageService
@@ -758,30 +757,26 @@ public class CustomerHierarchyApi extends BaseApi {
 						paramBean.getProperty("default.billingCycleCode",
 								"DEFAULT"), provider);
 				if (billingCycle == null) {
+					String imputationCalendarCode = paramBean.getProperty(
+							"default.imputationCalendar.Name", "DEF_IMP_CAL");
 					Calendar imputationCalendar = calendarService.findByName(
 							em, paramBean.getProperty(
 									"default.imputationCalendar.Name",
 									"DEF_IMP_CAL"));
 
+					String cycleCalendarCode = paramBean.getProperty(
+							"default.cycleCalendar.Name", "DEF_CYC_CAL");
 					Calendar cycleCalendar = calendarService.findByName(em,
 							paramBean.getProperty("default.cycleCalendar.Name",
 									"DEF_CYC_CAL"));
 
 					if (imputationCalendar == null) {
-						throw new BusinessException(
-								"Cannot find calendar with name "
-										+ paramBean
-												.getProperty(
-														"default.imputationCalendar.Name",
-														"DEF_IMP_CAL"));
+						throw new EntityDoesNotExistsException(Calendar.class,
+								imputationCalendarCode);
 					}
 					if (cycleCalendar == null) {
-						throw new BusinessException(
-								"Cannot find calendar with name "
-										+ paramBean.getProperty(
-												"default.cycleCalendar.Name",
-												"DEF_CYC_CAL"));
-
+						throw new EntityDoesNotExistsException(Calendar.class,
+								cycleCalendarCode);
 					}
 
 					billingCycle = new BillingCycle();
@@ -830,23 +825,35 @@ public class CustomerHierarchyApi extends BaseApi {
 			if (userAccount == null) {
 				userAccount = new UserAccount();
 			}
+			String userAccountCode = enleverAccent(customerHeirarchyDto
+					.getCustomerId());
 			userAccount.setStatus(AccountStatusEnum.ACTIVE);
 			userAccount.setBillingAccount(billingAccount);
-			userAccount.setCode(enleverAccent(customerHeirarchyDto
-					.getCustomerId()));
+			userAccount.setCode(userAccountCode);
 
 			if (userAccount.isTransient()) {
-				userAccountService.createUserAccount(em, billingAccount,
-						userAccount, currentUser);
+				try {
+					userAccountService.createUserAccount(em, billingAccount,
+							userAccount, currentUser);
+				} catch (AccountAlreadyExistsException e) {
+					throw new EntityAlreadyExistsException(UserAccount.class,
+							userAccountCode);
+				}
 			} else {
-				userAccountService.updateUserAccount(em, userAccount,
-						currentUser);
+				try {
+					userAccountService.updateUserAccount(em, userAccount,
+							currentUser);
+				} catch (BusinessException e) {
+					throw new MeveoApiException(
+							MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+				}
 			}
 
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"Missing value for the following parameters ");
 			List<String> missingFields = new ArrayList<String>();
+
 			if (StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())) {
 				missingFields.add("Customer ID");
 			}
@@ -884,23 +891,26 @@ public class CustomerHierarchyApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new BusinessException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
 	}
 
-	public List<CustomerHierarchyDto> select(CustomerHierarchyDto customerDto,
-			int limit, int index, String sortField, User currentUser)
-			throws BusinessException {
-		List<CustomerHierarchyDto> result = new ArrayList<CustomerHierarchyDto>();
-		Customer customerFilter = customerDTOService.getCustomer(customerDto,
+	public List<AccountHierarchyDto> find(AccountHierarchyDto customerDto,
+			User currentUser) throws MeveoApiException {
+		List<AccountHierarchyDto> result = new ArrayList<AccountHierarchyDto>();
+		Customer customerFilter;
+
+		customerFilter = customerUtil.getCustomer(customerDto,
 				currentUser.getProvider());
+
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
-				index, limit, null, null, sortField, null);
+				customerDto.getIndex(), customerDto.getLimit(), null, null,
+				customerDto.getSortField(), null);
 
 		List<Customer> customers = customerService.findByValues(em,
 				customerFilter, paginationConfiguration);
 		for (Customer customer : customers) {
-			result.add(customerDTOService.getCustomerDTO(customer));
+			result.add(customerUtil.getCustomerDTO(customer));
 		}
 
 		return null;
