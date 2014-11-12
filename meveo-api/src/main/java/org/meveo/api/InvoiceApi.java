@@ -7,10 +7,11 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.InvoiceDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -41,6 +42,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.meveo.util.MeveoParamBean;
 
 /**
  * @author R.AITYAAZZA
@@ -81,11 +83,13 @@ public class InvoiceApi extends BaseApi {
 	TaxService taxService;
 
 	@Inject
+	@MeveoParamBean
 	private ParamBean paramBean;
 
-	public void createInvoice(InvoiceDto invoiceDTO, User currentUser)
-			throws BusinessException {
+	public void create(InvoiceDto invoiceDTO, User currentUser)
+			throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
+	
 		if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0
 				&& !StringUtils.isBlank(invoiceDTO.getBillingAccountCode())
 				&& !StringUtils.isBlank(invoiceDTO.getDueDate())
@@ -281,12 +285,10 @@ public class InvoiceApi extends BaseApi {
 					}
 					sb.append(".");
 
-					throw new BusinessException(sb.toString());
+					throw new MissingParameterException(sb.toString());
 				}
-
 			}
 		} else {
-
 			StringBuilder sb = new StringBuilder(
 					"Missing value for the following parameters ");
 			List<String> missingFields = new ArrayList<String>();
@@ -316,13 +318,12 @@ public class InvoiceApi extends BaseApi {
 			}
 			sb.append(".");
 
-			throw new BusinessException(sb.toString());
+			throw new MissingParameterException(sb.toString());
 		}
-
 	}
 
-	public List<InvoiceDto> getInvoiceList(String customerAccountCode,
-			User currentUser) throws Exception {
+	public List<InvoiceDto> list(String customerAccountCode, User currentUser)
+			throws MeveoApiException {
 		List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
 
 		if (!StringUtils.isBlank(customerAccountCode)) {
@@ -330,9 +331,8 @@ public class InvoiceApi extends BaseApi {
 			CustomerAccount customerAccount = customerAccountService
 					.findByCode(em, customerAccountCode, provider);
 			if (customerAccount == null) {
-				throw new BusinessException(
-						"Cannot find customer account with code="
-								+ customerAccountCode);
+				throw new EntityDoesNotExistsException(CustomerAccount.class,
+						customerAccountCode);
 			}
 
 			for (BillingAccount billingAccount : customerAccount
@@ -417,7 +417,6 @@ public class InvoiceApi extends BaseApi {
 			sb.append(".");
 
 			throw new MissingParameterException(sb.toString());
-
 		}
 
 		return customerInvoiceDtos;
