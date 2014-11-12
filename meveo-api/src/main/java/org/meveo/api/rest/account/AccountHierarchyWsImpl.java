@@ -37,11 +37,11 @@ public class AccountHierarchyWsImpl extends BaseWs implements
 	 * @return list of customer dto satisfying the filter
 	 */
 	@Override
-	public CustomerListResponse find(AccountHierarchyDto customerDto) {
+	public CustomerListResponse find(AccountHierarchyDto accountHierarchyDto) {
 		CustomerListResponse result = new CustomerListResponse();
 
 		try {
-			result.setCustomerDtoList(accountHierarchyApi.find(customerDto,
+			result.setCustomerDtoList(accountHierarchyApi.find(accountHierarchyDto,
 					getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -62,11 +62,11 @@ public class AccountHierarchyWsImpl extends BaseWs implements
 	 * ,currencyCode,countryCode,lastName,languageCode,billingCycleCode
 	 */
 	@Override
-	public ActionStatus create(AccountHierarchyDto customerHeirarchyDto) {
+	public ActionStatus create(AccountHierarchyDto accountHierarchyDto) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accountHierarchyApi.createAccountHierarchy(customerHeirarchyDto,
+			accountHierarchyApi.create(accountHierarchyDto,
 					getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
@@ -82,7 +82,7 @@ public class AccountHierarchyWsImpl extends BaseWs implements
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			accountHierarchyApi.updateCustomerHeirarchy(customerHeirarchyDto,
+			accountHierarchyApi.update(customerHeirarchyDto,
 					getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());

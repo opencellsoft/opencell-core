@@ -25,10 +25,10 @@ public interface AccountHierarchyWs extends IBaseWs {
 
 	@POST
 	@Path("/")
-	public ActionStatus create(AccountHierarchyDto customerHeirarchyDto);
+	public ActionStatus create(AccountHierarchyDto accountHierarchyDto);
 
 	@PUT
 	@Path("/")
-	public ActionStatus update(AccountHierarchyDto customerHeirarchyDto);
+	public ActionStatus update(AccountHierarchyDto accountHierarchyDto);
 
 }

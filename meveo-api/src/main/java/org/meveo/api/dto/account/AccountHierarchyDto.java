@@ -5,8 +5,10 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.crm.Customer;
 
 @XmlRootElement(name = "AccountHierarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -20,22 +22,56 @@ public class AccountHierarchyDto extends BaseDto {
 	private String customerCategoryCode;
 	private String currencyCode;
 	private String countryCode;
+	private String languageCode;
+
+	private String titleCode;
 	private String firstName;
 	private String lastName;
-	private String languageCode;
-	private String billingCycleCode;
 	private String email;
-	private String zipCode;
-	private String address1;
-	private String address2;
 	private Date birthDate;
 	private String phoneNumber;
-	private String city;
-	private String titleCode;
 
+	private String billingCycleCode;
+
+	private String address1;
+	private String address2;
+	private String zipCode;
+	private String city;	
+
+	@XmlTransient
 	private int limit;
+	
+	@XmlTransient
 	private String sortField;
+	
+	@XmlTransient
 	private int index;
+	
+	public AccountHierarchyDto() {
+		
+	}
+
+	public AccountHierarchyDto(Customer customer) {
+		this.setCustomerId(customer.getCode());
+		this.setEmail(customer.getContactInformation().getEmail());
+		this.setPhoneNumber(customer.getContactInformation().getPhone());
+
+		if (customer.getAddress() != null) {
+			this.setAddress1(customer.getAddress().getAddress1());
+			this.setAddress2(customer.getAddress().getAddress2());
+			this.setZipCode(customer.getAddress().getZipCode());
+			this.setCountryCode(customer.getAddress().getCountry());
+			this.setCity(customer.getAddress().getCity());
+		}
+
+		if (customer.getName() != null) {
+			if (customer.getName().getTitle() != null) {
+				this.setTitleCode(customer.getName().getTitle().getCode());
+			}
+			this.setLastName(customer.getName().getLastName());
+			this.setFirstName(customer.getName().getFirstName());
+		}
+	}
 
 	public String getCustomerId() {
 		return customerId;

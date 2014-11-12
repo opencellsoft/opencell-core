@@ -69,6 +69,7 @@ public class CustomerService extends PersistenceService<Customer> {
 		// to determine the filters with fields that are set
 		List<Customer> result = new ArrayList<Customer>();
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
+
 		if (c.getAddress() != null) {
 			if (!StringUtils.isBlank(c.getAddress().getAddress1())) {
 				qb.addCriterion("c.address.address1", "=", c.getAddress()
@@ -105,15 +106,14 @@ public class CustomerService extends PersistenceService<Customer> {
 			qb.addCriterion("c.customerCategory.code", "=", c
 					.getCustomerCategory().getCode(), false);
 		}
-		if (!StringUtils.isBlank(c.getContactInformation().getEmail())) {
-			qb.addCriterion("c.email", "=", c.getContactInformation()
-					.getEmail(), true);
-		}
+		// if (!StringUtils.isBlank(c.getContactInformation().getEmail())) {
+		// qb.addCriterion("c.email", "=", c.getContactInformation()
+		// .getEmail(), true);
+		// }
 		if (!StringUtils.isBlank(c.getCode())) {
 			qb.addCriterion("c.code", "=", c.getCode(), false);
 		}
 		if (c.getName() != null) {
-
 			if (!StringUtils.isBlank(c.getName().getFirstName())) {
 				qb.addCriterion("c.name.firstName", "=", c.getName()
 						.getFirstName(), true);
@@ -123,9 +123,11 @@ public class CustomerService extends PersistenceService<Customer> {
 						.getLastName(), true);
 			}
 		}
+
 		qb.addCriterionEntity("c.provider", c.getProvider());
 		qb.addPaginationConfiguration(paginationConfiguration);
 		result = qb.getQuery(em).getResultList();
+
 		return result;
 	}
 

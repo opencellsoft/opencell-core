@@ -62,13 +62,10 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.slf4j.Logger;
+import org.meveo.util.MeveoParamBean;
 
 @Stateless
 public class AccountHierarchyApi extends BaseApi {
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private CustomerBrandService customerBrandService;
@@ -122,6 +119,7 @@ public class AccountHierarchyApi extends BaseApi {
 	private CustomerUtil customerUtil;
 
 	@Inject
+	@MeveoParamBean
 	private ParamBean paramBean;
 
 	/*
@@ -146,39 +144,31 @@ public class AccountHierarchyApi extends BaseApi {
 		return newValue;
 	}
 
-	public void createAccountHierarchy(
-			AccountHierarchyDto customerHeirarchyDto, User currentUser)
-			throws MeveoApiException {
+	public void create(AccountHierarchyDto accountHierarchy,
+			User currentUser) throws MeveoApiException {
 
 		Provider provider = currentUser.getProvider();
 
-		if (customerService.findByCode(em,
-				customerHeirarchyDto.getCustomerId(), provider) != null) {
+		if (customerService.findByCode(em, accountHierarchy.getCustomerId(),
+				provider) != null) {
 			throw new EntityAlreadyExistsException(Customer.class,
-					customerHeirarchyDto.getCustomerId());
+					accountHierarchy.getCustomerId());
 		} else {
-
-			if (!StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())
-					&& !StringUtils.isEmpty(customerHeirarchyDto
+			if (!StringUtils.isEmpty(accountHierarchy.getCustomerId())
+					&& !StringUtils.isEmpty(accountHierarchy
 							.getCustomerBrandCode())
-					&& !StringUtils.isEmpty(customerHeirarchyDto
+					&& !StringUtils.isEmpty(accountHierarchy
 							.getCustomerCategoryCode())
-					&& !StringUtils.isEmpty(customerHeirarchyDto
-							.getSellerCode())
-					&& !StringUtils.isEmpty(customerHeirarchyDto
-							.getCurrencyCode())
-					&& !StringUtils.isEmpty(customerHeirarchyDto
-							.getCountryCode())
-					&& !StringUtils.isEmpty(customerHeirarchyDto.getLastName())
-					&& !StringUtils.isEmpty(customerHeirarchyDto
-							.getLanguageCode())
-					&& !StringUtils.isEmpty(customerHeirarchyDto
+					&& !StringUtils.isEmpty(accountHierarchy.getSellerCode())
+					&& !StringUtils.isEmpty(accountHierarchy.getCurrencyCode())
+					&& !StringUtils.isEmpty(accountHierarchy.getCountryCode())
+					&& !StringUtils.isEmpty(accountHierarchy.getLastName())
+					&& !StringUtils.isEmpty(accountHierarchy.getLanguageCode())
+					&& !StringUtils.isEmpty(accountHierarchy
 							.getBillingCycleCode())) {
 
-				log.info("Creating Customer Heirarchy...");
-
 				Seller seller = sellerService.findByCode(em,
-						customerHeirarchyDto.getSellerCode(), provider);
+						accountHierarchy.getSellerCode(), provider);
 
 				Auditable auditableTrading = new Auditable();
 				auditableTrading.setCreated(new Date());
@@ -186,15 +176,14 @@ public class AccountHierarchyApi extends BaseApi {
 
 				TradingCountry tradingCountry = tradingCountryService
 						.findByTradingCountryCode(em,
-								customerHeirarchyDto.getCountryCode(), provider);
+								accountHierarchy.getCountryCode(), provider);
 
 				if (tradingCountry == null) {
 					Country country = countryService.findByCode(em,
-							customerHeirarchyDto.getCountryCode());
-
+							accountHierarchy.getCountryCode());
 					if (country == null) {
 						throw new EntityDoesNotExistsException(Country.class,
-								customerHeirarchyDto.getCountryCode());
+								accountHierarchy.getCountryCode());
 					} else {
 						// create tradingCountry
 						tradingCountry = new TradingCountry();
@@ -211,20 +200,18 @@ public class AccountHierarchyApi extends BaseApi {
 
 				TradingCurrency tradingCurrency = tradingCurrencyService
 						.findByTradingCurrencyCode(em,
-								customerHeirarchyDto.getCurrencyCode(),
-								provider);
-
+								accountHierarchy.getCurrencyCode(), provider);
 				if (tradingCurrency == null) {
 					Currency currency = currencyService.findByCode(em,
-							customerHeirarchyDto.getCurrencyCode());
+							accountHierarchy.getCurrencyCode());
 
 					if (currency == null) {
 						throw new EntityDoesNotExistsException(Currency.class,
-								customerHeirarchyDto.getCurrencyCode());
+								accountHierarchy.getCurrencyCode());
 					} else {
 						// create tradingCountry
 						tradingCurrency = new TradingCurrency();
-						tradingCurrency.setCurrencyCode(customerHeirarchyDto
+						tradingCurrency.setCurrencyCode(accountHierarchy
 								.getCurrencyCode());
 						tradingCurrency.setCurrency(currency);
 						tradingCurrency.setProvider(provider);
@@ -239,20 +226,18 @@ public class AccountHierarchyApi extends BaseApi {
 
 				TradingLanguage tradingLanguage = tradingLanguageService
 						.findByTradingLanguageCode(em,
-								customerHeirarchyDto.getLanguageCode(),
-								provider);
-
+								accountHierarchy.getLanguageCode(), provider);
 				if (tradingLanguage == null) {
 					Language language = languageService.findByCode(em,
-							customerHeirarchyDto.getLanguageCode());
+							accountHierarchy.getLanguageCode());
 
 					if (language == null) {
 						throw new EntityDoesNotExistsException(Language.class,
-								customerHeirarchyDto.getLanguageCode());
+								accountHierarchy.getLanguageCode());
 					} else {
 						// create tradingCountry
 						tradingLanguage = new TradingLanguage();
-						tradingLanguage.setLanguageCode(customerHeirarchyDto
+						tradingLanguage.setLanguageCode(accountHierarchy
 								.getLanguageCode());
 						tradingLanguage.setLanguage(language);
 						tradingLanguage.setProvider(provider);
@@ -266,33 +251,27 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 
 				CustomerBrand customerBrand = customerBrandService.findByCode(
-						em, customerHeirarchyDto.getCustomerBrandCode());
-
-				if (StringUtils.isEmpty(customerHeirarchyDto
-						.getCustomerCategoryCode())) {
-					throw new MissingParameterException(
-							"CustomerCategorCode is required.");
-				}
-
-				CustomerCategory customerCategory = customerCategoryService
-						.findByCode(em,
-								customerHeirarchyDto.getCustomerCategoryCode());
+						em, accountHierarchy.getCustomerBrandCode());
 
 				if (customerBrand == null) {
 					customerBrand = new CustomerBrand();
-					customerBrand.setCode(enleverAccent(customerHeirarchyDto
+					customerBrand.setCode(enleverAccent(accountHierarchy
 							.getCustomerBrandCode()));
-					customerBrand.setDescription(customerHeirarchyDto
+					customerBrand.setDescription(accountHierarchy
 							.getCustomerBrandCode());
 					customerBrandService.create(em, customerBrand, currentUser,
 							provider);
 				}
 
+				CustomerCategory customerCategory = customerCategoryService
+						.findByCode(em,
+								accountHierarchy.getCustomerCategoryCode());
+
 				if (customerCategory == null) {
 					customerCategory = new CustomerCategory();
-					customerCategory.setCode(enleverAccent(customerHeirarchyDto
+					customerCategory.setCode(enleverAccent(accountHierarchy
 							.getCustomerCategoryCode()));
-					customerCategory.setDescription(customerHeirarchyDto
+					customerCategory.setDescription(accountHierarchy
 							.getCustomerCategoryCode());
 					customerCategoryService.create(em, customerCategory,
 							currentUser, provider);
@@ -302,7 +281,6 @@ public class AccountHierarchyApi extends BaseApi {
 						"asp.api.default.customerAccount.paymentMethod", "1"));
 				int creditCategory = Integer.parseInt(paramBean.getProperty(
 						"asp.api.default.customerAccount.creditCategory", "5"));
-
 				int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
 						"asp.api.default.customerAccount.paymentMethod", "1"));
 
@@ -313,7 +291,7 @@ public class AccountHierarchyApi extends BaseApi {
 				if (seller == null) {
 					seller = new Seller();
 					seller.setActive(true);
-					seller.setCode(enleverAccent(customerHeirarchyDto
+					seller.setCode(enleverAccent(accountHierarchy
 							.getSellerCode()));
 					seller.setAuditable(auditable);
 					seller.setProvider(provider);
@@ -324,32 +302,30 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 
 				Address address = new Address();
-				address.setAddress1(customerHeirarchyDto.getAddress1());
-				address.setAddress2(customerHeirarchyDto.getAddress2());
-				address.setZipCode(customerHeirarchyDto.getZipCode());
+				address.setAddress1(accountHierarchy.getAddress1());
+				address.setAddress2(accountHierarchy.getAddress2());
+				address.setZipCode(accountHierarchy.getZipCode());
+				address.setCity(accountHierarchy.getCity());
+				address.setCountry(accountHierarchy.getCountryCode());
 
 				ContactInformation contactInformation = new ContactInformation();
-				contactInformation.setEmail(customerHeirarchyDto.getEmail());
-				contactInformation.setPhone(customerHeirarchyDto
-						.getPhoneNumber());
+				contactInformation.setEmail(accountHierarchy.getEmail());
+				contactInformation.setPhone(accountHierarchy.getPhoneNumber());
 
 				Title title = titleService.findByCode(em, provider,
-						enleverAccent(customerHeirarchyDto.getTitleCode()));
+						enleverAccent(accountHierarchy.getTitleCode()));
 
 				Customer customer = new Customer();
-				customer.getName().setLastName(
-						customerHeirarchyDto.getLastName());
-				customer.getName().setFirstName(
-						customerHeirarchyDto.getFirstName());
+				customer.getName().setLastName(accountHierarchy.getLastName());
+				customer.getName()
+						.setFirstName(accountHierarchy.getFirstName());
 				customer.getName().setTitle(title);
 				customer.setContactInformation(contactInformation);
 				customer.setAddress(address);
-				customer.setCode(enleverAccent(customerHeirarchyDto
-						.getCustomerId()));
+				customer.setCode(enleverAccent(accountHierarchy.getCustomerId()));
 				customer.setCustomerBrand(customerBrand);
 				customer.setCustomerCategory(customerCategory);
 				customer.setSeller(seller);
-
 				customerService.create(em, customer, currentUser, provider);
 
 				CustomerAccount customerAccount = new CustomerAccount();
@@ -357,11 +333,11 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setAddress(address);
 				customerAccount.setContactInformation(contactInformation);
 				customerAccount.getName().setFirstName(
-						customerHeirarchyDto.getFirstName());
+						accountHierarchy.getFirstName());
 				customerAccount.getName().setLastName(
-						customerHeirarchyDto.getLastName());
+						accountHierarchy.getLastName());
 				customerAccount.getName().setTitle(title);
-				customerAccount.setCode(enleverAccent(customerHeirarchyDto
+				customerAccount.setCode(enleverAccent(accountHierarchy
 						.getCustomerId()));
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 				customerAccount.setPaymentMethod(PaymentMethodEnum
@@ -374,7 +350,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 				BillingCycle billingCycle = billingCycleService
 						.findByBillingCycleCode(em,
-								enleverAccent(customerHeirarchyDto
+								enleverAccent(accountHierarchy
 										.getBillingCycleCode()), currentUser,
 								provider);
 
@@ -420,7 +396,7 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 
 				BillingAccount billingAccount = new BillingAccount();
-				billingAccount.setCode(enleverAccent(customerHeirarchyDto
+				billingAccount.setCode(enleverAccent(accountHierarchy
 						.getCustomerId()));
 				billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 				billingAccount.setCustomerAccount(customerAccount);
@@ -437,12 +413,13 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountService.createBillingAccount(em, billingAccount,
 						currentUser, provider);
 
-				String userAccountCode = enleverAccent(customerHeirarchyDto
+				String userAccountCode = enleverAccent(accountHierarchy
 						.getCustomerId());
 				UserAccount userAccount = new UserAccount();
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
 				userAccount.setCode(userAccountCode);
+
 				try {
 					userAccountService.createUserAccount(em, billingAccount,
 							userAccount, currentUser);
@@ -450,40 +427,38 @@ public class AccountHierarchyApi extends BaseApi {
 					throw new EntityAlreadyExistsException(UserAccount.class,
 							userAccountCode);
 				}
-
 			} else {
 				StringBuilder sb = new StringBuilder(
 						"Missing value for the following parameters ");
 				List<String> missingFields = new ArrayList<String>();
 
-				if (StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())) {
+				if (StringUtils.isEmpty(accountHierarchy.getCustomerId())) {
 					missingFields.add("Customer ID");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto
-						.getCustomerBrandCode())) {
+				if (StringUtils
+						.isEmpty(accountHierarchy.getCustomerBrandCode())) {
 					missingFields.add("Customer Brand Code");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto
+				if (StringUtils.isEmpty(accountHierarchy
 						.getCustomerCategoryCode())) {
 					missingFields.add("Customer Category Code");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto.getSellerCode())) {
+				if (StringUtils.isEmpty(accountHierarchy.getSellerCode())) {
 					missingFields.add("Seller Code");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto.getCurrencyCode())) {
+				if (StringUtils.isEmpty(accountHierarchy.getCurrencyCode())) {
 					missingFields.add("Currency Code");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto.getCountryCode())) {
+				if (StringUtils.isEmpty(accountHierarchy.getCountryCode())) {
 					missingFields.add("Country Code");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto.getLastName())) {
+				if (StringUtils.isEmpty(accountHierarchy.getLastName())) {
 					missingFields.add("Last Name");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto.getLanguageCode())) {
+				if (StringUtils.isEmpty(accountHierarchy.getLanguageCode())) {
 					missingFields.add("Language Code");
 				}
-				if (StringUtils.isEmpty(customerHeirarchyDto
-						.getBillingCycleCode())) {
+				if (StringUtils.isEmpty(accountHierarchy.getBillingCycleCode())) {
 					missingFields.add("Billing Cycle Code");
 				}
 				if (missingFields.size() > 1) {
@@ -499,54 +474,51 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	public void updateCustomerHeirarchy(
-			AccountHierarchyDto customerHeirarchyDto, User currentUser)
+	public void update(
+			AccountHierarchyDto accountHierarchyDto, User currentUser)
 			throws MeveoApiException {
-
-		log.info("Updating Customer Heirarchy with code : "
-				+ customerHeirarchyDto.getCustomerId());
 
 		Provider provider = currentUser.getProvider();
 
 		Customer customer = customerService.findByCode(em,
-				customerHeirarchyDto.getCustomerId(), provider);
+				accountHierarchyDto.getCustomerId(), provider);
 
 		if (customer == null) {
 			throw new EntityAlreadyExistsException(Customer.class,
-					customerHeirarchyDto.getCustomerId());
+					accountHierarchyDto.getCustomerId());
 		}
 
-		if (!StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())
-				&& !StringUtils.isEmpty(customerHeirarchyDto
+		if (!StringUtils.isEmpty(accountHierarchyDto.getCustomerId())
+				&& !StringUtils.isEmpty(accountHierarchyDto
 						.getCustomerBrandCode())
-				&& !StringUtils.isEmpty(customerHeirarchyDto
+				&& !StringUtils.isEmpty(accountHierarchyDto
 						.getCustomerCategoryCode())
-				&& !StringUtils.isEmpty(customerHeirarchyDto.getSellerCode())
-				&& !StringUtils.isEmpty(customerHeirarchyDto.getCurrencyCode())
-				&& !StringUtils.isEmpty(customerHeirarchyDto.getCountryCode())
-				&& !StringUtils.isEmpty(customerHeirarchyDto.getLastName())
-				&& !StringUtils.isEmpty(customerHeirarchyDto.getLanguageCode())
-				&& !StringUtils.isEmpty(customerHeirarchyDto
+				&& !StringUtils.isEmpty(accountHierarchyDto.getSellerCode())
+				&& !StringUtils.isEmpty(accountHierarchyDto.getCurrencyCode())
+				&& !StringUtils.isEmpty(accountHierarchyDto.getCountryCode())
+				&& !StringUtils.isEmpty(accountHierarchyDto.getLastName())
+				&& !StringUtils.isEmpty(accountHierarchyDto.getLanguageCode())
+				&& !StringUtils.isEmpty(accountHierarchyDto
 						.getBillingCycleCode())) {
 
 			Seller seller = sellerService.findByCode(em,
-					customerHeirarchyDto.getSellerCode(), provider);
+					accountHierarchyDto.getSellerCode(), provider);
 
 			Auditable auditableTrading = new Auditable();
 			auditableTrading.setCreated(new Date());
 			auditableTrading.setCreator(currentUser);
 
 			Country country = countryService.findByCode(em,
-					customerHeirarchyDto.getCountryCode());
+					accountHierarchyDto.getCountryCode());
 
 			if (country == null) {
 				throw new EntityDoesNotExistsException(Country.class,
-						customerHeirarchyDto.getCountryCode());
+						accountHierarchyDto.getCountryCode());
 			}
 
 			TradingCountry tradingCountry = tradingCountryService
 					.findByTradingCountryCode(em,
-							customerHeirarchyDto.getCountryCode(), provider);
+							accountHierarchyDto.getCountryCode(), provider);
 
 			if (tradingCountry == null) {
 				tradingCountry = new TradingCountry();
@@ -566,16 +538,16 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			Currency currency = currencyService.findByCode(em,
-					customerHeirarchyDto.getCurrencyCode());
+					accountHierarchyDto.getCurrencyCode());
 
 			if (currency == null) {
 				throw new EntityDoesNotExistsException(Currency.class,
-						customerHeirarchyDto.getCurrencyCode());
+						accountHierarchyDto.getCurrencyCode());
 			}
 
 			TradingCurrency tradingCurrency = tradingCurrencyService
 					.findByTradingCurrencyCode(em,
-							customerHeirarchyDto.getCurrencyCode(), provider);
+							accountHierarchyDto.getCurrencyCode(), provider);
 
 			if (tradingCurrency == null) {
 				// create tradingCountry
@@ -583,7 +555,7 @@ public class AccountHierarchyApi extends BaseApi {
 				tradingCurrency.setAuditable(auditableTrading);
 			}
 
-			tradingCurrency.setCurrencyCode(customerHeirarchyDto
+			tradingCurrency.setCurrencyCode(accountHierarchyDto
 					.getCurrencyCode());
 			tradingCurrency.setCurrency(currency);
 			tradingCurrency.setProvider(provider);
@@ -598,23 +570,23 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			Language language = languageService.findByCode(em,
-					customerHeirarchyDto.getLanguageCode());
+					accountHierarchyDto.getLanguageCode());
 
 			if (language == null) {
 				throw new EntityDoesNotExistsException(Language.class,
-						customerHeirarchyDto.getLanguageCode());
+						accountHierarchyDto.getLanguageCode());
 			}
 
 			TradingLanguage tradingLanguage = tradingLanguageService
 					.findByTradingLanguageCode(em,
-							customerHeirarchyDto.getLanguageCode(), provider);
+							accountHierarchyDto.getLanguageCode(), provider);
 
 			if (tradingLanguage == null) {
 				tradingLanguage = new TradingLanguage();
 				tradingLanguage.setAuditable(auditableTrading);
 			}
 
-			tradingLanguage.setLanguageCode(customerHeirarchyDto
+			tradingLanguage.setLanguageCode(accountHierarchyDto
 					.getLanguageCode());
 			tradingLanguage.setLanguage(language);
 			tradingLanguage.setProvider(provider);
@@ -629,19 +601,19 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			CustomerBrand customerBrand = customerBrandService.findByCode(em,
-					customerHeirarchyDto.getCustomerBrandCode());
+					accountHierarchyDto.getCustomerBrandCode());
 
 			CustomerCategory customerCategory = customerCategoryService
 					.findByCode(em,
-							customerHeirarchyDto.getCustomerCategoryCode());
+							accountHierarchyDto.getCustomerCategoryCode());
 
 			if (customerBrand == null) {
 				customerBrand = new CustomerBrand();
 			}
 
-			customerBrand.setCode(enleverAccent(customerHeirarchyDto
+			customerBrand.setCode(enleverAccent(accountHierarchyDto
 					.getCustomerBrandCode()));
-			customerBrand.setDescription(customerHeirarchyDto
+			customerBrand.setDescription(accountHierarchyDto
 					.getCustomerBrandCode());
 
 			if (customerBrand.isTransient()) {
@@ -655,9 +627,9 @@ public class AccountHierarchyApi extends BaseApi {
 				customerCategory = new CustomerCategory();
 			}
 
-			customerCategory.setCode(enleverAccent(customerHeirarchyDto
+			customerCategory.setCode(enleverAccent(accountHierarchyDto
 					.getCustomerCategoryCode()));
-			customerCategory.setDescription(customerHeirarchyDto
+			customerCategory.setDescription(accountHierarchyDto
 					.getCustomerCategoryCode());
 
 			if (customerCategory.isTransient()) {
@@ -684,7 +656,7 @@ public class AccountHierarchyApi extends BaseApi {
 				seller = new Seller();
 				seller.setAuditable(auditable);
 				seller.setActive(true);
-				seller.setCode(customerHeirarchyDto.getSellerCode());
+				seller.setCode(accountHierarchyDto.getSellerCode());
 				seller.setProvider(provider);
 				seller.setTradingCountry(tradingCountry);
 				seller.setTradingCurrency(tradingCurrency);
@@ -692,23 +664,24 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			Address address = new Address();
-			address.setAddress1(customerHeirarchyDto.getAddress1());
-			address.setAddress2(customerHeirarchyDto.getAddress2());
-			address.setZipCode(customerHeirarchyDto.getZipCode());
+			address.setAddress1(accountHierarchyDto.getAddress1());
+			address.setAddress2(accountHierarchyDto.getAddress2());
+			address.setZipCode(accountHierarchyDto.getZipCode());
+			address.setCity(accountHierarchyDto.getCity());
+			address.setCountry(accountHierarchyDto.getCountryCode());
 
 			ContactInformation contactInformation = new ContactInformation();
-			contactInformation.setEmail(customerHeirarchyDto.getEmail());
-			contactInformation.setPhone(customerHeirarchyDto.getPhoneNumber());
+			contactInformation.setEmail(accountHierarchyDto.getEmail());
+			contactInformation.setPhone(accountHierarchyDto.getPhoneNumber());
 
 			Title title = titleService.findByCode(em, provider,
-					customerHeirarchyDto.getTitleCode());
+					accountHierarchyDto.getTitleCode());
 
-			customer.getName().setLastName(customerHeirarchyDto.getLastName());
-			customer.getName()
-					.setFirstName(customerHeirarchyDto.getFirstName());
+			customer.getName().setLastName(accountHierarchyDto.getLastName());
+			customer.getName().setFirstName(accountHierarchyDto.getFirstName());
 			customer.getName().setTitle(title);
 			customer.setAddress(address);
-			customer.setCode(enleverAccent(customerHeirarchyDto.getCustomerId()));
+			customer.setCode(enleverAccent(accountHierarchyDto.getCustomerId()));
 			customer.setCustomerBrand(customerBrand);
 			customer.setCustomerCategory(customerCategory);
 			customer.setContactInformation(contactInformation);
@@ -717,7 +690,7 @@ public class AccountHierarchyApi extends BaseApi {
 			customerService.update(em, customer, currentUser);
 
 			CustomerAccount customerAccount = customerAccountService
-					.findByCode(em, customerHeirarchyDto.getCustomerId(),
+					.findByCode(em, accountHierarchyDto.getCustomerId(),
 							provider);
 			if (customerAccount == null) {
 				customerAccount = new CustomerAccount();
@@ -728,11 +701,11 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccount.setContactInformation(contactInformation);
 
 			customerAccount.getName().setFirstName(
-					customerHeirarchyDto.getFirstName());
+					accountHierarchyDto.getFirstName());
 			customerAccount.getName().setLastName(
-					customerHeirarchyDto.getLastName());
+					accountHierarchyDto.getLastName());
 			customerAccount.getName().setTitle(title);
-			customerAccount.setCode(enleverAccent(customerHeirarchyDto
+			customerAccount.setCode(enleverAccent(accountHierarchyDto
 					.getCustomerId()));
 			customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 			customerAccount.setPaymentMethod(PaymentMethodEnum
@@ -740,6 +713,7 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccount.setCreditCategory(CreditCategoryEnum
 					.getValue(creditCategory));
 			customerAccount.setTradingCurrency(tradingCurrency);
+
 			if (customerAccount.isTransient()) {
 				customerAccountService.create(em, customerAccount, currentUser,
 						provider);
@@ -749,7 +723,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 			BillingCycle billingCycle = billingCycleService
 					.findByBillingCycleCode(em,
-							customerHeirarchyDto.getBillingCycleCode(),
+							accountHierarchyDto.getBillingCycleCode(),
 							currentUser, provider);
 
 			if (billingCycle == null) {
@@ -794,11 +768,11 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			BillingAccount billingAccount = billingAccountService.findByCode(
-					em, customerHeirarchyDto.getCustomerId(), provider);
+					em, accountHierarchyDto.getCustomerId(), provider);
 			if (billingAccount == null) {
 				billingAccount = new BillingAccount();
 			}
-			billingAccount.setCode(enleverAccent(customerHeirarchyDto
+			billingAccount.setCode(enleverAccent(accountHierarchyDto
 					.getCustomerId()));
 			billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 			billingAccount.setCustomerAccount(customerAccount);
@@ -821,11 +795,11 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			UserAccount userAccount = userAccountService.findByCode(em,
-					customerHeirarchyDto.getCustomerId(), provider);
+					accountHierarchyDto.getCustomerId(), provider);
 			if (userAccount == null) {
 				userAccount = new UserAccount();
 			}
-			String userAccountCode = enleverAccent(customerHeirarchyDto
+			String userAccountCode = enleverAccent(accountHierarchyDto
 					.getCustomerId());
 			userAccount.setStatus(AccountStatusEnum.ACTIVE);
 			userAccount.setBillingAccount(billingAccount);
@@ -848,39 +822,37 @@ public class AccountHierarchyApi extends BaseApi {
 							MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
 				}
 			}
-
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"Missing value for the following parameters ");
 			List<String> missingFields = new ArrayList<String>();
 
-			if (StringUtils.isEmpty(customerHeirarchyDto.getCustomerId())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getCustomerId())) {
 				missingFields.add("Customer ID");
 			}
-			if (StringUtils
-					.isEmpty(customerHeirarchyDto.getCustomerBrandCode())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getCustomerBrandCode())) {
 				missingFields.add("Customer Brand Code");
 			}
-			if (StringUtils.isEmpty(customerHeirarchyDto
+			if (StringUtils.isEmpty(accountHierarchyDto
 					.getCustomerCategoryCode())) {
 				missingFields.add("Customer Category Code");
 			}
-			if (StringUtils.isEmpty(customerHeirarchyDto.getSellerCode())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getSellerCode())) {
 				missingFields.add("Seller Code");
 			}
-			if (StringUtils.isEmpty(customerHeirarchyDto.getCurrencyCode())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getCurrencyCode())) {
 				missingFields.add("Currency Code");
 			}
-			if (StringUtils.isEmpty(customerHeirarchyDto.getCountryCode())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getCountryCode())) {
 				missingFields.add("Country Code");
 			}
-			if (StringUtils.isEmpty(customerHeirarchyDto.getLastName())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getLastName())) {
 				missingFields.add("Last Name");
 			}
-			if (StringUtils.isEmpty(customerHeirarchyDto.getLanguageCode())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getLanguageCode())) {
 				missingFields.add("Language Code");
 			}
-			if (StringUtils.isEmpty(customerHeirarchyDto.getBillingCycleCode())) {
+			if (StringUtils.isEmpty(accountHierarchyDto.getBillingCycleCode())) {
 				missingFields.add("Billing Cycle Code");
 			}
 			if (missingFields.size() > 1) {
@@ -910,9 +882,9 @@ public class AccountHierarchyApi extends BaseApi {
 		List<Customer> customers = customerService.findByValues(em,
 				customerFilter, paginationConfiguration);
 		for (Customer customer : customers) {
-			result.add(customerUtil.getCustomerDTO(customer));
+			result.add(new AccountHierarchyDto(customer));
 		}
 
-		return null;
+		return result;
 	}
 }

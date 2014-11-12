@@ -65,15 +65,8 @@ public class CustomerUtil {
 			}
 		}
 
-		Title title = null;
-		if (!StringUtils.isEmpty(postData.getCurrencyCode())) {
-			title = titleService.findByCode(em, provider,
-					postData.getTitleCode());
-			if (title == null) {
-				throw new EntityDoesNotExistsException(Title.class,
-						postData.getTitleCode());
-			}
-		}
+		Title title = titleService.findByCode(em, provider,
+				postData.getTitleCode());
 
 		customer.setCode(postData.getCustomerId());
 		customer.getContactInformation().setEmail(postData.getEmail());
@@ -83,6 +76,8 @@ public class CustomerUtil {
 		customer.getAddress().setAddress2(postData.getAddress2());
 		customer.getAddress().setZipCode(postData.getZipCode());
 		customer.getAddress().setCity(postData.getCity());
+		customer.getAddress().setCountry(postData.getCountryCode());
+		customer.setProvider(provider);
 
 		if (country != null) {
 			customer.getAddress().setCountry(country.getCountryCode());
@@ -94,31 +89,6 @@ public class CustomerUtil {
 		customer.getName().setFirstName(postData.getFirstName());
 
 		return customer;
-	}
-
-	public AccountHierarchyDto getCustomerDTO(Customer customer) {
-		AccountHierarchyDto result = new AccountHierarchyDto();
-
-		result.setCustomerId(customer.getCode());
-		result.setEmail(customer.getContactInformation().getEmail());
-		result.setPhoneNumber(customer.getContactInformation().getPhone());
-		if (customer.getAddress() != null) {
-			result.setAddress1(customer.getAddress().getAddress1());
-			result.setAddress2(customer.getAddress().getAddress2());
-			result.setZipCode(customer.getAddress().getZipCode());
-			result.setCountryCode(customer.getAddress().getCountry());
-			result.setCity(customer.getAddress().getCity());
-		}
-
-		if (customer.getName() != null) {
-			if (customer.getName().getTitle() != null) {
-				result.setTitleCode(customer.getName().getTitle().getCode());
-			}
-			result.setLastName(customer.getName().getLastName());
-			result.setFirstName(customer.getName().getFirstName());
-		}
-
-		return result;
 	}
 
 }

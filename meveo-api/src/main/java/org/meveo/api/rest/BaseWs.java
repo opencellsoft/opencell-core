@@ -9,6 +9,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.rest.security.WSUser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
+import org.meveo.util.MeveoParamBean;
 
 /**
  * @author Edward P. Legaspi
@@ -16,6 +17,7 @@ import org.meveo.model.admin.User;
 public abstract class BaseWs implements IBaseWs {
 
 	@Inject
+	@MeveoParamBean
 	protected ParamBean paramBean;
 
 	@Inject
