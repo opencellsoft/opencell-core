@@ -52,11 +52,10 @@ public class ProviderApi extends BaseApi {
 	private UserAccountService userAccountService;
 
 	public void create(ProviderDto postData, User currentUser)
-			throws MissingParameterException, EntityDoesNotExistsException,
-			EntityAlreadyExistsException {
+			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())) {
 			Provider provider = new Provider();
-			provider.setCode(postData.getCode());
+			provider.setCode(postData.getCode().toUpperCase());
 			provider.setDescription(postData.getDescription());
 
 			provider.setMulticountryFlag(postData.isMultiCountry());
@@ -164,7 +163,7 @@ public class ProviderApi extends BaseApi {
 	}
 
 	public void update(ProviderDto postData, User currentUser)
-			throws MissingParameterException, EntityDoesNotExistsException {
+			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())) {
 			// search for provider
 			Provider provider = providerService.findByCode(postData.getCode());

@@ -2,6 +2,7 @@ package org.meveo.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -39,8 +41,7 @@ public class UserApi extends BaseApi {
 	private UserService userService;
 
 	public void create(UserDto postData, User currentUser)
-			throws MissingParameterException, EntityDoesNotExistsException,
-			EntityAlreadyExistsException {
+			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUsername())
 				&& !StringUtils.isBlank(postData.getProvider())
 				&& !StringUtils.isBlank(postData.getRole())
@@ -67,16 +68,22 @@ public class UserApi extends BaseApi {
 			}
 
 			User user = new User();
-			user.setUserName(postData.getUsername());
+			user.setUserName(postData.getUsername().toUpperCase());
 			Name name = new Name();
 			name.setLastName(postData.getLastName());
 			name.setFirstName(postData.getFirstName());
 			user.setName(name);
-			user.setProvider(provider);
 			user.setPassword(Sha1Encrypt.encodePassword(postData.getPassword()));
+			user.setLastPasswordModification(new Date());
+			user.setProvider(provider);
+
 			Set<Role> roles = new HashSet<Role>();
 			roles.add(role);
 			user.setRoles(roles);
+
+			Set<Provider> providers = new HashSet<Provider>();
+			providers.add(provider);
+			user.setProviders(providers);
 
 			userService.create(user, currentUser, provider);
 		} else {
@@ -110,7 +117,7 @@ public class UserApi extends BaseApi {
 	}
 
 	public void update(UserDto postData, User currentUser)
-			throws EntityDoesNotExistsException, MissingParameterException {
+			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUsername())
 				&& !StringUtils.isBlank(postData.getProvider())
 				&& !StringUtils.isBlank(postData.getRole())
@@ -179,7 +186,7 @@ public class UserApi extends BaseApi {
 		}
 	}
 
-	public void remove(String username) throws EntityDoesNotExistsException {
+	public void remove(String username) throws MeveoApiException {
 		User user = userService.findByUsername(username);
 
 		if (user == null) {
@@ -190,7 +197,7 @@ public class UserApi extends BaseApi {
 		userService.remove(user);
 	}
 
-	public UserDto find(String username) throws EntityDoesNotExistsException {
+	public UserDto find(String username) throws MeveoApiException {
 		User user = userService.findByUsernameWithFetch(username,
 				Arrays.asList("provider", "roles"));
 
