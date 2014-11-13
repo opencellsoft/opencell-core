@@ -40,6 +40,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
@@ -166,9 +167,11 @@ public class UserBean extends BaseBean<User> {
 					return null;
 				}
 			}
-			entity.setLastPasswordModification(new Date());
-			entity.setNewPassword(password);
-			entity.setPassword(password);
+			if (!StringUtils.isBlank(password)) {
+				entity.setLastPasswordModification(new Date());
+				entity.setNewPassword(password);
+				entity.setPassword(password);
+			}
 			return super.saveOrUpdate(killConversation);
 		}
 	}
