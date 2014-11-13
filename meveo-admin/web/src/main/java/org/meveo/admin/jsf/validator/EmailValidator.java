@@ -47,7 +47,18 @@ public class EmailValidator implements Validator, ClientValidator {
 				facesMessage.setSummary(message);
 				facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
 
-				throw new ValidatorException(facesMessage);
+				boolean match = false;
+				for (FacesMessage fm : context.getMessageList()) {
+					if (fm.getDetail().equals(message)
+							|| fm.getSummary().equals(message)) {
+						match = true;
+						break;
+					}
+				}
+
+				if (!match) {
+					throw new ValidatorException(facesMessage);
+				}
 			}
 		}
 

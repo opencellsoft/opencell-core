@@ -15,9 +15,12 @@
 
 	<ui:define name="body">
 		<hf:formPanel label="#{messages['user.userPanel']}"
-			backingBean="#{userBean}" columns="2">
+			backingBean="#{userBean}" columns="1">
 			<hf:formField label="#{messages['user.userName']}" field="userName"
 				required="true" validateUnique="true" useConverter="false" />
+			<hf:formField label="#{messages['contactInformation.email']}"
+				field="email" required="true" useConverter="false"
+				validatorId="emailValidator" />
 			<p:commandLink value="#{messages['menutop.changePassword']}"
 				action="#{userBean.change()}" update="passwordPanel"
 				rendered="#{!(userBean.entity.id==null) and userBean.edit}"
@@ -40,15 +43,6 @@
 						value="#{userBean.repeatedPassword}" autocomplete="off"></p:password>
 				</hftl:panelGroup>
 			</p:outputPanel>
-
-			<p:panelGrid columns="2" rendered="#{userBean.edit}">
-				<p:outputLabel for="email"
-					value="#{messages['contactInformation.email']}"></p:outputLabel>
-				<p:inputText id="email" value="#{userBean.entity.email}"
-					required="true">
-					<f:validator validatorId="emailValidator"></f:validator>
-				</p:inputText>
-			</p:panelGrid>
 
 			<hf:formField label="#{messages['user.roles']}" field="roles"
 				listType="pickUpList" childField="name" required="true"

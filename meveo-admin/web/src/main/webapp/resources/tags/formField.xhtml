@@ -41,6 +41,7 @@
 	<cc:attribute name="validateUnique" default="false" />
 	<cc:attribute name="validateRib" default="false" />
 	<cc:attribute name="validateEmail" default="false" />
+	<cc:attribute name="validatorId" default="" />
 	<cc:attribute name="datePattern"
 		default="#{cc.attrs.time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
 	<cc:attribute name="edit"
@@ -127,6 +128,10 @@
 						<o:validator validatorId="javax.faces.RegularExpression"
 							pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
 							message="#{messages['validator.email.invalid']}" />
+					</c:if>
+
+					<c:if test="#{not empty cc.attrs.validatorId}">
+						<f:validator validatorId="#{cc.attrs.validatorId}" />
 					</c:if>
 
 					<c:if test="#{cc.attrs.validateUnique}">
