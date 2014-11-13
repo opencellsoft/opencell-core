@@ -118,12 +118,16 @@ public class AccessBean extends BaseBean<Access> {
 		Subscription subscription = subscriptionService.findById(entity
 				.getSubscription().getId());
 		entity.setSubscription(subscription);
-		if (accessService.isDuplicate(entity)) {
-			messages.error(new BundleKey("messages", "access.duplicate"));
-		} else {
-			result = super.saveOrUpdate(killConversation);
-			CDRParsingService.resetAccessPointCache(entity);
+
+		if (entity.isTransient()) {
+			if (accessService.isDuplicate(entity)) {
+				messages.error(new BundleKey("messages", "access.duplicate"));
+				return result;
+			}
 		}
+
+		result = super.saveOrUpdate(killConversation);
+		CDRParsingService.resetAccessPointCache(entity);
 
 		return result;
 	}
