@@ -142,13 +142,16 @@ public class UserService extends PersistenceService<User> {
 
 	public User findByUsernameAndPassword(EntityManager em, String username,
 			String password, List<String> fetchFields) {
+
+		password = Sha1Encrypt.encodePassword(password);
+
+		QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields, null);
+
+		qb.addCriterion("userName", "=", username.toUpperCase(), true);
+		qb.addCriterion("password", "=", password, true);
+
 		try {
-			password = Sha1Encrypt.encodePassword(password);
-			return (User) em
-					.createQuery(
-							"from User as u where u.userName=:userName and u.password=:password")
-					.setParameter("userName", username.toUpperCase())
-					.setParameter("password", password).getSingleResult();
+			return (User) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
