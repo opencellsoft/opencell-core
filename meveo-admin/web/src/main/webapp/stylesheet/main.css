@@ -87,7 +87,7 @@ select[disabled] { color : #000; }
 	color: #333;
 }
 
-.actionButtons { padding-left: 1px; }
+.actionButtons { padding-left: 1px; margin-top: 5px; }
 .actionButtons select { margin: 5px 5px 5px 0; vertical-align: bottom; }
 
 .footer
