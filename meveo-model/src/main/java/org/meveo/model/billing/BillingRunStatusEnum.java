@@ -18,16 +18,13 @@ package org.meveo.model.billing;
 
 public enum BillingRunStatusEnum {
 
-	NEW(1, "BillingRunStatusEnum.new"), 
-	WAITING(2, "BillingRunStatusEnum.waiting"), 
-	ON_GOING(3, "BillingRunStatusEnum.onGoing"), 
-	CANCELED(4, "BillingRunStatusEnum.canceled"),
-	TERMINATED(5, "BillingRunStatusEnum.terminated"),
-	CONFIRMED(6, "BillingRunStatusEnum.confirmed"),
-	VALIDATED(7, "BillingRunStatusEnum.validated");
-	
-	
-	
+	NEW(1, "BillingRunStatusEnum.new"), WAITING(2,
+			"BillingRunStatusEnum.waiting"), ON_GOING(3,
+			"BillingRunStatusEnum.onGoing"), CANCELED(4,
+			"BillingRunStatusEnum.canceled"), TERMINATED(5,
+			"BillingRunStatusEnum.terminated"), CONFIRMED(6,
+			"BillingRunStatusEnum.confirmed"), VALIDATED(7,
+			"BillingRunStatusEnum.validated");
 
 	private Integer id;
 	private String label;

@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
+	xmlns:a="http://richfaces.org/a4j" xmlns:o="http://omnifaces.org/ui"
 	xmlns:e="http://jboss.com/products/seam/excel"
 	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
@@ -15,6 +15,8 @@
 			<f:event type="preRenderView"
 				listener="#{billingRunBean.preRenderView}" />
 		</f:metadata>
+
+		<o:importConstants type="org.meveo.model.billing.BillingRunStatusEnum" />
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -62,6 +64,12 @@
 					<f:param name="cid"
 						value="#{javax.enterprise.context.conversation.id}" />
 				</p:button>
+				<p:commandButton value="#{messages['action.cancel']}"
+					rendered="#{entity.status != BillingRunStatusEnum.TERMINATED}"
+					action="#{billingRunBean.cancelInvoicing()}" update=":results_form">
+					<f:setPropertyActionListener target="#{billingRunBean.entity}"
+						value="#{entity}"></f:setPropertyActionListener>
+				</p:commandButton>
 			</p:column>
 		</hftl:dataList>
 
