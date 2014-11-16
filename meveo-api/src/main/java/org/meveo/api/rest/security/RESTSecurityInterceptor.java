@@ -63,6 +63,7 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
+		log.debug("REST security filter");
 		ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext
 				.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
 		Method method = methodInvoker.getMethod();
@@ -107,6 +108,8 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 					usernameAndPassword, ":");
 			String username = tokenizer.nextToken();
 			String password = tokenizer.nextToken();
+
+			log.debug("REST call basic authentication. Username={}", username);
 
 			try {
 				currentUser = userService.loginChecks(em, username, password,
