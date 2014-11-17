@@ -379,6 +379,7 @@ input[type="submit"],
 .col2-set .col2 { width : 72% !Important; float : right; }
 .confirm-dialog .ui-dialog-content p span.ui-confirm-dialog-severity { position: relative; top: -4px; }
 .confirm-dialog .ui-dialog-buttonpane { text-align: center; }
+.action-buttons { margin-top: 5px; }
 .action-buttons button { margin-right: 5px; }
 .custom-grid tbody { display: table-row-group; }
 .align-left .ui-datalist-header {text-align:left;}
