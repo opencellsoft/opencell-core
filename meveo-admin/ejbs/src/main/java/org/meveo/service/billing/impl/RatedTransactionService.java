@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -247,7 +248,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  
     }
     @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-    public void createInvoiceAndAgregates(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice) throws BusinessException{
+    public void createInvoiceAndAgregates(EntityManager em,BillingRun billingRun,BillingAccount billingAccount,Invoice invoice) throws BusinessException{
     	 boolean entreprise = billingRun.getProvider().isEntreprise();
 
          BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
@@ -286,7 +287,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	     }
 	     
    		 List<InvoiceAgregate> invoiceAgregateFList=new ArrayList<InvoiceAgregate>();
-   		 List<Object[]> invoiceSubCats=getEntityManager().createQuery(cq).getResultList();
+   		 List<Object[]> invoiceSubCats=em.createQuery(cq).getResultList();
    		
    		
    		  
@@ -302,7 +303,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
    		  for( Object[] object:invoiceSubCats){
    			  logger.info("amountWithoutTax="+object[1]+"amountWithTax"+object[2]+"amountTax"+object[3]);
    			  Long  invoiceSubCategoryId=(Long) object[0];
-   			  InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findById(invoiceSubCategoryId);
+   			  InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findById(em,invoiceSubCategoryId);
    			  Tax tax = null;
                  for(InvoiceSubcategoryCountry invoicesubcatCountry: invoiceSubCategory.getInvoiceSubcategoryCountries()){
                  	if(invoicesubcatCountry.getTradingCountry().getCountryCode().
@@ -363,7 +364,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  invoiceAgregateT.setProvider(billingRun.getProvider());
                  
                  if(invoiceAgregateT.getId()==null){
-              	   invoiceAgregateService.create(invoiceAgregateT);
+              	   invoiceAgregateService.create(em,invoiceAgregateT);
                }
                  
                  invoiceAgregateF.setSubCategoryTax(tax);
@@ -386,7 +387,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                  fillAgregates(invoiceAgregateR, wallet);
                  if(invoiceAgregateR.getId()==null){
-                	   invoiceAgregateService.create(invoiceAgregateR);
+                	   invoiceAgregateService.create(em,invoiceAgregateR);
                  }
 
                  invoiceAgregateR.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
@@ -419,7 +420,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                          biggestSubCat = invoiceAgregateF;
                      }
 
-                invoiceAgregateService.create(invoiceAgregateF);
+                invoiceAgregateService.create(em,invoiceAgregateF);
    		  }
    		  
    		// compute the tax
@@ -469,7 +470,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                  invoice.setAmountWithoutTax(invoice.getAmountWithoutTax().add(delta).setScale(2, RoundingMode.HALF_UP));
                  invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(2, RoundingMode.HALF_UP));
-                 BigDecimal balance =customerAccountService.customerAccountBalanceDue(null,invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
+                 BigDecimal balance =customerAccountService.customerAccountBalanceDue(em,null,invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
 
 
                  if (balance == null) {
@@ -496,13 +497,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         int itemNumber = invoiceAgregate.getItemNumber() != null ? invoiceAgregate.getItemNumber() + 1 : 1;
         invoiceAgregate.setItemNumber(itemNumber);
     }
-    public void updateRatedTransactions(BillingRun billingRun,BillingAccount billingAccount,Invoice invoice){
+    public void updateRatedTransactions(EntityManager em,BillingRun billingRun,BillingAccount billingAccount,Invoice invoice){
     	String statment ="UPDATE RatedTransaction r SET r.billingRun=:billingRun,invoice=:invoice,status=:newStatus where r.invoice is null and r.status=:status and r.doNotTriggerInvoicing=:invoicing and r.billingAccount=:billingAccount";
     	if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
     		statment+=" and r.amountWithoutTax<>:zeroValue ";
     	}
 			
-    	Query query=getEntityManager().createQuery(statment);
+    	Query query=em.createQuery(statment);
          query.setParameter("billingRun", billingRun);
          query.setParameter("invoice", invoice);
          query.setParameter("newStatus", RatedTransactionStatusEnum.BILLED);
@@ -520,11 +521,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  
     }
     
-    public Boolean isBillingAccountBillable(BillingRun billingRun,Long billingAccountId){
+    public Boolean isBillingAccountBillable(BillingRun billingRun,Long billingAccountID){
     	
-    	  QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+    	  QueryBuilder qb = new QueryBuilder("select count(*) from RatedTransaction c");
 		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.OPEN);
-		  qb.addCriterionEntity("c.billingAccount.id", billingAccountId);
+		  qb.addCriterionEntity("c.billingAccount.id", billingAccountID);
 		  qb.addBooleanCriterion("c.doNotTriggerInvoicing", false);
 		  if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
 			  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false); 
@@ -532,9 +533,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  qb.addSql("c.invoice is null");
          
 
-		  @SuppressWarnings("unchecked")
-		List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
-		  return ratedTransactions.size()>0?true:false;
+		long count= (Long)qb.getQuery(getEntityManager()).getSingleResult();
+		  return count>0?true:false;
  
 		  
     }

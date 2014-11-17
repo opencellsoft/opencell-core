@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -103,7 +104,7 @@ public class ImportCustomersJob implements Job {
 	@Inject
 	private ProviderService providerService;
 	
-	@Inject
+	@EJB
 	private CustomerImportService customerImportService;
 
 	Sellers sellersWarning;

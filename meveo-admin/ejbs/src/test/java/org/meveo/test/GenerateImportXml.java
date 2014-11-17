@@ -34,20 +34,20 @@ public class GenerateImportXml {
      * @param args
      */
     /**************************configuration properties***********************************/
-    private static int count=2000;
+    private static int count=10;
     private static int startIndex=1;
-    private static int BC_NUMBER=2;
+    private static int BC_NUMBER=1;
     private static String billingCyclePrefix="CYC_INV_MT";
 
-    private static String customersFile="/tmp/CUSTOMERS.xml";
-    private static String accountsFile="/tmp/ACCOUNTS.xml";
-    private static String subscriptionsFile="/tmp/SUBSCRIPTIONS.xml";
+    private static String customersFile="d:\\meveo\\generated_imports\\CUSTOMERS_2.xml";
+    private static String accountsFile="d:\\meveo\\generated_imports\\ACCOUNTS_2.xml";
+    private static String subscriptionsFile="d:\\meveo\\generated_imports\\SUBSCRIPTIONS_2.xml";
     private static String providerCode="DEMO";
     private static String customerBrand="DEMO";
-    private static String customerCategory="Business";
-    private static String serviceCode="EXCH20101";
+    private static String customerCategory="Client";
+    private static String serviceCode="SVC_DEF";
     private static String creditCategory="VIP";
-    private static String offerCode="EXCH20101";
+    private static String offerCode="OF_DEF";
 
 
     /***********************************************************************/

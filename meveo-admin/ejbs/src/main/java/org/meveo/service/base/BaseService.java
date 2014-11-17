@@ -18,6 +18,7 @@ package org.meveo.service.base;
 
 import java.util.Random;
 
+import javax.ejb.EJB;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 import org.jboss.seam.security.Identity;
 import org.meveo.model.admin.User;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 
 public abstract class BaseService {
@@ -39,6 +41,9 @@ public abstract class BaseService {
 
 	@Inject
 	BeanManager beanManager;
+	
+	@EJB
+	UserService userService;
 
 	User currentUser;
 
@@ -47,7 +52,8 @@ public abstract class BaseService {
 			try {
 				currentUser = ((MeveoUser) identity.getUser()).getUser();
 			} catch (Exception e) {
-				log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
+				//log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
+				currentUser=userService.getSystemUser();
 			}
 		}
 		return currentUser;

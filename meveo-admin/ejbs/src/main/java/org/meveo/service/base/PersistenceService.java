@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.ProviderNotAllowedException;
@@ -56,8 +57,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	@MeveoJpa
 	protected EntityManager em;
 
-	@Inject
-	@MeveoJpaForJobs
+	@PersistenceContext
 	private EntityManager emfForJobs;
 
 	// TODO move to places where it is needed
@@ -275,11 +275,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	public void create(E e, User creator) {
 		create(e, creator, getCurrentProvider());
 	}
+	public void create(EntityManager em,E e) {
+		create(em,e, getCurrentUser(), getCurrentProvider());
+	}
 
 	public void create(E e, User creator, Provider provider) {
 		create(getEntityManager(), e, creator, provider);
 	}
-
 	public void create(EntityManager em, E e, User creator, Provider provider) {
 		log.debug("start of create {} entity ..", e.getClass().getSimpleName());
 		if (e instanceof AuditableEntity) {
@@ -533,7 +535,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			} catch (Exception e) {
 			}
 		}
-		//log.debug("return em:" + result);
 		return result;
 	}
 }

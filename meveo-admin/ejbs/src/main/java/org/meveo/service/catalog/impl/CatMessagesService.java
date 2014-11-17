@@ -19,14 +19,21 @@ package org.meveo.service.catalog.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 
+import org.infinispan.api.BasicCache;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.util.CacheContainerProvider;
 
 /**
  * CatMessagesService service implementation.
@@ -35,14 +42,42 @@ import org.meveo.service.base.PersistenceService;
 @Named
 @LocalBean
 public class CatMessagesService extends PersistenceService<CatMessages> {
+	
+	@Inject
+	CacheContainerProvider cacheContainerProvider;
+	
+
+    private static BasicCache<String, Object> catMessageCach;
+    
+    @PostConstruct
+    private void init() {
+		if(catMessageCach==null){
+			catMessageCach=cacheContainerProvider.getCacheContainer().getCache("meveo");
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	public String getMessageDescription(String messageCode, String languageCode) {
+		if(messageCode==null || languageCode==null){
+			return null;
+		}
+		if(catMessageCach.containsKey(messageCode)){
+			log.info("get message description from infinispan cache messageCode="+messageCode+",languageCode="+languageCode);
+			return (String)catMessageCach.get(messageCode);
+		}
+		log.info("get message description from DB="+messageCode+",languageCode="+languageCode);
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterionWildcard("c.messageCode", messageCode, true);
 		qb.addCriterionWildcard("c.languageCode", languageCode, true);
 		List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
-		return catMessages.size() > 0 ? catMessages.get(0).getDescription() : null;
+		
+		String description= catMessages.size() > 0 ? catMessages.get(0).getDescription() : "";
+		if(description!=null){
+			catMessageCach.put(messageCode, description);
+		}
+		log.info("get message description description ="+description);
+		return description;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -67,5 +102,23 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 				.getResultList();
 		return cats;
 	}
+
+	@Override
+	public void create(EntityManager em, CatMessages e, User creator,
+			Provider provider) {
+
+		catMessageCach.putIfAbsent(e.getMessageCode(), e.getDescription());
+		super.create(em, e, creator, provider);
+	}
+
+	@Override
+	public void update(EntityManager em, CatMessages e, User updater) {
+		catMessageCach.put(e.getMessageCode(), e.getDescription());
+		super.update(em, e, updater);
+	}
+	
+	
+	
+	
 
 }

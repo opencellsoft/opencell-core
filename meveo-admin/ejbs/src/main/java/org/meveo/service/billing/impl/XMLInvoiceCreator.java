@@ -63,8 +63,10 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -88,6 +90,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	@Inject
 	RatedTransactionService ratedTransactionService;
+	
+	@Inject
+	CatMessagesService catMessagesService;
 
 	@SuppressWarnings("unchecked")
 	public void createXMLInvoice(Invoice invoice, File billingRundir)
@@ -160,18 +165,23 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					customerAccount.getExternalRef2() != null ? customerAccount
 							.getExternalRef2() : "");
 
-			EntityManager em = getEntityManager();
+			
+			/*EntityManager em = getEntityManager();
 			Query billingQuery = em
 					.createQuery("select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");
 			billingQuery.setParameter("customerAccountId",
 					customerAccount.getId());
 			List<ServiceInstance> services = (List<ServiceInstance>) billingQuery
 					.getResultList();
+			
+			
+			
 			boolean terminated = services.size() > 0 ? isAllServiceInstancesTerminated(services)
-					: false;
+					: false;*/
 
-			customerAccountTag.setAttribute("accountTerminated", terminated
+			customerAccountTag.setAttribute("accountTerminated", customerAccount.getStatus().equals(CustomerAccountStatusEnum.CLOSE)
 					+ "");
+
 
 			header.appendChild(customerAccountTag);
 			addNameAndAdress(customerAccount, doc, customerAccountTag);
@@ -305,7 +315,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// create string from xml tree
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(billingRundir
-					+ File.separator + invoice.getInvoiceNumber() + ".xml");
+					+ File.separator + (invoice.getInvoiceNumber()!=null?invoice.getInvoiceNumber():invoice.getTemporaryInvoiceNumber()) + ".xml");
 			log.info("source=" + source.toString());
 			trans.transform(source, result);
 
@@ -542,22 +552,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private String getMessageDescription(String messageCode, String languageCode) {
-		String result = "";
-		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-		qb.addCriterionWildcard("c.messageCode", messageCode, true);
-		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> catMessages = qb.getQuery(getEntityManager())
-				.getResultList();
-		result = catMessages.size() > 0 ? catMessages.get(0).getDescription()
-				: null;
 
-		return result != null ? result : null;
-	}
 
 	public void addCategories(UserAccount userAccount, Invoice invoice,
 			Document doc, Element parent, boolean generateSubCat) {
+		long startDate=System.currentTimeMillis();
 		String languageCode = invoice.getBillingAccount().getTradingLanguage()
 				.getLanguage().getLanguageCode();
 
@@ -597,7 +596,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			InvoiceCategory invoiceCategory = categoryInvoiceAgregate
 					.getInvoiceCategory();
 
-			String invoiceCategoryLabel = invoiceCategory != null ? getMessageDescription(
+			String invoiceCategoryLabel = invoiceCategory != null ? catMessagesService.getMessageDescription(
 					invoiceCategory.getClass().getSimpleName() + "_"
 							+ invoiceCategory.getId(), languageCode) : "";
 			invoiceCategoryLabel = invoiceCategoryLabel != null ? invoiceCategoryLabel
@@ -659,7 +658,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					if (!createSubCatElement) {
 						continue;
 					}
-					String invoiceSubCategoryLabel = invoiceSubCat != null ? getMessageDescription(
+					String invoiceSubCategoryLabel = invoiceSubCat != null ? catMessagesService.getMessageDescription(
 							invoiceSubCat.getClass().getSimpleName() + "_"
 									+ invoiceSubCat.getId(), languageCode) : "";
 					invoiceSubCategoryLabel = invoiceSubCategoryLabel != null ? invoiceSubCategoryLabel
@@ -766,7 +765,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			}
 
 		}
-
+		log.info("addCategorries time: "+(System.currentTimeMillis()-startDate));
 	}
 
 	private void addTaxes(Invoice invoice, Document doc, Element parent) {
@@ -814,7 +813,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			Long idTax = taxInvoiceAgregate.getTax().getId();
 			String languageCode = invoice.getBillingAccount()
 					.getTradingLanguage().getLanguage().getLanguageCode();
-			String taxDescription = getMessageDescription(taxInvoiceAgregate
+			String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate
 					.getTax().getClass().getSimpleName()
 					+ "_" + idTax, languageCode);
 			taxDescription = taxDescription != null ? taxDescription
@@ -851,6 +850,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private void addHeaderCategories(Invoice invoice, Document doc,
 			Element parent) {
+		long startDate=System.currentTimeMillis();
 		boolean entreprise = invoice.getProvider().isEntreprise();
 		LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO>();
 		List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
@@ -992,6 +992,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 		}
 		addHeaderCategories(headerCategories, doc, parent, entreprise);
+
+		log.info("addHeaderCategories time: "+(System.currentTimeMillis()-startDate));
 	}
 
 	private void addHeaderCategories(

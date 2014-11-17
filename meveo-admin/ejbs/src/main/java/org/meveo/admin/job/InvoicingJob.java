@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -53,7 +54,7 @@ public class InvoicingJob implements Job {
 	@Inject
 	JobExecutionService jobExecutionService;
 
-	@Inject
+	@EJB
 	private BillingRunService billingRunService;
 
 	@Inject
@@ -87,6 +88,7 @@ public class InvoicingJob implements Job {
 					
 					
 				} catch (Exception e) {
+					log.info("# InvoicingJob error:" + e.getMessage());
 					e.printStackTrace();
 					result.registerError(e.getMessage());
 				}

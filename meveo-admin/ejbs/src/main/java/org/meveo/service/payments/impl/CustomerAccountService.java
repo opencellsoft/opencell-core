@@ -26,6 +26,7 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.jboss.seam.transaction.Transactional;
@@ -227,9 +228,15 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 	 */
 	public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode,
 			Date to) throws BusinessException {
+		
+		return customerAccountBalanceDue(getEntityManager(), customerAccountId, customerAccountCode, to);
+		
+	}
+	public BigDecimal customerAccountBalanceDue(EntityManager em,Long customerAccountId, String customerAccountCode,
+			Date to) throws BusinessException {
 		log.info("start customerAccountBalanceDue with id:"+customerAccountId+",code:"+customerAccountCode+",toDate:"+to);
 		return customerAccountBalanceDue(
-				findCustomerAccount(customerAccountId, customerAccountCode), to);
+				findCustomerAccount(em,customerAccountId, customerAccountCode), to);
 	}
 
 	public void createCustomerAccount(String code, String title, String firstName, String lastName,
@@ -572,8 +579,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		log.info("successfully end getCustomerById with id:"+ id);
 		return result;
 	}
-
 	public CustomerAccount findCustomerAccount(Long id, String code) throws BusinessException {
+		return findCustomerAccount(getEntityManager(), id, code);
+	}
+	public CustomerAccount findCustomerAccount(EntityManager em,Long id, String code) throws BusinessException {
 		log.info("findCustomerAccount with code:"+code+",id:"+ id);
 		if ((code == null || code.equals("")) && (id == null || id == 0)) {
 			log.warn("Error: require code and id are null!");
@@ -581,7 +590,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> impl
 		}
 		CustomerAccount customerAccount = null;
 		try {
-			customerAccount = (CustomerAccount) getEntityManager()
+			customerAccount = (CustomerAccount) em
 					.createQuery("from CustomerAccount where id=:id or code=:code ")
 					.setParameter("id", id).setParameter("code", code).getSingleResult();
 		} catch (Exception e) {

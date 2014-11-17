@@ -221,7 +221,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	  
 
 	  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	  public void createAgregatesAndInvoice(BillingAccount billingAccount,BillingRun billingRun) throws BusinessException, Exception {
+	  public void createAgregatesAndInvoice(EntityManager em,BillingAccount billingAccount,BillingRun billingRun) throws BusinessException, Exception {
 			
 				Long startDate=System.currentTimeMillis();
 	            BillingCycle billingCycle = billingRun.getBillingCycle();
@@ -245,10 +245,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	            invoice.setPaymentMethod(billingAccount.getPaymentMethod());
 	            invoice.setProvider(billingRun.getProvider());
-	            create(invoice);
-	            ratedTransactionService.createInvoiceAndAgregates(billingRun, billingAccount,invoice);
+	            create(getEntityManager(),invoice);
+	            ratedTransactionService.createInvoiceAndAgregates(em,billingRun, billingAccount,invoice);
 
-		        ratedTransactionService.updateRatedTransactions(billingRun, billingAccount,invoice);
+		        ratedTransactionService.updateRatedTransactions(em,billingRun, billingAccount,invoice);
 		        
 	            StringBuffer num1 = new StringBuffer("000000000");
 	            num1.append(invoice.getId() + "");
@@ -258,7 +258,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	                key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
 	            }
 	            invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
-	            update(invoice);
+	            update(getEntityManager(),invoice);
 	            Long endDate=System.currentTimeMillis();
 	            log.info("createAgregatesAndInvoice BR_ID="+billingRun.getId()+", BA_ID="+billingAccount.getId()+", Time en ms="+(endDate-startDate));
 		        

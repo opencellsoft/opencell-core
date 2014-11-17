@@ -141,6 +141,9 @@ public class BillingAccount extends AccountEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
 	private SubscriptionTerminationReason terminationReason;
+	
+	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
+	private List<RatedTransaction> ratedTransactions;
 
 	public List<UserAccount> getUsersAccounts() {
 		return usersAccounts;

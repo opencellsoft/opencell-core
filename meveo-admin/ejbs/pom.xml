@@ -15,6 +15,7 @@
 
 	<properties>
 		<manaty.seam.version>3.1.0.Final</manaty.seam.version>
+		<version.org.infinispan>5.1.7.Final</version.org.infinispan>
 	</properties>
 
 	<build>
@@ -267,12 +268,13 @@
 		</dependency>
 		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
 			<version>1.7.2</version> </dependency> -->
-
+	
 		<dependency>
+		
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-core</artifactId>
-			<version>5.1.8.Final</version><!-- use version used in jboss 7.1.3 -->
-			<scope>provided</scope>
+			<version>${version.org.infinispan}</version>
+			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<artifactId>jboss-logging</artifactId>

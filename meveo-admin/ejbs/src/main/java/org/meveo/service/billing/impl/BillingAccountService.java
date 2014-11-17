@@ -233,6 +233,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		try {
 			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b");
 			qb.addCriterionEntity("b.billingCycle", billingCycle);
+			qb.addSql("b.billingRun is null");
 			if (startdate != null) {
 				qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate",
 						startdate);
@@ -253,8 +254,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public BillingRun updateBillingAccountTotalAmounts(long billingAccountId,
 			BillingRun billingRun, boolean entreprise) {
-		BillingAccount billingAccount = findById(billingAccountId);
-		billingRun.getBillableBillingAccounts().add(billingAccount);
+
+		log.info("updateBillingAccountTotalAmounts  billingAccountId:" + billingAccountId);
+		BillingAccount billingAccount = findById(getEntityManager(),billingAccountId);
+		//billingRun.getBillableBillingAccounts().add(billingAccount);
 		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
 				entreprise);
 		billingAccount.setBillingRun(billingRun);

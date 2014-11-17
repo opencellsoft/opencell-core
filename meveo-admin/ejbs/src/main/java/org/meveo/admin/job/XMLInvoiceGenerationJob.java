@@ -92,7 +92,9 @@ public class XMLInvoiceGenerationJob implements Job {
 				        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
 				        billingRundir.mkdirs();
 				        for (Invoice invoice : billingRun.getInvoices()) {
+				        	long startDate=System.currentTimeMillis();
 				            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+				            log.info("invoice creation delay : " +(System.currentTimeMillis()-startDate));
 				        }
 				        billingRun.setXmlInvoiceGenerated(true);
 				        billingRunService.update(billingRun);
