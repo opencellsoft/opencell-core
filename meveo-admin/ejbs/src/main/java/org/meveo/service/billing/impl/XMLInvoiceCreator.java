@@ -31,8 +31,6 @@ import java.util.Set;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -42,12 +40,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
@@ -638,26 +634,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									.getInvoice(), subCatInvoiceAgregate
 									.getInvoiceSubCategory());
 
-					boolean createSubCatElement = false;
-					for (RatedTransaction ratedTrnsaction : transactions) {
-						BigDecimal transactionAmount = entreprise ? ratedTrnsaction
-								.getAmountWithTax() : ratedTrnsaction
-								.getAmountWithoutTax();
-						if (transactionAmount == null) {
-							transactionAmount = BigDecimal.ZERO;
-						}
-
-						if (invoice.getProvider()
-								.isDisplayFreeTransacInInvoice()
-								|| !(transactionAmount
-										.compareTo(BigDecimal.ZERO) == 0)) {
-							createSubCatElement = true;
-							break;
-						}
-					}
-					if (!createSubCatElement) {
-						continue;
-					}
 					String invoiceSubCategoryLabel = invoiceSubCat != null ? catMessagesService.getMessageDescription(
 							invoiceSubCat.getClass().getSimpleName() + "_"
 									+ invoiceSubCat.getId(), languageCode) : "";
@@ -667,21 +643,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", invoiceSubCategoryLabel);
 
-					Collections.sort(transactions,
-							new Comparator<RatedTransaction>() {
-								public int compare(RatedTransaction c0,
-										RatedTransaction c1) {
-									if (c0.getWalletOperationId() != null
-											&& c1.getWalletOperationId() != null) {
-										return c0
-												.getWalletOperationId()
-												.compareTo(
-														c1.getWalletOperationId());
-									}
-									return 0;
-								}
-							});
-
 					for (RatedTransaction ratedTrnsaction : transactions) {
 						BigDecimal transactionAmount = entreprise ? ratedTrnsaction
 								.getAmountWithTax() : ratedTrnsaction
@@ -690,10 +651,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							transactionAmount = BigDecimal.ZERO;
 						}
 
-						if (invoice.getProvider()
-								.isDisplayFreeTransacInInvoice()
-								|| !(transactionAmount
-										.compareTo(BigDecimal.ZERO) == 0)) {
 
 							Element line = doc.createElement("line");
 							String code = "", description = "";
@@ -759,7 +716,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							line.appendChild(usageDate);
 
 							subCategory.appendChild(line);
-						}
+						
 					}
 				}
 			}

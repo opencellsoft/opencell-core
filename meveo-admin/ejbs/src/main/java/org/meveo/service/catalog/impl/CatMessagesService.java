@@ -59,24 +59,28 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 
 	@SuppressWarnings("unchecked")
 	public String getMessageDescription(String messageCode, String languageCode) {
+		long startDate=System.currentTimeMillis();
 		if(messageCode==null || languageCode==null){
 			return null;
 		}
+		String description="";
 		if(catMessageCach.containsKey(messageCode)){
 			log.info("get message description from infinispan cache messageCode="+messageCode+",languageCode="+languageCode);
-			return (String)catMessageCach.get(messageCode);
+			description= (String)catMessageCach.get(messageCode);
+		}else{
+			log.info("get message description from DB="+messageCode+",languageCode="+languageCode);
+			QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
+			qb.addCriterionWildcard("c.messageCode", messageCode, true);
+			qb.addCriterionWildcard("c.languageCode", languageCode, true);
+			List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
+			
+			description= catMessages.size() > 0 ? catMessages.get(0).getDescription() : "";
+			if(description!=null){
+				catMessageCach.put(messageCode, description);
+			}
 		}
-		log.info("get message description from DB="+messageCode+",languageCode="+languageCode);
-		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-		qb.addCriterionWildcard("c.messageCode", messageCode, true);
-		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
 		
-		String description= catMessages.size() > 0 ? catMessages.get(0).getDescription() : "";
-		if(description!=null){
-			catMessageCach.put(messageCode, description);
-		}
-		log.info("get message description description ="+description);
+		log.info("get message description description ="+description+", time="+(System.currentTimeMillis()-startDate));
 		return description;
 	}
 

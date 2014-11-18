@@ -539,15 +539,27 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  
     }
     public  List<RatedTransaction> getRatedTransactions(WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCategory){
-    	
+    	long startDate=System.currentTimeMillis();
   	  QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
 		  qb.addCriterionEnum("c.status",  RatedTransactionStatusEnum.BILLED);
 		  qb.addCriterionEntity("c.wallet", wallet);
 		  qb.addCriterionEntity("c.invoice", invoice);
 		  qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
+		 
+		  
+		  if(!invoice.getProvider()
+			.isDisplayFreeTransacInInvoice()){
+			  qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false); 
+		  }
+		  
+		  qb.addOrderCriterion("c.walletOperationId", true);
 
 		  @SuppressWarnings("unchecked")
 		List<RatedTransaction> ratedTransactions= qb.getQuery(getEntityManager()).getResultList();
+		  
+
+			log.info("getRatedTransactions time: "+(System.currentTimeMillis()-startDate));
+			
 		  return ratedTransactions;
 
 		  
