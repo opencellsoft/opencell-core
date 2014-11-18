@@ -149,7 +149,7 @@ public class UserService extends PersistenceService<User> {
 
 		qb.addCriterion("userName", "=", username.toUpperCase(), true);
 		qb.addCriterion("password", "=", password, true);
-
+		System.out.println("qb="+qb);
 		try {
 			return (User) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException ex) {

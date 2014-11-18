@@ -40,9 +40,7 @@ import org.primefaces.model.DualListModel;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
+ * s
  * 
  */
 @Named
