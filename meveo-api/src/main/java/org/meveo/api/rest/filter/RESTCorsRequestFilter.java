@@ -23,8 +23,6 @@ public class RESTCorsRequestFilter implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestCtx) throws IOException {
-		log.debug("Override REST request. Aborting if METHOD=OPTIONS.");
-
 		// When HttpMethod comes as OPTIONS, just acknowledge that it accepts...
 		if (requestCtx.getRequest().getMethod().equals("OPTIONS")) {
 			log.debug("HTTP Method (OPTIONS) - Detected!");
