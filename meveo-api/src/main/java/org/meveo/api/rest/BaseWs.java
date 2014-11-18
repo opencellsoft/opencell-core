@@ -10,11 +10,15 @@ import org.meveo.api.rest.security.WSUser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.util.MeveoParamBean;
+import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
  **/
 public abstract class BaseWs implements IBaseWs {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	@MeveoParamBean
@@ -45,6 +49,7 @@ public abstract class BaseWs implements IBaseWs {
 	}
 
 	public User getCurrentUser() {
+		log.debug("Injected REST user is={}", currentUser);
 		return currentUser;
 	}
 

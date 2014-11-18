@@ -180,16 +180,19 @@
 		</h:form>
 
 		<br />
+
 		<h:form id="operationsForm" rendered="#{!edit}">
-			<p:commandButton action="#{billingRunBean.validateInvoicing()}"
-				value="Validate" />
-			<!-- <h:commandButton
+			<div class="action-buttons">
+				<p:commandButton action="#{billingRunBean.validateInvoicing()}"
+					value="Validate" />
+				<!-- <h:commandButton
 				action="#{billingRunBean.rerateConfirmedInvoicing()}"
 				value="Rerate" /> -->
-			<p:commandButton
-				action="#{billingRunBean.cancelConfirmedInvoicing()}"
-				value="Cancel billing run"
-				onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
+				<p:commandButton
+					action="#{billingRunBean.cancelConfirmedInvoicing()}"
+					value="Cancel billing run"
+					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
+			</div>
 		</h:form>
 	</ui:define>
 </ui:composition>

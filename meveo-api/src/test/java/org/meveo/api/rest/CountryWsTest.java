@@ -8,6 +8,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.meveo.admin.util.ComponentResources;
 import org.meveo.admin.util.LoggerProducer;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.api.BaseApi;
 import org.meveo.api.CountryApi;
 import org.meveo.api.MeveoApiErrorCode;
@@ -31,9 +33,11 @@ import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.logging.Logged;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.security.WSSecured;
+import org.meveo.api.rest.security.WSUser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.RoleService;
@@ -77,13 +81,12 @@ public class CountryWsTest {
 		result.addAsLibraries(seamDependencies);
 
 		// producers
-		result = result
-				.addClasses(Resources.class, LoggerProducer.class,
-						MeveoJpa.class, MeveoJpaForJobs.class,
-						ComponentResources.class);
+		result = result.addClasses(DefaultUserProducer.class, Resources.class,
+				LoggerProducer.class, MeveoJpa.class, MeveoJpaForJobs.class,
+				ComponentResources.class, MeveoUser.class);
 
 		// common classes
-		result = result.addClasses(StringUtils.class);
+		result = result.addClasses(StringUtils.class, Sha1Encrypt.class);
 
 		// base services
 		result = result.addClasses(PersistenceService.class,
@@ -94,9 +97,9 @@ public class CountryWsTest {
 
 		// base api
 		result = result
-				.addClasses(JaxRsActivator.class, BaseWs.class,
-						WSSecured.class, IBaseWs.class, BaseApi.class,
-						LoggingInterceptor.class, Logged.class,
+				.addClasses(JaxRsActivator.class, WSUser.class,
+						WSSecured.class, IBaseWs.class, BaseWs.class,
+						BaseApi.class, LoggingInterceptor.class, Logged.class,
 						MeveoApiErrorCode.class);
 
 		// country
@@ -138,6 +141,7 @@ public class CountryWsTest {
 
 	@RunAsClient
 	@Test
+	@InSequence(100)
 	public void testCreate(
 			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
 		CountryDto countryDto = new CountryDto();
@@ -153,6 +157,23 @@ public class CountryWsTest {
 
 	@RunAsClient
 	@Test
+	@InSequence(101)
+	public void testCreateAlreadyExists(
+			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
+		CountryDto countryDto = new CountryDto();
+		countryDto.setCountryCode("PH");
+		countryDto.setCurrencyCode("PHP");
+		countryDto.setLanguageCode("ENG");
+		countryDto.setName("Philippines");
+
+		ActionStatus result = countryWs.create(countryDto);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(102)
 	public void testFind(
 			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
 		GetCountryResponse result = countryWs.find("PH");
@@ -163,11 +184,65 @@ public class CountryWsTest {
 
 	@RunAsClient
 	@Test
+	@InSequence(103)
+	public void testFindDoesNotExists(
+			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
+		GetCountryResponse result = countryWs.find("NONE");
+		log.info("response=" + result);
+		Assert.assertEquals(result.getActionStatus().getStatus(),
+				ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(104)
+	public void testUpdate(
+			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
+		CountryDto countryDto = new CountryDto();
+		countryDto.setCountryCode("PH");
+		countryDto.setCurrencyCode("PHP");
+		countryDto.setLanguageCode("ENG");
+		countryDto.setName("Philippines-Updated");
+
+		ActionStatus result = countryWs.update(countryDto);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.SUCCESS);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(105)
+	public void testUpdateDoesNotExists(
+			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
+		CountryDto countryDto = new CountryDto();
+		countryDto.setCountryCode("PH-NONE");
+		countryDto.setCurrencyCode("PHP-NONE");
+		countryDto.setLanguageCode("ENG");
+		countryDto.setName("Philippines-Updated");
+
+		ActionStatus result = countryWs.update(countryDto);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(106)
 	public void testRemove(
 			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
 		ActionStatus result = countryWs.remove("PH", "PHP");
 		log.info("response=" + result);
 		Assert.assertEquals(result.getStatus(), ActionStatusEnum.SUCCESS);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(107)
+	public void testRemoveDoesNotExists(
+			@ArquillianResteasyResource("api/rest") CountryWs countryWs) {
+		ActionStatus result = countryWs.remove("PH-NONE", "PHP-NONE");
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
 	}
 
 }

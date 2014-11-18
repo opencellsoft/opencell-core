@@ -10,7 +10,8 @@
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{customerBean.preRenderView}" />
+			<f:event type="preRenderView"
+				listener="#{customerBean.preRenderView}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
 	</ui:define>
@@ -96,33 +97,36 @@
 											field="address" childField="zipCode" popup="false"
 											id="zipCode" maxlength="10" size="10" />
 										<hf:formEntityField label="#{messages['address.city']}"
-											field="address" childField="city" popup="false"
-											id="city" maxlength="50" />
+											field="address" childField="city" popup="false" id="city"
+											maxlength="50" />
 									</p:panelGrid>
 									<hf:formEntityField label="#{messages['address.country']}"
 										embedded="true" field="address" childField="country"
 										labelField="descriptionEn" valueField="countryCode"
 										listBean="#{countryBean}"></hf:formEntityField>
 								</p:fieldset>
-								<hftl:fieldset name="#{messages['customerAccount.sepaDebit']}" columns="1">
-												<hftl:panelGroup columns="1">
-													<hf:formField
-														label="#{messages['customerAccount.mandateIdentification']}"
-														field="mandateIdentification" />
-													<hf:formField
-														label="#{messages['customerAccount.mandateDate']}"
-														field="mandateDate" isDate="true" />
-												</hftl:panelGroup>
-											</hftl:fieldset>
+								<hftl:fieldset name="#{messages['customerAccount.sepaDebit']}"
+									columns="1">
+									<hftl:panelGroup columns="1">
+										<hf:formField
+											label="#{messages['customerAccount.mandateIdentification']}"
+											field="mandateIdentification" />
+										<hf:formField
+											label="#{messages['customerAccount.mandateDate']}"
+											field="mandateDate" isDate="true" />
+									</hftl:panelGroup>
+								</hftl:fieldset>
 							</p:tab>
 						</p:tabView>
 
 					</hf:formPanel>
 					<h:form id="operationsForm" rendered="#{!customerBean.edit}">
-						<p:button outcome="addCustomerAccount"
-							value="#{messages['customer.buttonAddCustomerAccount']}">
-							<f:param name="cid" value="#{conversation.id}" />
-						</p:button>
+						<div class="actionButtons">
+							<p:button outcome="addCustomerAccount"
+								value="#{messages['customer.buttonAddCustomerAccount']}">
+								<f:param name="cid" value="#{conversation.id}" />
+							</p:button>
+						</div>
 					</h:form>
 				</p:column>
 			</p:row>

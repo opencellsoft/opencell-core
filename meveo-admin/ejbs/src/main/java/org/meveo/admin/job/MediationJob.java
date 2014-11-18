@@ -60,6 +60,9 @@ public class MediationJob implements Job {
 	@Inject
 	CDRParsingService cdrParser;
 
+	@Inject
+	private MediationJobBean mediationJobBean;
+
 	String cdrFileName;
 	File cdrFile;
 	String inputDir;
@@ -130,7 +133,8 @@ public class MediationJob implements Job {
 						List<EDR> edrs = cdrParser.getEDRList(line);
 						if (edrs != null && edrs.size() > 0) {
 							for (EDR edr : edrs) {
-								edrService.create(edr);
+								// edrService.create(edr);
+								mediationJobBean.createEdr(edr);
 							}
 						}
 						outputCDR(line);

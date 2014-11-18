@@ -6,6 +6,10 @@
         http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
 
+	<factory>
+		<exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
+	</factory>
+
 	<application>
 		<locale-config>
 			<default-locale>en</default-locale>

@@ -43,7 +43,7 @@
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.xhtml</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jsf</url-pattern>
@@ -59,15 +59,15 @@
 		<servlet-name>Faces Servlet</servlet-name>
 	</filter-mapping>
 
-<!-- 	<filter> -->
-<!-- 		<filter-name>UTF8CharacterEncodingFilter</filter-name> -->
-<!-- 		<filter-class>org.meveo.admin.filter.UTF8CharacterEncodingFilter</filter-class> -->
-<!-- 	</filter> -->
+	<!-- <filter> -->
+	<!-- <filter-name>UTF8CharacterEncodingFilter</filter-name> -->
+	<!-- <filter-class>org.meveo.admin.filter.UTF8CharacterEncodingFilter</filter-class> -->
+	<!-- </filter> -->
 
-<!-- 	<filter-mapping> -->
-<!-- 		<filter-name>UTF8CharacterEncodingFilter</filter-name> -->
-<!-- 		<url-pattern>*.jsf</url-pattern> -->
-<!-- 	</filter-mapping> -->
+	<!-- <filter-mapping> -->
+	<!-- <filter-name>UTF8CharacterEncodingFilter</filter-name> -->
+	<!-- <url-pattern>*.jsf</url-pattern> -->
+	<!-- </filter-mapping> -->
 
 	<!-- Error page -->
 	<error-page>

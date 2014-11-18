@@ -88,7 +88,7 @@ public class XMLInvoiceGenerationJob implements Job {
 				try {
 					
 			        ParamBean param = ParamBean.getInstance();
-			        String invoicesDir = param.getProperty("meveo.dir","/tmp/meveo");
+			        String invoicesDir = param.getProperty("providers.rootDir","/tmp/meveo");
 				        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
 				        billingRundir.mkdirs();
 				        for (Invoice invoice : billingRun.getInvoices()) {

@@ -68,7 +68,7 @@ public class PDFParametersConstruction {
 					.getBillingTemplateName() : "default";
 
 			ParamBean paramBean = ParamBean.getInstance();
-			String meveoDir = paramBean.getProperty("meveo.dir", "/tmp/meveo");
+			String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
 			String resDir = meveoDir + File.separator + provider.getCode()
 					+ File.separator + "jasper";
 			String templateDir = new StringBuilder(resDir)

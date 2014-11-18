@@ -38,6 +38,18 @@
 		<ui:insert name="body" />
 	</div>
 	<div class="footer">MEVEO @VERSION_NUMBER@ @BUILD_NUMBER@</div>
+
+	<p:ajaxStatus
+		style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+		<f:facet name="start">
+			<h:graphicImage library="img" name="loading.gif" />
+		</f:facet>
+
+		<f:facet name="complete">
+			<h:outputText value="" />
+		</f:facet>
+	</p:ajaxStatus>
+
 </h:body>
 	</html>
 </f:view>

@@ -87,7 +87,7 @@ select[disabled] { color : #000; }
 	color: #333;
 }
 
-.actionButtons { padding-left: 1px; }
+.actionButtons { padding-left: 1px; margin-top: 5px; }
 .actionButtons select { margin: 5px 5px 5px 0; vertical-align: bottom; }
 
 .footer
@@ -379,6 +379,7 @@ input[type="submit"],
 .col2-set .col2 { width : 72% !Important; float : right; }
 .confirm-dialog .ui-dialog-content p span.ui-confirm-dialog-severity { position: relative; top: -4px; }
 .confirm-dialog .ui-dialog-buttonpane { text-align: center; }
+.action-buttons { margin-top: 5px; }
 .action-buttons button { margin-right: 5px; }
 .custom-grid tbody { display: table-row-group; }
 .align-left .ui-datalist-header {text-align:left;}

@@ -31,23 +31,30 @@
 				<hf:formPanel id="timerFormId" formId="timerBeanFormId"
 					backingBean="#{timerBean}" showFormButtons="false"
 					ajaxSubmit="true">
+
 					<a
-						href="http://docs.oracle.com/javaee/6/api/javax/ejb/ScheduleExpression.html">Help on format</a>
-					<sc:inputContainer label="#{messages['timer.jobName']}">
+						href="http://docs.oracle.com/javaee/6/api/javax/ejb/ScheduleExpression.html">Help
+						on format</a>
+
+					<p:panelGrid columns="2">
+						<p:outputLabel for="timerJobName"
+							value="#{messages['timer.jobName']}"></p:outputLabel>
 						<p:selectOneMenu id="timerJobName"
 							value="#{timerBean.timerEntity.jobName}"
 							disabled="#{timerBean.timerEntity.id != null}" required="true">
 							<f:selectItem itemLabel="#{messages['commons.select']}" />
 							<f:selectItems value="#{timerBean.jobNames}" />
-							<!-- <a:ajax event="valueChange" render="timerForm" execute="@this"></a:ajax> -->
 							<p:ajax event="valueChange" update=":timerForm"></p:ajax>
 						</p:selectOneMenu>
-					</sc:inputContainer>
+					</p:panelGrid>
+
 					<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.name']}*" />
-							<p:inputText value="#{timerBean.timerEntity.name}" required="true"/>
-						</p:panelGrid>
-					<h:panelGrid columns="4"
+						<p:outputLabel for="jobName" value="#{messages['timer.name']}" />
+						<p:inputText id="jobName" value="#{timerBean.timerEntity.name}"
+							required="true" />
+					</p:panelGrid>
+
+					<p:panelGrid columns="4"
 						rendered="#{timerBean.timerEntity.id!=null or timerBean.timerEntity.jobName!=null}">
 
 						<p:panelGrid columns="2">
@@ -96,15 +103,21 @@
 								value="#{timerBean.timerEntity.info.active}" />
 						</p:panelGrid>
 
-					</h:panelGrid>
-					<sc:inputContainer label="#{messages['timer.followingJob']}">
+					</p:panelGrid>
+
+					<p:panelGrid columns="2">
+						<p:outputLabel for="timerFollowingJob"
+							value="#{messages['timer.followingJob']}"></p:outputLabel>
 						<p:selectOneMenu id="timerFollowingJob"
-							value="#{timerBean.timerEntity.followingTimer}" converter="timerEntityConverter">
+							value="#{timerBean.timerEntity.followingTimer}"
+							converter="timerEntityConverter">
 							<f:selectItem itemLabel="#{messages['commons.select']}" />
-							<f:selectItems value="#{timerBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.name}" itemValue="#{t_}"/>
+							<f:selectItems value="#{timerBean.getTimerEntityList()}" var="t_"
+								itemLabel="#{t_.name}" itemValue="#{t_}" />
 						</p:selectOneMenu>
-					</sc:inputContainer>
-					<h:panelGroup columns="4">
+					</p:panelGrid>
+
+					<p:panelGrid columns="4">
 						<div class="action-buttons">
 							<p:commandButton ajax="false" id="button_create"
 								value="#{messages['action.save']}"
@@ -126,7 +139,7 @@
 							<p:button id="button_cancel" value="#{messages['action.cancel']}"
 								outcome="jobTimers" />
 						</div>
-					</h:panelGroup>
+					</p:panelGrid>
 				</hf:formPanel>
 			</h:form>
 
@@ -134,7 +147,8 @@
 
 			<p:outputPanel id="jobExecutions">
 				<hftl:dataList backingBean="#{timerBean}"
-					resultsId="timerBean_results" sortBy="#{entity.startDate}" sortOrder="descending">
+					resultsId="timerBean_results" sortBy="#{entity.startDate}"
+					sortOrder="descending">
 					<p:column sortBy="startDate">
 						<f:facet name="header">
 							<h:outputText value="#{messages['jobExecution.startDate']}" />
@@ -164,8 +178,8 @@
 
 					<hftl:column label="#{messages['jobExecution.report']}"
 						field="report" sort="false" />
-
 				</hftl:dataList>
+
 			</p:outputPanel>
 		</p:panel>
 	</ui:define>
