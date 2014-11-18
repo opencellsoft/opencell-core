@@ -316,6 +316,17 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>customFieldTemplates</from-outcome>
+			<to-view-id>/pages/admin/customFieldTemplates/customFieldTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customFieldTemplateDetail</from-outcome>
+			<to-view-id>/pages/admin/customFieldTemplates/customFieldTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<navigation-case>
 			<from-outcome>customerImportHisto</from-outcome>
 			<to-view-id>/pages/admin/history/customerImportHistory.xhtml</to-view-id>
 			<redirect />

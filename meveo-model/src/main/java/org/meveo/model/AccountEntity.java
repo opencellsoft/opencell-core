@@ -16,18 +16,27 @@
  */
 package org.meveo.model;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.listeners.AccountCodeGenerationListener;
 import org.meveo.model.shared.Address;
@@ -66,6 +75,10 @@ public abstract class AccountEntity extends BusinessEntity {
 	@JoinColumn(name = "PRIMARY_CONTACT")
 	private ProviderContact primaryContact;
 
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@MapKeyColumn(name="code")
+	private Map<String,CustomFieldInstance> customFields=new HashMap<String, CustomFieldInstance>();
+	
 	public String getExternalRef1() {
 		return externalRef1;
 	}
@@ -130,4 +143,73 @@ public abstract class AccountEntity extends BusinessEntity {
 		this.primaryContact = primaryContact;
 	}
 
+	public Map<String,CustomFieldInstance> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String,CustomFieldInstance> customFields) {
+		this.customFields = customFields;
+	}
+	
+	public CustomFieldInstance getCustomFieldInstance(String code){
+		CustomFieldInstance cfi =null;
+		 if(customFields.containsKey(code)){
+			 cfi = customFields.get(code);
+		 } else {
+			 cfi = new CustomFieldInstance();
+			 cfi.setCode(code);
+			 customFields.put(code, cfi);
+		 }
+		 return cfi;
+	}
+	
+	
+	public String getStringCustomValue(String code){
+		String result=null;
+		if(customFields.containsKey(code)){
+			result = customFields.get(code).getStringValue();
+		}
+		return result;
+	}
+
+	public void setStringCustomValue(String code, String value){
+	 	getCustomFieldInstance(code).setStringValue(value);
+	}
+	
+	public Date getDateCustomValue(String code){
+		Date result=null;
+		if(customFields.containsKey(code)){
+			result = customFields.get(code).getDateValue();
+		}
+		return result;
+	}
+
+	public void setDateCustomValue(String code, Date value){
+	 	getCustomFieldInstance(code).setDateValue(value);
+	}
+	
+	public Long getLongCustomValue(String code){
+		Long result=null;
+		if(customFields.containsKey(code)){
+			result = customFields.get(code).getLongValue();
+		}
+		return result;
+	}
+
+	public void setLongCustomValue(String code, Long value){
+	 	getCustomFieldInstance(code).setLongValue(value);
+	}
+	
+	public Double getDoubleCustomValue(String code){
+		Double result=null;
+		if(customFields.containsKey(code)){
+			result = customFields.get(code).getDoubleValue();
+		}
+		return result;
+	}
+
+	public void setDoubleCustomValue(String code, Double value){
+	 	getCustomFieldInstance(code).setDoubleValue(value);
+	}
+	
 }
