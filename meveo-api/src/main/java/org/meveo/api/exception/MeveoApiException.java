@@ -14,7 +14,8 @@ public class MeveoApiException extends Exception {
 
 	}
 
-	public MeveoApiException(int errorCode) {
+	public MeveoApiException(int errorCode, String message) {
+		super(message);
 		this.errorCode = errorCode;
 	}
 

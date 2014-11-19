@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.admin.Seller;
@@ -17,7 +18,9 @@ public class SellerDto implements Serializable {
 
 	private static final long serialVersionUID = 4763606402719751014L;
 
+	@XmlAttribute(required = true)
 	private String code;
+
 	private String description;
 	private String invoicePrefix;
 	private String currencyCode;

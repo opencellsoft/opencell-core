@@ -43,6 +43,7 @@ public class UserApi extends BaseApi {
 	public void create(UserDto postData, User currentUser)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getUsername())
+				&& !StringUtils.isBlank(postData.getEmail())
 				&& !StringUtils.isBlank(postData.getProvider())
 				&& !StringUtils.isBlank(postData.getRole())
 				&& !StringUtils.isBlank(postData.getLastName())) {
@@ -93,6 +94,9 @@ public class UserApi extends BaseApi {
 
 			if (StringUtils.isBlank(postData.getUsername())) {
 				missingFields.add("username");
+			}
+			if (StringUtils.isBlank(postData.getEmail())) {
+				missingFields.add("email");
 			}
 			if (StringUtils.isBlank(postData.getProvider())) {
 				missingFields.add("provider");

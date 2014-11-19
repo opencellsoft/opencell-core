@@ -40,7 +40,7 @@ public class CountryWsTest extends BaseWsTest {
 	@Deployment
 	public static Archive<?> createTestArchive() {
 		WebArchive result = ShrinkWrap
-				.create(WebArchive.class, "meveo-api.war");
+				.create(WebArchive.class, "country-api.war");
 
 		result = initArchive(result);
 

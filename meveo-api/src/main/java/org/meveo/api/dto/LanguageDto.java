@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.TradingLanguage;
@@ -17,6 +18,7 @@ public class LanguageDto implements Serializable {
 
 	private static final long serialVersionUID = 725968016559888810L;
 
+	@XmlAttribute(required = true)
 	private String code;
 	private String description;
 

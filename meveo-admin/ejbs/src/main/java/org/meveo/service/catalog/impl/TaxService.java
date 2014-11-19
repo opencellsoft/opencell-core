@@ -24,6 +24,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -32,7 +33,11 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class TaxService extends PersistenceService<Tax> {
 
-	public Tax findByCode(EntityManager em, String code) {
+	public Tax findByCode(String code, Provider provider) {
+		return findByCode(getEntityManager(), code, provider);
+	}
+
+	public Tax findByCode(EntityManager em, String code, Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
 			qb.addCriterion("code", "=", code, false);
@@ -43,10 +48,12 @@ public class TaxService extends PersistenceService<Tax> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Tax> findStartsWithCode(EntityManager em, String taxId) {
+	public List<Tax> findStartsWithCode(EntityManager em, String taxId,
+			Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
 			qb.like("code", taxId, 1, false);
+			qb.addCriterionEntity("t.provider", provider);
 			return (List<Tax>) qb.getQuery(em).getResultList();
 		} catch (NoResultException ne) {
 			return null;

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.Provider;
@@ -17,7 +18,9 @@ public class ProviderDto implements Serializable {
 
 	private static final long serialVersionUID = 5599223889050605880L;
 
+	@XmlAttribute(required = true)
 	private String code;
+
 	private String description;
 	private String currency;
 	private String country;

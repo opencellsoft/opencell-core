@@ -13,8 +13,8 @@ import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -144,8 +144,8 @@ public class AccountHierarchyApi extends BaseApi {
 		return newValue;
 	}
 
-	public void create(AccountHierarchyDto accountHierarchy,
-			User currentUser) throws MeveoApiException {
+	public void create(AccountHierarchyDto accountHierarchy, User currentUser)
+			throws MeveoApiException {
 
 		Provider provider = currentUser.getProvider();
 
@@ -474,8 +474,7 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 	}
 
-	public void update(
-			AccountHierarchyDto accountHierarchyDto, User currentUser)
+	public void update(AccountHierarchyDto accountHierarchyDto, User currentUser)
 			throws MeveoApiException {
 
 		Provider provider = currentUser.getProvider();
@@ -818,8 +817,7 @@ public class AccountHierarchyApi extends BaseApi {
 					userAccountService.updateUserAccount(em, userAccount,
 							currentUser);
 				} catch (BusinessException e) {
-					throw new MeveoApiException(
-							MeveoApiErrorCode.BUSINESS_API_EXCEPTION);
+					throw new BusinessApiException();
 				}
 			}
 		} else {

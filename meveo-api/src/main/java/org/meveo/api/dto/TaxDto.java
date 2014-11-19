@@ -1,11 +1,15 @@
 package org.meveo.api.dto;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.model.billing.Tax;
 
 /**
  * @author Edward P. Legaspi
@@ -13,43 +17,80 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "Tax")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaxDto extends BaseDto {
+public class TaxDto implements Serializable {
 
 	private static final long serialVersionUID = 5184602572648722134L;
 
-	@XmlElement(required = true)
-	private String taxId;
+	@XmlAttribute(required = true)
+	private String code;
 
-	private String name;
+	@XmlAttribute(required = true)
+	private String description;
 
-	@XmlElement(required = true)
-	private List<CountryTaxDto> countryTaxes;
+	@XmlAttribute(required = true)
+	private BigDecimal percent;
+
+	private String accountingCode;
+	private List<LanguageDescriptionDto> languageDescriptions;
 
 	public TaxDto() {
 
 	}
 
-	public String getTaxId() {
-		return taxId;
+	public TaxDto(Tax tax) {
+		code = tax.getCode();
+		description = tax.getDescription();
+		percent = tax.getPercent();
+		accountingCode = tax.getAccountingCode();
+
 	}
 
-	public void setTaxId(String taxId) {
-		this.taxId = taxId;
+	public String getCode() {
+		return code;
 	}
 
-	public String getName() {
-		return name;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getDescription() {
+		return description;
 	}
 
-	public List<CountryTaxDto> getCountryTaxes() {
-		return countryTaxes;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public void setCountryTaxes(List<CountryTaxDto> countryTaxes) {
-		this.countryTaxes = countryTaxes;
+	public BigDecimal getPercent() {
+		return percent;
 	}
+
+	public void setPercent(BigDecimal percent) {
+		this.percent = percent;
+	}
+
+	public String getAccountingCode() {
+		return accountingCode;
+	}
+
+	public void setAccountingCode(String accountingCode) {
+		this.accountingCode = accountingCode;
+	}
+
+	public List<LanguageDescriptionDto> getLanguageDescriptions() {
+		return languageDescriptions;
+	}
+
+	public void setLanguageDescriptions(
+			List<LanguageDescriptionDto> languageDescriptions) {
+		this.languageDescriptions = languageDescriptions;
+	}
+
+	@Override
+	public String toString() {
+		return "TaxDto [code=" + code + ", description=" + description
+				+ ", percent=" + percent + ", accountingCode=" + accountingCode
+				+ ", languageDescriptions=" + languageDescriptions + "]";
+	}
+
 }

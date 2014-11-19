@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.TradingCurrency;
@@ -17,7 +18,9 @@ public class CurrencyDto implements Serializable {
 
 	private static final long serialVersionUID = 9143645109603442839L;
 
+	@XmlAttribute(required = true)
 	private String code;
+	
 	private String description;
 
 	public CurrencyDto() {

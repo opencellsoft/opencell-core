@@ -89,7 +89,7 @@ public class InvoiceApi extends BaseApi {
 	public void create(InvoiceDto invoiceDTO, User currentUser)
 			throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
-	
+
 		if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0
 				&& !StringUtils.isBlank(invoiceDTO.getBillingAccountCode())
 				&& !StringUtils.isBlank(invoiceDTO.getDueDate())
@@ -106,7 +106,7 @@ public class InvoiceApi extends BaseApi {
 			// FIXME : store that in SubCategoryInvoiceAgregateDto
 			String taxCode = paramBean.getProperty("tax.code.default", "");
 
-			Tax tax = taxService.findByCode(em, taxCode);
+			Tax tax = taxService.findByCode(em, taxCode, provider);
 			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
 					.findByCode(em, invoiceSubCategoryCode);
 			BillingRun br = new BillingRun();

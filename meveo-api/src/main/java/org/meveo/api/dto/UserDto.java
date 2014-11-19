@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,12 +23,32 @@ public class UserDto implements Serializable {
 
 	private static final long serialVersionUID = -6633504145323452803L;
 
+	@XmlAttribute(required = true)
+	private String username;
+
+	@XmlAttribute(required = true)
+	private String password;
+
+	@XmlAttribute(required = true)
+	private String email;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@XmlAttribute(required = true)
+	private String role;
+
+	@XmlAttribute(required = true)
+	private String provider;
+
 	private String firstName;
 	private String lastName;
-	private String username;
-	private String password;
-	private String role;
-	private String provider;
+
 	@XmlTransient
 	private List<String> roles;
 
@@ -103,6 +124,14 @@ public class UserDto implements Serializable {
 
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
+	}
+
+	@Override
+	public String toString() {
+		return "UserDto [username=" + username + ", password=" + password
+				+ ", email=" + email + ", role=" + role + ", provider="
+				+ provider + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", roles=" + roles + "]";
 	}
 
 }
