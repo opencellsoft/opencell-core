@@ -1,11 +1,15 @@
 package org.meveo.api.rest;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -15,6 +19,8 @@ import org.junit.runner.RunWith;
 import org.meveo.api.TaxApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.TaxService;
@@ -40,7 +46,7 @@ public class TaxWsTest extends BaseWsTest {
 
 		return result;
 	}
-	
+
 	@RunAsClient
 	@Test
 	public void testVersion(
@@ -48,6 +54,254 @@ public class TaxWsTest extends BaseWsTest {
 		ActionStatus result = resource.index();
 		log.info("response=" + result);
 		Assert.assertEquals(result.getStatus(), ActionStatusEnum.SUCCESS);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(1)
+	public void testCreate(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("E_TEST");
+		postData.setAccountingCode("E_TEST");
+		postData.setDescription("E_TEST");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld = new LanguageDescriptionDto();
+		ld.setLanguageCode("ENG");
+		ld.setDescription("English");
+		languageDescriptions.add(ld);
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.create(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.SUCCESS);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(2)
+	public void testCreateAlreadyExists(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("E_TEST");
+		postData.setAccountingCode("E_TEST");
+		postData.setDescription("E_TEST");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld = new LanguageDescriptionDto();
+		ld.setLanguageCode("ENG");
+		ld.setDescription("English");
+		languageDescriptions.add(ld);
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.create(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(3)
+	public void testCreateLanguageNotSupportedByProvider(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("E_TEST-NONE");
+		postData.setAccountingCode("E_TEST");
+		postData.setDescription("E_TEST");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld = new LanguageDescriptionDto();
+		ld.setLanguageCode("ENG-NONE");
+		ld.setDescription("English");
+		languageDescriptions.add(ld);
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.create(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(4)
+	public void testCreateMissingParameters(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("");
+		postData.setAccountingCode("");
+		postData.setDescription("E_TEST");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld = new LanguageDescriptionDto();
+		ld.setLanguageCode("ENG");
+		ld.setDescription("English");
+		languageDescriptions.add(ld);
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.create(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(100)
+	public void testFind(@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		GetTaxResponse result = resource.find("E_TEST");
+		log.info("response=" + result);
+
+		Assert.assertEquals(result.getActionStatus().getStatus(),
+				ActionStatusEnum.SUCCESS);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(100)
+	public void testFindOneLanguage(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		GetTaxResponse result = resource.find("E_TEST");
+		log.info("response=" + result);
+
+		Assert.assertEquals(result.getActionStatus().getStatus(),
+				ActionStatusEnum.SUCCESS);
+		// count language
+		Assert.assertEquals(1, result.getTax().getLanguageDescriptions().size());
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(201)
+	public void testUpdate(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("E_TEST");
+		postData.setAccountingCode("E_TEST");
+		postData.setDescription("E_TEST-Updated");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld1 = new LanguageDescriptionDto();
+		ld1.setLanguageCode("ENG");
+		ld1.setDescription("English");		
+		languageDescriptions.add(ld1);
+		
+		LanguageDescriptionDto ld2 = new LanguageDescriptionDto();
+		ld2.setLanguageCode("FRA");
+		ld2.setDescription("French");		
+		languageDescriptions.add(ld2);
+		
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.update(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.SUCCESS);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(202)
+	public void testUpdateDoesNotExists(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("E_TEST-NONE");
+		postData.setAccountingCode("E_TEST");
+		postData.setDescription("E_TEST");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld = new LanguageDescriptionDto();
+		ld.setLanguageCode("ENG");
+		ld.setDescription("English");
+		languageDescriptions.add(ld);
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.update(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(203)
+	public void testUpdateLanguageNotSupportedByProvider(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("E_TEST-NONE");
+		postData.setAccountingCode("E_TEST");
+		postData.setDescription("E_TEST");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld = new LanguageDescriptionDto();
+		ld.setLanguageCode("ENG-NONE");
+		ld.setDescription("English");
+		languageDescriptions.add(ld);
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.update(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(204)
+	public void testUpdateMissingParameters(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		TaxDto postData = new TaxDto();
+		postData.setCode("");
+		postData.setAccountingCode("");
+		postData.setDescription("E_TEST");
+		postData.setPercent(new BigDecimal(.2));
+
+		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+		LanguageDescriptionDto ld = new LanguageDescriptionDto();
+		ld.setLanguageCode("ENG");
+		ld.setDescription("English");
+		languageDescriptions.add(ld);
+		postData.setLanguageDescriptions(languageDescriptions);
+
+		ActionStatus result = resource.update(postData);
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(300)
+	public void testFindTwoLanguage(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		GetTaxResponse result = resource.find("E_TEST");
+		log.info("response=" + result);
+
+		Assert.assertEquals(result.getActionStatus().getStatus(),
+				ActionStatusEnum.SUCCESS);
+		// count language
+		Assert.assertEquals(2, result.getTax().getLanguageDescriptions().size());
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(400)
+	public void testRemove(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		ActionStatus result = resource.remove("E_TEST");
+		log.info("response=" + result);
+	}
+
+	@RunAsClient
+	@Test
+	@InSequence(401)
+	public void testRemoveDoesNotExists(
+			@ArquillianResteasyResource("api/rest") TaxWs resource) {
+		ActionStatus result = resource.remove("E_TEST-NONE");
+		log.info("response=" + result);
+		Assert.assertEquals(result.getStatus(), ActionStatusEnum.FAIL);
 	}
 
 }

@@ -55,8 +55,6 @@ public class TaxApi extends BaseApi {
 			tax.setPercent(postData.getPercent());
 			tax.setAccountingCode(postData.getAccountingCode());
 
-			taxService.create(tax, currentUser, provider);
-
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
 					for (LanguageDescriptionDto ld : postData
@@ -81,11 +79,13 @@ public class TaxApi extends BaseApi {
 						}
 					}
 
+					taxService.create(tax, currentUser, provider);
+
 					// create cat messages
 					for (LanguageDescriptionDto ld : postData
 							.getLanguageDescriptions()) {
-						CatMessages catMsg = new CatMessages(tax.getClass()
-								.getSimpleName() + "_" + tax.getId(),
+						CatMessages catMsg = new CatMessages(
+								Tax.class.getSimpleName() + "_" + tax.getId(),
 								ld.getLanguageCode(), ld.getDescription());
 
 						catMessagesService
@@ -144,8 +144,6 @@ public class TaxApi extends BaseApi {
 			tax.setPercent(postData.getPercent());
 			tax.setAccountingCode(postData.getAccountingCode());
 
-			taxService.update(tax, currentUser);
-
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
 					for (LanguageDescriptionDto ld : postData
@@ -174,23 +172,24 @@ public class TaxApi extends BaseApi {
 					for (LanguageDescriptionDto ld : postData
 							.getLanguageDescriptions()) {
 						CatMessages catMsg = catMessagesService.getCatMessages(
-								tax.getClass().getSimpleName() + "_"
-										+ tax.getId(), ld.getLanguageCode());
+								Tax.class.getSimpleName() + "_" + tax.getId(),
+								ld.getLanguageCode());
 
 						if (catMsg != null) {
 							catMsg.setDescription(ld.getDescription());
 							catMessagesService.update(catMsg);
 						} else {
-							CatMessages catMessages = new CatMessages(tax
-									.getClass().getSimpleName()
-									+ "_"
-									+ tax.getId(), ld.getLanguageCode(),
-									ld.getDescription());
+							CatMessages catMessages = new CatMessages(
+									Tax.class.getSimpleName() + "_"
+											+ tax.getId(),
+									ld.getLanguageCode(), ld.getDescription());
 							catMessagesService.create(catMessages);
 						}
 					}
 				}
 			}
+
+			taxService.update(tax, currentUser);
 		} else {
 			StringBuilder sb = new StringBuilder(
 					"The following parameters are required ");
@@ -274,6 +273,9 @@ public class TaxApi extends BaseApi {
 			if (tax == null) {
 				throw new EntityDoesNotExistsException(Tax.class, taxCode);
 			}
+
+			// remove cat messages
+			catMessagesService.batchRemove(tax.getId());
 
 			taxService.remove(tax);
 		} else {
