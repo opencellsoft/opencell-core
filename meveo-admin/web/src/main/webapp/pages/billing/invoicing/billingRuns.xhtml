@@ -65,7 +65,7 @@
 						value="#{javax.enterprise.context.conversation.id}" />
 				</p:button>
 				<p:commandButton value="#{messages['action.cancel']}"
-					rendered="#{entity.status != BillingRunStatusEnum.TERMINATED}"
+					rendered="#{entity.status != BillingRunStatusEnum.TERMINATED || entity.status != BillingRunStatusEnum.CANCELED || entity.status != BillingRunStatusEnum.VALIDATED}"
 					action="#{billingRunBean.cancelInvoicing()}" update=":results_form">
 					<f:setPropertyActionListener target="#{billingRunBean.entity}"
 						value="#{entity}"></f:setPropertyActionListener>
