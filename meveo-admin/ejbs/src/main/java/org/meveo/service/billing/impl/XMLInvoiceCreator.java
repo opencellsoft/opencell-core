@@ -271,26 +271,18 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			amountWithTax.appendChild(amountWithTaxTxt);
 			amount.appendChild(amountWithTax);
 
-			BigDecimal balance = customerAccountService
-					.customerAccountBalanceDue(null,
-							invoice.getBillingAccount().getCustomerAccount()
-									.getCode(), invoice.getDueDate());
-
-			if (balance == null) {
-				throw new BusinessException(
-						"account balance calculation failed");
-			}
+			
 			BigDecimal netToPay = BigDecimal.ZERO;
 			if (entreprise) {
 				netToPay = invoice.getAmountWithTax();
 			} else {
-				netToPay = invoice.getAmountWithTax().add(balance);
+				netToPay = invoice.getNetToPay();
 			}
 
-			Element balanceElement = doc.createElement("balance");
+			/*Element balanceElement = doc.createElement("balance");
 			Text balanceTxt = doc.createTextNode(round(balance));
 			balanceElement.appendChild(balanceTxt);
-			amount.appendChild(balanceElement);
+			amount.appendChild(balanceElement);*/
 
 			Element netToPayElement = doc.createElement("netToPay");
 			Text netToPayTxt = doc.createTextNode(round(netToPay));
