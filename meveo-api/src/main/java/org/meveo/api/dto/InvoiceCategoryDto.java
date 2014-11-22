@@ -1,7 +1,6 @@
 package org.meveo.api.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,17 +8,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.InvoiceCategory;
 
 /**
  * @author Edward P. Legaspi
- * @since Oct 11, 2013
  **/
-@XmlRootElement(name = "Tax")
+@XmlRootElement(name = "InvoiceCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaxDto implements Serializable {
+public class InvoiceCategoryDto implements Serializable {
 
-	private static final long serialVersionUID = 5184602572648722134L;
+	private static final long serialVersionUID = 5166093858617578774L;
 
 	@XmlAttribute(required = true)
 	private String code;
@@ -27,21 +25,15 @@ public class TaxDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String description;
 
-	@XmlAttribute(required = true)
-	private BigDecimal percent;
-
-	private String accountingCode;
 	private List<LanguageDescriptionDto> languageDescriptions;
 
-	public TaxDto() {
+	public InvoiceCategoryDto() {
 
 	}
 
-	public TaxDto(Tax tax) {
-		code = tax.getCode();
-		description = tax.getDescription();
-		percent = tax.getPercent();
-		accountingCode = tax.getAccountingCode();
+	public InvoiceCategoryDto(InvoiceCategory invoiceCategory) {
+		code = invoiceCategory.getCode();
+		description = invoiceCategory.getDescription();
 	}
 
 	public String getCode() {
@@ -60,22 +52,6 @@ public class TaxDto implements Serializable {
 		this.description = description;
 	}
 
-	public BigDecimal getPercent() {
-		return percent;
-	}
-
-	public void setPercent(BigDecimal percent) {
-		this.percent = percent;
-	}
-
-	public String getAccountingCode() {
-		return accountingCode;
-	}
-
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
-
 	public List<LanguageDescriptionDto> getLanguageDescriptions() {
 		return languageDescriptions;
 	}
@@ -87,9 +63,9 @@ public class TaxDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "TaxDto [code=" + code + ", description=" + description
-				+ ", percent=" + percent + ", accountingCode=" + accountingCode
-				+ ", languageDescriptions=" + languageDescriptions + "]";
+		return "InvoiceCategoryDto [code=" + code + ", description="
+				+ description + ", languageDescriptions="
+				+ languageDescriptions + "]";
 	}
 
 }

@@ -25,7 +25,6 @@ import javax.inject.Named;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -69,15 +68,13 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		return cats;
 	}
 
-	public void batchRemove(Long taxId) {
+	public void batchRemove(String entityName, Long id) {
 		String strQuery = "DELETE FROM " + CatMessages.class.getSimpleName()
 				+ " c WHERE c.messageCode=:messageCode";
 
 		try {
-			getEntityManager()
-					.createQuery(strQuery)
-					.setParameter("messageCode",
-							Tax.class.getSimpleName() + "_" + taxId)
+			getEntityManager().createQuery(strQuery)
+					.setParameter("messageCode", entityName + "_" + id)
 					.executeUpdate();
 		} catch (Exception e) {
 			log.error(e.getMessage());

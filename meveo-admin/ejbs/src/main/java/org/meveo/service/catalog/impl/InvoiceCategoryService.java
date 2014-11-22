@@ -22,6 +22,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -29,6 +30,23 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class InvoiceCategoryService extends PersistenceService<InvoiceCategory> {
+
+	public InvoiceCategory findByCode(String code, Provider provider) {
+		if (code == null) {
+			return null;
+		}
+
+		QueryBuilder qb = new QueryBuilder(InvoiceCategory.class, "c");
+		qb.addCriterion("code", "=", code, false);
+		qb.addCriterionEntity("c.provider", provider);
+
+		try {
+			return (InvoiceCategory) qb.getQuery(getEntityManager())
+					.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
 	public InvoiceCategory findByCode(EntityManager em, String code) {
 		if (code == null) {
