@@ -16,11 +16,15 @@
  */
 package org.meveo.service.catalog.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -42,8 +46,31 @@ public class InvoiceSubCategoryService extends
 		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
 		qb.addCriterion("code", "=", code, false);
 
-		return (InvoiceSubCategory) qb.getQuery(getEntityManager())
-				.getSingleResult();
+		try {
+			return (InvoiceSubCategory) qb.getQuery(getEntityManager())
+					.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public InvoiceSubCategory findByCode(String code, Provider provider) {
+		return findByCode(code, provider, null);
+	}
+
+	public InvoiceSubCategory findByCode(String code, Provider provider,
+			List<String> fetchFields) {
+		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc",
+				fetchFields, provider);
+		qb.addCriterion("sc.code", "=", code, false);
+		qb.addCriterionEntity("sc.provider", provider);
+
+		try {
+			return (InvoiceSubCategory) qb.getQuery(getEntityManager())
+					.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }
