@@ -25,8 +25,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -68,5 +71,30 @@ public class InvoiceSubCategoryCountryService extends
 		query.setMaxResults(1);
 
 		return (InvoiceSubcategoryCountry) query.getSingleResult();
+	}
+
+	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
+			InvoiceSubCategory invoiceSubCategory,
+			TradingCountry tradingCountry, Provider provider) {
+		return findByInvoiceSubCategoryAndCountry(invoiceSubCategory,
+				tradingCountry, null, provider);
+	}
+
+	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
+			InvoiceSubCategory invoiceSubCategory,
+			TradingCountry tradingCountry, List<String> fetchFields,
+			Provider provider) {
+		QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
+				"ic", fetchFields, provider);
+		qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
+		qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
+		qb.addCriterionEntity("ic.provider", provider);
+
+		try {
+			return (InvoiceSubcategoryCountry) qb.getQuery(getEntityManager())
+					.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }
