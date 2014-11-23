@@ -78,19 +78,20 @@ public class TaxApi extends BaseApi {
 											+ " is not supported by the provider.");
 						}
 					}
+				}
+			}
 
-					taxService.create(tax, currentUser, provider);
+			taxService.create(tax, currentUser, provider);
 
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						CatMessages catMsg = new CatMessages(
-								Tax.class.getSimpleName() + "_" + tax.getId(),
-								ld.getLanguageCode(), ld.getDescription());
+			// create cat messages
+			if (postData.getLanguageDescriptions() != null) {
+				for (LanguageDescriptionDto ld : postData
+						.getLanguageDescriptions()) {
+					CatMessages catMsg = new CatMessages(
+							Tax.class.getSimpleName() + "_" + tax.getId(),
+							ld.getLanguageCode(), ld.getDescription());
 
-						catMessagesService
-								.create(catMsg, currentUser, provider);
-					}
+					catMessagesService.create(catMsg, currentUser, provider);
 				}
 			}
 		} else {

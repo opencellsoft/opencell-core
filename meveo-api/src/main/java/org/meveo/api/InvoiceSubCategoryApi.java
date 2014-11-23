@@ -88,21 +88,22 @@ public class InvoiceSubCategoryApi extends BaseApi {
 											+ " is not supported by the provider.");
 						}
 					}
+				}
+			}
 
-					invoiceSubCategoryService.create(invoiceSubCategory,
-							currentUser, provider);
+			invoiceSubCategoryService.create(invoiceSubCategory, currentUser,
+					provider);
 
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						CatMessages catMsg = new CatMessages(
-								InvoiceSubCategory.class.getSimpleName() + "_"
-										+ invoiceSubCategory.getId(),
-								ld.getLanguageCode(), ld.getDescription());
+			// create cat messages
+			if (postData.getLanguageDescriptions() != null) {
+				for (LanguageDescriptionDto ld : postData
+						.getLanguageDescriptions()) {
+					CatMessages catMsg = new CatMessages(
+							InvoiceSubCategory.class.getSimpleName() + "_"
+									+ invoiceSubCategory.getId(),
+							ld.getLanguageCode(), ld.getDescription());
 
-						catMessagesService
-								.create(catMsg, currentUser, provider);
-					}
+					catMessagesService.create(catMsg, currentUser, provider);
 				}
 			}
 		} else {

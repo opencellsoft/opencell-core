@@ -71,21 +71,22 @@ public class InvoiceCategoryApi extends BaseApi {
 											+ " is not supported by the provider.");
 						}
 					}
+				}
+			}
 
-					invoiceCategoryService.create(invoiceCategory, currentUser,
-							provider);
+			invoiceCategoryService.create(invoiceCategory, currentUser,
+					provider);
 
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						CatMessages catMsg = new CatMessages(
-								InvoiceCategory.class.getSimpleName() + "_"
-										+ invoiceCategory.getId(),
-								ld.getLanguageCode(), ld.getDescription());
+			// create cat messages
+			if (postData.getLanguageDescriptions() != null) {
+				for (LanguageDescriptionDto ld : postData
+						.getLanguageDescriptions()) {
+					CatMessages catMsg = new CatMessages(
+							InvoiceCategory.class.getSimpleName() + "_"
+									+ invoiceCategory.getId(),
+							ld.getLanguageCode(), ld.getDescription());
 
-						catMessagesService
-								.create(catMsg, currentUser, provider);
-					}
+					catMessagesService.create(catMsg, currentUser, provider);
 				}
 			}
 		} else {
@@ -162,7 +163,7 @@ public class InvoiceCategoryApi extends BaseApi {
 					}
 				}
 			}
-			
+
 			invoiceCategoryService.update(invoiceCategory, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
