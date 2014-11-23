@@ -170,9 +170,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
 						}
 					}
 
-					invoiceSubCategoryService.create(invoiceSubCategory,
-							currentUser, provider);
-
 					// create cat messages
 					for (LanguageDescriptionDto ld : postData
 							.getLanguageDescriptions()) {
@@ -186,6 +183,8 @@ public class InvoiceSubCategoryApi extends BaseApi {
 					}
 				}
 			}
+
+			invoiceSubCategoryService.update(invoiceSubCategory, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
