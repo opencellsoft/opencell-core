@@ -147,32 +147,21 @@ public class PaymentApi extends BaseApi {
 			log.info("automatedPayment created for amount:"
 					+ automatedPayment.getAmount());
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(paymentDto.getAmount())) {
-				missingFields.add("amount");
+				missingParameters.add("amount");
 			}
 			if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
-				missingFields.add("CustomerAccountCode");
+				missingParameters.add("CustomerAccountCode");
 			}
 			if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
-				missingFields.add("OccTemplateCode");
+				missingParameters.add("OccTemplateCode");
 			}
 			if (StringUtils.isBlank(paymentDto.getReference())) {
-				missingFields.add("Reference");
+				missingParameters.add("Reference");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 	}
@@ -234,6 +223,7 @@ public class PaymentApi extends BaseApi {
 		Provider provider = currentUser.getProvider();
 		CustomerAccount customerAccount = customerAccountService.findByCode(em,
 				customerAccountCode, provider);
+
 		return customerAccountService.customerAccountBalanceDue(
 				customerAccount, new Date()).doubleValue();
 	}

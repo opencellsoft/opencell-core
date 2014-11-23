@@ -428,48 +428,38 @@ public class AccountHierarchyApi extends BaseApi {
 							userAccountCode);
 				}
 			} else {
-				StringBuilder sb = new StringBuilder(
-						"Missing value for the following parameters ");
-				List<String> missingFields = new ArrayList<String>();
-
 				if (StringUtils.isEmpty(accountHierarchy.getCustomerId())) {
-					missingFields.add("Customer ID");
+					missingParameters.add("Customer ID");
 				}
 				if (StringUtils
 						.isEmpty(accountHierarchy.getCustomerBrandCode())) {
-					missingFields.add("Customer Brand Code");
+					missingParameters.add("Customer Brand Code");
 				}
 				if (StringUtils.isEmpty(accountHierarchy
 						.getCustomerCategoryCode())) {
-					missingFields.add("Customer Category Code");
+					missingParameters.add("Customer Category Code");
 				}
 				if (StringUtils.isEmpty(accountHierarchy.getSellerCode())) {
-					missingFields.add("Seller Code");
+					missingParameters.add("Seller Code");
 				}
 				if (StringUtils.isEmpty(accountHierarchy.getCurrencyCode())) {
-					missingFields.add("Currency Code");
+					missingParameters.add("Currency Code");
 				}
 				if (StringUtils.isEmpty(accountHierarchy.getCountryCode())) {
-					missingFields.add("Country Code");
+					missingParameters.add("Country Code");
 				}
 				if (StringUtils.isEmpty(accountHierarchy.getLastName())) {
-					missingFields.add("Last Name");
+					missingParameters.add("Last Name");
 				}
 				if (StringUtils.isEmpty(accountHierarchy.getLanguageCode())) {
-					missingFields.add("Language Code");
+					missingParameters.add("Language Code");
 				}
 				if (StringUtils.isEmpty(accountHierarchy.getBillingCycleCode())) {
-					missingFields.add("Billing Cycle Code");
+					missingParameters.add("Billing Cycle Code");
 				}
-				if (missingFields.size() > 1) {
-					sb.append(org.apache.commons.lang.StringUtils.join(
-							missingFields.toArray(), ", "));
-				} else {
-					sb.append(missingFields.get(0));
-				}
-				sb.append(".");
 
-				throw new MissingParameterException(sb.toString());
+				throw new MissingParameterException(
+						getMissingParametersExceptionMessage());
 			}
 		}
 	}
@@ -821,47 +811,37 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"Missing value for the following parameters ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isEmpty(accountHierarchyDto.getCustomerId())) {
-				missingFields.add("Customer ID");
+				missingParameters.add("Customer ID");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto.getCustomerBrandCode())) {
-				missingFields.add("Customer Brand Code");
+				missingParameters.add("Customer Brand Code");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto
 					.getCustomerCategoryCode())) {
-				missingFields.add("Customer Category Code");
+				missingParameters.add("Customer Category Code");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto.getSellerCode())) {
-				missingFields.add("Seller Code");
+				missingParameters.add("Seller Code");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto.getCurrencyCode())) {
-				missingFields.add("Currency Code");
+				missingParameters.add("Currency Code");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto.getCountryCode())) {
-				missingFields.add("Country Code");
+				missingParameters.add("Country Code");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto.getLastName())) {
-				missingFields.add("Last Name");
+				missingParameters.add("Last Name");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto.getLanguageCode())) {
-				missingFields.add("Language Code");
+				missingParameters.add("Language Code");
 			}
 			if (StringUtils.isEmpty(accountHierarchyDto.getBillingCycleCode())) {
-				missingFields.add("Billing Cycle Code");
+				missingParameters.add("Billing Cycle Code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 

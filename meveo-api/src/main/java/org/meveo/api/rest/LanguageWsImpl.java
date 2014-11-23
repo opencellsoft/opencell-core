@@ -47,7 +47,8 @@ public class LanguageWsImpl extends BaseWs implements LanguageWs {
 		GetLanguageResponse result = new GetLanguageResponse();
 
 		try {
-			result.setLanguage(languageApi.find(languageCode, getCurrentUser()));
+			result.setLanguage(languageApi.find(languageCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -67,7 +68,7 @@ public class LanguageWsImpl extends BaseWs implements LanguageWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageApi.remove(languageCode, getCurrentUser());
+			languageApi.remove(languageCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

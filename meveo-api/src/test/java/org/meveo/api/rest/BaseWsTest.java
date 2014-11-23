@@ -47,6 +47,12 @@ public class BaseWsTest {
 				.withTransitivity().asFile();
 		result.addAsLibraries(seamDependencies);
 
+		// apache commons
+		File[] apacheCommonsDependencies = Maven.resolver()
+				.resolve("commons-lang:commons-lang:2.3").withTransitivity()
+				.asFile();
+		result.addAsLibraries(apacheCommonsDependencies);
+
 		// producers
 		result = result.addClasses(DefaultUserProducer.class, Resources.class,
 				LoggerProducer.class, MeveoJpa.class, MeveoJpaForJobs.class,

@@ -1,8 +1,6 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -153,37 +151,26 @@ public class CountryApi extends BaseApi {
 			}
 
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(countryDto.getCountryCode())) {
-				missingFields.add("countryCode");
+				missingParameters.add("countryCode");
 			}
 			if (StringUtils.isBlank(countryDto.getName())) {
-				missingFields.add("name");
+				missingParameters.add("name");
 			}
 			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
-				missingFields.add("currencyCode");
+				missingParameters.add("currencyCode");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
-	public CountryDto find(String countryCode, User currentUser)
+	public CountryDto find(String countryCode, Provider provider)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(countryCode)) {
 			TradingCountry tradingCountry = tradingCountryService
-					.findByTradingCountryCode(countryCode,
-							currentUser.getProvider());
+					.findByTradingCountryCode(countryCode, provider);
 
 			if (tradingCountry != null) {
 				Country country = countryService.findByCode(countryCode);
@@ -193,28 +180,16 @@ public class CountryApi extends BaseApi {
 			throw new EntityDoesNotExistsException(TradingCountry.class,
 					countryCode);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(countryCode)) {
-				missingFields.add("countryCode");
+				missingParameters.add("countryCode");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MeveoApiException(getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void remove(String countryCode, String currencyCode, User currentUser)
-			throws MeveoApiException {
-		Provider provider = currentUser.getProvider();
+	public void remove(String countryCode, String currencyCode,
+			Provider provider) throws MeveoApiException {
 
 		if (!StringUtils.isBlank(countryCode)
 				&& !StringUtils.isBlank(currencyCode)) {
@@ -235,25 +210,15 @@ public class CountryApi extends BaseApi {
 				}
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(countryCode)) {
-				missingFields.add("countryCode");
+				missingParameters.add("countryCode");
 			}
 			if (StringUtils.isBlank(currencyCode)) {
-				missingFields.add("currencyCode");
+				missingParameters.add("currencyCode");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -314,25 +279,15 @@ public class CountryApi extends BaseApi {
 				}
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(countryDto.getCountryCode())) {
-				missingFields.add("countryCode");
+				missingParameters.add("countryCode");
 			}
 			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
-				missingFields.add("currencyCode");
+				missingParameters.add("currencyCode");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 }

@@ -13,7 +13,7 @@ import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.rest.IBaseWs;
 import org.meveo.api.rest.security.WSSecured;
 
-@Path("/accountHierarchy")
+@Path("/account/accountHierarchy")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @WSSecured

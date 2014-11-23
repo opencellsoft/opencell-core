@@ -1,8 +1,6 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -90,28 +88,18 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 			invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry,
 					currentUser, provider);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-				missingFields.add("invoiceSubCategory");
+				missingParameters.add("invoiceSubCategory");
 			}
 			if (StringUtils.isBlank(postData.getCountry())) {
-				missingFields.add("country");
+				missingParameters.add("country");
 			}
 			if (StringUtils.isBlank(postData.getTax())) {
-				missingFields.add("tax");
+				missingParameters.add("tax");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -161,28 +149,18 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 			invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry,
 					currentUser);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-				missingFields.add("invoiceSubCategory");
+				missingParameters.add("invoiceSubCategory");
 			}
 			if (StringUtils.isBlank(postData.getCountry())) {
-				missingFields.add("country");
+				missingParameters.add("country");
 			}
 			if (StringUtils.isBlank(postData.getTax())) {
-				missingFields.add("tax");
+				missingParameters.add("tax");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -218,25 +196,15 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
 			return new InvoiceSubCategoryCountryDto(invoiceSubcategoryCountry);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(invoiceSubCategoryCode)) {
-				missingFields.add("invoiceSubCategoryCode");
+				missingParameters.add("invoiceSubCategoryCode");
 			}
 			if (StringUtils.isBlank(countryCode)) {
-				missingFields.add("country");
+				missingParameters.add("country");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -272,26 +240,15 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
 			invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(invoiceSubCategoryCode)) {
-				missingFields.add("invoiceSubCategoryCode");
+				missingParameters.add("invoiceSubCategoryCode");
 			}
 			if (StringUtils.isBlank(countryCode)) {
-				missingFields.add("country");
+				missingParameters.add("country");
 			}
-			
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 

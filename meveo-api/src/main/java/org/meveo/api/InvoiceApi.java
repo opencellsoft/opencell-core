@@ -254,80 +254,61 @@ public class InvoiceApi extends BaseApi {
 
 					}
 				} else {
-					StringBuilder sb = new StringBuilder(
-							"Missing value for the following parameters ");
-					List<String> missingFields = new ArrayList<String>();
-
 					if (subCategoryInvoiceAgregateDTO.getRatedTransactions()
 							.size() <= 0) {
-						missingFields.add("Rated Transactions");
+						missingParameters.add("Rated Transactions");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getItemNumber())) {
-						missingFields.add("Item Number");
+						missingParameters.add("Item Number");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getAmountTax())) {
-						missingFields.add("Tax Amount");
+						missingParameters.add("Tax Amount");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getAmountWithoutTax())) {
-						missingFields.add("Amount Without Tax");
+						missingParameters.add("Amount Without Tax");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getAmountWithTax())) {
-						missingFields.add("Amount With Tax");
+						missingParameters.add("Amount With Tax");
 					}
 
-					if (missingFields.size() > 1) {
-						sb.append(org.apache.commons.lang.StringUtils.join(
-								missingFields.toArray(), ", "));
-					}
-					sb.append(".");
-
-					throw new MissingParameterException(sb.toString());
+					throw new MissingParameterException(
+							getMissingParametersExceptionMessage());
 				}
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"Missing value for the following parameters ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0) {
-				missingFields.add("Subcategory Invoice Agregates");
+				missingParameters.add("Subcategory Invoice Agregates");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getBillingAccountCode())) {
-				missingFields.add("Billing Account Code");
+				missingParameters.add("Billing Account Code");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getDueDate())) {
-				missingFields.add("Due Date");
+				missingParameters.add("Due Date");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getAmountTax())) {
-				missingFields.add("Amount Tax");
+				missingParameters.add("Amount Tax");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getAmountWithoutTax())) {
-				missingFields.add("Amount Without Tax");
+				missingParameters.add("Amount Without Tax");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getAmountWithTax())) {
-				missingFields.add("Amount With Tax");
+				missingParameters.add("Amount With Tax");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
-	public List<InvoiceDto> list(String customerAccountCode, User currentUser)
+	public List<InvoiceDto> list(String customerAccountCode, Provider provider)
 			throws MeveoApiException {
 		List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
 
 		if (!StringUtils.isBlank(customerAccountCode)) {
-			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService
 					.findByCode(em, customerAccountCode, provider);
 			if (customerAccount == null) {
@@ -400,23 +381,12 @@ public class InvoiceApi extends BaseApi {
 			}
 
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(customerAccountCode)) {
-				missingFields.add("CustomerAccountCode");
+				missingParameters.add("CustomerAccountCode");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 		return customerInvoiceDtos;

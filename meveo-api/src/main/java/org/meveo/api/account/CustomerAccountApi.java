@@ -1,7 +1,6 @@
 package org.meveo.api.account;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -128,22 +127,12 @@ public class CustomerAccountApi extends BaseApi {
 			}
 			customerAccountDto.setBalance(balance);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(customerAccountCode)) {
-				missingFields.add("CustomerAccountCode");
+				missingParameters.add("CustomerAccountCode");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 
 		}
 

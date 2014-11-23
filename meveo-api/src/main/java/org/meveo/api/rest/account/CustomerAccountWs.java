@@ -15,7 +15,7 @@ import org.meveo.api.rest.security.WSSecured;
  * @author R.AITYAAZZA
  * 
  */
-@Path("/customerAccount")
+@Path("/account/customerAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @WSSecured

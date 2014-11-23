@@ -1,8 +1,5 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -53,27 +50,16 @@ public class PdfInvoiceApi extends BaseApi {
 			invoice = invoiceService.getInvoice(em, invoiceNumber,
 					customerAccount);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(invoiceNumber)) {
-				missingFields.add("invoiceNumber");
+				missingParameters.add("invoiceNumber");
 			}
 
 			if (StringUtils.isBlank(customerAccountCode)) {
-				missingFields.add("CustomerAccountCode");
+				missingParameters.add("CustomerAccountCode");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
-
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 		return invoice.getPdf();

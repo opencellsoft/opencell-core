@@ -59,7 +59,8 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		try {
-			result.setCountry(countryApi.find(countryCode, getCurrentUser()));
+			result.setCountry(countryApi.find(countryCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -80,7 +81,8 @@ public class CountryWsImpl extends BaseWs implements CountryWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryApi.remove(countryCode, currencyCode, getCurrentUser());
+			countryApi.remove(countryCode, currencyCode, getCurrentUser()
+					.getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -1,8 +1,6 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -112,23 +110,12 @@ public class ProviderApi extends BaseApi {
 
 			providerService.create(provider, currentUser);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -143,22 +130,11 @@ public class ProviderApi extends BaseApi {
 
 			throw new EntityDoesNotExistsException(Country.class, providerCode);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(providerCode)) {
-				missingFields.add("providerCode");
+				missingParameters.add("providerCode");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MeveoApiException(sb.toString());
+			throw new MeveoApiException(getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -218,23 +194,12 @@ public class ProviderApi extends BaseApi {
 
 			providerService.update(provider, currentUser);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 

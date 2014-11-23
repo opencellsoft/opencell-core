@@ -27,6 +27,7 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarTypeEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -35,6 +36,23 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @Named
 public class CalendarService extends PersistenceService<Calendar> {
+
+	public Calendar findByName(String name, Provider provider) {
+		return findByName(getEntityManager(), name, provider);
+	}
+
+	public Calendar findByName(EntityManager em, String name, Provider provider) {
+		try {
+			QueryBuilder qb = new QueryBuilder(Calendar.class, "c");
+			qb.addCriterion("name", "=", name, true);
+			qb.addCriterionEntity("c.provider", provider);
+
+			return (Calendar) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
 
 	public Calendar findByName(EntityManager em, String name) {
 		try {

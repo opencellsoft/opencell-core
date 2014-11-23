@@ -47,7 +47,8 @@ public class CurrencyWsImpl extends BaseWs implements CurrencyWs {
 		GetCurrencyResponse result = new GetCurrencyResponse();
 
 		try {
-			result.setCurrency(currencyApi.find(languageCode, getCurrentUser()));
+			result.setCurrency(currencyApi.find(languageCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -67,7 +68,7 @@ public class CurrencyWsImpl extends BaseWs implements CurrencyWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			currencyApi.remove(languageCode, getCurrentUser());
+			currencyApi.remove(languageCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -1,10 +1,8 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -88,35 +86,24 @@ public class UserApi extends BaseApi {
 
 			userService.create(user, currentUser, provider);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getUsername())) {
-				missingFields.add("username");
+				missingParameters.add("username");
 			}
 			if (StringUtils.isBlank(postData.getEmail())) {
-				missingFields.add("email");
+				missingParameters.add("email");
 			}
 			if (StringUtils.isBlank(postData.getProvider())) {
-				missingFields.add("provider");
+				missingParameters.add("provider");
 			}
 			if (StringUtils.isBlank(postData.getRole())) {
-				missingFields.add("role");
+				missingParameters.add("role");
 			}
 			if (StringUtils.isBlank(postData.getLastName())) {
-				missingFields.add("lastName");
+				missingParameters.add("lastName");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -159,34 +146,23 @@ public class UserApi extends BaseApi {
 			roles.add(role);
 			user.setRoles(roles);
 
-			userService.create(user, currentUser, provider);
+			userService.update(user, currentUser);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getUsername())) {
-				missingFields.add("username");
+				missingParameters.add("username");
 			}
 			if (StringUtils.isBlank(postData.getProvider())) {
-				missingFields.add("provider");
+				missingParameters.add("provider");
 			}
 			if (StringUtils.isBlank(postData.getRole())) {
-				missingFields.add("role");
+				missingParameters.add("role");
 			}
 			if (StringUtils.isBlank(postData.getLastName())) {
-				missingFields.add("lastName");
+				missingParameters.add("lastName");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 

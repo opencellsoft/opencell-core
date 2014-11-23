@@ -1,8 +1,6 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -25,7 +23,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class LanguageApi {
+public class LanguageApi extends BaseApi {
 
 	@Inject
 	private LanguageService languageService;
@@ -69,30 +67,20 @@ public class LanguageApi {
 			tradingLanguage.setActive(true);
 			tradingLanguageService.create(tradingLanguage, currentUser);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void remove(String code, User currentUser)
+	public void remove(String code, Provider provider)
 			throws MissingParameterException, EntityDoesNotExistsException {
 		if (!StringUtils.isBlank(code)) {
 			TradingLanguage tradingLanguage = tradingLanguageService
-					.findByTradingLanguageCode(code, currentUser.getProvider());
+					.findByTradingLanguageCode(code, provider);
 			if (tradingLanguage == null) {
 				throw new EntityDoesNotExistsException(TradingLanguage.class,
 						code);
@@ -100,22 +88,12 @@ public class LanguageApi {
 				tradingLanguageService.remove(tradingLanguage);
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(code)) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -150,30 +128,20 @@ public class LanguageApi {
 				create(postData, currentUser);
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
-	public LanguageDto find(String code, User currentUser)
+	public LanguageDto find(String code, Provider provider)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
 			TradingLanguage tradingLanguage = tradingLanguageService
-					.findByTradingLanguageCode(code, currentUser.getProvider());
+					.findByTradingLanguageCode(code, provider);
 
 			if (tradingLanguage != null) {
 				return new LanguageDto(tradingLanguage);
@@ -181,22 +149,12 @@ public class LanguageApi {
 
 			throw new EntityDoesNotExistsException(TradingLanguage.class, code);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(code)) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 

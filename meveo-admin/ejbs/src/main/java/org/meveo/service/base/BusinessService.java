@@ -16,9 +16,13 @@
  */
 package org.meveo.service.base;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.Provider;
 
@@ -27,6 +31,21 @@ public abstract class BusinessService<P extends BusinessEntity> extends
 
 	public P findByCode(String code, Provider provider) {
 		return findByCode(getEntityManager(), code, provider);
+	}
+
+	@SuppressWarnings("unchecked")
+	public P findByCode(String code, Provider provider, List<String> fetchFields) {
+		QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields,
+				provider);
+		qb.addCriterion("be.code", "=", code, true);
+		qb.addCriterionEntity("be.provider", provider);
+
+		try {
+			return (P) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

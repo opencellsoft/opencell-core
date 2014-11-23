@@ -94,31 +94,20 @@ public class TaxApi extends BaseApi {
 				}
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 
 			if (StringUtils.isBlank(postData.getDescription())) {
-				missingFields.add("description");
+				missingParameters.add("description");
 			}
 
 			if (StringUtils.isBlank(postData.getPercent())) {
-				missingFields.add("percent");
+				missingParameters.add("percent");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 		return result;
@@ -191,42 +180,31 @@ public class TaxApi extends BaseApi {
 
 			taxService.update(tax, currentUser);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 
 			if (StringUtils.isBlank(postData.getDescription())) {
-				missingFields.add("description");
+				missingParameters.add("description");
 			}
 
 			if (StringUtils.isBlank(postData.getPercent())) {
-				missingFields.add("percent");
+				missingParameters.add("percent");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 		return result;
 	}
 
-	public TaxDto find(String taxCode, User currentUser)
+	public TaxDto find(String taxCode, Provider provider)
 			throws MeveoApiException {
 		TaxDto result = new TaxDto();
 
 		if (!StringUtils.isBlank(taxCode)) {
-			Tax tax = taxService.findByCode(taxCode, currentUser.getProvider());
+			Tax tax = taxService.findByCode(taxCode, provider);
 			if (tax == null) {
 				throw new EntityDoesNotExistsException(Tax.class, taxCode);
 			}
@@ -243,34 +221,23 @@ public class TaxApi extends BaseApi {
 
 			result.setLanguageDescriptions(languageDescriptions);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(taxCode)) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 		return result;
 	}
 
-	public ActionStatus remove(String taxCode, User currentUser)
+	public ActionStatus remove(String taxCode, Provider provider)
 			throws MeveoApiException {
 		ActionStatus result = new ActionStatus();
 
 		if (!StringUtils.isBlank(taxCode)) {
-			Tax tax = taxService.findByCode(taxCode, currentUser.getProvider());
+			Tax tax = taxService.findByCode(taxCode, provider);
 			if (tax == null) {
 				throw new EntityDoesNotExistsException(Tax.class, taxCode);
 			}
@@ -281,23 +248,12 @@ public class TaxApi extends BaseApi {
 
 			taxService.remove(tax);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(taxCode)) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
-
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 		return result;

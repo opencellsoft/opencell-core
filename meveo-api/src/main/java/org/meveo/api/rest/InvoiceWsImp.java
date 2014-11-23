@@ -51,12 +51,13 @@ public class InvoiceWsImp extends BaseWs implements InvoiceWs {
 
 		try {
 			result.setCustomerInvoiceDtoList(invoiceApi.list(
-					customerAccountCode, getCurrentUser()));
+					customerAccountCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		} catch (Exception e) {
-			result.getActionStatus().setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setErrorCode(
+					MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
 		}

@@ -66,7 +66,7 @@ public class TaxWsImpl extends BaseWs implements TaxWs {
 		GetTaxResponse result = new GetTaxResponse();
 
 		try {
-			result.setTax(taxApi.find(taxCode, getCurrentUser()));
+			result.setTax(taxApi.find(taxCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -86,7 +86,7 @@ public class TaxWsImpl extends BaseWs implements TaxWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			taxApi.remove(taxCode, getCurrentUser());
+			taxApi.remove(taxCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

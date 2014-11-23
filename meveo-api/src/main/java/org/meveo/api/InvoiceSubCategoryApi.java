@@ -106,28 +106,18 @@ public class InvoiceSubCategoryApi extends BaseApi {
 				}
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 			if (StringUtils.isBlank(postData.getDescription())) {
-				missingFields.add("description");
+				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getInvoiceCategory())) {
-				missingFields.add("invoiceCategory");
+				missingParameters.add("invoiceCategory");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -197,28 +187,18 @@ public class InvoiceSubCategoryApi extends BaseApi {
 				}
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
 			if (StringUtils.isBlank(postData.getDescription())) {
-				missingFields.add("description");
+				missingParameters.add("description");
 			}
 			if (StringUtils.isBlank(postData.getInvoiceCategory())) {
-				missingFields.add("invoiceCategory");
+				missingParameters.add("invoiceCategory");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -247,8 +227,10 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
 			result.setLanguageDescriptions(languageDescriptions);
 		} else {
+			missingParameters.add("invoiceSubCategoryCode");
+
 			throw new MissingParameterException(
-					"invoiceSubCategoryCode is required.");
+					getMissingParametersExceptionMessage());
 		}
 
 		return result;
@@ -270,8 +252,10 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
 			invoiceSubCategoryService.remove(invoiceSubCategory);
 		} else {
+			missingParameters.add("invoiceSubCategoryCode");
+
 			throw new MissingParameterException(
-					"invoiceSubCategoryCode is required.");
+					getMissingParametersExceptionMessage());
 		}
 	}
 

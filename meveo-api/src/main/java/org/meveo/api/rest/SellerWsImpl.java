@@ -66,7 +66,8 @@ public class SellerWsImpl extends BaseWs implements SellerWs {
 		GetSellerResponse result = new GetSellerResponse();
 
 		try {
-			result.setSeller(sellerApi.find(sellerCode, getCurrentUser()));
+			result.setSeller(sellerApi.find(sellerCode, getCurrentUser()
+					.getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -86,7 +87,7 @@ public class SellerWsImpl extends BaseWs implements SellerWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			sellerApi.remove(sellerCode, getCurrentUser());
+			sellerApi.remove(sellerCode, getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

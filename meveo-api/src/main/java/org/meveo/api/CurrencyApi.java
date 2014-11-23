@@ -1,8 +1,6 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,7 +24,7 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class CurrencyApi {
+public class CurrencyApi extends BaseApi {
 
 	@Inject
 	private CurrencyService currencyService;
@@ -69,31 +67,21 @@ public class CurrencyApi {
 			tradingCurrency.setActive(true);
 			tradingCurrencyService.create(tradingCurrency, currentUser);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 
 	}
 
-	public CurrencyDto find(String code, User currentUser)
+	public CurrencyDto find(String code, Provider provider)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
 			TradingCurrency tradingCurrency = tradingCurrencyService
-					.findByTradingCurrencyCode(code, currentUser.getProvider());
+					.findByTradingCurrencyCode(code, provider);
 
 			if (tradingCurrency != null) {
 				return new CurrencyDto(tradingCurrency);
@@ -101,29 +89,19 @@ public class CurrencyApi {
 
 			throw new EntityDoesNotExistsException(TradingLanguage.class, code);
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(code)) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void remove(String code, User currentUser) throws MeveoApiException {
+	public void remove(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
 			TradingCurrency tradingCurrency = tradingCurrencyService
-					.findByTradingCurrencyCode(code, currentUser.getProvider());
+					.findByTradingCurrencyCode(code, provider);
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class,
 						code);
@@ -131,22 +109,12 @@ public class CurrencyApi {
 				tradingCurrencyService.remove(tradingCurrency);
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(code)) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
@@ -179,22 +147,12 @@ public class CurrencyApi {
 				create(postData, currentUser);
 			}
 		} else {
-			StringBuilder sb = new StringBuilder(
-					"The following parameters are required ");
-			List<String> missingFields = new ArrayList<String>();
-
 			if (StringUtils.isBlank(postData.getCode())) {
-				missingFields.add("code");
+				missingParameters.add("code");
 			}
-			if (missingFields.size() > 1) {
-				sb.append(org.apache.commons.lang.StringUtils.join(
-						missingFields.toArray(), ", "));
-			} else {
-				sb.append(missingFields.get(0));
-			}
-			sb.append(".");
 
-			throw new MissingParameterException(sb.toString());
+			throw new MissingParameterException(
+					getMissingParametersExceptionMessage());
 		}
 	}
 
