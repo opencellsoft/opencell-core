@@ -57,7 +57,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	@MeveoJpa
 	protected EntityManager em;
 
-	@PersistenceContext
+	@Inject
+	@MeveoJpaForJobs
 	private EntityManager emfForJobs;
 
 	// TODO move to places where it is needed

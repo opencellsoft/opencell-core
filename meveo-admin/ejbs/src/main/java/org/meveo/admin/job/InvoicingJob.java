@@ -1,10 +1,8 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -20,14 +18,8 @@ import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -84,8 +76,8 @@ public class InvoicingJob implements Job {
 			log.info("# billingRuns to process:" + billingRuns.size());
 			for (BillingRun billingRun : billingRuns) {
 				try {
-					billingRunService.processBillingRun(billingRun);
-					
+					Future<Boolean> isBRProcessed=billingRunService.processBillingRun(billingRun,result);
+					isBRProcessed.get();
 					
 				} catch (Exception e) {
 					log.info("# InvoicingJob error:" + e.getMessage());

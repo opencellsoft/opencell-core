@@ -1,8 +1,10 @@
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +25,7 @@ import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.crm.impl.ProviderService;
@@ -57,6 +60,9 @@ public class PDFInvoiceGenerationJob implements Job {
 	
 	@Inject
 	PDFFilesOutputProducer pDFFilesOutputProducer;
+	
+	@Inject
+	private BillingRunService billingRunService;
 
 
 	private Logger log = Logger.getLogger(PDFInvoiceGenerationJob.class.getName());
@@ -70,12 +76,24 @@ public class PDFInvoiceGenerationJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute PDFInvoiceGenerationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<Invoice> invoices=invoiceService.getValidatedInvoicesWithNoPdf(null);
+		List<Invoice> invoices=new ArrayList<Invoice>();
+		if(parameter!=null && parameter.trim().length()>0){
+			try{
+				invoices=invoiceService.getInvoices(billingRunService.getBillingRunById(Long.parseLong(parameter), provider));
+			} catch (Exception e){
+				e.printStackTrace();
+				result.registerError(e.getMessage());
+			}
+		}else {
+			invoices=invoiceService.getValidatedInvoicesWithNoPdf(null);
+		}
+		log.info("PDFInvoiceGenerationJob number of invoices to process="+invoices.size());
 		for (Invoice invoice : invoices) {
 			try {
 		         Map<String, Object> parameters=pDFParametersConstruction.constructParameters(invoice);
 		         log.info("PDFInvoiceGenerationJob parameters="+parameters);
-				 pDFFilesOutputProducer.producePdf(parameters);
+		         Future<Boolean> isPdfgenerated=pDFFilesOutputProducer.producePdf(parameters,result);
+		         isPdfgenerated.get();
 			} catch (Exception e) {
 				e.printStackTrace();
 				result.registerError(e.getMessage());

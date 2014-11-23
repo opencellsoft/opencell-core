@@ -18,12 +18,13 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -37,6 +38,7 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
@@ -55,6 +57,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	@EJB
 	private RatedTransactionService ratedTransactionService;
+	
+	@EJB
+	private RejectedBillingAccountService rejectedBillingAccountService;
 
 	public Invoice getInvoiceByNumber(String invoiceNumber, String providerCode)
 			throws BusinessException {
@@ -220,9 +225,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	  
 
-	  @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	  public void createAgregatesAndInvoice(EntityManager em,BillingAccount billingAccount,BillingRun billingRun) throws BusinessException, Exception {
-			
+	  @Asynchronous
+	  public Future<Boolean> createAgregatesAndInvoice(EntityManager em,BillingAccount billingAccount,BillingRun billingRun) throws BusinessException, Exception {
+			try {
 				Long startDate=System.currentTimeMillis();
 	            BillingCycle billingCycle = billingRun.getBillingCycle();
 	            if (billingCycle == null) {
@@ -261,7 +266,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	            update(getEntityManager(),invoice);
 	            Long endDate=System.currentTimeMillis();
 	            log.info("createAgregatesAndInvoice BR_ID="+billingRun.getId()+", BA_ID="+billingAccount.getId()+", Time en ms="+(endDate-startDate));
-		        
+	            return new AsyncResult<Boolean>(true);  
+				
+			} catch (Exception e) {
+				log.error("Error for BA="+ billingAccount.getCode()+ " : "+e.getMessage());
+				RejectedBillingAccount rejectedBA=new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
+				rejectedBillingAccountService.create(rejectedBA);
+			}
+			return new AsyncResult<Boolean>(false);
 		}
 
 }

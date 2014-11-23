@@ -21,7 +21,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -251,18 +254,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public BillingRun updateBillingAccountTotalAmounts(long billingAccountId,
+	@Asynchronous
+	public Future<Boolean> updateBillingAccountTotalAmounts(long billingAccountId,
 			BillingRun billingRun, boolean entreprise) {
-
+		
 		log.info("updateBillingAccountTotalAmounts  billingAccountId:" + billingAccountId);
 		BillingAccount billingAccount = findById(getEntityManager(),billingAccountId);
-		//billingRun.getBillableBillingAccounts().add(billingAccount);
 		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
 				entreprise);
 		billingAccount.setBillingRun(billingRun);
 		update(billingAccount);
-		return billingRun;
+		return new AsyncResult<Boolean>(true);
 	}
 
 }

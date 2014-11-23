@@ -26,8 +26,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -52,6 +55,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.w3c.dom.Document;
@@ -75,9 +79,10 @@ public class PDFFilesOutputProducer{
     /**
      * @see org.meveo.core.outputproducer.OutputProducer#produceOutput(java.util.List)
      */
-     public void producePdf(Map<String, Object> parameters) throws Exception{
-
-		    	ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
+    @Asynchronous
+     public Future<Boolean> producePdf(Map<String, Object> parameters,JobExecutionResultImpl result) throws Exception{
+    		try {
+    			ParamBean paramBean = ParamBean.getInstance("meveo-admin.properties");
 		    	logger.info("PDFInvoiceGenerationJob is invoice key exists="+parameters!=null?parameters.containsKey(PdfGenratorConstants.INVOICE)+"":"parameters is null");
 		    	Invoice invoice=(Invoice)parameters.get(PdfGenratorConstants.INVOICE);
 		    	String meveoDir= paramBean.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + invoice.getProvider().getCode()
@@ -127,8 +132,7 @@ public class PDFFilesOutputProducer{
                     invoice.setPdf(fileBytes);
                     invoiceService.update(invoice);
                 } catch (Exception e) {
-                    logger.severe("Error handling file.");
-                    throw new ConfigurationException("Error saving file to DB as blob.");
+                    logger.severe("Error saving file to DB as blob.="+e.getMessage());
                 } finally {
                     if (fileInputStream != null) {
                         try {
@@ -138,6 +142,12 @@ public class PDFFilesOutputProducer{
                         }
                     }
                 }
+                return new AsyncResult<Boolean>(true);
+			} catch (Exception e) {
+				result.registerError(e.getMessage());
+				e.printStackTrace();
+			}
+    		return new AsyncResult<Boolean>(false);	
                 
     }
     

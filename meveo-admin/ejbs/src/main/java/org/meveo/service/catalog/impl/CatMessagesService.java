@@ -64,10 +64,10 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 			return null;
 		}
 		String description="";
-		if(catMessageCach.containsKey(messageCode)){
+		/*if(catMessageCach.containsKey(messageCode)){
 			log.info("get message description from infinispan cache messageCode="+messageCode+",languageCode="+languageCode);
 			description= (String)catMessageCach.get(messageCode);
-		}else{
+		}else{*/
 			log.info("get message description from DB="+messageCode+",languageCode="+languageCode);
 			QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 			qb.addCriterionWildcard("c.messageCode", messageCode, true);
@@ -76,9 +76,9 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 			
 			description= catMessages.size() > 0 ? catMessages.get(0).getDescription() : "";
 			if(description!=null){
-				catMessageCach.put(messageCode, description);
+				//catMessageCach.put(messageCode, description);
 			}
-		}
+		//}
 		
 		log.info("get message description description ="+description+", time="+(System.currentTimeMillis()-startDate));
 		return description;

@@ -146,7 +146,7 @@ public class BillingRun extends AuditableEntity {
 	PostInvoicingReportsDTO postInvoicingReports = new PostInvoicingReportsDTO();
 	
 	
-	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
 	private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
 
 	public Date getProcessDate() {

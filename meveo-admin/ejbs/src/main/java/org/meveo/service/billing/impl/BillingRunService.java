@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -31,6 +34,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.xpath.operations.Bool;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
@@ -48,6 +52,7 @@ import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 
@@ -490,9 +495,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return result;
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void processBillingRun(BillingRun billingRun) throws BusinessException, Exception{
-		
+	@Asynchronous
+	public Future<Boolean> processBillingRun(BillingRun billingRun,JobExecutionResultImpl result) throws BusinessException, Exception{
+		try {
 			if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 				BillingCycle billingCycle = billingRun
 						.getBillingCycle();
@@ -530,10 +535,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 						if (ratedTransactionService
 								.isBillingAccountBillable(billingRun,
 										billingAccount.getId())) {
-							billingRun = billingAccountService
+							Future<Boolean> baUpdated = billingAccountService
 									.updateBillingAccountTotalAmounts(
 											billingAccount.getId(),
 											billingRun, entreprise);
+							baUpdated.get();
 							billableBA++;
 						}
 					}
@@ -569,7 +575,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
 				update(getEntityManager(),billingRun);
 			}
+			
+			 return new AsyncResult<Boolean>(true);
 		
+		} catch (Exception e) {
+			result.registerError(e.getMessage());
+		}
+			
+		return new AsyncResult<Boolean>(false);
 	}
 	
 	  public void createAgregatesAndInvoice(EntityManager em,BillingRun billingRun)
@@ -581,15 +594,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			for (BillingAccount billingAccount : billingAccounts) {
 				try {
 					Long startDate = System.currentTimeMillis();
-					invoiceService
+					Future<Boolean> isInvoiceCreated= invoiceService
 							.createAgregatesAndInvoice(em,billingAccount, billingRun);
+					isInvoiceCreated.get();
 					Long endDate = System.currentTimeMillis();
 					log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId()
 							+ ", BA_ID=" + billingAccount.getId() + ", Time en ms="
 							+ (endDate - startDate));
 				} catch (Exception e) {
 					log.error("Error for BA="+ billingAccount.getCode()+ " : "+e.getMessage());
-					billingRun.addRejectedBillingAccounts(new RejectedBillingAccount(billingAccount, billingRun, e.getMessage()));
 				}
 				
 			}

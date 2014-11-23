@@ -27,7 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -90,8 +93,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	@Inject
 	CatMessagesService catMessagesService;
 
-	@SuppressWarnings("unchecked")
-	public void createXMLInvoice(Invoice invoice, File billingRundir)
+	@Asynchronous
+	public Future<Boolean> createXMLInvoice(Invoice invoice, File billingRundir)
 			throws BusinessException {
 		try {
 			boolean entreprise = invoice.getProvider().isEntreprise();
@@ -306,11 +309,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					+ File.separator + (invoice.getInvoiceNumber()!=null?invoice.getInvoiceNumber():invoice.getTemporaryInvoiceNumber()) + ".xml");
 			log.info("source=" + source.toString());
 			trans.transform(source, result);
-
+			return new AsyncResult<Boolean>(true);
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new BusinessException(e.getMessage());
+			log.error("Error occured when creating xml for invoiceID={0}",invoice.getId(), e);
 		}
+		return new AsyncResult<Boolean>(false);
 	}
 
 	public void addUserAccounts(Invoice invoice, Document doc, Element parent) {

@@ -4,10 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -54,7 +56,7 @@ public class XMLInvoiceGenerationJob implements Job {
 	@Inject
 	BillingAccountService billingAccountService;
 	
-	@Inject
+	@EJB
 	XMLInvoiceCreator xmlInvoiceCreator;
 	
 	@Inject
@@ -93,8 +95,9 @@ public class XMLInvoiceGenerationJob implements Job {
 				        billingRundir.mkdirs();
 				        for (Invoice invoice : billingRun.getInvoices()) {
 				        	long startDate=System.currentTimeMillis();
-				            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
-				            log.info("invoice creation delay : " +(System.currentTimeMillis()-startDate));
+				            Future<Boolean> xmlCreated= xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+				            xmlCreated.get();
+				            log.info("invoice creation delay :"+(System.currentTimeMillis()-startDate)+",xmlCreated={1} "+xmlCreated.get()+"");
 				        }
 				        billingRun.setXmlInvoiceGenerated(true);
 				        billingRunService.update(billingRun);
