@@ -1,4 +1,4 @@
-package org.meveo.api.dto;
+package org.meveo.api.dto.catalog;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "OneShotChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OneShotChargeTemplateDto {
+public class OneShotChargeTemplateWithPriceDto {
 	private String chargeCode;
 	private String description;
 	private Double unitPriceWithoutTax;
@@ -17,7 +17,7 @@ public class OneShotChargeTemplateDto {
 	private String taxCode;
 	private String taxDescription;
 
-	public OneShotChargeTemplateDto() {
+	public OneShotChargeTemplateWithPriceDto() {
 
 	}
 

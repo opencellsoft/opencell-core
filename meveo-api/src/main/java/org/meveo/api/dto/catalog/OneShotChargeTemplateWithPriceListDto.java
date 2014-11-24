@@ -1,4 +1,4 @@
-package org.meveo.api.dto;
+package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,16 +12,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  **/
 @XmlRootElement(name = "OneShotChargeTemplateList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OneShotChargeTemplateListDto {
+public class OneShotChargeTemplateWithPriceListDto {
 	
-	private List<OneShotChargeTemplateDto> oneShotChargeTemplateDtos = new ArrayList<OneShotChargeTemplateDto>();
+	private List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplateDtos = new ArrayList<OneShotChargeTemplateWithPriceDto>();
 
-	public List<OneShotChargeTemplateDto> getOneShotChargeTemplateDtos() {
+	public List<OneShotChargeTemplateWithPriceDto> getOneShotChargeTemplateDtos() {
 		return oneShotChargeTemplateDtos;
 	}
 
 	public void setOneShotChargeTemplateDtos(
-			List<OneShotChargeTemplateDto> oneShotChargeTemplateDtos) {
+			List<OneShotChargeTemplateWithPriceDto> oneShotChargeTemplateDtos) {
 		this.oneShotChargeTemplateDtos = oneShotChargeTemplateDtos;
 	}
 }

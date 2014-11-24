@@ -19,9 +19,6 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	@XmlAttribute(required = true)
 	private String calendar;
 
-	@XmlAttribute(required = true)
-	private boolean disabled;
-	
 	private Integer durationTermInMonth;
 	private Boolean subscriptionProrata;
 	private Boolean terminationProrata;
@@ -37,20 +34,12 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 		setDescription(e.getDescription());
 		setInvoiceSubCategory(e.getInvoiceSubCategory().getCode());
 		setAmountEditable(e.getAmountEditable());
-		disabled = e.isDisabled();
+		setDisabled(e.isDisabled());
 		durationTermInMonth = e.getDurationTermInMonth();
 		subscriptionProrata = e.getSubscriptionProrata();
 		terminationProrata = e.getTerminationProrata();
 		applyInAdvance = e.getApplyInAdvance();
 		shareLevel = e.getShareLevel().getId();
-	}
-
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public Integer getDurationTermInMonth() {
@@ -104,17 +93,18 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 	@Override
 	public String toString() {
 		return "RecurringChargeTemplateDto [calendar=" + calendar
-				+ ", disabled=" + disabled + ", durationTermInMonth="
-				+ durationTermInMonth + ", subscriptionProrata="
-				+ subscriptionProrata + ", terminationProrata="
-				+ terminationProrata + ", applyInAdvance=" + applyInAdvance
-				+ ", shareLevel=" + shareLevel + ", isDisabled()="
-				+ isDisabled() + ", getDurationTermInMonth()="
-				+ getDurationTermInMonth() + ", getSubscriptionProrata()="
-				+ getSubscriptionProrata() + ", getTerminationProrata()="
-				+ getTerminationProrata() + ", getApplyInAdvance()="
-				+ getApplyInAdvance() + ", getShareLevel()=" + getShareLevel()
-				+ ", getCalendar()=" + getCalendar() + "]";
+				+ ", durationTermInMonth=" + durationTermInMonth
+				+ ", subscriptionProrata=" + subscriptionProrata
+				+ ", terminationProrata=" + terminationProrata
+				+ ", applyInAdvance=" + applyInAdvance + ", shareLevel="
+				+ shareLevel + ", getCode()=" + getCode()
+				+ ", getDescription()=" + getDescription()
+				+ ", getLanguageDescriptions()=" + getLanguageDescriptions()
+				+ ", toString()=" + super.toString() + ", getAmountEditable()="
+				+ getAmountEditable() + ", getInvoiceSubCategory()="
+				+ getInvoiceSubCategory() + ", isDisabled()=" + isDisabled()
+				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
+				+ "]";
 	}
 
 }

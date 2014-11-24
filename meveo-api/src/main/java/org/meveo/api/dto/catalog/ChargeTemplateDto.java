@@ -23,6 +23,9 @@ public abstract class ChargeTemplateDto implements Serializable {
 	@XmlAttribute(required = true)
 	private String invoiceSubCategory;
 
+	@XmlAttribute(required = true)
+	private boolean disabled;
+	
 	private Boolean amountEditable;
 	private List<LanguageDescriptionDto> languageDescriptions;
 
@@ -54,9 +57,10 @@ public abstract class ChargeTemplateDto implements Serializable {
 	@Override
 	public String toString() {
 		return "ChargeTemplateDto [code=" + code + ", description="
-				+ description + ", amountEditable=" + amountEditable
-				+ ", invoiceSubCategory=" + invoiceSubCategory
-				+ ", languageDescriptions=" + languageDescriptions + "]";
+				+ description + ", invoiceSubCategory=" + invoiceSubCategory
+				+ ", disabled=" + disabled + ", amountEditable="
+				+ amountEditable + ", languageDescriptions="
+				+ languageDescriptions + "]";
 	}
 
 	public Boolean getAmountEditable() {
@@ -73,6 +77,14 @@ public abstract class ChargeTemplateDto implements Serializable {
 
 	public void setInvoiceSubCategory(String invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
+	}
+
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
 }

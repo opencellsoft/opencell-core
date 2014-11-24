@@ -75,25 +75,6 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 						postData.getCalendar());
 			}
 
-			RecurringChargeTemplate recurringChargeTemplate = new RecurringChargeTemplate();
-			recurringChargeTemplate.setCode(postData.getCode());
-			recurringChargeTemplate.setDescription(postData.getDescription());
-			recurringChargeTemplate.setDisabled(postData.isDisabled());
-			recurringChargeTemplate.setAmountEditable(postData
-					.getAmountEditable());
-			recurringChargeTemplate.setDurationTermInMonth(postData
-					.getDurationTermInMonth());
-			recurringChargeTemplate.setSubscriptionProrata(postData
-					.getSubscriptionProrata());
-			recurringChargeTemplate.setTerminationProrata(postData
-					.getTerminationProrata());
-			recurringChargeTemplate.setApplyInAdvance(postData
-					.getApplyInAdvance());
-			recurringChargeTemplate.setShareLevel(LevelEnum.getValue(postData
-					.getShareLevel()));
-			recurringChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			recurringChargeTemplate.setCalendar(calendar);
-
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
 					for (LanguageDescriptionDto ld : postData
@@ -119,6 +100,25 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 					}
 				}
 			}
+
+			RecurringChargeTemplate recurringChargeTemplate = new RecurringChargeTemplate();
+			recurringChargeTemplate.setCode(postData.getCode());
+			recurringChargeTemplate.setDescription(postData.getDescription());
+			recurringChargeTemplate.setDisabled(postData.isDisabled());
+			recurringChargeTemplate.setAmountEditable(postData
+					.getAmountEditable());
+			recurringChargeTemplate.setDurationTermInMonth(postData
+					.getDurationTermInMonth());
+			recurringChargeTemplate.setSubscriptionProrata(postData
+					.getSubscriptionProrata());
+			recurringChargeTemplate.setTerminationProrata(postData
+					.getTerminationProrata());
+			recurringChargeTemplate.setApplyInAdvance(postData
+					.getApplyInAdvance());
+			recurringChargeTemplate.setShareLevel(LevelEnum.getValue(postData
+					.getShareLevel()));
+			recurringChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+			recurringChargeTemplate.setCalendar(calendar);
 
 			recurringChargeTemplateService.create(recurringChargeTemplate,
 					currentUser, provider);
@@ -279,22 +279,22 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 
 		if (!StringUtils.isBlank(code)) {
 			// check if code already exists
-			RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
+			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService
 					.findByCode(code, provider,
 							Arrays.asList("invoiceSubCategory", "calendar"));
-			if (recurringChargeTemplate == null) {
+			if (chargeTemplate == null) {
 				throw new EntityDoesNotExistsException(
 						RecurringChargeTemplate.class, code);
 			}
 
-			result = new RecurringChargeTemplateDto(recurringChargeTemplate);
+			result = new RecurringChargeTemplateDto(chargeTemplate);
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService
 					.getCatMessagesList(RecurringChargeTemplate.class
 							.getSimpleName()
 							+ "_"
-							+ recurringChargeTemplate.getId())) {
+							+ chargeTemplate.getId())) {
 				languageDescriptions.add(new LanguageDescriptionDto(msg
 						.getLanguageCode(), msg.getDescription()));
 			}
@@ -315,9 +315,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 	public void remove(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
 			// check if code already exists
-			RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
+			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService
 					.findByCode(code, provider);
-			if (recurringChargeTemplate == null) {
+			if (chargeTemplate == null) {
 				throw new EntityDoesNotExistsException(
 						RecurringChargeTemplate.class, code);
 			}
@@ -325,9 +325,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 			// remove cat messages
 			catMessagesService.batchRemove(
 					RecurringChargeTemplate.class.getSimpleName(),
-					recurringChargeTemplate.getId());
+					chargeTemplate.getId());
 
-			recurringChargeTemplateService.remove(recurringChargeTemplate);
+			recurringChargeTemplateService.remove(chargeTemplate);
 		} else {
 			if (StringUtils.isBlank(code)) {
 				missingParameters.add("recurringChargeTemplateCode");
