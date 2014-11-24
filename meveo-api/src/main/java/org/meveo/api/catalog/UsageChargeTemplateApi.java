@@ -7,9 +7,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.dto.LanguageDescriptionDto;
-import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
+import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -19,45 +20,40 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.LevelEnum;
-import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.UsageChgTemplateEnum;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class RecurringChargeTemplateApi extends ChargeTemplateApi {
+public class UsageChargeTemplateApi extends BaseApi {
 
 	@Inject
-	private RecurringChargeTemplateService recurringChargeTemplateService;
+	private UsageChargeTemplateService usageChargeTemplateService;
 
 	@Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
 
 	@Inject
-	private CalendarService calendarService;
-
-	@Inject
 	private CatMessagesService catMessagesService;
 
-	public void create(RecurringChargeTemplateDto postData, User currentUser)
+	public void create(UsageChargeTemplateDto postData, User currentUser)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())
 				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getInvoiceSubCategory())
-				&& !StringUtils.isBlank(postData.getCalendar())) {
+				&& !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 			Provider provider = currentUser.getProvider();
+
 			// check if code already exists
-			if (recurringChargeTemplateService.findByCode(postData.getCode(),
+			if (usageChargeTemplateService.findByCode(postData.getCode(),
 					provider) != null) {
 				throw new EntityAlreadyExistsException(
-						RecurringChargeTemplate.class, postData.getCode());
+						UsageChargeTemplate.class, postData.getCode());
 			}
 
 			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
@@ -66,13 +62,6 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 				throw new EntityDoesNotExistsException(
 						InvoiceSubCategory.class,
 						postData.getInvoiceSubCategory());
-			}
-
-			Calendar calendar = calendarService.findByName(
-					postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class,
-						postData.getCalendar());
 			}
 
 			if (provider.getTradingLanguages() != null) {
@@ -101,34 +90,34 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 				}
 			}
 
-			RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
+			UsageChargeTemplate chargeTemplate = new UsageChargeTemplate();
 			chargeTemplate.setCode(postData.getCode());
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData
-					.getAmountEditable());
-			chargeTemplate.setDurationTermInMonth(postData
-					.getDurationTermInMonth());
-			chargeTemplate.setSubscriptionProrata(postData
-					.getSubscriptionProrata());
-			chargeTemplate.setTerminationProrata(postData
-					.getTerminationProrata());
-			chargeTemplate.setApplyInAdvance(postData
-					.getApplyInAdvance());
-			chargeTemplate.setShareLevel(LevelEnum.getValue(postData
-					.getShareLevel()));
+			chargeTemplate.setAmountEditable(postData.getAmountEditable());
+			chargeTemplate.setUnityMultiplicator(postData
+					.getUnityMultiplicator());
+			chargeTemplate.setUnityDescription(postData.getUnityDescription());
+			chargeTemplate.setUnityFormatter(UsageChgTemplateEnum
+					.getValue(postData.getUnityFormatter()));
+			chargeTemplate.setUnityNbDecimal(postData.getUnityNbDecimal());
+			chargeTemplate.setPriority(postData.getPriority());
+			chargeTemplate.setFilterParam1(postData.getFilterParam1());
+			chargeTemplate.setFilterParam2(postData.getFilterParam2());
+			chargeTemplate.setFilterParam3(postData.getFilterParam3());
+			chargeTemplate.setFilterParam4(postData.getFilterParam4());
+			chargeTemplate.setFilterExpression(postData.getFilterExpression());
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setCalendar(calendar);
 
-			recurringChargeTemplateService.create(chargeTemplate,
-					currentUser, provider);
+			usageChargeTemplateService.create(chargeTemplate, currentUser,
+					provider);
 
 			// create cat messages
 			if (postData.getLanguageDescriptions() != null) {
 				for (LanguageDescriptionDto ld : postData
 						.getLanguageDescriptions()) {
 					CatMessages catMsg = new CatMessages(
-							RecurringChargeTemplate.class.getSimpleName() + "_"
+							UsageChargeTemplate.class.getSimpleName() + "_"
 									+ chargeTemplate.getId(),
 							ld.getLanguageCode(), ld.getDescription());
 
@@ -145,28 +134,25 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 				missingParameters.add("invoiceSubCategory");
 			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
 	}
 
-	public void update(RecurringChargeTemplateDto postData, User currentUser)
+	public void update(UsageChargeTemplateDto postData, User currentUser)
 			throws MeveoApiException {
 		if (!StringUtils.isBlank(postData.getCode())
 				&& !StringUtils.isBlank(postData.getDescription())
-				&& !StringUtils.isBlank(postData.getInvoiceSubCategory())
-				&& !StringUtils.isBlank(postData.getCalendar())) {
+				&& !StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 			Provider provider = currentUser.getProvider();
+
 			// check if code already exists
-			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService
+			UsageChargeTemplate chargeTemplate = usageChargeTemplateService
 					.findByCode(postData.getCode(), provider);
 			if (chargeTemplate == null) {
 				throw new EntityDoesNotExistsException(
-						RecurringChargeTemplate.class, postData.getCode());
+						UsageChargeTemplate.class, postData.getCode());
 			}
 
 			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
@@ -176,30 +162,6 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 						InvoiceSubCategory.class,
 						postData.getInvoiceSubCategory());
 			}
-
-			Calendar calendar = calendarService.findByName(
-					postData.getCalendar(), provider);
-			if (calendar == null) {
-				throw new EntityDoesNotExistsException(Calendar.class,
-						postData.getCalendar());
-			}
-
-			chargeTemplate.setDescription(postData.getDescription());
-			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData
-					.getAmountEditable());
-			chargeTemplate.setDurationTermInMonth(postData
-					.getDurationTermInMonth());
-			chargeTemplate.setSubscriptionProrata(postData
-					.getSubscriptionProrata());
-			chargeTemplate.setTerminationProrata(postData
-					.getTerminationProrata());
-			chargeTemplate.setApplyInAdvance(postData
-					.getApplyInAdvance());
-			chargeTemplate.setShareLevel(LevelEnum.getValue(postData
-					.getShareLevel()));
-			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			chargeTemplate.setCalendar(calendar);
 
 			if (provider.getTradingLanguages() != null) {
 				if (postData.getLanguageDescriptions() != null) {
@@ -224,36 +186,40 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 											+ " is not supported by the provider.");
 						}
 					}
-
-					// create cat messages
-					for (LanguageDescriptionDto ld : postData
-							.getLanguageDescriptions()) {
-						CatMessages catMsg = catMessagesService
-								.getCatMessages(
-										RecurringChargeTemplate.class
-												.getSimpleName()
-												+ "_"
-												+ chargeTemplate
-														.getId(), ld
-												.getLanguageCode());
-
-						if (catMsg != null) {
-							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg);
-						} else {
-							CatMessages catMessages = new CatMessages(
-									RecurringChargeTemplate.class.getSimpleName()
-											+ "_"
-											+ chargeTemplate.getId(),
-									ld.getLanguageCode(), ld.getDescription());
-							catMessagesService.create(catMessages);
-						}
-					}
 				}
 			}
 
-			recurringChargeTemplateService.update(chargeTemplate,
-					currentUser);
+			chargeTemplate.setDescription(postData.getDescription());
+			chargeTemplate.setDisabled(postData.isDisabled());
+			chargeTemplate.setAmountEditable(postData.getAmountEditable());
+			chargeTemplate.setUnityMultiplicator(postData
+					.getUnityMultiplicator());
+			chargeTemplate.setUnityDescription(postData.getUnityDescription());
+			chargeTemplate.setUnityFormatter(UsageChgTemplateEnum
+					.getValue(postData.getUnityFormatter()));
+			chargeTemplate.setUnityNbDecimal(postData.getUnityNbDecimal());
+			chargeTemplate.setPriority(postData.getPriority());
+			chargeTemplate.setFilterParam1(postData.getFilterParam1());
+			chargeTemplate.setFilterParam2(postData.getFilterParam2());
+			chargeTemplate.setFilterParam3(postData.getFilterParam3());
+			chargeTemplate.setFilterParam4(postData.getFilterParam4());
+			chargeTemplate.setFilterExpression(postData.getFilterExpression());
+			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+
+			usageChargeTemplateService.update(chargeTemplate, currentUser);
+
+			// create cat messages
+			if (postData.getLanguageDescriptions() != null) {
+				for (LanguageDescriptionDto ld : postData
+						.getLanguageDescriptions()) {
+					CatMessages catMsg = new CatMessages(
+							UsageChargeTemplate.class.getSimpleName() + "_"
+									+ chargeTemplate.getId(),
+							ld.getLanguageCode(), ld.getDescription());
+
+					catMessagesService.create(catMsg, currentUser, provider);
+				}
+			}
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -264,37 +230,32 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 			if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
 				missingParameters.add("invoiceSubCategory");
 			}
-			if (StringUtils.isBlank(postData.getCalendar())) {
-				missingParameters.add("calendar");
-			}
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
 	}
 
-	public RecurringChargeTemplateDto find(String code, Provider provider)
+	public UsageChargeTemplateDto find(String code, Provider provider)
 			throws MeveoApiException {
-		RecurringChargeTemplateDto result = new RecurringChargeTemplateDto();
+		UsageChargeTemplateDto result = new UsageChargeTemplateDto();
 
 		if (!StringUtils.isBlank(code)) {
 			// check if code already exists
-			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService
+			UsageChargeTemplate chargeTemplate = usageChargeTemplateService
 					.findByCode(code, provider,
-							Arrays.asList("invoiceSubCategory", "calendar"));
+							Arrays.asList("invoiceSubCategory"));
 			if (chargeTemplate == null) {
 				throw new EntityDoesNotExistsException(
-						RecurringChargeTemplate.class, code);
+						UsageChargeTemplateDto.class, code);
 			}
 
-			result = new RecurringChargeTemplateDto(chargeTemplate);
+			result = new UsageChargeTemplateDto(chargeTemplate);
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(RecurringChargeTemplate.class
-							.getSimpleName()
-							+ "_"
-							+ chargeTemplate.getId())) {
+					.getCatMessagesList(UsageChargeTemplate.class
+							.getSimpleName() + "_" + chargeTemplate.getId())) {
 				languageDescriptions.add(new LanguageDescriptionDto(msg
 						.getLanguageCode(), msg.getDescription()));
 			}
@@ -302,7 +263,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 			result.setLanguageDescriptions(languageDescriptions);
 		} else {
 			if (StringUtils.isBlank(code)) {
-				missingParameters.add("recurringChargeTemplateCode");
+				missingParameters.add("usageChargeTemplateCode");
 			}
 
 			throw new MissingParameterException(
@@ -315,26 +276,28 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 	public void remove(String code, Provider provider) throws MeveoApiException {
 		if (!StringUtils.isBlank(code)) {
 			// check if code already exists
-			RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService
-					.findByCode(code, provider);
+			UsageChargeTemplate chargeTemplate = usageChargeTemplateService
+					.findByCode(code, provider,
+							Arrays.asList("invoiceSubCategory"));
 			if (chargeTemplate == null) {
 				throw new EntityDoesNotExistsException(
-						RecurringChargeTemplate.class, code);
+						UsageChargeTemplateDto.class, code);
 			}
 
 			// remove cat messages
 			catMessagesService.batchRemove(
-					RecurringChargeTemplate.class.getSimpleName(),
+					UsageChargeTemplate.class.getSimpleName(),
 					chargeTemplate.getId());
 
-			recurringChargeTemplateService.remove(chargeTemplate);
+			usageChargeTemplateService.remove(chargeTemplate);
 		} else {
 			if (StringUtils.isBlank(code)) {
-				missingParameters.add("recurringChargeTemplateCode");
+				missingParameters.add("usageChargeTemplateCode");
 			}
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
 	}
+
 }

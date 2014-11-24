@@ -126,19 +126,19 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				}
 			}
 
-			OneShotChargeTemplate oneShotChargeTemplate = new OneShotChargeTemplate();
-			oneShotChargeTemplate.setCode(postData.getCode());
-			oneShotChargeTemplate.setDescription(postData.getDescription());
-			oneShotChargeTemplate.setDisabled(postData.isDisabled());
-			oneShotChargeTemplate.setAmountEditable(postData
+			OneShotChargeTemplate chargeTemplate = new OneShotChargeTemplate();
+			chargeTemplate.setCode(postData.getCode());
+			chargeTemplate.setDescription(postData.getDescription());
+			chargeTemplate.setDisabled(postData.isDisabled());
+			chargeTemplate.setAmountEditable(postData
 					.getAmountEditable());
-			oneShotChargeTemplate
+			chargeTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum
 							.getValue(postData.getOneShotChargeTemplateType()));
-			oneShotChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			oneShotChargeTemplate.setImmediateInvoicing(postData
+			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+			chargeTemplate.setImmediateInvoicing(postData
 					.getImmediateInvoicing());
-			oneShotChargeTemplateService.create(oneShotChargeTemplate,
+			oneShotChargeTemplateService.create(chargeTemplate,
 					currentUser, provider);
 
 			// create cat messages
@@ -147,7 +147,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 						.getLanguageDescriptions()) {
 					CatMessages catMsg = new CatMessages(
 							OneShotChargeTemplate.class.getSimpleName() + "_"
-									+ oneShotChargeTemplate.getId(),
+									+ chargeTemplate.getId(),
 							ld.getLanguageCode(), ld.getDescription());
 
 					catMessagesService.create(catMsg, currentUser, provider);
@@ -182,9 +182,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			Provider provider = currentUser.getProvider();
 
 			// check if code already exists
-			OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService
+			OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService
 					.findByCode(postData.getCode(), provider);
-			if (oneShotChargeTemplate == null) {
+			if (chargeTemplate == null) {
 				throw new EntityDoesNotExistsException(
 						OneShotChargeTemplate.class, postData.getCode());
 			}
@@ -226,7 +226,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 							.getLanguageDescriptions()) {
 						CatMessages catMsg = catMessagesService.getCatMessages(
 								OneShotChargeTemplate.class.getSimpleName()
-										+ "_" + oneShotChargeTemplate.getId(),
+										+ "_" + chargeTemplate.getId(),
 								ld.getLanguageCode());
 
 						if (catMsg != null) {
@@ -236,7 +236,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 							CatMessages catMessages = new CatMessages(
 									OneShotChargeTemplate.class.getSimpleName()
 											+ "_"
-											+ oneShotChargeTemplate.getId(),
+											+ chargeTemplate.getId(),
 									ld.getLanguageCode(), ld.getDescription());
 							catMessagesService.create(catMessages);
 						}
@@ -244,17 +244,17 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				}
 			}
 
-			oneShotChargeTemplate.setDescription(postData.getDescription());
-			oneShotChargeTemplate.setDisabled(postData.isDisabled());
-			oneShotChargeTemplate.setAmountEditable(postData
+			chargeTemplate.setDescription(postData.getDescription());
+			chargeTemplate.setDisabled(postData.isDisabled());
+			chargeTemplate.setAmountEditable(postData
 					.getAmountEditable());
-			oneShotChargeTemplate
+			chargeTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum
 							.getValue(postData.getOneShotChargeTemplateType()));
-			oneShotChargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
-			oneShotChargeTemplate.setImmediateInvoicing(postData
+			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
+			chargeTemplate.setImmediateInvoicing(postData
 					.getImmediateInvoicing());
-			oneShotChargeTemplateService.update(oneShotChargeTemplate,
+			oneShotChargeTemplateService.update(chargeTemplate,
 					currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {

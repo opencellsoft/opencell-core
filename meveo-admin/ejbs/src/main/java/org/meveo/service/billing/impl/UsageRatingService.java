@@ -40,7 +40,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
-import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 public class UsageRatingService {
 
 	@Inject
-	@MeveoJpa
+	@MeveoJpaForJobs
 	protected EntityManager em;
 
 	@Inject
@@ -434,10 +434,13 @@ public class UsageRatingService {
 							.getStartDate().equals(edr.getEventDate()))
 							&& itemPeriodCache.getEndDate().after(
 									edr.getEventDate())) {
-						walletOperation.setAggregatedServiceInstance(chargeInstance.getServiceInstance());
+						walletOperation
+								.setAggregatedServiceInstance(chargeInstance
+										.getServiceInstance());
 						walletOperationService
 								.updatePriceForSameServiceAndType(
-										walletOperation,chargeInstance.getServiceInstance(),
+										walletOperation,
+										chargeInstance.getServiceInstance(),
 										itemPeriodCache.getStartDate(),
 										itemPeriodCache.getEndDate());
 						break;
