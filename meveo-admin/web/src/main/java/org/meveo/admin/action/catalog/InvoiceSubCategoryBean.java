@@ -92,7 +92,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		this.invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 	}
 
-	public String saveInvoiceSubCategoryCountry() {
+	public void saveInvoiceSubCategoryCountry() {
 		log.info("saveOneShotChargeIns getObjectId=#0", getObjectId());
 
 		try {
@@ -134,7 +134,6 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
 		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 		
-		return getListViewName();
 	}
 
 	public void deleteInvoiceSubcategoryCountry(
