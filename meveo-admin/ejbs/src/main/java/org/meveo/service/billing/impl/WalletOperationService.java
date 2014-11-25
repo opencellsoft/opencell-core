@@ -1428,15 +1428,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				&& !walletOperation.getQuantity().equals(BigDecimal.ZERO)
 				&& walletOperation.getWallet() != null) {
 			BigDecimal unitPriceWithoutTax = walletOperation
-					.getAmountWithoutTax()
-					.divide(walletOperation.getQuantity());
-			BigDecimal unitTax = walletOperation.getAmountTax().divide(
-					walletOperation.getQuantity());
+					.getUnitAmountWithoutTax();
+			BigDecimal unitTax = walletOperation.getUnitAmountTax();
+			BigDecimal unitPriceWithTax = walletOperation.getUnitAmountWithTax();
 			String strQuery = "UPDATE "
 					+ WalletOperation.class.getSimpleName()
 					+ " as w SET  w.amountWithoutTax = w.quantity * "+ unitPriceWithoutTax+ ","
 					+ " w.amountTax = w.quantity * "+ unitTax+ ","
-					+ " w.amountWithTax = w.amountWithoutTax + w.amountTax"
+					+ " w.amountWithTax = w.quantity * "+ unitPriceWithTax+ ","
 					+ " WHERE  w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "
 					+ " AND w.status=:status "
