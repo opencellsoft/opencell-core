@@ -415,7 +415,7 @@ public class UsageRatingService {
 		walletOperation
 				.setOfferCode(edr.getSubscription().getOffer().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
-		log.info("provider code:" + provider.getCode());
+		//log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(walletOperation, null, null,
 				countryId, currency, provider);
 		// for AGGREGATED counter we update the price of the previous wallet
