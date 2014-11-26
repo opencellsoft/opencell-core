@@ -39,8 +39,6 @@ public interface Job {
 	 * @param timer
 	 */
 	public void trigger(Timer timer);
-	
-	public Collection<Timer> getTimers();
 
 	public JobExecutionService getJobExecutionService();
     

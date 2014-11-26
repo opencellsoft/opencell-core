@@ -1,10 +1,13 @@
 package org.meveo.services.job;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.ejb.Timer;
+import javax.ejb.TimerService;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -31,6 +34,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 
 	@Inject
 	private Messages messages;
+	
 
 	private int pageSize = 20;
 	private PaginationDataModel<TimerEntity> timersDataModel;
@@ -64,9 +68,9 @@ public class TimersBean extends BaseBean<TimerEntity> {
 		return timersDataModel;
 	}
 
-	public List<Timer> getEjbTimers() {// FIXME: throws BusinessException {
+	public Collection<Timer> getEjbTimers() {// FIXME: throws BusinessException {
 
-		return timerEntityservice.getEjbTimers();
+		return timerEntityservice.getTimers();
 	}
 
 	public TimerInfo getTimerInfo(Timer timer) {
@@ -103,7 +107,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 	public void cancelEjbTimers() {
 
 		try {
-			for (Timer timer : timerEntityservice.getEjbTimers()) {
+			for (Timer timer : timerEntityservice.getTimers()) {
 				TimerEntity timerEntity = timerEntityservice.findByTimerHandle(timer.getHandle());
 
 				if (timerEntity != null) {
@@ -145,7 +149,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 		@Override
 		protected int countRecords(PaginationConfiguration paginatingData) {
 			try {
-				return timerEntityservice.getEjbTimers().size();
+				return timerEntityservice.getTimers().size();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -156,7 +160,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 		@Override
 		protected List<Timer> loadData(PaginationConfiguration configuration) {
 			try {
-				return new ArrayList<Timer>(timerEntityservice.getEjbTimers());
+				return new ArrayList<Timer>(timerEntityservice.getTimers());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

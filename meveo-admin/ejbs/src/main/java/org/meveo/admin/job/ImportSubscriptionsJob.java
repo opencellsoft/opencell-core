@@ -315,12 +315,6 @@ public class ImportSubscriptionsJob implements Job {
 		}
 	}
 
-	@Override
-	public Collection<Timer> getTimers() {
-		// TODO Auto-generated method stub
-		return timerService.getTimers();
-	}
-
 	private CheckedSubscription subscriptionCheckError(Provider provider,
 			org.meveo.model.jaxb.subscription.Subscription subscrip) {
 		CheckedSubscription checkSubscription = new CheckedSubscription();

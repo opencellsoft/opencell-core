@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -130,11 +129,6 @@ public class BillingRunJob implements Job {
 		}
 	}
 
-	@Override
-	public Collection<Timer> getTimers() {
-		// TODO Auto-generated method stub
-		return timerService.getTimers();
-	}
 
 	@Override
 	public JobExecutionService getJobExecutionService() {

@@ -221,11 +221,6 @@ public class InvoicingJob implements Job {
 		}
 	}
 
-	@Override
-	public Collection<Timer> getTimers() {
-		// TODO Auto-generated method stub
-		return timerService.getTimers();
-	}
 
 	@Override
 	public JobExecutionService getJobExecutionService() {

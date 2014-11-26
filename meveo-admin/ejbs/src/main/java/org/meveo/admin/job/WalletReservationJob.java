@@ -105,10 +105,6 @@ public class WalletReservationJob implements Job {
 		}
 	}
 
-	@Override
-	public Collection<Timer> getTimers() {
-		return timerService.getTimers();
-	}
 
 	@Override
 	public JobExecutionService getJobExecutionService() {

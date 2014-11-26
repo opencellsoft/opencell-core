@@ -21,9 +21,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.Timer;
 import javax.ejb.TimerHandle;
+import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.jboss.seam.security.Identity;
@@ -42,12 +45,17 @@ import org.meveo.service.crm.impl.ProviderService;
 public class TimerEntityService extends PersistenceService<TimerEntity> {
 
 	public static HashMap<String, Job> jobEntries = new HashMap<String, Job>();
-
+	
 	@Inject
 	Identity identity;
 	
 	@Inject
 	ProviderService providerService;
+	
+	@Resource
+	TimerService timerService;
+	
+	static boolean timersCleaned = false;
 	
 	static ParamBean paramBean = ParamBean.getInstance();
 
@@ -66,43 +74,26 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 	 *            (instantiacion class must be a session EJB)
 	 */
 	public static void registerJob(Job job) {
-		if (jobEntries.containsKey(job.getClass().getSimpleName())) {
-			throw new RuntimeException(job.getClass().getSimpleName() + " already registered.");
+		if (!jobEntries.containsKey(job.getClass().getSimpleName())) {
+			jobEntries.put(job.getClass().getSimpleName(), job);
+			job.getJobExecutionService().getTimerEntityService().createDefaultTimers(job.getClass().getSimpleName());
 		}
-		jobEntries.put(job.getClass().getSimpleName(), job);
-		job.getJobExecutionService().getTimerEntityService().cleanTimers(job);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void cleanTimers(Job job){
-		String jobName=job.getClass().getSimpleName();
-		log.info("cleanTimer " + jobName);
+	public Collection<Timer> getTimers(){
+		return timerService.getTimers();
+	}
+	
+	public void createDefaultTimers(String jobName){
 		List<TimerHandle> timerHandles=new ArrayList<TimerHandle>();
-		Collection<Timer> timers = job.getTimers();
+		Collection<Timer> timers = timerService.getTimers();
 		if(timers!=null){
 			log.debug("cleanTimer found " + timers.size()+" ejb timers");
 			for(Timer timer : timers){
 				TimerEntity timerEntity = findByTimerHandle(timer.getHandle());
-				if(timerEntity==null){
-					log.warn("EJB timer as no counterPart in database, we cancel the timer");
-					timer.cancel();
-				}
-				else {
+				if(timerEntity!=null){
 					timerHandles.add(timer.getHandle());
-				}
-			}
-		}
-		String sql = "select distinct t from TimerEntity t";
-		QueryBuilder qb = new QueryBuilder(sql);// FIXME: .cacheable();
-		qb.addCriterion("t.jobName", "=",jobName,false);
-		List<TimerEntity> timerEntities = qb.find(getEntityManager());
-		if(timerEntities!=null){
-			log.debug("cleanTimer found " + timers.size()+" timer entities in database");
-			for(TimerEntity timerEntity :timerEntities){
-				if(!timerHandles.contains(timerEntity.getTimerHandle())){
-					log.warn("Database timer as no counterPart in EJB, we delete it from the database");
-					timerHandles.remove(timerEntity.getTimerHandle());
-					super.remove(timerEntity);
+					break;
 				}
 			}
 		}
@@ -131,6 +122,43 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 			} else {
 				log.error("incorrect schedule Porperty jobs.autoStart."+jobName+"="+scheduleProperty);
 			}
+		}
+		cleanTimers();
+	}
+	
+	public void cleanTimers(){
+		log.info("cleanTimers");
+		if(!timersCleaned){
+			List<TimerHandle> timerHandles=new ArrayList<TimerHandle>();
+			Collection<Timer> timers = timerService.getTimers();
+			if(timers!=null){
+				log.debug("cleanTimer found " + timers.size()+" ejb timers");
+				for(Timer timer : timers){
+					TimerEntity timerEntity = findByTimerHandle(timer.getHandle());
+					if(timerEntity==null){
+						log.warn("EJB timer as no counterPart in database, we cancel the timer");
+						timer.cancel();
+					}
+					else {
+						timerHandles.add(timer.getHandle());
+					}
+				}
+			}
+			String sql = "select distinct t from TimerEntity t";
+			QueryBuilder qb = new QueryBuilder(sql);
+			@SuppressWarnings("unchecked")
+			List<TimerEntity> timerEntities = qb.find(getEntityManager());
+			if(timerEntities!=null){
+				log.debug("cleanTimer found " + timers.size()+" timer entities in database");
+				for(TimerEntity timerEntity :timerEntities){
+					if(!timerHandles.contains(timerEntity.getTimerHandle())){
+						log.warn("Database timer as no counterPart in EJB, we delete it from the database");
+						timerHandles.remove(timerEntity.getTimerHandle());
+						super.remove(timerEntity);
+					}
+				}
+			}
+			timersCleaned=true;
 		}
 	}
 
@@ -223,30 +251,6 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 
 	public long count(PaginationConfiguration configuration) {
 		return getFindQuery(configuration).count(getEntityManager());
-	}
-
-	public List<Timer> getEjbTimers() {
-		List<Timer> timers = new ArrayList<Timer>();
-
-		for (Job job : jobEntries.values()) {
-			try {
-				// TODO: this class should not refer specific job
-				/*
-				 * if(job instanceof JobImportDocs || job instanceof JobPurge ||
-				 * job instanceof JobDeletedPages || job instanceof
-				 * JobExportDocs || job instanceof JobImportPieces || job
-				 * instanceof JobPieceTraceability || job instanceof
-				 * JobTransfertPrimo){
-				 */
-				timers.addAll(job.getTimers());
-				// }
-
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
-
-		}
-		return timers;
 	}
 
 }
