@@ -281,6 +281,7 @@ public class UsageRatingService {
 
 			cachedValue.setChargeDate(usageChargeInstance.getChargeDate());
 			cachedValue.setChargeInstanceId(usageChargeInstance.getId());
+			usageChargeInstance.getProvider().getCode();
 			cachedValue.setProvider(usageChargeInstance.getProvider());
 			cachedValue
 					.setCurrencyId(usageChargeInstance.getCurrency().getId());
