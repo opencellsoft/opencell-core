@@ -75,7 +75,36 @@
 					</p:commandButton>
 				</p:panel>
 			</h:form>
-
+			<h:form rendered="#{userBean.selectedFileName!=null}">
+				<p:inputText id="newFilename" value="#{userBean.newFilename}"/>
+				<p:commandButton value="#{messages['fileExplorer.renameFile']}"
+						action="#{userBean.renameFile()}"
+						update=":#{p:component('fileExplorer')}">
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</p:commandButton>
+			</h:form>
+			<h:form rendered="#{userBean.selectedFileName==null}">
+				<p:inputText id="dirName" value="#{userBean.directoryName}"/>
+				<p:commandButton value="#{messages['fileExplorer.createDirectory']}"
+						action="#{userBean.createDirectory()}"
+						update=":#{p:component('fileExplorer')}">
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</p:commandButton>
+			</h:form>
+			<h:form rendered="#{userBean.selectedFolder!=null and userBean.currentDirEmpty}">
+				<p:commandButton value="#{messages['fileExplorer.deleteDirectory']}"
+						action="#{userBean.deleteDirectory()}"
+						update=":#{p:component('fileExplorer')}">
+						<p:confirm header="Confirmation"
+							message="#{messages['fileExplorer.deleteDirectoryConfirm']}"
+							icon="ui-icon-alert" />
+						<f:param name="cid"
+							value="#{javax.enterprise.context.conversation.id}" />
+					</p:commandButton>
+			</h:form>
+			
 			<h:form rendered="#{userBean.selectedFileName==null}">
 				<p:fileUpload fileUploadListener="#{userBean.handleFileUpload}"
 					multiple="true" mode="advanced" dragDropSupport="true"

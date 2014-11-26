@@ -112,7 +112,10 @@ public class UserBean extends BaseBean<User> {
 	private String providerFilePath = param.getProperty("providers.rootDir",
 			"/tmp/meveo/");
 	private String selectedFolder;
+	private boolean currentDirEmpty;
 	private String selectedFileName;
+	private String newFilename;
+	private String directoryName;
 	private ArrayList<File> fileList;
 	private UploadedFile file;
 
@@ -276,6 +279,15 @@ public class UserBean extends BaseBean<User> {
 				+ getCurrentProvider().getCode();
 	}
 
+	private String getFilePath(String name){
+		String result=getFilePath() + File.separator + name;
+		if (selectedFolder != null) {
+			result = getFilePath() + File.separator + selectedFolder
+					+ File.separator + name;
+		}
+		return result;
+	}
+	
 	public void createMissingDirectories() {
 		// log.info("Creating required dirs in "+getFilePath());
 		String importDir = getFilePath() + File.separator + "imports"
@@ -366,11 +378,11 @@ public class UserBean extends BaseBean<User> {
 	public void setSelectedFolder(String selectedFolder) {
 		setSelectedFileName(null);
 		if (selectedFolder == null) {
-			log.info("setSelectedFolder to null");
+			log.debug("setSelectedFolder to null");
 			this.selectedFolder = null;
 		} else if ("..".equals(selectedFolder)) {
 			if (this.selectedFolder.lastIndexOf(File.separator) > 0) {
-				log.info("setSelectedFolder to parent "
+				log.debug("setSelectedFolder to parent "
 						+ this.selectedFolder
 						+ " -> "
 						+ this.selectedFolder.substring(0,
@@ -381,7 +393,7 @@ public class UserBean extends BaseBean<User> {
 				this.selectedFolder = null;
 			}
 		} else {
-			log.info("setSelectedFolder " + selectedFolder);
+			log.debug("setSelectedFolder " + selectedFolder);
 			if (this.selectedFolder == null) {
 				this.selectedFolder = File.separator + selectedFolder;
 			} else {
@@ -395,11 +407,14 @@ public class UserBean extends BaseBean<User> {
 		String folder = getFilePath() + File.separator
 				+ (this.selectedFolder == null ? "" : this.selectedFolder);
 		File file = new File(folder);
-		log.info("getFileList " + folder);
+		log.debug("getFileList " + folder);
 
 		fileList = file.listFiles() == null ? new ArrayList<File>()
 				: new ArrayList<File>(Arrays.asList(file.listFiles()));
 		if (this.selectedFolder != null) {
+			if(fileList.size()==0){
+				currentDirEmpty=true;
+			}
 			File parent = new File("..");
 			fileList.add(0, parent);
 		}
@@ -410,8 +425,28 @@ public class UserBean extends BaseBean<User> {
 	}
 
 	public void setSelectedFileName(String selectedFileName) {
-		log.info("setSelectedFileName " + selectedFileName);
+		log.debug("setSelectedFileName " + selectedFileName);
 		this.selectedFileName = selectedFileName;
+	}
+
+	public String getNewFilename() {
+		return newFilename;
+	}
+
+	public void setNewFilename(String newFilename) {
+		this.newFilename = newFilename;
+	}
+
+	public String getDirectoryName() {
+		return directoryName;
+	}
+
+	public void setDirectoryName(String directoryName) {
+		this.directoryName = directoryName;
+	}
+
+	public boolean isCurrentDirEmpty() {
+		return currentDirEmpty;
 	}
 
 	public List<File> getFileList() {
@@ -436,7 +471,7 @@ public class UserBean extends BaseBean<User> {
 
 	public void upload(ActionEvent event) {
 		if (file != null) {
-			log.info("upload file={}", file);
+			log.debug("upload file={}", file);
 			try {
 				copyFile(file.getFileName(), file.getInputstream());
 
@@ -451,16 +486,56 @@ public class UserBean extends BaseBean<User> {
 
 		}
 	}
+	
+	public void createDirectory(){
+		if(!StringUtils.isBlank(directoryName)){
+			String filePath = getFilePath(directoryName);
+			File newDir = new File(filePath);
+			if(!newDir.exists()){
+				if(newDir.mkdir()){
+					 buildFileList();
+					directoryName="";
+				}
+			}
+		}
+	}
+	
+	public void deleteDirectory(){
+		log.debug("deleteDirectory:"+selectedFolder);
+		if(!StringUtils.isBlank(selectedFolder) && currentDirEmpty){
+			String filePath = getFilePath("");
+			File currentDir = new File(filePath);
+			if(currentDir.exists() && currentDir.isDirectory()){
+				if(currentDir.delete()){
+					setSelectedFolder("..");
+					createMissingDirectories();
+					buildFileList();
+				}
+			}
+		}
+	}
+	
+	public void renameFile(){
+		if(!StringUtils.isBlank(selectedFileName) && !StringUtils.isBlank(newFilename)){
+			String filePath = getFilePath(selectedFileName);
+			String newFilePath = getFilePath(newFilename);
+			File currentFile = new File(filePath);
+			File newFile = new File(newFilePath);
+			if(currentFile.exists() && currentFile.isFile() && !newFile.exists()){
+				if(currentFile.renameTo(newFile)){
+					buildFileList();
+					selectedFileName=newFilename;
+					newFilename="";
+				}
+			}
+		}
+	}
 
 	public void copyFile(String fileName, InputStream in) {
 		try {
 
 			// write the inputStream to a FileOutputStream
-			String filePath = getFilePath() + File.separator + fileName;
-			if (selectedFolder != null) {
-				filePath = getFilePath() + File.separator + selectedFolder
-						+ File.separator + fileName;
-			}
+			String filePath = getFilePath(fileName);
 			OutputStream out = new FileOutputStream(new File(filePath));
 
 			int read = 0;
