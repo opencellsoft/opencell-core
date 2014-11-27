@@ -15,7 +15,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "ServiceTemplate")
+@XmlRootElement(name = "OfferTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferTemplateDto implements Serializable {
 

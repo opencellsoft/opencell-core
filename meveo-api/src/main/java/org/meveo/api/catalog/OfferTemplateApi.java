@@ -140,7 +140,7 @@ public class OfferTemplateApi extends BaseApi {
 
 			return new OfferTemplateDto(offerTemplate);
 		} else {
-			missingParameters.add("code");
+			missingParameters.add("offerTemplateCode");
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
@@ -158,7 +158,7 @@ public class OfferTemplateApi extends BaseApi {
 
 			offerTemplateService.remove(offerTemplate);
 		} else {
-			missingParameters.add("code");
+			missingParameters.add("offerTemplateCode");
 
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
