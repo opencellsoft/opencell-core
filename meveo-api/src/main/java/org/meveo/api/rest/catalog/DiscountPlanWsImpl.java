@@ -1,35 +1,30 @@
 package org.meveo.api.rest.catalog;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.api.MeveoApiErrorCode;
-import org.meveo.api.catalog.PricePlanApi;
+import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.catalog.PricePlanDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
+import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.response.catalog.GetDiscountPlanResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.BaseWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
-@Interceptors({ LoggingInterceptor.class })
-public class PricePlanWsImpl extends BaseWs implements PricePlanWs {
+public class DiscountPlanWsImpl extends BaseWs implements DiscountPlanWs {
 
 	@Inject
-	private PricePlanApi pricePlanApi;
+	private DiscountPlanApi discountPlanApi;
 
 	@Override
-	public ActionStatus create(PricePlanDto postData) {
+	public ActionStatus create(DiscountPlanDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			result.setMessage(String.valueOf(pricePlanApi.create(postData,
+			result.setMessage(String.valueOf(discountPlanApi.create(postData,
 					getCurrentUser())));
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
@@ -45,11 +40,11 @@ public class PricePlanWsImpl extends BaseWs implements PricePlanWs {
 	}
 
 	@Override
-	public ActionStatus update(PricePlanDto postData) {
+	public ActionStatus update(DiscountPlanDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			pricePlanApi.update(postData, getCurrentUser());
+			discountPlanApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -64,11 +59,11 @@ public class PricePlanWsImpl extends BaseWs implements PricePlanWs {
 	}
 
 	@Override
-	public GetPricePlanResponse find(Long id) {
-		GetPricePlanResponse result = new GetPricePlanResponse();
+	public GetDiscountPlanResponse find(Long id) {
+		GetDiscountPlanResponse result = new GetDiscountPlanResponse();
 
 		try {
-			result.setPricePlan(pricePlanApi.find(id));
+			result.setDiscountPlan(discountPlanApi.find(id));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -88,7 +83,7 @@ public class PricePlanWsImpl extends BaseWs implements PricePlanWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			pricePlanApi.remove(id);
+			discountPlanApi.remove(id);
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -234,8 +234,7 @@ public class PricePlanApi extends BaseApi {
 		}
 	}
 
-	public PricePlanDto find(Long id, Provider provider)
-			throws MeveoApiException {
+	public PricePlanDto find(Long id) throws MeveoApiException {
 		if (id != null) {
 			PricePlanMatrix pricePlanMatrix = pricePlanMatrixService
 					.findById(id);
@@ -253,7 +252,7 @@ public class PricePlanApi extends BaseApi {
 		}
 	}
 
-	public void remove(Long id, Provider provider) throws MeveoApiException {
+	public void remove(Long id) throws MeveoApiException {
 		if (id != null) {
 			PricePlanMatrix pricePlanMatrix = pricePlanMatrixService
 					.findById(id);

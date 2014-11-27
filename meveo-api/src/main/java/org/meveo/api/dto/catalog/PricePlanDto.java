@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -20,7 +21,10 @@ public class PricePlanDto implements Serializable {
 	private static final long serialVersionUID = -9089693491690592072L;
 
 	private Long id;
+	
+	@XmlAttribute(required = true)
 	private String eventCode;
+	
 	private String seller;
 	private String country;
 	private String currency;
