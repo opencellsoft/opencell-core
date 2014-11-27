@@ -19,14 +19,13 @@ package org.meveo.model.jobs;
 import java.util.Date;
 
 import javax.ejb.ScheduleExpression;
-import javax.ejb.TimerHandle;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.meveo.model.BaseEntity;
@@ -38,48 +37,48 @@ public class TimerEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
-	@Column(name = "NAME", unique = true, nullable = false)
+	@Column(name = "NAME", nullable = false)
 	private String name;
 
 	@Column(name = "JOB_NAME", nullable = false)
 	private String jobName;
+	
+	@Embedded
+	private TimerInfo timerInfo=new TimerInfo();
 
-	@Column(name = "TIMER_HANDLE", nullable = false, length = 1000)
-	private TimerHandle timerHandle;
-
-	@JoinColumn(name = "FOLLOWING_TIMER_ID")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@Transient
 	private TimerEntity followingTimer;
 
-	@Transient
+	@Column(name = "SC_YEAR", nullable = false)
 	private String year = "*";
 
-	@Transient
+
+	@Column(name = "SC_MONTH", nullable = false)
 	private String month = "*";
 
-	@Transient
+
+	@Column(name = "SC_D_O_MONTH", nullable = false)
 	private String dayOfMonth = "*";
 
-	@Transient
+	@Column(name = "SC_D_O_WEEK", nullable = false)
 	private String dayOfWeek = "*";
 
-	@Transient
+	@Column(name = "SC_HOUR", nullable = false)
 	private String hour = "*";
 
-	@Transient
+	@Column(name = "SC_MIN", nullable = false)
 	private String minute = "0";
 
-	@Transient
+	@Column(name = "SC_SEC", nullable = false)
 	private String second = "0";
 
-	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "SC_START", nullable = true)
 	private Date start;
 
-	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "SC_END", nullable = true)
 	private Date end;
-
-	@Transient
-	private TimerInfo info = new TimerInfo();
 
 	public String getName() {
 		return (name == null) ? (getId() == null ? null : jobName + "_"
@@ -97,14 +96,15 @@ public class TimerEntity extends BaseEntity {
 	public void setJobName(String jobName) {
 		System.out.println("setJobName(" + jobName + ")");
 		this.jobName = jobName;
+		timerInfo.setJobName(jobName);
 	}
 
-	public TimerHandle getTimerHandle() {
-		return timerHandle;
+	public TimerInfo getTimerInfo() {
+		return timerInfo;
 	}
 
-	public void setTimerHandle(TimerHandle timerHandle) {
-		this.timerHandle = timerHandle;
+	public void setTimerInfo(TimerInfo timerInfo) {
+		this.timerInfo = timerInfo;
 	}
 
 	public TimerEntity getFollowingTimer() {
@@ -113,6 +113,9 @@ public class TimerEntity extends BaseEntity {
 
 	public void setFollowingTimer(TimerEntity followingTimer) {
 		this.followingTimer = followingTimer;
+		if(followingTimer!=null){
+			this.timerInfo.setFollowingTimerId(followingTimer.getId());
+		}
 	}
 
 	public String getYear() {
@@ -187,14 +190,6 @@ public class TimerEntity extends BaseEntity {
 		this.end = end;
 	}
 
-	public TimerInfo getInfo() {
-		return info;
-	}
-
-	public void setInfo(TimerInfo info) {
-		this.info = info;
-	}
-
 	public ScheduleExpression getScheduleExpression() {
 		ScheduleExpression expression = new ScheduleExpression();
 		expression.dayOfMonth(dayOfMonth);
@@ -209,55 +204,14 @@ public class TimerEntity extends BaseEntity {
 		return expression;
 	}
 
-	public void setFieldsFromTimerHandler() {
-		try {
-			ScheduleExpression expression = timerHandle.getTimer()
-					.getSchedule();
-			setDayOfMonth(expression.getDayOfMonth());
-			setDayOfWeek(expression.getDayOfWeek());
-			setEnd(expression.getEnd());
-			setHour(expression.getHour());
-			setMinute(expression.getMinute());
-			setMonth(expression.getMonth());
-			setSecond(expression.getSecond());
-			setStart(expression.getStart());
-			setYear(expression.getYear());
-			setInfo((TimerInfo) timerHandle.getTimer().getInfo());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public String getTimerSchedule() {
 		String result = "";
 		try {
-			result = timerHandle.getTimer().getSchedule().toString();
+			result = getScheduleExpression().toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object other) {
-		if (other != null && other instanceof TimerEntity) {
-			if (this == other) {
-				return true;
-			}
-			TimerEntity timer = (TimerEntity) other;
-			if (timerHandle != null
-					&& timerHandle.equals(timer.getTimerHandle())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public int hashcode() {
-		int result = super.hashCode();
-		if (timerHandle != null) {
-			return timerHandle.hashCode();
-		}
-		return result;
-	}
 }

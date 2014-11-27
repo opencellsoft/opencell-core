@@ -1,10 +1,7 @@
 package org.meveo.services.job;
 
-import java.util.Collection;
-
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
-import javax.ejb.TimerHandle;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
@@ -32,15 +29,15 @@ public interface Job {
     public JobExecutionResult execute(String parameter,Provider provider);
     
 
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression,TimerInfo infos);
+	public Timer createTimer(ScheduleExpression scheduleExpression,TimerInfo infos);
+	
+	public void cleanAllTimers();
 	
 	/**
 	 * You must implement this method and add the @Timeout annotation to it 
 	 * @param timer
 	 */
 	public void trigger(Timer timer);
-	
-	public Collection<Timer> getTimers();
 
 	public JobExecutionService getJobExecutionService();
     

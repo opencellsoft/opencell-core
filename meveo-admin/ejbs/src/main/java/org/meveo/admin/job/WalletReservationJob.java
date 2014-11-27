@@ -10,7 +10,6 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
-import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
@@ -24,10 +23,6 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
-
-/**
- * @author Edward P. Legaspi
- **/
 
 @Startup
 @Singleton
@@ -74,13 +69,12 @@ public class WalletReservationJob implements Job {
 	}
 
 	@Override
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression,
+	public Timer createTimer(ScheduleExpression scheduleExpression,
 			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		Timer timer = timerService.createCalendarTimer(scheduleExpression,
+		return timerService.createCalendarTimer(scheduleExpression,
 				timerConfig);
-		return timer.getHandle();
 	}
 
 	boolean running = false;
@@ -105,14 +99,22 @@ public class WalletReservationJob implements Job {
 		}
 	}
 
-	@Override
-	public Collection<Timer> getTimers() {
-		return timerService.getTimers();
-	}
 
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
 
+	@Override
+	public void cleanAllTimers() {
+		Collection<Timer> alltimers = timerService.getTimers();
+		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
+		for(Timer timer:alltimers){
+			try{
+				timer.cancel();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
 }

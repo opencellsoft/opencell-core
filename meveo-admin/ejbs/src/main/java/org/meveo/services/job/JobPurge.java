@@ -63,12 +63,11 @@ public class JobPurge implements Job {
     }
 
 	@Override
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression,TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression,TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		//timerConfig.setPersistent(false);
-		Timer timer = timerService.createCalendarTimer(scheduleExpression,timerConfig);
-		return timer.getHandle();
+		timerConfig.setPersistent(false);
+		return timerService.createCalendarTimer(scheduleExpression,timerConfig);
 	}
 
 	@Timeout
@@ -81,16 +80,22 @@ public class JobPurge implements Job {
 		}
 	}
 	
-	@Override
-	public Collection<Timer> getTimers() {
-		// TODO Auto-generated method stub
-		return timerService.getTimers();
-	}
-	
 
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
 
+	@Override
+	public void cleanAllTimers() {
+		Collection<Timer> alltimers = timerService.getTimers();
+		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
+		for(Timer timer:alltimers){
+			try{
+				timer.cancel();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
 }

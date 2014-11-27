@@ -19,8 +19,10 @@ package org.meveo.model.jobs;
 import java.io.Serializable;
 
 import javax.inject.Named;
+import javax.persistence.Embeddable;
 
 @Named
+@Embeddable
 public class TimerInfo implements Serializable {
 
 	private static final long serialVersionUID = 5572229725635504448L;
