@@ -14,7 +14,6 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
-import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
@@ -108,12 +107,11 @@ public class XMLInvoiceGenerationJob implements Job {
 
 
 	@Override
-	public TimerHandle createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		//timerConfig.setPersistent(false);
-		Timer timer = timerService.createCalendarTimer(scheduleExpression, timerConfig);
-		return timer.getHandle();
+		timerConfig.setPersistent(false);
+		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -139,5 +137,18 @@ public class XMLInvoiceGenerationJob implements Job {
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
+	}
+
+	@Override
+	public void cleanAllTimers() {
+		Collection<Timer> alltimers = timerService.getTimers();
+		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
+		for(Timer timer:alltimers){
+			try{
+				timer.cancel();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.ejb.Timer;
-import javax.ejb.TimerService;
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -90,7 +88,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 	public void cancelEjbTimer(Timer timer) {
 
 		try {
-			TimerEntity timerEntity = timerEntityservice.findByTimerHandle(timer.getHandle());
+			TimerEntity timerEntity = timerEntityservice.getByTimer(timer);
 
 			if (timerEntity != null) {
 				timerEntityservice.remove(timerEntity);
@@ -108,8 +106,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 
 		try {
 			for (Timer timer : timerEntityservice.getTimers()) {
-				TimerEntity timerEntity = timerEntityservice.findByTimerHandle(timer.getHandle());
-
+				TimerEntity timerEntity = timerEntityservice.getByTimer(timer);
 				if (timerEntity != null) {
 					timerEntityservice.remove(timerEntity);
 				} else {

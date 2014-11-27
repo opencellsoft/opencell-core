@@ -77,7 +77,6 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 		if (timerEntity == null) {
 			if (timerId.get() != null) {
 				timerEntity = timerEntityService.findById(timerId.get());
-				timerEntity.setFieldsFromTimerHandler();
 				filters.put("jobName", timerEntity.getJobName());
 			} else {
 				log.debug("create new timerEntity");
