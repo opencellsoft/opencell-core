@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -16,6 +17,12 @@ public class AccountHierarchyDto extends BaseDto {
 
 	private static final long serialVersionUID = -8469973066490541924L;
 
+	@XmlAttribute(required = true)
+	private String email;
+
+	@XmlAttribute(required = true)
+	private int paymentMethod = 1;
+
 	private String customerId;
 	private String sellerCode;
 	private String customerBrandCode;
@@ -27,7 +34,6 @@ public class AccountHierarchyDto extends BaseDto {
 	private String titleCode;
 	private String firstName;
 	private String lastName;
-	private String email;
 	private Date birthDate;
 	private String phoneNumber;
 
@@ -36,19 +42,19 @@ public class AccountHierarchyDto extends BaseDto {
 	private String address1;
 	private String address2;
 	private String zipCode;
-	private String city;	
+	private String city;
 
 	@XmlTransient
 	private int limit;
-	
+
 	@XmlTransient
 	private String sortField;
-	
+
 	@XmlTransient
 	private int index;
-	
+
 	public AccountHierarchyDto() {
-		
+
 	}
 
 	public AccountHierarchyDto(Customer customer) {
@@ -219,17 +225,19 @@ public class AccountHierarchyDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "AccountHierarchyDto [customerId=" + customerId
+		return "AccountHierarchyDto [email=" + email + ", paymentMethod="
+				+ paymentMethod + ", customerId=" + customerId
 				+ ", sellerCode=" + sellerCode + ", customerBrandCode="
 				+ customerBrandCode + ", customerCategoryCode="
 				+ customerCategoryCode + ", currencyCode=" + currencyCode
-				+ ", countryCode=" + countryCode + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", languageCode=" + languageCode
-				+ ", billingCycleCode=" + billingCycleCode + ", email=" + email
-				+ ", zipCode=" + zipCode + ", address1=" + address1
-				+ ", address2=" + address2 + ", birthDate=" + birthDate
-				+ ", phoneNumber=" + phoneNumber + ", city=" + city
-				+ ", titleCode=" + titleCode + "]";
+				+ ", countryCode=" + countryCode + ", languageCode="
+				+ languageCode + ", titleCode=" + titleCode + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", birthDate="
+				+ birthDate + ", phoneNumber=" + phoneNumber
+				+ ", billingCycleCode=" + billingCycleCode + ", address1="
+				+ address1 + ", address2=" + address2 + ", zipCode=" + zipCode
+				+ ", city=" + city + ", limit=" + limit + ", sortField="
+				+ sortField + ", index=" + index + "]";
 	}
 
 	public int getLimit() {
@@ -254,6 +262,14 @@ public class AccountHierarchyDto extends BaseDto {
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public int getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(int paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 
 }

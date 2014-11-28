@@ -61,6 +61,7 @@ public class InvoiceApi extends BaseApi {
 
 	@Inject
 	BillingAccountService billingAccountService;
+
 	@Inject
 	BillingRunService billingRunService;
 
@@ -256,23 +257,23 @@ public class InvoiceApi extends BaseApi {
 				} else {
 					if (subCategoryInvoiceAgregateDTO.getRatedTransactions()
 							.size() <= 0) {
-						missingParameters.add("Rated Transactions");
+						missingParameters.add("ratedTransactions");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getItemNumber())) {
-						missingParameters.add("Item Number");
+						missingParameters.add("itemNumber");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getAmountTax())) {
-						missingParameters.add("Tax Amount");
+						missingParameters.add("amountTax");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getAmountWithoutTax())) {
-						missingParameters.add("Amount Without Tax");
+						missingParameters.add("amountWithoutTax");
 					}
 					if (StringUtils.isBlank(subCategoryInvoiceAgregateDTO
 							.getAmountWithTax())) {
-						missingParameters.add("Amount With Tax");
+						missingParameters.add("amountWithTax");
 					}
 
 					throw new MissingParameterException(
@@ -280,23 +281,23 @@ public class InvoiceApi extends BaseApi {
 				}
 			}
 		} else {
-			if (invoiceDTO.getSubCategoryInvoiceAgregates().size() > 0) {
-				missingParameters.add("Subcategory Invoice Agregates");
+			if (invoiceDTO.getSubCategoryInvoiceAgregates().size() <= 0) {
+				missingParameters.add("subCategoryInvoiceAgregates");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getBillingAccountCode())) {
-				missingParameters.add("Billing Account Code");
+				missingParameters.add("billingAccountCode");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getDueDate())) {
-				missingParameters.add("Due Date");
+				missingParameters.add("dueDate");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getAmountTax())) {
-				missingParameters.add("Amount Tax");
+				missingParameters.add("amountTax");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getAmountWithoutTax())) {
-				missingParameters.add("Amount Without Tax");
+				missingParameters.add("amountWithoutTax");
 			}
 			if (StringUtils.isBlank(invoiceDTO.getAmountWithTax())) {
-				missingParameters.add("Amount With Tax");
+				missingParameters.add("amountWithTax");
 			}
 
 			throw new MissingParameterException(

@@ -15,11 +15,13 @@ import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
+import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
 
@@ -42,31 +44,34 @@ public class CountryApi extends BaseApi {
 	@Inject
 	private TradingCurrencyService tradingCurrencyService;
 
-	public void create(CountryDto countryDto, User currentUser)
+	@Inject
+	private LanguageService languageService;
+
+	public void create(CountryDto postData, User currentUser)
 			throws MeveoApiException {
-		if (!StringUtils.isBlank(countryDto.getCountryCode())
-				&& !StringUtils.isBlank(countryDto.getName())
-				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
+		if (!StringUtils.isBlank(postData.getCountryCode())
+				&& !StringUtils.isBlank(postData.getName())
+				&& !StringUtils.isBlank(postData.getCurrencyCode())) {
 
 			// If countryCode exist in the trading country table
 			// ("billing_trading_country"), return error.
 
 			Provider provider = currentUser.getProvider();
 			TradingCountry tradingCountry = tradingCountryService
-					.findByTradingCountryCode(countryDto.getCountryCode(),
+					.findByTradingCountryCode(postData.getCountryCode(),
 							provider);
 
-			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
-				throw new EntityDoesNotExistsException(Currency.class,
-						countryDto.getCurrencyCode());
+			Language language = languageService.findByCode(postData
+					.getLanguageCode());
+			if (language == null) {
+				throw new EntityDoesNotExistsException(Language.class,
+						postData.getLanguageCode());
 			}
 
 			if (tradingCountry == null) {
 				// check currency
-				Country country = new Country();
-
-				country = countryService
-						.findByCode(countryDto.getCountryCode());
+				Country country = countryService.findByCode(postData
+						.getCountryCode());
 				Currency currency = null;
 				Auditable auditable = new Auditable();
 
@@ -80,25 +85,22 @@ public class CountryApi extends BaseApi {
 					country = new Country();
 					auditable.setCreated(new Date());
 					auditable.setCreator(currentUser);
-					country.setDescriptionEn(countryDto.getName());
-					country.setCountryCode(countryDto.getCountryCode());
+					country.setDescriptionEn(postData.getName());
+					country.setCountryCode(postData.getCountryCode());
+					country.setLanguage(language);
 				} else {
-					// If country code exist in the reference table but the
-					// currencyCode values in the two tables are different,
-					// change the value of Currencycode in the country reference
-					auditable.setUpdated(new Date());
-					auditable.setUpdater(currentUser);
+					country.getAuditable().setUpdated(new Date());
+					country.getAuditable().setUpdater(currentUser);
 				}
-				country.setAuditable(auditable);
 
-				if (countryDto.getCurrencyCode() != null) { //
-					currency = currencyService.findByCode(countryDto
+				if (postData.getCurrencyCode() != null) { //
+					currency = currencyService.findByCode(postData
 							.getCurrencyCode());
 					// If currencyCode don't exist in reference table
 					// ("adm_currency"), return error.
 					if (currency == null) {
 						throw new EntityDoesNotExistsException(Currency.class,
-								countryDto.getCurrencyCode());
+								postData.getCurrencyCode());
 					}
 				} else {
 					if (provider.getCurrency() != null) {
@@ -108,7 +110,7 @@ public class CountryApi extends BaseApi {
 				country.setCurrency(currency);
 
 				if (country.isTransient()) {
-					countryService.create(em, country, currentUser, provider);
+					countryService.create(country, currentUser, provider);
 				}
 
 				Auditable auditableTrading = new Auditable();
@@ -121,43 +123,41 @@ public class CountryApi extends BaseApi {
 				tradingCountry.setCountry(country);
 				tradingCountry.setProvider(provider);
 				tradingCountry.setActive(true);
-				tradingCountry.setPrDescription(countryDto.getName());
+				tradingCountry.setPrDescription(postData.getName());
 				tradingCountry.setAuditable(auditableTrading);
-				tradingCountryService.create(em, tradingCountry, currentUser,
+				tradingCountryService.create(tradingCountry, currentUser,
 						provider);
 
 				// If currencyCode exist in reference table ("adm_currency") and
 				// don't exist in the trading currency table, create the
 				// currency in the trading currency table
 				// ('billing_trading_currency").
-				if (!StringUtils.isBlank(countryDto.getCurrencyCode())
+				if (!StringUtils.isBlank(postData.getCurrencyCode())
 						&& tradingCurrencyService.findByTradingCurrencyCode(
-								countryDto.getCurrencyCode(), provider) == null) {
+								postData.getCurrencyCode(), provider) == null) {
 					TradingCurrency tradingCurrency = new TradingCurrency();
 					tradingCurrency.setActive(true);
 					tradingCurrency.setCurrency(currency);
 					tradingCurrency.setAuditable(auditableTrading);
-					tradingCurrency.setCurrencyCode(countryDto
-							.getCurrencyCode());
-					tradingCurrency.setPrDescription(countryDto
-							.getCurrencyCode());
-					tradingCurrencyService.create(em, tradingCurrency,
-							currentUser, provider);
+					tradingCurrency.setCurrencyCode(postData.getCurrencyCode());
+					tradingCurrency
+							.setPrDescription(postData.getCurrencyCode());
+					tradingCurrencyService.create(tradingCurrency, currentUser,
+							provider);
 				}
 			} else {
 				throw new EntityAlreadyExistsException(
 						TradingCountry.class.getName(),
 						tradingCountry.getCountryCode());
 			}
-
 		} else {
-			if (StringUtils.isBlank(countryDto.getCountryCode())) {
+			if (StringUtils.isBlank(postData.getCountryCode())) {
 				missingParameters.add("countryCode");
 			}
-			if (StringUtils.isBlank(countryDto.getName())) {
+			if (StringUtils.isBlank(postData.getName())) {
 				missingParameters.add("name");
 			}
-			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
+			if (StringUtils.isBlank(postData.getCurrencyCode())) {
 				missingParameters.add("currencyCode");
 			}
 
@@ -222,32 +222,38 @@ public class CountryApi extends BaseApi {
 		}
 	}
 
-	public void update(CountryDto countryDto, User currentUser)
+	public void update(CountryDto postData, User currentUser)
 			throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
-		if (!StringUtils.isBlank(countryDto.getCountryCode())
-				&& !StringUtils.isBlank(countryDto.getCurrencyCode())) {
-			Currency currency = currencyService.findByCode(countryDto
+		if (!StringUtils.isBlank(postData.getCountryCode())
+				&& !StringUtils.isBlank(postData.getCurrencyCode())) {
+			Currency currency = currencyService.findByCode(postData
 					.getCurrencyCode());
 			TradingCountry tradingCountry = tradingCountryService
-					.findByTradingCountryCode(countryDto.getCountryCode(),
+					.findByTradingCountryCode(postData.getCountryCode(),
 							provider);
 
+			Language language = languageService.findByCode(postData
+					.getLanguageCode());
+			if (language == null) {
+				throw new EntityDoesNotExistsException(Language.class,
+						postData.getLanguageCode());
+			}
+
 			if (currency != null && tradingCountry != null) {
-				Country country = countryService.findByCode(em,
-						countryDto.getCountryCode());
-				if (country != null
-						&& !StringUtils.isBlank(countryDto.getName())) {
-					if (!country.getDescriptionEn()
-							.equals(countryDto.getName())) {
-						tradingCountry.setPrDescription(countryDto.getName());
+				Country country = countryService.findByCode(postData
+						.getCountryCode());
+				if (country != null && !StringUtils.isBlank(postData.getName())) {
+					if (!country.getDescriptionEn().equals(postData.getName())) {
+						tradingCountry.setPrDescription(postData.getName());
 						country.setCurrency(currency);
-						country.setDescriptionEn(countryDto.getName());
+						country.setDescriptionEn(postData.getName());
+						country.setLanguage(language);
 					}
 
 					TradingCurrency tradingCurrency = tradingCurrencyService
 							.findByTradingCurrencyCode(
-									countryDto.getCurrencyCode(), provider);
+									postData.getCurrencyCode(), provider);
 					if (tradingCurrency == null) {
 						Auditable auditableTrading = new Auditable();
 						auditableTrading.setCreated(new Date());
@@ -257,32 +263,33 @@ public class CountryApi extends BaseApi {
 						tradingCurrency.setActive(true);
 						tradingCurrency.setCurrency(currency);
 						tradingCurrency.setAuditable(auditableTrading);
-						tradingCurrency.setCurrencyCode(countryDto
+						tradingCurrency.setCurrencyCode(postData
 								.getCurrencyCode());
-						tradingCurrency.setPrDescription(countryDto
+						tradingCurrency.setPrDescription(postData
 								.getCurrencyCode());
-						tradingCurrencyService.create(em, tradingCurrency,
+						tradingCurrencyService.create(tradingCurrency,
 								currentUser, provider);
 					}
 				} else {
-					create(countryDto, currentUser);
+					throw new EntityDoesNotExistsException(Country.class,
+							postData.getCountryCode());
 				}
 
 			} else {
 				if (currency == null) {
 					throw new EntityDoesNotExistsException(Currency.class,
-							countryDto.getCurrencyCode());
+							postData.getCurrencyCode());
 				}
 				if (tradingCountry == null) {
 					throw new EntityDoesNotExistsException(
-							TradingCountry.class, countryDto.getCountryCode());
+							TradingCountry.class, postData.getCountryCode());
 				}
 			}
 		} else {
-			if (StringUtils.isBlank(countryDto.getCountryCode())) {
+			if (StringUtils.isBlank(postData.getCountryCode())) {
 				missingParameters.add("countryCode");
 			}
-			if (StringUtils.isBlank(countryDto.getCurrencyCode())) {
+			if (StringUtils.isBlank(postData.getCurrencyCode())) {
 				missingParameters.add("currencyCode");
 			}
 

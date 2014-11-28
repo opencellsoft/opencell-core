@@ -25,6 +25,11 @@ public class EntityDoesNotExistsException extends MeveoApiException {
 		setErrorCode(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
 	}
 
+	public EntityDoesNotExistsException(Class<?> clazz, Long id) {
+		super(clazz.getSimpleName() + " with id=" + id + " does not exists.");
+		setErrorCode(MeveoApiErrorCode.ENTITY_DOES_NOT_EXISTS_EXCEPTION);
+	}
+
 	public EntityDoesNotExistsException(Class<?> clazz, String value,
 			String field) {
 		super(clazz.getSimpleName() + " with " + field + "=" + value

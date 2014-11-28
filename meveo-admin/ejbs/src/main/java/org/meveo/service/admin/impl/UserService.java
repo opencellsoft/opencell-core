@@ -149,7 +149,7 @@ public class UserService extends PersistenceService<User> {
 
 		qb.addCriterion("userName", "=", username.toUpperCase(), true);
 		qb.addCriterion("password", "=", password, true);
-		
+
 		try {
 			return (User) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException ex) {
@@ -212,6 +212,12 @@ public class UserService extends PersistenceService<User> {
 			boolean skipPasswordExpiracy) throws UnknownUserException,
 			PasswordExpiredException, LoginException {
 		User user = findByUsernameAndPassword(em, username, password);
+
+		// check if the user exists
+		if (user == null) {
+			throw new UnknownUserException(username);
+		}
+
 		return loginChecks(user, skipPasswordExpiracy);
 	}
 
@@ -223,21 +229,23 @@ public class UserService extends PersistenceService<User> {
 		} else {
 			// log.debug("[UserService] Checking expiry asked");
 		}
+
+		// check if the user exists
+		if (user == null) {
+			throw new UnknownUserException(username);
+		}
+
 		return loginChecks(user, skipPasswordExpiracy);
 	}
 
 	public User loginChecks(User user, boolean skipPasswordExpiracy)
 			throws LoginException {
-		// check if the user exists
-		if (user == null) {
-			throw new UnknownUserException(null);
-		}
 
 		// Check if the user is active
 		if (!user.isActive()) {
-			log.info("The user #" + user.getId() + " is not active");
-			throw new InactiveUserException("The user #" + user.getId()
-					+ " is not active");
+			log.info("The user " + user.getId() + " is not active.");
+			throw new InactiveUserException("The user " + user.getId()
+					+ " is not active.");
 		}
 
 		// Check if the user password has expired
@@ -246,15 +254,15 @@ public class UserService extends PersistenceService<User> {
 
 		if (!skipPasswordExpiracy
 				&& user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user #" + user.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user #"
+			log.info("The password of user " + user.getId() + " has expired.");
+			throw new PasswordExpiredException("The password of user "
 					+ user.getId() + " has expired.");
 		}
 
 		// Check the roles
 		if (user.getRoles() == null || user.getRoles().isEmpty()) {
-			log.info("The user #" + user.getId() + " has no role!");
-			throw new NoRoleException("The user #" + user.getId()
+			log.info("The user " + user.getId() + " has no role!");
+			throw new NoRoleException("The user " + user.getId()
 					+ " has no role!");
 		}
 

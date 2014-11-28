@@ -3,13 +3,18 @@ package org.meveo.api.dto.catalog;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.LanguageDescriptionDto;
 
 /**
  * @author Edward P. Legaspi
  **/
+@XmlRootElement(name = "ChargeTemplate")
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ChargeTemplateDto implements Serializable {
 
 	private static final long serialVersionUID = -5143285194077662656L;
@@ -25,7 +30,7 @@ public abstract class ChargeTemplateDto implements Serializable {
 
 	@XmlAttribute(required = true)
 	private boolean disabled;
-	
+
 	private Boolean amountEditable;
 	private List<LanguageDescriptionDto> languageDescriptions;
 

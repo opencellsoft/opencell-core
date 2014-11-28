@@ -144,7 +144,8 @@ public class CurrencyApi extends BaseApi {
 				tradingCurrency.setCurrencyCode(postData.getCode());
 				tradingCurrency.setPrDescription(postData.getDescription());
 			} else {
-				create(postData, currentUser);
+				throw new EntityDoesNotExistsException(Currency.class,
+						postData.getCode());
 			}
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {

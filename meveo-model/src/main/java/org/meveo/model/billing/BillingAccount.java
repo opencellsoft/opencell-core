@@ -86,8 +86,8 @@ public class BillingAccount extends AccountEntity {
 
 	@Column(name = "PAYMENT_METHOD")
 	@Enumerated(EnumType.STRING)
-	private PaymentMethodEnum paymentMethod=PaymentMethodEnum.CHECK;
-	
+	private PaymentMethodEnum paymentMethod = PaymentMethodEnum.CHECK;
+
 	@Column(name = "PAYMENT_TERM")
 	@Enumerated(EnumType.STRING)
 	private PaymentTermEnum paymentTerm;
@@ -128,7 +128,7 @@ public class BillingAccount extends AccountEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_RUN")
 	private BillingRun billingRun;
-	
+
 	@Column(name = "BR_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal brAmountWithoutTax;
 
@@ -137,7 +137,7 @@ public class BillingAccount extends AccountEntity {
 
 	@Column(name = "INVOICE_PREFIX")
 	private String invoicePrefix;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TERMIN_REASON_ID", nullable = true)
 	private SubscriptionTerminationReason terminationReason;
@@ -324,7 +324,8 @@ public class BillingAccount extends AccountEntity {
 		return terminationReason;
 	}
 
-	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+	public void setTerminationReason(
+			SubscriptionTerminationReason terminationReason) {
 		this.terminationReason = terminationReason;
 	}
 
@@ -352,7 +353,4 @@ public class BillingAccount extends AccountEntity {
 		this.paymentTerm = paymentTerm;
 	}
 
-	
-	
-	
 }

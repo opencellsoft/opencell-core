@@ -20,9 +20,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.ServiceUsageChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
@@ -41,6 +43,22 @@ public class ServiceUsageChargeTemplateService extends
 		query.executeUpdate();
 	}
 
+	public void removeByServiceTemplate(ServiceTemplate serviceTemplate,
+			Provider provider) {
+		Query query = getEntityManager()
+				.createQuery(
+						"DELETE ServiceUsageChargeTemplate t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
+		query.setParameter("serviceTemplate", serviceTemplate);
+		query.setParameter("provider", provider);
+		query.executeUpdate();
+	}
+
+	public List<ServiceUsageChargeTemplate> findByUsageChargeTemplate(
+			UsageChargeTemplate usageChargeTemplate, Provider provider) {
+		return findByUsageChargeTemplate(getEntityManager(),
+				usageChargeTemplate, provider);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<ServiceUsageChargeTemplate> findByUsageChargeTemplate(
 			EntityManager em, UsageChargeTemplate usageChargeTemplate,
@@ -52,6 +70,23 @@ public class ServiceUsageChargeTemplateService extends
 
 		return (List<ServiceUsageChargeTemplate>) qb.getQuery(em)
 				.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ServiceUsageChargeTemplate> findByServiceTemplate(
+			ServiceTemplate serviceTemplate, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(ServiceUsageChargeTemplate.class,
+				"s");
+		qb.addCriterionEntity("s.serviceTemplate", serviceTemplate);
+		qb.addCriterionEntity("s.provider", provider);
+
+		try {
+			return (List<ServiceUsageChargeTemplate>) qb.getQuery(
+					getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
 	}
 
 }

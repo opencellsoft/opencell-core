@@ -231,10 +231,11 @@
 				</property>
 			</activation>
 			<properties>
-				<hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+				<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
 				<dbtype>postgres</dbtype>
 			</properties>
 		</profile>
+		
 		<profile>
 			<id>integration</id>
 			<activation>
