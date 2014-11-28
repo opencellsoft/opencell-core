@@ -125,7 +125,8 @@ public class LanguageApi extends BaseApi {
 				tradingLanguage.setLanguageCode(postData.getCode());
 				tradingLanguage.setPrDescription(postData.getDescription());
 			} else {
-				create(postData, currentUser);
+				throw new EntityDoesNotExistsException(Language.class,
+						postData.getCode());
 			}
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
