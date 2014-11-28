@@ -39,7 +39,9 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 		subscriptionProrata = e.getSubscriptionProrata();
 		terminationProrata = e.getTerminationProrata();
 		applyInAdvance = e.getApplyInAdvance();
-		shareLevel = e.getShareLevel().getId();
+		if (e.getShareLevel() != null) {
+			shareLevel = e.getShareLevel().getId();
+		}
 	}
 
 	public Integer getDurationTermInMonth() {
