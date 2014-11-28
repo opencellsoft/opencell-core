@@ -21,6 +21,8 @@ import java.io.Serializable;
 import javax.inject.Named;
 import javax.persistence.Embeddable;
 
+import org.apache.commons.lang.StringUtils;
+
 @Named
 @Embeddable
 public class TimerInfo implements Serializable {
@@ -71,5 +73,20 @@ public class TimerInfo implements Serializable {
 	public void setFollowingTimerId(Long followingTimerId) {
 		this.followingTimerId = followingTimerId;
 	}
-
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other != null && other instanceof TimerInfo) {
+			if (this == other) {
+				return true;
+			}
+			TimerInfo info = (TimerInfo) other;
+			if (StringUtils.equals(parametres, info.getParametres()) &&
+				providerId == info.getProviderId() &&
+				followingTimerId == info.getFollowingTimerId()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

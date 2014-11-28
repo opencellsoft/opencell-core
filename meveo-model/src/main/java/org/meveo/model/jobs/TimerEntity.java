@@ -28,6 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BaseEntity;
 
 @Entity
@@ -212,6 +213,27 @@ public class TimerEntity extends BaseEntity {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other != null && other instanceof TimerEntity) {
+			if (this == other) {
+				return true;
+			}
+			TimerEntity timer = (TimerEntity) other;
+
+			if(this.getId()==timer.getId()){
+				return true;
+			}
+			if (StringUtils.equals(jobName, timer.getJobName()) &&
+				StringUtils.equals(name, timer.getName()) &&
+				StringUtils.equals(getScheduleExpression().toString(), timer.getScheduleExpression().toString()) &&
+				timerInfo.equals(timer.getTimerInfo())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -181,6 +181,7 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		QueryBuilder qb = new QueryBuilder(sql);// FIXME: .cacheable(); there is
 												// no cacheable in MEVEO
 												// QueryBuilder
+		qb.addCriterionEntity("provider", getCurrentProvider());
 		qb.addPaginationConfiguration(configuration);
 		return qb;
 	}

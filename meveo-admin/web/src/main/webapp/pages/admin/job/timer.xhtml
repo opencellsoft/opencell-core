@@ -109,11 +109,11 @@
 						<p:outputLabel for="timerFollowingJob"
 							value="#{messages['timer.followingJob']}"></p:outputLabel>
 						<p:selectOneMenu id="timerFollowingJob"
-							value="#{timerBean.timerEntity.followingTimer}"
-							converter="timerEntityConverter">
+							value="#{timerBean.timerEntity.timerInfo.followingTimerId}"
+							>
 							<f:selectItem itemLabel="#{messages['commons.select']}" />
 							<f:selectItems value="#{timerBean.getTimerEntityList()}" var="t_"
-								itemLabel="#{t_.name}" itemValue="#{t_}" />
+								itemLabel="#{t_.name}" itemValue="#{t_.id}" />
 						</p:selectOneMenu>
 					</p:panelGrid>
 
