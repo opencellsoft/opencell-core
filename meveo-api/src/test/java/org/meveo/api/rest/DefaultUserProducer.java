@@ -7,7 +7,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.LoginException;
-import org.meveo.api.rest.security.WSUser;
+import org.meveo.api.rest.security.RSUser;
 import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class DefaultUserProducer {
 	}
 
 	@Produces
-	@WSUser
+	@RSUser
 	public User getCurrentUser() {
 		return currentUser;
 	}

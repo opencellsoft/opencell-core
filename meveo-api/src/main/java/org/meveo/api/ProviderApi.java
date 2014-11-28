@@ -10,7 +10,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.rest.security.WSUser;
+import org.meveo.api.rest.security.RSUser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.User;
@@ -34,7 +34,7 @@ public class ProviderApi extends BaseApi {
 	private ProviderService providerService;
 
 	@Inject
-	@WSUser
+	@RSUser
 	private User currentUser;
 
 	@Inject

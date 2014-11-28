@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * 
  *         http://java.dzone.com/articles/java-ee-7-and-jax-rs-20
  **/
-@WSSecured
+@RSSecured
 @Provider
 public class RESTSecurityInterceptor implements ContainerRequestFilter,
 		ExceptionMapper<Exception> {
@@ -149,7 +149,7 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter,
 	}
 
 	@Produces
-	@WSUser
+	@RSUser
 	public User getCurrentUser() {
 		return currentUser;
 	}
