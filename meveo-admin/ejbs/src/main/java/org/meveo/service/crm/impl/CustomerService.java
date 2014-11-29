@@ -101,6 +101,10 @@ public class CustomerService extends PersistenceService<Customer> {
 			}
 		}
 
+		if (c.getSeller() != null) {
+			qb.addCriterionEntity("c.seller", c.getSeller());
+		}
+
 		if (c.getCustomerCategory() != null
 				&& !StringUtils.isBlank(c.getCustomerCategory().getCode())) {
 			qb.addCriterion("c.customerCategory.code", "=", c
