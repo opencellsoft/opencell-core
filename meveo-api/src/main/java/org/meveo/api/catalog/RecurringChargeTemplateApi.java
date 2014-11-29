@@ -20,6 +20,7 @@ import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.crm.Provider;
@@ -105,30 +106,28 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 			chargeTemplate.setCode(postData.getCode());
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData
-					.getAmountEditable());
+			chargeTemplate.setAmountEditable(postData.getAmountEditable());
 			chargeTemplate.setDurationTermInMonth(postData
 					.getDurationTermInMonth());
 			chargeTemplate.setSubscriptionProrata(postData
 					.getSubscriptionProrata());
 			chargeTemplate.setTerminationProrata(postData
 					.getTerminationProrata());
-			chargeTemplate.setApplyInAdvance(postData
-					.getApplyInAdvance());
+			chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
 			chargeTemplate.setShareLevel(LevelEnum.getValue(postData
 					.getShareLevel()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setCalendar(calendar);
 
-			recurringChargeTemplateService.create(chargeTemplate,
-					currentUser, provider);
+			recurringChargeTemplateService.create(chargeTemplate, currentUser,
+					provider);
 
 			// create cat messages
 			if (postData.getLanguageDescriptions() != null) {
 				for (LanguageDescriptionDto ld : postData
 						.getLanguageDescriptions()) {
 					CatMessages catMsg = new CatMessages(
-							RecurringChargeTemplate.class.getSimpleName() + "_"
+							ChargeTemplate.class.getSimpleName() + "_"
 									+ chargeTemplate.getId(),
 							ld.getLanguageCode(), ld.getDescription());
 
@@ -186,16 +185,14 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData
-					.getAmountEditable());
+			chargeTemplate.setAmountEditable(postData.getAmountEditable());
 			chargeTemplate.setDurationTermInMonth(postData
 					.getDurationTermInMonth());
 			chargeTemplate.setSubscriptionProrata(postData
 					.getSubscriptionProrata());
 			chargeTemplate.setTerminationProrata(postData
 					.getTerminationProrata());
-			chargeTemplate.setApplyInAdvance(postData
-					.getApplyInAdvance());
+			chargeTemplate.setApplyInAdvance(postData.getApplyInAdvance());
 			chargeTemplate.setShareLevel(LevelEnum.getValue(postData
 					.getShareLevel()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
@@ -228,32 +225,27 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 					// create cat messages
 					for (LanguageDescriptionDto ld : postData
 							.getLanguageDescriptions()) {
-						CatMessages catMsg = catMessagesService
-								.getCatMessages(
-										RecurringChargeTemplate.class
-												.getSimpleName()
-												+ "_"
-												+ chargeTemplate
-														.getId(), ld
-												.getLanguageCode());
+						CatMessages catMsg = catMessagesService.getCatMessages(
+								ChargeTemplate.class.getSimpleName() + "_"
+										+ chargeTemplate.getId(),
+								ld.getLanguageCode());
 
 						if (catMsg != null) {
 							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg);
+							catMessagesService.update(catMsg, currentUser);
 						} else {
 							CatMessages catMessages = new CatMessages(
-									RecurringChargeTemplate.class.getSimpleName()
-											+ "_"
+									ChargeTemplate.class.getSimpleName() + "_"
 											+ chargeTemplate.getId(),
 									ld.getLanguageCode(), ld.getDescription());
-							catMessagesService.create(catMessages);
+							catMessagesService.create(catMessages, currentUser,
+									provider);
 						}
 					}
 				}
 			}
 
-			recurringChargeTemplateService.update(chargeTemplate,
-					currentUser);
+			recurringChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -291,10 +283,8 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(RecurringChargeTemplate.class
-							.getSimpleName()
-							+ "_"
-							+ chargeTemplate.getId())) {
+					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
+							+ "_" + chargeTemplate.getId())) {
 				languageDescriptions.add(new LanguageDescriptionDto(msg
 						.getLanguageCode(), msg.getDescription()));
 			}

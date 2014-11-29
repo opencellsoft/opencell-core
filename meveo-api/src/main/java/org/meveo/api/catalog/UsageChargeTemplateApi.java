@@ -20,6 +20,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.UsageChgTemplateEnum;
 import org.meveo.model.crm.Provider;
@@ -116,12 +117,13 @@ public class UsageChargeTemplateApi extends BaseApi {
 			if (postData.getLanguageDescriptions() != null) {
 				for (LanguageDescriptionDto ld : postData
 						.getLanguageDescriptions()) {
-					CatMessages catMsg = new CatMessages(
-							UsageChargeTemplate.class.getSimpleName() + "_"
+					CatMessages catMessages = new CatMessages(
+							ChargeTemplate.class.getSimpleName() + "_"
 									+ chargeTemplate.getId(),
 							ld.getLanguageCode(), ld.getDescription());
 
-					catMessagesService.create(catMsg, currentUser, provider);
+					catMessagesService.create(catMessages, currentUser,
+							provider);
 				}
 			}
 		} else {
@@ -206,20 +208,54 @@ public class UsageChargeTemplateApi extends BaseApi {
 			chargeTemplate.setFilterExpression(postData.getFilterExpression());
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 
-			usageChargeTemplateService.update(chargeTemplate, currentUser);
+			if (provider.getTradingLanguages() != null) {
+				if (postData.getLanguageDescriptions() != null) {
+					for (LanguageDescriptionDto ld : postData
+							.getLanguageDescriptions()) {
+						boolean match = false;
 
-			// create cat messages
-			if (postData.getLanguageDescriptions() != null) {
-				for (LanguageDescriptionDto ld : postData
-						.getLanguageDescriptions()) {
-					CatMessages catMsg = new CatMessages(
-							UsageChargeTemplate.class.getSimpleName() + "_"
-									+ chargeTemplate.getId(),
-							ld.getLanguageCode(), ld.getDescription());
+						for (TradingLanguage tl : provider
+								.getTradingLanguages()) {
+							if (tl.getLanguageCode().equals(
+									ld.getLanguageCode())) {
+								match = true;
+								break;
+							}
+						}
 
-					catMessagesService.create(catMsg, currentUser, provider);
+						if (!match) {
+							throw new MeveoApiException(
+									MeveoApiErrorCode.GENERIC_API_EXCEPTION,
+									"Language "
+											+ ld.getLanguageCode()
+											+ " is not supported by the provider.");
+						}
+					}
+
+					// create cat messages
+					for (LanguageDescriptionDto ld : postData
+							.getLanguageDescriptions()) {
+						CatMessages catMsg = catMessagesService.getCatMessages(
+								ChargeTemplate.class.getSimpleName() + "_"
+										+ chargeTemplate.getId(),
+								ld.getLanguageCode());
+
+						if (catMsg != null) {
+							catMsg.setDescription(ld.getDescription());
+							catMessagesService.update(catMsg, currentUser);
+						} else {
+							CatMessages catMessages = new CatMessages(
+									ChargeTemplate.class.getSimpleName() + "_"
+											+ chargeTemplate.getId(),
+									ld.getLanguageCode(), ld.getDescription());
+							catMessagesService.create(catMessages, currentUser,
+									provider);
+						}
+					}
 				}
 			}
+
+			usageChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -254,8 +290,8 @@ public class UsageChargeTemplateApi extends BaseApi {
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(UsageChargeTemplate.class
-							.getSimpleName() + "_" + chargeTemplate.getId())) {
+					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
+							+ "_" + chargeTemplate.getId())) {
 				languageDescriptions.add(new LanguageDescriptionDto(msg
 						.getLanguageCode(), msg.getDescription()));
 			}

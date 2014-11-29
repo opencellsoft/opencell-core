@@ -66,6 +66,7 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
+    @Override
     public InvoiceCategory initEntity() {
         InvoiceCategory invoicecat = super.initEntity();
         languageMessagesMap.clear();

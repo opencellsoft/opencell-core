@@ -81,6 +81,7 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
+	@Override
 	public OneShotChargeTemplate initEntity() {
 		OneShotChargeTemplate oneShotChargeTemplate = super.initEntity();
 		if (oneShotChargeTemplate.getId() != null) {

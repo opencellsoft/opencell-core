@@ -48,7 +48,8 @@ import org.primefaces.component.datatable.DataTable;
  */
 @Named
 @ConversationScoped
-public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplate> {
+public class RecurringChargeTemplateBean extends
+		BaseBean<RecurringChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Injected @{link RecurringChargeTemplate} service. Extends
@@ -83,12 +84,15 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
+	@Override
 	public RecurringChargeTemplate initEntity() {
 		RecurringChargeTemplate recuChargeTemplate = super.initEntity();
 		if (recuChargeTemplate.getId() != null) {
-			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
-					.getSimpleName() + "_" + recuChargeTemplate.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			for (CatMessages msg : catMessagesService
+					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
+							+ "_" + recuChargeTemplate.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(),
+						msg.getDescription());
 			}
 		}
 		return recuChargeTemplate;
@@ -113,8 +117,10 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 		String back = null;
 
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null) {
+		if (oneShotChargeTemplateService.findByCode(entity.getCode(),
+				entity.getProvider()) != null
+				|| usageChargeTemplateService.findByCode(entity.getCode(),
+						entity.getProvider()) != null) {
 			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
 			return null;
 		}
@@ -123,13 +129,15 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
 				CatMessages catMsg = catMessagesService.getCatMessages(
-						ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
+						ChargeTemplate.class.getSimpleName() + "_"
+								+ entity.getId(), msgKey);
 				if (catMsg != null) {
 					catMsg.setDescription(description);
 					catMessagesService.update(catMsg);
 				} else {
-					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-							+ "_" + entity.getId(), msgKey, description);
+					CatMessages catMessages = new CatMessages(
+							ChargeTemplate.class.getSimpleName() + "_"
+									+ entity.getId(), msgKey, description);
 					catMessagesService.create(catMessages);
 				}
 			}
@@ -139,8 +147,9 @@ public class RecurringChargeTemplateBean extends BaseBean<RecurringChargeTemplat
 			back = super.saveOrUpdate(killConversation);
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-						+ "_" + entity.getId(), msgKey, description);
+				CatMessages catMessages = new CatMessages(
+						ChargeTemplate.class.getSimpleName() + "_"
+								+ entity.getId(), msgKey, description);
 				catMessagesService.create(catMessages);
 			}
 		}

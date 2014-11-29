@@ -65,6 +65,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 		super(UsageChargeTemplate.class);
 	}
 
+	@Override
 	public UsageChargeTemplate initEntity() {
 		UsageChargeTemplate usageChargeTemplate = super.initEntity();
 		if (usageChargeTemplate.getId() != null) {

@@ -30,6 +30,7 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.crm.Provider;
@@ -130,23 +131,22 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			chargeTemplate.setCode(postData.getCode());
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData
-					.getAmountEditable());
+			chargeTemplate.setAmountEditable(postData.getAmountEditable());
 			chargeTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum
 							.getValue(postData.getOneShotChargeTemplateType()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setImmediateInvoicing(postData
 					.getImmediateInvoicing());
-			oneShotChargeTemplateService.create(chargeTemplate,
-					currentUser, provider);
+			oneShotChargeTemplateService.create(chargeTemplate, currentUser,
+					provider);
 
 			// create cat messages
 			if (postData.getLanguageDescriptions() != null) {
 				for (LanguageDescriptionDto ld : postData
 						.getLanguageDescriptions()) {
 					CatMessages catMsg = new CatMessages(
-							OneShotChargeTemplate.class.getSimpleName() + "_"
+							ChargeTemplate.class.getSimpleName() + "_"
 									+ chargeTemplate.getId(),
 							ld.getLanguageCode(), ld.getDescription());
 
@@ -225,20 +225,20 @@ public class OneShotChargeTemplateApi extends BaseApi {
 					for (LanguageDescriptionDto ld : postData
 							.getLanguageDescriptions()) {
 						CatMessages catMsg = catMessagesService.getCatMessages(
-								OneShotChargeTemplate.class.getSimpleName()
-										+ "_" + chargeTemplate.getId(),
+								ChargeTemplate.class.getSimpleName() + "_"
+										+ chargeTemplate.getId(),
 								ld.getLanguageCode());
 
 						if (catMsg != null) {
 							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg);
+							catMessagesService.update(catMsg, currentUser);
 						} else {
 							CatMessages catMessages = new CatMessages(
-									OneShotChargeTemplate.class.getSimpleName()
-											+ "_"
+									ChargeTemplate.class.getSimpleName() + "_"
 											+ chargeTemplate.getId(),
 									ld.getLanguageCode(), ld.getDescription());
-							catMessagesService.create(catMessages);
+							catMessagesService.create(catMessages, currentUser,
+									provider);
 						}
 					}
 				}
@@ -246,16 +246,14 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 			chargeTemplate.setDescription(postData.getDescription());
 			chargeTemplate.setDisabled(postData.isDisabled());
-			chargeTemplate.setAmountEditable(postData
-					.getAmountEditable());
+			chargeTemplate.setAmountEditable(postData.getAmountEditable());
 			chargeTemplate
 					.setOneShotChargeTemplateType(OneShotChargeTemplateTypeEnum
 							.getValue(postData.getOneShotChargeTemplateType()));
 			chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
 			chargeTemplate.setImmediateInvoicing(postData
 					.getImmediateInvoicing());
-			oneShotChargeTemplateService.update(chargeTemplate,
-					currentUser);
+			oneShotChargeTemplateService.update(chargeTemplate, currentUser);
 		} else {
 			if (StringUtils.isBlank(postData.getCode())) {
 				missingParameters.add("code");
@@ -293,8 +291,8 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 			List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 			for (CatMessages msg : catMessagesService
-					.getCatMessagesList(OneShotChargeTemplate.class
-							.getSimpleName() + "_" + chargeTemplate.getId())) {
+					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
+							+ "_" + chargeTemplate.getId())) {
 				languageDescriptions.add(new LanguageDescriptionDto(msg
 						.getLanguageCode(), msg.getDescription()));
 			}
