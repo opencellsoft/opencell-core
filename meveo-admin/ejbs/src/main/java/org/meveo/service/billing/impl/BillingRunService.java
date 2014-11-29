@@ -414,7 +414,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				provider);
 		qb.startOrClause();
 		if (code != null) {
-			qb.addCriterion("c.code", "=", code, false);
+			qb.addCriterion("c.billingCycle.code", "=", code, false);
 		}
 		qb.endOrClause();
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
