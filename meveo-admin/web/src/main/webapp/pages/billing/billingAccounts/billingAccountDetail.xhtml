@@ -322,7 +322,6 @@
 															value="#{billingAccountBean.entity.paymentMethod}"
 															rendered="#{billingAccountBean.edit}" required="true">
 															<f:selectItem itemLabel="" itemValue="" />
-
 															<f:selectItems
 																value="#{cc.getEnumConstants('paymentMethod')}"
 																var="enumElement"
@@ -330,12 +329,15 @@
 															<p:ajax event="valueChange" immediate="false"
 																update=":parentTab:formBillingAccountPanel:formId:childTab" />
 														</p:selectOneMenu>
+														<h:outputText
+															value="#{billingAccountBean.entity.paymentMethod}"
+															styleClass="field-value"></h:outputText>
 													</hftl:panelGroup>
-													<hftl:panelGroup columns="1">
-														<hf:formField id="paymentTerm"
-															label="#{messages['billingAccount.paymentTerm']}"
-															field="paymentTerm" required="false" />
-													</hftl:panelGroup>
+
+													<hf:formField id="paymentTerm"
+														label="#{messages['billingAccount.paymentTerm']}"
+														field="paymentTerm" required="false" />
+
 													<hftl:panelGroup columns="2">
 														<hf:formField
 															label="#{messages['billingAccount.electronicBilling']}"
