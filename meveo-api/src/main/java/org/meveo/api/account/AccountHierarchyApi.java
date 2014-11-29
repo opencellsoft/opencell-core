@@ -149,23 +149,19 @@ public class AccountHierarchyApi extends BaseApi {
 
 		Provider provider = currentUser.getProvider();
 
-		if (customerService.findByCode(em, postData.getCustomerId(),
-				provider) != null) {
+		if (customerService.findByCode(em, postData.getCustomerId(), provider) != null) {
 			throw new EntityAlreadyExistsException(Customer.class,
 					postData.getCustomerId());
 		} else {
 			if (!StringUtils.isEmpty(postData.getCustomerId())
-					&& !StringUtils.isEmpty(postData
-							.getCustomerBrandCode())
-					&& !StringUtils.isEmpty(postData
-							.getCustomerCategoryCode())
+					&& !StringUtils.isEmpty(postData.getCustomerBrandCode())
+					&& !StringUtils.isEmpty(postData.getCustomerCategoryCode())
 					&& !StringUtils.isEmpty(postData.getSellerCode())
 					&& !StringUtils.isEmpty(postData.getCurrencyCode())
 					&& !StringUtils.isEmpty(postData.getCountryCode())
 					&& !StringUtils.isEmpty(postData.getLastName())
 					&& !StringUtils.isEmpty(postData.getLanguageCode())
-					&& !StringUtils.isEmpty(postData
-							.getBillingCycleCode())
+					&& !StringUtils.isEmpty(postData.getBillingCycleCode())
 					&& !StringUtils.isEmpty(postData.getEmail())) {
 
 				Seller seller = sellerService.findByCode(em,
@@ -265,8 +261,7 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 
 				CustomerCategory customerCategory = customerCategoryService
-						.findByCode(em,
-								postData.getCustomerCategoryCode());
+						.findByCode(em, postData.getCustomerCategoryCode());
 
 				if (customerCategory == null) {
 					customerCategory = new CustomerCategory();
@@ -292,8 +287,7 @@ public class AccountHierarchyApi extends BaseApi {
 				if (seller == null) {
 					seller = new Seller();
 					seller.setActive(true);
-					seller.setCode(enleverAccent(postData
-							.getSellerCode()));
+					seller.setCode(enleverAccent(postData.getSellerCode()));
 					seller.setAuditable(auditable);
 					seller.setProvider(provider);
 					seller.setTradingCountry(tradingCountry);
@@ -318,8 +312,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 				Customer customer = new Customer();
 				customer.getName().setLastName(postData.getLastName());
-				customer.getName()
-						.setFirstName(postData.getFirstName());
+				customer.getName().setFirstName(postData.getFirstName());
 				customer.getName().setTitle(title);
 				customer.setContactInformation(contactInformation);
 				customer.setAddress(address);
@@ -333,13 +326,11 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setCustomer(customer);
 				customerAccount.setAddress(address);
 				customerAccount.setContactInformation(contactInformation);
-				customerAccount.getName().setFirstName(
-						postData.getFirstName());
-				customerAccount.getName().setLastName(
-						postData.getLastName());
+				customerAccount.getName().setFirstName(postData.getFirstName());
+				customerAccount.getName().setLastName(postData.getLastName());
 				customerAccount.getName().setTitle(title);
-				customerAccount.setCode(enleverAccent(postData
-						.getCustomerId()));
+				customerAccount
+						.setCode(enleverAccent(postData.getCustomerId()));
 				customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 				customerAccount.setPaymentMethod(PaymentMethodEnum
 						.getValue(caPaymentMethod));
@@ -351,9 +342,8 @@ public class AccountHierarchyApi extends BaseApi {
 
 				BillingCycle billingCycle = billingCycleService
 						.findByBillingCycleCode(em,
-								enleverAccent(postData
-										.getBillingCycleCode()), currentUser,
-								provider);
+								enleverAccent(postData.getBillingCycleCode()),
+								currentUser, provider);
 
 				if (billingCycle == null) {
 					billingCycle = billingCycleService.findByBillingCycleCode(
@@ -400,8 +390,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccount.setEmail(postData.getEmail());
 				billingAccount.setPaymentMethod(PaymentMethodEnum
 						.getValue(postData.getPaymentMethod()));
-				billingAccount.setCode(enleverAccent(postData
-						.getCustomerId()));
+				billingAccount.setCode(enleverAccent(postData.getCustomerId()));
 				billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 				billingAccount.setCustomerAccount(customerAccount);
 				billingAccount.setPaymentMethod(PaymentMethodEnum
@@ -417,8 +406,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccountService.createBillingAccount(em, billingAccount,
 						currentUser, provider);
 
-				String userAccountCode = enleverAccent(postData
-						.getCustomerId());
+				String userAccountCode = enleverAccent(postData.getCustomerId());
 				UserAccount userAccount = new UserAccount();
 				userAccount.setStatus(AccountStatusEnum.ACTIVE);
 				userAccount.setBillingAccount(billingAccount);
@@ -433,33 +421,34 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 			} else {
 				if (StringUtils.isEmpty(postData.getCustomerId())) {
-					missingParameters.add("Customer ID");
+					missingParameters.add("customerId");
 				}
-				if (StringUtils
-						.isEmpty(postData.getCustomerBrandCode())) {
-					missingParameters.add("Customer Brand Code");
+				if (StringUtils.isEmpty(postData.getCustomerBrandCode())) {
+					missingParameters.add("customerBrandCode");
 				}
-				if (StringUtils.isEmpty(postData
-						.getCustomerCategoryCode())) {
-					missingParameters.add("Customer Category Code");
+				if (StringUtils.isEmpty(postData.getCustomerCategoryCode())) {
+					missingParameters.add("customerCategoryCode");
 				}
 				if (StringUtils.isEmpty(postData.getSellerCode())) {
-					missingParameters.add("Seller Code");
+					missingParameters.add("sellerCode");
 				}
 				if (StringUtils.isEmpty(postData.getCurrencyCode())) {
-					missingParameters.add("Currency Code");
+					missingParameters.add("currencyCode");
 				}
 				if (StringUtils.isEmpty(postData.getCountryCode())) {
-					missingParameters.add("Country Code");
+					missingParameters.add("countryCode");
 				}
 				if (StringUtils.isEmpty(postData.getLastName())) {
-					missingParameters.add("Last Name");
+					missingParameters.add("lastName");
 				}
 				if (StringUtils.isEmpty(postData.getLanguageCode())) {
-					missingParameters.add("Language Code");
+					missingParameters.add("languageCode");
 				}
 				if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
-					missingParameters.add("Billing Cycle Code");
+					missingParameters.add("billingCycleCode");
+				}
+				if (StringUtils.isEmpty(postData.getEmail())) {
+					missingParameters.add("email");
 				}
 
 				throw new MissingParameterException(
@@ -482,17 +471,15 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		if (!StringUtils.isEmpty(postData.getCustomerId())
-				&& !StringUtils.isEmpty(postData
-						.getCustomerBrandCode())
-				&& !StringUtils.isEmpty(postData
-						.getCustomerCategoryCode())
+				&& !StringUtils.isEmpty(postData.getCustomerBrandCode())
+				&& !StringUtils.isEmpty(postData.getCustomerCategoryCode())
 				&& !StringUtils.isEmpty(postData.getSellerCode())
 				&& !StringUtils.isEmpty(postData.getCurrencyCode())
 				&& !StringUtils.isEmpty(postData.getCountryCode())
 				&& !StringUtils.isEmpty(postData.getLastName())
 				&& !StringUtils.isEmpty(postData.getLanguageCode())
-				&& !StringUtils.isEmpty(postData
-						.getBillingCycleCode())) {
+				&& !StringUtils.isEmpty(postData.getBillingCycleCode())
+				&& !StringUtils.isEmpty(postData.getEmail())) {
 
 			Seller seller = sellerService.findByCode(em,
 					postData.getSellerCode(), provider);
@@ -510,8 +497,8 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			TradingCountry tradingCountry = tradingCountryService
-					.findByTradingCountryCode(em,
-							postData.getCountryCode(), provider);
+					.findByTradingCountryCode(em, postData.getCountryCode(),
+							provider);
 
 			if (tradingCountry == null) {
 				tradingCountry = new TradingCountry();
@@ -539,8 +526,8 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			TradingCurrency tradingCurrency = tradingCurrencyService
-					.findByTradingCurrencyCode(em,
-							postData.getCurrencyCode(), provider);
+					.findByTradingCurrencyCode(em, postData.getCurrencyCode(),
+							provider);
 
 			if (tradingCurrency == null) {
 				// create tradingCountry
@@ -548,8 +535,7 @@ public class AccountHierarchyApi extends BaseApi {
 				tradingCurrency.setAuditable(auditableTrading);
 			}
 
-			tradingCurrency.setCurrencyCode(postData
-					.getCurrencyCode());
+			tradingCurrency.setCurrencyCode(postData.getCurrencyCode());
 			tradingCurrency.setCurrency(currency);
 			tradingCurrency.setProvider(provider);
 			tradingCurrency.setActive(true);
@@ -571,16 +557,15 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			TradingLanguage tradingLanguage = tradingLanguageService
-					.findByTradingLanguageCode(em,
-							postData.getLanguageCode(), provider);
+					.findByTradingLanguageCode(em, postData.getLanguageCode(),
+							provider);
 
 			if (tradingLanguage == null) {
 				tradingLanguage = new TradingLanguage();
 				tradingLanguage.setAuditable(auditableTrading);
 			}
 
-			tradingLanguage.setLanguageCode(postData
-					.getLanguageCode());
+			tradingLanguage.setLanguageCode(postData.getLanguageCode());
 			tradingLanguage.setLanguage(language);
 			tradingLanguage.setProvider(provider);
 			tradingLanguage.setActive(true);
@@ -597,17 +582,15 @@ public class AccountHierarchyApi extends BaseApi {
 					postData.getCustomerBrandCode());
 
 			CustomerCategory customerCategory = customerCategoryService
-					.findByCode(em,
-							postData.getCustomerCategoryCode());
+					.findByCode(em, postData.getCustomerCategoryCode());
 
 			if (customerBrand == null) {
 				customerBrand = new CustomerBrand();
 			}
 
-			customerBrand.setCode(enleverAccent(postData
-					.getCustomerBrandCode()));
-			customerBrand.setDescription(postData
-					.getCustomerBrandCode());
+			customerBrand
+					.setCode(enleverAccent(postData.getCustomerBrandCode()));
+			customerBrand.setDescription(postData.getCustomerBrandCode());
 
 			if (customerBrand.isTransient()) {
 				customerBrandService.create(em, customerBrand, currentUser,
@@ -622,8 +605,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 			customerCategory.setCode(enleverAccent(postData
 					.getCustomerCategoryCode()));
-			customerCategory.setDescription(postData
-					.getCustomerCategoryCode());
+			customerCategory.setDescription(postData.getCustomerCategoryCode());
 
 			if (customerCategory.isTransient()) {
 				customerCategoryService.create(em, customerCategory,
@@ -683,8 +665,7 @@ public class AccountHierarchyApi extends BaseApi {
 			customerService.update(em, customer, currentUser);
 
 			CustomerAccount customerAccount = customerAccountService
-					.findByCode(em, postData.getCustomerId(),
-							provider);
+					.findByCode(em, postData.getCustomerId(), provider);
 			if (customerAccount == null) {
 				customerAccount = new CustomerAccount();
 			}
@@ -693,13 +674,10 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccount.setAddress(address);
 			customerAccount.setContactInformation(contactInformation);
 
-			customerAccount.getName().setFirstName(
-					postData.getFirstName());
-			customerAccount.getName().setLastName(
-					postData.getLastName());
+			customerAccount.getName().setFirstName(postData.getFirstName());
+			customerAccount.getName().setLastName(postData.getLastName());
 			customerAccount.getName().setTitle(title);
-			customerAccount.setCode(enleverAccent(postData
-					.getCustomerId()));
+			customerAccount.setCode(enleverAccent(postData.getCustomerId()));
 			customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
 			customerAccount.setPaymentMethod(PaymentMethodEnum
 					.getValue(caPaymentMethod));
@@ -715,8 +693,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			BillingCycle billingCycle = billingCycleService
-					.findByBillingCycleCode(em,
-							postData.getBillingCycleCode(),
+					.findByBillingCycleCode(em, postData.getBillingCycleCode(),
 							currentUser, provider);
 
 			if (billingCycle == null) {
@@ -765,11 +742,10 @@ public class AccountHierarchyApi extends BaseApi {
 			if (billingAccount == null) {
 				billingAccount = new BillingAccount();
 			}
-			billingAccount.setCode(enleverAccent(postData
-					.getCustomerId()));
+			billingAccount.setCode(enleverAccent(postData.getCustomerId()));
 			billingAccount.setEmail(postData.getEmail());
-			billingAccount.setPaymentMethod(PaymentMethodEnum
-					.getValue(postData.getPaymentMethod()));
+			billingAccount.setPaymentMethod(PaymentMethodEnum.getValue(postData
+					.getPaymentMethod()));
 			billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 			billingAccount.setCustomerAccount(customerAccount);
 			billingAccount.setPaymentMethod(PaymentMethodEnum
@@ -795,8 +771,7 @@ public class AccountHierarchyApi extends BaseApi {
 			if (userAccount == null) {
 				userAccount = new UserAccount();
 			}
-			String userAccountCode = enleverAccent(postData
-					.getCustomerId());
+			String userAccountCode = enleverAccent(postData.getCustomerId());
 			userAccount.setStatus(AccountStatusEnum.ACTIVE);
 			userAccount.setBillingAccount(billingAccount);
 			userAccount.setCode(userAccountCode);
@@ -819,32 +794,34 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 		} else {
 			if (StringUtils.isEmpty(postData.getCustomerId())) {
-				missingParameters.add("Customer ID");
+				missingParameters.add("customerId");
 			}
 			if (StringUtils.isEmpty(postData.getCustomerBrandCode())) {
-				missingParameters.add("Customer Brand Code");
+				missingParameters.add("customerBrandCode");
 			}
-			if (StringUtils.isEmpty(postData
-					.getCustomerCategoryCode())) {
-				missingParameters.add("Customer Category Code");
+			if (StringUtils.isEmpty(postData.getCustomerCategoryCode())) {
+				missingParameters.add("customerCategoryCode");
 			}
 			if (StringUtils.isEmpty(postData.getSellerCode())) {
-				missingParameters.add("Seller Code");
+				missingParameters.add("sellerCode");
 			}
 			if (StringUtils.isEmpty(postData.getCurrencyCode())) {
-				missingParameters.add("Currency Code");
+				missingParameters.add("currencyCode");
 			}
 			if (StringUtils.isEmpty(postData.getCountryCode())) {
-				missingParameters.add("Country Code");
+				missingParameters.add("countryCode");
 			}
 			if (StringUtils.isEmpty(postData.getLastName())) {
-				missingParameters.add("Last Name");
+				missingParameters.add("lastName");
 			}
 			if (StringUtils.isEmpty(postData.getLanguageCode())) {
-				missingParameters.add("Language Code");
+				missingParameters.add("languageCode");
 			}
 			if (StringUtils.isEmpty(postData.getBillingCycleCode())) {
-				missingParameters.add("Billing Cycle Code");
+				missingParameters.add("billingCycleCode");
+			}
+			if (StringUtils.isEmpty(postData.getEmail())) {
+				missingParameters.add("email");
 			}
 
 			throw new MissingParameterException(

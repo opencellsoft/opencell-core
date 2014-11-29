@@ -2,14 +2,13 @@ package org.meveo.api.util;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Country;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -18,6 +17,7 @@ import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.TitleService;
 
 /**
@@ -37,8 +37,8 @@ public class CustomerUtil {
 	@Inject
 	private CurrencyService currencyService;
 
-	@PersistenceContext
-	private EntityManager em;
+	@Inject
+	private SellerService sellerService;
 
 	public Customer getCustomer(AccountHierarchyDto postData, Provider provider)
 			throws MeveoApiException {
@@ -46,7 +46,7 @@ public class CustomerUtil {
 		Country country = null;
 
 		if (!StringUtils.isEmpty(postData.getCountryCode())) {
-			country = countryService.findByCode(em, postData.getCountryCode());
+			country = countryService.findByCode(postData.getCountryCode());
 
 			if (country == null) {
 				throw new EntityDoesNotExistsException(Country.class,
@@ -56,8 +56,7 @@ public class CustomerUtil {
 
 		Currency currency = null;
 		if (!StringUtils.isEmpty(postData.getCurrencyCode())) {
-			currency = currencyService.findByCode(em,
-					postData.getCurrencyCode());
+			currency = currencyService.findByCode(postData.getCurrencyCode());
 
 			if (currency == null) {
 				throw new EntityDoesNotExistsException(Currency.class,
@@ -65,8 +64,15 @@ public class CustomerUtil {
 			}
 		}
 
-		Title title = titleService.findByCode(em, provider,
-				postData.getTitleCode());
+		Title title = titleService
+				.findByCode(provider, postData.getTitleCode());
+
+		if (!org.meveo.commons.utils.StringUtils.isBlank(postData
+				.getSellerCode())) {
+			Seller seller = sellerService.findByCode(postData.getSellerCode(),
+					provider);
+			customer.setSeller(seller);
+		}
 
 		customer.setCode(postData.getCustomerId());
 		customer.getContactInformation().setEmail(postData.getEmail());

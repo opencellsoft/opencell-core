@@ -98,23 +98,34 @@ public class InvoiceApi extends BaseApi {
 				&& !StringUtils.isBlank(invoiceDTO.getAmountWithoutTax())
 				&& !StringUtils.isBlank(invoiceDTO.getAmountWithTax())) {
 			BillingAccount billingAccount = billingAccountService.findByCode(
-					em, invoiceDTO.getBillingAccountCode(), provider);
+					invoiceDTO.getBillingAccountCode(), provider);
+
+			if (billingAccount == null) {
+				throw new EntityDoesNotExistsException(BillingAccount.class,
+						invoiceDTO.getBillingAccountCode());
+			}
 
 			// FIXME : store that in SubCategoryInvoiceAgregateDto
 			String invoiceSubCategoryCode = paramBean.getProperty(
-					"invoiceSubCategory.code.default", "");
+					"invoiceSubCategory.code.default", "SUB_DATA");
 
 			// FIXME : store that in SubCategoryInvoiceAgregateDto
 			String taxCode = paramBean.getProperty("tax.code.default", "");
 
-			Tax tax = taxService.findByCode(em, taxCode, provider);
+			Tax tax = taxService.findByCode(taxCode, provider);
 			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
-					.findByCode(em, invoiceSubCategoryCode);
+					.findByCode(invoiceSubCategoryCode);
+
+			if (invoiceSubCategory == null) {
+				throw new EntityDoesNotExistsException(
+						InvoiceSubCategory.class, invoiceSubCategoryCode);
+			}
+
 			BillingRun br = new BillingRun();
 			br.setStartDate(new Date());
 			br.setProvider(provider);
 			br.setStatus(BillingRunStatusEnum.VALIDATED);
-			billingRunService.create(em, br, currentUser, provider);
+			billingRunService.create(br, currentUser, provider);
 
 			Invoice invoice = new Invoice();
 			invoice.setBillingAccount(billingAccount);
@@ -130,7 +141,7 @@ public class InvoiceApi extends BaseApi {
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
 
-			invoiceService.create(em, invoice, currentUser, provider);
+			invoiceService.create(invoice, currentUser, provider);
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 
 			for (SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDTO : invoiceDTO
@@ -193,7 +204,7 @@ public class InvoiceApi extends BaseApi {
 					categoryInvoiceAgregate
 							.setInvoiceCategory(invoiceSubCategory
 									.getInvoiceCategory());
-					invoiceAgregateService.create(em, categoryInvoiceAgregate,
+					invoiceAgregateService.create(categoryInvoiceAgregate,
 							currentUser, provider);
 
 					TaxInvoiceAgregate taxInvoiceAgregate = new TaxInvoiceAgregate();
@@ -218,7 +229,7 @@ public class InvoiceApi extends BaseApi {
 							.setItemNumber(subCategoryInvoiceAgregateDTO
 									.getItemNumber());
 					taxInvoiceAgregate.setTax(tax);
-					invoiceAgregateService.create(em, taxInvoiceAgregate,
+					invoiceAgregateService.create(taxInvoiceAgregate,
 							currentUser, provider);
 
 					subCategoryInvoiceAgregate
@@ -311,7 +322,7 @@ public class InvoiceApi extends BaseApi {
 
 		if (!StringUtils.isBlank(customerAccountCode)) {
 			CustomerAccount customerAccount = customerAccountService
-					.findByCode(em, customerAccountCode, provider);
+					.findByCode(customerAccountCode, provider);
 			if (customerAccount == null) {
 				throw new EntityDoesNotExistsException(CustomerAccount.class,
 						customerAccountCode);

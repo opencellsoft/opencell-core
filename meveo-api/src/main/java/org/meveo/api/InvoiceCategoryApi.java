@@ -152,13 +152,14 @@ public class InvoiceCategoryApi extends BaseApi {
 
 						if (catMsg != null) {
 							catMsg.setDescription(ld.getDescription());
-							catMessagesService.update(catMsg);
+							catMessagesService.update(catMsg, currentUser);
 						} else {
 							CatMessages catMessages = new CatMessages(
 									InvoiceCategory.class.getSimpleName() + "_"
 											+ invoiceCategory.getId(),
 									ld.getLanguageCode(), ld.getDescription());
-							catMessagesService.create(catMessages);
+							catMessagesService.create(catMessages, currentUser,
+									provider);
 						}
 					}
 				}

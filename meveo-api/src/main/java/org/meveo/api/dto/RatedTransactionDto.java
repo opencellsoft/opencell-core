@@ -32,31 +32,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RatedTransactionDto extends BaseDto {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7627662294414998797L;
 
 	private Date usageDate;
-
 	private BigDecimal unitAmountWithoutTax;
-
 	private BigDecimal unitAmountWithTax;
-
 	private BigDecimal unitAmountTax;
-
 	private BigDecimal quantity;
-
 	private BigDecimal amountWithoutTax;
-
 	private BigDecimal amountWithTax;
-
 	private BigDecimal amountTax;
-
 	private String code;
-
 	private String description;
-
 	private boolean doNotTriggerInvoicing = false;
 
 	public Date getUsageDate() {
