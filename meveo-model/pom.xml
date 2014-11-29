@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>meveo</artifactId>
 		<groupId>org.manaty</groupId>
-		<version>3.2</version>
+		<version>3.2.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>meveo-model</artifactId>
@@ -84,6 +84,12 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.3</version>
+		</dependency>
 
 		<dependency>
 			<groupId>cn.guoyukun.jdbc</groupId>
