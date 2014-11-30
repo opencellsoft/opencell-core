@@ -645,6 +645,7 @@ public class UsageRatingService {
 										}
 										// we found matching charge, if we rate
 										// it we exit the look
+										log.debug("found matchig charge inst : id="+charge.getChargeInstanceId());
 										edrIsRated = rateEDRonChargeAndCounters(
 												edr, charge);
 										if (edrIsRated) {

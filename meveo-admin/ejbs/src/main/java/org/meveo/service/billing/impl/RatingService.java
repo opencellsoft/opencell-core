@@ -404,7 +404,8 @@ public class RatingService {
 		}
 		if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
 			if(unitPriceAmountTax != null){
-				priceWithTax = priceWithoutTax.add(unitPriceAmountTax);
+				unitPriceWithTax=unitPriceWithoutTax.add(unitPriceAmountTax);
+				priceWithTax=priceWithoutTax.add(amountTax);
 			}
 		} else {
 			unitPriceAmountTax=unitPriceWithTax.subtract(unitPriceWithoutTax);
@@ -418,6 +419,7 @@ public class RatingService {
 			priceWithTax = NumberUtils.round(priceWithTax,
 					provider.getRounding());
 		}
+
 
 		bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
 		bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
