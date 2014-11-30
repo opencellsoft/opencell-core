@@ -12,8 +12,8 @@ import org.meveo.api.dto.catalog.PricePlanDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.catalog.PricePlanRs;
+import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi

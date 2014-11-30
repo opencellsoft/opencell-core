@@ -12,8 +12,8 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
+import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi

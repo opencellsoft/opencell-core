@@ -9,8 +9,8 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.catalog.DiscountPlanRs;
+import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi

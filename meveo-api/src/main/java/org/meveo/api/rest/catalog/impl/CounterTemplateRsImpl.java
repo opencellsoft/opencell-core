@@ -9,8 +9,8 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.catalog.CounterTemplateRs;
+import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi

@@ -9,7 +9,6 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.InvoiceCategoryRs;
 
 /**

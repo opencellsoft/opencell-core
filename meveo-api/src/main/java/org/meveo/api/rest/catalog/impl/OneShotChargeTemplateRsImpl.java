@@ -17,8 +17,8 @@ import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.catalog.OneShotChargeTemplateRs;
+import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.shared.DateUtils;
 
 /**
