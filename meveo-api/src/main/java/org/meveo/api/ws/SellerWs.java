@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.GetSellerResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface SellerRs extends IBaseWs {
+public interface SellerWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus create(SellerDto postData);

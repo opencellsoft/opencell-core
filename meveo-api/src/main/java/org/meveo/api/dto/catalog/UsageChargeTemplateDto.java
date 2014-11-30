@@ -29,9 +29,9 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 	private String filterParam4 = WILCARD;
 	private String filterExpression = null;
 	private int priority = 1;
-	
+
 	public UsageChargeTemplateDto() {
-		
+
 	}
 
 	public UsageChargeTemplateDto(UsageChargeTemplate e) {
@@ -41,7 +41,9 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 		setAmountEditable(e.getAmountEditable());
 		setDisabled(e.isDisabled());
 		unityDescription = e.getUnityDescription();
-		unityFormatter = e.getUnityFormatter().getId();
+		if (e.getUnityFormatter() != null) {
+			unityFormatter = e.getUnityFormatter().getId();
+		}
 		unityMultiplicator = e.getUnityMultiplicator();
 		unityNbDecimal = e.getUnityNbDecimal();
 		filterParam1 = e.getFilterParam1();

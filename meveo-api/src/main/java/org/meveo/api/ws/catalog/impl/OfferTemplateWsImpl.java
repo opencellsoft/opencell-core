@@ -1,36 +1,33 @@
-package org.meveo.api.rest.impl;
+package org.meveo.api.ws.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
-import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
-import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.response.catalog.GetOfferTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.InvoiceSubCategoryCountryRs;
+import org.meveo.api.ws.catalog.OfferTemplateWs;
+import org.meveo.api.ws.impl.BaseWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
-@Interceptors({ LoggingInterceptor.class })
-public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
-		InvoiceSubCategoryCountryRs {
+@WebService(serviceName = "OfferTemplateWs", endpointInterface = "org.meveo.api.ws.catalog.OfferTemplateWs")
+public class OfferTemplateWsImpl extends BaseWs implements OfferTemplateWs {
 
 	@Inject
-	private InvoiceSubCategoryCountryApi invoiceSubCategoryCountryApi;
+	private OfferTemplateApi offerTemplateApi;
 
 	@Override
-	public ActionStatus create(InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus create(OfferTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.create(postData, getCurrentUser());
+			offerTemplateApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -45,11 +42,11 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public ActionStatus update(InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus update(OfferTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.update(postData, getCurrentUser());
+			offerTemplateApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -64,14 +61,12 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public GetInvoiceSubCategoryCountryResponse find(
-			String invoiceSubCategoryCode, String country) {
-		GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
+	public GetOfferTemplateResponse find(String offerTemplateCode) {
+		GetOfferTemplateResponse result = new GetOfferTemplateResponse();
 
 		try {
-			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi
-					.find(invoiceSubCategoryCode, country, getCurrentUser()
-							.getProvider()));
+			result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode,
+					getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -87,12 +82,12 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public ActionStatus remove(String invoiceSubCategoryCode, String country) {
+	public ActionStatus remove(String offerTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode,
-					country, getCurrentUser().getProvider());
+			offerTemplateApi.remove(offerTemplateCode, getCurrentUser()
+					.getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

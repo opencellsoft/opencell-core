@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface InvoiceSubCategoryRs extends IBaseWs {
+public interface InvoiceSubCategoryWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus create(InvoiceSubCategoryDto postData);

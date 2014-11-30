@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.GetCountryResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface CountryWs {
+public interface CountryWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus create(CountryDto countryDto);

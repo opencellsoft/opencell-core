@@ -14,7 +14,7 @@ import org.meveo.api.dto.response.GetLanguageResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface LanguageRs extends IBaseWs {
+public interface LanguageWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus create(LanguageDto postData);

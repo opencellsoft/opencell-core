@@ -44,32 +44,48 @@ public class CustomerAccountApi extends BaseApi {
 			customerAccountDto
 					.setStatus(customerAccount.getStatus().toString() != null ? customerAccount
 							.getStatus().toString() : null);
-			customerAccountDto.setPaymentMethod(customerAccount
-					.getPaymentMethod().toString() != null ? customerAccount
-					.getPaymentMethod().toString() : null);
-			customerAccountDto.setCreditCategory(customerAccount
-					.getCreditCategory().toString() != null ? customerAccount
-					.getCreditCategory().toString() : null);
+			if (customerAccount.getPaymentMethod() != null) {
+				customerAccountDto
+						.setPaymentMethod(customerAccount.getPaymentMethod()
+								.toString() != null ? customerAccount
+								.getPaymentMethod().toString() : null);
+			}
+
+			if (customerAccount.getCreditCategory() != null) {
+				customerAccountDto
+						.setCreditCategory(customerAccount.getCreditCategory()
+								.toString() != null ? customerAccount
+								.getCreditCategory().toString() : null);
+			}
 
 			customerAccountDto.setDateStatus(customerAccount.getDateStatus());
 			customerAccountDto.setDateDunningLevel(customerAccount
 					.getDateDunningLevel());
-			customerAccountDto.setEmail(customerAccount.getContactInformation()
-					.getEmail() != null ? customerAccount
-					.getContactInformation().getEmail() : null);
-			customerAccountDto.setPhone(customerAccount.getContactInformation()
-					.getPhone() != null ? customerAccount
-					.getContactInformation().getPhone() : null);
-			customerAccountDto
-					.setMobile(customerAccount.getContactInformation()
-							.getMobile() != null ? customerAccount
-							.getContactInformation().getMobile() : null);
-			customerAccountDto.setFax(customerAccount.getContactInformation()
-					.getFax() != null ? customerAccount.getContactInformation()
-					.getFax() : null);
 
-			customerAccountDto.setCustomerCode(customerAccount.getCustomer()
-					.getCode());
+			if (customerAccount.getContactInformation() != null) {
+				customerAccountDto
+						.setEmail(customerAccount.getContactInformation()
+								.getEmail() != null ? customerAccount
+								.getContactInformation().getEmail() : null);
+				customerAccountDto
+						.setPhone(customerAccount.getContactInformation()
+								.getPhone() != null ? customerAccount
+								.getContactInformation().getPhone() : null);
+				customerAccountDto
+						.setMobile(customerAccount.getContactInformation()
+								.getMobile() != null ? customerAccount
+								.getContactInformation().getMobile() : null);
+				customerAccountDto
+						.setFax(customerAccount.getContactInformation()
+								.getFax() != null ? customerAccount
+								.getContactInformation().getFax() : null);
+			}
+
+			if (customerAccount.getCustomer() != null) {
+				customerAccountDto.setCustomerCode(customerAccount
+						.getCustomer().getCode());
+			}
+
 			customerAccountDto.setDunningLevel(customerAccount
 					.getDunningLevel().toString() != null ? customerAccount
 					.getDunningLevel().toString() : null);

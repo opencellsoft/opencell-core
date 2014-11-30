@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.CustomerInvoicesResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface InvoiceRs extends IBaseWs {
+public interface InvoiceWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus create(InvoiceDto invoiceDto);

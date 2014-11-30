@@ -1,5 +1,6 @@
 package org.meveo.api.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "Invoice")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceDto extends BaseDto {
+public class InvoiceDto implements Serializable {
 
 	private static final long serialVersionUID = 1072382628068718580L;
 
@@ -39,7 +40,6 @@ public class InvoiceDto extends BaseDto {
 	public void setInvoiceNumber(String invoiceNumber) {
 		this.invoiceNumber = invoiceNumber;
 	}
-
 
 	public String getBillingAccountCode() {
 		return billingAccountCode;
@@ -74,8 +74,6 @@ public class InvoiceDto extends BaseDto {
 		this.dueDate = dueDate;
 	}
 
-	
-
 	public BigDecimal getDiscount() {
 		return discount;
 	}
@@ -108,8 +106,6 @@ public class InvoiceDto extends BaseDto {
 		this.amountWithTax = amountWithTax;
 	}
 
-	
-	
 	public boolean isPDFpresent() {
 		return PDFpresent;
 	}
@@ -117,7 +113,6 @@ public class InvoiceDto extends BaseDto {
 	public void setPDFpresent(boolean pDFpresent) {
 		PDFpresent = pDFpresent;
 	}
-
 
 	public String getPaymentMathod() {
 		return paymentMathod;
@@ -129,12 +124,12 @@ public class InvoiceDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "InvoiceDto [invoiceNumber =" + invoiceNumber + "," 
+		return "InvoiceDto [invoiceNumber =" + invoiceNumber + ","
 				+ ", billingAccountCode=" + billingAccountCode
 				+ ", invoiceDate=" + invoiceDate + ", dueDate=" + dueDate
-				+ ", discount=" + discount
-				+ ", amountWithoutTax=" + amountWithoutTax + ", amountTax="
-				+ amountTax + ", amountWithTax=" + amountWithTax
+				+ ", discount=" + discount + ", amountWithoutTax="
+				+ amountWithoutTax + ", amountTax=" + amountTax
+				+ ", amountWithTax=" + amountWithTax
 				+ ", subCategoryInvoiceAgregates="
 				+ subCategoryInvoiceAgregates + "]";
 	}

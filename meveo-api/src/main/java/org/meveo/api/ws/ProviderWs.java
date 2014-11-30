@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface ProviderRs extends IBaseWs {
+public interface ProviderWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus create(ProviderDto postData);

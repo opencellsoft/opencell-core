@@ -1,36 +1,34 @@
-package org.meveo.api.rest.impl;
+package org.meveo.api.ws.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
-import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
-import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
+import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.InvoiceSubCategoryCountryRs;
+import org.meveo.api.ws.catalog.UsageChargeTemplateWs;
+import org.meveo.api.ws.impl.BaseWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
-@Interceptors({ LoggingInterceptor.class })
-public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
-		InvoiceSubCategoryCountryRs {
+@WebService(serviceName = "UsageChargeTemplateWs", endpointInterface = "org.meveo.api.ws.catalog.UsageChargeTemplateWs")
+public class UsageChargeTemplateWsImpl extends BaseWs implements
+		UsageChargeTemplateWs {
 
 	@Inject
-	private InvoiceSubCategoryCountryApi invoiceSubCategoryCountryApi;
+	private UsageChargeTemplateApi usageChargeTemplateApi;
 
 	@Override
-	public ActionStatus create(InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus create(UsageChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.create(postData, getCurrentUser());
+			usageChargeTemplateApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -45,11 +43,11 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public ActionStatus update(InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus update(UsageChargeTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.update(postData, getCurrentUser());
+			usageChargeTemplateApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -64,14 +62,12 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public GetInvoiceSubCategoryCountryResponse find(
-			String invoiceSubCategoryCode, String country) {
-		GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
+	public GetUsageChargeTemplateResponse find(String usageChargeTemplateCode) {
+		GetUsageChargeTemplateResponse result = new GetUsageChargeTemplateResponse();
 
 		try {
-			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi
-					.find(invoiceSubCategoryCode, country, getCurrentUser()
-							.getProvider()));
+			result.setUsageChargeTemplate(usageChargeTemplateApi.find(
+					usageChargeTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -87,12 +83,12 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public ActionStatus remove(String invoiceSubCategoryCode, String country) {
+	public ActionStatus remove(String usageChargeTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode,
-					country, getCurrentUser().getProvider());
+			usageChargeTemplateApi.remove(usageChargeTemplateCode,
+					getCurrentUser().getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

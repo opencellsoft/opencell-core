@@ -1,6 +1,8 @@
 package org.meveo.api.rest.catalog.impl;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.catalog.CounterTemplateApi;
@@ -9,12 +11,15 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.catalog.CounterTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi
  **/
+@RequestScoped
+@Interceptors({ LoggingInterceptor.class })
 public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
 
 	@Inject

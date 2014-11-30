@@ -1,8 +1,7 @@
-package org.meveo.api.rest.impl;
+package org.meveo.api.ws.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
 import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.MeveoApiErrorCode;
@@ -11,16 +10,14 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.InvoiceSubCategoryCountryRs;
+import org.meveo.api.ws.InvoiceSubCategoryCountryWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
-@Interceptors({ LoggingInterceptor.class })
-public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
-		InvoiceSubCategoryCountryRs {
+@WebService(serviceName = "InvoiceSubCategoryCountryWs", endpointInterface = "org.meveo.api.ws.InvoiceSubCategoryCountryWs")
+public class InvoiceSubCategoryCountryWsImpl extends BaseWs implements
+		InvoiceSubCategoryCountryWs {
 
 	@Inject
 	private InvoiceSubCategoryCountryApi invoiceSubCategoryCountryApi;

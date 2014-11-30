@@ -1,36 +1,33 @@
-package org.meveo.api.rest.impl;
+package org.meveo.api.ws.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import javax.jws.WebService;
 
-import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.catalog.CounterTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.InvoiceSubCategoryCountryDto;
-import org.meveo.api.dto.response.GetInvoiceSubCategoryCountryResponse;
+import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.response.catalog.GetCounterTemplateResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.InvoiceSubCategoryCountryRs;
+import org.meveo.api.ws.catalog.CounterTemplateWs;
+import org.meveo.api.ws.impl.BaseWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
-@Interceptors({ LoggingInterceptor.class })
-public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
-		InvoiceSubCategoryCountryRs {
+@WebService(serviceName = "CounterTemplateWs", endpointInterface = "org.meveo.api.ws.catalog.CounterTemplateWs")
+public class CounterTemplateWsImpl extends BaseWs implements CounterTemplateWs {
 
 	@Inject
-	private InvoiceSubCategoryCountryApi invoiceSubCategoryCountryApi;
+	private CounterTemplateApi counterTemplateApi;
 
 	@Override
-	public ActionStatus create(InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus create(CounterTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.create(postData, getCurrentUser());
+			counterTemplateApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -45,11 +42,11 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public ActionStatus update(InvoiceSubCategoryCountryDto postData) {
+	public ActionStatus update(CounterTemplateDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.update(postData, getCurrentUser());
+			counterTemplateApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -64,14 +61,12 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public GetInvoiceSubCategoryCountryResponse find(
-			String invoiceSubCategoryCode, String country) {
-		GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
+	public GetCounterTemplateResponse find(String counterTemplateCode) {
+		GetCounterTemplateResponse result = new GetCounterTemplateResponse();
 
 		try {
-			result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi
-					.find(invoiceSubCategoryCode, country, getCurrentUser()
-							.getProvider()));
+			result.setCounterTemplate(counterTemplateApi.find(
+					counterTemplateCode, getCurrentUser().getProvider()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -87,12 +82,12 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements
 	}
 
 	@Override
-	public ActionStatus remove(String invoiceSubCategoryCode, String country) {
+	public ActionStatus remove(String counterTemplateCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode,
-					country, getCurrentUser().getProvider());
+			counterTemplateApi.remove(counterTemplateCode, getCurrentUser()
+					.getProvider());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);

@@ -11,7 +11,7 @@ import org.meveo.api.dto.response.GetUserResponse;
  * @author Edward P. Legaspi
  **/
 @WebService
-public interface UserRs extends IBaseWs {
+public interface UserWs extends IBaseWs {
 
 	@WebMethod
 	public ActionStatus create(UserDto postData);
