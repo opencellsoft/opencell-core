@@ -12,7 +12,6 @@ import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.response.GetCurrencyResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.CurrencyRs;
 
 /**

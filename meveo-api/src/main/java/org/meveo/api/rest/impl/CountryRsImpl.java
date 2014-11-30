@@ -14,7 +14,6 @@ import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.CountryRs;
 
 /**

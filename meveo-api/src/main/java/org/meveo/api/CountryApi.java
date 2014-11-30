@@ -61,19 +61,23 @@ public class CountryApi extends BaseApi {
 					.findByTradingCountryCode(postData.getCountryCode(),
 							provider);
 
-			Language language = languageService.findByCode(postData
-					.getLanguageCode());
-			if (language == null) {
-				throw new EntityDoesNotExistsException(Language.class,
-						postData.getLanguageCode());
-			}
-
 			if (tradingCountry == null) {
 				// check currency
 				Country country = countryService.findByCode(postData
 						.getCountryCode());
 				Currency currency = null;
 				Auditable auditable = new Auditable();
+
+				if (!StringUtils.isBlank(postData.getLanguageCode())) {
+					Language language = languageService.findByCode(postData
+							.getLanguageCode());
+					if (language == null) {
+						throw new EntityDoesNotExistsException(Language.class,
+								postData.getLanguageCode());
+					}
+
+					country.setLanguage(language);
+				}
 
 				// If country code doesn't exist in the reference table, create
 				// the country in this table ("adm_country") with the currency
@@ -87,11 +91,12 @@ public class CountryApi extends BaseApi {
 					auditable.setCreator(currentUser);
 					country.setDescriptionEn(postData.getName());
 					country.setCountryCode(postData.getCountryCode());
-					country.setLanguage(language);
 				} else {
-					country.getAuditable().setUpdated(new Date());
-					country.getAuditable().setUpdater(currentUser);
+					auditable = country.getAuditable();
+					auditable.setUpdated(new Date());
+					auditable.setUpdater(currentUser);
 				}
+				country.setAuditable(auditable);
 
 				if (postData.getCurrencyCode() != null) { //
 					currency = currencyService.findByCode(postData

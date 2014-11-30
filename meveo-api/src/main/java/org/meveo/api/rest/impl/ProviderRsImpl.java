@@ -13,7 +13,6 @@ import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.ProviderRs;
 
 /**

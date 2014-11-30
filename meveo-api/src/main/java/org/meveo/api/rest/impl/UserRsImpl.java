@@ -14,7 +14,6 @@ import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.UserRs;
 
 /**

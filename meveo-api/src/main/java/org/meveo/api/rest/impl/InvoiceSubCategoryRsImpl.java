@@ -1,6 +1,8 @@
 package org.meveo.api.rest.impl;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.api.InvoiceSubCategoryApi;
 import org.meveo.api.MeveoApiErrorCode;
@@ -9,12 +11,14 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.rest.BaseRs;
+import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.InvoiceSubCategoryRs;
 
 /**
  * @author Edward P. Legaspi
  **/
+@RequestScoped
+@Interceptors({ LoggingInterceptor.class })
 public class InvoiceSubCategoryRsImpl extends BaseRs implements
 		InvoiceSubCategoryRs {
 

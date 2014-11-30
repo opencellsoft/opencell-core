@@ -1,5 +1,6 @@
 package org.meveo.api.dto.account;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,12 +9,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.meveo.api.dto.BaseDto;
 import org.meveo.model.crm.Customer;
 
 @XmlRootElement(name = "AccountHierarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AccountHierarchyDto extends BaseDto {
+public class AccountHierarchyDto implements Serializable {
 
 	private static final long serialVersionUID = -8469973066490541924L;
 
@@ -61,6 +61,9 @@ public class AccountHierarchyDto extends BaseDto {
 		this.setCustomerId(customer.getCode());
 		this.setEmail(customer.getContactInformation().getEmail());
 		this.setPhoneNumber(customer.getContactInformation().getPhone());
+		if (customer.getSeller() != null) {
+			this.sellerCode = customer.getSeller().getCode();
+		}
 
 		if (customer.getAddress() != null) {
 			this.setAddress1(customer.getAddress().getAddress1());

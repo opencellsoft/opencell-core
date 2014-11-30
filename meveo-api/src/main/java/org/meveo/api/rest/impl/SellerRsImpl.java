@@ -12,7 +12,6 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.SellerRs;
 
 /**

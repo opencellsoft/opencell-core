@@ -9,8 +9,8 @@ import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.CustomerAccountResponse;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.account.CustomerAccountRs;
+import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author R.AITYAAZZA

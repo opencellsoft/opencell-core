@@ -1,4 +1,4 @@
-package org.meveo.api.rest;
+package org.meveo.api.rest.impl;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSUser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;

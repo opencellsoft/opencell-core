@@ -1,4 +1,4 @@
-package org.meveo.api.rest;
+package org.meveo.api.rest.impl;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

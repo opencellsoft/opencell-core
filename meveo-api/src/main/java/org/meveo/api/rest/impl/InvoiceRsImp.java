@@ -13,7 +13,6 @@ import org.meveo.api.dto.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.LoggingInterceptor;
-import org.meveo.api.rest.BaseRs;
 import org.meveo.api.rest.InvoiceRs;
 
 /**
