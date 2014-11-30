@@ -417,7 +417,7 @@ public class UsageRatingService {
 				.setOfferCode(edr.getSubscription().getOffer().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 		//log.info("provider code:" + provider.getCode());
-		ratingService.rateBareWalletOperation(walletOperation, null, null,
+		ratingService.rateBareWalletOperation(em,walletOperation, null, null,
 				countryId, currency, provider);
 		// for AGGREGATED counter we update the price of the previous wallet
 		// Operation to the current price
@@ -439,7 +439,7 @@ public class UsageRatingService {
 								.setAggregatedServiceInstance(chargeInstance
 										.getServiceInstance());
 						walletOperationService
-								.updatePriceForSameServiceAndType(
+								.updatePriceForSameServiceAndType(em,
 										walletOperation,
 										chargeInstance.getServiceInstance(),
 										itemPeriodCache.getStartDate(),
@@ -520,7 +520,7 @@ public class UsageRatingService {
 				// periodCache.setDbDirty(true);
 				counterInstanceService.updatePeriodValue(
 						periodCache.getCounterPeriodId(),
-						periodCache.getValue());
+						periodCache.getValue(),em);
 			}
 			// put back the deduced quantity in charge unit
 			deducedQuantity = deducedQuantity.divide(charge
@@ -561,14 +561,14 @@ public class UsageRatingService {
 				|| deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService
-					.findById(charge.getChargeInstanceId());
+					.findById(em,charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
 					deducedQuantity, charge, chargeInstance, provider);
 			if (deducedQuantity != null) {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
 				walletOperation.setQuantity(deducedQuantity);
 			}
-			walletOperationService.create(walletOperation, null, provider);
+			walletOperationService.create(em,walletOperation, null, provider);
 			// handle associated edr creation
 			if (charge.getTemplateCache().isEdrTemplate()) {
 				// TODO: implement EL parser
@@ -587,7 +587,7 @@ public class UsageRatingService {
 						.getAmountWithoutTax() : edr.getQuantity());
 				newEdr.setStatus(EDRStatusEnum.OPEN);
 				newEdr.setSubscription(edr.getSubscription());
-				edrService.create(newEdr);
+				edrService.create(em,newEdr,null,provider);
 			}
 		}
 		return stopEDRRating;
@@ -645,6 +645,7 @@ public class UsageRatingService {
 										}
 										// we found matching charge, if we rate
 										// it we exit the look
+										log.debug("found matchig charge inst : id="+charge.getChargeInstanceId());
 										edrIsRated = rateEDRonChargeAndCounters(
 												edr, charge);
 										if (edrIsRated) {

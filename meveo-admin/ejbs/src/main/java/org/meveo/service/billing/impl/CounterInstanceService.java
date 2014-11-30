@@ -107,11 +107,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		return counterPeriod;
 	}
 
-	public void updatePeriodValue(Long counterPeriodId, BigDecimal value) {
+	public void updatePeriodValue(Long counterPeriodId, BigDecimal value,EntityManager em) {
 		CounterPeriod counterPeriod = counterPeriodService
-				.findById(counterPeriodId);
+				.findById(em,counterPeriodId);
 		counterPeriod.setValue(value);
 		counterPeriod.getAuditable().setUpdated(new Date());
-		counterPeriodService.update(counterPeriod);
+		counterPeriodService.update(em,counterPeriod);
 	}
 }

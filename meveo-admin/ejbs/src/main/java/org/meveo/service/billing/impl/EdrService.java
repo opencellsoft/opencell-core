@@ -20,10 +20,13 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.BoundedHashMap;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -109,8 +112,8 @@ public class EdrService extends PersistenceService<EDR> {
 		return result;
 	}
 
-	public void create(EDR e) {
-		super.create(e);
+	public void create(EntityManager em,EDR e,User user,Provider provider) {
+		super.create(em,e,user,provider);
 		if (useInMemoryDeduplication) {
 			synchronized (duplicateCache) {
 				duplicateCache.put(e.getOriginBatch() + e.getOriginRecord(), 0);

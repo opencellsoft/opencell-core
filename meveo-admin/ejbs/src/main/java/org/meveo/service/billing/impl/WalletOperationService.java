@@ -1421,7 +1421,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return walletOperations;
 	}
 
-	public void updatePriceForSameServiceAndType(
+	public void updatePriceForSameServiceAndType(EntityManager em,
 			WalletOperation walletOperation,ServiceInstance serviceInstance, Date startDate, Date endDate) {
 		if (walletOperation.getChargeInstance() != null
 				&& walletOperation.getChargeInstance() instanceof UsageChargeInstance
