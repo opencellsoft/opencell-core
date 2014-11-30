@@ -38,9 +38,11 @@ public class TaxService extends PersistenceService<Tax> {
 	}
 
 	public Tax findByCode(EntityManager em, String code, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(Tax.class, "t");
+		qb.addCriterion("code", "=", code, false);
+		qb.addCriterionEntity("t.provider", provider);
+
 		try {
-			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
-			qb.addCriterion("code", "=", code, false);
 			return (Tax) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException ne) {
 			return null;
