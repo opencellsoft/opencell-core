@@ -15,6 +15,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCode;
 import org.meveo.api.logging.Logged;
 import org.meveo.api.logging.LoggingInterceptor;
+import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.security.RSSecured;
 import org.meveo.api.rest.security.RSUser;
 import org.meveo.commons.utils.ParamBean;

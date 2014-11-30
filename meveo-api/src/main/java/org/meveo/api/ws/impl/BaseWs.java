@@ -1,4 +1,4 @@
-package org.meveo.api.ws;
+package org.meveo.api.ws.impl;
 
 import java.util.List;
 import java.util.Map;

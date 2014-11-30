@@ -14,15 +14,15 @@ import org.meveo.api.dto.response.GetCountryResponse;
 public interface CountryWs {
 
 	@WebMethod
-	public ActionStatus create(CountryDto countryDto);
+	ActionStatus create(CountryDto countryDto);
 
 	@WebMethod
-	public GetCountryResponse find(String countryCode);
+	GetCountryResponse find(String countryCode);
 
 	@WebMethod
-	public ActionStatus remove(String countryCode, String currencyCode);
+	ActionStatus remove(String countryCode, String currencyCode);
 
 	@WebMethod
-	public ActionStatus update(CountryDto countryDto);
+	ActionStatus update(CountryDto countryDto);
 
 }
