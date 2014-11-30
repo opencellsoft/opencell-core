@@ -5958,50 +5958,53 @@
       <wsdl:output message="ns1:updateResponse" name="updateResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountHierarchyWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountHierarchyWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acc="http://account.ws.api.meveo.org/">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8080/meveo/AccountHierarchyWs</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountHierarchyWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acc="http://account.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <acc:create>
          <!--Optional:-->
-         <arg0 email="?" paymentMethod="?">
+         <arg0 email="test@manaty.net" paymentMethod="1">
             <!--Optional:-->
-            <customerId>?</customerId>
+            <customerId>CUST_TEST</customerId>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <customerBrandCode>?</customerBrandCode>
+            <customerBrandCode>DEFAULT</customerBrandCode>
             <!--Optional:-->
-            <customerCategoryCode>?</customerCategoryCode>
+            <customerCategoryCode>CLIENT</customerCategoryCode>
             <!--Optional:-->
-            <currencyCode>?</currencyCode>
+            <currencyCode>USD</currencyCode>
             <!--Optional:-->
-            <countryCode>?</countryCode>
+            <countryCode>US</countryCode>
             <!--Optional:-->
-            <languageCode>?</languageCode>
+            <languageCode>EN</languageCode>
             <!--Optional:-->
-            <titleCode>?</titleCode>
+            <titleCode></titleCode>
             <!--Optional:-->
-            <firstName>?</firstName>
+            <firstName>Edward</firstName>
             <!--Optional:-->
-            <lastName>?</lastName>
+            <lastName>Legaspi</lastName>
             <!--Optional:-->
-            <birthDate>?</birthDate>
+            <!--<birthDate>?</birthDate>-->
             <!--Optional:-->
-            <phoneNumber>?</phoneNumber>
+            <phoneNumber>1234</phoneNumber>
             <!--Optional:-->
-            <billingCycleCode>?</billingCycleCode>
+            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>
             <!--Optional:-->
-            <address1>?</address1>
+            <address1></address1>
             <!--Optional:-->
-            <address2>?</address2>
+            <address2></address2>
             <!--Optional:-->
-            <zipCode>?</zipCode>
+            <zipCode>4030</zipCode>
             <!--Optional:-->
-            <city>?</city>
+            <city>Laguna</city>
          </arg0>
       </acc:create>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.account.ws.api.meveo.org/AccountHierarchyWs/create"/></con:call></con:operation><con:operation isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.account.ws.api.meveo.org/AccountHierarchyWs/create"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
   &lt;con:entry key="username" value="meveo.admin"/>
   &lt;con:entry key="password" value="meveo.admin"/>
 &lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountHierarchyWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acc="http://account.ws.api.meveo.org/">
@@ -6009,41 +6012,41 @@
    <soapenv:Body>
       <acc:find>
          <!--Optional:-->
-         <arg0 email="edward.legaspi@manaty.net" paymentMethod="1">
+         <arg0 email="test@manaty.net" paymentMethod="1">
             <!--Optional:-->
-            <customerId>TEST</customerId>
+            <customerId>CUST_TEST</customerId>
             <!--Optional:-->
             <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <customerBrandCode>?</customerBrandCode>
+            <customerBrandCode>DEFAULT</customerBrandCode>
             <!--Optional:-->
-            <customerCategoryCode>?</customerCategoryCode>
+            <customerCategoryCode>CLIENT</customerCategoryCode>
             <!--Optional:-->
-            <currencyCode>?</currencyCode>
+            <currencyCode>USD</currencyCode>
             <!--Optional:-->
-            <countryCode>?</countryCode>
+            <countryCode>US</countryCode>
             <!--Optional:-->
-            <languageCode>?</languageCode>
+            <languageCode>EN</languageCode>
             <!--Optional:-->
-            <titleCode>?</titleCode>
+            <titleCode></titleCode>
             <!--Optional:-->
-            <firstName>?</firstName>
+            <firstName>Edward</firstName>
             <!--Optional:-->
-            <lastName>?</lastName>
+            <lastName>Legaspi</lastName>
             <!--Optional:-->
-            <birthDate>?</birthDate>
+            <!--<birthDate>?</birthDate>-->
             <!--Optional:-->
-            <phoneNumber>?</phoneNumber>
+            <phoneNumber>1234</phoneNumber>
             <!--Optional:-->
-            <billingCycleCode>?</billingCycleCode>
+            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>
             <!--Optional:-->
-            <address1>?</address1>
+            <address1></address1>
             <!--Optional:-->
-            <address2>?</address2>
+            <address2></address2>
             <!--Optional:-->
-            <zipCode>?</zipCode>
+            <zipCode>4030</zipCode>
             <!--Optional:-->
-            <city>?</city>
+            <city>Laguna</city>
          </arg0>
       </acc:find>
    </soapenv:Body>
@@ -6055,47 +6058,50 @@
    <soapenv:Body>
       <acc:index/>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.account.ws.api.meveo.org/AccountHierarchyWs/index"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountHierarchyWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acc="http://account.ws.api.meveo.org/">
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.account.ws.api.meveo.org/AccountHierarchyWs/index"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  &lt;con:entry key="username" value="meveo.admin"/>
+  &lt;con:entry key="password" value="meveo.admin"/>
+&lt;/xml-fragment></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/meveo/AccountHierarchyWs</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:acc="http://account.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
       <acc:update>
          <!--Optional:-->
-         <arg0 email="?" paymentMethod="?">
+         <arg0 email="test@manaty.net" paymentMethod="2">
             <!--Optional:-->
-            <customerId>?</customerId>
+            <customerId>CUST_TEST</customerId>
             <!--Optional:-->
-            <sellerCode>?</sellerCode>
+            <sellerCode>MAIN_SELLER</sellerCode>
             <!--Optional:-->
-            <customerBrandCode>?</customerBrandCode>
+            <customerBrandCode>DEFAULT</customerBrandCode>
             <!--Optional:-->
-            <customerCategoryCode>?</customerCategoryCode>
+            <customerCategoryCode>CLIENT</customerCategoryCode>
             <!--Optional:-->
-            <currencyCode>?</currencyCode>
+            <currencyCode>USD</currencyCode>
             <!--Optional:-->
-            <countryCode>?</countryCode>
+            <countryCode>US</countryCode>
             <!--Optional:-->
-            <languageCode>?</languageCode>
+            <languageCode>EN</languageCode>
             <!--Optional:-->
-            <titleCode>?</titleCode>
+            <titleCode></titleCode>
             <!--Optional:-->
-            <firstName>?</firstName>
+            <firstName>Edward1</firstName>
             <!--Optional:-->
-            <lastName>?</lastName>
+            <lastName>Legaspi1</lastName>
             <!--Optional:-->
-            <birthDate>?</birthDate>
+            <!--<birthDate>?</birthDate>-->
             <!--Optional:-->
-            <phoneNumber>?</phoneNumber>
+            <phoneNumber>1234</phoneNumber>
             <!--Optional:-->
-            <billingCycleCode>?</billingCycleCode>
+            <billingCycleCode>CYC_INV_MT_1</billingCycleCode>
             <!--Optional:-->
-            <address1>?</address1>
+            <address1></address1>
             <!--Optional:-->
-            <address2>?</address2>
+            <address2></address2>
             <!--Optional:-->
-            <zipCode>?</zipCode>
+            <zipCode>4030</zipCode>
             <!--Optional:-->
-            <city>?</city>
+            <city>Laguna</city>
          </arg0>
       </acc:update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.account.ws.api.meveo.org/AccountHierarchyWs/update"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.account.ws.api.meveo.org/AccountHierarchyWs/update"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
