@@ -329,7 +329,7 @@
 															<p:ajax event="valueChange" immediate="false"
 																update=":parentTab:formBillingAccountPanel:formId:childTab" />
 														</p:selectOneMenu>
-														<h:outputText
+														<h:outputText rendered="#{!billingAccountBean.edit}"
 															value="#{billingAccountBean.entity.paymentMethod}"
 															styleClass="field-value"></h:outputText>
 													</hftl:panelGroup>
