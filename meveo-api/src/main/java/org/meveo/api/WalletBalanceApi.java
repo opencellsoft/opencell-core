@@ -31,13 +31,13 @@ public class WalletBalanceApi extends BaseApi {
 			try {
 				if (walletBalance.isAmountWithTax()) {
 					return walletReservationService.getCurrentBalanceWithTax(
-							em, provider, walletBalance.getSellerCode(),
+							provider, walletBalance.getSellerCode(),
 							walletBalance.getUserAccountCode(),
 							walletBalance.getStartDate(),
 							walletBalance.getEndDate());
 				} else {
 					return walletReservationService
-							.getCurrentBalanceWithoutTax(em, provider,
+							.getCurrentBalanceWithoutTax(provider,
 									walletBalance.getSellerCode(),
 									walletBalance.getUserAccountCode(),
 									walletBalance.getStartDate(),
@@ -75,13 +75,13 @@ public class WalletBalanceApi extends BaseApi {
 			try {
 				if (walletBalance.isAmountWithTax()) {
 					return walletReservationService.getReservedBalanceWithTax(
-							em, provider, walletBalance.getSellerCode(),
+							provider, walletBalance.getSellerCode(),
 							walletBalance.getUserAccountCode(),
 							walletBalance.getStartDate(),
 							walletBalance.getEndDate());
 				} else {
 					return walletReservationService
-							.getReservedBalanceWithoutTax(em, provider,
+							.getReservedBalanceWithoutTax(provider,
 									walletBalance.getSellerCode(),
 									walletBalance.getUserAccountCode(),
 									walletBalance.getStartDate(),
@@ -120,12 +120,12 @@ public class WalletBalanceApi extends BaseApi {
 			try {
 				if (walletBalance.isAmountWithTax()) {
 					return walletReservationService.getOpenBalanceWithoutTax(
-							em, provider, walletBalance.getSellerCode(),
+							provider, walletBalance.getSellerCode(),
 							walletBalance.getUserAccountCode(),
 							walletBalance.getStartDate(),
 							walletBalance.getEndDate());
 				} else {
-					return walletReservationService.getOpenBalanceWithTax(em,
+					return walletReservationService.getOpenBalanceWithTax(
 							provider, walletBalance.getSellerCode(),
 							walletBalance.getUserAccountCode(),
 							walletBalance.getStartDate(),

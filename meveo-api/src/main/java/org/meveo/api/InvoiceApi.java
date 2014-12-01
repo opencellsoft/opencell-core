@@ -121,7 +121,7 @@ public class InvoiceApi extends BaseApi {
 			if (tax == null) {
 				throw new EntityDoesNotExistsException(Tax.class, taxCode);
 			}
-			
+
 			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
 					.findByCode(invoiceSubCategoryCode);
 			if (invoiceSubCategory == null) {
@@ -244,8 +244,8 @@ public class InvoiceApi extends BaseApi {
 							.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
 					subCategoryInvoiceAgregate
 							.setTaxInvoiceAgregate(taxInvoiceAgregate);
-					invoiceAgregateService.create(em,
-							subCategoryInvoiceAgregate, currentUser, provider);
+					invoiceAgregateService.create(subCategoryInvoiceAgregate,
+							currentUser, provider);
 
 					for (RatedTransactionDto ratedTransaction : subCategoryInvoiceAgregateDTO
 							.getRatedTransactions()) {
@@ -269,8 +269,8 @@ public class InvoiceApi extends BaseApi {
 						meveoRatedTransaction.setInvoice(invoice);
 						meveoRatedTransaction
 								.setWallet(userAccount.getWallet());
-						ratedTransactionService.create(em,
-								meveoRatedTransaction, currentUser, provider);
+						ratedTransactionService.create(meveoRatedTransaction,
+								currentUser, provider);
 
 					}
 				} else {
