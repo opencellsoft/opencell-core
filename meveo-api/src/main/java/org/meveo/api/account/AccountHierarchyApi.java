@@ -274,11 +274,11 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 
 				int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
-						"asp.api.default.customerAccount.paymentMethod", "1"));
+						"api.default.customerAccount.paymentMethod", "1"));
 				int creditCategory = Integer.parseInt(paramBean.getProperty(
-						"asp.api.default.customerAccount.creditCategory", "5"));
+						"api.default.customerAccount.creditCategory", "5"));
 				int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
-						"asp.api.default.customerAccount.paymentMethod", "1"));
+						"api.default.customerAccount.paymentMethod", "1"));
 
 				Auditable auditable = new Auditable();
 				auditable.setCreated(new Date());
@@ -346,19 +346,21 @@ public class AccountHierarchyApi extends BaseApi {
 								currentUser, provider);
 
 				if (billingCycle == null) {
-					billingCycle = billingCycleService.findByBillingCycleCode(
-							em, paramBean.getProperty(
-									"default.billingCycleCode", "DEFAULT"),
-							provider);
+					billingCycle = billingCycleService
+							.findByBillingCycleCode(em,
+									paramBean.getProperty(
+											"api.default.billingCycle.code",
+											"DEFAULT"), provider);
 					if (billingCycle == null) {
 						String imputationCalendarCode = paramBean.getProperty(
-								"default.imputationCalendar.Name",
+								"api.default.imputationCalendar.name",
 								"DEF_IMP_CAL");
 						Calendar imputationCalendar = calendarService
 								.findByName(em, imputationCalendarCode);
 
-						String cycleCalendarCode = paramBean.getProperty(
-								"default.cycleCalendar.Name", "DEF_CYC_CAL");
+						String cycleCalendarCode = paramBean
+								.getProperty("api.default.cycleCalendar.name",
+										"DEF_CYC_CAL");
 						Calendar cycleCalendar = calendarService.findByName(em,
 								cycleCalendarCode);
 
@@ -373,10 +375,11 @@ public class AccountHierarchyApi extends BaseApi {
 
 						billingCycle = new BillingCycle();
 						billingCycle.setCode(paramBean.getProperty(
-								"default.billingCycleCode", "DEFAULT"));
+								"api.default.billingCycle.code", "DEFAULT"));
 						billingCycle.setActive(true);
 						billingCycle.setBillingTemplateName(paramBean
-								.getProperty("default.billingTemplateName",
+								.getProperty(
+										"api.default.billingTemplate.name",
 										"DEFAULT"));
 						billingCycle.setInvoiceDateDelay(0);
 						billingCycle.setCalendar(cycleCalendar);
@@ -398,7 +401,7 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccount
 						.setElectronicBilling(Boolean.valueOf(paramBean
 								.getProperty(
-										"customerHeirarchy.billingAccount.electronicBilling",
+										"api.customerHeirarchy.billingAccount.electronicBilling",
 										"true")));
 				billingAccount.setTradingCountry(tradingCountry);
 				billingAccount.setTradingLanguage(tradingLanguage);
@@ -616,12 +619,12 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
-					"asp.api.default.customerAccount.paymentMethod", "1"));
+					"api.default.customerAccount.paymentMethod", "1"));
 			int creditCategory = Integer.parseInt(paramBean.getProperty(
-					"asp.api.default.customerAccount.creditCategory", "5"));
+					"api.default.customerAccount.creditCategory", "5"));
 
 			int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
-					"asp.api.default.customerAccount.paymentMethod", "1"));
+					"api.default.customerAccount.paymentMethod", "1"));
 
 			Auditable auditable = new Auditable();
 			auditable.setCreated(new Date());
@@ -698,21 +701,19 @@ public class AccountHierarchyApi extends BaseApi {
 
 			if (billingCycle == null) {
 				billingCycle = billingCycleService.findByBillingCycleCode(em,
-						paramBean.getProperty("default.billingCycleCode",
+						paramBean.getProperty("api.default.billingCycle.code",
 								"DEFAULT"), provider);
 				if (billingCycle == null) {
 					String imputationCalendarCode = paramBean.getProperty(
-							"default.imputationCalendar.Name", "DEF_IMP_CAL");
+							"api.default.imputationCalendar.name",
+							"DEF_IMP_CAL");
 					Calendar imputationCalendar = calendarService.findByName(
-							em, paramBean.getProperty(
-									"default.imputationCalendar.Name",
-									"DEF_IMP_CAL"));
+							em, imputationCalendarCode);
 
 					String cycleCalendarCode = paramBean.getProperty(
-							"default.cycleCalendar.Name", "DEF_CYC_CAL");
+							"api.default.cycleCalendar.name", "DEF_CYC_CAL");
 					Calendar cycleCalendar = calendarService.findByName(em,
-							paramBean.getProperty("default.cycleCalendar.Name",
-									"DEF_CYC_CAL"));
+							cycleCalendarCode);
 
 					if (imputationCalendar == null) {
 						throw new EntityDoesNotExistsException(Calendar.class,
@@ -725,10 +726,10 @@ public class AccountHierarchyApi extends BaseApi {
 
 					billingCycle = new BillingCycle();
 					billingCycle.setCode(paramBean.getProperty(
-							"default.billingCycleCode", "DEFAULT"));
+							"api.default.billingCycle.code", "DEFAULT"));
 					billingCycle.setActive(true);
 					billingCycle.setBillingTemplateName(paramBean.getProperty(
-							"default.billingTemplateName", "DEFAULT"));
+							"api.default.billingTemplate.name", "DEFAULT"));
 					billingCycle.setInvoiceDateDelay(0);
 					billingCycle.setCalendar(cycleCalendar);
 
@@ -753,7 +754,7 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccount
 					.setElectronicBilling(Boolean.valueOf(paramBean
 							.getProperty(
-									"customerHeirarchy.billingAccount.electronicBilling",
+									"api.customerHeirarchy.billingAccount.electronicBilling",
 									"true")));
 			billingAccount.setTradingCountry(tradingCountry);
 			billingAccount.setTradingLanguage(tradingLanguage);
