@@ -18,6 +18,9 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing
+ * {@link org.meveo.model.catalog.RecurringChargeTemplate}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/recurringChargeTemplate")
@@ -26,19 +29,43 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface RecurringChargeTemplateRs extends IBaseRs {
 
+	/**
+	 * Create recurring charge template.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@POST
 	@Path("/")
 	public ActionStatus create(RecurringChargeTemplateDto postData);
 
+	/**
+	 * Search recurring charge template with a given code.
+	 * 
+	 * @param recurringChargeTemplateCode
+	 * @return
+	 */
 	@GET
 	@Path("/")
 	public GetRecurringChargeTemplateResponse find(
 			@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
+	/**
+	 * Update recurring charge template.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@PUT
 	@Path("/")
 	public ActionStatus update(RecurringChargeTemplateDto postData);
 
+	/**
+	 * Remove recurring charge template with a given code.
+	 * 
+	 * @param recurringChargeTemplateCode
+	 * @return
+	 */
 	@DELETE
 	@Path("/{recurringChargeTemplateCode}")
 	public ActionStatus remove(

@@ -12,8 +12,9 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
- * @author R.AITYAAZZA
+ * Web service for managing customer account.
  * 
+ * @author R.AITYAAZZA
  */
 @Path("/account/customerAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -21,6 +22,12 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CustomerAccountRs extends IBaseRs {
 
+	/**
+	 * Search for a customer account with a given code.
+	 * 
+	 * @param customerAccountCode
+	 * @return
+	 */
 	@GET
 	@Path("/")
 	public CustomerAccountResponse getCustomerAccount(

@@ -28,19 +28,45 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CurrencyRs extends IBaseRs {
 
+	/**
+	 * Create {@link org.meveo.model.billing.Currency} and
+	 * {@link org.meveo.model.billing.TradingCurrency}.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@POST
 	@Path("/")
 	public ActionStatus create(CurrencyDto postData);
 
+	/**
+	 * Search currency with a given currency code.
+	 * 
+	 * @param currencyCode
+	 * @return
+	 */
 	@GET
 	@Path("/")
 	public GetCurrencyResponse find(
 			@QueryParam("currencyCode") String currencyCode);
 
+	/**
+	 * Remove currency with a given currency code.
+	 * 
+	 * @param currencyCode
+	 * @return
+	 */
 	@DELETE
 	@Path("/{currencyCode}")
 	public ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
+	/**
+	 * Update {@link org.meveo.model.billing.Currency} and
+	 * {@link org.meveo.model.billing.TradingCurrency}.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@PUT
 	@Path("/")
 	public ActionStatus update(CurrencyDto postData);
