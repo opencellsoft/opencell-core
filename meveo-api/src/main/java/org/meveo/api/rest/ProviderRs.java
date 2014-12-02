@@ -15,6 +15,8 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.Provider}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/provider")
@@ -23,15 +25,33 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ProviderRs extends IBaseRs {
 
+	/**
+	 * Create provider.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@POST
 	@Path("/")
 	public ActionStatus create(ProviderDto postData);
 
+	/**
+	 * Search for provider with a given code.
+	 * 
+	 * @param providerCode
+	 * @return
+	 */
 	@GET
 	@Path("/")
 	public GetProviderResponse find(
 			@QueryParam("providerCode") String providerCode);
 
+	/**
+	 * Update provider.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@PUT
 	@Path("/")
 	public ActionStatus update(ProviderDto postData);

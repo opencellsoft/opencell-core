@@ -35,7 +35,7 @@ public class WalletReservationApi extends BaseApi {
 				&& walletReservation.getCreditLimit() != null) {
 
 			try {
-				return reservationService.createReservation(em, provider,
+				return reservationService.createReservation(provider,
 						walletReservation.getSellerCode(),
 						walletReservation.getOfferCode(),
 						walletReservation.getUserAccountCode(),
@@ -91,7 +91,7 @@ public class WalletReservationApi extends BaseApi {
 				&& walletReservation.getCreditLimit() != null) {
 
 			try {
-				reservationService.updateReservation(em,
+				reservationService.updateReservation(
 						walletReservation.getReservationId(), provider,
 						walletReservation.getSellerCode(),
 						walletReservation.getOfferCode(),
@@ -156,7 +156,7 @@ public class WalletReservationApi extends BaseApi {
 		}
 
 		try {
-			reservationService.cancelReservation(em, reservation);
+			reservationService.cancelReservation(reservation);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -171,7 +171,7 @@ public class WalletReservationApi extends BaseApi {
 				&& walletReservation.getCreditLimit() != null) {
 
 			try {
-				return reservationService.confirmReservation(em,
+				return reservationService.confirmReservation(
 						walletReservation.getReservationId(), provider,
 						walletReservation.getSellerCode(),
 						walletReservation.getOfferCode(),

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Tax;
@@ -38,11 +39,15 @@ public class TaxService extends PersistenceService<Tax> {
 	}
 
 	public Tax findByCode(EntityManager em, String code, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(Tax.class, "t");
+		qb.addCriterion("t.code", "=", code, false);
+		qb.addCriterionEntity("t.provider", provider);
+
 		try {
-			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
-			qb.addCriterion("code", "=", code, false);
 			return (Tax) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException ne) {
+		} catch (NoResultException ne ) {
+			return null;
+		}catch (NonUniqueResultException nre){
 			return null;
 		}
 	}
@@ -52,10 +57,12 @@ public class TaxService extends PersistenceService<Tax> {
 			Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
-			qb.like("code", taxId, 1, false);
+			qb.like("t.code", taxId, 1, false);
 			qb.addCriterionEntity("t.provider", provider);
 			return (List<Tax>) qb.getQuery(em).getResultList();
 		} catch (NoResultException ne) {
+			return null;
+		}catch (NonUniqueResultException nre){
 			return null;
 		}
 	}

@@ -81,6 +81,12 @@ public class BillingCycleService extends PersistenceService<BillingCycle> {
 		}
 	}
 
+	public BillingCycle findByBillingCycleCode(String billingCycleCode,
+			User currentUser, Provider provider) {
+		return findByBillingCycleCode(getEntityManager(), billingCycleCode,
+				currentUser, provider);
+	}
+
 	public BillingCycle findByBillingCycleCode(EntityManager em,
 			String billingCycleCode, User currentUser, Provider provider) {
 		try {

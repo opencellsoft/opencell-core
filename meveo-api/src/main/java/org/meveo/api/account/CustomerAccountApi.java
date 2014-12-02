@@ -34,7 +34,7 @@ public class CustomerAccountApi extends BaseApi {
 		if (!StringUtils.isBlank(customerAccountCode)) {
 			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService
-					.findByCode(em, customerAccountCode, provider);
+					.findByCode(customerAccountCode, provider);
 			if (customerAccount == null) {
 				throw new BusinessException(
 						"Cannot find customer account with code="

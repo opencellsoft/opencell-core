@@ -41,14 +41,13 @@ public class PdfInvoiceApi extends BaseApi {
 				&& !StringUtils.isBlank(customerAccountCode)) {
 			Provider provider = currentUser.getProvider();
 			CustomerAccount customerAccount = customerAccountService
-					.findByCode(em, customerAccountCode, provider);
+					.findByCode(customerAccountCode, provider);
 			if (customerAccount == null) {
 				throw new BusinessException(
 						"Cannot find customer account with code="
 								+ customerAccountCode);
 			}
-			invoice = invoiceService.getInvoice(em, invoiceNumber,
-					customerAccount);
+			invoice = invoiceService.getInvoice(invoiceNumber, customerAccount);
 		} else {
 			if (StringUtils.isBlank(invoiceNumber)) {
 				missingParameters.add("invoiceNumber");

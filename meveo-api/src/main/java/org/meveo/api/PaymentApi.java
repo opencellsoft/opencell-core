@@ -66,7 +66,7 @@ public class PaymentApi extends BaseApi {
 				+ "...");
 
 		Provider provider = currentUser.getProvider();
-		CustomerAccount customerAccount = customerAccountService.findByCode(em,
+		CustomerAccount customerAccount = customerAccountService.findByCode(
 				paymentDto.getCustomerAccountCode(), provider);
 		if (customerAccount == null) {
 			throw new BusinessException(
@@ -104,7 +104,7 @@ public class PaymentApi extends BaseApi {
 			automatedPayment
 					.setTransactionDate(paymentDto.getTransactionDate());
 			automatedPayment.setMatchingStatus(MatchingStatusEnum.O);
-			automatedPaymentService.create(em, automatedPayment, currentUser,
+			automatedPaymentService.create(automatedPayment, currentUser,
 					provider);
 			if (paymentDto.isToMatching()) {
 				MatchingCode matchingCode = new MatchingCode();
@@ -121,8 +121,8 @@ public class PaymentApi extends BaseApi {
 					accountOperation.setUnMatchingAmount(accountOperation
 							.getUnMatchingAmount().subtract(amountToMatch));
 					accountOperation.setMatchingStatus(MatchingStatusEnum.L);
-					recordedInvoiceService.update(em, accountOperation,
-							currentUser);
+					recordedInvoiceService
+							.update(accountOperation, currentUser);
 					MatchingAmount matchingAmount = new MatchingAmount();
 					matchingAmount.setProvider(accountOperation.getProvider());
 					matchingAmount.setAccountOperation(accountOperation);
@@ -136,8 +136,7 @@ public class PaymentApi extends BaseApi {
 				matchingCode.setMatchingDate(new Date());
 				matchingCode.setMatchingType(MatchingTypeEnum.A);
 				matchingCode.setProvider(provider);
-				matchingCodeService.create(em, matchingCode, currentUser,
-						provider);
+				matchingCodeService.create(matchingCode, currentUser, provider);
 				log.info("matching created  for 1 automatedPayment and "
 						+ (paymentDto.getListOCCReferenceforMatching().size() - 1)
 						+ " occ");
@@ -175,7 +174,7 @@ public class PaymentApi extends BaseApi {
 		}
 		Provider provider = currentUser.getProvider();
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(em,
+		CustomerAccount customerAccount = customerAccountService.findByCode(
 				customerAccountCode, provider);
 
 		if (customerAccount == null) {
@@ -221,7 +220,7 @@ public class PaymentApi extends BaseApi {
 	public double getBalance(String customerAccountCode, User currentUser)
 			throws BusinessException {
 		Provider provider = currentUser.getProvider();
-		CustomerAccount customerAccount = customerAccountService.findByCode(em,
+		CustomerAccount customerAccount = customerAccountService.findByCode(
 				customerAccountCode, provider);
 
 		return customerAccountService.customerAccountBalanceDue(

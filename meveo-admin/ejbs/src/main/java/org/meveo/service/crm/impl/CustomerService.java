@@ -62,6 +62,11 @@ public class CustomerService extends PersistenceService<Customer> {
 		}
 	}
 
+	public List<Customer> findByValues(Customer c,
+			PaginationConfiguration paginationConfiguration) {
+		return findByValues(getEntityManager(), c, paginationConfiguration);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Customer> findByValues(EntityManager em, Customer c,
 			PaginationConfiguration paginationConfiguration) {

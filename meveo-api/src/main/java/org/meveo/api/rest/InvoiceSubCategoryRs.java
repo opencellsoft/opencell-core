@@ -17,6 +17,8 @@ import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.billing.InvoiceSubCategory}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/invoiceSubCategory")
@@ -25,19 +27,43 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface InvoiceSubCategoryRs extends IBaseRs {
 
+	/**
+	 * Create invoice sub category.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@POST
 	public ActionStatus create(InvoiceSubCategoryDto postData);
 
+	/**
+	 * Update invoice sub category.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	public ActionStatus update(InvoiceSubCategoryDto postData);
 
+	/**
+	 * Search for invoice sub category with a given code.
+	 * 
+	 * @param invoiceSubCategoryCode
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	public GetInvoiceSubCategoryResponse find(
 			@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
+	/**
+	 * Remove invoice sub category with a given code.
+	 * 
+	 * @param invoiceSubCategoryCode
+	 * @return
+	 */
 	@Path("/{invoiceSubCategoryCode}")
 	@DELETE
 	public ActionStatus remove(

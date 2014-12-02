@@ -17,6 +17,8 @@ import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.billing.InvoiceCategory}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/invoiceCategory")
@@ -25,19 +27,43 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface InvoiceCategoryRs extends IBaseRs {
 
+	/**
+	 * Create invoice category.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@POST
 	public ActionStatus create(InvoiceCategoryDto postData);
 
+	/**
+	 * Update invoice category.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	public ActionStatus update(InvoiceCategoryDto postData);
 
+	/**
+	 * Search invoice with a given code.
+	 * 
+	 * @param invoiceCategoryCode
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	public GetInvoiceCategoryResponse find(
 			@QueryParam("invoiceCategoryCode") String invoiceCategoryCode);
 
+	/**
+	 * Remove invoice with a given code.
+	 * 
+	 * @param invoiceCategoryCode
+	 * @return
+	 */
 	@Path("/{invoiceCategoryCode}")
 	@DELETE
 	public ActionStatus remove(

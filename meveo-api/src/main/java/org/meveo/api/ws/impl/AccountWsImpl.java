@@ -3,50 +3,37 @@ package org.meveo.api.ws.impl;
 import javax.inject.Inject;
 import javax.jws.WebService;
 
-import org.meveo.api.LanguageApi;
 import org.meveo.api.MeveoApiErrorCode;
+import org.meveo.api.account.AccountHierarchyApi;
+import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.LanguageDto;
-import org.meveo.api.dto.response.GetLanguageResponse;
+import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.response.CustomerAccountResponse;
+import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.ws.LanguageWs;
+import org.meveo.api.ws.AccountWs;
 
 /**
  * @author Edward P. Legaspi
  **/
-@WebService(serviceName = "LanguageWs", endpointInterface = "org.meveo.api.ws.LanguageWs")
-public class LanguageWsImpl extends BaseWs implements LanguageWs {
+@WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
+public class AccountWsImpl extends BaseWs implements AccountWs {
 
 	@Inject
-	private LanguageApi languageApi;
+	private AccountHierarchyApi accountHierarchyApi;
+
+	@Inject
+	private CustomerAccountApi customerAccountapi;
 
 	@Override
-	public ActionStatus create(LanguageDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	public CustomerListResponse findAccountHierarchy(
+			AccountHierarchyDto postData) {
+		CustomerListResponse result = new CustomerListResponse();
 
 		try {
-			languageApi.create(postData, getCurrentUser());
-		} catch (MeveoApiException e) {
-			result.setErrorCode(e.getErrorCode());
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		} catch (Exception e) {
-			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
-			result.setStatus(ActionStatusEnum.FAIL);
-			result.setMessage(e.getMessage());
-		}
-
-		return result;
-	}
-
-	@Override
-	public GetLanguageResponse find(String languageCode) {
-		GetLanguageResponse result = new GetLanguageResponse();
-
-		try {
-			result.setLanguage(languageApi.find(languageCode, getCurrentUser()
-					.getProvider()));
+			result.setCustomerDtoList(accountHierarchyApi.find(postData,
+					getCurrentUser()));
 		} catch (MeveoApiException e) {
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -62,11 +49,11 @@ public class LanguageWsImpl extends BaseWs implements LanguageWs {
 	}
 
 	@Override
-	public ActionStatus remove(String languageCode) {
+	public ActionStatus createAccountHierarchy(AccountHierarchyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageApi.remove(languageCode, getCurrentUser().getProvider());
+			accountHierarchyApi.create(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -81,11 +68,11 @@ public class LanguageWsImpl extends BaseWs implements LanguageWs {
 	}
 
 	@Override
-	public ActionStatus update(LanguageDto postData) {
+	public ActionStatus updateAccountHierarchy(AccountHierarchyDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageApi.update(postData, getCurrentUser());
+			accountHierarchyApi.update(postData, getCurrentUser());
 		} catch (MeveoApiException e) {
 			result.setErrorCode(e.getErrorCode());
 			result.setStatus(ActionStatusEnum.FAIL);
@@ -94,6 +81,22 @@ public class LanguageWsImpl extends BaseWs implements LanguageWs {
 			result.setErrorCode(MeveoApiErrorCode.GENERIC_API_EXCEPTION);
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public CustomerAccountResponse getCustomerAccount(String customerAccountCode) {
+		CustomerAccountResponse result = new CustomerAccountResponse();
+		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		try {
+			result.setCustomerAccountDto(customerAccountapi.getCustomerAccount(
+					customerAccountCode, getCurrentUser()));
+		} catch (Exception e) {
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
 		}
 
 		return result;

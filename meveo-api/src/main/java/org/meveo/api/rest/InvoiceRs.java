@@ -14,6 +14,8 @@ import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.billing.Invoice}.
+ *  
  * @author Edward P. Legaspi
  **/
 @Path("/invoice")
@@ -22,10 +24,21 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface InvoiceRs extends IBaseRs {
 
+	/**
+	 * Create invoice.
+	 * 
+	 * @param invoiceDto
+	 * @return
+	 */
 	@POST
 	@Path("/")
 	public ActionStatus create(InvoiceDto invoiceDto);
 
+	/**
+	 * Search for a list of invoice given a customer account code.
+	 * @param customerAccountCode
+	 * @return
+	 */
 	@GET
 	@Path("/")
 	public CustomerInvoicesResponse find(

@@ -21,7 +21,7 @@ import org.meveo.api.rest.InvoiceRs;
  */
 @RequestScoped
 @Interceptors({ LoggingInterceptor.class })
-public class InvoiceRsImp extends BaseRs implements InvoiceRs {
+public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
 	@Inject
 	private InvoiceApi invoiceApi;

@@ -80,6 +80,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
+	public Invoice getInvoice(String invoiceNumber,
+			CustomerAccount customerAccount) throws BusinessException {
+		return getInvoice(getEntityManager(), invoiceNumber, customerAccount);
+	}
+
 	public Invoice getInvoice(EntityManager em, String invoiceNumber,
 			CustomerAccount customerAccount) throws BusinessException {
 		try {

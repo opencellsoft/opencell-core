@@ -65,6 +65,16 @@ public class ReservationService extends PersistenceService<Reservation> {
 	@Inject
 	private WalletService walletService;
 
+	public Long createReservation(Provider provider, String sellerCode,
+			String offerCode, String userAccountCode, Date subscriptionDate,
+			Date expiryDate, BigDecimal creditLimit, String param1,
+			String param2, String param3, boolean amountWithTax)
+			throws BusinessException {
+		return createReservation(getEntityManager(), provider, sellerCode,
+				offerCode, userAccountCode, subscriptionDate, expiryDate,
+				creditLimit, param1, param2, param3, amountWithTax);
+	}
+
 	public Long createReservation(EntityManager em, Provider provider,
 			String sellerCode, String offerCode, String userAccountCode,
 			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
@@ -183,6 +193,16 @@ public class ReservationService extends PersistenceService<Reservation> {
 		return reservation.getId();
 	}
 
+	public void updateReservation(Long reservationId, Provider provider,
+			String sellerCode, String offerCode, String userAccountCode,
+			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
+			String param1, String param2, String param3, boolean amountWithTax)
+			throws BusinessException {
+		updateReservation(getEntityManager(), reservationId, provider,
+				sellerCode, offerCode, userAccountCode, subscriptionDate,
+				expiryDate, creditLimit, param1, param2, param3, amountWithTax);
+	}
+
 	public void updateReservation(EntityManager em, Long reservationId,
 			Provider provider, String sellerCode, String offerCode,
 			String userAccountCode, Date subscriptionDate, Date expiryDate,
@@ -274,6 +294,11 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 	}
 
+	public void cancelReservation(Reservation reservation)
+			throws BusinessException {
+		cancelReservation(getEntityManager(), reservation);
+	}
+
 	public void cancelReservation(EntityManager em, Reservation reservation)
 			throws BusinessException {
 
@@ -290,6 +315,15 @@ public class ReservationService extends PersistenceService<Reservation> {
 
 		// #3 Set to CANCELLED the status of reservation.
 		reservation.setStatus(ReservationStatus.CANCELLED);
+	}
+
+	public BigDecimal confirmReservation(Long reservationId, Provider provider,
+			String sellerCode, String offerCode, Date subscriptionDate,
+			Date terminationDate, String param1, String param2, String param3)
+			throws BusinessException {
+		return confirmReservation(getEntityManager(), reservationId, provider,
+				sellerCode, offerCode, subscriptionDate, terminationDate,
+				param1, param2, param3);
 	}
 
 	public BigDecimal confirmReservation(EntityManager em, Long reservationId,
