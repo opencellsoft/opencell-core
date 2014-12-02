@@ -66,7 +66,7 @@ public class EDR extends BaseEntity {
 	@Column(name = "EVENT_DATE")
 	private Date eventDate;
 
-	@Column(name = "QUANTITY")
+	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal quantity;
 
 	@Column(name = "PARAMETER_1")
