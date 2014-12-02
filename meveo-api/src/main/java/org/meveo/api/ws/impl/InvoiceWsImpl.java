@@ -2,7 +2,6 @@ package org.meveo.api.ws.impl;
 
 import javax.inject.Inject;
 import javax.jws.WebService;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.api.InvoiceApi;
 import org.meveo.api.MeveoApiErrorCode;
@@ -39,8 +38,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	}
 
 	@Override
-	public CustomerInvoicesResponse find(
-			@QueryParam("customerAccountCode") String customerAccountCode) {
+	public CustomerInvoicesResponse find(String customerAccountCode) {
 		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
 		try {
