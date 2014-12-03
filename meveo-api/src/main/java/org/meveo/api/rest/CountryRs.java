@@ -17,6 +17,9 @@ import org.meveo.api.dto.response.GetCountryResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.billing.Country} and
+ * {@link org.meveo.model.billing.TradingCountry}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/country")
@@ -25,19 +28,46 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface CountryRs extends IBaseRs {
 
+	/**
+	 * Create {@link org.meveo.model.billing.Country} and
+	 * {@link org.meveo.model.billing.TradingCountry}.
+	 * 
+	 * @param countryDto
+	 * @return
+	 */
 	@POST
 	@Path("/")
 	public ActionStatus create(CountryDto countryDto);
 
+	/**
+	 * Search country with a given country code.
+	 * 
+	 * @param countryCode
+	 * @return {@link org.meveo.api.dto.response.GetCountryResponse}.
+	 */
 	@GET
 	@Path("/")
 	public GetCountryResponse find(@QueryParam("countryCode") String countryCode);
 
+	/**
+	 * Remove country with a given country and currency code. 
+	 * 
+	 * @param countryCode
+	 * @param currencyCode
+	 * @return
+	 */
 	@DELETE
 	@Path("/{countryCode}/{currencyCode}")
 	public ActionStatus remove(@PathParam("countryCode") String countryCode,
 			@PathParam("currencyCode") String currencyCode);
 
+	/**
+	 * Update {@link org.meveo.model.billing.Country} and
+	 * {@link org.meveo.model.billing.TradingCountry}.
+	 * 
+	 * @param countryDto
+	 * @return
+	 */
 	@PUT
 	@Path("/")
 	public ActionStatus update(CountryDto countryDto);

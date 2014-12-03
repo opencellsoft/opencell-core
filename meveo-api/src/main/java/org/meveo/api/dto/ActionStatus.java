@@ -25,7 +25,7 @@ public class ActionStatus {
 	private ActionStatusEnum status;
 
 	/**
-	 * {@link https://www.assembla.com/spaces/meveo/wiki/Error_Codes}
+	 * {@link https://www.assembla.com/spaces/meveo/wiki/Error_Codes}.
 	 */
 	private int errorCode;
 

@@ -18,6 +18,7 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.catalog.ServiceTemplate}.
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/serviceTemplate")
@@ -26,19 +27,40 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface ServiceTemplateRs extends IBaseRs {
 
+	/**
+	 * Create service template.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@POST
 	ActionStatus create(ServiceTemplateDto postData);
 
+	/** 
+	 * Update service template.
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	ActionStatus update(ServiceTemplateDto postData);
 
+	/**
+	 * Search service template with a given code.
+	 * @param serviceTemplateCode
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	GetServiceTemplateResponse find(
 			@QueryParam("serviceTemplateCode") String serviceTemplateCode);
 
+	/**
+	 * Remove service template with a given code.
+	 * @param serviceTemplateCode
+	 * @return
+	 */
 	@Path("/{serviceTemplateCode}")
 	@DELETE
 	ActionStatus remove(

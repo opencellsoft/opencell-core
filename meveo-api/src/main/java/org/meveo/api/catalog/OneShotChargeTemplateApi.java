@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -42,6 +43,7 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -76,6 +78,10 @@ public class OneShotChargeTemplateApi extends BaseApi {
 
 	@Inject
 	private CatMessagesService catMessagesService;
+
+	@Inject
+	@MeveoJpaForJobs
+	private EntityManager em;
 
 	public void create(OneShotChargeTemplateDto postData, User currentUser)
 			throws MeveoApiException {
@@ -340,14 +346,14 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			String languageCode, String countryCode, String currencyCode,
 			String sellerCode, Date date, User currentUser) {
 		Provider provider = currentUser.getProvider();
-		Seller seller = sellerService.findByCode(em, sellerCode, provider);
+		Seller seller = sellerService.findByCode(sellerCode, provider);
 		TradingCurrency currency = tradingCurrencyService
-				.findByTradingCurrencyCode(em, currencyCode, provider);
+				.findByTradingCurrencyCode(currencyCode, provider);
 		TradingCountry country = tradingCountryService
-				.findByTradingCountryCode(em, countryCode, provider);
+				.findByTradingCountryCode(countryCode, provider);
 
 		List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService
-				.getSubscriptionChargeTemplates(em, provider);
+				.getSubscriptionChargeTemplates(provider);
 		OneShotChargeTemplateWithPriceListDto oneShotChargeTemplateListDto = new OneShotChargeTemplateWithPriceListDto();
 
 		for (OneShotChargeTemplate oneShotChargeTemplate : oneShotChargeTemplates) {
@@ -362,7 +368,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				log.warn("country with code={} does not exists", countryCode);
 			} else {
 				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-						.findInvoiceSubCategoryCountry(em,
+						.findInvoiceSubCategoryCountry(
 								invoiceSubCategory.getId(), country.getId());
 				if (invoiceSubcategoryCountry != null
 						&& invoiceSubcategoryCountry.getTax() != null) {

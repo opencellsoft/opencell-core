@@ -18,6 +18,8 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.catalog.DiscountPlanMatrix}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/discountPlan")
@@ -26,18 +28,42 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface DiscountPlanRs extends IBaseRs {
 
+	/**
+	 * Create discount plan.
+	 * 
+	 * @param postData
+	 * @return The id of the newly create discount plan.
+	 */
 	@Path("/")
 	@POST
 	ActionStatus create(DiscountPlanDto postData);
 
+	/**
+	 * Update discount plan.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	ActionStatus update(DiscountPlanDto postData);
 
+	/**
+	 * Search discount plan with a given id.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	GetDiscountPlanResponse find(@QueryParam("id") Long id);
 
+	/**
+	 * Remove discount plan with a given id.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@Path("/{id}")
 	@DELETE
 	ActionStatus remove(@PathParam("id") Long id);

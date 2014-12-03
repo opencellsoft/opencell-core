@@ -107,15 +107,23 @@ public class InvoiceApi extends BaseApi {
 
 			// FIXME : store that in SubCategoryInvoiceAgregateDto
 			String invoiceSubCategoryCode = paramBean.getProperty(
-					"invoiceSubCategory.code.default", "SUB_DATA");
+					"api.default.invoiceSubCategory.code", "SUB_DATA");
 
 			// FIXME : store that in SubCategoryInvoiceAgregateDto
-			String taxCode = paramBean.getProperty("tax.code.default", "");
+			String taxCode = paramBean.getProperty("api.default.tax.code", "");
+
+			if (StringUtils.isBlank(taxCode)) {
+				throw new MeveoApiException(
+						"Property api.default.tax.code must be set.");
+			}
 
 			Tax tax = taxService.findByCode(taxCode, provider);
+			if (tax == null) {
+				throw new EntityDoesNotExistsException(Tax.class, taxCode);
+			}
+
 			InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
 					.findByCode(invoiceSubCategoryCode);
-
 			if (invoiceSubCategory == null) {
 				throw new EntityDoesNotExistsException(
 						InvoiceSubCategory.class, invoiceSubCategoryCode);
@@ -236,8 +244,8 @@ public class InvoiceApi extends BaseApi {
 							.setCategoryInvoiceAgregate(categoryInvoiceAgregate);
 					subCategoryInvoiceAgregate
 							.setTaxInvoiceAgregate(taxInvoiceAgregate);
-					invoiceAgregateService.create(em,
-							subCategoryInvoiceAgregate, currentUser, provider);
+					invoiceAgregateService.create(subCategoryInvoiceAgregate,
+							currentUser, provider);
 
 					for (RatedTransactionDto ratedTransaction : subCategoryInvoiceAgregateDTO
 							.getRatedTransactions()) {
@@ -261,8 +269,8 @@ public class InvoiceApi extends BaseApi {
 						meveoRatedTransaction.setInvoice(invoice);
 						meveoRatedTransaction
 								.setWallet(userAccount.getWallet());
-						ratedTransactionService.create(em,
-								meveoRatedTransaction, currentUser, provider);
+						ratedTransactionService.create(meveoRatedTransaction,
+								currentUser, provider);
 
 					}
 				} else {

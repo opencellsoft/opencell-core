@@ -18,6 +18,8 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.catalog.PricePlanMatrix}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/pricePlan")
@@ -26,18 +28,42 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface PricePlanRs extends IBaseRs {
 
+	/**
+	 * Create price plan.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@POST
 	ActionStatus create(PricePlanDto postData);
 
+	/**
+	 * Update price plan.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	ActionStatus update(PricePlanDto postData);
 
+	/**
+	 * Search price plan with a given id.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	GetPricePlanResponse find(@QueryParam("id") Long id);
 
+	/**
+	 * Remove price plan with a given id.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@Path("/{id}")
 	@DELETE
 	ActionStatus remove(@PathParam("id") Long id);

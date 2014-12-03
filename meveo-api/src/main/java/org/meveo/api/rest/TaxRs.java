@@ -17,6 +17,8 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.billing.Tax}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/tax")
@@ -25,18 +27,40 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface TaxRs extends IBaseRs {
 
+	/**
+	 * Create tax.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@POST
 	public ActionStatus create(TaxDto postData);
 
+	/**
+	 * Update tax.
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	public ActionStatus update(TaxDto postData);
 
+	/**
+	 * Search tax with a given code.
+	 * @param taxCode
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	public GetTaxResponse find(@QueryParam("taxCode") String taxCode);
 
+	/**
+	 * Remove tax with a given code.
+	 * 
+	 * @param taxCode
+	 * @return
+	 */
 	@Path("/{taxCode}")
 	@DELETE
 	public ActionStatus remove(@PathParam("taxCode") String taxCode);

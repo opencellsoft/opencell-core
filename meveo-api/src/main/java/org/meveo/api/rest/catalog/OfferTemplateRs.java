@@ -18,6 +18,8 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.catalog.OfferTemplate}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/offerTemplate")
@@ -26,19 +28,43 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface OfferTemplateRs extends IBaseRs {
 
+	/**
+	 * Create offer template.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@POST
 	ActionStatus create(OfferTemplateDto postData);
 
+	/**
+	 * Update offer template.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	ActionStatus update(OfferTemplateDto postData);
 
+	/**
+	 * Search offer template with a given code.
+	 * 
+	 * @param offerTemplateCode
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	GetOfferTemplateResponse find(
 			@QueryParam("offerTemplateCode") String offerTemplateCode);
 
+	/**
+	 * Remove offer template with a given code.
+	 * 
+	 * @param offerTemplateCode
+	 * @return
+	 */
 	@Path("/{offerTemplateCode}")
 	@DELETE
 	ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode);

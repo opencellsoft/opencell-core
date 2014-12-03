@@ -17,6 +17,8 @@ import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing {@link org.meveo.model.admin.Seller}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/seller")
@@ -25,18 +27,42 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface SellerRs extends IBaseRs {
 
+	/**
+	 * Create seller.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@POST
 	public ActionStatus create(SellerDto postData);
 
+	/**
+	 * Update seller.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@Path("/")
 	@PUT
 	public ActionStatus update(SellerDto postData);
 
+	/**
+	 * Search for seller with a given code.
+	 * 
+	 * @param sellerCode
+	 * @return
+	 */
 	@Path("/")
 	@GET
 	public GetSellerResponse find(@QueryParam("sellerCode") String sellerCode);
-
+	
+	/**
+	 * Remove seller with a given code.
+	 * 
+	 * @param sellerCode
+	 * @return
+	 */
 	@Path("/{sellerCode}")
 	@DELETE
 	public ActionStatus remove(@PathParam("sellerCode") String sellerCode);

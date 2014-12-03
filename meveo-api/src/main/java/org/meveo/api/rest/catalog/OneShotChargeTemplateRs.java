@@ -19,6 +19,9 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.rest.security.RSSecured;
 
 /**
+ * Web service for managing
+ * {@link org.meveo.model.catalog.OneShotChargeTemplate}.
+ * 
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/oneShotChargeTemplate")
@@ -27,19 +30,47 @@ import org.meveo.api.rest.security.RSSecured;
 @RSSecured
 public interface OneShotChargeTemplateRs extends IBaseRs {
 
+	/**
+	 * Create one shot charge template.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@POST
 	@Path("/")
 	public ActionStatus create(OneShotChargeTemplateDto postData);
 
+	/**
+	 * Update one shot charge template.
+	 * 
+	 * @param postData
+	 * @return
+	 */
 	@PUT
 	@Path("/")
 	public ActionStatus update(OneShotChargeTemplateDto postData);
 
+	/**
+	 * Search one shot charge templatewith a given code.
+	 * 
+	 * @param oneShotChargeTemplateCode
+	 * @return
+	 */
 	@GET
 	@Path("/")
 	public GetOneShotChargeTemplateResponse find(
 			@QueryParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
+	/**
+	 * List one shot charge template with the following filters.
+	 * 
+	 * @param languageCode
+	 * @param countryCode
+	 * @param currencyCode
+	 * @param sellerCode
+	 * @param date
+	 * @return
+	 */
 	@GET
 	@Path("/")
 	public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(
@@ -49,6 +80,12 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 			@QueryParam("sellerCode") String sellerCode,
 			@QueryParam("date") String date);
 
+	/**
+	 * Remove one shot charge template with a given code.
+	 * 
+	 * @param oneShotChargeTemplateCode
+	 * @return
+	 */
 	@DELETE
 	@Path("/{oneShotChargeTemplateCode}")
 	public ActionStatus remove(

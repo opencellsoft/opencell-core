@@ -69,6 +69,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		create(billingAccount, creator);
 	}
 
+	public void createBillingAccount(BillingAccount billingAccount,
+			User creator, Provider provider) {
+		createBillingAccount(getEntityManager(), billingAccount, creator,
+				provider);
+	}
+
 	public void createBillingAccount(EntityManager em,
 			BillingAccount billingAccount, User creator, Provider provider) {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);

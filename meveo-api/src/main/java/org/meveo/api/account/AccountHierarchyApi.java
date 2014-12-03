@@ -149,7 +149,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		Provider provider = currentUser.getProvider();
 
-		if (customerService.findByCode(em, postData.getCustomerId(), provider) != null) {
+		if (customerService.findByCode(postData.getCustomerId(), provider) != null) {
 			throw new EntityAlreadyExistsException(Customer.class,
 					postData.getCustomerId());
 		} else {
@@ -164,7 +164,7 @@ public class AccountHierarchyApi extends BaseApi {
 					&& !StringUtils.isEmpty(postData.getBillingCycleCode())
 					&& !StringUtils.isEmpty(postData.getEmail())) {
 
-				Seller seller = sellerService.findByCode(em,
+				Seller seller = sellerService.findByCode(
 						postData.getSellerCode(), provider);
 
 				Auditable auditableTrading = new Auditable();
@@ -172,12 +172,12 @@ public class AccountHierarchyApi extends BaseApi {
 				auditableTrading.setCreator(currentUser);
 
 				TradingCountry tradingCountry = tradingCountryService
-						.findByTradingCountryCode(em,
-								postData.getCountryCode(), provider);
+						.findByTradingCountryCode(postData.getCountryCode(),
+								provider);
 
 				if (tradingCountry == null) {
-					Country country = countryService.findByCode(em,
-							postData.getCountryCode());
+					Country country = countryService.findByCode(postData
+							.getCountryCode());
 					if (country == null) {
 						throw new EntityDoesNotExistsException(Country.class,
 								postData.getCountryCode());
@@ -190,17 +190,17 @@ public class AccountHierarchyApi extends BaseApi {
 						tradingCountry.setPrDescription(country
 								.getDescriptionEn());
 						tradingCountry.setAuditable(auditableTrading);
-						tradingCountryService.create(em, tradingCountry,
+						tradingCountryService.create(tradingCountry,
 								currentUser, provider);
 					}
 				}
 
 				TradingCurrency tradingCurrency = tradingCurrencyService
-						.findByTradingCurrencyCode(em,
-								postData.getCurrencyCode(), provider);
+						.findByTradingCurrencyCode(postData.getCurrencyCode(),
+								provider);
 				if (tradingCurrency == null) {
-					Currency currency = currencyService.findByCode(em,
-							postData.getCurrencyCode());
+					Currency currency = currencyService.findByCode(postData
+							.getCurrencyCode());
 
 					if (currency == null) {
 						throw new EntityDoesNotExistsException(Currency.class,
@@ -216,17 +216,17 @@ public class AccountHierarchyApi extends BaseApi {
 						tradingCurrency.setPrDescription(currency
 								.getDescriptionEn());
 						tradingCurrency.setAuditable(auditableTrading);
-						tradingCurrencyService.create(em, tradingCurrency,
+						tradingCurrencyService.create(tradingCurrency,
 								currentUser, provider);
 					}
 				}
 
 				TradingLanguage tradingLanguage = tradingLanguageService
-						.findByTradingLanguageCode(em,
-								postData.getLanguageCode(), provider);
+						.findByTradingLanguageCode(postData.getLanguageCode(),
+								provider);
 				if (tradingLanguage == null) {
-					Language language = languageService.findByCode(em,
-							postData.getLanguageCode());
+					Language language = languageService.findByCode(postData
+							.getLanguageCode());
 
 					if (language == null) {
 						throw new EntityDoesNotExistsException(Language.class,
@@ -242,13 +242,13 @@ public class AccountHierarchyApi extends BaseApi {
 						tradingLanguage.setPrDescription(language
 								.getDescriptionEn());
 						tradingLanguage.setAuditable(auditableTrading);
-						tradingLanguageService.create(em, tradingLanguage,
+						tradingLanguageService.create(tradingLanguage,
 								currentUser, provider);
 					}
 				}
 
-				CustomerBrand customerBrand = customerBrandService.findByCode(
-						em, postData.getCustomerBrandCode());
+				CustomerBrand customerBrand = customerBrandService
+						.findByCode(postData.getCustomerBrandCode());
 
 				if (customerBrand == null) {
 					customerBrand = new CustomerBrand();
@@ -256,12 +256,12 @@ public class AccountHierarchyApi extends BaseApi {
 							.getCustomerBrandCode()));
 					customerBrand.setDescription(postData
 							.getCustomerBrandCode());
-					customerBrandService.create(em, customerBrand, currentUser,
+					customerBrandService.create(customerBrand, currentUser,
 							provider);
 				}
 
 				CustomerCategory customerCategory = customerCategoryService
-						.findByCode(em, postData.getCustomerCategoryCode());
+						.findByCode(postData.getCustomerCategoryCode());
 
 				if (customerCategory == null) {
 					customerCategory = new CustomerCategory();
@@ -269,16 +269,16 @@ public class AccountHierarchyApi extends BaseApi {
 							.getCustomerCategoryCode()));
 					customerCategory.setDescription(postData
 							.getCustomerCategoryCode());
-					customerCategoryService.create(em, customerCategory,
+					customerCategoryService.create(customerCategory,
 							currentUser, provider);
 				}
 
 				int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
-						"asp.api.default.customerAccount.paymentMethod", "1"));
+						"api.default.customerAccount.paymentMethod", "1"));
 				int creditCategory = Integer.parseInt(paramBean.getProperty(
-						"asp.api.default.customerAccount.creditCategory", "5"));
+						"api.default.customerAccount.creditCategory", "5"));
 				int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
-						"asp.api.default.customerAccount.paymentMethod", "1"));
+						"api.default.customerAccount.paymentMethod", "1"));
 
 				Auditable auditable = new Auditable();
 				auditable.setCreated(new Date());
@@ -293,7 +293,7 @@ public class AccountHierarchyApi extends BaseApi {
 					seller.setTradingCountry(tradingCountry);
 					seller.setTradingCurrency(tradingCurrency);
 
-					sellerService.create(em, seller, currentUser, provider);
+					sellerService.create(seller, currentUser, provider);
 				}
 
 				Address address = new Address();
@@ -307,7 +307,7 @@ public class AccountHierarchyApi extends BaseApi {
 				contactInformation.setEmail(postData.getEmail());
 				contactInformation.setPhone(postData.getPhoneNumber());
 
-				Title title = titleService.findByCode(em, provider,
+				Title title = titleService.findByCode(provider,
 						enleverAccent(postData.getTitleCode()));
 
 				Customer customer = new Customer();
@@ -320,7 +320,7 @@ public class AccountHierarchyApi extends BaseApi {
 				customer.setCustomerBrand(customerBrand);
 				customer.setCustomerCategory(customerCategory);
 				customer.setSeller(seller);
-				customerService.create(em, customer, currentUser, provider);
+				customerService.create(customer, currentUser, provider);
 
 				CustomerAccount customerAccount = new CustomerAccount();
 				customerAccount.setCustomer(customer);
@@ -337,30 +337,32 @@ public class AccountHierarchyApi extends BaseApi {
 				customerAccount.setCreditCategory(CreditCategoryEnum
 						.getValue(creditCategory));
 				customerAccount.setTradingCurrency(tradingCurrency);
-				customerAccountService.create(em, customerAccount, currentUser,
+				customerAccountService.create(customerAccount, currentUser,
 						provider);
 
 				BillingCycle billingCycle = billingCycleService
-						.findByBillingCycleCode(em,
+						.findByBillingCycleCode(
 								enleverAccent(postData.getBillingCycleCode()),
 								currentUser, provider);
 
 				if (billingCycle == null) {
-					billingCycle = billingCycleService.findByBillingCycleCode(
-							em, paramBean.getProperty(
-									"default.billingCycleCode", "DEFAULT"),
-							provider);
+					billingCycle = billingCycleService
+							.findByBillingCycleCode(
+									paramBean.getProperty(
+											"api.default.billingCycle.code",
+											"DEFAULT"), provider);
 					if (billingCycle == null) {
 						String imputationCalendarCode = paramBean.getProperty(
-								"default.imputationCalendar.Name",
+								"api.default.imputationCalendar.name",
 								"DEF_IMP_CAL");
 						Calendar imputationCalendar = calendarService
-								.findByName(em, imputationCalendarCode);
+								.findByName(imputationCalendarCode, provider);
 
-						String cycleCalendarCode = paramBean.getProperty(
-								"default.cycleCalendar.Name", "DEF_CYC_CAL");
-						Calendar cycleCalendar = calendarService.findByName(em,
-								cycleCalendarCode);
+						String cycleCalendarCode = paramBean
+								.getProperty("api.default.cycleCalendar.name",
+										"DEF_CYC_CAL");
+						Calendar cycleCalendar = calendarService.findByName(
+								cycleCalendarCode, provider);
 
 						if (imputationCalendar == null) {
 							throw new EntityDoesNotExistsException(
@@ -373,16 +375,17 @@ public class AccountHierarchyApi extends BaseApi {
 
 						billingCycle = new BillingCycle();
 						billingCycle.setCode(paramBean.getProperty(
-								"default.billingCycleCode", "DEFAULT"));
+								"api.default.billingCycle.code", "DEFAULT"));
 						billingCycle.setActive(true);
 						billingCycle.setBillingTemplateName(paramBean
-								.getProperty("default.billingTemplateName",
+								.getProperty(
+										"api.default.billingTemplate.name",
 										"DEFAULT"));
 						billingCycle.setInvoiceDateDelay(0);
 						billingCycle.setCalendar(cycleCalendar);
 
-						billingCycleService.create(em, billingCycle,
-								currentUser, provider);
+						billingCycleService.create(billingCycle, currentUser,
+								provider);
 					}
 				}
 
@@ -398,12 +401,12 @@ public class AccountHierarchyApi extends BaseApi {
 				billingAccount
 						.setElectronicBilling(Boolean.valueOf(paramBean
 								.getProperty(
-										"customerHeirarchy.billingAccount.electronicBilling",
+										"api.customerHeirarchy.billingAccount.electronicBilling",
 										"true")));
 				billingAccount.setTradingCountry(tradingCountry);
 				billingAccount.setTradingLanguage(tradingLanguage);
 				billingAccount.setBillingCycle(billingCycle);
-				billingAccountService.createBillingAccount(em, billingAccount,
+				billingAccountService.createBillingAccount(billingAccount,
 						currentUser, provider);
 
 				String userAccountCode = enleverAccent(postData.getCustomerId());
@@ -413,7 +416,7 @@ public class AccountHierarchyApi extends BaseApi {
 				userAccount.setCode(userAccountCode);
 
 				try {
-					userAccountService.createUserAccount(em, billingAccount,
+					userAccountService.createUserAccount(billingAccount,
 							userAccount, currentUser);
 				} catch (AccountAlreadyExistsException e) {
 					throw new EntityAlreadyExistsException(UserAccount.class,
@@ -462,7 +465,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		Provider provider = currentUser.getProvider();
 
-		Customer customer = customerService.findByCode(em,
+		Customer customer = customerService.findByCode(
 				postData.getCustomerId(), provider);
 
 		if (customer == null) {
@@ -481,15 +484,15 @@ public class AccountHierarchyApi extends BaseApi {
 				&& !StringUtils.isEmpty(postData.getBillingCycleCode())
 				&& !StringUtils.isEmpty(postData.getEmail())) {
 
-			Seller seller = sellerService.findByCode(em,
-					postData.getSellerCode(), provider);
+			Seller seller = sellerService.findByCode(postData.getSellerCode(),
+					provider);
 
 			Auditable auditableTrading = new Auditable();
 			auditableTrading.setCreated(new Date());
 			auditableTrading.setCreator(currentUser);
 
-			Country country = countryService.findByCode(em,
-					postData.getCountryCode());
+			Country country = countryService.findByCode(postData
+					.getCountryCode());
 
 			if (country == null) {
 				throw new EntityDoesNotExistsException(Country.class,
@@ -497,7 +500,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			TradingCountry tradingCountry = tradingCountryService
-					.findByTradingCountryCode(em, postData.getCountryCode(),
+					.findByTradingCountryCode(postData.getCountryCode(),
 							provider);
 
 			if (tradingCountry == null) {
@@ -511,14 +514,14 @@ public class AccountHierarchyApi extends BaseApi {
 			tradingCountry.setPrDescription(country.getDescriptionEn());
 
 			if (tradingCountry.isTransient()) {
-				tradingCountryService.create(em, tradingCountry, currentUser,
+				tradingCountryService.create(tradingCountry, currentUser,
 						provider);
 			} else {
-				tradingCountryService.update(em, tradingCountry, currentUser);
+				tradingCountryService.update(tradingCountry, currentUser);
 			}
 
-			Currency currency = currencyService.findByCode(em,
-					postData.getCurrencyCode());
+			Currency currency = currencyService.findByCode(postData
+					.getCurrencyCode());
 
 			if (currency == null) {
 				throw new EntityDoesNotExistsException(Currency.class,
@@ -526,7 +529,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			TradingCurrency tradingCurrency = tradingCurrencyService
-					.findByTradingCurrencyCode(em, postData.getCurrencyCode(),
+					.findByTradingCurrencyCode(postData.getCurrencyCode(),
 							provider);
 
 			if (tradingCurrency == null) {
@@ -542,14 +545,14 @@ public class AccountHierarchyApi extends BaseApi {
 			tradingCurrency.setPrDescription(currency.getDescriptionEn());
 
 			if (tradingCurrency.isTransient()) {
-				tradingCurrencyService.create(em, tradingCurrency, currentUser,
+				tradingCurrencyService.create(tradingCurrency, currentUser,
 						provider);
 			} else {
-				tradingCurrencyService.update(em, tradingCurrency, currentUser);
+				tradingCurrencyService.update(tradingCurrency, currentUser);
 			}
 
-			Language language = languageService.findByCode(em,
-					postData.getLanguageCode());
+			Language language = languageService.findByCode(postData
+					.getLanguageCode());
 
 			if (language == null) {
 				throw new EntityDoesNotExistsException(Language.class,
@@ -557,7 +560,7 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 
 			TradingLanguage tradingLanguage = tradingLanguageService
-					.findByTradingLanguageCode(em, postData.getLanguageCode(),
+					.findByTradingLanguageCode(postData.getLanguageCode(),
 							provider);
 
 			if (tradingLanguage == null) {
@@ -572,17 +575,17 @@ public class AccountHierarchyApi extends BaseApi {
 			tradingLanguage.setPrDescription(language.getDescriptionEn());
 
 			if (tradingLanguage.isTransient()) {
-				tradingLanguageService.create(em, tradingLanguage, currentUser,
+				tradingLanguageService.create(tradingLanguage, currentUser,
 						provider);
 			} else {
-				tradingLanguageService.update(em, tradingLanguage, currentUser);
+				tradingLanguageService.update(tradingLanguage, currentUser);
 			}
 
-			CustomerBrand customerBrand = customerBrandService.findByCode(em,
-					postData.getCustomerBrandCode());
+			CustomerBrand customerBrand = customerBrandService
+					.findByCode(postData.getCustomerBrandCode());
 
 			CustomerCategory customerCategory = customerCategoryService
-					.findByCode(em, postData.getCustomerCategoryCode());
+					.findByCode(postData.getCustomerCategoryCode());
 
 			if (customerBrand == null) {
 				customerBrand = new CustomerBrand();
@@ -593,10 +596,10 @@ public class AccountHierarchyApi extends BaseApi {
 			customerBrand.setDescription(postData.getCustomerBrandCode());
 
 			if (customerBrand.isTransient()) {
-				customerBrandService.create(em, customerBrand, currentUser,
+				customerBrandService.create(customerBrand, currentUser,
 						provider);
 			} else {
-				customerBrandService.update(em, customerBrand, currentUser);
+				customerBrandService.update(customerBrand, currentUser);
 			}
 
 			if (customerCategory == null) {
@@ -608,20 +611,19 @@ public class AccountHierarchyApi extends BaseApi {
 			customerCategory.setDescription(postData.getCustomerCategoryCode());
 
 			if (customerCategory.isTransient()) {
-				customerCategoryService.create(em, customerCategory,
-						currentUser, provider);
+				customerCategoryService.create(customerCategory, currentUser,
+						provider);
 			} else {
-				customerCategoryService.update(em, customerCategory,
-						currentUser);
+				customerCategoryService.update(customerCategory, currentUser);
 			}
 
 			int caPaymentMethod = Integer.parseInt(paramBean.getProperty(
-					"asp.api.default.customerAccount.paymentMethod", "1"));
+					"api.default.customerAccount.paymentMethod", "1"));
 			int creditCategory = Integer.parseInt(paramBean.getProperty(
-					"asp.api.default.customerAccount.creditCategory", "5"));
+					"api.default.customerAccount.creditCategory", "5"));
 
 			int baPaymentMethod = Integer.parseInt(paramBean.getProperty(
-					"asp.api.default.customerAccount.paymentMethod", "1"));
+					"api.default.customerAccount.paymentMethod", "1"));
 
 			Auditable auditable = new Auditable();
 			auditable.setCreated(new Date());
@@ -635,7 +637,7 @@ public class AccountHierarchyApi extends BaseApi {
 				seller.setProvider(provider);
 				seller.setTradingCountry(tradingCountry);
 				seller.setTradingCurrency(tradingCurrency);
-				sellerService.create(em, seller, currentUser, provider);
+				sellerService.create(seller, currentUser, provider);
 			}
 
 			Address address = new Address();
@@ -649,7 +651,7 @@ public class AccountHierarchyApi extends BaseApi {
 			contactInformation.setEmail(postData.getEmail());
 			contactInformation.setPhone(postData.getPhoneNumber());
 
-			Title title = titleService.findByCode(em, provider,
+			Title title = titleService.findByCode(provider,
 					postData.getTitleCode());
 
 			customer.getName().setLastName(postData.getLastName());
@@ -662,10 +664,10 @@ public class AccountHierarchyApi extends BaseApi {
 			customer.setContactInformation(contactInformation);
 			customer.setSeller(seller);
 
-			customerService.update(em, customer, currentUser);
+			customerService.update(customer, currentUser);
 
 			CustomerAccount customerAccount = customerAccountService
-					.findByCode(em, postData.getCustomerId(), provider);
+					.findByCode(postData.getCustomerId(), provider);
 			if (customerAccount == null) {
 				customerAccount = new CustomerAccount();
 			}
@@ -686,33 +688,31 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccount.setTradingCurrency(tradingCurrency);
 
 			if (customerAccount.isTransient()) {
-				customerAccountService.create(em, customerAccount, currentUser,
+				customerAccountService.create(customerAccount, currentUser,
 						provider);
 			} else {
-				customerAccountService.update(em, customerAccount, currentUser);
+				customerAccountService.update(customerAccount, currentUser);
 			}
 
 			BillingCycle billingCycle = billingCycleService
-					.findByBillingCycleCode(em, postData.getBillingCycleCode(),
+					.findByBillingCycleCode(postData.getBillingCycleCode(),
 							currentUser, provider);
 
 			if (billingCycle == null) {
-				billingCycle = billingCycleService.findByBillingCycleCode(em,
-						paramBean.getProperty("default.billingCycleCode",
+				billingCycle = billingCycleService.findByBillingCycleCode(
+						paramBean.getProperty("api.default.billingCycle.code",
 								"DEFAULT"), provider);
 				if (billingCycle == null) {
 					String imputationCalendarCode = paramBean.getProperty(
-							"default.imputationCalendar.Name", "DEF_IMP_CAL");
+							"api.default.imputationCalendar.name",
+							"DEF_IMP_CAL");
 					Calendar imputationCalendar = calendarService.findByName(
-							em, paramBean.getProperty(
-									"default.imputationCalendar.Name",
-									"DEF_IMP_CAL"));
+							imputationCalendarCode, provider);
 
 					String cycleCalendarCode = paramBean.getProperty(
-							"default.cycleCalendar.Name", "DEF_CYC_CAL");
-					Calendar cycleCalendar = calendarService.findByName(em,
-							paramBean.getProperty("default.cycleCalendar.Name",
-									"DEF_CYC_CAL"));
+							"api.default.cycleCalendar.name", "DEF_CYC_CAL");
+					Calendar cycleCalendar = calendarService.findByName(
+							cycleCalendarCode, provider);
 
 					if (imputationCalendar == null) {
 						throw new EntityDoesNotExistsException(Calendar.class,
@@ -725,20 +725,20 @@ public class AccountHierarchyApi extends BaseApi {
 
 					billingCycle = new BillingCycle();
 					billingCycle.setCode(paramBean.getProperty(
-							"default.billingCycleCode", "DEFAULT"));
+							"api.default.billingCycle.code", "DEFAULT"));
 					billingCycle.setActive(true);
 					billingCycle.setBillingTemplateName(paramBean.getProperty(
-							"default.billingTemplateName", "DEFAULT"));
+							"api.default.billingTemplate.name", "DEFAULT"));
 					billingCycle.setInvoiceDateDelay(0);
 					billingCycle.setCalendar(cycleCalendar);
 
-					billingCycleService.create(em, billingCycle, currentUser,
+					billingCycleService.create(billingCycle, currentUser,
 							provider);
 				}
 			}
 
 			BillingAccount billingAccount = billingAccountService.findByCode(
-					em, postData.getCustomerId(), provider);
+					postData.getCustomerId(), provider);
 			if (billingAccount == null) {
 				billingAccount = new BillingAccount();
 			}
@@ -753,20 +753,20 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccount
 					.setElectronicBilling(Boolean.valueOf(paramBean
 							.getProperty(
-									"customerHeirarchy.billingAccount.electronicBilling",
+									"api.customerHeirarchy.billingAccount.electronicBilling",
 									"true")));
 			billingAccount.setTradingCountry(tradingCountry);
 			billingAccount.setTradingLanguage(tradingLanguage);
 			billingAccount.setBillingCycle(billingCycle);
 			if (billingAccount.isTransient()) {
-				billingAccountService.createBillingAccount(em, billingAccount,
+				billingAccountService.createBillingAccount(billingAccount,
 						currentUser, provider);
 			} else {
-				billingAccountService.updateBillingAccount(em, billingAccount,
+				billingAccountService.updateBillingAccount(billingAccount,
 						currentUser);
 			}
 
-			UserAccount userAccount = userAccountService.findByCode(em,
+			UserAccount userAccount = userAccountService.findByCode(
 					postData.getCustomerId(), provider);
 			if (userAccount == null) {
 				userAccount = new UserAccount();
@@ -778,7 +778,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 			if (userAccount.isTransient()) {
 				try {
-					userAccountService.createUserAccount(em, billingAccount,
+					userAccountService.createUserAccount(billingAccount,
 							userAccount, currentUser);
 				} catch (AccountAlreadyExistsException e) {
 					throw new EntityAlreadyExistsException(UserAccount.class,
@@ -786,7 +786,7 @@ public class AccountHierarchyApi extends BaseApi {
 				}
 			} else {
 				try {
-					userAccountService.updateUserAccount(em, userAccount,
+					userAccountService.updateUserAccount(userAccount,
 							currentUser);
 				} catch (BusinessException e) {
 					throw new BusinessApiException();
@@ -841,12 +841,13 @@ public class AccountHierarchyApi extends BaseApi {
 				customerDto.getIndex(), customerDto.getLimit(), null, null,
 				customerDto.getSortField(), null);
 
-		List<Customer> customers = customerService.findByValues(em,
-				customerFilter, paginationConfiguration);
+		List<Customer> customers = customerService.findByValues(customerFilter,
+				paginationConfiguration);
 		for (Customer customer : customers) {
 			result.add(new AccountHierarchyDto(customer));
 		}
 
 		return result;
 	}
+
 }

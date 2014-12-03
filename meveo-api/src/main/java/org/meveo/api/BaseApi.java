@@ -3,20 +3,11 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-
-import org.meveo.util.MeveoJpaForJobs;
-
 /**
  * @author Edward P. Legaspi
  * @since Oct 15, 2013
  **/
 public abstract class BaseApi {
-
-	@Inject
-	@MeveoJpaForJobs
-	protected EntityManager em;
 
 	protected List<String> missingParameters = new ArrayList<String>();
 

@@ -17,8 +17,7 @@ import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.CountryRs;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Country} and
- * {@link org.meveo.model.billing.TradingCountry}.
+ * @see {@link org.meveo.api.rest.CountryWs}.
  * 
  * @author Edward P. Legaspi
  **/

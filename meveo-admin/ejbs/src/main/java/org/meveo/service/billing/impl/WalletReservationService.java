@@ -42,6 +42,13 @@ public class WalletReservationService extends
 	@Inject
 	private CalendarService calendarService;
 
+	public BigDecimal getCurrentBalanceWithoutTax(Provider provider,
+			String sellerCode, String userAccountCode, Date startDate,
+			Date endDate) throws BusinessException {
+		return getCurrentBalanceWithoutTax(getEntityManager(), provider,
+				sellerCode, userAccountCode, startDate, endDate);
+	}
+
 	public BigDecimal getCurrentBalanceWithoutTax(EntityManager em,
 			Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
@@ -61,6 +68,13 @@ public class WalletReservationService extends
 		return walletOperationService.getBalanceAmount(em, provider, seller,
 				null, null, userAccount.getBillingAccount(), null, startDate,
 				endDate, false, 1);
+	}
+
+	public BigDecimal getCurrentBalanceWithTax(Provider provider,
+			String sellerCode, String userAccountCode, Date startDate,
+			Date endDate) throws BusinessException {
+		return getCurrentBalanceWithTax(getEntityManager(), provider,
+				sellerCode, userAccountCode, startDate, endDate);
 	}
 
 	public BigDecimal getCurrentBalanceWithTax(EntityManager em,
@@ -84,6 +98,13 @@ public class WalletReservationService extends
 				endDate, true, 1);
 	}
 
+	public BigDecimal getReservedBalanceWithoutTax(Provider provider,
+			String sellerCode, String userAccountCode, Date startDate,
+			Date endDate) throws BusinessException {
+		return getReservedBalanceWithoutTax(getEntityManager(), provider,
+				sellerCode, userAccountCode, startDate, endDate);
+	}
+
 	public BigDecimal getReservedBalanceWithoutTax(EntityManager em,
 			Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
@@ -103,6 +124,13 @@ public class WalletReservationService extends
 		return walletOperationService.getBalanceAmount(em, provider, seller,
 				null, null, userAccount.getBillingAccount(), null, startDate,
 				endDate, false, 2);
+	}
+
+	public BigDecimal getReservedBalanceWithTax(Provider provider,
+			String sellerCode, String userAccountCode, Date startDate,
+			Date endDate) throws BusinessException {
+		return getReservedBalanceWithTax(getEntityManager(), provider,
+				sellerCode, userAccountCode, startDate, endDate);
 	}
 
 	public BigDecimal getReservedBalanceWithTax(EntityManager em,
@@ -126,6 +154,13 @@ public class WalletReservationService extends
 				endDate, true, 2);
 	}
 
+	public BigDecimal getOpenBalanceWithoutTax(Provider provider,
+			String sellerCode, String userAccountCode, Date startDate,
+			Date endDate) throws BusinessException {
+		return getOpenBalanceWithoutTax(getEntityManager(), provider,
+				sellerCode, userAccountCode, startDate, endDate);
+	}
+
 	public BigDecimal getOpenBalanceWithoutTax(EntityManager em,
 			Provider provider, String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
@@ -145,6 +180,13 @@ public class WalletReservationService extends
 		return walletOperationService.getBalanceAmount(em, provider, seller,
 				null, null, userAccount.getBillingAccount(), null, startDate,
 				endDate, false, 3);
+	}
+
+	public BigDecimal getOpenBalanceWithTax(Provider provider,
+			String sellerCode, String userAccountCode, Date startDate,
+			Date endDate) throws BusinessException {
+		return getOpenBalanceWithTax(getEntityManager(), provider, sellerCode,
+				userAccountCode, startDate, endDate);
 	}
 
 	public BigDecimal getOpenBalanceWithTax(EntityManager em,
