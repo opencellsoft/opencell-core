@@ -124,7 +124,7 @@ public class InvoiceApi extends BaseApi {
 			BillingRun br = new BillingRun();
 			br.setStartDate(new Date());
 			br.setProvider(provider);
-			br.setStatus(BillingRunStatusEnum.VALIDATED);
+			br.setStatus(BillingRunStatusEnum.TERMINATED);
 			billingRunService.create(br, currentUser, provider);
 
 			Invoice invoice = new Invoice();
