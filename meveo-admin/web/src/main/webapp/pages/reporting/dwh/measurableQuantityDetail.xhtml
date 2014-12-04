@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+	
+	<ui:define name="body">
+
+		<hf:formPanel id="measurableQuantityForm"
+			backingBean="#{measurableQuantityBean}" columns="1">
+			<hf:formField label="#{messages['entity.measurablequantity.code']}" field="code" />
+			<hf:formField label="#{messages['entity.measurablequantity.dimension1']}" field="dimension1" />
+			<hf:formField label="#{messages['entity.measurablequantity.dimension2']}" field="dimension2" />
+			<hf:formField label="#{messages['entity.measurablequantity.dimension3']}" field="dimension3" />
+			<hf:formField label="#{messages['entity.measurablequantity.dimension4']}" field="dimension4" />
+			<hf:formField label="#{messages['entity.measurablequantity.jpaQuery']}" field="jpaQuery" textArea="true"/>
+			<hf:formField label="#{messages['entity.measurablequantity.editable']}" field="editable" />
+		</hf:formPanel>
+
+	</ui:define>
+
+</ui:composition>

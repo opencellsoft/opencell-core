@@ -421,6 +421,7 @@ public class UsageRatingService {
 				countryId, currency, provider);
 		// for AGGREGATED counter we update the price of the previous wallet
 		// Operation to the current price
+		// FIXME: just need to do that if its the first event deduced on the counter, if not its useless
 		if (chargeInstance.getCounter() != null
 				&& (chargeInstance.getCounter().getCounterTemplate() != null)
 				&& CounterTypeEnum.AGGREGATED == chargeInstance.getCounter()
