@@ -1439,7 +1439,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				strQuery +=  ","
 					+ " w.amountWithTax = w.quantity * "+ unitPriceWithTax;
 			}
-			strQuery += " w.auditable.updated = CURRENT_TIMESTAMP"
+			strQuery += ", w.auditable.updated = CURRENT_TIMESTAMP"
 					+ " WHERE  w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "
 					+ " AND w.status=:status "
