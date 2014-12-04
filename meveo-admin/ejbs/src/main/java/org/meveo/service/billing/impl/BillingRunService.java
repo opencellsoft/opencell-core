@@ -495,8 +495,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return result;
 	}
 	
-	@Asynchronous
-	public Future<Boolean> processBillingRun(BillingRun billingRun,JobExecutionResultImpl result) throws BusinessException, Exception{
+	
+	public void processBillingRun(BillingRun billingRun,JobExecutionResultImpl result) throws BusinessException, Exception{
 		try {
 			if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 				BillingCycle billingCycle = billingRun
@@ -575,14 +575,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
 				update(getEntityManager(),billingRun);
 			}
-			
-			 return new AsyncResult<Boolean>(true);
+			 
 		
 		} catch (Exception e) {
 			result.registerError(e.getMessage());
 		}
-			
-		return new AsyncResult<Boolean>(false);
+			 
 	}
 	
 	  public void createAgregatesAndInvoice(EntityManager em,BillingRun billingRun)

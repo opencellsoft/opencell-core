@@ -236,7 +236,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		try {
 			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b");
 			qb.addCriterionEntity("b.billingCycle", billingCycle);
-			qb.addSql("b.billingRun is null");
 			if (startdate != null) {
 				qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate",
 						startdate);

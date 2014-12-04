@@ -76,8 +76,8 @@ public class InvoicingJob implements Job {
 			log.info("# billingRuns to process:" + billingRuns.size());
 			for (BillingRun billingRun : billingRuns) {
 				try {
-					Future<Boolean> isBRProcessed=billingRunService.processBillingRun(billingRun,result);
-					isBRProcessed.get();
+				billingRunService.processBillingRun(billingRun,result);
+					
 					
 				} catch (Exception e) {
 					log.info("# InvoicingJob error:" + e.getMessage());

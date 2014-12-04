@@ -24,7 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.AuditableEntity;
 
 /**
  * RejectedBillingAccount.
@@ -32,7 +32,7 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "BILLING_REJECTED_BILLING_ACCOUNTS")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_REJECTED_BA_SEQ")
-public class RejectedBillingAccount extends BusinessEntity {
+public class RejectedBillingAccount extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
