@@ -38,23 +38,24 @@ public class DWHQueryBean {
 		if(mq==null){
 			throw new BusinessException("no measurable quantity with code "+measurableQuantityCode+" for provider "+provider.getCode());
 		}
-		if(StringUtils.isBlank(mq.getJpaQuery())){
-			throw new BusinessException("measurable quantity with code "+measurableQuantityCode+" has no JPA query set.");
+		if(StringUtils.isBlank(mq.getSqlQuery())){
+			throw new BusinessException("measurable quantity with code "+measurableQuantityCode+" has no SQL query set.");
 		}
 		try{
-			Query query=em.createQuery(mq.getJpaQuery());
+			Query query=em.createNativeQuery(mq.getSqlQuery());
 			@SuppressWarnings("unchecked")
 			List<Object[]> results=query.getResultList();
 			for(Object[] res:results){
-				MeasuredValue mv = mvService.getByDate(em, (Date) res[0], MeasurementPeriodEnum.DAILY, mq);
+				MeasurementPeriodEnum mve = (mq.getMeasurementPeriod()!=null)?mq.getMeasurementPeriod():MeasurementPeriodEnum.DAILY;
+				MeasuredValue mv = mvService.getByDate(em, (Date) res[0], mve, mq);
 				if(mv==null){
 						mv=new MeasuredValue();
 				}
 				mv.setProvider(provider);
 				mv.setMeasurableQuantity(mq);
 				mv.setDate((Date) res[0]);
-				mv.setMeasurementPeriod(MeasurementPeriodEnum.DAILY);
-				mv.setValue((Long)res[1]);
+				mv.setMeasurementPeriod(mve);
+				mv.setValue(Long.parseLong(""+res[1]));
 				if(mv.getId()!=null){
 					mvService.update(em, mv);
 				} else {
@@ -63,7 +64,7 @@ public class DWHQueryBean {
 				result++;
 			}
 		} catch(Exception e){
-			throw new BusinessException("measurable quantity with code "+measurableQuantityCode+" contain invalid JPA query: "+e.getMessage());			
+			throw new BusinessException("measurable quantity with code "+measurableQuantityCode+" contain invalid SQL query: "+e.getMessage());			
 		}
 		
 		return result;

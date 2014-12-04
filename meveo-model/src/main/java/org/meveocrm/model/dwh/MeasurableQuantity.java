@@ -2,6 +2,8 @@ package org.meveocrm.model.dwh;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -40,8 +42,13 @@ public class MeasurableQuantity extends BusinessEntity {
 	 * that will be used to create measuredValue.
 	 * be careful that super admin MUST validate those queries as they could break separation of data between providers
 	 */
-	@Column(name = "JPA_QUERY", length = 2000)
-	private String jpaQuery;
+	@Column(name = "SQL_QUERY", length = 2000)
+	private String sqlQuery;
+	
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "MEASUREMENT_PERIOD")
+	private MeasurementPeriodEnum measurementPeriod;
 
 	public String getTheme() {
 		return theme;
@@ -91,12 +98,19 @@ public class MeasurableQuantity extends BusinessEntity {
 		this.editable = editable;
 	}
 
-	public String getJpaQuery() {
-		return jpaQuery;
+	public String getSqlQuery() {
+		return sqlQuery;
 	}
 
-	public void setJpaQuery(String jpaQuery) {
-		this.jpaQuery = jpaQuery;
+	public void setSqlQuery(String sqlQuery) {
+		this.sqlQuery = sqlQuery;
 	}
 
+	public MeasurementPeriodEnum getMeasurementPeriod() {
+		return measurementPeriod;
+	}
+
+	public void setMeasurementPeriod(MeasurementPeriodEnum measurementPeriod) {
+		this.measurementPeriod = measurementPeriod;
+	}
 }

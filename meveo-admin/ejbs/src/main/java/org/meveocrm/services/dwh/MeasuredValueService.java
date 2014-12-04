@@ -44,7 +44,7 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 	
 	public MeasuredValue getByDate(EntityManager em,Date date, MeasurementPeriodEnum period,
 			MeasurableQuantity mq){
-
+		MeasuredValue result=null;
 		QueryBuilder queryBuilder = new QueryBuilder("FROM "
 				+ MeasuredValue.class.getName() + " m ");
 		queryBuilder.addCriterionDate("m.date", date);
@@ -52,7 +52,12 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 					.addCriterion("m.measurementPeriod", "=", period, false);
 		queryBuilder.addCriterion("m.measurableQuantity", "=", mq, false);
 		Query query = queryBuilder.getQuery(em);
-		return (MeasuredValue) query.getSingleResult();
+		@SuppressWarnings("unchecked")
+		List<MeasuredValue> res = query.getResultList();
+		if(res.size()>0){
+			result = res.get(0);
+		}
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
