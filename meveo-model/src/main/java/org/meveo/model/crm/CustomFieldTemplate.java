@@ -1,10 +1,13 @@
 package org.meveo.model.crm;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.meveo.model.BusinessEntity;
 
@@ -23,6 +26,18 @@ public class CustomFieldTemplate extends BusinessEntity {
 	@Enumerated
 	private AccountLevelEnum accountLevel;
 
+	@Transient
+	private String stringValue;
+
+	@Transient
+	private Double doubleValue;
+
+	@Transient
+	private Long longValue;
+
+	@Transient
+	private Date dateValue;
+
 	public CustomFieldTypeEnum getFieldType() {
 		return fieldType;
 	}
@@ -37,6 +52,38 @@ public class CustomFieldTemplate extends BusinessEntity {
 
 	public void setAccountLevel(AccountLevelEnum accountLevel) {
 		this.accountLevel = accountLevel;
+	}
+
+	public String getStringValue() {
+		return stringValue;
+	}
+
+	public void setStringValue(String stringValue) {
+		this.stringValue = stringValue;
+	}
+
+	public Double getDoubleValue() {
+		return doubleValue;
+	}
+
+	public void setDoubleValue(Double doubleValue) {
+		this.doubleValue = doubleValue;
+	}
+
+	public Long getLongValue() {
+		return longValue;
+	}
+
+	public void setLongValue(Long longValue) {
+		this.longValue = longValue;
+	}
+
+	public Date getDateValue() {
+		return dateValue;
+	}
+
+	public void setDateValue(Date dateValue) {
+		this.dateValue = dateValue;
 	}
 
 }

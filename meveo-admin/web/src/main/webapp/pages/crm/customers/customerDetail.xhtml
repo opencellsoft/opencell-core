@@ -6,6 +6,7 @@
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:o="http://omnifaces.org/ui"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
@@ -14,6 +15,8 @@
 				listener="#{customerBean.preRenderView}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
+		
+		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -116,6 +119,10 @@
 											field="mandateDate" isDate="true" />
 									</hftl:panelGroup>
 								</hftl:fieldset>
+							</p:tab>
+
+							<p:tab title="#{messages['customFieldTemplate.panel']}">
+								<hf:customFields />
 							</p:tab>
 						</p:tabView>
 

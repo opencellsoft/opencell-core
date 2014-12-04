@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -43,6 +44,7 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -72,7 +74,7 @@ import com.lowagie.text.pdf.PdfStamper;
  */
 @Named
 @ConversationScoped
-public class BillingAccountBean extends BaseBean<BillingAccount> {
+public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -139,6 +141,8 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 			}
 		}
 
+		initCustomFields(AccountLevelEnum.BA);
+
 		return entity;
 	}
 
@@ -172,6 +176,9 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 					&& !customerAccount.getBillingAccounts().contains(entity)) {
 				customerAccount.getBillingAccounts().add(entity);
 			}
+
+			saveCustomFields();
+
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=false&billingAccountId="
 					+ entity.getId()
 					+ "&faces-redirect=true&includeViewParams=true";
@@ -195,7 +202,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 
 	protected String saveOrUpdate(BillingAccount entity) {
 		try {
-
 			if (entity.isTransient()) {
 				billingAccountService.createBillingAccount(entity, null);
 				messages.info(new BundleKey("messages", "save.successful"));
@@ -203,7 +209,6 @@ public class BillingAccountBean extends BaseBean<BillingAccount> {
 				billingAccountService.updateBillingAccount(entity, null);
 				messages.info(new BundleKey("messages", "update.successful"));
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			// messages.error(e.getMessage());
