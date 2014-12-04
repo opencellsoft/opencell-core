@@ -30,6 +30,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.jboss.seam.transaction.TransactionPropagation;
+import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
@@ -226,6 +228,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	  
 
 	  @Asynchronous
+	  @Transactional(TransactionPropagation.REQUIRED)
 	  public Future<Boolean> createAgregatesAndInvoice(EntityManager em,BillingAccount billingAccount,BillingRun billingRun) throws BusinessException, Exception {
 			try {
 				Long startDate=System.currentTimeMillis();
@@ -251,7 +254,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	            invoice.setPaymentMethod(billingAccount.getPaymentMethod());
 	            invoice.setProvider(billingRun.getProvider());
 	            create(getEntityManager(),invoice);
-	            ratedTransactionService.createInvoiceAndAgregates(em,billingRun, billingAccount,invoice);
+	            ratedTransactionService.createInvoiceAndAgregates(em, billingAccount,invoice);
 
 		        ratedTransactionService.updateRatedTransactions(em,billingRun, billingAccount,invoice);
 		        
@@ -269,6 +272,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	            return new AsyncResult<Boolean>(true);  
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error("Error for BA="+ billingAccount.getCode()+ " : "+e.getMessage());
 				RejectedBillingAccount rejectedBA=new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
 				rejectedBillingAccountService.create(rejectedBA);

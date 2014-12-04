@@ -360,11 +360,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public void cleanBillingRun(BillingRun billingRun) {
 		Query queryTrans = getEntityManager()
-				.createQuery(
-						"update "
-								+ RatedTransaction.class.getName()
-								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where billingRun=:billingRun");
-		queryTrans.setParameter("billingRun", billingRun);
+			    .createQuery(
+			      "update "
+			        + RatedTransaction.class.getName()
+			        + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
+			  queryTrans.setParameter("billingRun", billingRun);
+			  queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
 		queryTrans.executeUpdate();
 
 		Query queryAgregate = getEntityManager().createQuery(
@@ -386,6 +387,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 								+ " set billingRun=null where billingRun=:billingRun");
 		queryBA.setParameter("billingRun", billingRun);
 		queryBA.executeUpdate();
+		
+		
 		
 	}
 
