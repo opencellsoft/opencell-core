@@ -8,24 +8,20 @@ import javax.persistence.Table;
 
 import org.meveo.model.BusinessEntity;
 
-
 @Entity
 @Table(name = "CRM_CUSTOM_FIELD_TMPL")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FLD_TMP_SEQ")
 public class CustomFieldTemplate extends BusinessEntity {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -1403961759495272885L;
 
-	@Column(name="FIELD_TYPE")
+	@Column(name = "FIELD_TYPE")
 	@Enumerated
-	CustomFieldTypeEnum fieldType;
-	
-	@Column(name="ACCOUNT_TYPE")
+	private CustomFieldTypeEnum fieldType;
+
+	@Column(name = "ACCOUNT_TYPE")
 	@Enumerated
-	AccountLevelEnum accountLevel;
+	private AccountLevelEnum accountLevel;
 
 	public CustomFieldTypeEnum getFieldType() {
 		return fieldType;

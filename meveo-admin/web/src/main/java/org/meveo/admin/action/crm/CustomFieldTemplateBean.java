@@ -9,7 +9,6 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
-
 @Named
 @ConversationScoped
 public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
@@ -17,8 +16,12 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
 	private static final long serialVersionUID = 9099292371182275568L;
 
 	@Inject
-	CustomFieldTemplateService cftService;
-	
+	private CustomFieldTemplateService cftService;
+
+	public CustomFieldTemplateBean() {
+		super(CustomFieldTemplate.class);
+	}
+
 	@Override
 	protected IPersistenceService<CustomFieldTemplate> getPersistenceService() {
 		return cftService;
@@ -33,7 +36,7 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
 	public String getNewViewName() {
 		return "customFieldTemplateDetail";
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
