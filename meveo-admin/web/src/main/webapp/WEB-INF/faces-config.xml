@@ -950,6 +950,36 @@
 			<to-view-id>/pages/crm/syntheseClients/billingAccounts.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+	</navigation-rule>
+	<navigation-rule>
+
+		<navigation-case>
+			<from-outcome>measuredValueDetail</from-outcome>
+			<to-view-id>/pages/reporting/dwh/measuredValueDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>measuredValues</from-outcome>
+			<to-view-id>/pages/reporting/dwh/measuredValues.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>measurableQuantityDetail</from-outcome>
+			<to-view-id>/pages/reporting/dwh/measurableQuantityDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>measurableQuantities</from-outcome>
+			<to-view-id>/pages/reporting/dwh/measurableQuantities.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+	</navigation-rule>
+	<navigation-rule>
 		<!-- Reporting -->
 		<navigation-case>
 			<from-outcome>jobs</from-outcome>

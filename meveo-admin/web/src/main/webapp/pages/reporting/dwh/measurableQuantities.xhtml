@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+    template="/layout/template.xhtml">
+
+
+    <ui:define name="navigation">
+   		<ui:include src="/layout/navigation.xhtml" />
+   	</ui:define>
+   	
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{measurableQuantityBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+	<ui:define name="body">
+   		
+			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+
+			<hf:searchPanel label="#{messages['menu.measurableQuantities']}" columns="3" backingBean="#{measurableQuantitiesBean}">
+				<hf:searchField label="#{messages['entity.measurablequantity.code']}" field="code" />
+				<hf:searchField label="#{messages['entity.measurablequantity.dimension1']}" field="dimension1" />
+				<hf:searchField label="#{messages['entity.measurablequantity.dimension2']}" field="dimension2" />
+				<hf:searchField label="#{messages['entity.measurablequantity.dimension3']}" field="dimension3" />
+				<hf:searchField label="#{messages['entity.measurablequantity.dimension4']}" field="dimension4" />
+				<hf:searchField label="#{messages['entity.measurablequantity.editable']}" field="editable" />
+			</hf:searchPanel>
+
+			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
+
+			<hftl:dataList backingBean="#{measurableQuantityBean}">
+			    <hftl:column label="#{messages['entity.measurablequantity.code']}"
+					field="code" />
+				<hftl:column
+					label="#{messages['entity.measurablequantity.dimension1']}"
+					field="dimension1" />
+				<hftl:column
+					label="#{messages['entity.measurablequantity.dimension2']}"
+					field="dimension2" />
+				<hftl:column
+					label="#{messages['entity.measurablequantity.dimension3']}"
+					field="dimension3" />
+				<hftl:column
+					label="#{messages['entity.measurablequantity.dimension4']}"
+					field="dimension4" />
+				<hftl:column
+					label="#{messages['entity.measurablequantity.editable']}"
+					field="editable" isMessage="true" />
+				<hftl:actionsColumn editView="/pages/reporting/dwh/measurableQuantityDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
+			</hftl:dataList>
+	</ui:define>
+</ui:composition>

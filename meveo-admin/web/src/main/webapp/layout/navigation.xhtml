@@ -587,10 +587,13 @@
 		<p:submenu id="reporting" label="#{messages['menu.reporting']}"
 			rendered="#{identity.hasPermission('reporting','reportingVisualization')}">
 
-			<!-- <p:menuitem id="jobs" outcome="jobs" value="#{messages['menu.jobs']}" />
-
-			<p:menuitem id="jobHistory" outcome="jobHistory"
-				value="#{messages['menu.jobHistory']}" /> -->
+			<p:menuitem id="measurableQuantities"
+				value="#{messages['menu.measurableQuantities']}"
+				outcome="measurableQuantities"/>
+				
+			<p:menuitem id="measuredValues"
+				value="#{messages['menu.measuredValues']}"
+				outcome="measuredValues"/>
 
 		</p:submenu>
 
