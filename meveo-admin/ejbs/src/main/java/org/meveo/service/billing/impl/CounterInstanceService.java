@@ -92,6 +92,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		log.info("create counter period from " + startDate + " to " + endDate);
 		counterPeriod.setPeriodStartDate(startDate);
 		counterPeriod.setPeriodEndDate(endDate);
+		counterPeriod.setProvider(counterInstance.getProvider());
 		counterPeriod.setValue(counterInstance.getCounterTemplate().getLevel());
 		counterPeriod.setCode(counterInstance.getCode());
 		counterPeriod.setDescription(counterInstance.getDescription());
