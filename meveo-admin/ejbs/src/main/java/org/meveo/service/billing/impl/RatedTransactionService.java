@@ -40,6 +40,8 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.jboss.seam.transaction.TransactionPropagation;
+import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -71,6 +73,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	
 	@EJB
 	private InvoiceAgregateService invoiceAgregateService;
+	
+	@EJB
+	private BillingAccountService billingAccountService;
 	
 	@EJB
 	private InvoiceSubCategoryService invoiceSubCategoryService;
@@ -248,16 +253,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		  
     }
     @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-    public void createInvoiceAndAgregates(EntityManager em,BillingRun billingRun,BillingAccount billingAccount,Invoice invoice) throws BusinessException{
-    	 boolean entreprise = billingRun.getProvider().isEntreprise();
+    @Transactional(TransactionPropagation.REQUIRED)
+    public void createInvoiceAndAgregates(EntityManager em,BillingAccount billingAccount,Invoice invoice) throws BusinessException{
+    	 boolean entreprise = billingAccount.getProvider().isEntreprise();
 
          BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
+         billingAccount=billingAccountService.findById(billingAccount.getId());
         for (UserAccount userAccount : billingAccount.getUsersAccounts()) {
         	WalletInstance wallet = userAccount.getWallet();
   
         
         
-          CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+          CriteriaBuilder cb = em.getCriteriaBuilder();
           CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
           Root from= cq.from(RatedTransaction.class);
           Path<Long> invoiceSubCategoryPath = from.get("invoiceSubCategory").get("id");
@@ -274,13 +281,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	     Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN);
 	     Predicate pWallet = cb.equal(from.get("wallet"), wallet);
 	     Predicate pAmoutWithoutTax=null;
-	     if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+	     if(!billingAccount.getProvider().isDisplayFreeTransacInInvoice()){
 	    	 pAmoutWithoutTax = cb.notEqual(from.get("amountWithoutTax"), BigDecimal.ZERO);
 	     }
 	    
 	     Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
 	     Predicate pInvoice = cb.isNull(from.get("invoice"));
-	     if(!billingRun.getProvider().isDisplayFreeTransacInInvoice()){
+	     if(!billingAccount.getProvider().isDisplayFreeTransacInInvoice()){
 	    	 cq.where(pStatus,pWallet,pAmoutWithoutTax,pdoNotTriggerInvoicing,pInvoice);
 	     }else{
 	    	 cq.where(pStatus,pWallet,pdoNotTriggerInvoicing,pInvoice);
@@ -313,10 +320,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  }
    			  
    			  SubCategoryInvoiceAgregate invoiceAgregateF = new SubCategoryInvoiceAgregate();
-                 invoiceAgregateF.setAuditable(billingRun.getAuditable());
-                 invoiceAgregateF.setProvider(billingRun.getProvider());
+                 invoiceAgregateF.setAuditable(billingAccount.getAuditable());
+                 invoiceAgregateF.setProvider(billingAccount.getProvider());
                  invoiceAgregateF.setInvoice(invoice);
-                 invoiceAgregateF.setBillingRun(billingRun);
+                 invoiceAgregateF.setBillingRun(billingAccount.getBillingRun());
                  invoiceAgregateF.setWallet(wallet);
                  invoiceAgregateF.setAccountingCode(invoiceSubCategory.getAccountingCode());
                  invoiceAgregateF.setSubCategoryTax(tax);
@@ -328,7 +335,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  invoiceAgregateF.setAmountWithTax((BigDecimal)object[2]);
                  invoiceAgregateF.setAmountTax((BigDecimal)object[3]);
                  invoiceAgregateF.setQuantity((BigDecimal)object[4]);
-                 invoiceAgregateF.setProvider(billingRun.getProvider());
+                 invoiceAgregateF.setProvider(billingAccount.getProvider());
                  invoiceAgregateFList.add(invoiceAgregateF);
                  // end agregate F
                  
@@ -343,10 +350,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                      invoiceAgregateT = taxInvoiceAgregateMap.get(taxId);
                  } else {
                      invoiceAgregateT = new TaxInvoiceAgregate();
-                     invoiceAgregateT.setAuditable(billingRun.getAuditable());
-                     invoiceAgregateT.setProvider(billingRun.getProvider());
+                     invoiceAgregateT.setAuditable(billingAccount.getAuditable());
+                     invoiceAgregateT.setProvider(billingAccount.getProvider());
                      invoiceAgregateT.setInvoice(invoice);
-                     invoiceAgregateT.setBillingRun(billingRun);
+                     invoiceAgregateT.setBillingRun(billingAccount.getBillingRun());
                      invoiceAgregateT.setTax(tax);
                      invoiceAgregateT.setAccountingCode(tax.getAccountingCode());
 
@@ -361,7 +368,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  if(invoiceAgregateF.getSubCategoryTax().getPercent().compareTo(BigDecimal.ZERO)!=0) {
                  	invoiceAgregateT.setTaxPercent(invoiceAgregateF.getSubCategoryTax().getPercent());
                  }
-                 invoiceAgregateT.setProvider(billingRun.getProvider());
+                 invoiceAgregateT.setProvider(billingAccount.getProvider());
                  
                  if(invoiceAgregateT.getId()==null){
               	   invoiceAgregateService.create(em,invoiceAgregateT);
@@ -377,11 +384,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                      invoiceAgregateR = catInvoiceAgregateMap.get(invoiceCategoryId);
                  } else {
                      invoiceAgregateR = new CategoryInvoiceAgregate();
-                     invoiceAgregateR.setAuditable(billingRun.getAuditable());
-                     invoiceAgregateR.setProvider(billingRun.getProvider());
+                     invoiceAgregateR.setAuditable(billingAccount.getAuditable());
+                     invoiceAgregateR.setProvider(billingAccount.getProvider());
 
                      invoiceAgregateR.setInvoice(invoice);
-                     invoiceAgregateR.setBillingRun(billingRun);
+                     invoiceAgregateR.setBillingRun(billingAccount.getBillingRun());
                      catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateR);
                  }
 
@@ -391,7 +398,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                  }
 
                  invoiceAgregateR.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
-                 invoiceAgregateR.setProvider(billingRun.getProvider());
+                 invoiceAgregateR.setProvider(billingAccount.getProvider());
                  invoiceAgregateF.setCategoryInvoiceAgregate(invoiceAgregateR);
                  invoiceAgregateF.setTaxInvoiceAgregate(invoiceAgregateT);
                  // end agregate R
