@@ -22,7 +22,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 
@@ -33,7 +32,6 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.util.CacheContainerProvider;
 
 /**
  * CatMessagesService service implementation.
@@ -43,17 +41,12 @@ import org.meveo.util.CacheContainerProvider;
 @LocalBean
 public class CatMessagesService extends PersistenceService<CatMessages> {
 	
-	@Inject
-	CacheContainerProvider cacheContainerProvider;
 	
 
     private static BasicCache<String, Object> catMessageCach;
     
     @PostConstruct
     private void init() {
-		if(catMessageCach==null){
-			catMessageCach=cacheContainerProvider.getCacheContainer().getCache("meveo");
-		}
 
 	}
 
@@ -63,22 +56,14 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		if(messageCode==null || languageCode==null){
 			return null;
 		}
-		String description="";
-		/*if(catMessageCach.containsKey(messageCode)){
-			log.info("get message description from infinispan cache messageCode="+messageCode+",languageCode="+languageCode);
-			description= (String)catMessageCach.get(messageCode);
-		}else{*/
-			log.info("get message description from DB="+messageCode+",languageCode="+languageCode);
 			QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 			qb.addCriterionWildcard("c.messageCode", messageCode, true);
 			qb.addCriterionWildcard("c.languageCode", languageCode, true);
 			List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
 			
-			description= catMessages.size() > 0 ? catMessages.get(0).getDescription() : "";
-			if(description!=null){
-				//catMessageCach.put(messageCode, description);
-			}
-		//}
+			String  description= catMessages.size() > 0 ? catMessages.get(0).getDescription() : "";
+			
+		
 		
 		log.info("get message description description ="+description+", time="+(System.currentTimeMillis()-startDate));
 		return description;
