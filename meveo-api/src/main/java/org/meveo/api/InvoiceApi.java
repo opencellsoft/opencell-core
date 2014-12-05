@@ -129,16 +129,8 @@ public class InvoiceApi extends BaseApi {
 						InvoiceSubCategory.class, invoiceSubCategoryCode);
 			}
 
-			BillingRun br = new BillingRun();
-			br.setStartDate(new Date());
-			br.setProvider(provider);
-			br.setStatus(BillingRunStatusEnum.TERMINATED);
-			billingRunService.create(br, currentUser, provider);
-
 			Invoice invoice = new Invoice();
 			invoice.setBillingAccount(billingAccount);
-			invoice.setBillingRun(br);
-			invoice.setAuditable(br.getAuditable());
 			invoice.setProvider(provider);
 			Date invoiceDate = new Date();
 			invoice.setInvoiceDate(invoiceDate);
@@ -180,7 +172,6 @@ public class InvoiceApi extends BaseApi {
 					subCategoryInvoiceAgregate
 							.setBillingAccount(billingAccount);
 					subCategoryInvoiceAgregate.setUserAccount(userAccount);
-					subCategoryInvoiceAgregate.setBillingRun(br);
 					subCategoryInvoiceAgregate.setInvoice(invoice);
 					subCategoryInvoiceAgregate.setSubCategoryTax(tax);
 					subCategoryInvoiceAgregate
@@ -202,7 +193,6 @@ public class InvoiceApi extends BaseApi {
 							.setAmountTax(subCategoryInvoiceAgregateDTO
 									.getAmountTax());
 					categoryInvoiceAgregate.setBillingAccount(billingAccount);
-					categoryInvoiceAgregate.setBillingRun(br);
 					categoryInvoiceAgregate.setInvoice(invoice);
 					categoryInvoiceAgregate
 							.setItemNumber(subCategoryInvoiceAgregateDTO
@@ -229,7 +219,6 @@ public class InvoiceApi extends BaseApi {
 							.setTaxPercent(subCategoryInvoiceAgregateDTO
 									.getTaxPercent());
 					taxInvoiceAgregate.setBillingAccount(billingAccount);
-					taxInvoiceAgregate.setBillingRun(br);
 					taxInvoiceAgregate.setInvoice(invoice);
 					taxInvoiceAgregate.setUserAccount(billingAccount
 							.getDefaultUserAccount());
@@ -265,7 +254,6 @@ public class InvoiceApi extends BaseApi {
 								.getCode());
 						meveoRatedTransaction.setDescription(ratedTransaction
 								.getDescription());
-						meveoRatedTransaction.setBillingRun(br);
 						meveoRatedTransaction.setInvoice(invoice);
 						meveoRatedTransaction
 								.setWallet(userAccount.getWallet());
