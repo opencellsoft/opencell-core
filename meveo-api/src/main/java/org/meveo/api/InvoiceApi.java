@@ -87,7 +87,7 @@ public class InvoiceApi extends BaseApi {
 	@MeveoParamBean
 	private ParamBean paramBean;
 
-	public void create(InvoiceDto invoiceDTO, User currentUser)
+	public String create(InvoiceDto invoiceDTO, User currentUser)
 			throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
 
@@ -148,7 +148,7 @@ public class InvoiceApi extends BaseApi {
 			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
-
+			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
 			invoiceService.create(invoice, currentUser, provider);
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 
@@ -299,6 +299,7 @@ public class InvoiceApi extends BaseApi {
 							getMissingParametersExceptionMessage());
 				}
 			}
+			return invoice.getInvoiceNumber();
 		} else {
 			if (invoiceDTO.getSubCategoryInvoiceAgregates().size() <= 0) {
 				missingParameters.add("subCategoryInvoiceAgregates");
@@ -322,6 +323,7 @@ public class InvoiceApi extends BaseApi {
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
+		
 	}
 
 	public List<InvoiceDto> list(String customerAccountCode, Provider provider)

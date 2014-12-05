@@ -164,6 +164,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public void setInvoiceNumber(Invoice invoice) {
+		
+		invoice.setInvoiceNumber(getInvoiceNumber(invoice));
+		update(invoice);
+	}
+	
+	public String getInvoiceNumber(Invoice invoice) {
 		Seller seller = invoice.getBillingAccount().getCustomerAccount()
 				.getCustomer().getSeller();
 		String prefix = seller.getInvoicePrefix();
@@ -177,8 +183,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		StringBuffer num1 = new StringBuffer("000000000");
 		num1.append(nextInvoiceNb + "");
 		String invoiceNumber = num1.substring(num1.length() - 9);
-		invoice.setInvoiceNumber(prefix + invoiceNumber);
-		update(invoice);
+		return (prefix + invoiceNumber);
 	}
 
 	public synchronized long getNextValue(Seller seller) {
