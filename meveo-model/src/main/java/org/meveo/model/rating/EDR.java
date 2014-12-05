@@ -43,8 +43,8 @@ import org.meveo.model.billing.Subscription;
 public class EDR extends BaseEntity {
 
 	private static final long serialVersionUID = 1278336655583933747L;
-	
-	public static String EDR_TABLE_ORIGIN="EDR_TABLE";
+
+	public static String EDR_TABLE_ORIGIN = "EDR_TABLE";
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "SUBSCRIPTION_ID")
@@ -198,6 +198,17 @@ public class EDR extends BaseEntity {
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+
+	@Override
+	public String toString() {
+		return "EDR [subscription=" + subscription + ", originBatch="
+				+ originBatch + ", originRecord=" + originRecord
+				+ ", eventDate=" + eventDate + ", quantity=" + quantity
+				+ ", parameter1=" + parameter1 + ", parameter2=" + parameter2
+				+ ", parameter3=" + parameter3 + ", parameter4=" + parameter4
+				+ ", status=" + status + ", rejectReason=" + rejectReason
+				+ ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
 	}
 
 }

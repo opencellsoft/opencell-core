@@ -421,7 +421,8 @@ public class UsageRatingService {
 				countryId, currency, provider);
 		// for AGGREGATED counter we update the price of the previous wallet
 		// Operation to the current price
-		// FIXME: just need to do that if its the first event deduced on the counter, if not its useless
+		// FIXME: just need to do that if its the first event deduced on the
+		// counter, if not its useless
 		if (chargeInstance.getCounter() != null
 				&& (chargeInstance.getCounter().getCounterTemplate() != null)
 				&& CounterTypeEnum.AGGREGATED == chargeInstance.getCounter()
@@ -606,6 +607,9 @@ public class UsageRatingService {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void ratePostpaidUsage(EDR edr) {
 		BigDecimal originalQuantity = edr.getQuantity();
+
+		log.info("Rating EDR={}", edr);
+
 		if (edr.getSubscription() == null) {
 			edr.setStatus(EDRStatusEnum.REJECTED);
 			edr.setRejectReason("subscription null");
@@ -647,9 +651,10 @@ public class UsageRatingService {
 											// expressionFactory =
 										}
 										// we found matching charge, if we rate
-										// it we exit the look
-										log.debug("found matchig charge inst : id="
-												+ charge.getChargeInstanceId());
+										// it we exit the loop
+										log.debug(
+												"found matching charge instance with id={}",
+												charge.getChargeInstanceId());
 										edrIsRated = rateEDRonChargeAndCounters(
 												edr, charge);
 										if (edrIsRated) {
@@ -661,6 +666,7 @@ public class UsageRatingService {
 							}
 						}
 					}
+					
 					if (!edrIsRated) {
 						edr.setStatus(EDRStatusEnum.REJECTED);
 						edr.setRejectReason("no matching charge");
@@ -675,6 +681,7 @@ public class UsageRatingService {
 				e.printStackTrace();
 			}
 		}
+		
 		// put back the original quantity in edr (could have been decrease by
 		// counters)
 		edr.setQuantity(originalQuantity);
