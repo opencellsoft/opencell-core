@@ -87,7 +87,7 @@ public class InvoiceApi extends BaseApi {
 	@MeveoParamBean
 	private ParamBean paramBean;
 
-	public void create(InvoiceDto invoiceDTO, User currentUser)
+	public String create(InvoiceDto invoiceDTO, User currentUser)
 			throws MeveoApiException {
 		Provider provider = currentUser.getProvider();
 
@@ -129,16 +129,8 @@ public class InvoiceApi extends BaseApi {
 						InvoiceSubCategory.class, invoiceSubCategoryCode);
 			}
 
-			BillingRun br = new BillingRun();
-			br.setStartDate(new Date());
-			br.setProvider(provider);
-			br.setStatus(BillingRunStatusEnum.TERMINATED);
-			billingRunService.create(br, currentUser, provider);
-
 			Invoice invoice = new Invoice();
 			invoice.setBillingAccount(billingAccount);
-			invoice.setBillingRun(br);
-			invoice.setAuditable(br.getAuditable());
 			invoice.setProvider(provider);
 			Date invoiceDate = new Date();
 			invoice.setInvoiceDate(invoiceDate);
@@ -148,7 +140,7 @@ public class InvoiceApi extends BaseApi {
 			invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
 			invoice.setAmountWithTax(invoiceDTO.getAmountWithTax());
 			invoice.setDiscount(invoiceDTO.getDiscount());
-
+			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
 			invoiceService.create(invoice, currentUser, provider);
 			UserAccount userAccount = billingAccount.getDefaultUserAccount();
 
@@ -180,7 +172,6 @@ public class InvoiceApi extends BaseApi {
 					subCategoryInvoiceAgregate
 							.setBillingAccount(billingAccount);
 					subCategoryInvoiceAgregate.setUserAccount(userAccount);
-					subCategoryInvoiceAgregate.setBillingRun(br);
 					subCategoryInvoiceAgregate.setInvoice(invoice);
 					subCategoryInvoiceAgregate.setSubCategoryTax(tax);
 					subCategoryInvoiceAgregate
@@ -202,7 +193,6 @@ public class InvoiceApi extends BaseApi {
 							.setAmountTax(subCategoryInvoiceAgregateDTO
 									.getAmountTax());
 					categoryInvoiceAgregate.setBillingAccount(billingAccount);
-					categoryInvoiceAgregate.setBillingRun(br);
 					categoryInvoiceAgregate.setInvoice(invoice);
 					categoryInvoiceAgregate
 							.setItemNumber(subCategoryInvoiceAgregateDTO
@@ -229,7 +219,6 @@ public class InvoiceApi extends BaseApi {
 							.setTaxPercent(subCategoryInvoiceAgregateDTO
 									.getTaxPercent());
 					taxInvoiceAgregate.setBillingAccount(billingAccount);
-					taxInvoiceAgregate.setBillingRun(br);
 					taxInvoiceAgregate.setInvoice(invoice);
 					taxInvoiceAgregate.setUserAccount(billingAccount
 							.getDefaultUserAccount());
@@ -265,7 +254,6 @@ public class InvoiceApi extends BaseApi {
 								.getCode());
 						meveoRatedTransaction.setDescription(ratedTransaction
 								.getDescription());
-						meveoRatedTransaction.setBillingRun(br);
 						meveoRatedTransaction.setInvoice(invoice);
 						meveoRatedTransaction
 								.setWallet(userAccount.getWallet());
@@ -299,6 +287,7 @@ public class InvoiceApi extends BaseApi {
 							getMissingParametersExceptionMessage());
 				}
 			}
+			return invoice.getInvoiceNumber();
 		} else {
 			if (invoiceDTO.getSubCategoryInvoiceAgregates().size() <= 0) {
 				missingParameters.add("subCategoryInvoiceAgregates");
@@ -322,6 +311,7 @@ public class InvoiceApi extends BaseApi {
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
+		
 	}
 
 	public List<InvoiceDto> list(String customerAccountCode, Provider provider)
