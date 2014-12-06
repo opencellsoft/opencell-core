@@ -9,6 +9,10 @@ import javax.validation.constraints.Size;
 @Embeddable
 public class UsageChargeEDRTemplate  implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
+
+	@Column(name = "CONDITION_EL", length = 1000)
+	@Size(max = 1000)
+	private String conditionEl;
 	
 	@Column(name = "QUANTITY_EL", length = 1000)
 	@Size(max = 1000)
@@ -29,6 +33,14 @@ public class UsageChargeEDRTemplate  implements Serializable, Cloneable {
 	@Column(name = "PARAM_4_EL", length = 1000)
 	@Size(max = 1000)
 	private String param4El;
+
+	public String getConditionEl() {
+		return conditionEl;
+	}
+
+	public void setConditionEl(String conditionEl) {
+		this.conditionEl = conditionEl;
+	}
 
 	public String getQuantityEl() {
 		return quantityEl;

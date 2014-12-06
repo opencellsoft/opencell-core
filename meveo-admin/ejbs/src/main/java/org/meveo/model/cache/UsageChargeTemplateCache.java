@@ -14,6 +14,7 @@ public class UsageChargeTemplateCache {
 	private String filter3;
 	private String filter4;
 	private boolean edrTemplate;
+	private String conditionEL;
 	private String quantityEL;
 	private String param1EL;
 	private String param2EL;
@@ -68,6 +69,13 @@ public class UsageChargeTemplateCache {
 	}
 	public void setEdrTemplate(boolean edrTemplate) {
 		this.edrTemplate = edrTemplate;
+	}
+	
+	public String getConditionEL() {
+		return conditionEL;
+	}
+	public void setConditionEL(String conditionEL) {
+		this.conditionEL = conditionEL;
 	}
 	public String getQuantityEL() {
 		return quantityEL;

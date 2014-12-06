@@ -66,6 +66,9 @@ public class DiscountPlanMatrix extends AuditableEntity {
 	@Column(name = "NB_PERIOD")
 	private Integer nbPeriod;
 
+	@Column(name = "CRITERIA_EL",length=2000)
+	private String criteriaEL;
+
 	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
 	@Min(0)
@@ -121,6 +124,14 @@ public class DiscountPlanMatrix extends AuditableEntity {
 
 	public void setNbPeriod(Integer nbPeriod) {
 		this.nbPeriod = nbPeriod;
+	}
+
+	public String getCriteriaEL() {
+		return criteriaEL;
+	}
+
+	public void setCriteriaEL(String criteriaEL) {
+		this.criteriaEL = criteriaEL;
 	}
 
 	public BigDecimal getPercent() {
