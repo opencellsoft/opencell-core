@@ -569,6 +569,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				}
 			}
 		}
+
 		Collections.sort(categoryInvoiceAgregates,
 				new Comparator<CategoryInvoiceAgregate>() {
 					public int compare(CategoryInvoiceAgregate c0,
@@ -587,6 +588,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						return 0;
 					}
 				});
+
 		for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
 
 			InvoiceCategory invoiceCategory = categoryInvoiceAgregate
@@ -678,9 +680,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 								}
 							});
 
-					for (RatedTransaction ratedTrnsaction : transactions) {
-						BigDecimal transactionAmount = entreprise ? ratedTrnsaction
-								.getAmountWithTax() : ratedTrnsaction
+					for (RatedTransaction ratedTransaction : transactions) {
+						BigDecimal transactionAmount = entreprise ? ratedTransaction
+								.getAmountWithTax() : ratedTransaction
 								.getAmountWithoutTax();
 						if (transactionAmount == null) {
 							transactionAmount = BigDecimal.ZERO;
@@ -693,16 +695,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 							Element line = doc.createElement("line");
 							String code = "", description = "";
-							if (ratedTrnsaction.getWalletOperationId() != null) {
+							if (ratedTransaction.getWalletOperationId() != null) {
 								WalletOperation walletOperation = getEntityManager()
 										.find(WalletOperation.class,
-												ratedTrnsaction
+												ratedTransaction
 														.getWalletOperationId());
 								code = walletOperation.getCode();
 								description = walletOperation.getDescription();
 							} else {
-								code = ratedTrnsaction.getCode();
-								description = ratedTrnsaction.getDescription();
+								code = ratedTransaction.getCode();
+								description = ratedTransaction.getDescription();
 							}
 
 							line.setAttribute("code", code != null ? code : "");
@@ -717,7 +719,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element lineAmountWithoutTax = doc
 									.createElement("amountWithoutTax");
 							Text lineAmountWithoutTaxTxt = doc
-									.createTextNode(round(ratedTrnsaction
+									.createTextNode(round(ratedTransaction
 											.getAmountWithoutTax()));
 							lineAmountWithoutTax
 									.appendChild(lineAmountWithoutTaxTxt);
@@ -726,17 +728,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element lineAmountWithTax = doc
 									.createElement("amountWithTax");
 							Text lineAmountWithTaxTxt = doc
-									.createTextNode(round(entreprise ? ratedTrnsaction
+									.createTextNode(round(entreprise ? ratedTransaction
 											.getAmountWithTax()
-											: ratedTrnsaction
-													.getAmountWithoutTax()));
+											: ratedTransaction
+													.getAmountWithTax()));
 							lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
 							line.appendChild(lineAmountWithTax);
 
 							Element quantity = doc.createElement("quantity");
 							Text quantityTxt = doc
-									.createTextNode(ratedTrnsaction
-											.getQuantity() != null ? ratedTrnsaction
+									.createTextNode(ratedTransaction
+											.getQuantity() != null ? ratedTransaction
 											.getQuantity() + ""
 											: "");
 							quantity.appendChild(quantityTxt);
@@ -744,10 +746,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 							Element usageDate = doc.createElement("usageDate");
 							Text usageDateTxt = doc
-									.createTextNode(ratedTrnsaction
+									.createTextNode(ratedTransaction
 											.getUsageDate() != null ? DateUtils
 											.formatDateWithPattern(
-													ratedTrnsaction
+													ratedTransaction
 															.getUsageDate(),
 													"dd/MM/yyyy")
 											+ "" : "");
@@ -759,13 +761,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					}
 				}
 			}
-
 		}
-
 	}
 
 	private void addTaxes(Invoice invoice, Document doc, Element parent) {
-
 		Element taxes = doc.createElement("taxes");
 		taxes.setAttribute("total", round(invoice.getAmountTax()));
 		parent.appendChild(taxes);

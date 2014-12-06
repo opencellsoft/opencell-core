@@ -237,15 +237,15 @@ public class UsageRatingService {
 			UsageChargeInstanceCache cachedValue = new UsageChargeInstanceCache();
 			ChargeTemplate chargeTemplate = usageChargeInstance
 					.getChargeTemplate();
-			System.out.println(chargeTemplate.getId());
+			log.debug("chargeTemplateId={}" + chargeTemplate.getId());
 			// UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)
 			// usageChargeInstance.getChargeTemplate();
 			UsageChargeTemplate usageChargeTemplate = em.find(
 					UsageChargeTemplate.class, chargeTemplate.getId());
 			Long key = usageChargeInstance.getServiceInstance()
 					.getSubscription().getId();
-			log.info("update cache key (subs Id)=" + key + "'for charge"
-					+ usageChargeInstance.getId());
+			log.info("update cache key (subs Id)={} for charge with id={}",
+					key, usageChargeInstance.getId());
 			boolean cacheContainsKey = chargeCache.containsKey(key);
 			boolean cacheContainsCharge = false;
 
@@ -340,9 +340,9 @@ public class UsageRatingService {
 						counterPeriod.setValue(itemPeriodCache.getValue());
 						counterPeriod.getAuditable().setUpdated(new Date());
 						em.merge(counterPeriod);
-						System.out.println("save counter"
-								+ itemPeriodCache.getCounterPeriodId()
-								+ " new value=" + itemPeriodCache.getValue());
+						log.debug("save counter with id={}, new value={}",
+								itemPeriodCache.getCounterPeriodId(),
+								itemPeriodCache.getValue());
 						// calling ejb in this predestroy method just fail...
 						// counterInstanceService.updatePeriodValue(itemPeriodCache.getCounterPeriodId(),itemPeriodCache.getValue());
 					}
@@ -666,7 +666,7 @@ public class UsageRatingService {
 							}
 						}
 					}
-					
+
 					if (!edrIsRated) {
 						edr.setStatus(EDRStatusEnum.REJECTED);
 						edr.setRejectReason("no matching charge");
@@ -681,7 +681,7 @@ public class UsageRatingService {
 				e.printStackTrace();
 			}
 		}
-		
+
 		// put back the original quantity in edr (could have been decrease by
 		// counters)
 		edr.setQuantity(originalQuantity);
