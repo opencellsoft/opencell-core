@@ -1,6 +1,5 @@
 package org.meveo.admin.web;
 
-
 import javax.enterprise.context.NonexistentConversationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,39 +16,71 @@ public class ExceptionHandler {
 
 	private Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 
-	public void handleAuthorizationException(@Handles CaughtException<AuthorizationException> evt, final HttpServletRequest request, final HttpServletResponse response) {
+	public void handleAuthorizationException(
+			@Handles CaughtException<AuthorizationException> evt,
+			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(
-			        request.getContextPath() + "/errors/403.jsf"));
+			response.sendRedirect(response.encodeRedirectURL(request
+					.getContextPath() + "/errors/403.jsf"));
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 	}
 
 	public void handleInvalidConversationException(
-			@Handles CaughtException<NonexistentConversationException> evt, final HttpServletRequest request, final HttpServletResponse response) {
+			@Handles CaughtException<NonexistentConversationException> evt,
+			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(
-			        request.getContextPath() + "/errors/sessionExpired.jsf"));
+			response.sendRedirect(response.encodeRedirectURL(request
+					.getContextPath() + "/errors/expired.jsf"));
 		} catch (Exception e) {
 			log.info(e.getMessage());
 		}
 	}
 
 	public void handleViewExpiredException(
-			@Handles CaughtException<javax.faces.application.ViewExpiredException> evt, final HttpServletRequest request, final HttpServletResponse response) {
+			@Handles CaughtException<javax.faces.application.ViewExpiredException> evt,
+			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();
 
 		try {
-			response.sendRedirect(response.encodeRedirectURL(
-			        request.getContextPath() + "/errors/sessionExpired.jsf"));
+			response.sendRedirect(response.encodeRedirectURL(request
+					.getContextPath() + "/errors/expired.jsf"));
+		} catch (Exception e) {
+			log.info(e.getMessage());
+		}
+	}
+
+	public void handleSqlException(
+			@Handles CaughtException<java.sql.SQLException> evt,
+			final HttpServletRequest request, final HttpServletResponse response) {
+
+		evt.handled();
+
+		try {
+			response.sendRedirect(response.encodeRedirectURL(request
+					.getContextPath() + "/errors/database.jsf"));
+		} catch (Exception e) {
+			log.info(e.getMessage());
+		}
+	}
+
+	public void handleRuntimeException(
+			@Handles CaughtException<java.lang.RuntimeException> evt,
+			final HttpServletRequest request, final HttpServletResponse response) {
+
+		evt.handled();
+
+		try {
+			response.sendRedirect(response.encodeRedirectURL(request
+					.getContextPath() + "/errors/bug.jsf"));
 		} catch (Exception e) {
 			log.info(e.getMessage());
 		}

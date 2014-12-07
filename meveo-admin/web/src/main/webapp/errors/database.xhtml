@@ -1,0 +1,14 @@
+<ui:composition template="/layout/errorTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<ui:define name="contentTitle">Database operation error.</ui:define>
+	
+	<ui:define name="errorContent">
+		<p>
+			<a href="#{requestScope['javax.servlet.error.request_uri']}">Back
+				to initial page.</a>
+		</p>
+	</ui:define>
+	
+</ui:composition>
