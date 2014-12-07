@@ -21,7 +21,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -74,7 +79,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		createBillingAccount(getEntityManager(), billingAccount, creator,
 				provider);
 	}
-
 	public void createBillingAccount(EntityManager em,
 			BillingAccount billingAccount, User creator, Provider provider) {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -254,16 +258,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return null;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public BillingRun updateBillingAccountTotalAmounts(long billingAccountId,
+	@Asynchronous
+	public Future<Boolean> updateBillingAccountTotalAmounts(long billingAccountId,
 			BillingRun billingRun, boolean entreprise) {
-		BillingAccount billingAccount = findById(billingAccountId);
-		billingRun.getBillableBillingAccounts().add(billingAccount);
+		
+		log.info("updateBillingAccountTotalAmounts  billingAccountId:" + billingAccountId);
+		BillingAccount billingAccount = findById(getEntityManager(),billingAccountId);
 		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
 				entreprise);
 		billingAccount.setBillingRun(billingRun);
 		update(billingAccount);
-		return billingRun;
+		return new AsyncResult<Boolean>(true);
 	}
 
 }

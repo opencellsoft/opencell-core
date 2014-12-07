@@ -27,11 +27,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous; 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -41,12 +42,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
@@ -62,15 +61,18 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.XMLInvoiceHeaderCategoryDTO;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-@Stateless
+ 
+@Stateless 
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private static final String dueDateFormat = "dd/MM/yyyy";
@@ -83,9 +85,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	@Inject
 	RatedTransactionService ratedTransactionService;
+	
+	@Inject
+	CatMessagesService catMessagesService;
 
-	@SuppressWarnings("unchecked")
-	public void createXMLInvoice(Invoice invoice, File billingRundir)
+	@Asynchronous
+	public Future<Boolean> createXMLInvoice(Invoice invoice, File billingRundir)
 			throws BusinessException {
 		try {
 			boolean entreprise = invoice.getProvider().isEntreprise();
@@ -155,18 +160,23 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					customerAccount.getExternalRef2() != null ? customerAccount
 							.getExternalRef2() : "");
 
-			EntityManager em = getEntityManager();
+			
+			/*EntityManager em = getEntityManager();
 			Query billingQuery = em
 					.createQuery("select si from ServiceInstance si join si.subscription s join s.userAccount ua join ua.billingAccount ba join ba.customerAccount ca where ca.id = :customerAccountId");
 			billingQuery.setParameter("customerAccountId",
 					customerAccount.getId());
 			List<ServiceInstance> services = (List<ServiceInstance>) billingQuery
 					.getResultList();
+			
+			
+			
 			boolean terminated = services.size() > 0 ? isAllServiceInstancesTerminated(services)
-					: false;
+					: false;*/
 
-			customerAccountTag.setAttribute("accountTerminated", terminated
+			customerAccountTag.setAttribute("accountTerminated", customerAccount.getStatus().equals(CustomerAccountStatusEnum.CLOSE)
 					+ "");
+
 
 			header.appendChild(customerAccountTag);
 			addNameAndAdress(customerAccount, doc, customerAccountTag);
@@ -260,26 +270,18 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			amountWithTax.appendChild(amountWithTaxTxt);
 			amount.appendChild(amountWithTax);
 
-			BigDecimal balance = customerAccountService
-					.customerAccountBalanceDue(null,
-							invoice.getBillingAccount().getCustomerAccount()
-									.getCode(), invoice.getDueDate());
-
-			if (balance == null) {
-				throw new BusinessException(
-						"account balance calculation failed");
-			}
+			
 			BigDecimal netToPay = BigDecimal.ZERO;
 			if (entreprise) {
 				netToPay = invoice.getAmountWithTax();
 			} else {
-				netToPay = invoice.getAmountWithTax().add(balance);
+				netToPay = invoice.getNetToPay();
 			}
 
-			Element balanceElement = doc.createElement("balance");
+			/*Element balanceElement = doc.createElement("balance");
 			Text balanceTxt = doc.createTextNode(round(balance));
 			balanceElement.appendChild(balanceTxt);
-			amount.appendChild(balanceElement);
+			amount.appendChild(balanceElement);*/
 
 			Element netToPayElement = doc.createElement("netToPay");
 			Text netToPayTxt = doc.createTextNode(round(netToPay));
@@ -300,14 +302,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// create string from xml tree
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(billingRundir
-					+ File.separator + invoice.getInvoiceNumber() + ".xml");
+					+ File.separator + (invoice.getInvoiceNumber()!=null?invoice.getInvoiceNumber():invoice.getTemporaryInvoiceNumber()) + ".xml");
 			log.info("source=" + source.toString());
 			trans.transform(source, result);
-
+			return new AsyncResult<Boolean>(true);
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new BusinessException(e.getMessage());
+			log.error("Error occured when creating xml for invoiceID={0}",invoice.getId(), e);
 		}
+		return new AsyncResult<Boolean>(false);
 	}
 
 	public void addUserAccounts(Invoice invoice, Document doc, Element parent) {
@@ -537,22 +539,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private String getMessageDescription(String messageCode, String languageCode) {
-		String result = "";
-		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-		qb.addCriterionWildcard("c.messageCode", messageCode, true);
-		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> catMessages = qb.getQuery(getEntityManager())
-				.getResultList();
-		result = catMessages.size() > 0 ? catMessages.get(0).getDescription()
-				: null;
 
-		return result != null ? result : null;
-	}
 
 	public void addCategories(UserAccount userAccount, Invoice invoice,
 			Document doc, Element parent, boolean generateSubCat) {
+		long startDate=System.currentTimeMillis();
 		String languageCode = invoice.getBillingAccount().getTradingLanguage()
 				.getLanguage().getLanguageCode();
 
@@ -592,7 +583,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			InvoiceCategory invoiceCategory = categoryInvoiceAgregate
 					.getInvoiceCategory();
 
-			String invoiceCategoryLabel = invoiceCategory != null ? getMessageDescription(
+			String invoiceCategoryLabel = invoiceCategory != null ? catMessagesService.getMessageDescription(
 					invoiceCategory.getClass().getSimpleName() + "_"
 							+ invoiceCategory.getId(), languageCode) : "";
 			invoiceCategoryLabel = invoiceCategoryLabel != null ? invoiceCategoryLabel
@@ -634,27 +625,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									.getInvoice(), subCatInvoiceAgregate
 									.getInvoiceSubCategory());
 
-					boolean createSubCatElement = false;
-					for (RatedTransaction ratedTrnsaction : transactions) {
-						BigDecimal transactionAmount = entreprise ? ratedTrnsaction
-								.getAmountWithTax() : ratedTrnsaction
-								.getAmountWithoutTax();
-						if (transactionAmount == null) {
-							transactionAmount = BigDecimal.ZERO;
-						}
-
-						if (invoice.getProvider()
-								.isDisplayFreeTransacInInvoice()
-								|| !(transactionAmount
-										.compareTo(BigDecimal.ZERO) == 0)) {
-							createSubCatElement = true;
-							break;
-						}
-					}
-					if (!createSubCatElement) {
-						continue;
-					}
-					String invoiceSubCategoryLabel = invoiceSubCat != null ? getMessageDescription(
+					String invoiceSubCategoryLabel = invoiceSubCat != null ? catMessagesService.getMessageDescription(
 							invoiceSubCat.getClass().getSimpleName() + "_"
 									+ invoiceSubCat.getId(), languageCode) : "";
 					invoiceSubCategoryLabel = invoiceSubCategoryLabel != null ? invoiceSubCategoryLabel
@@ -663,46 +634,27 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", invoiceSubCategoryLabel);
 
-					Collections.sort(transactions,
-							new Comparator<RatedTransaction>() {
-								public int compare(RatedTransaction c0,
-										RatedTransaction c1) {
-									if (c0.getWalletOperationId() != null
-											&& c1.getWalletOperationId() != null) {
-										return c0
-												.getWalletOperationId()
-												.compareTo(
-														c1.getWalletOperationId());
-									}
-									return 0;
-								}
-							});
-
-					for (RatedTransaction ratedTrnsaction : transactions) {
-						BigDecimal transactionAmount = entreprise ? ratedTrnsaction
-								.getAmountWithTax() : ratedTrnsaction
+					for (RatedTransaction ratedTransaction : transactions) {
+						BigDecimal transactionAmount = entreprise ? ratedTransaction
+								.getAmountWithTax() : ratedTransaction
 								.getAmountWithoutTax();
 						if (transactionAmount == null) {
 							transactionAmount = BigDecimal.ZERO;
 						}
 
-						if (invoice.getProvider()
-								.isDisplayFreeTransacInInvoice()
-								|| !(transactionAmount
-										.compareTo(BigDecimal.ZERO) == 0)) {
 
 							Element line = doc.createElement("line");
 							String code = "", description = "";
-							if (ratedTrnsaction.getWalletOperationId() != null) {
+							if (ratedTransaction.getWalletOperationId() != null) {
 								WalletOperation walletOperation = getEntityManager()
 										.find(WalletOperation.class,
-												ratedTrnsaction
+												ratedTransaction
 														.getWalletOperationId());
 								code = walletOperation.getCode();
 								description = walletOperation.getDescription();
 							} else {
-								code = ratedTrnsaction.getCode();
-								description = ratedTrnsaction.getDescription();
+								code = ratedTransaction.getCode();
+								description = ratedTransaction.getDescription();
 							}
 
 							line.setAttribute("code", code != null ? code : "");
@@ -717,7 +669,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element lineAmountWithoutTax = doc
 									.createElement("amountWithoutTax");
 							Text lineAmountWithoutTaxTxt = doc
-									.createTextNode(round(ratedTrnsaction
+									.createTextNode(round(ratedTransaction
 											.getAmountWithoutTax()));
 							lineAmountWithoutTax
 									.appendChild(lineAmountWithoutTaxTxt);
@@ -726,17 +678,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element lineAmountWithTax = doc
 									.createElement("amountWithTax");
 							Text lineAmountWithTaxTxt = doc
-									.createTextNode(round(entreprise ? ratedTrnsaction
+									.createTextNode(round(entreprise ? ratedTransaction
 											.getAmountWithTax()
-											: ratedTrnsaction
+											: ratedTransaction
 													.getAmountWithoutTax()));
 							lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
 							line.appendChild(lineAmountWithTax);
 
 							Element quantity = doc.createElement("quantity");
 							Text quantityTxt = doc
-									.createTextNode(ratedTrnsaction
-											.getQuantity() != null ? ratedTrnsaction
+									.createTextNode(ratedTransaction
+											.getQuantity() != null ? ratedTransaction
 											.getQuantity() + ""
 											: "");
 							quantity.appendChild(quantityTxt);
@@ -744,10 +696,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 							Element usageDate = doc.createElement("usageDate");
 							Text usageDateTxt = doc
-									.createTextNode(ratedTrnsaction
+									.createTextNode(ratedTransaction
 											.getUsageDate() != null ? DateUtils
 											.formatDateWithPattern(
-													ratedTrnsaction
+													ratedTransaction
 															.getUsageDate(),
 													"dd/MM/yyyy")
 											+ "" : "");
@@ -755,13 +707,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							line.appendChild(usageDate);
 
 							subCategory.appendChild(line);
-						}
+						
 					}
 				}
 			}
 
 		}
-
+		log.info("addCategorries time: "+(System.currentTimeMillis()-startDate));
 	}
 
 	private void addTaxes(Invoice invoice, Document doc, Element parent) {
@@ -809,7 +761,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			Long idTax = taxInvoiceAgregate.getTax().getId();
 			String languageCode = invoice.getBillingAccount()
 					.getTradingLanguage().getLanguage().getLanguageCode();
-			String taxDescription = getMessageDescription(taxInvoiceAgregate
+			String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate
 					.getTax().getClass().getSimpleName()
 					+ "_" + idTax, languageCode);
 			taxDescription = taxDescription != null ? taxDescription
@@ -846,6 +798,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private void addHeaderCategories(Invoice invoice, Document doc,
 			Element parent) {
+		long startDate=System.currentTimeMillis();
 		boolean entreprise = invoice.getProvider().isEntreprise();
 		LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO>();
 		List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
@@ -987,6 +940,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 		}
 		addHeaderCategories(headerCategories, doc, parent, entreprise);
+
+		log.info("addHeaderCategories time: "+(System.currentTimeMillis()-startDate));
 	}
 
 	private void addHeaderCategories(

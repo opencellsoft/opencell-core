@@ -35,15 +35,18 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
+import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 
 @Named
 @ConversationScoped
@@ -66,8 +69,13 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	@Inject
 	@RequestParam
 	private Instance<Boolean> postReport;
+	
+	@Inject
+	private RatedTransactionService ratedTransactionService;
 
 	private ListItemsSelector<Invoice> itemSelector;
+	
+	private boolean launchInvoicingRejectedBA=false;
 
 	@Inject
 	private Messages messages;
@@ -183,6 +191,34 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CONFIRMED);
 			billingRunService.update(entity);
+			if(launchInvoicingRejectedBA){ 
+				BillingRun billingRun = new BillingRun();
+				billingRun.setStatus(BillingRunStatusEnum.NEW);
+				billingRun.setProcessDate(new Date());
+				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
+				billingRun.setProvider(getCurrentProvider());
+				String selectedBillingAccounts = "";
+				String sep = "";
+				boolean isBillable = false;
+				for (RejectedBillingAccount ba : entity.getRejectedBillingAccounts()) {
+					selectedBillingAccounts = selectedBillingAccounts + sep
+							+ ba.getId();
+					sep = ",";
+					if (!isBillable
+							&& ratedTransactionService.isBillingAccountBillable(
+									billingRun, (Long) ba.getId())) {
+						isBillable = true;
+					}
+				}
+				if (!isBillable) {
+					messages.error(new BundleKey("messages",
+							"error.invoicing.noTransactions"));
+					return null;
+				}
+				log.info("selectedBillingAccounts=" + selectedBillingAccounts);
+				billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
+				billingRunService.create(billingRun);
+			}
 			endConversation();
 			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
 		} catch (Exception e) {
@@ -191,6 +227,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		}
 		return null;
 	}
+	
 
 	public String cancelInvoicing() {
 		try {
@@ -350,4 +387,16 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	protected String getDefaultSort() {
 		return "id";
 	}
+
+	public boolean isLaunchInvoicingRejectedBA() {
+		return launchInvoicingRejectedBA;
+	}
+
+	public void setLaunchInvoicingRejectedBA(boolean launchInvoicingRejectedBA) {
+		this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
+	}
+
+ 
+	
+	
 }

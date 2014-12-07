@@ -4,16 +4,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
+import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
@@ -53,7 +56,7 @@ public class XMLInvoiceGenerationJob implements Job {
 	@Inject
 	BillingAccountService billingAccountService;
 	
-	@Inject
+    @Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
 	
 	@Inject
@@ -91,7 +94,10 @@ public class XMLInvoiceGenerationJob implements Job {
 				        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
 				        billingRundir.mkdirs();
 				        for (Invoice invoice : billingRun.getInvoices()) {
-				            xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+				        	long startDate=System.currentTimeMillis();
+				            Future<Boolean> xmlCreated= xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+				            xmlCreated.get();
+				            log.info("invoice creation delay :"+(System.currentTimeMillis()-startDate)+",xmlCreated={1} "+xmlCreated.get()+"");
 				        }
 				        billingRun.setXmlInvoiceGenerated(true);
 				        billingRunService.update(billingRun);
@@ -112,6 +118,7 @@ public class XMLInvoiceGenerationJob implements Job {
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
 		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
+		
 	}
 
 	boolean running = false;
@@ -133,13 +140,13 @@ public class XMLInvoiceGenerationJob implements Job {
 		}
 	}
 
+	
 
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
-
-	@Override
+    @Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
 		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
@@ -150,5 +157,4 @@ public class XMLInvoiceGenerationJob implements Job {
 				e.printStackTrace();
 			}
 		}
-	}
-}
+	}}

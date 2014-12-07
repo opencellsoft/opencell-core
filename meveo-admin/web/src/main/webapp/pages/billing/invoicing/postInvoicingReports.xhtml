@@ -172,7 +172,41 @@
 				field="amountWithTax" />
 
 		</hftl:dataList>
+		
+	     <br /> <br /> 
+		<h:outputText value="#{messages['postInvoicingReport.rejectedBillingAccounts']}"
+			style="font-weight: bold;font-size=14;" />
+			<hftl:dataList resultsId="rejectedBA_results" backingBean="#{billingAccountBean}" dataModel="#{billingRunBean.entity.rejectedBillingAccounts}" checkMany="false">
 
+		<hftl:column label="#{messages['businessEntity.code']}"
+				field="billingAccount" childField="code" />
+				
+			<rich:column width="100">
+				<f:facet name="header">
+					<h:outputText value="#{messages['name.title']}" />
+				</f:facet>
+				<e:cell>
+					<h:outputText
+						rendered="#{entity.billingAccount.name.title != null}"
+						value="#{messages[stringUtil.merge('Title.',entity.billingAccount.name.title.code)]}" />
+				</e:cell>
+			</rich:column>
+
+			<hftl:column label="#{messages['billingAccount.name']}"
+				field="billingAccount" childField="name" />
+				 
+
+			<hftl:column label="#{messages['RejectedBillingAccounts.rejectCause']}"
+				field="rejectCause" /> 
+
+		</hftl:dataList> 
+		<br/>
+		<p:panelGrid columns="2">
+		<p:outputLabel value="#{messages['billingRuns.launchInvoicing']}"  style="width:270px" />
+		<p:selectBooleanCheckbox
+		value="#{billingRunBean.launchInvoicingRejectedBA}" />
+		</p:panelGrid>
+		<br/>
 		<h:form id="operationsForm2"
 			rendered="#{billingRun.getInvoices().size()>0}">
 			<h:commandButton action="#{billingRunBean.excludeBillingAccounts}"
@@ -180,19 +214,18 @@
 		</h:form>
 
 		<br />
-
 		<h:form id="operationsForm" rendered="#{!edit}">
-			<div class="action-buttons">
-				<p:commandButton action="#{billingRunBean.validateInvoicing()}"
-					value="Validate" />
-				<!-- <h:commandButton
+           <div class="action-buttons">
+			<p:commandButton action="#{billingRunBean.validateInvoicing()}"
+				value="Validate" />
+			<!-- <h:commandButton
 				action="#{billingRunBean.rerateConfirmedInvoicing()}"
 				value="Rerate" /> -->
-				<p:commandButton
-					action="#{billingRunBean.cancelConfirmedInvoicing()}"
-					value="Cancel billing run"
-					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
-			</div>
+			<p:commandButton
+				action="#{billingRunBean.cancelConfirmedInvoicing()}"
+				value="Cancel billing run"
+				onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
+               </div>
 		</h:form>
 	</ui:define>
 </ui:composition>
