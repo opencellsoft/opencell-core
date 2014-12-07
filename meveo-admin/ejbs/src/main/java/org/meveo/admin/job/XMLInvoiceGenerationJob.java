@@ -85,37 +85,30 @@ public class XMLInvoiceGenerationJob implements Job {
 		}
 		
 		log.info("# billingRuns to process:" + billingRuns.size());
-			for (BillingRun billingRun : billingRuns) {
-				try {
-					
-			        ParamBean param = ParamBean.getInstance();
-			        String invoicesDir = param.getProperty("providers.rootDir","/tmp/meveo");
-				        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
-				        billingRundir.mkdirs();
-				        for (Invoice invoice : billingRun.getInvoices()) {
-				        	long startDate=System.currentTimeMillis();
-				            Future<Boolean> xmlCreated= xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
-				            xmlCreated.get();
-				            log.info("invoice creation delay :"+(System.currentTimeMillis()-startDate)+",xmlCreated={1} "+xmlCreated.get()+"");
-				        }
-				        billingRun.setXmlInvoiceGenerated(true);
-				        billingRunService.update(billingRun);
-				} catch (Exception e) {
-					e.printStackTrace();
-					result.registerError(e.getMessage());
-				}
+		for (BillingRun billingRun : billingRuns) {
+			try {
 				
-				billingRun.setXmlInvoiceGenerated(true);
-				billingRunService.update(billingRun);
+		        ParamBean param = ParamBean.getInstance();
+		        String invoicesDir = param.getProperty("providers.dir","/tmp/meveo");
+			        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
+			        billingRundir.mkdirs();
+			        for (Invoice invoice : billingRun.getInvoices()) {
+			        	long startDate=System.currentTimeMillis();
+			            Future<Boolean> xmlCreated= xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+			            xmlCreated.get();
+			            log.info("invoice creation delay :"+(System.currentTimeMillis()-startDate)+",xmlCreated={1} "+xmlCreated.get()+"");
+			        }
+			        billingRun.setXmlInvoiceGenerated(true);
+			        billingRunService.update(billingRun);
 			} catch (Exception e) {
 				e.printStackTrace();
 				result.registerError(e.getMessage());
 			}
 		}
-
-		result.close();
-		return result;
-	}
+	
+	result.close("");
+	return result;
+}
 
 	@Override
 	public Timer createTimer(ScheduleExpression scheduleExpression,
