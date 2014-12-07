@@ -560,6 +560,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				}
 			}
 		}
+
 		Collections.sort(categoryInvoiceAgregates,
 				new Comparator<CategoryInvoiceAgregate>() {
 					public int compare(CategoryInvoiceAgregate c0,
@@ -578,6 +579,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						return 0;
 					}
 				});
+
 		for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
 
 			InvoiceCategory invoiceCategory = categoryInvoiceAgregate
@@ -711,13 +713,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					}
 				}
 			}
-
 		}
 		log.info("addCategorries time: "+(System.currentTimeMillis()-startDate));
 	}
 
 	private void addTaxes(Invoice invoice, Document doc, Element parent) {
-
 		Element taxes = doc.createElement("taxes");
 		taxes.setAttribute("total", round(invoice.getAmountTax()));
 		parent.appendChild(taxes);

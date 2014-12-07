@@ -7,8 +7,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.el.ArrayELResolver;
+import javax.el.BeanELResolver;
+import javax.el.CompositeELResolver;
+import javax.el.ELContext;
+import javax.el.ELResolver;
+import javax.el.ExpressionFactory;
+import javax.el.FunctionMapper;
+import javax.el.ListELResolver;
+import javax.el.MapELResolver;
+import javax.el.ValueExpression;
+import javax.el.VariableMapper;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -32,6 +44,9 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.SimpleELResolver;
+import org.meveo.service.base.SimpleFunctionMapper;
+import org.meveo.service.base.SimpleVariableMapper;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
@@ -488,6 +503,14 @@ public class RatingService {
 				continue;
 			}
 
+			boolean criteriaELSameInPricePlan = discountPlan.getCriteriaEL() == null
+					|| matchExpression(discountPlan.getCriteriaEL(),bareOperation);
+			if (!criteriaELSameInPricePlan) {
+				log.debug("The operation is not compatible with discount plan criteria EL: "
+						+ discountPlan.getCriteriaEL());
+				continue;
+			}
+			
 			boolean offerCodeSameInPricePlan = discountPlan.getOfferTemplate() == null
 					|| discountPlan.getOfferTemplate().getCode()
 							.equals(bareOperation.getOfferCode());
@@ -663,6 +686,14 @@ public class RatingService {
 						+ pricePlan.getCriteria3Value());
 				continue;
 			}
+			boolean criteriaELSameInPricePlan = pricePlan.getCriteriaEL() == null
+					|| matchExpression(pricePlan.getCriteriaEL(),bareOperation);
+			if (!criteriaELSameInPricePlan) {
+				log.debug("The operation is not compatible with price plan criteria EL: "
+						+ pricePlan.getCriteriaEL());
+				continue;
+			}
+			
 			boolean offerCodeSameInPricePlan = pricePlan.getOfferTemplate() == null
 					|| pricePlan.getOfferTemplate().getCode()
 							.equals(bareOperation.getOfferCode());
@@ -747,12 +778,17 @@ public class RatingService {
 						&& pricePlan.getCriteria3Value().length() == 0) {
 					pricePlan.setCriteria3Value(null);
 				}
+				if (pricePlan.getCriteriaEL() != null
+						&& pricePlan.getCriteriaEL().length() == 0) {
+					pricePlan.setCriteriaEL(null);
+				}
 				log.info("Add pricePlan for provider="
 						+ pricePlan.getProvider().getCode() + "; chargeCode="
 						+ pricePlan.getEventCode() + "; priceplan=" + pricePlan
 						+ "; criteria1=" + pricePlan.getCriteria1Value()
 						+ "; criteria2=" + pricePlan.getCriteria2Value()
-						+ "; criteria3=" + pricePlan.getCriteria3Value());
+						+ "; criteria3=" + pricePlan.getCriteria3Value()
+						+ "; criteriaEL=" + pricePlan.getCriteriaEL());
 				List<PricePlanMatrix> chargePriceList = providerPricePlans
 						.get(pricePlan.getEventCode());
 				chargePriceList.add(pricePlan);
@@ -807,4 +843,43 @@ public class RatingService {
 		}
 		allDiscountPlan = result;
 	}
+
+	private boolean matchExpression(String expression,
+			WalletOperation bareOperation) {
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("op", bareOperation);
+		//FIXME: externilize the resolver to instance variable and simply set the bare operation
+		//before evaluation
+		ELResolver simpleELResolver = new SimpleELResolver(userMap);
+		final VariableMapper variableMapper = new SimpleVariableMapper();
+		final FunctionMapper functionMapper = new SimpleFunctionMapper();
+		final CompositeELResolver compositeELResolver = new CompositeELResolver();
+		compositeELResolver.add(simpleELResolver);
+		compositeELResolver.add(new ArrayELResolver());
+		compositeELResolver.add(new ListELResolver());
+		compositeELResolver.add(new BeanELResolver());
+		compositeELResolver.add(new MapELResolver());
+		ELContext context = new ELContext() {
+			@Override
+			public ELResolver getELResolver() {
+				return compositeELResolver;
+			}
+
+			@Override
+			public FunctionMapper getFunctionMapper() {
+				return functionMapper;
+			}
+
+			@Override
+			public VariableMapper getVariableMapper() {
+				return variableMapper;
+			}
+		};
+		ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
+		
+		ValueExpression ve = expressionFactory.createValueExpression(context,
+				expression, Boolean.class);
+		return (Boolean) ve.getValue(context);
+	}
+
 }

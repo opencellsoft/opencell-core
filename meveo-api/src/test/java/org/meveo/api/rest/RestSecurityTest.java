@@ -11,7 +11,8 @@ public class RestSecurityTest {
 
 	public RestSecurityTest() {
 		MeveoClient restClient = new MeveoClient("http://localhost:8080/meveo",
-				"api/rest/invoice/version", "meveo.admin", "meveo.admin");
+			    "api/rest/customerAccount/", "meveo.admin", "meveo.admin");
+			  restClient.addParam("customerAccountCode", "CA1");
 
 		System.out.println("response=" + restClient.execute());
 	}

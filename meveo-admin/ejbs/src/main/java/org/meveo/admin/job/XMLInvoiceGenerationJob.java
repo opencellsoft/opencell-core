@@ -45,25 +45,24 @@ public class XMLInvoiceGenerationJob implements Job {
 
 	@Inject
 	private ProviderService providerService;
-	
+
 	@Inject
 	JobExecutionService jobExecutionService;
 
-
 	@Inject
 	private BillingRunService billingRunService;
-	
+
 	@Inject
 	BillingAccountService billingAccountService;
-	
+
     @Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
-	
+
 	@Inject
 	InvoiceService invoiceService;
 
-
-	private Logger log = Logger.getLogger(XMLInvoiceGenerationJob.class.getName());
+	private Logger log = Logger.getLogger(XMLInvoiceGenerationJob.class
+			.getName());
 
 	@PostConstruct
 	public void init() {
@@ -75,16 +74,18 @@ public class XMLInvoiceGenerationJob implements Job {
 		log.info("execute XMLInvoiceGenerationJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
-		if(parameter!=null && parameter.trim().length()>0){
-			try{
-				billingRuns.add(billingRunService.getBillingRunById(Long.parseLong(parameter), provider));
-			} catch (Exception e){
+		if (parameter != null && parameter.trim().length() > 0) {
+			try {
+				billingRuns.add(billingRunService.getBillingRunById(
+						Long.parseLong(parameter), provider));
+			} catch (Exception e) {
 				e.printStackTrace();
 				result.registerError(e.getMessage());
 			}
-		}else {
+		} else {
 			billingRuns = billingRunService.getValidatedBillingRuns(provider);
 		}
+		
 		log.info("# billingRuns to process:" + billingRuns.size());
 			for (BillingRun billingRun : billingRuns) {
 				try {
@@ -105,19 +106,27 @@ public class XMLInvoiceGenerationJob implements Job {
 					e.printStackTrace();
 					result.registerError(e.getMessage());
 				}
+				
+				billingRun.setXmlInvoiceGenerated(true);
+				billingRunService.update(billingRun);
+			} catch (Exception e) {
+				e.printStackTrace();
+				result.registerError(e.getMessage());
 			}
-		
+		}
+
 		result.close("");
 		return result;
 	}
 
-
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression,
+			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 		
 	}
 
@@ -129,9 +138,11 @@ public class XMLInvoiceGenerationJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-                Provider provider=providerService.findById(info.getProviderId());
-                JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info,provider);
+				Provider provider = providerService.findById(info
+						.getProviderId());
+				JobExecutionResult result = execute(info.getParametres(),
+						provider);
+				jobExecutionService.persistResult(this, result, info, provider);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -140,8 +151,6 @@ public class XMLInvoiceGenerationJob implements Job {
 		}
 	}
 
-	
-
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
@@ -149,11 +158,12 @@ public class XMLInvoiceGenerationJob implements Job {
     @Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		System.out.println("cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

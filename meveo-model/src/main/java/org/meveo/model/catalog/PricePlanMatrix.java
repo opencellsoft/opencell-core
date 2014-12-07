@@ -88,6 +88,9 @@ public class PricePlanMatrix extends AuditableEntity implements Comparable<Price
 
 	@Column(name = "CRITERIA_3")
 	private String criteria3Value;
+	
+	@Column(name = "CRITERIA_EL",length=2000)
+	private String criteriaEL;
 
 	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
 	@Digits(integer = 23, fraction = 12)
@@ -214,6 +217,14 @@ public class PricePlanMatrix extends AuditableEntity implements Comparable<Price
 
 	public void setCriteria3Value(String criteria3Value) {
 		this.criteria3Value = criteria3Value;
+	}
+
+	public String getCriteriaEL() {
+		return criteriaEL;
+	}
+
+	public void setCriteriaEL(String criteriaEL) {
+		this.criteriaEL = criteriaEL;
 	}
 
 	public BigDecimal getAmountWithoutTax() {
