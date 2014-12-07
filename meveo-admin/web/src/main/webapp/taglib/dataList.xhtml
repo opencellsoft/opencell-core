@@ -44,7 +44,7 @@
 
 		<h:form id="#{formId}" prependId="false">
 
-			<e:sortableDataTable id="datatable" var="entity" value="#{dataModel}"
+			<e:sortableDataTable id="datatable_#{resultsId}" var="entity" value="#{dataModel}"
 				paginator="true" rows="10"
 				selection="#{backingBean.selectedEntities}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -65,7 +65,7 @@
 			<p:commandButton id="#{formId}buttonExport"
 				value="#{messages['commons.exportExcel']}" ajax="false"
 				rendered="#{exportButton}">
-				<p:dataExporter type="xls" target="datatable" fileName="data"
+				<p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data"
 					pageOnly="false" />
 			</p:commandButton>
 
@@ -73,12 +73,12 @@
 				<ui:insert name="add-on-buttons" />
 			</p:panel>
 
-			<p:blockUI block="datatable" trigger="datatable">
+			<p:blockUI block="datatable_#{resultsId}" trigger="datatable_#{resultsId}">
         		LOADING<br />
 				<p:graphicImage name="ajax-loader1.gif" library="img" />
 			</p:blockUI>
 
-			<p:panelGrid id="blockUIContentDataTable" columns="2"
+			<p:panelGrid id="blockUIContentDataTable_#{resultsId}" columns="2"
 				style="display:none;">
 				<h:graphicImage library="img" name="ajax-loader1.gif"
 					style="margin-right: 12px; vertical-align: middle;" />

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -52,7 +53,7 @@ public class XMLInvoiceGenerationJob implements Job {
 	@Inject
 	BillingAccountService billingAccountService;
 
-	@Inject
+    @Inject
 	XMLInvoiceCreator xmlInvoiceCreator;
 
 	@Inject
@@ -86,30 +87,28 @@ public class XMLInvoiceGenerationJob implements Job {
 		log.info("# billingRuns to process:" + billingRuns.size());
 		for (BillingRun billingRun : billingRuns) {
 			try {
-				ParamBean param = ParamBean.getInstance();
-				String invoicesDir = param.getProperty("providers.rootDir",
-						"/tmp/meveo");
-				File billingRundir = new File(invoicesDir + File.separator
-						+ provider.getCode() + File.separator + "invoices"
-						+ File.separator + "xml" + File.separator
-						+ billingRun.getId());
-				billingRundir.mkdirs();
 				
-				for (Invoice invoice : billingRun.getInvoices()) {
-					xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
-				}
-				
-				billingRun.setXmlInvoiceGenerated(true);
-				billingRunService.update(billingRun);
+		        ParamBean param = ParamBean.getInstance();
+		        String invoicesDir = param.getProperty("providers.dir","/tmp/meveo");
+			        File billingRundir = new File(invoicesDir + File.separator +provider.getCode()+File.separator+"invoices"+File.separator+"xml"+File.separator+billingRun.getId());
+			        billingRundir.mkdirs();
+			        for (Invoice invoice : billingRun.getInvoices()) {
+			        	long startDate=System.currentTimeMillis();
+			            Future<Boolean> xmlCreated= xmlInvoiceCreator.createXMLInvoice(invoice, billingRundir);
+			            xmlCreated.get();
+			            log.info("invoice creation delay :"+(System.currentTimeMillis()-startDate)+",xmlCreated={1} "+xmlCreated.get()+"");
+			        }
+			        billingRun.setXmlInvoiceGenerated(true);
+			        billingRunService.update(billingRun);
 			} catch (Exception e) {
 				e.printStackTrace();
 				result.registerError(e.getMessage());
 			}
 		}
-
-		result.close("");
-		return result;
-	}
+	
+	result.close("");
+	return result;
+}
 
 	@Override
 	public Timer createTimer(ScheduleExpression scheduleExpression,
@@ -119,6 +118,7 @@ public class XMLInvoiceGenerationJob implements Job {
 		timerConfig.setPersistent(false);
 		return timerService
 				.createCalendarTimer(scheduleExpression, timerConfig);
+		
 	}
 
 	boolean running = false;
@@ -146,8 +146,7 @@ public class XMLInvoiceGenerationJob implements Job {
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
-
-	@Override
+    @Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
 		System.out.println("cancel " + alltimers.size() + " timers for"
@@ -159,5 +158,4 @@ public class XMLInvoiceGenerationJob implements Job {
 				e.printStackTrace();
 			}
 		}
-	}
-}
+	}}
