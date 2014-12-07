@@ -9,14 +9,12 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
-import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
@@ -115,7 +113,7 @@ public class XMLInvoiceGenerationJob implements Job {
 			}
 		}
 
-		result.close("");
+		result.close();
 		return result;
 	}
 
