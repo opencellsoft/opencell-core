@@ -22,19 +22,13 @@ import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
-import org.jboss.seam.transaction.TransactionPropagation;
-import org.jboss.seam.transaction.Transactional;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
@@ -287,7 +281,7 @@ public void setInvoiceNumber(Invoice invoice) {
 				e.printStackTrace();
 				log.error("Error for BA="+ billingAccount.getCode()+ " : "+e.getMessage());
 				RejectedBillingAccount rejectedBA=new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
-				rejectedBillingAccountService.create(getEntityManager(),rejectedBA);
+				rejectedBillingAccountService.create(em,rejectedBA);
 			}
 			return new AsyncResult<Boolean>(false);
 		}
