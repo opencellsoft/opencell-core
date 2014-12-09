@@ -1002,6 +1002,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					line.appendChild(lebel);
 					log.info("addHeaderCategories2 headerRatedTransaction amountHT="
 							+ headerTransaction.getAmountWithoutTax());
+					Element lineUnitAmountWithoutTax = doc
+							.createElement("unitAmountWithoutTax");
+					Text lineUnitAmountWithoutTaxTxt = doc
+							.createTextNode(round(headerTransaction
+									.getUnitAmountWithoutTax()) + "");
+					lineUnitAmountWithoutTax.appendChild(lineUnitAmountWithoutTaxTxt);
+					line.appendChild(lineUnitAmountWithoutTax);
 					Element lineAmountWithoutTax = doc
 							.createElement("amountWithoutTax");
 					Text lineAmountWithoutTaxTxt = doc
@@ -1010,14 +1017,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					lineAmountWithoutTax.appendChild(lineAmountWithoutTaxTxt);
 					line.appendChild(lineAmountWithoutTax);
 
-					Element lineAmountWithTax = doc
-							.createElement("amountWithTax");
-					Text lineAmountWithTaxTxt = doc
-							.createTextNode(round(headerTransaction
-									.getAmountWithTax()) + "");
-					lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
-					line.appendChild(lineAmountWithTax);
-
+					if(!entreprise){
+						Element lineAmountWithTax = doc
+								.createElement("amountWithTax");
+						Text lineAmountWithTaxTxt = doc
+								.createTextNode(round(headerTransaction
+										.getAmountWithTax()) + "");
+						lineAmountWithTax.appendChild(lineAmountWithTaxTxt);
+						line.appendChild(lineAmountWithTax);
+					}
 					category.appendChild(line);
 				}
 			}
