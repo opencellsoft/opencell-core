@@ -4,14 +4,16 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui" xmlns:a="http://richfaces.org/a4j"
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
 		<f:metadata>
-			<f:event type="preRenderView" listener="#{userAccountBean.preRenderView}" />
-		
+			<f:event type="preRenderView"
+				listener="#{userAccountBean.preRenderView}" />
+
 			<f:viewParam name="userAccountId" value="#{userAccountBean.objectId}" />
 			<f:viewParam name="billingAccountId"
 				value="#{userAccountBean.billingAccountId}" />
@@ -21,6 +23,8 @@
 				value="#{customerAccountBean.objectId}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
+
+		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -53,14 +57,11 @@
 			column2="endDate" column3Label="#{messages['chargeInstance.code']}"
 			column2Converter="date" column3="chargeInstance" column3Child="code"
 			column4Label="#{messages['walletOperation.quantity']}"
-			column4="quantity"
-			column4Converter="4digits"
+			column4="quantity" column4Converter="4digits"
 			column5Label="#{messages['walletOperation.amountWithoutTax']}"
-			column5="amountWithoutTax"
-			column5Converter="4digits"
+			column5="amountWithoutTax" column5Converter="4digits"
 			column6Label="#{messages['walletOperation.amountWithTax']}"
-			column6="amountWithTax"
-			column6Converter="4digits"
+			column6="amountWithTax" column6Converter="4digits"
 			column7Label="#{messages['currency.codeCurrency']}"
 			column7="currency">
 		</hftl:entityPopup>
@@ -179,6 +180,7 @@
 									</hftl:panelGroup>
 								</hftl:fieldset>
 							</p:tab>
+
 							<p:tab title="#{messages['billingAccount.tab.information']}">
 								<hftl:fieldset name="#{messages['commons.contacts']}"
 									columns="1">
@@ -210,6 +212,10 @@
 								</hftl:fieldset>
 							</p:tab>
 
+							<p:tab title="#{messages['customFieldTemplate.panel']}">
+								<hf:customFields />
+							</p:tab>
+
 						</p:tabView>
 
 					</hf:formPanel>
@@ -220,7 +226,7 @@
 							<p:button outcome="addNewSubscription"
 								value="#{messages['userAccount.addNewSubscription']}"
 								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
-<!-- 								<f:param name="cid" value="#{conversation.id}" /> -->
+								<!-- 								<f:param name="cid" value="#{conversation.id}" /> -->
 							</p:button>
 							<p:commandButton value="#{messages['button.terminateButton']}"
 								oncomplete="dlg_userAccountTerminationPopup.show()"

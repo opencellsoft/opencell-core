@@ -1087,6 +1087,8 @@ insert into BILLING_SUBSCRIP_TERMIN_REASON (id, version, provider_id, code, desc
 DROP SEQUENCE IF EXISTS BILLING_SUB_TERM_REASON_SEQ;
 CREATE SEQUENCE BILLING_SUB_TERM_REASON_SEQ start with 4 increment by 1;
 
+
+
 --------------------------------------------------------
 --  AR_OCC_TEMPLATE  
 --------------------------------------------------------

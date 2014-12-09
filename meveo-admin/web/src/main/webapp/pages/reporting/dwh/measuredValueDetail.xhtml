@@ -1,0 +1,183 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+	
+
+	<ui:define name="body">
+
+		<p:panel header="#{messages['page.title.measuredValue']}"
+			styleClass="form-panel">
+
+			<p:messages id="formMessages" showDetail="true" showSummary="false"
+				redisplay="false"></p:messages>
+
+			<p:panelGrid columns="1" style="width: 100%">
+				<h:form id="measurementForm">
+					<p:panelGrid columns="4">
+
+						<p:panelGrid columns="2">
+							<p:outputLabel for="measurablePeriod"
+								value="#{messages['entity.measuredvalue.measurementPeriod']}"></p:outputLabel>
+							<p:selectOneMenu id="measurablePeriod" required="true"
+								value="#{measurementBean.measuredPeriod}"
+								converter="omnifaces.SelectItemsConverter" style="width: 150px">
+								<f:selectItems value="#{measurementBean.getMeasurePeriods()}"
+									var="obj" itemValue="#{obj}"
+									itemLabel="#{messages['enum.measurementperiod.'.concat(obj)]}"></f:selectItems>
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:panelGrid columns="2">
+							<p:outputLabel for="selectedDate"
+								value="#{messages['commons.date']}" />
+
+							<p:calendar id="selectedDate"
+								value="#{measurementBean.selectedDate}" required="true"
+								pattern="MMMM yyyy" />
+						</p:panelGrid>
+
+						<p:panelGrid columns="2">
+							<p:outputLabel for="dimension1Filter"
+								value="#{messages['entity.measurablequantity.dimension1']}"></p:outputLabel>
+							<p:selectOneMenu id="dimension1Filter"
+								value="#{measurementBean.dimension1Filter}"
+								converter="omnifaces.SelectItemsConverter">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{measurementBean.dimension1List}"
+									var="obj" itemValue="#{obj}"></f:selectItems>
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:commandButton value="Generate Table"
+							action="#{measurementBean.generateMVModel()}"
+							update=":mqTableForm " />
+
+					</p:panelGrid>
+				</h:form>
+
+				<h:form id="mqTableForm">
+					<p:dataTable id="mqTable" value="#{measurementBean.mainMVModel}"
+						var="meas" rendered="#{measurementBean.selectedDate != null}"
+						editable="true" editMode="cell">
+
+						<p:ajax event="cellEdit" listener="#{measurementBean.onCellEdit}"
+							update=":#{p:component('formMessages')} " />
+
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column rowspan="3" headerText="#{messages['commons.date']}" />
+							</p:row>
+							<p:row>
+								<c:forEach items="#{measurementBean.getDimension(1)}" var="dim">
+									<p:column colspan="#{measurementBean.getColspan(dim,1)}"
+										headerText="#{dim}"></p:column>
+								</c:forEach>
+							</p:row>
+							<p:row>
+								<c:forEach items="#{measurementBean.getDimension(2)}" var="dim">
+									<p:column headerText="#{dim}"></p:column>
+								</c:forEach>
+							</p:row>
+						</p:columnGroup>
+
+						<c:forEach begin="0"
+							end="#{measurementBean.mainMVModel.get(0).size() -1}" step="1"
+							varStatus="colIndex">
+							<p:column styleClass="ui-editable-column"
+								id="#{'col'.concat(colIndex.index)}">
+								<h:outputText value="#{meas[0].date}"
+									rendered="#{colIndex.index eq 0}">
+									<f:convertDateTime
+										pattern="#{paramBean.getProperty('format.date','dd/MM/yyyy')}" />
+								</h:outputText>
+								<h:outputText value="#{meas[colIndex.index].value}"
+									rendered="#{not measurementBean.edit}" />
+								<h:outputText value="#{meas[colIndex.index].value}"
+									rendered="#{measurementBean.edit and (not meas[colIndex.index].measurableQuantity.editable)}" />
+								<p:cellEditor
+									rendered="#{measurementBean.edit and (meas[colIndex.index].measurableQuantity.editable) and (colIndex.index != 0)}">
+									<f:facet name="output">
+										<h:outputText value="#{meas[colIndex.index].value}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{meas[colIndex.index].value}">
+										</p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+						</c:forEach>
+
+					</p:dataTable>
+
+					<p:panel styleClass="form-panel-actions">
+
+						<p:button id="backButton" value="#{messages['action.back']}"
+							icon="ui-icon-arrowthick-1-w" outcome="#{measurementBean.back()}"
+							includeViewParams="true">
+							<!-- <c:if test="#{measurementBean.lcid != null}">
+								<f:param name="cid" value="#{measurementBean.lcid}" />
+							</c:if> -->
+						</p:button>
+
+						<p:button value="#{messages['action.edit']}"
+							rendered="#{!measurementBean.edit and measurementBean.objectId != null}"
+							includeViewParams="true">
+							<f:param name="edit" value="true" />
+							<f:param name="#{measurementBean.objectId}"
+								value="#{measurementBean.objectId}" />
+						</p:button>
+
+						<h:commandLink>
+							<h:outputText
+								value="#{messages['page.measuredValue.exporttable']}"></h:outputText>
+							<p:dataExporter type="xls" target="mqTable"
+								fileName="measuredValueTable"
+								postProcessor="#{measurementBean.generateExcelReport}" />
+						</h:commandLink>
+					</p:panel>
+				</h:form>
+			</p:panelGrid>
+		</p:panel>
+
+		<p:dialog id="editMV" header="#{messages['menu.measuredValue']}"
+			showEffect="fade" widgetVar="editMVWidget" modal="true"
+			appendTo="@(body)">
+			<h:form id="editMVdialog">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="mvdate"
+						value="#{messages['entity.measuredvalue.date']}"></p:outputLabel>
+					<h:outputText id="mvdate"
+						value="#{measurementBean.selectedMV.date}" styleClass="value">
+						<f:convertDateTime
+							pattern="#{paramBean.getProperty('format.date','dd/MM/yyyy')}" />
+					</h:outputText>
+
+					<p:outputLabel for="mvPeriod"
+						value="#{messages['entity.measuredvalue.measurementPeriod']}"></p:outputLabel>
+					<h:outputText id="mvPeriod"
+						value="#{messages['enum.measurementperiod.'.concat(measurementBean.selectedMV.measurementPeriod)]}"
+						styleClass="value">
+					</h:outputText>
+
+					<p:outputLabel for="mvvalue"
+						value="#{messages['entity.measuredvalue.value']}"></p:outputLabel>
+					<p:inputText id="mvvalue"
+						value="#{measurementBean.selectedMV.value}" />
+
+					<p:commandButton value="#{messages['action.save']}"
+						action="#{measurementBean.saveMV}" ajax="false"></p:commandButton>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

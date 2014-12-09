@@ -16,11 +16,16 @@
  */
 package org.meveo.admin.action.crm;
 
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.crm.AccountLevelEnum;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -31,13 +36,10 @@ import org.meveo.service.crm.impl.CustomerService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Gediminas Ubartas
- * @created 2010.11.15
  */
 @Named
 @ConversationScoped
-public class CustomerBean extends BaseBean<Customer> {
+public class CustomerBean extends AccountBean<Customer> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,7 +63,11 @@ public class CustomerBean extends BaseBean<Customer> {
 	 * @throws InstantiationException
 	 */
 	public Customer initEntity() {
-		return super.initEntity();
+		Customer customer = super.initEntity();
+
+		initCustomFields(AccountLevelEnum.CUSTOMER);
+
+		return customer;
 	}
 
 	/*
@@ -72,6 +78,9 @@ public class CustomerBean extends BaseBean<Customer> {
 	@Override
 	public String saveOrUpdate(boolean killConversation) {
 		super.saveOrUpdate(killConversation);
+
+		saveCustomFields();
+
 		return "/pages/crm/customers/customerDetail.xhtml?edit=false&customerId="
 				+ entity.getId() + "&faces-redirect=true";
 	}
@@ -87,5 +96,14 @@ public class CustomerBean extends BaseBean<Customer> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	public List<CustomFieldTemplate> getCustomFieldTemplates() {
+		return customFieldTemplates;
+	}
+
+	public void setCustomFieldTemplates(
+			List<CustomFieldTemplate> customFieldTemplates) {
+		this.customFieldTemplates = customFieldTemplates;
 	}
 }

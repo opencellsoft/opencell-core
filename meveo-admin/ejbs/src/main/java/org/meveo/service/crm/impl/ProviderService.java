@@ -117,7 +117,7 @@ public class ProviderService extends PersistenceService<Provider> {
 
 	public void update(Provider e) {
 		((AuditableEntity) e).updateAudit(getCurrentUser());
-		em.merge(e);
+		getEntityManager().merge(e);
 		log.info("updated provider");
 	}
 
@@ -127,7 +127,7 @@ public class ProviderService extends PersistenceService<Provider> {
 			((AuditableEntity) e).updateAudit(getCurrentUser());
 		}
 		e.setProvider(null);
-		em.persist(e);
+		getEntityManager().persist(e);
 		log.info("created provider id={}. creating default user", e.getId());
 		User user = new User();
 		user.setProvider(e);
@@ -143,12 +143,12 @@ public class ProviderService extends PersistenceService<Provider> {
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(e.getCode() + ".password"));
 		Role role = roleService.findById(Long.parseLong(paramBean.getProperty(
-				"system.adminRoleid", "1")));
+				"systgetEntityManager().adminRoleid", "1")));
 		Set<Role> roles = new HashSet<Role>();
 		roles.add(role);
 		user.setRoles(roles);
 		user.setUserName(e.getCode() + ".ADMIN");
-		em.persist(user);
+		getEntityManager().persist(user);
 		log.info("created default user id={}.", user.getId());
 	}
 

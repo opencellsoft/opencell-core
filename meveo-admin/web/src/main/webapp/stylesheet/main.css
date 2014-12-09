@@ -390,3 +390,11 @@ input[type="submit"],
 /*.ui-selectonemenu .ui-selectonemenu-label { width: 130px !important; }*/
 
 .no-padding td:first-child { padding: 0 0 0 2px; }
+
+.alert-box { color:#555; border-radius:10px; font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px; padding:10px 10px 10px 36px; margin:10px; }
+.alert-box span { font-weight:bold; text-transform:uppercase; }
+.alert-box-error { background:#ffecec url('../resources/img/error.png') no-repeat 10px 50%; border:1px solid #f5aca6; } /* ui-messages-error-icon */
+.alert-box-success { background:#e9ffd9 url('../resources/img/success.png') no-repeat 10px 50%; border:1px solid #a6ca8a; }
+.alert-box-warning { background:#fff8c4 url('../resources/img/warning.png') no-repeat 10px 50%; border:1px solid #f2c779; }
+.alert-box-notice { background:#e3f7fc url('../resources/img/notice.png') no-repeat 10px 50%; border:1px solid #8ed9f6; }
+.main-error-box { }

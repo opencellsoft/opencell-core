@@ -8,12 +8,14 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
+import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
@@ -102,7 +104,7 @@ public class ImportCustomersJob implements Job {
 	@Inject
 	private ProviderService providerService;
 	
-	@Inject
+	@EJB
 	private CustomerImportService customerImportService;
 
 	Sellers sellersWarning;
@@ -654,9 +656,10 @@ public class ImportCustomersJob implements Job {
 			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		timerConfig.setPersistent(false);
+		//timerConfig.setPersistent(false);
 		return timerService.createCalendarTimer(scheduleExpression,
 				timerConfig);
+		
 	}
 
 	boolean running = false;
@@ -679,13 +682,11 @@ public class ImportCustomersJob implements Job {
 			}
 		}
 	}
-
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
-	}
-
-	@Override
+		}
+@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
 		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
@@ -696,5 +697,5 @@ public class ImportCustomersJob implements Job {
 				e.printStackTrace();
 			}
 		}
-	}
-}
+	}	}
+

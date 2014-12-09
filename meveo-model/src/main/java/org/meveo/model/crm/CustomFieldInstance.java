@@ -16,25 +16,25 @@ import org.meveo.model.BusinessEntity;
 @Entity
 @Table(name = "CRM_CUSTOM_FIELD_INST")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
-public class CustomFieldInstance  extends  BusinessEntity {
+public class CustomFieldInstance extends BusinessEntity {
 
 	private static final long serialVersionUID = 8691447585410651639L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ACCOUNT_ID")
-	AccountEntity account;
-	
-	@Column(name="STRING_VALUE")
-	String stringValue;
+	private AccountEntity account;
 
-	@Column(name="DATE_VALUE")
-	Date dateValue;
+	@Column(name = "STRING_VALUE")
+	private String stringValue;
 
-	@Column(name="LONG_VALUE")
-	Long longValue;
+	@Column(name = "DATE_VALUE")
+	private Date dateValue;
 
-	@Column(name="DOUBLE_VALUE")
-	Double doubleValue;
+	@Column(name = "LONG_VALUE")
+	private Long longValue;
+
+	@Column(name = "DOUBLE_VALUE")
+	private Double doubleValue;
 
 	public String getStringValue() {
 		return stringValue;
@@ -67,5 +67,13 @@ public class CustomFieldInstance  extends  BusinessEntity {
 	public void setDoubleValue(Double doubleValue) {
 		this.doubleValue = doubleValue;
 	}
-	
+
+	public AccountEntity getAccount() {
+		return account;
+	}
+
+	public void setAccount(AccountEntity account) {
+		this.account = account;
+	}
+
 }

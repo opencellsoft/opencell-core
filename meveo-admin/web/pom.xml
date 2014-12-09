@@ -82,14 +82,14 @@
 						<replacement>
 							<token>@VERSION_NUMBER@</token>
 							<value>${project.version}</value>
-						</replacement>
+						</replacement> 
 						<replacement>
-							<token>@BUILD_NUMBER@</token>
-							<value>[${buildNumber}]</value>
-						</replacement>
+                       <token>@BUILD_NUMBER@</token>
+                       <value>${buildNumber}</value>
+                       </replacement> 
 					</replacements>
 				</configuration>
-			</plugin>
+			</plugin> 
 
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>

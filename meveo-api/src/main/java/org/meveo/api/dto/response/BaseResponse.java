@@ -16,7 +16,7 @@ public abstract class BaseResponse implements Serializable {
 	/**
 	 * The status response of the web service response.
 	 */
-	private ActionStatus actionStatus;
+	private ActionStatus actionStatus=new ActionStatus();
 
 	public BaseResponse() {
 		actionStatus = new ActionStatus();

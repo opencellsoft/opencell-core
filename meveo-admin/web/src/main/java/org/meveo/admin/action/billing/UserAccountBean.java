@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
@@ -34,6 +35,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -50,7 +52,7 @@ import org.primefaces.model.LazyDataModel;
  */
 @Named
 @ConversationScoped
-public class UserAccountBean extends BaseBean<UserAccount> {
+public class UserAccountBean extends AccountBean<UserAccount> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -100,7 +102,7 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	@Override
 	public UserAccount initEntity() {
 		super.initEntity();
-		System.out.println("initentity useraccount id=" + entity.getId());
+
 		if (entity.getId() == null && billingAccountId != null) {
 			BillingAccount billingAccount = billingAccountService
 					.findById(billingAccountId);
@@ -112,6 +114,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 				entity.setDefaultLevel(true);
 			}
 		}
+
+		initCustomFields(AccountLevelEnum.UA);
+
 		return entity;
 	}
 
@@ -131,6 +136,9 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 
 			}
 			super.saveOrUpdate(killConversation);
+			
+			saveCustomFields();
+			
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId="
 					+ entity.getId()
 					+ "&faces-redirect=true&includeViewParams=true";
@@ -289,5 +297,5 @@ public class UserAccountBean extends BaseBean<UserAccount> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
+
 }

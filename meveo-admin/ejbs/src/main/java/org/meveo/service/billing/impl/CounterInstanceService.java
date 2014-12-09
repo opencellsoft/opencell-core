@@ -82,7 +82,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	}
 
 	public CounterPeriod createPeriod(CounterInstance counterInstance,
-			Date chargeDate) {
+			Date chargeDate,EntityManager em) {
 		CounterPeriod counterPeriod = new CounterPeriod();
 		counterPeriod.setCounterInstance(counterInstance);
 		Date startDate = counterInstance.getCounterTemplate().getCalendar()
@@ -92,6 +92,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		log.info("create counter period from " + startDate + " to " + endDate);
 		counterPeriod.setPeriodStartDate(startDate);
 		counterPeriod.setPeriodEndDate(endDate);
+		counterPeriod.setProvider(counterInstance.getProvider());
 		counterPeriod.setValue(counterInstance.getCounterTemplate().getLevel());
 		counterPeriod.setCode(counterInstance.getCode());
 		counterPeriod.setDescription(counterInstance.getDescription());
@@ -100,18 +101,23 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 				.getCounterType());
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
+		auditable.setCreator(counterInstance.getAuditable().getCreator());
 		counterPeriod.setAuditable(auditable);
-		counterPeriodService.create(counterPeriod);
+		counterPeriodService.create(em,counterPeriod,counterInstance.getAuditable().getCreator(),counterInstance.getProvider());
 		counterInstance.getCounterPeriods().add(counterPeriod);
-		update(counterInstance);
+		update(em,counterInstance);
 		return counterPeriod;
 	}
 
-	public void updatePeriodValue(Long counterPeriodId, BigDecimal value,EntityManager em) {
-		CounterPeriod counterPeriod = counterPeriodService
-				.findById(em,counterPeriodId);
+	public void updatePeriodValue(Long counterPeriodId, BigDecimal value,
+			EntityManager em) throws BusinessException {
+		CounterPeriod counterPeriod = counterPeriodService.findById(em,
+				counterPeriodId);
+		if (counterPeriod == null)
+			throw new BusinessException("CounterPeriod with id="
+					+ counterPeriodId + " does not exists.");
 		counterPeriod.setValue(value);
 		counterPeriod.getAuditable().setUpdated(new Date());
-		counterPeriodService.update(em,counterPeriod);
+		counterPeriodService.update(em, counterPeriod);
 	}
 }

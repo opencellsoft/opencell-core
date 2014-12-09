@@ -27,9 +27,11 @@ import javax.inject.Named;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
+import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -49,7 +51,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  */
 @Named
 @ConversationScoped
-public class CustomerAccountBean extends BaseBean<CustomerAccount> {
+public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -115,6 +117,9 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 		if (getTab() != null) {
 			selectedTab = getTab();
 		}
+
+		initCustomFields(AccountLevelEnum.CA);
+
 		return entity;
 	}
 
@@ -136,7 +141,11 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 				}
 
 			}
+
 			super.saveOrUpdate(killConversation);
+
+			saveCustomFields();
+
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId="
 					+ entity.getId()
 					+ "&cid="
@@ -150,6 +159,7 @@ public class CustomerAccountBean extends BaseBean<CustomerAccount> {
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
 
 		}
+
 		return null;
 	}
 

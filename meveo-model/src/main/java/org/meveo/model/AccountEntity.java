@@ -76,9 +76,9 @@ public abstract class AccountEntity extends BusinessEntity {
 	private ProviderContact primaryContact;
 
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@MapKeyColumn(name="code")
-	private Map<String,CustomFieldInstance> customFields=new HashMap<String, CustomFieldInstance>();
-	
+	@MapKeyColumn(name = "code")
+	private Map<String, CustomFieldInstance> customFields = new HashMap<String, CustomFieldInstance>();
+
 	public String getExternalRef1() {
 		return externalRef1;
 	}
@@ -143,73 +143,72 @@ public abstract class AccountEntity extends BusinessEntity {
 		this.primaryContact = primaryContact;
 	}
 
-	public Map<String,CustomFieldInstance> getCustomFields() {
+	public Map<String, CustomFieldInstance> getCustomFields() {
 		return customFields;
 	}
 
-	public void setCustomFields(Map<String,CustomFieldInstance> customFields) {
+	public void setCustomFields(Map<String, CustomFieldInstance> customFields) {
 		this.customFields = customFields;
 	}
-	
-	public CustomFieldInstance getCustomFieldInstance(String code){
-		CustomFieldInstance cfi =null;
-		 if(customFields.containsKey(code)){
-			 cfi = customFields.get(code);
-		 } else {
-			 cfi = new CustomFieldInstance();
-			 cfi.setCode(code);
-			 customFields.put(code, cfi);
-		 }
-		 return cfi;
+
+	public CustomFieldInstance getCustomFieldInstance(String code) {
+		CustomFieldInstance cfi = null;
+		if (customFields.containsKey(code)) {
+			cfi = customFields.get(code);
+		} else {
+			cfi = new CustomFieldInstance();
+			cfi.setCode(code);
+			customFields.put(code, cfi);
+		}
+		return cfi;
 	}
-	
-	
-	public String getStringCustomValue(String code){
-		String result=null;
-		if(customFields.containsKey(code)){
+
+	public String getStringCustomValue(String code) {
+		String result = null;
+		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getStringValue();
 		}
 		return result;
 	}
 
-	public void setStringCustomValue(String code, String value){
-	 	getCustomFieldInstance(code).setStringValue(value);
+	public void setStringCustomValue(String code, String value) {
+		getCustomFieldInstance(code).setStringValue(value);
 	}
-	
-	public Date getDateCustomValue(String code){
-		Date result=null;
-		if(customFields.containsKey(code)){
+
+	public Date getDateCustomValue(String code) {
+		Date result = null;
+		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getDateValue();
 		}
 		return result;
 	}
 
-	public void setDateCustomValue(String code, Date value){
-	 	getCustomFieldInstance(code).setDateValue(value);
+	public void setDateCustomValue(String code, Date value) {
+		getCustomFieldInstance(code).setDateValue(value);
 	}
-	
-	public Long getLongCustomValue(String code){
-		Long result=null;
-		if(customFields.containsKey(code)){
+
+	public Long getLongCustomValue(String code) {
+		Long result = null;
+		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getLongValue();
 		}
 		return result;
 	}
 
-	public void setLongCustomValue(String code, Long value){
-	 	getCustomFieldInstance(code).setLongValue(value);
+	public void setLongCustomValue(String code, Long value) {
+		getCustomFieldInstance(code).setLongValue(value);
 	}
-	
-	public Double getDoubleCustomValue(String code){
-		Double result=null;
-		if(customFields.containsKey(code)){
+
+	public Double getDoubleCustomValue(String code) {
+		Double result = null;
+		if (customFields.containsKey(code)) {
 			result = customFields.get(code).getDoubleValue();
 		}
 		return result;
 	}
 
-	public void setDoubleCustomValue(String code, Double value){
-	 	getCustomFieldInstance(code).setDoubleValue(value);
+	public void setDoubleCustomValue(String code, Double value) {
+		getCustomFieldInstance(code).setDoubleValue(value);
 	}
-	
+
 }
