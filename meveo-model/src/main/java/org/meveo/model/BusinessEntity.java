@@ -27,9 +27,9 @@ public class BusinessEntity extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE", nullable = false, length = 35)
+	@Column(name = "CODE", nullable = false, length = 60)
 	// TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
-	@Size(max = 35, min = 1)
+	@Size(max = 60, min = 1)
 	@NotNull
 	protected String code;
 
