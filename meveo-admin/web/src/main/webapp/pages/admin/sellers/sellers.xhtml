@@ -8,7 +8,7 @@
 	<f:metadata>
 		<f:event type="preRenderView" listener="#{sellerBean.preRenderView}" />
 	</f:metadata>
-	
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
@@ -33,8 +33,7 @@
 				field="description" />
 			<hf:searchField id="seller"
 				label="#{messages['BusinessEntity.code']}" field="seller"
-				childField="code" popup="true" popupId="searchSellerPopup"
-				clearButton="true" />
+				childField="code" popup="true" popupId="searchSellerPopup" />
 		</hf:searchPanel>
 
 		<hftl:dataList label="#{messages['seller.title']}"
