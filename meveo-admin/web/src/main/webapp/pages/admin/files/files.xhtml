@@ -3,7 +3,10 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+ 	template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -50,7 +53,7 @@
 						update=":#{p:component('fileExplorer')}">
 					</p:commandLink>
 					<p:commandLink action="#{userBean.setSelectedFileName(file.name)}"
-						value='#{file.name}' rendered="#{!file.isDirectory()}"
+						value="#{userBean.getLastModified(file)}: #{file.name}" rendered="#{!file.isDirectory()}"
 						update=":#{p:component('fileExplorer')}">
 					</p:commandLink>
 				</p:dataList>
