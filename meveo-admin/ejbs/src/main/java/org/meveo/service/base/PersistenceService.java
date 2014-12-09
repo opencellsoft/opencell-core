@@ -539,4 +539,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		}
 		return result;
 	}
+
+	public EntityManager getEmfForJobs() {
+		return emfForJobs;
+	}
+
+	
 }

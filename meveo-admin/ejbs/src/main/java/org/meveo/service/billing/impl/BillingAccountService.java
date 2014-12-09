@@ -263,11 +263,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			BillingRun billingRun, boolean entreprise) {
 		
 		log.info("updateBillingAccountTotalAmounts  billingAccountId:" + billingAccountId);
-		BillingAccount billingAccount = findById(getEntityManager(),billingAccountId);
+		BillingAccount billingAccount = findById(getEmfForJobs(),billingAccountId);
 		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
 				entreprise);
 		billingAccount.setBillingRun(billingRun);
-		update(billingAccount);
+		update(getEmfForJobs(),billingAccount);
 		return new AsyncResult<Boolean>(true);
 	}
 

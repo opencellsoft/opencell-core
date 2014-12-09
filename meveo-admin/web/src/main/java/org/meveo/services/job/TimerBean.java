@@ -23,10 +23,12 @@ import java.util.Set;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.logging.Logger;
@@ -133,6 +135,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 
 	public String executeTimer() {
 		try {
+			
 			JobExecutionResult result = timerEntityService.manualExecute(timerEntity);
 			messages.info(new BundleKey("messages", "info.entity.executed"),
 					timerEntity.getJobName());

@@ -36,6 +36,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
@@ -473,7 +474,7 @@ public class UserBean extends BaseBean<User> {
 		if (file != null) {
 			log.debug("upload file={}", file);
 			try {
-				copyFile(file.getFileName(), file.getInputstream());
+				copyFile(FilenameUtils.getName(file.getFileName()), file.getInputstream());
 
 				messages.info(file.getFileName() + " is uploaded to "
 						+ ((selectedFolder != null) ? selectedFolder : "Home"));
