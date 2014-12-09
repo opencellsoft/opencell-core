@@ -14,6 +14,7 @@ import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
@@ -27,6 +28,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.meveo.util.MeveoJpaForJobs;
 
 @Startup
 @Singleton
@@ -46,6 +48,10 @@ public class UsageRatingJob implements Job {
 
 	@Inject
 	UsageRatingService usageRatingService;
+	
+	@Inject
+	@MeveoJpaForJobs
+	protected EntityManager em;
 
 	private Logger log = Logger.getLogger(UsageRatingJob.class.getName());
 
@@ -59,14 +65,14 @@ public class UsageRatingJob implements Job {
 		log.info("execute UsageRatingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
-			List<EDR> edrs = edrService.getEDRToRate();
+			List<EDR> edrs = edrService.getEDRToRate(em);
 			log.info("edr to rate:" + edrs.size());
 			
 			for (EDR edr : edrs) {
 				log.info("rate edr " + edr.getId());
 				try {
 					usageRatingService.ratePostpaidUsage(edr);
-					edrService.update(edr);
+					edrService.update(em, edr);
 					if (edr.getStatus() == EDRStatusEnum.RATED) {
 						result.registerSucces();
 					} else {
