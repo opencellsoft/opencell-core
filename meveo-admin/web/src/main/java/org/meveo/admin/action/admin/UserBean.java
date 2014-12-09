@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -119,6 +120,8 @@ public class UserBean extends BaseBean<User> {
 	private String directoryName;
 	private ArrayList<File> fileList;
 	private UploadedFile file;
+	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -420,7 +423,11 @@ public class UserBean extends BaseBean<User> {
 			fileList.add(0, parent);
 		}
 	}
-
+	
+	public String getLastModified(File file){
+		return sdf.format(new Date(file.lastModified()));
+	}
+	
 	public String getSelectedFileName() {
 		return selectedFileName;
 	}
