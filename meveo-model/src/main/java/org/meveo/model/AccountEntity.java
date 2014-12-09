@@ -19,6 +19,7 @@ package org.meveo.model;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -211,4 +212,13 @@ public abstract class AccountEntity extends BusinessEntity {
 		getCustomFieldInstance(code).setDoubleValue(value);
 	}
 
+	public String getCustomFieldsAsJson() {
+		String result="";
+		String sep="";
+		for(Entry<String,CustomFieldInstance> cf:customFields.entrySet()){
+			result+=sep+cf.getValue().toJson();
+			sep=";";
+		}
+		return result;
+	}
 }

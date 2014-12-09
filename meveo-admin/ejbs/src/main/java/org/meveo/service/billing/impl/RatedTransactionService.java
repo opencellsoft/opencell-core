@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -225,6 +227,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @SuppressWarnings("unchecked")
     public void sumbillingRunAmounts(BillingRun billingRun,List<BillingAccount> billingAccounts,RatedTransactionStatusEnum status,boolean entreprise){
     	

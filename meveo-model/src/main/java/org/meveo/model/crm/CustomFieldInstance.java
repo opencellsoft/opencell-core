@@ -75,5 +75,21 @@ public class CustomFieldInstance extends BusinessEntity {
 	public void setAccount(AccountEntity account) {
 		this.account = account;
 	}
+	
+	public String toJson(){
+		String result = code+":";
+		if(stringValue!=null){
+			result+="'"+stringValue+"'";
+		} else if(dateValue!=null){
+			result+="'"+sdf.format(dateValue)+"'";
+		} else if(longValue!=null){
+			result+=longValue;
+		} else if(doubleValue!=null){
+			result+=doubleValue;
+		} else {
+			result = "";
+		}
+		return result;
+	}
 
 }

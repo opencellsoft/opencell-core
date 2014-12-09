@@ -83,4 +83,12 @@ public class Country extends ProviderlessEntity {
 		return countryCode;
 	}
 
+	@Override
+	public boolean equals(Object other){
+		if(other==null || !(other instanceof Country)){
+			return false;
+		}
+		Country o = (Country) other;
+		return (o.countryCode!=null) && o.countryCode.equals(this.countryCode);
+	}
 }
