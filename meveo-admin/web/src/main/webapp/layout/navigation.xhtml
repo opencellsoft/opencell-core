@@ -281,13 +281,6 @@
 			<p:menuitem id="counterTemplates" outcome="counterTemplates"
 				value="#{messages['menu.counterTemplates']}" />
 
-			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes"
-				value="#{messages['menu.pricePlanMatrixes']}" />
-
-			<p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
-				value="#{messages['menu.discountPlanMatrixes']}" />
-
-
 			<!-- <p:menuitem id="serviceParameterTemplates"
 				outcome="serviceParameterTemplates"
 				value="#{messages['menu.serviceParameterTemplates']}" /> -->
@@ -441,6 +434,19 @@
 			</rich:menuItem>
 		</rich:dropDownMenu>
 		-->
+
+		<p:submenu id="rating" label="#{messages['menu.rating']}"
+			rendered="#{identity.hasPermission('administration','administrationVisualization') or identity.hasPermission('catalog','catalogVisualization')}">
+			<p:menuitem id="pricePlanMatrixes" outcome="pricePlanMatrixes"
+				value="#{messages['menu.pricePlanMatrixes']}" />
+
+			<p:menuitem id="discountPlanMatrixes" outcome="discountPlanMatrixes"
+				value="#{messages['menu.discountPlanMatrixes']}" />
+
+			<p:menuitem id="edr" outcome="edr"
+				value="#{messages['menu.edr']}" />
+		</p:submenu>
+
 		<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
 			rendered="#{identity.hasPermission('billing','billingVisualization')}">
 
