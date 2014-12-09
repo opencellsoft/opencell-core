@@ -66,11 +66,14 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<EDR> getEDRToRate() {
-		Query query = getEntityManager().createQuery(
-				"from EDR e where e.status=:status").setParameter("status",
-				EDRStatusEnum.OPEN);
+		return getEDRToRate(getEntityManager());
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<EDR> getEDRToRate(EntityManager em) {
+		Query query = em.createQuery("from EDR e where e.status=:status")
+				.setParameter("status", EDRStatusEnum.OPEN);
 		return query.getResultList();
 	}
 
@@ -112,8 +115,8 @@ public class EdrService extends PersistenceService<EDR> {
 		return result;
 	}
 
-	public void create(EntityManager em,EDR e,User user,Provider provider) {
-		super.create(em,e,user,provider);
+	public void create(EntityManager em, EDR e, User user, Provider provider) {
+		super.create(em, e, user, provider);
 		if (useInMemoryDeduplication) {
 			synchronized (duplicateCache) {
 				duplicateCache.put(e.getOriginBatch() + e.getOriginRecord(), 0);

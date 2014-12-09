@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{edrBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:entityPopup id="searchEdrPopup"
+			header="#{messages['commons.search']}"
+			updateField=":searchPanel:searchForm:edr:subscription_child"
+			selection="#{edrBean.filters['subscription']}"
+			backingBean="#{subscriptionBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
+		<hf:searchPanel label="#{messages['commons.search']}" id="searchPanel"
+			backingBean="#{edrBean}">
+			<hf:searchField id="edr" label="#{messages['BusinessEntity.code']}"
+				field="subscription" childField="code" popup="true"
+				popupId="searchEdrPopup" />
+		</hf:searchPanel>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<hftl:dataList checkMany="false" noClose="false"
+			backingBean="#{edrBean}">
+
+			<hftl:column label="#{messages['BusinessEntity.code']}"
+				field="subscription" childField="code" />
+			<hftl:column label="#{messages['commons.status']}" field="status" />
+			<hftl:column label="#{messages['edr.rejectReason']}"
+				field="rejectReason" />
+
+			<p:column style="width: 50px;">
+				<f:facet name="header">
+					<h:outputText value="#{messages['commons.actions']}" />
+				</f:facet>
+
+				<p:tooltip for="updateEdr" value="#{messages['action.update']}"
+					showEffect="slide" hideEffect="slide" />
+				<p:commandButton id="updateEdr" icon="ui-icon-play"
+					actionListener="#{edrBean.updateStatus(entity)}"
+					update=":results_form">
+					<p:confirm header="#{messages['message.confirmation']}"
+						message="#{messages['message.confirm.edr.update']}"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+			</p:column>
+
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

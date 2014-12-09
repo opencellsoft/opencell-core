@@ -1048,6 +1048,16 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>edr</from-outcome>
+			<to-view-id>/pages/rating/edr/edrList.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>edrDetail</from-outcome>
+			<to-view-id>/pages/rating/edr/edrDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>zonningPlans</from-outcome>
 			<to-view-id>/pages/medina/zoningPlan/zoningPlan.xhtml</to-view-id>
 			<redirect />
