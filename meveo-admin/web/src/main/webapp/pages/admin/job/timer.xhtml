@@ -32,7 +32,7 @@
 					backingBean="#{timerBean}" showFormButtons="false"
 					ajaxSubmit="true">
 
-					<a
+					<a target="_blank"
 						href="http://docs.oracle.com/javaee/6/api/javax/ejb/ScheduleExpression.html">Help
 						on format</a>
 
@@ -94,7 +94,8 @@
 
 						<p:panelGrid columns="2">
 							<p:outputLabel value="#{messages['timer.parameter']}" />
-							<p:inputText value="#{timerBean.timerEntity.timerInfo.parametres}" />
+							<p:inputText
+								value="#{timerBean.timerEntity.timerInfo.parametres}" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
@@ -109,8 +110,7 @@
 						<p:outputLabel for="timerFollowingJob"
 							value="#{messages['timer.followingJob']}"></p:outputLabel>
 						<p:selectOneMenu id="timerFollowingJob"
-							value="#{timerBean.timerEntity.timerInfo.followingTimerId}"
-							>
+							value="#{timerBean.timerEntity.timerInfo.followingTimerId}">
 							<f:selectItem itemLabel="#{messages['commons.select']}" />
 							<f:selectItems value="#{timerBean.getTimerEntityList()}" var="t_"
 								itemLabel="#{t_.name}" itemValue="#{t_.id}" />
