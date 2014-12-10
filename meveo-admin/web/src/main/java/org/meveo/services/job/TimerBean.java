@@ -30,7 +30,6 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.logging.Logger;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
@@ -41,6 +40,7 @@ import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.local.IPersistenceService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.slf4j.Logger;
 
 @Named
 @ConversationScoped
@@ -92,7 +92,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 	}
 
 	public String create() throws BusinessException {
-		log.debug("createTimer on job={}" + timerEntity.getJobName());
+		log.debug("createTimer on job={}", timerEntity.getJobName());
 
 		if (timerEntity.getJobName() == null) {
 			messages.error("Veuillez selectionner un job");
