@@ -13,11 +13,11 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
-import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -31,7 +31,7 @@ public class ReccuringRatingJob implements Job {
 	TimerService timerService;
 
 	@Inject
-	private ProviderService providerService;
+	private UserService userService;
 
 	@Inject
 	JobExecutionService jobExecutionService;
@@ -48,11 +48,12 @@ public class ReccuringRatingJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute RecurringRatingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		recurringRatingJobBean.execute(result);
 		result.close("");
+
 		return result;
 	}
 
@@ -62,8 +63,9 @@ public class ReccuringRatingJob implements Job {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression,
-				timerConfig);
+
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -74,35 +76,35 @@ public class ReccuringRatingJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
 
-
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
-	
 
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

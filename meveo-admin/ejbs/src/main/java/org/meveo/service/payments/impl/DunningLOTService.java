@@ -18,7 +18,6 @@ package org.meveo.service.payments.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -34,25 +33,26 @@ import org.meveo.model.payments.DunningActionTypeEnum;
 import org.meveo.model.payments.DunningLOT;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
+import org.slf4j.Logger;
 
 @Stateless
 public class DunningLOTService extends PersistenceService<DunningLOT> {
 
-	private static final Logger logger = Logger
-			.getLogger(DunningLOTService.class.getName());
+	@Inject
+	private Logger log;
 
 	private static final String USER_SYSTEM_ID = "bayad.userSystemId";
 
 	@Inject
-	ActionDunningService actionDunningService;
+	private ActionDunningService actionDunningService;
 
 	@Inject
-	UserService userService;
+	private UserService userService;
 
 	public void createDunningLOTAndCsvFile(
 			List<ActionDunning> listActionDunning,
 			DunningHistory dunningHistory, Provider provider) throws Exception {
-		logger.info("createDunningLOTAndCsvFile ...");
+		log.info("createDunningLOTAndCsvFile ...");
 
 		User systemUser = userService.findById(Long.valueOf(ParamBean
 				.getInstance().getProperty(USER_SYSTEM_ID, "1")));
@@ -66,7 +66,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 				dunningLOT.setProvider(provider);
 
 				create(dunningLOT);
-				logger.info("createDunningLOTAndCsvFile persist dunningLOT ok");
+				log.info("createDunningLOTAndCsvFile persist dunningLOT ok");
 				for (ActionDunning actionDunning : listActionDunning) {
 					if (actionDunning.getTypeAction() == actionType) {
 						actionDunning.setDunningLOT(dunningLOT);
@@ -81,7 +81,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 				} else {
 					try {
 						dunningLOT.setFileName(buildFile(dunningLOT));
-						logger.info("doCommit dunningLOT.setFileName ok");
+						log.info("doCommit dunningLOT.setFileName ok");
 						dunningLOT.setDunningHistory(dunningHistory);
 						update(dunningLOT);
 					} catch (Exception e) {
@@ -91,7 +91,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 			}
 		}
 
-		logger.info("createDunningLOTAndCsvFile done");
+		log.info("createDunningLOTAndCsvFile done");
 	}
 
 	private String buildFile(DunningLOT dunningLOT) throws Exception {

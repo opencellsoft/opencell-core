@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.service.base.PersistenceService;
@@ -28,7 +29,7 @@ import org.meveo.service.billing.impl.RatingService;
 @Stateless
 public class DiscountPlanMatrixService extends
 		PersistenceService<DiscountPlanMatrix> {
-	public void create(DiscountPlanMatrix e) {
+	public void create(DiscountPlanMatrix e) throws BusinessException {
 		super.create(e);
 		RatingService.setDiscountPlanDirty();
 	}

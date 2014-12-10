@@ -14,10 +14,11 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -34,18 +35,17 @@ import org.slf4j.LoggerFactory;
  */
 public class DWHQueryJob implements Job {
 
-	protected Logger log = LoggerFactory
-			.getLogger(DWHQueryJob.class);
+	protected Logger log = LoggerFactory.getLogger(DWHQueryJob.class);
 
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
-	private org.meveo.service.crm.impl.ProviderService providerService;
-	
+	private UserService userService;
+
 	@Inject
 	private DWHQueryBean queryBean;
 
@@ -54,21 +54,24 @@ public class DWHQueryJob implements Job {
 		TimerEntityService.registerJob(this);
 	}
 
-	
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
-		log.info("executing DWHQueryJob for "+parameter);
+	public JobExecutionResult execute(String parameter, User currentUser) {
+		log.info("executing DWHQueryJob for " + parameter);
+		
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		result.setProvider(provider);
+		result.setProvider(currentUser.getProvider());
+
 		String report = "";
-		int nbMeasureCreated=0;
+		int nbMeasureCreated = 0;
 		if (parameter != null && !parameter.isEmpty()) {
 			try {
-				nbMeasureCreated = queryBean.executeQuery(parameter, provider);
-			} catch(BusinessException e){
-				report = "ERROR: "+e.getMessage();
+				nbMeasureCreated = queryBean.executeQuery(parameter,
+						currentUser.getProvider());
+			} catch (BusinessException e) {
+				report = "ERROR: " + e.getMessage();
 			}
-			report = "Created "+nbMeasureCreated+" for "+parameter;
+			
+			report = "Created " + nbMeasureCreated + " for " + parameter;
 		} else {
 			report = "Invalid parameter: it must be the code of some MeasurableQuantity.";
 		}
@@ -84,14 +87,13 @@ public class DWHQueryJob implements Job {
 		TimerInfo info = (TimerInfo) timer.getInfo();
 		if (!running && info.isActive()) {
 			try {
-				if (info.isActive() ) {
+				if (info.isActive()) {
 					running = true;
-					Provider provider = providerService.findById(info
-							.getProviderId());
+					User currentUser = userService.findById(info.getUserId());
 					JobExecutionResult result = execute(info.getParametres(),
-							provider);
+							currentUser);
 					jobExecutionService.persistResult(this, result, info,
-							provider);
+							currentUser);
 				}
 			} catch (Exception e) {
 				log.error("error in trigger", e);
@@ -100,26 +102,27 @@ public class DWHQueryJob implements Job {
 			}
 		}
 	}
-	
+
 	@Override
 	public Timer createTimer(ScheduleExpression scheduleExpression,
 			TimerInfo infos) {
-	TimerConfig timerConfig = new TimerConfig();
-	timerConfig.setInfo(infos);
-	timerConfig.setPersistent(false);
-	return timerService.createCalendarTimer(scheduleExpression,
-			timerConfig);
+		TimerConfig timerConfig = new TimerConfig();
+		timerConfig.setInfo(infos);
+		timerConfig.setPersistent(false);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

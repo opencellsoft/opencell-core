@@ -37,9 +37,14 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.TIP;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class PDFParametersConstruction {
+
+	private Logger log = LoggerFactory
+			.getLogger(PDFParametersConstruction.class);
 
 	private static final String TIP_PAYMENT_METHOD = "TIP";
 	private static final String PDF_DIR_NAME = "pdf";
@@ -68,7 +73,8 @@ public class PDFParametersConstruction {
 					.getBillingTemplateName() : "default";
 
 			ParamBean paramBean = ParamBean.getInstance();
-			String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
+			String meveoDir = paramBean.getProperty("providers.rootDir",
+					"/tmp/meveo");
 			String resDir = meveoDir + File.separator + provider.getCode()
 					+ File.separator + "jasper";
 			String templateDir = new StringBuilder(resDir)
@@ -147,7 +153,7 @@ public class PDFParametersConstruction {
 			return parameters;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}

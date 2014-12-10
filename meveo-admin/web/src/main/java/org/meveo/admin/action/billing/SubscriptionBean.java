@@ -179,7 +179,8 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 			// UserAccount userAccount = entity.getUserAccount();
 			if (subscriptionService.isDuplicationExist(entity)) {
@@ -192,13 +193,14 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		}
 
 		super.saveOrUpdate(killConversation);
+		
 		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId="
 				+ entity.getId()
 				+ "&faces-redirect=true&includeViewParams=true";
 	}
 
 	@Override
-	protected String saveOrUpdate(Subscription entity) {
+	protected String saveOrUpdate(Subscription entity) throws BusinessException {
 		if (entity.isTransient()) {
 			subscriptionService.create(entity);
 			serviceTemplates.addAll(entity.getOffer().getServiceTemplates());

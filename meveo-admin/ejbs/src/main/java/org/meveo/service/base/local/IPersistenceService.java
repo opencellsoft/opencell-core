@@ -87,7 +87,7 @@ public interface IPersistenceService<E extends IEntity> {
 	 * 
 	 * @throws BusinessException
 	 */
-	public void create(E e);
+	public void create(E e) throws BusinessException;
 
 	/**
 	 * Persist an entity.

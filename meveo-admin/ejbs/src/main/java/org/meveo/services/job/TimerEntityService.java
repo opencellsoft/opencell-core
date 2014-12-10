@@ -30,40 +30,37 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class TimerEntityService extends PersistenceService<TimerEntity> {
 
 	public static HashMap<String, Job> jobEntries = new HashMap<String, Job>();
-	public static HashMap<Long,Timer> jobTimers = new HashMap<Long, Timer>();
-	
-	@Inject
-	Identity identity;
-	
-	@Inject
-	ProviderService providerService;
-	
+	public static HashMap<Long, Timer> jobTimers = new HashMap<Long, Timer>();
+
 	@Resource
-	TimerService timerService;
-	
-	/*static boolean timersCleaned = false;*/
-	
+	private TimerService timerService;
+
+	@Inject
+	private UserService userService;
+
+	/* static boolean timersCleaned = false; */
+
 	static ParamBean paramBean = ParamBean.getInstance();
 
-	static Long defaultProviderId = Long.parseLong(paramBean.getProperty("jobs.autoStart.providerId", "1"));
+	static Long defaultProviderId = Long.parseLong(paramBean.getProperty(
+			"jobs.autoStart.providerId", "1"));
 
-	static boolean allTimerCleanded=false;
-	
+	static boolean allTimerCleanded = false;
+
 	/**
 	 * Used by job instance classes to register themselves to the timer service
 	 * 
@@ -82,38 +79,55 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		}
 		job.getJobExecutionService().getTimerEntityService().startTimers(job);
 	}
-	
-	public Collection<Timer> getTimers(){
+
+	public Collection<Timer> getTimers() {
 		return timerService.getTimers();
 	}
-	
-	
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void startTimers(Job job){
-		//job.cleanAllTimers();
+	public void startTimers(Job job) {
+		// job.cleanAllTimers();
 		@SuppressWarnings("unchecked")
-		List<TimerEntity> timerEntities =getEntityManager().createQuery("from TimerEntity t where t.jobName=:jobName")
-		.setParameter("jobName", job.getClass().getSimpleName()).getResultList();
-		if(timerEntities!=null){
-			log.debug("staring " + timerEntities.size()+" timers for "+job.getClass().getSimpleName());
-			for(TimerEntity timerEntity :timerEntities){
-				jobTimers.put(timerEntity.getId(), job.createTimer(timerEntity.getScheduleExpression(),
+		List<TimerEntity> timerEntities = getEntityManager()
+				.createQuery("from TimerEntity t where t.jobName=:jobName")
+				.setParameter("jobName", job.getClass().getSimpleName())
+				.getResultList();
+
+		if (timerEntities != null) {
+			log.debug("Starting " + timerEntities.size() + " timers for "
+					+ job.getClass().getSimpleName());
+
+			for (TimerEntity timerEntity : timerEntities) {
+				jobTimers.put(timerEntity.getId(), job.createTimer(
+						timerEntity.getScheduleExpression(),
 						timerEntity.getTimerInfo()));
 			}
 		}
 	}
 
-
-	public void create(TimerEntity entity) {// FIXME: throws BusinessException{
+	public void create(TimerEntity entity) throws BusinessException {
 		if (jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
 			entity.getTimerInfo().setJobName(entity.getJobName());
-			entity.getTimerInfo().setProviderId(getCurrentProvider()==null?defaultProviderId:getCurrentProvider().getId());
-			if(entity.getFollowingTimer()!=null){
-				entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+
+			if (getCurrentUser() == null) {
+				throw new BusinessException(
+						"User must be logged in to perform this action.");
 			}
+
+			entity.getTimerInfo().setUserId(getCurrentUser().getId());
+
+			if (entity.getFollowingTimer() != null) {
+				entity.getTimerInfo().setFollowingTimerId(
+						entity.getFollowingTimer().getId());
+			}
+
 			super.create(entity);
-			jobTimers.put(entity.getId(), job.createTimer(entity.getScheduleExpression(),entity.getTimerInfo()));
+
+			jobTimers.put(
+					entity.getId(),
+					job.createTimer(entity.getScheduleExpression(),
+							entity.getTimerInfo()));
 		}
 	}
 
@@ -122,13 +136,21 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		if (jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
 			Timer timer = jobTimers.get(entity.getId());
-			log.info("cancelling existing " + timer.getTimeRemaining() / 1000
+			log.info("Cancelling existing " + timer.getTimeRemaining() / 1000
 					+ " sec");
+
 			timer.cancel();
-			if(entity.getFollowingTimer()!=null){
-				entity.getTimerInfo().setFollowingTimerId(entity.getFollowingTimer().getId());
+
+			if (entity.getFollowingTimer() != null) {
+				entity.getTimerInfo().setFollowingTimerId(
+						entity.getFollowingTimer().getId());
 			}
-			jobTimers.put(entity.getId(),job.createTimer(entity.getScheduleExpression(), entity.getTimerInfo()));
+
+			jobTimers.put(
+					entity.getId(),
+					job.createTimer(entity.getScheduleExpression(),
+							entity.getTimerInfo()));
+
 			super.update(entity);
 		}
 	}
@@ -137,45 +159,57 @@ public class TimerEntityService extends PersistenceService<TimerEntity> {
 		Timer timer = jobTimers.get(entity.getId());
 		timer.cancel();
 		jobTimers.remove(entity.getId());
+
 		super.remove(entity);
 	}
 
 	public void execute(TimerEntity entity) throws BusinessException {
-		log.info("execute " + entity.getJobName());
-		if (entity.getTimerInfo().isActive() && jobEntries.containsKey(entity.getJobName())) {
+		log.info("execute {}", entity.getJobName());
+
+		if (entity.getTimerInfo().isActive()
+				&& jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
-			Provider provider = providerService.findById(entity.getTimerInfo().getProviderId());
-			job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo().getParametres() : null,
-					provider);
+
+			User currentUser = userService.findById(entity.getTimerInfo()
+					.getUserId());
+			job.execute(entity.getTimerInfo() != null ? entity.getTimerInfo()
+					.getParametres() : null, currentUser);
 		}
 	}
 
-	public JobExecutionResult manualExecute(TimerEntity entity) throws BusinessException {
+	public JobExecutionResult manualExecute(TimerEntity entity)
+			throws BusinessException {
 		JobExecutionResult result = null;
 		log.info("manual execute " + entity.getJobName());
-		if(entity.getTimerInfo() != null && entity.getTimerInfo().getProviderId()!=getCurrentProvider().getId()){
-			throw new BusinessException("not authorized to execute this job");
+
+		User currentUser = userService.findById(entity.getTimerInfo()
+				.getUserId());
+		if (entity.getTimerInfo() != null
+				&& currentUser.getProvider().getId() != getCurrentProvider()
+						.getId()) {
+			throw new BusinessException("Not authorized to execute this job");
 		}
+
 		if (jobEntries.containsKey(entity.getJobName())) {
 			Job job = jobEntries.get(entity.getJobName());
-			result = job.execute(
-					entity.getTimerInfo() != null ? entity.getTimerInfo().getParametres() : null,
-							getCurrentProvider());
+			result = job.execute(entity.getTimerInfo() != null ? entity
+					.getTimerInfo().getParametres() : null, getCurrentUser());
 		}
+
 		return result;
 	}
 
-	
-	public TimerEntity getByTimer(Timer timer){
-		Set<Map.Entry<Long,Timer>> entrySet = jobTimers.entrySet();
-		for(Map.Entry<Long, Timer> entry : entrySet){
-			if(entry.getValue()==timer){
+	public TimerEntity getByTimer(Timer timer) {
+		Set<Map.Entry<Long, Timer>> entrySet = jobTimers.entrySet();
+		for (Map.Entry<Long, Timer> entry : entrySet) {
+			if (entry.getValue() == timer) {
 				return findById(entry.getKey());
 			}
 		}
+
 		return null;
 	}
-	
+
 	private QueryBuilder getFindQuery(PaginationConfiguration configuration) {
 		String sql = "select distinct t from TimerEntity t";
 		QueryBuilder qb = new QueryBuilder(sql);// FIXME: .cacheable(); there is

@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.report.ReportExecution;
 import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
@@ -83,8 +84,10 @@ public class ReportBean extends BaseBean<Report> {
 
 	/**
 	 * Creates report.
+	 * 
+	 * @throws BusinessException
 	 */
-	public String executeReport() {
+	public String executeReport() throws BusinessException {
 		log.info("executeReport()");
 		String save = super.saveOrUpdate(true);
 		log.debug("executeReport : after save");

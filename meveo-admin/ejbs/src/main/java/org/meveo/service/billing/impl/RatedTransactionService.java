@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -42,6 +41,7 @@ import javax.persistence.criteria.Root;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -61,10 +61,14 @@ import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.slf4j.Logger;
 
 @Stateless
 public class RatedTransactionService extends
 		PersistenceService<RatedTransaction> {
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
@@ -74,9 +78,6 @@ public class RatedTransactionService extends
 
 	@Inject
 	private CustomerAccountService customerAccountService;
-
-	private Logger logger = Logger.getLogger(RatedTransactionService.class
-			.getName());
 
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> getRatedTransactionsInvoiced(
@@ -261,7 +262,7 @@ public class RatedTransactionService extends
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 	public void createInvoiceAndAgregates(EntityManager em,
-			BillingAccount billingAccount, Invoice invoice)
+			BillingAccount billingAccount, Invoice invoice, User currentUser)
 			throws BusinessException {
 		boolean entreprise = billingAccount.getProvider().isEntreprise();
 
@@ -318,7 +319,7 @@ public class RatedTransactionService extends
 			BigDecimal biggestAmount = new BigDecimal("-100000000");
 
 			for (Object[] object : invoiceSubCats) {
-				logger.info("amountWithoutTax=" + object[1] + "amountWithTax"
+				log.info("amountWithoutTax=" + object[1] + "amountWithTax"
 						+ object[2] + "amountTax" + object[3]);
 				Long invoiceSubCategoryId = (Long) object[0];
 				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
@@ -399,7 +400,8 @@ public class RatedTransactionService extends
 				invoiceAgregateT.setProvider(billingAccount.getProvider());
 
 				if (invoiceAgregateT.getId() == null) {
-					invoiceAgregateService.create(em, invoiceAgregateT);
+					invoiceAgregateService.create(em, invoiceAgregateT,
+							currentUser, currentUser.getProvider());
 				}
 
 				invoiceAgregateF.setSubCategoryTax(tax);
@@ -427,7 +429,8 @@ public class RatedTransactionService extends
 
 				fillAgregates(invoiceAgregateR, wallet);
 				if (invoiceAgregateR.getId() == null) {
-					invoiceAgregateService.create(em, invoiceAgregateR);
+					invoiceAgregateService.create(em, invoiceAgregateR,
+							currentUser, currentUser.getProvider());
 				}
 
 				invoiceAgregateR.setInvoiceCategory(invoiceSubCategory
@@ -442,7 +445,7 @@ public class RatedTransactionService extends
 
 				// first we round the amount without tax
 
-				logger.info("subcat "
+				log.info("subcat "
 						+ invoiceAgregateF.getAccountingCode()
 						+ " ht="
 						+ invoiceAgregateF.getAmountWithoutTax()
@@ -459,7 +462,7 @@ public class RatedTransactionService extends
 							.get(invoiceAgregateF.getSubCategoryTax().getId());
 					taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateF
 							.getAmountWithoutTax());
-					logger.info("  tax "
+					log.info("  tax "
 							+ invoiceAgregateF.getTaxInvoiceAgregate()
 									.getTaxPercent() + " ht ->"
 							+ taxInvoiceAgregate.getAmountWithoutTax());
@@ -467,7 +470,7 @@ public class RatedTransactionService extends
 				invoiceAgregateF.getCategoryInvoiceAgregate()
 						.addAmountWithoutTax(
 								invoiceAgregateF.getAmountWithoutTax());
-				logger.info("  cat "
+				log.info("  cat "
 						+ invoiceAgregateF.getCategoryInvoiceAgregate().getId()
 						+ " ht ->"
 						+ invoiceAgregateF.getCategoryInvoiceAgregate()
@@ -478,7 +481,8 @@ public class RatedTransactionService extends
 					biggestSubCat = invoiceAgregateF;
 				}
 
-				invoiceAgregateService.create(em, invoiceAgregateF);
+				invoiceAgregateService.create(em, invoiceAgregateF,
+						currentUser, currentUser.getProvider());
 			}
 
 			// compute the tax
@@ -498,7 +502,7 @@ public class RatedTransactionService extends
 					taxCat.setAmountWithTax(taxCat.getAmountWithoutTax()
 							.add(taxCat.getAmountTax())
 							.setScale(2, RoundingMode.HALF_UP));
-					logger.info("  tax2 ht ->" + taxCat.getAmountWithoutTax());
+					log.info("  tax2 ht ->" + taxCat.getAmountWithoutTax());
 				} else {
 					// compute the percent
 					if (taxCat.getAmountTax() != null
@@ -531,7 +535,7 @@ public class RatedTransactionService extends
 				// TODO log those steps
 				BigDecimal delta = nonEnterprisePriceWithTax.subtract(invoice
 						.getAmountWithTax());
-				logger.info("delta= " + nonEnterprisePriceWithTax + " - "
+				log.info("delta= " + nonEnterprisePriceWithTax + " - "
 						+ invoice.getAmountWithTax() + "=" + delta);
 				biggestSubCat.setAmountWithoutTax(biggestSubCat
 						.getAmountWithoutTax().add(delta)
@@ -539,12 +543,12 @@ public class RatedTransactionService extends
 
 				TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap
 						.get(biggestSubCat.getSubCategoryTax().getId());
-				logger.info("  tax3 ht ->"
+				log.info("  tax3 ht ->"
 						+ invoiceAgregateT.getAmountWithoutTax());
 				invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT
 						.getAmountWithoutTax().add(delta)
 						.setScale(2, RoundingMode.HALF_UP));
-				logger.info("  tax4 ht ->"
+				log.info("  tax4 ht ->"
 						+ invoiceAgregateT.getAmountWithoutTax());
 				CategoryInvoiceAgregate invoiceAgregateR = biggestSubCat
 						.getCategoryInvoiceAgregate();
@@ -573,7 +577,6 @@ public class RatedTransactionService extends
 				}
 				invoice.setNetToPay(netToPay);
 			}
-
 		}
 
 	}
@@ -614,7 +617,6 @@ public class RatedTransactionService extends
 
 	public Boolean isBillingAccountBillable(BillingRun billingRun,
 			Long billingAccountID) {
-
 		QueryBuilder qb = new QueryBuilder(
 				"select count(*) from RatedTransaction c");
 		qb.addCriterionEnum("c.status", RatedTransactionStatusEnum.OPEN);
@@ -626,8 +628,8 @@ public class RatedTransactionService extends
 		qb.addSql("c.invoice is null");
 
 		long count = (Long) qb.getQuery(getEntityManager()).getSingleResult();
-		return count > 0 ? true : false;
 
+		return count > 0 ? true : false;
 	}
 
 	public List<RatedTransaction> getRatedTransactions(WalletInstance wallet,

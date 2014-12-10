@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.jboss.solder.logging.Logger;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BaseEntity;
@@ -26,10 +25,9 @@ import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
+import org.slf4j.Logger;
 
 @Stateless
 public class SubscriptionImportService {
@@ -38,25 +36,19 @@ public class SubscriptionImportService {
 	private Logger log;
 
 	@Inject
-	SubscriptionService subscriptionService;
+	private SubscriptionService subscriptionService;
 
 	@Inject
-	OfferTemplateService offerTemplateService;
+	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
 	@Inject
-	UserAccountService userAccountService;
-
-	@Inject
-	SubscriptionTerminationReasonService subscriptionTerminationReasonService;
-
-	@Inject
-	ServiceTemplateService serviceTemplateService;
+	private ServiceTemplateService serviceTemplateService;
 
 	@EJB
-	ServiceInstanceService serviceInstanceService;
+	private ServiceInstanceService serviceInstanceService;
 
 	@Inject
-	AccessService accessService;
+	private AccessService accessService;
 
 	ParamBean param = ParamBean.getInstance();
 

@@ -21,10 +21,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -43,14 +44,14 @@ public class MeasurableQuantityAggregationJob implements Job {
 	protected Logger log = LoggerFactory
 			.getLogger(MeasurableQuantityAggregationJob.class);
 
+	@Inject
+	private UserService userService;
+
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
 	JobExecutionService jobExecutionService;
-
-	@Inject
-	private org.meveo.service.crm.impl.ProviderService providerService;
 
 	@Inject
 	private MeasurableQuantityService mqService;
@@ -64,8 +65,8 @@ public class MeasurableQuantityAggregationJob implements Job {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void aggregateMeasuredValues(JobExecutionResultImpl result, Date date,
-			String report) {
+	public void aggregateMeasuredValues(JobExecutionResultImpl result,
+			Date date, String report) {
 		// FOR WEEKLY MEASUREMENT PERIOD
 		Calendar cal = Calendar.getInstance(Locale.FRANCE);
 		cal.setTime(date);
@@ -116,7 +117,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 
 			// FOR MONTHLY MEASUREMENT PERIOD
@@ -156,7 +157,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 			log.info(cal.getTime().toString());
 
@@ -166,10 +167,11 @@ public class MeasurableQuantityAggregationJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("executing MeasurableQuantityAggregation");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		result.setProvider(provider);
+		result.setProvider(currentUser.getProvider());
+
 		String report = "";
 		if (parameter != null) {
 			if (!parameter.isEmpty()) {
@@ -182,6 +184,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 					aggregateMeasuredValues(result, date, report);
 					result.setReport(report);
 					result.setDone(true);
+
 					return result;
 				} catch (ParseException e) {
 					report = "Parameter Date = "
@@ -190,6 +193,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 							.getTime(), report);
 					result.setReport(report);
 					result.setDone(true);
+
 					return result;
 				}
 			}
@@ -201,6 +205,7 @@ public class MeasurableQuantityAggregationJob implements Job {
 				report);
 		result.setReport(report);
 		result.setDone(true);
+
 		return result;
 	}
 
@@ -212,7 +217,6 @@ public class MeasurableQuantityAggregationJob implements Job {
 		return mvTotal;
 	}
 
-
 	boolean running = false;
 
 	@Timeout
@@ -220,14 +224,13 @@ public class MeasurableQuantityAggregationJob implements Job {
 		TimerInfo info = (TimerInfo) timer.getInfo();
 		if (!running && info.isActive()) {
 			try {
-				if (info.isActive() ) {
+				if (info.isActive()) {
 					running = true;
-					Provider provider = providerService.findById(info
-							.getProviderId());
+					User currentUser = userService.findById(info.getUserId());
 					JobExecutionResult result = execute(info.getParametres(),
-							provider);
+							currentUser);
 					jobExecutionService.persistResult(this, result, info,
-							provider);
+							currentUser);
 				}
 			} catch (Exception e) {
 				log.error("error in trigger", e);
@@ -236,26 +239,28 @@ public class MeasurableQuantityAggregationJob implements Job {
 			}
 		}
 	}
-	
+
 	@Override
 	public Timer createTimer(ScheduleExpression scheduleExpression,
 			TimerInfo infos) {
-	TimerConfig timerConfig = new TimerConfig();
-	timerConfig.setInfo(infos);
-	timerConfig.setPersistent(false);
-	return timerService.createCalendarTimer(scheduleExpression,
-			timerConfig);
+		TimerConfig timerConfig = new TimerConfig();
+		timerConfig.setInfo(infos);
+		timerConfig.setPersistent(false);
+
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

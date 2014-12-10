@@ -24,6 +24,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
@@ -101,7 +102,7 @@ public class AccessBean extends BaseBean<Access> {
 		this.selectedSubscription = selectedSubscription;
 	}
 
-	public String saveOrUpdate() {
+	public String saveOrUpdate() throws BusinessException {
 		if (subscriptionId.get() != null) {
 			Subscription subscription = subscriptionService
 					.findById(subscriptionId.get());
@@ -113,7 +114,8 @@ public class AccessBean extends BaseBean<Access> {
 		return "";
 	}
 
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		String result = "";
 		Subscription subscription = subscriptionService.findById(entity
 				.getSubscription().getId());

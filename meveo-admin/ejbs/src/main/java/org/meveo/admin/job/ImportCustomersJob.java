@@ -15,12 +15,10 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
-import javax.ejb.TimerHandle;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
-import org.jboss.solder.logging.Logger;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
@@ -45,28 +43,24 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.CustomerImportHistoService;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.crm.impl.CustomerBrandService;
-import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
 public class ImportCustomersJob implements Job {
+
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private Logger log;
@@ -81,29 +75,11 @@ public class ImportCustomersJob implements Job {
 	private SellerService sellerService;
 
 	@Inject
-	UserService userService;
-
-	@Inject
-	CustomerBrandService customerBrandService;
-
-	@Inject
-	CustomerCategoryService customerCategoryService;
-
-	@Inject
-	TradingCountryService tradingCountryService;
-
-	@Inject
-	TradingCurrencyService tradingCurrencyService;
-
-	@Inject
-	TradingLanguageService tradingLanguageService;
+	private UserService userService;
 
 	@Inject
 	private CustomerImportHistoService customerImportHistoService;
 
-	@Inject
-	private ProviderService providerService;
-	
 	@EJB
 	private CustomerImportService customerImportService;
 
@@ -137,11 +113,17 @@ public class ImportCustomersJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute ImportCustomersJob.");
 
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
-				+ File.separator+"imports"+ File.separator+"customers" + File.separator ;
+		Provider provider = currentUser.getProvider();
+
+		String importDir = param
+				.getProperty("providers.rootDir", "/tmp/meveo/")
+				+ File.separator
+				+ provider.getCode()
+				+ File.separator
+				+ "imports" + File.separator + "customers" + File.separator;
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
 		String dirOK = importDir + "output";
@@ -173,7 +155,7 @@ public class ImportCustomersJob implements Job {
 				result.registerError(e.getMessage());
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				if (currentFile != null)
 					currentFile.delete();
@@ -193,7 +175,7 @@ public class ImportCustomersJob implements Job {
 		for (File file : listFile) {
 			if (file.isFile()) {
 				files.add(file);
-				//we just process one file
+				// we just process one file
 				return files;
 			}
 		}
@@ -229,8 +211,8 @@ public class ImportCustomersJob implements Job {
 
 		customerImportHisto.setExecutionDate(new Date());
 		customerImportHisto.setFileName(fileName);
-		User userJob = userService.findById(new Long(param
-				.getProperty("connectorCRM.userId","1")));
+		User userJob = userService.findById(new Long(param.getProperty(
+				"connectorCRM.userId", "1")));
 		if (file.length() < 83) {
 			createSellerWarning(null, "File empty");
 			generateReport(fileName, provider);
@@ -279,7 +261,7 @@ public class ImportCustomersJob implements Job {
 				nbSellersError++;
 				log.info("file:" + fileName + ", typeEntity:Seller, index:" + i
 						+ ", code:" + sell.getCode() + ", status:Error");
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 
 		}
@@ -294,7 +276,7 @@ public class ImportCustomersJob implements Job {
 			org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, int i) {
 		nbSellers++;
-		int j=0;
+		int j = 0;
 		Customer customer = null;
 		try {
 			log.debug("customer found  code:" + cust.getCode());
@@ -323,7 +305,8 @@ public class ImportCustomersJob implements Job {
 				return;
 			}
 
-			customer=customerImportService.createCustomer(provider, userJob, seller, sell, cust);
+			customer = customerImportService.createCustomer(provider, userJob,
+					seller, sell, cust);
 			if (seller == null) {
 				nbSellersCreated++;
 				log.info("file:" + fileName + ", typeEntity:Seller, index:" + i
@@ -331,10 +314,10 @@ public class ImportCustomersJob implements Job {
 			}
 			if (customer == null) {
 				nbCustomersCreated++;
-				log.info("file:" + fileName + ", typeEntity:Customer, index:" + i
-						+ ", code:" + cust.getCode() + ", status:Created");
+				log.info("file:" + fileName + ", typeEntity:Customer, index:"
+						+ i + ", code:" + cust.getCode() + ", status:Created");
 			}
-			
+
 			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust
 					.getCustomerAccounts().getCustomerAccount()) {
 				j++;
@@ -348,7 +331,7 @@ public class ImportCustomersJob implements Job {
 			nbCustomersError++;
 			log.info("file:" + fileName + ", typeEntity:Customer, index:" + i
 					+ ", code:" + cust.getCode() + ", status:Error");
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 	}
@@ -395,9 +378,9 @@ public class ImportCustomersJob implements Job {
 					+ ", index:" + j + " Code:" + custAcc.getCode()
 					+ ", status:Warning");
 		}
-	
 
-        customerImportService.createCustomerAccount(provider, userJob, customer, seller, custAcc, cust, sell);
+		customerImportService.createCustomerAccount(provider, userJob,
+				customer, seller, custAcc, cust, sell);
 		nbCustomerAccountsCreated++;
 		log.info("file:" + fileName
 				+ ", typeEntity:CustomerAccount,  indexCustomer:" + i
@@ -433,11 +416,15 @@ public class ImportCustomersJob implements Job {
 
 	private void generateReport(String fileName, Provider provider)
 			throws Exception {
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
-				+ File.separator+"imports"+ File.separator+"customers" + File.separator ;
+		String importDir = param
+				.getProperty("providers.rootDir", "/tmp/meveo/")
+				+ File.separator
+				+ provider.getCode()
+				+ File.separator
+				+ "imports" + File.separator + "customers" + File.separator;
 		if (sellersWarning.getWarnings() != null) {
-			String warningDir = importDir+ "output"
-					+ File.separator + "warnings";
+			String warningDir = importDir + "output" + File.separator
+					+ "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -446,8 +433,7 @@ public class ImportCustomersJob implements Job {
 					+ File.separator + "WARN_" + fileName));
 		}
 		if (sellersError.getErrors() != null) {
-			String errorDir = importDir + "output"
-					+ File.separator + "errors";
+			String errorDir = importDir + "output" + File.separator + "errors";
 
 			File dir = new File(errorDir);
 			if (!dir.exists()) {
@@ -461,8 +447,8 @@ public class ImportCustomersJob implements Job {
 
 	private void createSellerError(org.meveo.model.jaxb.customer.Seller sell,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		ErrorSeller errorSeller = new ErrorSeller();
 		errorSeller.setCause(cause);
 		errorSeller.setCode(sell.getCode());
@@ -478,8 +464,8 @@ public class ImportCustomersJob implements Job {
 
 	private void createCustomerError(org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		ErrorCustomer errorCustomer = new ErrorCustomer();
 		errorCustomer.setCause(cause);
 		errorCustomer.setCode(cust.getCode());
@@ -495,8 +481,8 @@ public class ImportCustomersJob implements Job {
 
 	private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		WarningSeller warningSeller = new WarningSeller();
 		warningSeller.setCause(cause);
 		warningSeller.setCode(sell == null ? "" : sell.getCode());
@@ -517,8 +503,8 @@ public class ImportCustomersJob implements Job {
 			org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.CustomerAccount custAccount,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		ErrorCustomerAccount errorCustomerAccount = new ErrorCustomerAccount();
 		errorCustomerAccount.setCause(cause);
 		errorCustomerAccount.setCode(custAccount.getCode());
@@ -540,8 +526,8 @@ public class ImportCustomersJob implements Job {
 			org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.CustomerAccount custAccount,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		WarningCustomerAccount warningCustomerAccount = new WarningCustomerAccount();
 		warningCustomerAccount.setCause(cause);
 		warningCustomerAccount.setCode(custAccount.getCode());
@@ -656,10 +642,10 @@ public class ImportCustomersJob implements Job {
 			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		//timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression,
-				timerConfig);
-		
+		// timerConfig.setPersistent(false);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
+
 	}
 
 	boolean running = false;
@@ -670,32 +656,36 @@ public class ImportCustomersJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
+
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
-		}
-@Override
+	}
+
+	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
-	}	}
-
+	}
+}

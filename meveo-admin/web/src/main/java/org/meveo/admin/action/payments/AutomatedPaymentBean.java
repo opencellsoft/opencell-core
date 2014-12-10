@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -71,7 +72,8 @@ public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
      * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
      */
     @Override
-    public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
         entity.getCustomerAccount().getAccountOperations().add(entity);
         return super.saveOrUpdate(killConversation);
     }

@@ -30,6 +30,7 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperation;
@@ -38,9 +39,9 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -52,13 +53,13 @@ import org.slf4j.LoggerFactory;
 public class RatedTransactionsJob implements Job {
 
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	private ProviderService providerService;
+	private UserService userService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private WalletOperationService walletOperationService;
@@ -75,15 +76,17 @@ public class RatedTransactionsJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute RatedTransactionsJob.");
+
+		Provider provider = currentUser.getProvider();
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 
 		try {
 			// FIXME: only for postpaid wallets
 			List<WalletOperation> walletOperations = walletOperationService
 					.findByStatus(WalletOperationStatusEnum.OPEN, provider);
-			log.info("alletOperations to convert into rateTransactions={}",
+			log.info("WalletOperations to convert into rateTransactions={}",
 					walletOperations.size());
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
@@ -121,6 +124,7 @@ public class RatedTransactionsJob implements Job {
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
+
 		result.close("");
 
 		return result;
@@ -145,11 +149,11 @@ public class RatedTransactionsJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {
@@ -168,6 +172,7 @@ public class RatedTransactionsJob implements Job {
 		Collection<Timer> alltimers = timerService.getTimers();
 		log.info("cancel " + alltimers.size() + " timers for"
 				+ this.getClass().getSimpleName());
+
 		for (Timer timer : alltimers) {
 			try {
 				timer.cancel();

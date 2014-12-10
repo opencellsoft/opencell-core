@@ -21,43 +21,41 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.jboss.solder.logging.Logger;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.EDR;
-import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
 public class MediationJob implements Job {
+
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	private ProviderService providerService;
+	private UserService userService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
-
-	@Inject
-	EdrService edrService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private Logger log;
 
 	@Inject
-	CDRParsingService cdrParser;
+	private CDRParsingService cdrParser;
 
 	@Inject
 	private MediationJobBean mediationJobBean;
@@ -77,8 +75,10 @@ public class MediationJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute MediationJob.");
+
+		Provider provider = currentUser.getProvider();
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		BufferedReader cdrReader = null;
 		try {
@@ -176,7 +176,7 @@ public class MediationJob implements Job {
 				result.setReport(report);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			try {
 				if (rejectFileWriter != null) {
@@ -207,7 +207,7 @@ public class MediationJob implements Job {
 			}
 			outputFileWriter.println(line);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -225,7 +225,7 @@ public class MediationJob implements Job {
 						reason.name()));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -235,7 +235,8 @@ public class MediationJob implements Job {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression,timerConfig);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -246,35 +247,35 @@ public class MediationJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
 
-
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
-	
 
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

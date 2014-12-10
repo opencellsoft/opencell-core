@@ -5,6 +5,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 
@@ -18,7 +19,7 @@ public class MediationJobBean {
 	private EdrService edrService;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createEdr(EDR edr) {
+	public void createEdr(EDR edr) throws BusinessException {
 		edrService.create(edr);
 	}
 

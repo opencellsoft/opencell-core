@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.AccountBean;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.AccountLevelEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
@@ -76,7 +77,8 @@ public class CustomerBean extends AccountBean<Customer> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		super.saveOrUpdate(killConversation);
 
 		saveCustomFields();

@@ -19,9 +19,9 @@ package org.meveo.admin.sepa;
 //import java.text.Normalizer;
 import java.math.RoundingMode;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr;
@@ -56,12 +56,13 @@ import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
 
 @Stateless
 public class SepaFileBuilder {
 
-	private static final Logger logger = Logger.getLogger(SepaFileBuilder.class
-			.getName());
+	@Inject
+	private Logger log;
 
 	public void addHeader(CstmrDrctDbtInitn Message, DDRequestLOT ddRequestLOT)
 			throws Exception {
@@ -83,7 +84,7 @@ public class SepaFileBuilder {
 	public void addPaymentInformation(CstmrDrctDbtInitn Message,
 			DDRequestItem dDRequestItem) throws Exception {
 
-		logger.info("addPaymentInformation dDRequestItem id="
+		log.info("addPaymentInformation dDRequestItem id="
 				+ dDRequestItem.getId());
 		Provider provider = dDRequestItem.getProvider();
 

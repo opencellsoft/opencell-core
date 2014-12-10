@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -161,7 +162,8 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 
 		List<RecurringChargeTemplate> recurringCharges = entity.getRecurringCharges();
 		for (RecurringChargeTemplate recurringCharge : recurringCharges) {

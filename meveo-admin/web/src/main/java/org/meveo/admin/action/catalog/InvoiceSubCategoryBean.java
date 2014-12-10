@@ -28,6 +28,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
@@ -199,7 +200,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		String back = null;
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {

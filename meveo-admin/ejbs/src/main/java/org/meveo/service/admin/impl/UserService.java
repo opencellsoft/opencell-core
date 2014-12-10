@@ -60,7 +60,8 @@ public class UserService extends PersistenceService<User> {
 
 	@Override
 	@UserCreate
-	public void create(User user) throws UsernameAlreadyExistsException {
+	public void create(User user) throws UsernameAlreadyExistsException,
+			BusinessException {
 
 		if (isUsernameExists(user.getUserName())) {
 			throw new UsernameAlreadyExistsException(user.getUserName());
@@ -70,6 +71,7 @@ public class UserService extends PersistenceService<User> {
 		user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
 		user.setLastPasswordModification(new Date());
 		user.setProvider(getCurrentProvider());
+
 		super.create(user);
 	}
 

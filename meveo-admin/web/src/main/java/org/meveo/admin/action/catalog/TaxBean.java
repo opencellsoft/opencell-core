@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Tax;
@@ -95,7 +96,8 @@ public class TaxBean extends BaseBean<Tax> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		log.debug("end conversation id: {}", conversation.getId());
 		String back = null;
 		if (entity.getId() != null) {

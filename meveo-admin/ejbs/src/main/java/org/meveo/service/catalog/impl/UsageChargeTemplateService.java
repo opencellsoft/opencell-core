@@ -22,6 +22,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -39,7 +40,7 @@ public class UsageChargeTemplateService extends
 	@EJB
 	UsageRatingService usageRatingService;
 
-	public void create(UsageChargeTemplate e) {
+	public void create(UsageChargeTemplate e) throws BusinessException {
 		super.create(e);
 		usageRatingService.updateTemplateCache(e);
 	}

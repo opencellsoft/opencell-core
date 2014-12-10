@@ -18,7 +18,6 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
-import org.jboss.solder.logging.Logger;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
@@ -45,42 +44,40 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.crm.impl.CheckedSubscription;
 import org.meveo.service.crm.impl.ImportIgnoredException;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.crm.impl.SubscriptionImportService;
 import org.meveo.service.crm.impl.SubscriptionServiceException;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
 public class ImportSubscriptionsJob implements Job {
+
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private Logger log;
 
 	@Inject
-	UserService userService;
+	private UserService userService;
 
 	@Inject
-	SubscriptionService subscriptionService;
+	private SubscriptionService subscriptionService;
 
 	@Inject
-	SubscriptionImportHistoService subscriptionImportHistoService;
+	private SubscriptionImportHistoService subscriptionImportHistoService;
 
 	@Inject
-	private ProviderService providerService;
+	private OfferTemplateService offerTemplateService;
 
 	@Inject
-	OfferTemplateService offerTemplateService;
-
-	@Inject
-	UserAccountService userAccountService;
+	private UserAccountService userAccountService;
 
 	@Inject
 	private SubscriptionImportService subscriptionImportService;
@@ -103,14 +100,20 @@ public class ImportSubscriptionsJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute ImportSubscriptionsJob.");
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
-				+ File.separator+"imports"+ File.separator+"subscriptions" + File.separator ;
+
+		Provider provider = currentUser.getProvider();
+		String importDir = param
+				.getProperty("providers.rootDir", "/tmp/meveo/")
+				+ File.separator
+				+ provider.getCode()
+				+ File.separator
+				+ "imports" + File.separator + "subscriptions" + File.separator;
 
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
-		String dirOK = importDir +  "output";
+		String dirOK = importDir + "output";
 		String dirKO = importDir + "reject";
 		String prefix = param.getProperty(
 				"connectorCRM.importSubscriptions.prefix", "SUB_");
@@ -139,7 +142,7 @@ public class ImportSubscriptionsJob implements Job {
 				result.registerError(e.getMessage());
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				if (currentFile != null)
 					currentFile.delete();
@@ -163,8 +166,8 @@ public class ImportSubscriptionsJob implements Job {
 		subscriptionImportHisto = new SubscriptionImportHisto();
 		subscriptionImportHisto.setExecutionDate(new Date());
 		subscriptionImportHisto.setFileName(fileName);
-		User userJob = userService.findById(new Long(param
-				.getProperty("connectorCRM.userId","1")));
+		User userJob = userService.findById(new Long(param.getProperty(
+				"connectorCRM.userId", "1")));
 		if (file.length() < 100) {
 			createSubscriptionWarning(null, "Fichier vide");
 			generateReport(fileName, provider);
@@ -218,7 +221,7 @@ public class ImportSubscriptionsJob implements Job {
 				log.info("file:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
 						+ subscrip.getCode() + ", status:Error");
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 		}
 		generateReport(fileName, provider);
@@ -243,10 +246,15 @@ public class ImportSubscriptionsJob implements Job {
 
 	private void generateReport(String fileName, Provider provider)
 			throws Exception {
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
-				+ File.separator+"imports"+ File.separator+"subscriptions" + File.separator ;
+		String importDir = param
+				.getProperty("providers.rootDir", "/tmp/meveo/")
+				+ File.separator
+				+ provider.getCode()
+				+ File.separator
+				+ "imports" + File.separator + "subscriptions" + File.separator;
 		if (subscriptionsWarning.getWarnings() != null) {
-			String warningDir = importDir + "output" + File.separator + "warnings";
+			String warningDir = importDir + "output" + File.separator
+					+ "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -288,8 +296,8 @@ public class ImportSubscriptionsJob implements Job {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression,
-				timerConfig);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -300,13 +308,13 @@ public class ImportSubscriptionsJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
@@ -357,7 +365,7 @@ public class ImportSubscriptionsJob implements Job {
 			userAccount = userAccountService.findByCode(
 					subscrip.getUserAccountId(), provider);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		if (userAccount == null) {
 			createSubscriptionError(subscrip, "cannot find UserAccount entity:"
@@ -370,7 +378,7 @@ public class ImportSubscriptionsJob implements Job {
 			checkSubscription.subscription = subscriptionService.findByCode(
 					subscrip.getCode(), provider);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		if (!"ACTIVE".equals(subscrip.getStatus().getValue())
 				&& checkSubscription.subscription == null) {
@@ -407,8 +415,8 @@ public class ImportSubscriptionsJob implements Job {
 	private void createSubscriptionError(
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		ErrorSubscription errorSubscription = new ErrorSubscription();
 		errorSubscription.setCause(cause);
 		errorSubscription.setCode(subscrip.getCode());
@@ -426,8 +434,8 @@ public class ImportSubscriptionsJob implements Job {
 	private void createSubscriptionWarning(
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		WarningSubscription warningSubscription = new WarningSubscription();
 		warningSubscription.setCause(cause);
 		warningSubscription.setCode(subscrip == null ? "" : subscrip.getCode());
@@ -496,12 +504,14 @@ public class ImportSubscriptionsJob implements Job {
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}
