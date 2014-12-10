@@ -27,6 +27,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.CatMessages;
@@ -36,6 +37,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.DiscountPlanMatrix;
@@ -215,6 +217,7 @@ public class RatingService {
 		result.setOfferCode(offerCode);
 		result.setStatus(WalletOperationStatusEnum.OPEN);
 		result.setSeller(chargeInstance.getSeller());
+		result.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
 		BigDecimal unitPriceWithTax = null;
@@ -274,7 +277,6 @@ public class RatingService {
 				invoiceSubCategory, criteria1, criteria2, criteria3, startdate,
 				endDate, mode);
 
-		result.setWallet(subscription.getUserAccount().getWallet());
 		String chargeInstnceLabel = null;
 		try {
 			String languageCode = subscription.getUserAccount()
@@ -503,12 +505,13 @@ public class RatingService {
 				continue;
 			}
 
-			boolean criteriaELSameInPricePlan = discountPlan.getCriteriaEL() == null
-					|| matchExpression(discountPlan.getCriteriaEL(),bareOperation);
-			if (!criteriaELSameInPricePlan) {
-				log.debug("The operation is not compatible with discount plan criteria EL: "
-						+ discountPlan.getCriteriaEL());
-				continue;
+			if(!StringUtils.isBlank(discountPlan.getCriteriaEL())){
+				UserAccount ua = bareOperation.getWallet().getUserAccount();
+				if (!matchExpression(discountPlan.getCriteriaEL(),bareOperation,ua)) {
+					log.debug("The operation is not compatible with discount plan criteria EL: "
+							+ discountPlan.getCriteriaEL());
+					continue;
+				}
 			}
 			
 			boolean offerCodeSameInPricePlan = discountPlan.getOfferTemplate() == null
@@ -686,12 +689,13 @@ public class RatingService {
 						+ pricePlan.getCriteria3Value());
 				continue;
 			}
-			boolean criteriaELSameInPricePlan = pricePlan.getCriteriaEL() == null
-					|| matchExpression(pricePlan.getCriteriaEL(),bareOperation);
-			if (!criteriaELSameInPricePlan) {
-				log.debug("The operation is not compatible with price plan criteria EL: "
-						+ pricePlan.getCriteriaEL());
-				continue;
+			if(!StringUtils.isBlank(pricePlan.getCriteriaEL())){
+				UserAccount ua = bareOperation.getWallet().getUserAccount();
+				if (!matchExpression(pricePlan.getCriteriaEL(),bareOperation,ua)) {
+					log.debug("The operation is not compatible with price plan criteria EL: "
+							+ pricePlan.getCriteriaEL());
+					continue;
+				}
 			}
 			
 			boolean offerCodeSameInPricePlan = pricePlan.getOfferTemplate() == null
@@ -845,9 +849,10 @@ public class RatingService {
 	}
 
 	private boolean matchExpression(String expression,
-			WalletOperation bareOperation) {
+			WalletOperation bareOperation,UserAccount ua) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
+		userMap.put("ua", ua);
 		//FIXME: externilize the resolver to instance variable and simply set the bare operation
 		//before evaluation
 		ELResolver simpleELResolver = new SimpleELResolver(userMap);
