@@ -39,7 +39,7 @@ public class JobExecutionService extends
 		PersistenceService<JobExecutionResultImpl> {
 
 	@Inject
-	TimerEntityService timerEntityService;
+	private TimerEntityService timerEntityService;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void executeJob(String jobName, TimerInfo info, User currentUser) {
@@ -66,7 +66,7 @@ public class JobExecutionService extends
 							+ entity.getNbItemsProcessedWithError() + entity
 								.getNbItemsProcessedWithWarning()) > 0) {
 
-				create(entity, currentUser);
+				create(entity, currentUser, currentUser.getProvider());
 				log.info("PersistResult entity.isDone()=" + entity.isDone());
 
 				if (!entity.isDone()) {
