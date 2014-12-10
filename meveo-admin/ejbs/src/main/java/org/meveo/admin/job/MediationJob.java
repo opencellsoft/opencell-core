@@ -133,7 +133,7 @@ public class MediationJob implements Job {
 						if (edrs != null && edrs.size() > 0) {
 							for (EDR edr : edrs) {
 								// edrService.create(edr);
-								mediationJobBean.createEdr(edr);
+								mediationJobBean.createEdr(edr, currentUser);
 							}
 						}
 						outputCDR(line);
