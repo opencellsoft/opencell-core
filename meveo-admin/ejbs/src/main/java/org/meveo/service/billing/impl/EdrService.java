@@ -16,6 +16,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +27,7 @@ import javax.persistence.Query;
 import org.meveo.commons.utils.BoundedHashMap;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -124,4 +126,23 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
+	public void massUpdate(EDRStatusEnum status, Subscription subscription,
+			Provider provider) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UPDATE "
+				+ EDR.class.getSimpleName()
+				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.subscription=:subscription AND e.provider=:provider");
+
+		try {
+			getEntityManager().createQuery(sb.toString())
+					.setParameter("newStatus", status)
+					.setParameter("subscription", subscription)
+					.setParameter("oldStatus", EDRStatusEnum.REJECTED)
+					.setParameter("provider", provider)
+					.setParameter("lastUpdate", new Date()).executeUpdate();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
 }
