@@ -108,10 +108,17 @@ public class UserService extends PersistenceService<User> {
 
 	@SuppressWarnings("unchecked")
 	public List<User> findUsersByRoles(String... roles) {
-		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) and u.provider=:provider";
-		Query query = getEntityManager().createQuery(queryString);
+		StringBuffer queryString = new StringBuffer("select distinct u from User u join u.roles as r where r.name in (:roles)");
+		if(getProvider()!=null){
+			queryString.append(" and u.provider=:provider");
+		}
+		
+		Query query = getEntityManager().createQuery(queryString.toString());
 		query.setParameter("roles", Arrays.asList(roles));
-		query.setParameter("provider", getProvider()); //for jobs need, getProvider in invoked instead of getCurrentprovider
+		if(getProvider()!=null){
+			query.setParameter("provider", getProvider()); //for jobs need, getProvider in invoked instead of getCurrentprovider
+		}
+		
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return query.getResultList();
 	}
