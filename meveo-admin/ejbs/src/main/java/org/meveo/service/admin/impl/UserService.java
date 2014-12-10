@@ -26,6 +26,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import oracle.jdbc.proxy.annotation.GetProxy;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
@@ -106,9 +108,10 @@ public class UserService extends PersistenceService<User> {
 
 	@SuppressWarnings("unchecked")
 	public List<User> findUsersByRoles(String... roles) {
-		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles)";
+		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) and u.provider=:provider";
 		Query query = getEntityManager().createQuery(queryString);
 		query.setParameter("roles", Arrays.asList(roles));
+		query.setParameter("provider", getProvider()); //for jobs need, getProvider in invoked instead of getCurrentprovider
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return query.getResultList();
 	}

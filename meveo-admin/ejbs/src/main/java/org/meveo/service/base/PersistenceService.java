@@ -286,6 +286,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	public void create(EntityManager em, E e, User creator, Provider provider) {
 		log.debug("start of create {} entity ..", e.getClass().getSimpleName());
+		
 		if (e instanceof AuditableEntity) {
 			if (creator != null) {
 				((AuditableEntity) e).updateAudit(creator);
@@ -296,6 +297,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
 			((BaseEntity) e).setProvider(provider);
 		}
+		this.provider=((BaseEntity) e).getProvider();
 		em.persist(e);
 		log.debug("end of create {}. entity id={}.", e.getClass()
 				.getSimpleName(), e.getId());
@@ -494,9 +496,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 		if (getCurrentProvider() != null) {
 			if (e instanceof BaseEntity) {
-				Provider provider = ((BaseEntity) e).getProvider();
 				provider = getEntityManager().find(Provider.class,
-						provider.getId());
+						((BaseEntity) e).getProvider().getId());
 				boolean notSameProvider = !(provider != null && provider
 						.getId().equals(getCurrentProvider().getId()));
 				log.debug(
@@ -513,15 +514,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	public Provider getCurrentProvider() {
-		Provider result = provider;
-		if (result == null && getCurrentUser() != null) {
-			result = getCurrentUser().getProvider();
+		if (getCurrentUser() != null) {
+			return getCurrentUser().getProvider();
 		}
-		return result;
+		return null;
 	}
 
-	public void setProvider(Provider provider) {
-		this.provider = provider;
+	
+	public Provider getProvider() {
+		return provider;
 	}
 
 	public BaseEntity attach(BaseEntity e) {

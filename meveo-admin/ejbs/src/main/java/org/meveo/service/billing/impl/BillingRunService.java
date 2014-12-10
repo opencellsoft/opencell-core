@@ -575,16 +575,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {
-				Long startDate = System.currentTimeMillis();
 				Future<Boolean> isInvoiceCreated = invoiceService
 						.createAgregatesAndInvoice(em, billingAccount,
 								billingRun);
 				isInvoiceCreated.get();
-				Long endDate = System.currentTimeMillis();
-				log.info("createAgregatesAndInvoice BR_ID="
-						+ billingRun.getId() + ", BA_ID="
-						+ billingAccount.getId() + ", Time en ms="
-						+ (endDate - startDate));
 			} catch (Exception e) {
 				log.error("Error for BA=" + billingAccount.getCode() + " : "
 						+ e.getMessage());
