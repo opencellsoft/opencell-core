@@ -17,6 +17,7 @@
 package org.meveo.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -38,6 +39,7 @@ public abstract class BaseEntity implements Serializable, IEntity {
 
 	public static final int NB_PRECISION=23;
 	public static final int NB_DECIMALS=12;
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR")

@@ -39,11 +39,11 @@ public class GenerateImportXml {
     private static int BC_NUMBER=2;
     private static String billingCyclePrefix="CYC_INV_MT";
 
-    private static String customersFile="/tmp/CUSTOMERS.xml";
-    private static String accountsFile="/tmp/ACCOUNTS.xml";
-    private static String subscriptionsFile="/tmp/SUBSCRIPTIONS.xml";
-    private static String providerCode="DEMO";
-    private static String customerBrand="DEMO";
+    private static String customersFile="/tmp/CUSTOMERS_ORANGE.xml";
+    private static String accountsFile="/tmp/ACCOUNTS_ORANGE.xml";
+    private static String subscriptionsFile="/tmp/SUBSCRIPTIONS_ORANGE.xml";
+    private static String providerCode="ORANGE";
+    private static String customerBrand="ORANGE";
     private static String customerCategory="Business";
     private static String serviceCode="ORANGE_SRV";
     private static String creditCategory="VIP";

@@ -257,7 +257,6 @@ public class RatedTransactionService extends
 							: (BigDecimal) ratedTrans[0]);
 			billingRun.setPrAmountTax((BigDecimal) ratedTrans[2]);
 		}
-
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
