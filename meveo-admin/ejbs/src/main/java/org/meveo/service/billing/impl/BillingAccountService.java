@@ -25,11 +25,7 @@ import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -79,6 +75,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		createBillingAccount(getEntityManager(), billingAccount, creator,
 				provider);
 	}
+
 	public void createBillingAccount(EntityManager em,
 			BillingAccount billingAccount, User creator, Provider provider) {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -259,15 +256,16 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 
 	@Asynchronous
-	public Future<Boolean> updateBillingAccountTotalAmounts(long billingAccountId,
-			BillingRun billingRun, boolean entreprise) {
-		
-		log.info("updateBillingAccountTotalAmounts  billingAccountId:" + billingAccountId);
-		BillingAccount billingAccount = findById(getEmfForJobs(),billingAccountId);
+	public Future<Boolean> updateBillingAccountTotalAmounts(
+			long billingAccountId, BillingRun billingRun, boolean entreprise) {
+		log.info("updateBillingAccountTotalAmounts  billingAccountId:"
+				+ billingAccountId);
+		BillingAccount billingAccount = findById(getEmfForJobs(),
+				billingAccountId);
 		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
 				entreprise);
 		billingAccount.setBillingRun(billingRun);
-		update(getEmfForJobs(),billingAccount);
+		update(getEmfForJobs(), billingAccount);
 		return new AsyncResult<Boolean>(true);
 	}
 

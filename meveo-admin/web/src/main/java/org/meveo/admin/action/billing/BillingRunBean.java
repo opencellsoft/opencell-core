@@ -35,7 +35,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -69,13 +68,13 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	@Inject
 	@RequestParam
 	private Instance<Boolean> postReport;
-	
+
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
 	private ListItemsSelector<Invoice> itemSelector;
-	
-	private boolean launchInvoicingRejectedBA=false;
+
+	private boolean launchInvoicingRejectedBA = false;
 
 	@Inject
 	private Messages messages;
@@ -165,9 +164,8 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			entity.setProvider(entity.getBillingCycle().getProvider());
 
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
-
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -191,7 +189,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CONFIRMED);
 			billingRunService.update(entity);
-			if(launchInvoicingRejectedBA){ 
+			if (launchInvoicingRejectedBA) {
 				BillingRun billingRun = new BillingRun();
 				billingRun.setStatus(BillingRunStatusEnum.NEW);
 				billingRun.setProcessDate(new Date());
@@ -200,13 +198,15 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 				String selectedBillingAccounts = "";
 				String sep = "";
 				boolean isBillable = false;
-				for (RejectedBillingAccount ba : entity.getRejectedBillingAccounts()) {
+				for (RejectedBillingAccount ba : entity
+						.getRejectedBillingAccounts()) {
 					selectedBillingAccounts = selectedBillingAccounts + sep
 							+ ba.getId();
 					sep = ",";
 					if (!isBillable
-							&& ratedTransactionService.isBillingAccountBillable(
-									billingRun, (Long) ba.getId())) {
+							&& ratedTransactionService
+									.isBillingAccountBillable(billingRun,
+											(Long) ba.getId())) {
 						isBillable = true;
 					}
 				}
@@ -227,7 +227,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		}
 		return null;
 	}
-	
 
 	public String cancelInvoicing() {
 		try {
@@ -396,7 +395,4 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
 	}
 
- 
-	
-	
 }

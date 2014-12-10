@@ -47,7 +47,6 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class BillingRunService extends PersistenceService<BillingRun> {
@@ -56,14 +55,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	private WalletOperationService walletOperationService;
 
 	@Inject
-	private ProviderService providerService;
-
-	@Inject
 	private BillingAccountService billingAccountService;
 
 	@Inject
 	InvoiceService invoiceService;
-	
+
 	@Inject
 	RatedTransactionService ratedTransactionService;
 
@@ -186,7 +182,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				.setWiretransferBillableBANumber(wiretransferBillableBANumber);
 
 		return preInvoicingReportsDTO;
-
 	}
 
 	public PostInvoicingReportsDTO generatePostInvoicingReports(
@@ -347,17 +342,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			return null;
 		}
 		amount = amount.setScale(decimal, RoundingMode.HALF_UP);
+
 		return amount;
 	}
 
-	public void cleanBillingRun(BillingRun billingRun) { 
+	public void cleanBillingRun(BillingRun billingRun) {
 		Query queryTrans = getEntityManager()
-			    .createQuery(
-			      "update "
-			        + RatedTransaction.class.getName()
-			        + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
-			  queryTrans.setParameter("billingRun", billingRun);
-			  queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
+				.createQuery(
+						"update "
+								+ RatedTransaction.class.getName()
+								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
+		queryTrans.setParameter("billingRun", billingRun);
+		queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
 		queryTrans.executeUpdate();
 
 		Query queryAgregate = getEntityManager().createQuery(
@@ -371,18 +367,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 						+ " where billingRun=:billingRun");
 		queryInvoices.setParameter("billingRun", billingRun);
 		queryInvoices.executeUpdate();
-		
-		Query queryBA = getEntityManager()
-				.createQuery(
-						"update "
-								+ BillingAccount.class.getName()
-								+ " set billingRun=null where billingRun=:billingRun");
+
+		Query queryBA = getEntityManager().createQuery(
+				"update " + BillingAccount.class.getName()
+						+ " set billingRun=null where billingRun=:billingRun");
 		queryBA.setParameter("billingRun", billingRun);
 		queryBA.executeUpdate();
-		
-		
-		
-		
 	}
 
 	public void deleteInvoice(Invoice invoice) {
@@ -420,6 +410,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		qb.addCriterionEntity("c.provider", provider);
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
 				.getResultList();
+
 		return billingRuns != null && billingRuns.size() > 0 ? true : false;
 	}
 
@@ -438,33 +429,37 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				provider);
 		qb.startOrClause();
-		if(code!=null){
+		if (code != null) {
 			qb.addCriterion("c.billingCycle.code", "=", code, false);
 		}
 		qb.endOrClause();
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
 				.getResultList();
+
 		return billingRuns;
 
-	}	
-	
+	}
+
 	@SuppressWarnings("unchecked")
-	public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
+	public List<BillingRun> getbillingRuns(Provider provider,
+			BillingRunStatusEnum... status) {
 		BillingRunStatusEnum bRStatus;
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
-				getCurrentProvider());
+				provider);
+
 		qb.startOrClause();
-		if(status!=null){
-		for (int i = 0; i < status.length; i++) {
-			bRStatus = status[i];
-			qb.addCriterionEnum("c.status", bRStatus);
-		}
+		if (status != null) {
+			for (int i = 0; i < status.length; i++) {
+				bRStatus = status[i];
+				qb.addCriterionEnum("c.status", bRStatus);
+			}
 		}
 		qb.endOrClause();
+
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
 				.getResultList();
-		return billingRuns;
 
+		return billingRuns;
 	}
 
 	public List<BillingRun> getValidatedBillingRuns() {
@@ -479,6 +474,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		qb.addBooleanCriterion("c.xmlInvoiceGenerated", false);
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
 				.getResultList();
+
 		return billingRuns;
 
 	}
@@ -488,122 +484,116 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		if (!result.getProvider().getCode().equals(provider.getCode())) {
 			result = null;// discard the result
 		}
+
 		return result;
 	}
-	
-	
-	public void processBillingRun(BillingRun billingRun,JobExecutionResultImpl result) throws BusinessException, Exception{
+
+	public void processBillingRun(BillingRun billingRun,
+			JobExecutionResultImpl result) throws BusinessException, Exception {
 		try {
 			if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-				BillingCycle billingCycle = billingRun
-						.getBillingCycle();
+				BillingCycle billingCycle = billingRun.getBillingCycle();
 
-				boolean entreprise = billingRun.getProvider()
-						.isEntreprise();
+				boolean entreprise = billingRun.getProvider().isEntreprise();
 
 				Date startDate = billingRun.getStartDate();
 				Date endDate = billingRun.getEndDate();
 				List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 				if (billingCycle != null) {
 					billingAccounts = billingAccountService
-							.findBillingAccounts(billingCycle,
-									startDate, endDate);
+							.findBillingAccounts(billingCycle, startDate,
+									endDate);
 				} else {
-					String[] baIds = billingRun
-							.getSelectedBillingAccounts().split(",");
+					String[] baIds = billingRun.getSelectedBillingAccounts()
+							.split(",");
 					for (String id : Arrays.asList(baIds)) {
 						Long baId = Long.valueOf(id);
-						billingAccounts.add(billingAccountService
-								.findById(getEmfForJobs(),baId));
+						billingAccounts.add(billingAccountService.findById(
+								getEmfForJobs(), baId));
 					}
 				}
 
-				log.info("# billingAccounts to process:" + (billingAccounts != null?billingAccounts.size():0));
-				if (billingAccounts != null
-						&& billingAccounts.size() > 0) {
-					ratedTransactionService
-							.sumbillingRunAmounts(billingRun,
-									billingAccounts,
-									RatedTransactionStatusEnum.OPEN,
-									entreprise);
+				log.info("# billingAccounts to process:"
+						+ (billingAccounts != null ? billingAccounts.size() : 0));
+				if (billingAccounts != null && billingAccounts.size() > 0) {
+					ratedTransactionService.sumbillingRunAmounts(billingRun,
+							billingAccounts, RatedTransactionStatusEnum.OPEN,
+							entreprise);
 					int billableBA = 0;
+
 					for (BillingAccount billingAccount : billingAccounts) {
-						if (ratedTransactionService
-								.isBillingAccountBillable(billingRun,
-										billingAccount.getId())) {
+						if (ratedTransactionService.isBillingAccountBillable(
+								billingRun, billingAccount.getId())) {
 							Future<Boolean> baUpdated = billingAccountService
 									.updateBillingAccountTotalAmounts(
-											billingAccount.getId(),
-											billingRun, entreprise);
+											billingAccount.getId(), billingRun,
+											entreprise);
 							baUpdated.get();
 							billableBA++;
 						}
 					}
-					billingRun.setBillingAccountNumber(billingAccounts
-							.size());
-					billingRun
-							.setBillableBillingAcountNumber(billableBA);
+
+					billingRun.setBillingAccountNumber(billingAccounts.size());
+					billingRun.setBillableBillingAcountNumber(billableBA);
 					billingRun.setProcessDate(new Date());
 					billingRun.setStatus(BillingRunStatusEnum.WAITING);
-					update(getEmfForJobs(),billingRun);
-					if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
-							|| billingRun.getProvider()
-									.isAutomaticInvoicing()) {
+					update(getEmfForJobs(), billingRun);
 
-						createAgregatesAndInvoice(getEmfForJobs(),billingRun);
+					if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
+							|| billingRun.getProvider().isAutomaticInvoicing()) {
+						createAgregatesAndInvoice(getEmfForJobs(), billingRun);
 					}
 				}
-
 			} else if (BillingRunStatusEnum.ON_GOING.equals(billingRun
 					.getStatus())) {
-				createAgregatesAndInvoice(getEmfForJobs(),billingRun);
+				createAgregatesAndInvoice(getEmfForJobs(), billingRun);
 			} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun
 					.getStatus())) {
 				for (Invoice invoice : billingRun.getInvoices()) {
 					invoiceService.setInvoiceNumber(invoice);
-					BillingAccount billingAccount = invoice
-							.getBillingAccount();
-					Date nextCalendarDate = billingAccount
-							.getBillingCycle().getNextCalendarDate();
+					BillingAccount billingAccount = invoice.getBillingAccount();
+					Date nextCalendarDate = billingAccount.getBillingCycle()
+							.getNextCalendarDate();
 					billingAccount.setNextInvoiceDate(nextCalendarDate);
-					billingAccountService.update(getEmfForJobs(),billingAccount);
+					billingAccountService.update(getEmfForJobs(),
+							billingAccount);
 				}
+
 				billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
-				update(getEmfForJobs(),billingRun);
+				update(getEmfForJobs(), billingRun);
 			}
-			 
-		
 		} catch (Exception e) {
 			result.registerError(e.getMessage());
 		}
-			 
 	}
-	
-	  public void createAgregatesAndInvoice(EntityManager em,BillingRun billingRun)
-				throws BusinessException, Exception {
-		  billingRun=findById(em, billingRun.getId());
-			List<BillingAccount> billingAccounts = billingRun
-					.getBillableBillingAccounts();
 
-			for (BillingAccount billingAccount : billingAccounts) {
-				try {
-					Long startDate = System.currentTimeMillis();
-					Future<Boolean> isInvoiceCreated= invoiceService
-							.createAgregatesAndInvoice(em,billingAccount, billingRun);
-					isInvoiceCreated.get();
-					Long endDate = System.currentTimeMillis();
-					log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId()
-							+ ", BA_ID=" + billingAccount.getId() + ", Time en ms="
-							+ (endDate - startDate));
-				} catch (Exception e) {
-					log.error("Error for BA="+ billingAccount.getCode()+ " : "+e.getMessage());
-				}
-				
+	public void createAgregatesAndInvoice(EntityManager em,
+			BillingRun billingRun) throws BusinessException, Exception {
+		billingRun = findById(em, billingRun.getId());
+		List<BillingAccount> billingAccounts = billingRun
+				.getBillableBillingAccounts();
+
+		for (BillingAccount billingAccount : billingAccounts) {
+			try {
+				Long startDate = System.currentTimeMillis();
+				Future<Boolean> isInvoiceCreated = invoiceService
+						.createAgregatesAndInvoice(em, billingAccount,
+								billingRun);
+				isInvoiceCreated.get();
+				Long endDate = System.currentTimeMillis();
+				log.info("createAgregatesAndInvoice BR_ID="
+						+ billingRun.getId() + ", BA_ID="
+						+ billingAccount.getId() + ", Time en ms="
+						+ (endDate - startDate));
+			} catch (Exception e) {
+				log.error("Error for BA=" + billingAccount.getCode() + " : "
+						+ e.getMessage());
 			}
-			billingRun=findById(em, billingRun.getId(),true);
-			billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
-			update(em,billingRun);
 
 		}
+		billingRun = findById(em, billingRun.getId(), true);
+		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
+		update(em, billingRun);
+	}
 
 }

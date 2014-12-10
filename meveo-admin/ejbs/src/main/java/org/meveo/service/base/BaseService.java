@@ -34,18 +34,18 @@ public abstract class BaseService {
 	private static final Random RANDOM = new Random();
 
 	@Inject
-	Identity identity;
+	private Identity identity;
 
 	@Inject
 	protected Logger log;
 
 	@Inject
-	BeanManager beanManager;
-	
-	@EJB
-	UserService userService;
+	private BeanManager beanManager;
 
-	User currentUser;
+	@EJB
+	private UserService userService;
+
+	private User currentUser;
 
 	public User getCurrentUser() {
 		if (currentUser == null) {
@@ -53,9 +53,10 @@ public abstract class BaseService {
 				currentUser = ((MeveoUser) identity.getUser()).getUser();
 			} catch (Exception e) {
 				log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
-				currentUser=userService.getSystemUser();
+				currentUser = userService.getSystemUser();
 			}
 		}
+		
 		return currentUser;
 	}
 

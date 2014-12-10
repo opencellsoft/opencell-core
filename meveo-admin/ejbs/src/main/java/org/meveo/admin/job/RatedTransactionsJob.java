@@ -1,8 +1,23 @@
+/*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.meveo.admin.job;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -29,6 +44,8 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
@@ -39,19 +56,18 @@ public class RatedTransactionsJob implements Job {
 
 	@Inject
 	private ProviderService providerService;
-	
+
 	@Inject
 	JobExecutionService jobExecutionService;
 
-
 	@Inject
 	private WalletOperationService walletOperationService;
-	
+
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-
-	private Logger log = Logger.getLogger(RatedTransactionsJob.class.getName());
+	private Logger log = LoggerFactory.getLogger(RatedTransactionsJob.class
+			.getName());
 
 	@PostConstruct
 	public void init() {
@@ -62,39 +78,63 @@ public class RatedTransactionsJob implements Job {
 	public JobExecutionResult execute(String parameter, Provider provider) {
 		log.info("execute RatedTransactionsJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
+
 		try {
-			//FIXME: only for postpaid wallets
-			List<WalletOperation> walletOperations = walletOperationService.findByStatus(WalletOperationStatusEnum.OPEN);
-			log.info("# walletOperations to convert into rateTransactions:" + walletOperations.size());
+			// FIXME: only for postpaid wallets
+			List<WalletOperation> walletOperations = walletOperationService
+					.findByStatus(WalletOperationStatusEnum.OPEN, provider);
+			log.info("alletOperations to convert into rateTransactions={}",
+					walletOperations.size());
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
-					
-					RatedTransaction ratedTransaction=new RatedTransaction(walletOperation.getId(), walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(), walletOperation.getUnitAmountWithTax(), 
-							walletOperation.getUnitAmountTax(), walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), walletOperation.getAmountWithTax(),
-							walletOperation.getAmountTax(), RatedTransactionStatusEnum.OPEN,walletOperation.getProvider(),walletOperation.getWallet(),
-							walletOperation.getWallet().getUserAccount().getBillingAccount(),walletOperation.getChargeInstance().getChargeTemplate().getInvoiceSubCategory(),walletOperation.getParameter1(),walletOperation.getParameter2(),walletOperation.getParameter3());
+					RatedTransaction ratedTransaction = new RatedTransaction(
+							walletOperation.getId(),
+							walletOperation.getOperationDate(),
+							walletOperation.getUnitAmountWithoutTax(),
+							walletOperation.getUnitAmountWithTax(),
+							walletOperation.getUnitAmountTax(),
+							walletOperation.getQuantity(),
+							walletOperation.getAmountWithoutTax(),
+							walletOperation.getAmountWithTax(),
+							walletOperation.getAmountTax(),
+							RatedTransactionStatusEnum.OPEN,
+							walletOperation.getProvider(),
+							walletOperation.getWallet(), walletOperation
+									.getWallet().getUserAccount()
+									.getBillingAccount(), walletOperation
+									.getChargeInstance().getChargeTemplate()
+									.getInvoiceSubCategory(),
+							walletOperation.getParameter1(),
+							walletOperation.getParameter2(),
+							walletOperation.getParameter3());
 					ratedTransactionService.create(ratedTransaction);
-					
-					walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
-					
+
+					walletOperation
+							.setStatus(WalletOperationStatusEnum.TREATED);
+
 					walletOperationService.update(walletOperation);
 				} catch (Exception e) {
+					log.error(e.getMessage());
 					result.registerError(e.getMessage());
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		result.close("");
+
 		return result;
 	}
 
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression,
+			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
+
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -105,34 +145,36 @@ public class RatedTransactionsJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-                Provider provider=providerService.findById(info.getProviderId());
-                JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info,provider);
+				Provider provider = providerService.findById(info
+						.getProviderId());
+				JobExecutionResult result = execute(info.getParametres(),
+						provider);
+				jobExecutionService.persistResult(this, result, info, provider);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
 
-
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
 	}
-	
 
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}
+
 }
