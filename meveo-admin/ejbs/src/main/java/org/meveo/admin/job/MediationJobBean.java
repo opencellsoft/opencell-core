@@ -10,6 +10,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.User;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * @author Edward P. Legaspi
@@ -21,6 +22,7 @@ public class MediationJobBean {
 	private EdrService edrService;
 
 	@Inject
+	@MeveoJpaForJobs
 	private EntityManager em;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
