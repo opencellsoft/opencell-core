@@ -45,19 +45,13 @@ public abstract class BaseService {
 	@EJB
 	private UserService userService;
 
-	private User currentUser;
-
 	public User getCurrentUser() {
-		if (currentUser == null) {
-			try {
-				currentUser = ((MeveoUser) identity.getUser()).getUser();
-			} catch (Exception e) {
-				log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
-				currentUser = userService.getSystemUser();
-			}
+		try {
+			return ((MeveoUser) identity.getUser()).getUser();
+		} catch (Exception e) {
+			log.warn("getCurrentUser cannot retrieve current user from session identity and currentUser has not been set programmatically");
+			return userService.getSystemUser();
 		}
-		
-		return currentUser;
 	}
 
 	protected String generateRequestId() {
