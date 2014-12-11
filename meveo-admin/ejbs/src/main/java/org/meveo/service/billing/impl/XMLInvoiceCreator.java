@@ -677,7 +677,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 								code = ratedTransaction.getCode();
 								description = ratedTransaction.getDescription();
 							}
-
 							line.setAttribute("code", code != null ? code : "");
 							Element lebel = doc.createElement("label");
 							Text lebelTxt = doc
@@ -686,6 +685,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 							lebel.appendChild(lebelTxt);
 							line.appendChild(lebel);
+
+							Element lineUnit = doc
+									.createElement("unit");
+							Text lineUnitTxt = doc
+									.createTextNode(ratedTransaction.getUnityDescription());
+							lineUnit
+									.appendChild(lineUnitTxt);
+							line.appendChild(lineUnit);
 							
 							Element lineUnitAmountWithoutTax = doc
 									.createElement("unitAmountWithoutTax");

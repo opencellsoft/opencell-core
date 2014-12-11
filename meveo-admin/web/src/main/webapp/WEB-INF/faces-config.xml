@@ -977,6 +977,20 @@
 			<to-view-id>/pages/reporting/dwh/measurableQuantities.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		
+
+		<navigation-case>
+			<from-outcome>chartDetail</from-outcome>
+			<to-view-id>/pages/reporting/dwh/chartDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>charts</from-outcome>
+			<to-view-id>/pages/reporting/dwh/charts.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
 	</navigation-rule>
 	<navigation-rule>
