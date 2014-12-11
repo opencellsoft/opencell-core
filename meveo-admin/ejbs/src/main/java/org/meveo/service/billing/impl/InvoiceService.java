@@ -42,7 +42,6 @@ import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 
@@ -51,9 +50,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 	@Inject
 	private ProviderService providerService;
-
-	@Inject
-	private SellerService sellerService;
 
 	@Inject
 	private RatedTransactionService ratedTransactionService;
@@ -170,10 +166,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public void setInvoiceNumber(Invoice invoice) {
-		invoice.setInvoiceNumber(getInvoiceNumber(invoice));
+		invoice.setInvoiceNumber(getInvoiceNumber(invoice, null));
+	}
+
+	public void setInvoiceNumber(Invoice invoice, User currentUser) {
+		invoice.setInvoiceNumber(getInvoiceNumber(invoice, currentUser));
 	}
 
 	public String getInvoiceNumber(Invoice invoice) {
+		return getInvoiceNumber(invoice, null);
+	}
+
+	public String getInvoiceNumber(Invoice invoice, User currentUser) {
 		Seller seller = invoice.getBillingAccount().getCustomerAccount()
 				.getCustomer().getSeller();
 		String prefix = seller.getInvoicePrefix();
@@ -183,37 +187,46 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (prefix == null) {
 			prefix = "";
 		}
-		long nextInvoiceNb = getNextValue(seller);
+
+		if (currentUser != null) {
+			seller.updateAudit(currentUser);
+		} else {
+			seller.updateAudit(seller.getAuditable().getCreator());
+		}
+
+		long nextInvoiceNb = getNextValue(seller, currentUser);
 		StringBuffer num1 = new StringBuffer("000000000");
 		num1.append(nextInvoiceNb + "");
 		String invoiceNumber = num1.substring(num1.length() - 9);
 		return (prefix + invoiceNumber);
 	}
 
-	public synchronized long getNextValue(Seller seller) {
+	public synchronized long getNextValue(Seller seller, User currentUser) {
 		long result = 0;
 		if (seller != null) {
 			if (seller.getCurrentInvoiceNb() != null) {
 				long currentInvoiceNbre = seller.getCurrentInvoiceNb();
 				result = 1 + currentInvoiceNbre;
 				seller.setCurrentInvoiceNb(result);
-				sellerService
-						.update(seller, seller.getAuditable().getCreator());
 			} else {
-				result = getNextValue(seller.getProvider());
+				result = getNextValue(seller.getProvider(), currentUser);
 			}
 		}
 		return result;
 	}
 
-	public synchronized long getNextValue(Provider provider) {
+	public synchronized long getNextValue(Provider provider, User currentUser) {
 		long result = 0;
 		if (provider != null) {
 			long currentInvoiceNbre = provider.getCurrentInvoiceNb() != null ? provider
 					.getCurrentInvoiceNb() : 0;
 			result = 1 + currentInvoiceNbre;
 			provider.setCurrentInvoiceNb(result);
-			providerService.update(provider);
+			if (currentUser != null) {
+				provider.updateAudit(currentUser);
+			} else {
+				provider.updateAudit(provider.getAuditable().getCreator());
+			}
 		}
 		return result;
 	}

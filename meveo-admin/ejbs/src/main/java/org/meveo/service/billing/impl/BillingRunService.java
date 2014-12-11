@@ -572,7 +572,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			} else if (BillingRunStatusEnum.CONFIRMED.equals(billingRun
 					.getStatus())) {
 				for (Invoice invoice : billingRun.getInvoices()) {
-					invoiceService.setInvoiceNumber(invoice);
+					invoiceService.setInvoiceNumber(invoice, currentUser);
 					BillingAccount billingAccount = invoice.getBillingAccount();
 					Date nextCalendarDate = billingAccount.getBillingCycle()
 							.getNextCalendarDate();
