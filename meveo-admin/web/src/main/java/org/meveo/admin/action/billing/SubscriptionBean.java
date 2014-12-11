@@ -367,7 +367,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public RecurringChargeInstance getRecurringChargeInstance() {
-		log.debug("getRecurringChargeInstance " + recurringChargeInstance);
 		return recurringChargeInstance;
 	}
 

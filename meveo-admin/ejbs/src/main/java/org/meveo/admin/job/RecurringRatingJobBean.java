@@ -22,27 +22,30 @@ import org.slf4j.Logger;
 
 @Stateless
 public class RecurringRatingJobBean {
-	
-	@Inject 
+
+	@Inject
 	@MeveoJpaForJobs
 	private EntityManager em;
-	
+
 	@Inject
 	private RecurringChargeInstanceService recurringChargeInstanceService;
 
 	@Inject
 	private WalletOperationService walletOperationService;
 
-    @Inject
-    protected Logger log;
-	
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result){
+	@Inject
+	protected Logger log;
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void execute(JobExecutionResultImpl result) {
 		try {
 			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
-					.findByStatus(em,InstanceStatusEnum.ACTIVE, DateUtils.addDaysToDate(new Date(), 1));
+					.findByStatus(em, InstanceStatusEnum.ACTIVE,
+							DateUtils.addDaysToDate(new Date(), 1));
 
-			log.info("# charges to rate:" + activeRecurringChargeInstances.size());
+			log.info("charges to rate={}"
+					+ activeRecurringChargeInstances.size());
+
 			for (RecurringChargeInstance activeRecurringChargeInstance : activeRecurringChargeInstances) {
 				try {
 					RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
@@ -55,14 +58,17 @@ public class RecurringRatingJobBean {
 					}
 					Date applicationDate = null;
 					if (recurringChargeTemplate.getApplyInAdvance()) {
-						applicationDate = activeRecurringChargeInstance.getNextChargeDate();
+						applicationDate = activeRecurringChargeInstance
+								.getNextChargeDate();
 					} else {
-						applicationDate = activeRecurringChargeInstance.getChargeDate();
+						applicationDate = activeRecurringChargeInstance
+								.getChargeDate();
 					}
 
 					log.info("applicationDate=" + applicationDate);
 
-					applicationDate = DateUtils.parseDateWithPattern(applicationDate, "dd/MM/yyyy");
+					applicationDate = DateUtils.parseDateWithPattern(
+							applicationDate, "dd/MM/yyyy");
 
 					if (!recurringChargeTemplate.getApplyInAdvance()) {
 						walletOperationService
@@ -71,7 +77,9 @@ public class RecurringRatingJobBean {
 										recurringChargeTemplate, null);
 						result.registerSucces();
 					} else {
-						walletOperationService.applyReccuringCharge(em,activeRecurringChargeInstance, false, recurringChargeTemplate, null);
+						walletOperationService.applyReccuringCharge(em,
+								activeRecurringChargeInstance, false,
+								recurringChargeTemplate, null);
 						result.registerSucces();
 					}
 				} catch (Exception e) {

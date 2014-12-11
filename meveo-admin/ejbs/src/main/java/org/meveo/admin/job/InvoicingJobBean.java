@@ -34,12 +34,13 @@ public class InvoicingJobBean {
 		try {
 			try {
 				List<BillingRun> billingRuns = billingRunService
-						.getbillingRuns(currentUser.getProvider(),
+						.getbillingRuns(em, currentUser.getProvider(),
 								BillingRunStatusEnum.NEW,
 								BillingRunStatusEnum.ON_GOING,
 								BillingRunStatusEnum.CONFIRMED);
 
 				log.info("billingRuns to process={}", billingRuns.size());
+				
 				for (BillingRun billingRun : billingRuns) {
 					try {
 						billingRunService.processBillingRun(em, billingRun, result,

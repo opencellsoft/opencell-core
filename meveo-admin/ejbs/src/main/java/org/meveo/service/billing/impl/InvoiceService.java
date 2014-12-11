@@ -170,9 +170,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public void setInvoiceNumber(Invoice invoice) {
-
 		invoice.setInvoiceNumber(getInvoiceNumber(invoice));
-		update(invoice);
 	}
 
 	public String getInvoiceNumber(Invoice invoice) {

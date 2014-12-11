@@ -28,16 +28,16 @@ import org.slf4j.Logger;
 public class ReccuringRatingJob implements Job {
 
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
 	private UserService userService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
-	RecurringRatingJobBean recurringRatingJobBean;
+	private RecurringRatingJobBean recurringRatingJobBean;
 
 	@Inject
 	protected Logger log;

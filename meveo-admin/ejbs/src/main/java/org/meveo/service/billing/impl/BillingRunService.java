@@ -441,8 +441,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<BillingRun> getbillingRuns(Provider provider,
+			BillingRunStatusEnum... status) {
+		return getbillingRuns(getEntityManager(), provider, status);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BillingRun> getbillingRuns(EntityManager em, Provider provider,
 			BillingRunStatusEnum... status) {
 		BillingRunStatusEnum bRStatus;
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
@@ -458,8 +463,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 		qb.endOrClause();
 
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
-				.getResultList();
+		List<BillingRun> billingRuns = qb.getQuery(em).getResultList();
 
 		return billingRuns;
 	}
@@ -468,21 +472,30 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return getValidatedBillingRuns(getCurrentProvider());
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<BillingRun> getValidatedBillingRuns(Provider provider) {
+		return getValidatedBillingRuns(getEntityManager(), provider);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BillingRun> getValidatedBillingRuns(EntityManager em,
+			Provider provider) {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				provider);
 		qb.addCriterionEnum("c.status", BillingRunStatusEnum.VALIDATED);
 		qb.addBooleanCriterion("c.xmlInvoiceGenerated", false);
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
-				.getResultList();
+		List<BillingRun> billingRuns = qb.getQuery(em).getResultList();
 
 		return billingRuns;
 
 	}
 
 	public BillingRun getBillingRunById(long id, Provider provider) {
-		BillingRun result = getEntityManager().find(BillingRun.class, id);
+		return getBillingRunById(getEntityManager(), id, provider);
+	}
+
+	public BillingRun getBillingRunById(EntityManager em, long id,
+			Provider provider) {
+		BillingRun result = em.find(BillingRun.class, id);
 		if (!result.getProvider().getCode().equals(provider.getCode())) {
 			result = null;// discard the result
 		}
@@ -546,8 +559,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 					billingRun.setBillableBillingAcountNumber(billableBA);
 					billingRun.setProcessDate(new Date());
 					billingRun.setStatus(BillingRunStatusEnum.WAITING);
-					billingRun.getAuditable().setUpdater(currentUser);
-					billingRun.getAuditable().setUpdated(new Date());
+					billingRun.updateAudit(currentUser);
 
 					if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
 							|| billingRun.getProvider().isAutomaticInvoicing()) {
@@ -565,13 +577,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 					Date nextCalendarDate = billingAccount.getBillingCycle()
 							.getNextCalendarDate();
 					billingAccount.setNextInvoiceDate(nextCalendarDate);
-					billingAccount.getAuditable().setUpdater(currentUser);
-					billingAccount.getAuditable().setUpdated(new Date());
+					billingAccount.updateAudit(currentUser);
 				}
 
 				billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
-				billingRun.getAuditable().setUpdater(currentUser);
-				billingRun.getAuditable().setUpdated(new Date());
+				billingRun.updateAudit(currentUser);
 			}
 		} catch (Exception e) {
 			result.registerError(e.getMessage());

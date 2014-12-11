@@ -65,7 +65,6 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -77,16 +76,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private static final String dueDateFormat = "yyyy-MM-dd";
 
 	@Inject
-	CustomerAccountService customerAccountService;
+	private InvoiceService invoiceService;
 
 	@Inject
-	InvoiceService invoiceService;
+	private RatedTransactionService ratedTransactionService;
 
 	@Inject
-	RatedTransactionService ratedTransactionService;
-
-	@Inject
-	CatMessagesService catMessagesService;
+	private CatMessagesService catMessagesService;
 
 	@Asynchronous
 	public Future<Boolean> createXMLInvoice(Invoice invoice, File billingRundir)

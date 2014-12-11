@@ -217,7 +217,8 @@ public class RatingService {
 		result.setOfferCode(offerCode);
 		result.setStatus(WalletOperationStatusEnum.OPEN);
 		result.setSeller(chargeInstance.getSeller());
-		result.setWallet(chargeInstance.getSubscription().getUserAccount().getWallet());
+		result.setWallet(chargeInstance.getSubscription().getUserAccount()
+				.getWallet());
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
 		BigDecimal unitPriceWithTax = null;
@@ -322,12 +323,12 @@ public class RatingService {
 				reloadPricePlan();
 			}
 			if (!allPricePlan.containsKey(providerCode)) {
-				throw new RuntimeException("no price plan for provider "
+				throw new RuntimeException("No price plan for provider "
 						+ providerCode);
 			}
 			if (!allPricePlan.get(providerCode).containsKey(
 					bareWalletOperation.getCode())) {
-				throw new RuntimeException("no price plan for provider "
+				throw new RuntimeException("No price plan for provider "
 						+ providerCode + " and charge code "
 						+ bareWalletOperation.getCode());
 			}
@@ -414,20 +415,22 @@ public class RatingService {
 		BigDecimal unitPriceAmountTax = null;
 		BigDecimal amountTax = BigDecimal.ZERO;
 		if (bareWalletOperation.getTaxPercent() != null) {
-			unitPriceAmountTax = unitPriceWithoutTax.multiply(bareWalletOperation
-					.getTaxPercent().divide(HUNDRED));
+			unitPriceAmountTax = unitPriceWithoutTax
+					.multiply(bareWalletOperation.getTaxPercent().divide(
+							HUNDRED));
 			amountTax = priceWithoutTax.multiply(bareWalletOperation
 					.getTaxPercent().divide(HUNDRED));
 		}
 		if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
-			if(unitPriceAmountTax != null){
-				unitPriceWithTax=unitPriceWithoutTax.add(unitPriceAmountTax);
-				priceWithTax=priceWithoutTax.add(amountTax);
+			if (unitPriceAmountTax != null) {
+				unitPriceWithTax = unitPriceWithoutTax.add(unitPriceAmountTax);
+				priceWithTax = priceWithoutTax.add(amountTax);
 			}
 		} else {
-			unitPriceAmountTax=unitPriceWithTax.subtract(unitPriceWithoutTax);
-			priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithTax);
-			amountTax=priceWithTax.subtract(priceWithoutTax);
+			unitPriceAmountTax = unitPriceWithTax.subtract(unitPriceWithoutTax);
+			priceWithTax = bareWalletOperation.getQuantity().multiply(
+					unitPriceWithTax);
+			amountTax = priceWithTax.subtract(priceWithoutTax);
 		}
 
 		if (provider.getRounding() != null && provider.getRounding() > 0) {
@@ -436,7 +439,6 @@ public class RatingService {
 			priceWithTax = NumberUtils.round(priceWithTax,
 					provider.getRounding());
 		}
-
 
 		bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
 		bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
@@ -505,15 +507,16 @@ public class RatingService {
 				continue;
 			}
 
-			if(!StringUtils.isBlank(discountPlan.getCriteriaEL())){
+			if (!StringUtils.isBlank(discountPlan.getCriteriaEL())) {
 				UserAccount ua = bareOperation.getWallet().getUserAccount();
-				if (!matchExpression(discountPlan.getCriteriaEL(),bareOperation,ua)) {
+				if (!matchExpression(discountPlan.getCriteriaEL(),
+						bareOperation, ua)) {
 					log.debug("The operation is not compatible with discount plan criteria EL: "
 							+ discountPlan.getCriteriaEL());
 					continue;
 				}
 			}
-			
+
 			boolean offerCodeSameInPricePlan = discountPlan.getOfferTemplate() == null
 					|| discountPlan.getOfferTemplate().getCode()
 							.equals(bareOperation.getOfferCode());
@@ -689,15 +692,16 @@ public class RatingService {
 						+ pricePlan.getCriteria3Value());
 				continue;
 			}
-			if(!StringUtils.isBlank(pricePlan.getCriteriaEL())){
+			if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
 				UserAccount ua = bareOperation.getWallet().getUserAccount();
-				if (!matchExpression(pricePlan.getCriteriaEL(),bareOperation,ua)) {
+				if (!matchExpression(pricePlan.getCriteriaEL(), bareOperation,
+						ua)) {
 					log.debug("The operation is not compatible with price plan criteria EL: "
 							+ pricePlan.getCriteriaEL());
 					continue;
 				}
 			}
-			
+
 			boolean offerCodeSameInPricePlan = pricePlan.getOfferTemplate() == null
 					|| pricePlan.getOfferTemplate().getCode()
 							.equals(bareOperation.getOfferCode());
@@ -849,12 +853,13 @@ public class RatingService {
 	}
 
 	private boolean matchExpression(String expression,
-			WalletOperation bareOperation,UserAccount ua) {
+			WalletOperation bareOperation, UserAccount ua) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
 		userMap.put("ua", ua);
-		//FIXME: externilize the resolver to instance variable and simply set the bare operation
-		//before evaluation
+		// FIXME: externilize the resolver to instance variable and simply set
+		// the bare operation
+		// before evaluation
 		ELResolver simpleELResolver = new SimpleELResolver(userMap);
 		final VariableMapper variableMapper = new SimpleVariableMapper();
 		final FunctionMapper functionMapper = new SimpleFunctionMapper();
@@ -881,7 +886,7 @@ public class RatingService {
 			}
 		};
 		ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-		
+
 		ValueExpression ve = expressionFactory.createValueExpression(context,
 				expression, Boolean.class);
 		return (Boolean) ve.getValue(context);

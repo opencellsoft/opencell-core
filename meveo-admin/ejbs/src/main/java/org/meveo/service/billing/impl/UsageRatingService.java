@@ -141,7 +141,8 @@ public class UsageRatingService {
 			} else {
 				log.info("set filterExpression to "
 						+ usageChargeTemplate.getFilterExpression());
-				cachedValue.setFilterExpression(usageChargeTemplate.getFilterExpression());
+				cachedValue.setFilterExpression(usageChargeTemplate
+						.getFilterExpression());
 			}
 			if (usageChargeTemplate.getFilterParam1() == null
 					|| usageChargeTemplate.getFilterParam1().equals("")) {
@@ -190,7 +191,7 @@ public class UsageRatingService {
 						.getEdrTemplate();
 
 				cachedValue.setConditionEL(edrTemplate.getConditionEl());
-				
+
 				if (edrTemplate.getQuantityEl() == null
 						|| (edrTemplate.getQuantityEl().equals(""))) {
 					log.error("edrTemplate QuantityEL must be set for usageChargeTemplate="
@@ -519,7 +520,7 @@ public class UsageRatingService {
 			counterInstance = counterInstanceService
 					.findById(counterInstanceCache.getKey());
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(
-					counterInstance, edr.getEventDate(),em);
+					counterInstance, edr.getEventDate(), em);
 			periodCache = CounterPeriodCache.getInstance(counterPeriod,
 					counterInstance.getCounterTemplate());
 			counterInstanceCache.getCounterPeriods().add(periodCache);
@@ -602,20 +603,29 @@ public class UsageRatingService {
 			}
 			walletOperationService.create(em, walletOperation, null, provider);
 			// handle associated edr creation
-			if (charge.getTemplateCache().isEdrTemplate() && (charge.getTemplateCache().getConditionEL()==null
-				|| 	"".equals(charge.getTemplateCache().getConditionEL())
-				|| matchExpression(charge.getTemplateCache().getConditionEL(), edr,walletOperation))) {
+			if (charge.getTemplateCache().isEdrTemplate()
+					&& (charge.getTemplateCache().getConditionEL() == null
+							|| "".equals(charge.getTemplateCache()
+									.getConditionEL()) || matchExpression(
+								charge.getTemplateCache().getConditionEL(),
+								edr, walletOperation))) {
 				EDR newEdr = new EDR();
 				newEdr.setCreated(new Date());
 				newEdr.setEventDate(edr.getEventDate());
 				newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
 				newEdr.setOriginRecord("" + walletOperation.getId());
-				newEdr.setParameter1(evaluateStringExpression(charge.getTemplateCache().getParam1EL(),edr,walletOperation));
-				newEdr.setParameter2(evaluateStringExpression(charge.getTemplateCache().getParam2EL(),edr,walletOperation));
-				newEdr.setParameter3(evaluateStringExpression(charge.getTemplateCache().getParam3EL(),edr,walletOperation));
-				newEdr.setParameter4(evaluateStringExpression(charge.getTemplateCache().getParam4EL(),edr,walletOperation));
+				newEdr.setParameter1(evaluateStringExpression(charge
+						.getTemplateCache().getParam1EL(), edr, walletOperation));
+				newEdr.setParameter2(evaluateStringExpression(charge
+						.getTemplateCache().getParam2EL(), edr, walletOperation));
+				newEdr.setParameter3(evaluateStringExpression(charge
+						.getTemplateCache().getParam3EL(), edr, walletOperation));
+				newEdr.setParameter4(evaluateStringExpression(charge
+						.getTemplateCache().getParam4EL(), edr, walletOperation));
 				newEdr.setProvider(edr.getProvider());
-				newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(charge.getTemplateCache().getQuantityEL(),edr,walletOperation)));
+				newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(
+						charge.getTemplateCache().getQuantityEL(), edr,
+						walletOperation)));
 				newEdr.setStatus(EDRStatusEnum.OPEN);
 				newEdr.setSubscription(edr.getSubscription());
 				edrService.create(em, newEdr, null, provider);
@@ -639,9 +649,10 @@ public class UsageRatingService {
 
 		if (edr.getSubscription() == null) {
 			edr.setStatus(EDRStatusEnum.REJECTED);
-			edr.setRejectReason("subscription null");
+			edr.setRejectReason("Subscription is null");
 		} else {
 			boolean edrIsRated = false;
+
 			try {
 				if (chargeCache.containsKey(edr.getSubscription().getId())) {
 					// TODO:order charges by priority and id
@@ -671,9 +682,13 @@ public class UsageRatingService {
 													.equals(edr.getParameter4())) {
 										log.info("filter4 ok");
 										if (templateCache.getFilterExpression() == null
-												|| matchExpression(templateCache.getFilterExpression(),edr)) {
+												|| matchExpression(
+														templateCache
+																.getFilterExpression(),
+														edr)) {
 											log.info("filterExpression ok");
-											// we found matching charge, if we rate
+											// we found matching charge, if we
+											// rate
 											// it we exit the look
 											log.debug("found matchig charge inst : id="
 													+ charge.getChargeInstanceId());
@@ -701,7 +716,7 @@ public class UsageRatingService {
 			} catch (Exception e) {
 				edr.setStatus(EDRStatusEnum.REJECTED);
 				edr.setRejectReason(e.getMessage());
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 		}
 
@@ -711,37 +726,42 @@ public class UsageRatingService {
 		edr.setLastUpdate(new Date());
 	}
 
-	private boolean matchExpression(String expression,EDR edr){
+	private boolean matchExpression(String expression, EDR edr) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
-		return (Boolean) evaluateExpression(expression,userMap,Boolean.class);
+		return (Boolean) evaluateExpression(expression, userMap, Boolean.class);
 	}
 
-	private boolean matchExpression(String expression,EDR edr,WalletOperation walletOperation){
+	private boolean matchExpression(String expression, EDR edr,
+			WalletOperation walletOperation) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (Boolean) evaluateExpression(expression,userMap,Boolean.class);
-	}
-	
-	private String evaluateStringExpression(String expression,EDR edr,WalletOperation walletOperation){
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("edr", edr);
-		userMap.put("op", walletOperation);
-		return (String) evaluateExpression(expression,userMap,String.class);
+		return (Boolean) evaluateExpression(expression, userMap, Boolean.class);
 	}
 
-	private Double evaluateDoubleExpression(String expression,EDR edr,WalletOperation walletOperation){
+	private String evaluateStringExpression(String expression, EDR edr,
+			WalletOperation walletOperation) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (Double) evaluateExpression(expression,userMap,Double.class);
+		return (String) evaluateExpression(expression, userMap, String.class);
 	}
-	
+
+	private Double evaluateDoubleExpression(String expression, EDR edr,
+			WalletOperation walletOperation) {
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("edr", edr);
+		userMap.put("op", walletOperation);
+		return (Double) evaluateExpression(expression, userMap, Double.class);
+	}
+
 	private Object evaluateExpression(String expression,
-			Map<Object, Object> userMap,@SuppressWarnings("rawtypes") Class resultClass) {
-		//FIXME: externilize the resolver to instance variable and simply set the bare operation
-		//before evaluation
+			Map<Object, Object> userMap,
+			@SuppressWarnings("rawtypes") Class resultClass) {
+		// FIXME: externilize the resolver to instance variable and simply set
+		// the bare operation
+		// before evaluation
 		ELResolver simpleELResolver = new SimpleELResolver(userMap);
 		final VariableMapper variableMapper = new SimpleVariableMapper();
 		final FunctionMapper functionMapper = new SimpleFunctionMapper();
@@ -768,7 +788,7 @@ public class UsageRatingService {
 			}
 		};
 		ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-		
+
 		ValueExpression ve = expressionFactory.createValueExpression(context,
 				expression, resultClass);
 		return ve.getValue(context);

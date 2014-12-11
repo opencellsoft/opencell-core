@@ -17,7 +17,6 @@
 package org.meveo.admin.job;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -31,17 +30,10 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -60,12 +52,9 @@ public class RatedTransactionsJob implements Job {
 
 	@Inject
 	private JobExecutionService jobExecutionService;
-
+	
 	@Inject
-	private WalletOperationService walletOperationService;
-
-	@Inject
-	private RatedTransactionService ratedTransactionService;
+	private RatedTransactionsJobBean ratedTransactionsJobBean;
 
 	private Logger log = LoggerFactory.getLogger(RatedTransactionsJob.class
 			.getName());
@@ -79,52 +68,8 @@ public class RatedTransactionsJob implements Job {
 	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute RatedTransactionsJob.");
 
-		Provider provider = currentUser.getProvider();
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-
-		try {
-			// FIXME: only for postpaid wallets
-			List<WalletOperation> walletOperations = walletOperationService
-					.findByStatus(WalletOperationStatusEnum.OPEN, provider);
-			log.info("WalletOperations to convert into rateTransactions={}",
-					walletOperations.size());
-			for (WalletOperation walletOperation : walletOperations) {
-				try {
-					RatedTransaction ratedTransaction = new RatedTransaction(
-							walletOperation.getId(),
-							walletOperation.getOperationDate(),
-							walletOperation.getUnitAmountWithoutTax(),
-							walletOperation.getUnitAmountWithTax(),
-							walletOperation.getUnitAmountTax(),
-							walletOperation.getQuantity(),
-							walletOperation.getAmountWithoutTax(),
-							walletOperation.getAmountWithTax(),
-							walletOperation.getAmountTax(),
-							RatedTransactionStatusEnum.OPEN,
-							walletOperation.getProvider(),
-							walletOperation.getWallet(), walletOperation
-									.getWallet().getUserAccount()
-									.getBillingAccount(), walletOperation
-									.getChargeInstance().getChargeTemplate()
-									.getInvoiceSubCategory(),
-							walletOperation.getParameter1(),
-							walletOperation.getParameter2(),
-							walletOperation.getParameter3());
-					ratedTransactionService.create(ratedTransaction);
-
-					walletOperation
-							.setStatus(WalletOperationStatusEnum.TREATED);
-
-					walletOperationService.update(walletOperation);
-				} catch (Exception e) {
-					log.error(e.getMessage());
-					result.registerError(e.getMessage());
-				}
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-
+		ratedTransactionsJobBean.execute(result, currentUser);
 		result.close("");
 
 		return result;

@@ -195,6 +195,7 @@ public class MediationJob implements Job {
 
 		}
 		result.close("");
+
 		return result;
 	}
 
