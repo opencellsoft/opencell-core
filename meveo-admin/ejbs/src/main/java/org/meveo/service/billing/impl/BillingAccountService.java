@@ -232,9 +232,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle,
 			Date startdate, Date endDate) {
+		return findBillingAccounts(getEntityManager(), billingCycle, startdate,
+				endDate);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BillingAccount> findBillingAccounts(EntityManager em,
+			BillingCycle billingCycle, Date startdate, Date endDate) {
 		try {
 			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b");
 			qb.addCriterionEntity("b.billingCycle", billingCycle);
@@ -256,16 +262,17 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 
 	@Asynchronous
-	public Future<Boolean> updateBillingAccountTotalAmounts(
-			long billingAccountId, BillingRun billingRun, boolean entreprise) {
+	public Future<Boolean> updateBillingAccountTotalAmounts(EntityManager em,
+			long billingAccountId, BillingRun billingRun, boolean entreprise,
+			User currentUser) {
 		log.info("updateBillingAccountTotalAmounts  billingAccountId:"
 				+ billingAccountId);
-		BillingAccount billingAccount = findById(getEmfForJobs(),
-				billingAccountId);
+		BillingAccount billingAccount = findById(em, billingAccountId);
 		ratedTransactionService.billingAccountTotalAmounts(billingAccount,
 				entreprise);
 		billingAccount.setBillingRun(billingRun);
-		update(getEmfForJobs(), billingAccount);
+		setProvider(currentUser.getProvider());
+		update(em, billingAccount, currentUser);
 		return new AsyncResult<Boolean>(true);
 	}
 

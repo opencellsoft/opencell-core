@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,13 +13,12 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.admin.dunning;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,6 +45,8 @@ import org.meveo.service.payments.impl.DunningPlanTransitionService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Upgrade dunninglevel for one customerAccount
@@ -56,90 +57,129 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  */
 
 @Named
-public class UpgradeDunningLevel  {
+public class UpgradeDunningLevel {
 
-	private static final Logger logger = Logger.getLogger(UpgradeDunningLevel.class.getName());
+	private static final Logger logger = LoggerFactory
+			.getLogger(UpgradeDunningLevel.class);
+
 	private static final String DUNNING_BALANCE_FLAG = "bayad.dunning.blanceFlag";
-	
+
 	@Inject
 	DunningUtils dunningUtils;
-	
+
 	@Inject
 	UserService userService;
-	
+
 	@Inject
 	DunningPlanTransitionService dunningPlanTransitionService;
 
-	
 	@Inject
 	RecordedInvoiceService recordedInvoiceService;
-	
+
 	@Inject
 	ActionPlanItemService actionPlanItemService;
-	
+
 	@Inject
 	OCCTemplateService oCCTemplateService;
-	
+
 	@Inject
 	CustomerAccountService customerAccountService;
-	
-    @Inject
+
+	@Inject
 	OtherCreditAndChargeService otherCreditAndChargeService;
-	   
-	    
+
 	@Inject
 	ActionDunningService actionDunningService;
-	
 
-	public UpgradeDunningReturn execute(CustomerAccount customerAccount,BigDecimal balanceExigible,DunningPlan dunningPlan) throws Exception {
+	public UpgradeDunningReturn execute(CustomerAccount customerAccount,
+			BigDecimal balanceExigible, DunningPlan dunningPlan)
+			throws Exception {
 		logger.info("UpgradeDunningLevelStep ...");
-		UpgradeDunningReturn upgradeDunningReturn=new UpgradeDunningReturn();
-		logger.info("UpgradeDunningLevelStep customerAccount.code:" + customerAccount.getCode());
-		ParamBean parambean=ParamBean.getInstance();
-		if (balanceExigible.compareTo(BigDecimal.ZERO) == Integer.parseInt(parambean.getProperty(DUNNING_BALANCE_FLAG,"1"))) {
+		UpgradeDunningReturn upgradeDunningReturn = new UpgradeDunningReturn();
+		logger.info("UpgradeDunningLevelStep customerAccount.code:"
+				+ customerAccount.getCode());
+		ParamBean parambean = ParamBean.getInstance();
+		if (balanceExigible.compareTo(BigDecimal.ZERO) == Integer
+				.parseInt(parambean.getProperty(DUNNING_BALANCE_FLAG, "1"))) {
 			logger.info("UpgradeDunningLevelStep balance in dunning");
-			logger.info("UpgradeDunningLevelStep customerAccount.dunningLevel:" + customerAccount.getDunningLevel());
-			DunningLevelEnum nextLevel = DunningUtils.getNextDunningLevel(customerAccount.getDunningLevel());
+			logger.info("UpgradeDunningLevelStep customerAccount.dunningLevel:"
+					+ customerAccount.getDunningLevel());
+			DunningLevelEnum nextLevel = DunningUtils
+					.getNextDunningLevel(customerAccount.getDunningLevel());
 			if (nextLevel == null) {
 				logger.info("UpgradeDunningLevelStep  max DunningLevel");
 				return upgradeDunningReturn;
 			} else {
 				logger.info("UpgradeDunningLevelStep nextLevel:" + nextLevel);
-				DunningPlanTransition dunningPlanTransition = dunningPlanTransitionService.getDunningPlanTransition(customerAccount.getDunningLevel(), nextLevel, dunningPlan);
+				DunningPlanTransition dunningPlanTransition = dunningPlanTransitionService
+						.getDunningPlanTransition(
+								customerAccount.getDunningLevel(), nextLevel,
+								dunningPlan);
 				if (dunningPlanTransition == null) {
-					logger.info("UpgradeDunningLevelStep dunningPlanTransition not found fromLevel:" + customerAccount.getDunningLevel() + " , toLevel:"
-							+ nextLevel + ", dunningplan:" + dunningPlan.getCode());
+					logger.info("UpgradeDunningLevelStep dunningPlanTransition not found fromLevel:"
+							+ customerAccount.getDunningLevel()
+							+ " , toLevel:"
+							+ nextLevel
+							+ ", dunningplan:"
+							+ dunningPlan.getCode());
 					return upgradeDunningReturn;
 				}
-				if (DateUtils.addDaysToDate(customerAccount.getDateDunningLevel(), dunningPlanTransition.getWaitDuration()).before(new Date())) {
-					List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getRecordedInvoices(customerAccount, MatchingStatusEnum.O);
+				if (DateUtils.addDaysToDate(
+						customerAccount.getDateDunningLevel(),
+						dunningPlanTransition.getWaitDuration()).before(
+						new Date())) {
+					List<RecordedInvoice> recordedInvoices = recordedInvoiceService
+							.getRecordedInvoices(customerAccount,
+									MatchingStatusEnum.O);
 					if (recordedInvoices != null && !recordedInvoices.isEmpty()) {
-						RecordedInvoice recordedInvoice = recordedInvoices.get(0);
-						if (DateUtils.addDaysToDate(recordedInvoices.get(0).getDueDate(), dunningPlanTransition.getDelayBeforeProcess()).before(new Date())) {
-							if (balanceExigible.compareTo(dunningPlanTransition.getThresholdAmount()) == 1) {
-								for (ActionPlanItem actionPlanItem : actionPlanItemService.getActionPlanItems(dunningPlan, dunningPlanTransition)) {
+						RecordedInvoice recordedInvoice = recordedInvoices
+								.get(0);
+						if (DateUtils.addDaysToDate(
+								recordedInvoices.get(0).getDueDate(),
+								dunningPlanTransition.getDelayBeforeProcess())
+								.before(new Date())) {
+							if (balanceExigible.compareTo(dunningPlanTransition
+									.getThresholdAmount()) == 1) {
+								for (ActionPlanItem actionPlanItem : actionPlanItemService
+										.getActionPlanItems(dunningPlan,
+												dunningPlanTransition)) {
 									BigDecimal amoutDue = balanceExigible;
 									ActionDunning actionDunning = new ActionDunning();
-									actionDunning.setCustomerAccount(customerAccount);
-									actionDunning.setRecordedInvoice(recordedInvoice);
+									actionDunning
+											.setCustomerAccount(customerAccount);
+									actionDunning
+											.setRecordedInvoice(recordedInvoice);
 									actionDunning.setCreationDate(new Date());
-									actionDunning.setTypeAction(actionPlanItem.getActionType());
-									actionDunning.setStatus(DunningActionStatusEnum.E);
+									actionDunning.setTypeAction(actionPlanItem
+											.getActionType());
+									actionDunning
+											.setStatus(DunningActionStatusEnum.E);
 									actionDunning.setStatusDate(new Date());
-									actionDunning.setFromLevel(customerAccount.getDunningLevel());
-									actionDunning.setToLevel(dunningPlanTransition.getDunningLevelTo());
-									actionDunning.setActionPlanItem(actionPlanItem);
-									actionDunning.setProvider(customerAccount.getProvider());
+									actionDunning.setFromLevel(customerAccount
+											.getDunningLevel());
+									actionDunning
+											.setToLevel(dunningPlanTransition
+													.getDunningLevelTo());
+									actionDunning
+											.setActionPlanItem(actionPlanItem);
+									actionDunning.setProvider(customerAccount
+											.getProvider());
 									if (actionPlanItem.getActionType() == DunningActionTypeEnum.CHARGE) {
-										addOCC(customerAccount, actionPlanItem.getChargeAmount());
-										amoutDue = amoutDue.add(actionPlanItem.getChargeAmount());
+										addOCC(customerAccount,
+												actionPlanItem
+														.getChargeAmount());
+										amoutDue = amoutDue.add(actionPlanItem
+												.getChargeAmount());
 									}
 									actionDunning.setAmountDue(amoutDue);
 
-									upgradeDunningReturn.getListActionDunning().add(actionDunning);
+									upgradeDunningReturn.getListActionDunning()
+											.add(actionDunning);
 								}
 
-								customerAccount.setDunningLevel(dunningPlanTransition.getDunningLevelTo());
+								customerAccount
+										.setDunningLevel(dunningPlanTransition
+												.getDunningLevelTo());
 								customerAccount.setDateDunningLevel(new Date());
 								upgradeDunningReturn.setUpgraded(true);
 								customerAccountService.update(customerAccount);
@@ -162,15 +202,18 @@ public class UpgradeDunningLevel  {
 		return upgradeDunningReturn;
 	}
 
-	private OtherCreditAndCharge addOCC(CustomerAccount customerAccount, BigDecimal chargeAmount) throws Exception {
+	private OtherCreditAndCharge addOCC(CustomerAccount customerAccount,
+			BigDecimal chargeAmount) throws Exception {
 
-		OCCTemplate dunningOccTemplate = oCCTemplateService.getDunningOCCTemplate(customerAccount.getProvider().getCode());
+		OCCTemplate dunningOccTemplate = oCCTemplateService
+				.getDunningOCCTemplate(customerAccount.getProvider().getCode());
 		OtherCreditAndCharge occ = new OtherCreditAndCharge();
 		occ.setAccountCode(dunningOccTemplate.getAccountCode());
 		occ.setOccCode(dunningOccTemplate.getCode());
 		occ.setOccDescription(dunningOccTemplate.getDescription());
 		occ.setTransactionCategory(dunningOccTemplate.getOccCategory());
-		occ.setAccountCodeClientSide(dunningOccTemplate.getAccountCodeClientSide());
+		occ.setAccountCodeClientSide(dunningOccTemplate
+				.getAccountCodeClientSide());
 		occ.setAmount(chargeAmount);
 		occ.setUnMatchingAmount(chargeAmount);
 		occ.setMatchingAmount(BigDecimal.ZERO);
@@ -185,9 +228,5 @@ public class UpgradeDunningLevel  {
 		return occ;
 
 	}
-
-
-
-
 
 }

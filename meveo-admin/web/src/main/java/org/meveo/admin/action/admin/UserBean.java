@@ -41,6 +41,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -120,8 +121,9 @@ public class UserBean extends BaseBean<User> {
 	private String directoryName;
 	private ArrayList<File> fileList;
 	private UploadedFile file;
-	
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+
+	private static SimpleDateFormat sdf = new SimpleDateFormat(
+			"yyyy-MM-dd HH-mm-ss");
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -141,7 +143,7 @@ public class UserBean extends BaseBean<User> {
 	}
 
 	public String saveOrUpdate(boolean killConversation, String objectName,
-			Long objectId) {
+			Long objectId) throws BusinessException {
 		return saveOrUpdate(killConversation);
 	}
 
@@ -151,7 +153,8 @@ public class UserBean extends BaseBean<User> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		log.debug("saving new user={}", entity.getUserName());
 		boolean passwordsDoNotMatch = password != null
 				&& !password.equals(repeatedPassword);
@@ -283,15 +286,15 @@ public class UserBean extends BaseBean<User> {
 				+ getCurrentProvider().getCode();
 	}
 
-	private String getFilePath(String name){
-		String result=getFilePath() + File.separator + name;
+	private String getFilePath(String name) {
+		String result = getFilePath() + File.separator + name;
 		if (selectedFolder != null) {
 			result = getFilePath() + File.separator + selectedFolder
 					+ File.separator + name;
 		}
 		return result;
 	}
-	
+
 	public void createMissingDirectories() {
 		// log.info("Creating required dirs in "+getFilePath());
 		String importDir = getFilePath() + File.separator + "imports"
@@ -416,18 +419,18 @@ public class UserBean extends BaseBean<User> {
 		fileList = file.listFiles() == null ? new ArrayList<File>()
 				: new ArrayList<File>(Arrays.asList(file.listFiles()));
 		if (this.selectedFolder != null) {
-			if(fileList.size()==0){
-				currentDirEmpty=true;
+			if (fileList.size() == 0) {
+				currentDirEmpty = true;
 			}
 			File parent = new File("..");
 			fileList.add(0, parent);
 		}
 	}
-	
-	public String getLastModified(File file){
+
+	public String getLastModified(File file) {
 		return sdf.format(new Date(file.lastModified()));
 	}
-	
+
 	public String getSelectedFileName() {
 		return selectedFileName;
 	}
@@ -481,7 +484,8 @@ public class UserBean extends BaseBean<User> {
 		if (file != null) {
 			log.debug("upload file={}", file);
 			try {
-				copyFile(FilenameUtils.getName(file.getFileName()), file.getInputstream());
+				copyFile(FilenameUtils.getName(file.getFileName()),
+						file.getInputstream());
 
 				messages.info(file.getFileName() + " is uploaded to "
 						+ ((selectedFolder != null) ? selectedFolder : "Home"));
@@ -494,27 +498,27 @@ public class UserBean extends BaseBean<User> {
 
 		}
 	}
-	
-	public void createDirectory(){
-		if(!StringUtils.isBlank(directoryName)){
+
+	public void createDirectory() {
+		if (!StringUtils.isBlank(directoryName)) {
 			String filePath = getFilePath(directoryName);
 			File newDir = new File(filePath);
-			if(!newDir.exists()){
-				if(newDir.mkdir()){
-					 buildFileList();
-					directoryName="";
+			if (!newDir.exists()) {
+				if (newDir.mkdir()) {
+					buildFileList();
+					directoryName = "";
 				}
 			}
 		}
 	}
-	
-	public void deleteDirectory(){
-		log.debug("deleteDirectory:"+selectedFolder);
-		if(!StringUtils.isBlank(selectedFolder) && currentDirEmpty){
+
+	public void deleteDirectory() {
+		log.debug("deleteDirectory:" + selectedFolder);
+		if (!StringUtils.isBlank(selectedFolder) && currentDirEmpty) {
 			String filePath = getFilePath("");
 			File currentDir = new File(filePath);
-			if(currentDir.exists() && currentDir.isDirectory()){
-				if(currentDir.delete()){
+			if (currentDir.exists() && currentDir.isDirectory()) {
+				if (currentDir.delete()) {
 					setSelectedFolder("..");
 					createMissingDirectories();
 					buildFileList();
@@ -522,18 +526,20 @@ public class UserBean extends BaseBean<User> {
 			}
 		}
 	}
-	
-	public void renameFile(){
-		if(!StringUtils.isBlank(selectedFileName) && !StringUtils.isBlank(newFilename)){
+
+	public void renameFile() {
+		if (!StringUtils.isBlank(selectedFileName)
+				&& !StringUtils.isBlank(newFilename)) {
 			String filePath = getFilePath(selectedFileName);
 			String newFilePath = getFilePath(newFilename);
 			File currentFile = new File(filePath);
 			File newFile = new File(newFilePath);
-			if(currentFile.exists() && currentFile.isFile() && !newFile.exists()){
-				if(currentFile.renameTo(newFile)){
+			if (currentFile.exists() && currentFile.isFile()
+					&& !newFile.exists()) {
+				if (currentFile.renameTo(newFile)) {
 					buildFileList();
-					selectedFileName=newFilename;
-					newFilename="";
+					selectedFileName = newFilename;
+					newFilename = "";
 				}
 			}
 		}

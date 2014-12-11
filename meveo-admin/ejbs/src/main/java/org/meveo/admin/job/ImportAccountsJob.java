@@ -18,7 +18,6 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
-import org.jboss.solder.logging.Logger;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ExceptionUtils;
 import org.meveo.commons.utils.FileUtils;
@@ -42,29 +41,26 @@ import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.AccountImportHistoService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingCycleService;
-import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.ImportWarningException;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
 public class ImportAccountsJob implements Job {
+
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private Logger log;
-
 
 	@Inject
 	private BillingAccountService billingAccountService;
@@ -73,27 +69,14 @@ public class ImportAccountsJob implements Job {
 	private UserAccountService userAccountService;
 
 	@Inject
-	UserService userService;
-
-	@Inject
-	BillingCycleService billingCycleService;
+	private UserService userService;
 
 	@Inject
 	private AccountImportHistoService accountImportHistoService;
 
 	@Inject
-	private ProviderService providerService;
+	private AccountImportService accountImportService;
 
-
-	@Inject
-	TradingCountryService tradingCountryService;
-
-	@Inject
-	TradingLanguageService tradingLanguageService;
-
-	@Inject
-	AccountImportService accountImportService;
-	
 	BillingAccounts billingAccountsWarning;
 	BillingAccounts billingAccountsError;
 	ParamBean param = ParamBean.getInstance();
@@ -111,17 +94,23 @@ public class ImportAccountsJob implements Job {
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
 
-
 	@PostConstruct
 	public void init() {
 		TimerEntityService.registerJob(this);
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute ImportAccountsJob.");
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
-				+ File.separator+"imports"+ File.separator+"accounts" + File.separator ;
+
+		Provider provider = currentUser.getProvider();
+
+		String importDir = param
+				.getProperty("providers.rootDir", "/tmp/meveo/")
+				+ File.separator
+				+ provider.getCode()
+				+ File.separator
+				+ "imports" + File.separator + "accounts" + File.separator;
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
 		String dirOK = importDir + "output";
@@ -153,7 +142,7 @@ public class ImportAccountsJob implements Job {
 				result.registerError(e.getMessage());
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				if (currentFile != null)
 					currentFile.delete();
@@ -198,8 +187,8 @@ public class ImportAccountsJob implements Job {
 
 		accountImportHisto.setExecutionDate(new Date());
 		accountImportHisto.setFileName(fileName);
-		User userJob = userService.findById(new Long(param
-				.getProperty("connectorCRM.userId","1")));
+		User userJob = userService.findById(new Long(param.getProperty(
+				"connectorCRM.userId", "1")));
 		if (file.length() < 83) {
 			createBillingAccountWarning(null, "Fichier vide");
 			generateReport(fileName, provider);
@@ -232,23 +221,23 @@ public class ImportAccountsJob implements Job {
 				try {
 					billingAccount = billingAccountService.findByCode(
 							billAccount.getCode(), provider);
-					billingAccount=accountImportService.importBillingAccount(billAccount, provider, userJob);
+					billingAccount = accountImportService.importBillingAccount(
+							billAccount, provider, userJob);
 					log.info("file6:" + fileName
 							+ ", typeEntity:BillingAccount, index:" + i
 							+ ", code:" + billAccount.getCode()
 							+ ", status:Created");
 					nbBillingAccountsCreated++;
-				} catch(ImportWarningException w){
+				} catch (ImportWarningException w) {
 					createBillingAccountWarning(billAccount, w.getMessage());
 					nbBillingAccountsWarning++;
 					log.info("file5:" + fileName
 							+ ", typeEntity:BillingAccount,  index:" + i
 							+ " code:" + billAccount.getCode()
 							+ ", status:Warning");
-				
-				}
-				catch (BusinessException e) {
-					createBillingAccountError(billAccount,e.getMessage());
+
+				} catch (BusinessException e) {
+					createBillingAccountError(billAccount, e.getMessage());
 					nbBillingAccountsError++;
 					log.info("file2:" + fileName
 							+ ", typeEntity:BillingAccount, index:" + i
@@ -263,8 +252,9 @@ public class ImportAccountsJob implements Job {
 					nbBillingAccountsIgnored++;
 					existBillingAccount = true;
 				}
+
 				if (!existBillingAccount) {
-					//FIXME
+					// FIXME
 				}
 			} catch (Exception e) {
 				createBillingAccountError(billAccount, ExceptionUtils
@@ -273,7 +263,7 @@ public class ImportAccountsJob implements Job {
 				log.info("file7:" + fileName
 						+ ", typeEntity:BillingAccount, index:" + i + ", code:"
 						+ billAccount.getCode() + ", status:Error");
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 
 			for (org.meveo.model.jaxb.account.UserAccount uAccount : billAccount
@@ -282,38 +272,39 @@ public class ImportAccountsJob implements Job {
 				UserAccount userAccount = null;
 				log.debug("userAccount found code:" + uAccount.getCode());
 				try {
-						userAccount = userAccountService.findByCode(
-								uAccount.getCode(), provider);
+					userAccount = userAccountService.findByCode(
+							uAccount.getCode(), provider);
 				} catch (Exception e) {
 				}
 				if (userAccount != null) {
-						nbUserAccountsIgnored++;
+					nbUserAccountsIgnored++;
+					log.info("file:" + fileName
+							+ ", typeEntity:UserAccount,  indexBillingAccount:"
+							+ i + ", index:" + j + " code:"
+							+ uAccount.getCode() + ", status:Ignored");
+				} else {
+					try {
+						accountImportService.importUserAccount(billingAccount,
+								billAccount, uAccount, provider, userJob);
 						log.info("file:"
 								+ fileName
 								+ ", typeEntity:UserAccount,  indexBillingAccount:"
 								+ i + ", index:" + j + " code:"
-								+ uAccount.getCode() + ", status:Ignored");
-				} else {
-					try{
-						accountImportService.importUserAccount(billingAccount,billAccount,
-								uAccount, provider, userJob);
-						log.info("file:" + fileName
-								+ ", typeEntity:UserAccount,  indexBillingAccount:"
-								+ i + ", index:" + j + " code:"
 								+ uAccount.getCode() + ", status:Created");
 						nbUserAccountsCreated++;
-					} catch(ImportWarningException w){
-						createUserAccountWarning(billAccount, uAccount, w.getMessage());
+					} catch (ImportWarningException w) {
+						createUserAccountWarning(billAccount, uAccount,
+								w.getMessage());
 						nbUserAccountsWarning++;
 						log.info("file:"
 								+ fileName
 								+ ", typeEntity:UserAccount,  indexBillingAccount:"
 								+ i + ", index:" + j + " code:"
 								+ uAccount.getCode() + ", status:Warning");
-					
-					}
-					catch (BusinessException e) {
-						createUserAccountError(billAccount, uAccount,e.getMessage());
+
+					} catch (BusinessException e) {
+						createUserAccountError(billAccount, uAccount,
+								e.getMessage());
 						nbUserAccountsError++;
 						log.info("file:"
 								+ fileName
@@ -332,8 +323,8 @@ public class ImportAccountsJob implements Job {
 	private void createBillingAccountError(
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		ErrorBillingAccount errorBillingAccount = new ErrorBillingAccount();
 		errorBillingAccount.setCause(cause);
 		errorBillingAccount.setCode(billAccount.getCode());
@@ -351,8 +342,8 @@ public class ImportAccountsJob implements Job {
 	private void createUserAccountError(
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		ErrorUserAccount errorUserAccount = new ErrorUserAccount();
 		errorUserAccount.setCause(cause);
 		errorUserAccount.setCode(uAccount.getCode());
@@ -372,8 +363,8 @@ public class ImportAccountsJob implements Job {
 	private void createBillingAccountWarning(
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		WarningBillingAccount warningBillingAccount = new WarningBillingAccount();
 		warningBillingAccount.setCause(cause);
 		warningBillingAccount.setCode(billAccount == null ? "" : billAccount
@@ -390,12 +381,11 @@ public class ImportAccountsJob implements Job {
 				.add(warningBillingAccount);
 	}
 
-	
 	private void createUserAccountWarning(
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
-		String generateFullCrmReject = param
-				.getProperty("connectorCRM.generateFullCrmReject","true");
+		String generateFullCrmReject = param.getProperty(
+				"connectorCRM.generateFullCrmReject", "true");
 		WarningUserAccount warningUserAccount = new WarningUserAccount();
 		warningUserAccount.setCause(cause);
 		warningUserAccount.setCode(uAccount.getCode());
@@ -411,15 +401,17 @@ public class ImportAccountsJob implements Job {
 				.add(warningUserAccount);
 	}
 
-
-
 	private void generateReport(String fileName, Provider provider)
 			throws Exception {
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/")+ File.separator + provider.getCode()
-				+ File.separator+"imports"+ File.separator+"accounts" + File.separator ;
+		String importDir = param
+				.getProperty("providers.rootDir", "/tmp/meveo/")
+				+ File.separator
+				+ provider.getCode()
+				+ File.separator
+				+ "imports" + File.separator + "accounts" + File.separator;
 		if (billingAccountsWarning.getWarnings() != null) {
-			String warningDir = importDir + "output"
-					+ File.separator + "warnings";
+			String warningDir = importDir + "output" + File.separator
+					+ "warnings";
 			File dir = new File(warningDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -428,8 +420,7 @@ public class ImportAccountsJob implements Job {
 					+ File.separator + "WARN_" + fileName));
 		}
 		if (billingAccountsError.getErrors() != null) {
-			String errorDir = importDir  + "output"
-					+ File.separator + "errors";
+			String errorDir = importDir + "output" + File.separator + "errors";
 
 			File dir = new File(errorDir);
 			if (!dir.exists()) {
@@ -466,8 +457,8 @@ public class ImportAccountsJob implements Job {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression,
-				timerConfig);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -478,20 +469,19 @@ public class ImportAccountsJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
 
-	
 	@Override
 	public JobExecutionService getJobExecutionService() {
 		return jobExecutionService;
@@ -500,12 +490,14 @@ public class ImportAccountsJob implements Job {
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

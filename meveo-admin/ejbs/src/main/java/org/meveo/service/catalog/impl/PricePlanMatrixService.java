@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
@@ -34,7 +35,7 @@ import org.meveo.service.billing.impl.RatingService;
 @Stateless
 public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> {
 
-	public void create(PricePlanMatrix e) {
+	public void create(PricePlanMatrix e) throws BusinessException {
 		super.create(e);
 		RatingService.setPricePlanDirty();
 	}

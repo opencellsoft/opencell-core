@@ -24,6 +24,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
@@ -115,7 +116,7 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 }
 	
 	
-	public void saveActionPlanItem() { 
+	public void saveActionPlanItem() throws BusinessException { 
 		 
 		if (actionPlanItem.getId() != null) {
 			actionPlanItemService.update(actionPlanItem);

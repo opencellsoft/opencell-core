@@ -6,7 +6,9 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -43,6 +45,18 @@ public class EdrBean extends BaseBean<EDR> {
 		selectedEdr.setStatus(EDRStatusEnum.OPEN);
 
 		getPersistenceService().update(selectedEdr);
+	}
+
+	public void massUpdate() {
+		Subscription subscriptionFilter = null;
+		if (filters.containsKey("subscription")) {
+			subscriptionFilter = (Subscription) filters.get("subscription");
+		}
+
+		edrService.massUpdate(EDRStatusEnum.OPEN, subscriptionFilter,
+				getCurrentProvider());
+
+		messages.info(new BundleKey("messages", "update.successful"));
 	}
 
 	@Override

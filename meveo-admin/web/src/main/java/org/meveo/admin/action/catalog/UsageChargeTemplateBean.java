@@ -25,6 +25,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.UsageChargeEDRTemplate;
@@ -98,9 +99,11 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	 * Conversation is ended and user is redirected from edit to his previous
 	 * window.
 	 * 
+	 * @throws BusinessException
+	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String back = null;
 
 		// check for unicity

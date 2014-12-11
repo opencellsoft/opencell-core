@@ -144,7 +144,8 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountTax, BigDecimal quantity,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
 			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider, 
-			WalletInstance wallet,BillingAccount billingAccount,InvoiceSubCategory invoiceSubCategory,String parameter1,String parameter2,String parameter3) {
+			WalletInstance wallet,BillingAccount billingAccount,InvoiceSubCategory invoiceSubCategory,
+			String parameter1,String parameter2,String parameter3,String unityDescription) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -162,6 +163,7 @@ public class RatedTransaction extends BaseEntity {
 		this.parameter1=parameter1;
 		this.parameter2=parameter2;
 		this.parameter3=parameter3;
+		this.unityDescription=unityDescription;
 		setProvider(provider);
 	}
 

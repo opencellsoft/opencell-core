@@ -34,6 +34,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.seam.security.Identity;
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.admin.CurrentProvider;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
@@ -241,7 +242,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	// }
 
 	public String saveOrUpdate(boolean killConversation, String objectName,
-			Long objectId) {
+			Long objectId) throws BusinessException {
 		String outcome = saveOrUpdate(killConversation);
 
 		if (killConversation) {
@@ -253,7 +254,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		return outcome;
 	}
 
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		String outcome = saveOrUpdate(entity);
 		if (killConversation) {
 			endConversation();
@@ -266,8 +268,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * 
 	 * @param entity
 	 *            Entity to save.
+	 * @throws BusinessException
 	 */
-	protected String saveOrUpdate(T entity) {
+	protected String saveOrUpdate(T entity) throws BusinessException {
 		if (entity.isTransient()) {
 			getPersistenceService().create(entity);
 			messages.info(new BundleKey("messages", "save.successful"));

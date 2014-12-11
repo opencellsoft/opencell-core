@@ -31,7 +31,7 @@ public class TimerInfo implements Serializable {
 	private boolean active = false;
 	private String jobName;
 	private String parametres;
-	private Long providerId;
+	private Long userId;
 	private Long followingTimerId;
 
 	public boolean isActive() {
@@ -58,14 +58,6 @@ public class TimerInfo implements Serializable {
 		this.jobName = jobName;
 	}
 
-	public Long getProviderId() {
-		return providerId;
-	}
-
-	public void setProviderId(Long providerId) {
-		this.providerId = providerId;
-	}
-
 	public Long getFollowingTimerId() {
 		return followingTimerId;
 	}
@@ -73,20 +65,30 @@ public class TimerInfo implements Serializable {
 	public void setFollowingTimerId(Long followingTimerId) {
 		this.followingTimerId = followingTimerId;
 	}
-	
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		if (other != null && other instanceof TimerInfo) {
 			if (this == other) {
 				return true;
 			}
+
 			TimerInfo info = (TimerInfo) other;
-			if (StringUtils.equals(parametres, info.getParametres()) &&
-				providerId == info.getProviderId() &&
-				followingTimerId == info.getFollowingTimerId()) {
+			if (StringUtils.equals(parametres, info.getParametres())
+					&& userId == info.getUserId()
+					&& followingTimerId == info.getFollowingTimerId()) {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 }

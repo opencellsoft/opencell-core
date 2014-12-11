@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui" xmlns:a="http://richfaces.org/a4j"
+	xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
@@ -12,6 +13,8 @@
 		<f:metadata>
 			<f:event type="preRenderView" listener="#{edrBean.preRenderView}" />
 		</f:metadata>
+
+		<o:importConstants type="org.meveo.model.rating.EDRStatusEnum" />
 	</ui:define>
 
 	<ui:define name="navigation">
@@ -32,19 +35,14 @@
 			column2="description">
 		</hftl:entityPopup>
 
+		<p:messages id="messages" />
+
 		<hf:searchPanel label="#{messages['commons.search']}" id="searchPanel"
 			backingBean="#{edrBean}">
 			<hf:searchField id="edr" label="#{messages['BusinessEntity.code']}"
 				field="subscription" childField="code" popup="true"
 				popupId="searchEdrPopup" />
 		</hf:searchPanel>
-
-		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
-			<p:commandButton value="Yes" type="button"
-				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-			<p:commandButton value="No" type="button"
-				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-		</p:confirmDialog>
 
 		<hftl:dataList checkMany="false" noClose="false"
 			backingBean="#{edrBean}">
@@ -72,6 +70,25 @@
 			</p:column>
 
 		</hftl:dataList>
+
+		<p:panel styleClass="action-buttons">
+			<p:tooltip for="massUpdateEdr" value="#{messages['action.update']}"
+				showEffect="slide" hideEffect="slide" />
+			<p:commandButton id="massUpdateEdr"
+				value="#{messages['action.massUpdate']}"
+				update=":results_form :messages" action="#{edrBean.massUpdate()}">
+				<p:confirm header="#{messages['message.confirmation']}"
+					message="#{messages['message.confirm.edr.update']}"
+					icon="ui-icon-alert" />
+			</p:commandButton>
+		</p:panel>
+
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+			<p:commandButton value="Yes" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="No" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
 
 	</ui:define>
 

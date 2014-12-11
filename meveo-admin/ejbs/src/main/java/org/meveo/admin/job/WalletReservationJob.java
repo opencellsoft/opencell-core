@@ -13,16 +13,16 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.jboss.solder.logging.Logger;
-import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.ReservationService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
@@ -35,7 +35,7 @@ public class WalletReservationJob implements Job {
 	private TimerService timerService;
 
 	@Inject
-	private ProviderService providerService;
+	private UserService userService;
 
 	@Inject
 	private JobExecutionService jobExecutionService;
@@ -49,13 +49,13 @@ public class WalletReservationJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute " + getClass().getName());
 
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
 			int rowsUpdated = reservationService
-					.updateExpiredReservation(provider);
+					.updateExpiredReservation(currentUser.getProvider());
 			if (rowsUpdated != 0) {
 				log.info(rowsUpdated + " rows updated.");
 			}
@@ -65,6 +65,7 @@ public class WalletReservationJob implements Job {
 		}
 
 		result.close("");
+
 		return result;
 	}
 
@@ -73,8 +74,9 @@ public class WalletReservationJob implements Job {
 			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
-		return timerService.createCalendarTimer(scheduleExpression,
-				timerConfig);
+
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -86,19 +88,18 @@ public class WalletReservationJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
-
 
 	@Override
 	public JobExecutionService getJobExecutionService() {
@@ -108,12 +109,14 @@ public class WalletReservationJob implements Job {
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

@@ -25,6 +25,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -113,7 +114,8 @@ public class RecurringChargeTemplateBean extends
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		String back = null;
 
 		// check for unicity

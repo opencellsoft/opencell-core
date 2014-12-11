@@ -16,16 +16,20 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.BoundedHashMap;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -66,15 +70,21 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
-	public List<EDR> getEDRToRate() {
-		return getEDRToRate(getEntityManager());
+	public List<EDR> getEDRToRate(Provider provider) {
+		return getEDRToRate(getEntityManager(), provider);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<EDR> getEDRToRate(EntityManager em) {
-		Query query = em.createQuery("from EDR e where e.status=:status")
-				.setParameter("status", EDRStatusEnum.OPEN);
-		return query.getResultList();
+	public List<EDR> getEDRToRate(EntityManager em, Provider provider) {
+		QueryBuilder qb = new QueryBuilder(EDR.class, "e");
+		qb.addCriterionEntity("provider", provider);
+		qb.addCriterion("status", "=", EDRStatusEnum.OPEN, true);
+
+		try {
+			return (List<EDR>) qb.getQuery(em).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	public EDR findByBatchAndRecordId(String originBatch, String originRecord) {
@@ -124,4 +134,23 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
+	public void massUpdate(EDRStatusEnum status, Subscription subscription,
+			Provider provider) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("UPDATE "
+				+ EDR.class.getSimpleName()
+				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.subscription=:subscription AND e.provider=:provider");
+
+		try {
+			getEntityManager().createQuery(sb.toString())
+					.setParameter("newStatus", status)
+					.setParameter("subscription", subscription)
+					.setParameter("oldStatus", EDRStatusEnum.REJECTED)
+					.setParameter("provider", provider)
+					.setParameter("lastUpdate", new Date()).executeUpdate();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
 }

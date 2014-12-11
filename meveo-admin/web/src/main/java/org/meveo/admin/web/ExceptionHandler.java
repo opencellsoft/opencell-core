@@ -8,6 +8,7 @@ import org.jboss.seam.security.AuthorizationException;
 import org.jboss.solder.exception.control.CaughtException;
 import org.jboss.solder.exception.control.Handles;
 import org.jboss.solder.exception.control.HandlesExceptions;
+import org.meveo.admin.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,20 @@ public class ExceptionHandler {
 
 	public void handleRuntimeException(
 			@Handles CaughtException<java.lang.RuntimeException> evt,
+			final HttpServletRequest request, final HttpServletResponse response) {
+
+		evt.handled();
+
+		try {
+			response.sendRedirect(response.encodeRedirectURL(request
+					.getContextPath() + "/errors/bug.jsf"));
+		} catch (Exception e) {
+			log.info(e.getMessage());
+		}
+	}
+
+	public void handleBusinessException(
+			@Handles CaughtException<BusinessException> evt,
 			final HttpServletRequest request, final HttpServletResponse response) {
 
 		evt.handled();

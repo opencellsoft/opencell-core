@@ -3,7 +3,6 @@ package org.meveo.admin.job;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -19,6 +18,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.Provider;
@@ -30,43 +30,39 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
 public class AccountOperationsGenerationJob implements Job {
 
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	private ProviderService providerService;
-	
-	@Inject
-	JobExecutionService jobExecutionService;
-	
-	
-	@Inject
-	BillingAccountService billingAccountService;
+	private UserService userService;
 
 	@Inject
-	OCCTemplateService  oCCTemplateService;
-	
-	@Inject
-	InvoiceService invoiceService;
-	
-	@Inject
-	RecordedInvoiceService recordedInvoiceService;
+	private JobExecutionService jobExecutionService;
 
+	@Inject
+	private OCCTemplateService oCCTemplateService;
 
-	private Logger log = Logger.getLogger(AccountOperationsGenerationJob.class.getName());
+	@Inject
+	private InvoiceService invoiceService;
+
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
+
+	@Inject
+	private Logger log;
 
 	@PostConstruct
 	public void init() {
@@ -74,24 +70,29 @@ public class AccountOperationsGenerationJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute XMLInvoiceGenerationJob.");
-		ParamBean paramBan=ParamBean.getInstance();
+
+		ParamBean paramBan = ParamBean.getInstance();
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<Invoice> invoices=invoiceService.getInvoicesWithNoAccountOperation(null);
-		Provider providerForHistory=null;
+		List<Invoice> invoices = invoiceService
+				.getInvoicesWithNoAccountOperation(null);
+		Provider providerForHistory = null;
 		for (Invoice invoice : invoices) {
 			try {
 
 				CustomerAccount customerAccount = null;
 				OCCTemplate invoiceTemplate = null;
 				RecordedInvoice recordedInvoice = new RecordedInvoice();
-				BillingAccount billingAccount=invoice.getBillingAccount();
-				if (recordedInvoiceService.isRecordedInvoiceExist(invoice.getInvoiceNumber(), invoice.getProvider())) {
-					throw new InvoiceExistException("Invoice id" + invoice.getId() + " already exist");
+				BillingAccount billingAccount = invoice.getBillingAccount();
+				if (recordedInvoiceService.isRecordedInvoiceExist(
+						invoice.getInvoiceNumber(), invoice.getProvider())) {
+					throw new InvoiceExistException("Invoice id"
+							+ invoice.getId() + " already exist");
 				}
 				try {
-					customerAccount = invoice.getBillingAccount().getCustomerAccount();
+					customerAccount = invoice.getBillingAccount()
+							.getCustomerAccount();
 					recordedInvoice.setCustomerAccount(customerAccount);
 					recordedInvoice.setProvider(customerAccount.getProvider());
 					// set first provider from first customer account
@@ -99,33 +100,46 @@ public class AccountOperationsGenerationJob implements Job {
 						providerForHistory = customerAccount.getProvider();
 					}
 				} catch (Exception e) {
-					throw new ImportInvoiceException("Cannot found customerAccount");
+					throw new ImportInvoiceException(
+							"Cannot found customerAccount");
 				}
 
 				try {
-					invoiceTemplate = oCCTemplateService.findByCode(paramBan.getProperty("accountOperationsGenerationJob.occCode","FA_FACT"),customerAccount.getProvider().getCode());
+					invoiceTemplate = oCCTemplateService.findByCode(paramBan
+							.getProperty(
+									"accountOperationsGenerationJob.occCode",
+									"FA_FACT"), customerAccount.getProvider()
+							.getCode());
 				} catch (Exception e) {
 					// TODO message fr|en
-					throw new ImportInvoiceException("Cannot found OCC Template for invoice");
+					throw new ImportInvoiceException(
+							"Cannot found OCC Template for invoice");
 				}
 				recordedInvoice.setReference(invoice.getInvoiceNumber());
-				recordedInvoice.setAccountCode(invoiceTemplate.getAccountCode());
+				recordedInvoice
+						.setAccountCode(invoiceTemplate.getAccountCode());
 				recordedInvoice.setOccCode(invoiceTemplate.getCode());
-				recordedInvoice.setOccDescription(invoiceTemplate.getDescription());
-				recordedInvoice.setTransactionCategory(invoiceTemplate.getOccCategory());
-				recordedInvoice.setAccountCodeClientSide(invoiceTemplate.getAccountCodeClientSide());
+				recordedInvoice.setOccDescription(invoiceTemplate
+						.getDescription());
+				recordedInvoice.setTransactionCategory(invoiceTemplate
+						.getOccCategory());
+				recordedInvoice.setAccountCodeClientSide(invoiceTemplate
+						.getAccountCodeClientSide());
 
 				try {
 					recordedInvoice.setAmount(invoice.getAmountWithTax());
-					recordedInvoice.setUnMatchingAmount(invoice.getAmountWithTax());
+					recordedInvoice.setUnMatchingAmount(invoice
+							.getAmountWithTax());
 					recordedInvoice.setMatchingAmount(BigDecimal.ZERO);
 				} catch (Exception e) {
 					throw new ImportInvoiceException("Error on amountWithTax");
 				}
 				try {
-					recordedInvoice.setAmountWithoutTax(invoice.getAmountWithoutTax());
+					recordedInvoice.setAmountWithoutTax(invoice
+							.getAmountWithoutTax());
 				} catch (Exception e) {
-					throw new ImportInvoiceException("Error on amountWithoutTax");
+					throw new ImportInvoiceException(
+							"Error on amountWithoutTax");
 				}
 				try {
 					recordedInvoice.setNetToPay(invoice.getNetToPay());
@@ -134,21 +148,35 @@ public class AccountOperationsGenerationJob implements Job {
 				}
 
 				try {
-					recordedInvoice.setDueDate(DateUtils.parseDateWithPattern(invoice.getDueDate(), paramBan.getProperty("accountOperationsGenerationJob.dateFormat","dd/MM/yyyy")));
+					recordedInvoice
+							.setDueDate(DateUtils.parseDateWithPattern(
+									invoice.getDueDate(),
+									paramBan.getProperty(
+											"accountOperationsGenerationJob.dateFormat",
+											"dd/MM/yyyy")));
 				} catch (Exception e) {
 					throw new ImportInvoiceException("Error on DueDate");
 				}
 				try {
-					recordedInvoice.setInvoiceDate(DateUtils.parseDateWithPattern(invoice.getInvoiceDate(),
-							paramBan.getProperty("accountOperationsGenerationJob.dateFormat","dd/MM/yyyy")));
-					recordedInvoice.setTransactionDate(DateUtils.parseDateWithPattern(invoice.getInvoiceDate(),
-							paramBan.getProperty("accountOperationsGenerationJob.dateFormat","dd/MM/yyyy")));
+					recordedInvoice
+							.setInvoiceDate(DateUtils.parseDateWithPattern(
+									invoice.getInvoiceDate(),
+									paramBan.getProperty(
+											"accountOperationsGenerationJob.dateFormat",
+											"dd/MM/yyyy")));
+					recordedInvoice
+							.setTransactionDate(DateUtils.parseDateWithPattern(
+									invoice.getInvoiceDate(),
+									paramBan.getProperty(
+											"accountOperationsGenerationJob.dateFormat",
+											"dd/MM/yyyy")));
 
 				} catch (Exception e) {
 					throw new ImportInvoiceException("Error on invoiceDate");
 				}
 				try {
-					recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
+					recordedInvoice.setPaymentMethod(billingAccount
+							.getPaymentMethod());
 				} catch (Exception e) {
 					throw new ImportInvoiceException("Error on paymentMethod");
 				}
@@ -157,21 +185,29 @@ public class AccountOperationsGenerationJob implements Job {
 				} catch (Exception e) {
 					throw new ImportInvoiceException("Error on total tax");
 				}
-				recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());
-				recordedInvoice.setPaymentInfo1(billingAccount.getBankCoordinates().getBankCode());
-				recordedInvoice.setPaymentInfo2(billingAccount.getBankCoordinates().getBranchCode());
-				recordedInvoice.setPaymentInfo3(billingAccount.getBankCoordinates().getAccountNumber());
-				recordedInvoice.setPaymentInfo4(billingAccount.getBankCoordinates().getKey());
-				recordedInvoice.setPaymentInfo5(billingAccount.getBankCoordinates().getBankName());
-				recordedInvoice.setPaymentInfo6(billingAccount.getBankCoordinates().getBic());
-				recordedInvoice.setBillingAccountName(billingAccount.getBankCoordinates().getAccountOwner());
+				recordedInvoice.setPaymentInfo(billingAccount
+						.getBankCoordinates().getIban());
+				recordedInvoice.setPaymentInfo1(billingAccount
+						.getBankCoordinates().getBankCode());
+				recordedInvoice.setPaymentInfo2(billingAccount
+						.getBankCoordinates().getBranchCode());
+				recordedInvoice.setPaymentInfo3(billingAccount
+						.getBankCoordinates().getAccountNumber());
+				recordedInvoice.setPaymentInfo4(billingAccount
+						.getBankCoordinates().getKey());
+				recordedInvoice.setPaymentInfo5(billingAccount
+						.getBankCoordinates().getBankName());
+				recordedInvoice.setPaymentInfo6(billingAccount
+						.getBankCoordinates().getBic());
+				recordedInvoice.setBillingAccountName(billingAccount
+						.getBankCoordinates().getAccountOwner());
 				recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 				recordedInvoiceService.create(recordedInvoice);
 				invoice.setRecordedInvoice(recordedInvoice);
 				invoiceService.update(invoice);
-		       
+
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 				result.registerError(e.getMessage());
 			}
 		}
@@ -179,13 +215,14 @@ public class AccountOperationsGenerationJob implements Job {
 		return result;
 	}
 
-
 	@Override
-	public Timer createTimer(ScheduleExpression scheduleExpression, TimerInfo infos) {
+	public Timer createTimer(ScheduleExpression scheduleExpression,
+			TimerInfo infos) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression, timerConfig);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -196,17 +233,18 @@ public class AccountOperationsGenerationJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-                Provider provider=providerService.findById(info.getProviderId());
-                JobExecutionResult result=execute(info.getParametres(),provider);
-                jobExecutionService.persistResult(this, result,info,provider);
+				User currentUser = userService.findById(info.getUserId());
+				JobExecutionResult result = execute(info.getParametres(),
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
-	
 
 	@Override
 	public JobExecutionService getJobExecutionService() {
@@ -216,12 +254,14 @@ public class AccountOperationsGenerationJob implements Job {
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

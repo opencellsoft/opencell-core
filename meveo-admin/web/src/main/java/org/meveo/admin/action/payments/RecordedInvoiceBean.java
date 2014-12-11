@@ -23,14 +23,17 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
- * Standard backing bean for {@link RecordedInvoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link RecordedInvoice} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  * 
  * @author Ignas
  * @created 2009.10.13
@@ -39,73 +42,80 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 @ConversationScoped
 public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link RecordedInvoice} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private RecordedInvoiceService recordedInvoiceService;
+	/**
+	 * Injected @{link RecordedInvoice} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public RecordedInvoiceBean() {
-        super(RecordedInvoice.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public RecordedInvoiceBean() {
+		super(RecordedInvoice.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("recordedInvoice")
-    public RecordedInvoice init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("recordedInvoice")
+	public RecordedInvoice init() {
+		return initEntity();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
-    public String saveOrUpdate(boolean killConversation) {
-        entity.getCustomerAccount().getAccountOperations().add(entity);
-        return super.saveOrUpdate(killConversation);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
+	@Override
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
+		entity.getCustomerAccount().getAccountOperations().add(entity);
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<RecordedInvoice> getPersistenceService() {
-        return recordedInvoiceService;
-    }
+		return super.saveOrUpdate(killConversation);
+	}
 
-    public String addLitigation() {
-        try {
-            recordedInvoiceService.addLitigation(entity, getCurrentUser());
-            messages.info(new BundleKey("messages", "customerAccount.addLitigationSuccessful"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<RecordedInvoice> getPersistenceService() {
+		return recordedInvoiceService;
+	}
 
-    public String cancelLitigation() {
+	public String addLitigation() {
+		try {
+			recordedInvoiceService.addLitigation(entity, getCurrentUser());
+			messages.info(new BundleKey("messages",
+					"customerAccount.addLitigationSuccessful"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
 
-        try {
-            recordedInvoiceService.cancelLitigation(entity, getCurrentUser());
-            messages.info(new BundleKey("messages", "customerAccount.cancelLitigationSuccessful"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            messages.error(e.getMessage());
-        }
-        return null;
-    }
+	public String cancelLitigation() {
+
+		try {
+			recordedInvoiceService.cancelLitigation(entity, getCurrentUser());
+			messages.info(new BundleKey("messages",
+					"customerAccount.cancelLitigationSuccessful"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			messages.error(e.getMessage());
+		}
+		return null;
+	}
 
 }

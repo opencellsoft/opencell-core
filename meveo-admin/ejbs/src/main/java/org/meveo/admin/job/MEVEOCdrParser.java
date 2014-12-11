@@ -17,23 +17,28 @@ import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.EDRDAO;
 import org.meveo.service.medina.impl.InvalidAccessException;
 import org.meveo.service.medina.impl.InvalidFormatException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 public class MEVEOCdrParser implements CSVCDRParser {
+
+	private static Logger log = LoggerFactory.getLogger(MEVEOCdrParser.class);
+
 	static SimpleDateFormat sdf1 = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	static SimpleDateFormat sdf2 = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
-	
-	static  MessageDigest messageDigest=null;
-	static{
+
+	static MessageDigest messageDigest = null;
+	static {
 		try {
-			messageDigest=MessageDigest.getInstance("MD5");
+			messageDigest = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
-	
+
 	class CDR implements Serializable {
 		private static final long serialVersionUID = -536798105625877375L;
 		public long timestamp;
@@ -45,8 +50,9 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		public String param4;
 
 		public String toString() {
-			return sdf1.format(new Date(timestamp))+";"+quantity + ";" + access_id + ";" + param1 + ";"
-					+ param2 + ";" + param3 + ";"+param4;
+			return sdf1.format(new Date(timestamp)) + ";" + quantity + ";"
+					+ access_id + ";" + param1 + ";" + param2 + ";" + param3
+					+ ";" + param4;
 
 		}
 	}
@@ -82,7 +88,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
 					cdr.timestamp = sdf2.parse(fields[0]).getTime();
 				}
 				cdr.quantity = new BigDecimal(fields[1]);
-				
+
 				cdr.access_id = fields[2];
 				if (cdr.access_id == null) {
 					throw new InvalidAccessException(line, "userId is empty");
@@ -114,14 +120,15 @@ public class MEVEOCdrParser implements CSVCDRParser {
 	public String getOriginRecord(Serializable object) {
 		CDR cdr = (CDR) object;
 		String result = cdr.toString();
-		if(messageDigest!=null){
+		if (messageDigest != null) {
 			synchronized (messageDigest) {
 				messageDigest.reset();
 				messageDigest.update(result.getBytes(Charset.forName("UTF8")));
 				final byte[] resultByte = messageDigest.digest();
 				StringBuffer sb = new StringBuffer();
 				for (int i = 0; i < resultByte.length; ++i) {
-		          sb.append(Integer.toHexString((resultByte[i] & 0xFF) | 0x100).substring(1,3));
+					sb.append(Integer.toHexString(
+							(resultByte[i] & 0xFF) | 0x100).substring(1, 3));
 				}
 				result = sb.toString();
 			}

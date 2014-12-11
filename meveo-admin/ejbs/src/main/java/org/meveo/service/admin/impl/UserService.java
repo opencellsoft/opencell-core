@@ -26,8 +26,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import oracle.jdbc.proxy.annotation.GetProxy;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InactiveUserException;
 import org.meveo.admin.exception.LoginException;
@@ -62,7 +60,8 @@ public class UserService extends PersistenceService<User> {
 
 	@Override
 	@UserCreate
-	public void create(User user) throws UsernameAlreadyExistsException {
+	public void create(User user) throws UsernameAlreadyExistsException,
+			BusinessException {
 
 		if (isUsernameExists(user.getUserName())) {
 			throw new UsernameAlreadyExistsException(user.getUserName());
@@ -72,6 +71,7 @@ public class UserService extends PersistenceService<User> {
 		user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
 		user.setLastPasswordModification(new Date());
 		user.setProvider(getCurrentProvider());
+
 		super.create(user);
 	}
 
@@ -108,17 +108,10 @@ public class UserService extends PersistenceService<User> {
 
 	@SuppressWarnings("unchecked")
 	public List<User> findUsersByRoles(String... roles) {
-		StringBuffer queryString = new StringBuffer("select distinct u from User u join u.roles as r where r.name in (:roles)");
-		if(getProvider()!=null){
-			queryString.append(" and u.provider=:provider");
-		}
-		
-		Query query = getEntityManager().createQuery(queryString.toString());
+		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) and u.provider=:provider";
+		Query query = getEntityManager().createQuery(queryString);
 		query.setParameter("roles", Arrays.asList(roles));
-		if(getProvider()!=null){
-			query.setParameter("provider", getProvider()); //for jobs need, getProvider in invoked instead of getCurrentprovider
-		}
-		
+		query.setParameter("provider", getCurrentProvider());
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return query.getResultList();
 	}

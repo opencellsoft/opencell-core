@@ -47,53 +47,51 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
-import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.slf4j.Logger;
 
 @Stateless
 @LocalBean
 public class SepaService extends PersistenceService<DDRequestItem> {
-	private static final java.util.logging.Logger logger = java.util.logging.Logger
-			.getLogger(SepaService.class.getName());
 
 	@Inject
-	RecordedInvoiceService recordedInvoiceService;
+	private Logger logger;
 
 	@Inject
-	CustomerAccountService customerAccountService;
+	private RecordedInvoiceService recordedInvoiceService;
 
 	@Inject
-	DDRequestLotOpService dDRequestLotOpService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
-	DDRequestLOTService dDRequestLOTService;
+	private DDRequestLOTService dDRequestLOTService;
 
 	@Inject
-	OCCTemplateService oCCTemplateService;
+	private OCCTemplateService oCCTemplateService;
 
 	@Inject
-	UserService userService;
+	private UserService userService;
 
 	@Inject
-	AutomatedPaymentService automatedPaymentService;
+	private AutomatedPaymentService automatedPaymentService;
 
 	@Inject
-	AccountOperationService accountOperationService;
+	private AccountOperationService accountOperationService;
 
 	@Inject
-	MatchingCodeService matchingCodeService;
+	private MatchingCodeService matchingCodeService;
 
 	@Inject
-	MatchingAmountService matchingAmountService;
+	private MatchingAmountService matchingAmountService;
 
 	@Inject
-	SepaFileBuilder sepaFileBuilder;
+	private SepaFileBuilder sepaFileBuilder;
 
 	@EJB
-	SepaService sepaService;
+	private SepaService sepaService;
 
 	public void createDDRquestLot(Date fromDueDate, Date toDueDate, User user,
 			Provider provider) throws BusinessEntityException, Exception {

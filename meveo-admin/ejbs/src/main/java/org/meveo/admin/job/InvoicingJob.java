@@ -17,7 +17,6 @@
 package org.meveo.admin.job;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -30,37 +29,34 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.crm.Provider;
+import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
 public class InvoicingJob implements Job {
 
-	private Logger log = LoggerFactory.getLogger(InvoicingJob.class.getName());
+	@Inject
+	private Logger log;
 
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	private ProviderService providerService;
+	private UserService userService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
-	private BillingRunService billingRunService;
+	private InvoicingJobBean invoicingJobBean;
 
 	@PostConstruct
 	public void init() {
@@ -68,28 +64,10 @@ public class InvoicingJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute InvoicingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		try {
-			List<BillingRun> billingRuns = billingRunService.getbillingRuns(
-					provider, BillingRunStatusEnum.NEW,
-					BillingRunStatusEnum.ON_GOING,
-					BillingRunStatusEnum.CONFIRMED);
-
-			log.info("billingRuns to process={}", billingRuns.size());
-			for (BillingRun billingRun : billingRuns) {
-				try {
-					billingRunService.processBillingRun(billingRun, result);
-				} catch (Exception e) {
-					log.error("Error: {}", e.getMessage());
-					result.registerError(e.getMessage());
-				}
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-
+		invoicingJobBean.execute(result, currentUser);
 		result.close("");
 
 		return result;
@@ -113,11 +91,11 @@ public class InvoicingJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
 				log.error("Error: {}", e.getMessage());
 			} finally {
@@ -136,6 +114,7 @@ public class InvoicingJob implements Job {
 		Collection<Timer> alltimers = timerService.getTimers();
 		log.info("cancel " + alltimers.size() + " timers for"
 				+ this.getClass().getSimpleName());
+
 		for (Timer timer : alltimers) {
 			try {
 				timer.cancel();

@@ -43,9 +43,9 @@ public class TimerEntity extends BaseEntity {
 
 	@Column(name = "JOB_NAME", nullable = false)
 	private String jobName;
-	
+
 	@Embedded
-	private TimerInfo timerInfo=new TimerInfo();
+	private TimerInfo timerInfo = new TimerInfo();
 
 	@Transient
 	private TimerEntity followingTimer;
@@ -53,10 +53,8 @@ public class TimerEntity extends BaseEntity {
 	@Column(name = "SC_YEAR", nullable = false)
 	private String year = "*";
 
-
 	@Column(name = "SC_MONTH", nullable = false)
 	private String month = "*";
-
 
 	@Column(name = "SC_D_O_MONTH", nullable = false)
 	private String dayOfMonth = "*";
@@ -114,7 +112,7 @@ public class TimerEntity extends BaseEntity {
 
 	public void setFollowingTimer(TimerEntity followingTimer) {
 		this.followingTimer = followingTimer;
-		if(followingTimer!=null){
+		if (followingTimer != null) {
 			this.timerInfo.setFollowingTimerId(followingTimer.getId());
 		}
 	}
@@ -214,7 +212,7 @@ public class TimerEntity extends BaseEntity {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (other != null && other instanceof TimerEntity) {
@@ -223,13 +221,14 @@ public class TimerEntity extends BaseEntity {
 			}
 			TimerEntity timer = (TimerEntity) other;
 
-			if(this.getId()==timer.getId()){
+			if (this.getId() == timer.getId()) {
 				return true;
 			}
-			if (StringUtils.equals(jobName, timer.getJobName()) &&
-				StringUtils.equals(name, timer.getName()) &&
-				StringUtils.equals(getScheduleExpression().toString(), timer.getScheduleExpression().toString()) &&
-				timerInfo.equals(timer.getTimerInfo())) {
+			if (StringUtils.equals(jobName, timer.getJobName())
+					&& StringUtils.equals(name, timer.getName())
+					&& StringUtils.equals(getScheduleExpression().toString(),
+							timer.getScheduleExpression().toString())
+					&& timerInfo.equals(timer.getTimerInfo())) {
 				return true;
 			}
 		}

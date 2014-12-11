@@ -3,7 +3,6 @@ package org.meveo.admin.job;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -18,6 +17,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.Auditable;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -25,33 +25,35 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
+import org.slf4j.Logger;
 
 @Startup
 @Singleton
 public class BillingRunJob implements Job {
 
 	@Resource
-	TimerService timerService;
+	private TimerService timerService;
 
 	@Inject
-	private ProviderService providerService;
+	private UserService userService;
 
 	@Inject
-	JobExecutionService jobExecutionService;
+	private JobExecutionService jobExecutionService;
 
 	@Inject
 	private BillingRunService billingRunService;
-	
+
 	@Inject
 	private BillingCycleService billingCycleService;
 
-	private Logger log = Logger.getLogger(BillingRunJob.class.getName());
+	@Inject
+	private Logger log;
 
 	@PostConstruct
 	public void init() {
@@ -59,26 +61,30 @@ public class BillingRunJob implements Job {
 	}
 
 	@Override
-	public JobExecutionResult execute(String parameter, Provider provider) {
+	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute BillingRunJob.");
+
+		Provider provider = currentUser.getProvider();
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		try {
-			List<BillingRun>  billruns = billingRunService.getbillingRuns(provider,parameter);
-			boolean notTerminatedBillRun=false;
-			if(billruns!=null){
-				for(BillingRun billrun:billruns){
-					if(billrun.getStatus()==BillingRunStatusEnum.CONFIRMED || 
-							billrun.getStatus()==BillingRunStatusEnum.NEW ||
-							billrun.getStatus()==BillingRunStatusEnum.ON_GOING ||
-							billrun.getStatus()==BillingRunStatusEnum.WAITING){
-						notTerminatedBillRun=true;
+			List<BillingRun> billruns = billingRunService.getbillingRuns(
+					provider, parameter);
+			boolean notTerminatedBillRun = false;
+			if (billruns != null) {
+				for (BillingRun billrun : billruns) {
+					if (billrun.getStatus() == BillingRunStatusEnum.CONFIRMED
+							|| billrun.getStatus() == BillingRunStatusEnum.NEW
+							|| billrun.getStatus() == BillingRunStatusEnum.ON_GOING
+							|| billrun.getStatus() == BillingRunStatusEnum.WAITING) {
+						notTerminatedBillRun = true;
 						break;
 					}
 				}
 			}
-			if(!notTerminatedBillRun && !StringUtils.isEmpty(parameter)){
-				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(parameter, provider);
-				if(billingCycle!=null){
+			if (!notTerminatedBillRun && !StringUtils.isEmpty(parameter)) {
+				BillingCycle billingCycle = billingCycleService
+						.findByBillingCycleCode(parameter, provider);
+				if (billingCycle != null) {
 					BillingRun billingRun = new BillingRun();
 					Auditable auditable = new Auditable();
 					auditable.setCreated(new Date());
@@ -91,7 +97,7 @@ public class BillingRunJob implements Job {
 			}
 		} catch (Exception e) {
 			result.registerError(e.getMessage());
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		result.close("");
 		return result;
@@ -103,8 +109,8 @@ public class BillingRunJob implements Job {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
-		return timerService.createCalendarTimer(scheduleExpression,
-				timerConfig);
+		return timerService
+				.createCalendarTimer(scheduleExpression, timerConfig);
 	}
 
 	boolean running = false;
@@ -115,19 +121,18 @@ public class BillingRunJob implements Job {
 		if (!running && info.isActive()) {
 			try {
 				running = true;
-				Provider provider = providerService.findById(info
-						.getProviderId());
+				User currentUser = userService.findById(info.getUserId());
 				JobExecutionResult result = execute(info.getParametres(),
-						provider);
-				jobExecutionService.persistResult(this, result, info, provider);
+						currentUser);
+				jobExecutionService.persistResult(this, result, info,
+						currentUser);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 			} finally {
 				running = false;
 			}
 		}
 	}
-
 
 	@Override
 	public JobExecutionService getJobExecutionService() {
@@ -137,12 +142,13 @@ public class BillingRunJob implements Job {
 	@Override
 	public void cleanAllTimers() {
 		Collection<Timer> alltimers = timerService.getTimers();
-		System.out.println("cancel "+alltimers.size() +" timers for"+this.getClass().getSimpleName());
-		for(Timer timer:alltimers){
-			try{
+		log.info("Cancel " + alltimers.size() + " timers for"
+				+ this.getClass().getSimpleName());
+		for (Timer timer : alltimers) {
+			try {
 				timer.cancel();
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(e.getMessage());
 			}
 		}
 	}

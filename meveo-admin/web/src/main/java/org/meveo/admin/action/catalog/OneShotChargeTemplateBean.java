@@ -22,6 +22,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -120,6 +121,7 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	 * needed only to put factory name on it. Filters charges of Usage type.
 	 * 
 	 * @return
+	 * @throws BusinessException
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
@@ -141,7 +143,7 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) {
+	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String back = null;
 
 		// check for unicity

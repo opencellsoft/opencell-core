@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
@@ -102,7 +103,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
 	 */
-	public void create(E e) {
+	public void create(E e) throws BusinessException {
 		create(e, getCurrentUser());
 	}
 
@@ -262,8 +263,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 				((AuditableEntity) e).updateAudit(getCurrentUser());
 			}
 		}
-		em.merge(e);
 		checkProvider(e);
+		em.merge(e);
 		log.debug("end of update {} entity (id={}).", e.getClass()
 				.getSimpleName(), e.getId());
 	}
@@ -286,7 +287,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	public void create(EntityManager em, E e, User creator, Provider provider) {
 		log.debug("start of create {} entity ..", e.getClass().getSimpleName());
-		
+
 		if (e instanceof AuditableEntity) {
 			if (creator != null) {
 				((AuditableEntity) e).updateAudit(creator);
@@ -294,11 +295,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 				((AuditableEntity) e).updateAudit(getCurrentUser());
 			}
 		}
+
 		if (e instanceof BaseEntity && (((BaseEntity) e).getProvider() == null)) {
 			((BaseEntity) e).setProvider(provider);
 		}
-		this.provider=((BaseEntity) e).getProvider();
+
 		em.persist(e);
+
 		log.debug("end of create {}. entity id={}.", e.getClass()
 				.getSimpleName(), e.getId());
 
@@ -493,19 +496,21 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 * modify (update or delete) entity.
 	 */
 	private void checkProvider(E e) {
-
 		if (getCurrentProvider() != null) {
 			if (e instanceof BaseEntity) {
-				provider = getEntityManager().find(Provider.class,
-						((BaseEntity) e).getProvider().getId());
-				boolean notSameProvider = !(provider != null && provider
+				Provider entityProvider = getEntityManager().find(
+						Provider.class, ((BaseEntity) e).getProvider().getId());
+				boolean notSameProvider = !(entityProvider != null && entityProvider
 						.getId().equals(getCurrentProvider().getId()));
 				log.debug(
-						"checkProvider  getCurrentProvider() id={} code={}, entityprovider id={} code={}",
-						getCurrentProvider().getId(), getCurrentProvider()
-								.getCode(), provider != null ? provider.getId()
-								: null, provider != null ? provider.getCode()
-								: null);
+						"CheckProvider getCurrentProvider() id={} code={}, entityProvider id={} code={}",
+						new Object[] {
+								getCurrentProvider().getId(),
+								getCurrentProvider().getCode(),
+								entityProvider != null ? entityProvider.getId()
+										: null,
+								entityProvider != null ? entityProvider
+										.getCode() : null });
 				if (notSameProvider) {
 					throw new ProviderNotAllowedException();
 				}
@@ -514,15 +519,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	public Provider getCurrentProvider() {
-		if (getCurrentUser() != null) {
-			return getCurrentUser().getProvider();
+		Provider result = provider;
+		if (result == null && getCurrentUser() != null) {
+			result = getCurrentUser().getProvider();
 		}
-		return null;
+
+		return result;
 	}
 
-	
 	public Provider getProvider() {
 		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
 
 	public BaseEntity attach(BaseEntity e) {

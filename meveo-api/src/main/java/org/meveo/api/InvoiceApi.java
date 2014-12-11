@@ -249,10 +249,8 @@ public class InvoiceApi extends BaseApi {
 								null, null);
 						meveoRatedTransaction.setCode(ratedTransaction
 								.getCode());
-						meveoRatedTransaction.setDescription(ratedTransaction
-								.getDescription());
-						meveoRatedTransaction.setUnit(ratedTransaction.
-								.getUnityDescription());
+						meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
+						meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
 						meveoRatedTransaction.setInvoice(invoice);
 						meveoRatedTransaction
 								.setWallet(userAccount.getWallet());

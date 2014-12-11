@@ -1401,9 +1401,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status,
 			Provider provider) {
+		return findByStatus(getEntityManager(), status, provider);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<WalletOperation> findByStatus(EntityManager em,
+			WalletOperationStatusEnum status, Provider provider) {
 		List<WalletOperation> walletOperations = null;
 		try {
 			log.debug("start of find {} by status (status={})) ..",
@@ -1411,8 +1416,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
 			qb.addCriterion("c.status", "=", status, true);
 			qb.addCriterionEntity("c.provider", provider);
-			
-			walletOperations = qb.getQuery(getEntityManager()).getResultList();
+
+			walletOperations = qb.getQuery(em).getResultList();
 			log.debug(
 					"end of find {} by status (status={}). Result size found={}.",
 					new Object[] {

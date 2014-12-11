@@ -18,13 +18,14 @@ package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
 
-	public void create(CounterPeriod e) {
+	public void create(CounterPeriod e) throws BusinessException {
 		super.create(e);
 		getEntityManager().flush();
 	}
