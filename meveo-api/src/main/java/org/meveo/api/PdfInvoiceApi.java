@@ -63,5 +63,4 @@ public class PdfInvoiceApi extends BaseApi {
 
 		return invoice.getPdf();
 	}
-
 }

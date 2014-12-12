@@ -17,8 +17,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
@@ -311,7 +309,7 @@ public class InvoiceApi extends BaseApi {
 			throw new MissingParameterException(
 					getMissingParametersExceptionMessage());
 		}
-		
+
 	}
 
 	public List<InvoiceDto> list(String customerAccountCode, Provider provider)

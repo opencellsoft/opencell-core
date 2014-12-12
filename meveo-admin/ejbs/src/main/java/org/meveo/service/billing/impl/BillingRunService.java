@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -495,12 +496,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	public BillingRun getBillingRunById(EntityManager em, long id,
 			Provider provider) {
-		BillingRun result = em.find(BillingRun.class, id);
-		if (!result.getProvider().getCode().equals(provider.getCode())) {
-			result = null;// discard the result
-		}
+		QueryBuilder qb = new QueryBuilder(BillingRun.class, "b");
+		qb.addCriterionEntity("provider", provider);
+		qb.addCriterion("id", "=", id, true);
 
-		return result;
+		try {
+			return (BillingRun) qb.getQuery(em).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	public void processBillingRun(BillingRun billingRun,
@@ -537,6 +541,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 				log.info("billingAccounts to process={}",
 						(billingAccounts != null ? billingAccounts.size() : 0));
+				
 				if (billingAccounts != null && billingAccounts.size() > 0) {
 					ratedTransactionService.sumbillingRunAmounts(billingRun,
 							billingAccounts, RatedTransactionStatusEnum.OPEN,

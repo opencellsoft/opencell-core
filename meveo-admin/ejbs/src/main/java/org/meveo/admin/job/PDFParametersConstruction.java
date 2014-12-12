@@ -80,20 +80,20 @@ public class PDFParametersConstruction {
 			String templateDir = new StringBuilder(resDir)
 					.append(File.separator).append(billingTemplateName)
 					.append(File.separator).append(PDF_DIR_NAME).toString();
-			parameters.put(PdfGenratorConstants.MESSAGE_PATH_KEY, templateDir
+			parameters.put(PdfGeneratorConstants.MESSAGE_PATH_KEY, templateDir
 					+ File.separator);
-			parameters.put(PdfGenratorConstants.LOGO_PATH_KEY, templateDir
+			parameters.put(PdfGeneratorConstants.LOGO_PATH_KEY, templateDir
 					+ File.separator);
-			parameters.put(PdfGenratorConstants.CUSTOMER_ADDRESS_KEY,
+			parameters.put(PdfGeneratorConstants.CUSTOMER_ADDRESS_KEY,
 					getCustomerAddress(invoice));
-			parameters.put(PdfGenratorConstants.SUBREPORT_DIR, templateDir);
+			parameters.put(PdfGeneratorConstants.SUBREPORT_DIR, templateDir);
 			if (TIP_PAYMENT_METHOD.equals(billingAccount.getPaymentMethod()
 					.toString())) {
 				BigDecimal netToPay = invoice.getNetToPay();
 				if (netToPay.signum() != 1) {
-					parameters.put(PdfGenratorConstants.HIGH_OPTICAL_LINE_KEY,
+					parameters.put(PdfGeneratorConstants.HIGH_OPTICAL_LINE_KEY,
 							" ");
-					parameters.put(PdfGenratorConstants.LOW_OPTICAL_LINE_KEY,
+					parameters.put(PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
 							" ");
 				} else {
 					BankCoordinates bankCoordinates = billingAccount
@@ -115,10 +115,10 @@ public class PDFParametersConstruction {
 								invoice.getId(), invoice.getInvoiceDate(),
 								invoice.getDueDate(), netToPay);
 						parameters.put(
-								PdfGenratorConstants.HIGH_OPTICAL_LINE_KEY,
+								PdfGeneratorConstants.HIGH_OPTICAL_LINE_KEY,
 								tip.getLigneOptiqueHaute());
 						parameters.put(
-								PdfGenratorConstants.LOW_OPTICAL_LINE_KEY,
+								PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
 								tip.getLigneOptiqueBasse());
 					} else {
 						TIP tip = new TIP(provider.getInterBankTitle()
@@ -131,27 +131,26 @@ public class PDFParametersConstruction {
 								invoice.getId(), invoice.getInvoiceDate(),
 								invoice.getDueDate(), netToPay);
 						parameters.put(
-								PdfGenratorConstants.HIGH_OPTICAL_LINE_KEY,
+								PdfGeneratorConstants.HIGH_OPTICAL_LINE_KEY,
 								tip.getLigneOptiqueHaute());
 						parameters.put(
-								PdfGenratorConstants.LOW_OPTICAL_LINE_KEY,
+								PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
 								tip.getLigneOptiqueBasse());
 					}
 				}
 			}
 
-			parameters.put(PdfGenratorConstants.INVOICE_NUMBER_KEY,
+			parameters.put(PdfGeneratorConstants.INVOICE_NUMBER_KEY,
 					invoice.getInvoiceNumber());
-			parameters.put(PdfGenratorConstants.BILLING_TEMPLATE,
+			parameters.put(PdfGeneratorConstants.BILLING_TEMPLATE,
 					billingTemplateName);
 			parameters
-					.put(PdfGenratorConstants.BILLING_ACCOUNT, billingAccount);
-			parameters.put(PdfGenratorConstants.CUSTOMER_ACCOUNT,
+					.put(PdfGeneratorConstants.BILLING_ACCOUNT, billingAccount);
+			parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT,
 					billingAccount.getCustomerAccount());
-			parameters.put(PdfGenratorConstants.INVOICE, invoice);
+			parameters.put(PdfGeneratorConstants.INVOICE, invoice);
 
 			return parameters;
-
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return null;

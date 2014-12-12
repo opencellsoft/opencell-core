@@ -9,8 +9,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingRun;
@@ -39,6 +41,7 @@ public class XMLInvoiceGenerationJobBean {
 	private EntityManager em;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Interceptors({ JobLoggingInterceptor.class })
 	public void execute(JobExecutionResultImpl result, String parameter,
 			User currentUser) {
 		Provider provider = currentUser.getProvider();
