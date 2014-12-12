@@ -18,19 +18,19 @@
 
 			
 			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
-			<hf:searchPanel label="#{messages['menu.measuredValues']}" columns="3" backingBean="#{measurementsBean}">
+			<hf:searchPanel label="#{messages['menu.measuredValues']}" columns="3" backingBean="#{measurementBean}">
 				<hf:searchField label="#{messages['entity.measuredvalue.measurementPeriod']}" field="measurementPeriod" />
 				<hf:searchField label="#{messages['entity.measuredvalue.date']}" field="date" />
 				<hf:searchField label="#{messages['entity.measuredvalue.value']}" field="value" />
 			</hf:searchPanel>
 			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{measurementsBean}">
+			<hftl:dataList backingBean="#{measurementBean}">
 				<!-- <cftl:column label="#{messages['entity.measurement.code']}"
 					field="code" /> -->
 				<hftl:column
 					label="#{messages['entity.measuredvalue.measurableQuantity']}"
-					field="measurableQuantity" childField="id" />
+					field="measurableQuantity" childField="code" />
 
 				<p:column
 					headerText="#{messages['entity.measuredvalue.measurementPeriod']}">

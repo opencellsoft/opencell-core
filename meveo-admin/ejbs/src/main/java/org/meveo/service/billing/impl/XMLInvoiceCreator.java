@@ -42,6 +42,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -691,23 +692,34 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							description = ratedTransaction.getDescription();
 						}
 
-						line.setAttribute("code", code != null ? code : "");
-						Element lebel = doc.createElement("label");
-						Text lebelTxt = doc
-								.createTextNode(description != null ? description
-										: "");
+							line.setAttribute("code", code != null ? code : "");
+							Element lebel = doc.createElement("label");
+							Text lebelTxt = doc
+									.createTextNode(description != null ? description
+											: "");
 
-						lebel.appendChild(lebelTxt);
-						line.appendChild(lebel);
 
-						Element lineUnitAmountWithoutTax = doc
-								.createElement("unitAmountWithoutTax");
-						Text lineUnitAmountWithoutTaxTxt = doc
-								.createTextNode(round(ratedTransaction
-										.getAmountWithoutTax()));
-						lineUnitAmountWithoutTax
-								.appendChild(lineUnitAmountWithoutTaxTxt);
-						line.appendChild(lineUnitAmountWithoutTax);
+							lebel.appendChild(lebelTxt);
+							line.appendChild(lebel);
+
+							if(!StringUtils.isBlank(ratedTransaction.getUnityDescription())){
+								Element lineUnit = doc
+										.createElement("unit");
+								Text lineUnitTxt = doc
+										.createTextNode(ratedTransaction.getUnityDescription());
+								lineUnit
+										.appendChild(lineUnitTxt);
+								line.appendChild(lineUnit);
+							}
+							Element lineUnitAmountWithoutTax = doc
+									.createElement("unitAmountWithoutTax");
+							Text lineUnitAmountWithoutTaxTxt = doc
+									.createTextNode(round(ratedTransaction
+											.getUnitAmountWithoutTax()));
+							lineUnitAmountWithoutTax
+									.appendChild(lineUnitAmountWithoutTaxTxt);
+							line.appendChild(lineUnitAmountWithoutTax);
+
 
 						Element lineAmountWithoutTax = doc
 								.createElement("amountWithoutTax");

@@ -44,6 +44,7 @@ public class RatedTransactionDto extends BaseDto {
 	private BigDecimal amountTax;
 	private String code;
 	private String description;
+	private String unityDescription;
 	private boolean doNotTriggerInvoicing = false;
 
 	public Date getUsageDate() {
@@ -132,6 +133,14 @@ public class RatedTransactionDto extends BaseDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getUnityDescription() {
+		return unityDescription;
+	}
+
+	public void setUnityDescription(String unityDescription) {
+		this.unityDescription = unityDescription;
 	}
 
 }

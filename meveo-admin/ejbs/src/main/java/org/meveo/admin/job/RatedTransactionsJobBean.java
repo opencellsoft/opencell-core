@@ -11,8 +11,10 @@ import javax.persistence.EntityManager;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -50,6 +52,10 @@ public class RatedTransactionsJobBean {
 					walletOperations.size());
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
+					String unityDescription = null;
+					if(walletOperation.getChargeInstance() instanceof UsageChargeInstance){
+						unityDescription = ((UsageChargeTemplate)((UsageChargeInstance)walletOperation.getChargeInstance()).getChargeTemplate()).getUnityDescription();
+					}
 					RatedTransaction ratedTransaction = new RatedTransaction(
 							walletOperation.getId(),
 							walletOperation.getOperationDate(),
@@ -69,7 +75,8 @@ public class RatedTransactionsJobBean {
 									.getInvoiceSubCategory(),
 							walletOperation.getParameter1(),
 							walletOperation.getParameter2(),
-							walletOperation.getParameter3());
+							walletOperation.getParameter3(),
+							unityDescription);
 					ratedTransactionService.create(em, ratedTransaction,
 							currentUser, currentUser.getProvider());
 

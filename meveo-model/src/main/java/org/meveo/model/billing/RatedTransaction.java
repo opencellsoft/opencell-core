@@ -70,7 +70,9 @@ public class RatedTransaction extends BaseEntity {
 	
 	@Column(name = "DESCRIPTION")
 	private String description;
-  
+
+	@Column(name = "UNITY_DESCRIPTION", length = 20)
+	private String unityDescription;
 
 	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithoutTax;
@@ -142,7 +144,8 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountTax, BigDecimal quantity,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
 			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider, 
-			WalletInstance wallet,BillingAccount billingAccount,InvoiceSubCategory invoiceSubCategory,String parameter1,String parameter2,String parameter3) {
+			WalletInstance wallet,BillingAccount billingAccount,InvoiceSubCategory invoiceSubCategory,
+			String parameter1,String parameter2,String parameter3,String unityDescription) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -160,6 +163,7 @@ public class RatedTransaction extends BaseEntity {
 		this.parameter1=parameter1;
 		this.parameter2=parameter2;
 		this.parameter3=parameter3;
+		this.unityDescription=unityDescription;
 		setProvider(provider);
 	}
 
@@ -337,7 +341,15 @@ public class RatedTransaction extends BaseEntity {
 		this.description = description;
 	}
 	
-    public String getParameter1() {
+    public String getUnityDescription() {
+		return unityDescription;
+	}
+
+	public void setUnityDescription(String unityDescription) {
+		this.unityDescription = unityDescription;
+	}
+
+	public String getParameter1() {
 		return parameter1;
 	}
 

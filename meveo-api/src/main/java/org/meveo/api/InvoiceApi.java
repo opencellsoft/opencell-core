@@ -42,9 +42,6 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.MeveoParamBean;
 
-/**
- * @author R.AITYAAZZA
- */
 @Stateless
 public class InvoiceApi extends BaseApi {
 
@@ -250,8 +247,8 @@ public class InvoiceApi extends BaseApi {
 								null, null);
 						meveoRatedTransaction.setCode(ratedTransaction
 								.getCode());
-						meveoRatedTransaction.setDescription(ratedTransaction
-								.getDescription());
+						meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
+						meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
 						meveoRatedTransaction.setInvoice(invoice);
 						meveoRatedTransaction
 								.setWallet(userAccount.getWallet());
