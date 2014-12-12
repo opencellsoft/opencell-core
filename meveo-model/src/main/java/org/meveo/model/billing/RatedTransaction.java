@@ -45,7 +45,7 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "WALLET_ID")
 	private WalletInstance wallet;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BILLING_ACCOUNT__ID")
 	private BillingAccount billingAccount;
@@ -64,10 +64,10 @@ public class RatedTransaction extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
 	private InvoiceSubCategory invoiceSubCategory;
-	
+
 	@Column(name = "CODE")
 	private String code;
-	
+
 	@Column(name = "DESCRIPTION")
 	private String description;
 
@@ -95,26 +95,21 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
-
- 
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "INVOICE_ID")
 	private Invoice invoice;
 
-	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_F")
 	private SubCategoryInvoiceAgregate invoiceAgregateF;
 
-	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_R")
 	private CategoryInvoiceAgregate invoiceAgregateR;
 
-	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "AGGREGATE_ID_T")
 	private TaxInvoiceAgregate invoiceAgregateT;
-
- 
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
@@ -122,7 +117,7 @@ public class RatedTransaction extends BaseEntity {
 
 	@Column(name = "DO_NOT_TRIGGER_INVOICING")
 	private boolean doNotTriggerInvoicing = false;
-	
+
 	@Column(name = "PARAMETER_1", length = 50)
 	private String parameter1;
 
@@ -132,9 +127,6 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "PARAMETER_3", length = 50)
 	private String parameter3;
 
-	
-	 
-
 	public RatedTransaction() {
 		super();
 	}
@@ -143,9 +135,11 @@ public class RatedTransaction extends BaseEntity {
 			BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax,
 			BigDecimal unitAmountTax, BigDecimal quantity,
 			BigDecimal amountWithoutTax, BigDecimal amountWithTax,
-			BigDecimal amountTax, RatedTransactionStatusEnum status,Provider provider, 
-			WalletInstance wallet,BillingAccount billingAccount,InvoiceSubCategory invoiceSubCategory,
-			String parameter1,String parameter2,String parameter3,String unityDescription) {
+			BigDecimal amountTax, RatedTransactionStatusEnum status,
+			Provider provider, WalletInstance wallet,
+			BillingAccount billingAccount,
+			InvoiceSubCategory invoiceSubCategory, String parameter1,
+			String parameter2, String parameter3, String unityDescription) {
 		super();
 		this.walletOperationId = walletOperationId;
 		this.usageDate = usageDate;
@@ -157,13 +151,13 @@ public class RatedTransaction extends BaseEntity {
 		this.amountWithTax = amountWithTax;
 		this.amountTax = amountTax;
 		this.status = status;
-		this.wallet=wallet;
-		this.billingAccount=billingAccount;
-		this.invoiceSubCategory=invoiceSubCategory;
-		this.parameter1=parameter1;
-		this.parameter2=parameter2;
-		this.parameter3=parameter3;
-		this.unityDescription=unityDescription;
+		this.wallet = wallet;
+		this.billingAccount = billingAccount;
+		this.invoiceSubCategory = invoiceSubCategory;
+		this.parameter1 = parameter1;
+		this.parameter2 = parameter2;
+		this.parameter3 = parameter3;
+		this.unityDescription = unityDescription;
 		setProvider(provider);
 	}
 
@@ -175,8 +169,6 @@ public class RatedTransaction extends BaseEntity {
 		this.wallet = wallet;
 	}
 
-	 
-
 	public BillingRun getBillingRun() {
 		return billingRun;
 	}
@@ -184,7 +176,6 @@ public class RatedTransaction extends BaseEntity {
 	public void setBillingRun(BillingRun billingRun) {
 		this.billingRun = billingRun;
 	}
-
 
 	public Date getUsageDate() {
 		return usageDate;
@@ -201,8 +192,6 @@ public class RatedTransaction extends BaseEntity {
 	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
-
-	 
 
 	public BigDecimal getUnitAmountWithoutTax() {
 		return unitAmountWithoutTax;
@@ -260,7 +249,6 @@ public class RatedTransaction extends BaseEntity {
 		this.amountTax = amountTax;
 	}
 
-	 
 	public Invoice getInvoice() {
 		return invoice;
 	}
@@ -340,8 +328,8 @@ public class RatedTransaction extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-    public String getUnityDescription() {
+
+	public String getUnityDescription() {
 		return unityDescription;
 	}
 
@@ -372,8 +360,5 @@ public class RatedTransaction extends BaseEntity {
 	public void setParameter3(String parameter3) {
 		this.parameter3 = parameter3;
 	}
-
-
-	 
 
 }
