@@ -32,6 +32,7 @@ import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -49,14 +50,13 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -64,31 +64,28 @@ import org.w3c.dom.Node;
 public class PDFFilesOutputProducer {
 
 	private static final String PDF_DIR_NAME = "pdf";
-
 	private static final String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
-
-	private Logger log = LoggerFactory.getLogger(PDFFilesOutputProducer.class);
-
 	private static String DATE_PATERN = "yyyy.MM.dd";
 
 	@Inject
-	private InvoiceService invoiceService;
+	private Logger log;
 
 	/**
 	 * @see org.meveo.core.outputproducer.OutputProducer#produceOutput(java.util.List)
 	 */
 	@Asynchronous
-	public Future<Boolean> producePdf(Map<String, Object> parameters,
-			JobExecutionResultImpl result) throws Exception {
+	public Future<Boolean> producePdf(EntityManager em,
+			Map<String, Object> parameters, JobExecutionResultImpl result,
+			User currentUser) throws Exception {
 		try {
 			ParamBean paramBean = ParamBean.getInstance();
 			log.info("PDFInvoiceGenerationJob is invoice key exists="
 					+ parameters != null ? parameters
-					.containsKey(PdfGenratorConstants.INVOICE) + ""
+					.containsKey(PdfGeneratorConstants.INVOICE) + ""
 					: "parameters is null");
 
 			Invoice invoice = (Invoice) parameters
-					.get(PdfGenratorConstants.INVOICE);
+					.get(PdfGeneratorConstants.INVOICE);
 			String meveoDir = paramBean.getProperty("providers.rootDir",
 					"/tmp/meveo/")
 					+ File.separator
@@ -107,7 +104,7 @@ public class PDFFilesOutputProducer {
 			File invoiceXmlFile = new File(invoiceXmlFileName);
 			if (!invoiceXmlFile.exists()) {
 				throw new ConfigurationException(
-						"The xml invoice file doesn't exist");
+						"The xml invoice file doesn't exist.");
 			}
 			BillingCycle billingCycle = invoice.getBillingRun()
 					.getBillingCycle();
@@ -148,13 +145,13 @@ public class PDFFilesOutputProducer {
 				long fileSize = file.length();
 				if (fileSize > Integer.MAX_VALUE) {
 					throw new IllegalArgumentException(
-							"File is too big to put it to buffer in memory");
+							"File is too big to put it to buffer in memory.");
 				}
 				byte[] fileBytes = new byte[(int) file.length()];
 				fileInputStream = new FileInputStream(file);
 				fileInputStream.read(fileBytes);
 				invoice.setPdf(fileBytes);
-				invoiceService.update(invoice);
+				invoice.updateAudit(currentUser);
 			} catch (Exception e) {
 				log.error("Error saving file to DB as blob. {}", e.getMessage());
 			} finally {

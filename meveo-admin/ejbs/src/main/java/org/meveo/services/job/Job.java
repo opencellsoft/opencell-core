@@ -2,7 +2,9 @@ package org.meveo.services.job;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
+import javax.interceptor.Interceptors;
 
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.TimerInfo;
@@ -28,6 +30,7 @@ public interface Job {
 	 *            the provider for which the job must apply.
 	 * @return the result of execute(parameter,false) method
 	 */
+	@Interceptors({ JobLoggingInterceptor.class })
 	public JobExecutionResult execute(String parameter, User currentUser);
 
 	public Timer createTimer(ScheduleExpression scheduleExpression,

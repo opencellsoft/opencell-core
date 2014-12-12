@@ -17,7 +17,7 @@
 package org.meveo.admin.job;
 
 
-public class PdfGenratorConstants {
+public class PdfGeneratorConstants {
 
     public static final String PDF_PARAMETERS = "PDF_PARAMETERS";
     public static final String DUNNING_PARAMETERS = "DUNNING_PARAMETERS";

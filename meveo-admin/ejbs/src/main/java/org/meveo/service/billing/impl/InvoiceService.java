@@ -132,12 +132,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Invoice> getInvoices(BillingRun billingRun)
 			throws BusinessException {
+		return getInvoices(getEntityManager(), billingRun);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Invoice> getInvoices(EntityManager em, BillingRun billingRun)
+			throws BusinessException {
 		try {
-			Query q = getEntityManager().createQuery(
-					"from Invoice where billingRun = :billingRun");
+			Query q = em
+					.createQuery("from Invoice where billingRun = :billingRun");
 			q.setParameter("billingRun", billingRun);
 			List<Invoice> invoices = q.getResultList();
 			return invoices;
@@ -231,18 +236,25 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 
+	public List<Invoice> getValidatedInvoicesWithNoPdf(BillingRun br,
+			Provider provider) {
+		return getValidatedInvoicesWithNoPdf(getEntityManager(), br, provider);
+	}
+
 	@SuppressWarnings("unchecked")
-	public List<Invoice> getValidatedInvoicesWithNoPdf(BillingRun br) {
+	public List<Invoice> getValidatedInvoicesWithNoPdf(EntityManager em,
+			BillingRun br, Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
 			qb.addCriterionEntity("i.billingRun.status",
 					BillingRunStatusEnum.VALIDATED);
+			qb.addCriterionEntity("provider", provider);
 			qb.addSql("i.pdf is null");
+
 			if (br != null) {
 				qb.addCriterionEntity("i.billingRun", br);
 			}
-			return (List<Invoice>) qb.getQuery(getEntityManager())
-					.getResultList();
+			return (List<Invoice>) qb.getQuery(em).getResultList();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

@@ -7,9 +7,11 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -37,6 +39,7 @@ public class RecurringRatingJobBean {
 	protected Logger log;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Interceptors({ JobLoggingInterceptor.class })
 	public void execute(JobExecutionResultImpl result) {
 		try {
 			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService

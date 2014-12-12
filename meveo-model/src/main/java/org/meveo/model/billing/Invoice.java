@@ -28,7 +28,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -103,12 +102,6 @@ public class Invoice extends AuditableEntity {
 	@Column(name = "ALIAS")
 	private String alias;
 
-	@Column(name = "PDF")
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	// private Blob pdfBlob;
-	private byte[] pdf;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_CURRENCY_ID")
 	private TradingCurrency tradingCurrency;
@@ -129,6 +122,10 @@ public class Invoice extends AuditableEntity {
 
 	@Column(name = "COMMENT", length = 1200)
 	private String comment;
+
+	@Column(name = "PDF")
+	@Basic(fetch = FetchType.LAZY)
+	private byte[] pdf;
 
 	public List<RatedTransaction> getRatedTransactions() {
 		return ratedTransactions;

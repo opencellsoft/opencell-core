@@ -1,10 +1,6 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -18,13 +14,10 @@ import javax.ejb.TimerService;
 import javax.inject.Inject;
 
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.TimerInfo;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.services.job.Job;
 import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
@@ -47,16 +40,7 @@ public class PDFInvoiceGenerationJob implements Job {
 	private JobExecutionService jobExecutionService;
 
 	@Inject
-	private InvoiceService invoiceService;
-
-	@Inject
-	private PDFParametersConstruction pDFParametersConstruction;
-
-	@Inject
-	private PDFFilesOutputProducer pDFFilesOutputProducer;
-
-	@Inject
-	private BillingRunService billingRunService;
+	private PDFInvoiceGenerationJobBean pdfInvoiceGenerationJobBean;
 
 	@PostConstruct
 	public void init() {
@@ -68,36 +52,7 @@ public class PDFInvoiceGenerationJob implements Job {
 		log.info("execute PDFInvoiceGenerationJob.");
 
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		List<Invoice> invoices = new ArrayList<Invoice>();
-		if (parameter != null && parameter.trim().length() > 0) {
-			try {
-				invoices = invoiceService.getInvoices(billingRunService
-						.getBillingRunById(Long.parseLong(parameter),
-								currentUser.getProvider()));
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				result.registerError(e.getMessage());
-			}
-		} else {
-			invoices = invoiceService.getValidatedInvoicesWithNoPdf(null);
-		}
-
-		log.info("PDFInvoiceGenerationJob number of invoices to process="
-				+ invoices.size());
-		for (Invoice invoice : invoices) {
-			try {
-				Map<String, Object> parameters = pDFParametersConstruction
-						.constructParameters(invoice);
-				log.info("PDFInvoiceGenerationJob parameters=" + parameters);
-				Future<Boolean> isPdfgenerated = pDFFilesOutputProducer
-						.producePdf(parameters, result);
-				isPdfgenerated.get();
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				result.registerError(e.getMessage());
-			}
-		}
-
+		pdfInvoiceGenerationJobBean.execute(result, parameter, currentUser);
 		result.close("");
 
 		return result;
