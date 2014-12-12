@@ -15,7 +15,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 @Entity
-@Table(name = "DWH_CHART")
+@Table(name = "DWH_CHART") 
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
 public class Chart extends BusinessEntity {
