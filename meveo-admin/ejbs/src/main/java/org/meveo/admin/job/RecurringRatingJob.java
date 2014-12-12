@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 
 @Startup
 @Singleton
-public class ReccuringRatingJob implements Job {
+public class RecurringRatingJob implements Job {
 
 	@Resource
 	private TimerService timerService;
@@ -51,7 +51,7 @@ public class ReccuringRatingJob implements Job {
 	public JobExecutionResult execute(String parameter, User currentUser) {
 		log.info("execute RecurringRatingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		recurringRatingJobBean.execute(result);
+		recurringRatingJobBean.execute(result, currentUser);
 		result.close("");
 
 		return result;

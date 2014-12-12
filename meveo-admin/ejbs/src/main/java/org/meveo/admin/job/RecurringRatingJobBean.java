@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -40,7 +41,7 @@ public class RecurringRatingJobBean {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class })
-	public void execute(JobExecutionResultImpl result) {
+	public void execute(JobExecutionResultImpl result, User currentUser) {
 		try {
 			List<RecurringChargeInstance> activeRecurringChargeInstances = recurringChargeInstanceService
 					.findByStatus(em, InstanceStatusEnum.ACTIVE,
@@ -77,12 +78,12 @@ public class RecurringRatingJobBean {
 						walletOperationService
 								.applyNotAppliedinAdvanceReccuringCharge(em,
 										activeRecurringChargeInstance, false,
-										recurringChargeTemplate, null);
+										recurringChargeTemplate, currentUser);
 						result.registerSucces();
 					} else {
 						walletOperationService.applyReccuringCharge(em,
 								activeRecurringChargeInstance, false,
-								recurringChargeTemplate, null);
+								recurringChargeTemplate, currentUser);
 						result.registerSucces();
 					}
 				} catch (Exception e) {
