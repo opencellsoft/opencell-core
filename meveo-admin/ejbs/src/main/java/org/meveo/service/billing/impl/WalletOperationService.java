@@ -1115,14 +1115,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
 			throw new IncorrectChargeTemplateException(
-					"invoiceSubCategory is null for chargeTemplate code="
+					"InvoiceSubCategory is null for chargeTemplate code="
 							+ recurringChargeTemplate.getCode());
 		}
 
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
-					"no currency exists for customerAccount id="
+					"No currency exists for customerAccount id="
 							+ chargeInstance.getSubscription().getUserAccount()
 									.getBillingAccount().getCustomerAccount()
 									.getId());
@@ -1131,7 +1131,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
-					"no country exists for billingAccount id="
+					"No country exists for billingAccount id="
 							+ chargeInstance.getSubscription().getUserAccount()
 									.getBillingAccount().getId());
 		}
@@ -1142,7 +1142,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 						countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
-					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
+					"No invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
 							+ " and trading country="
 							+ country.getCountryCode());
@@ -1151,7 +1151,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
 			throw new IncorrectChargeTemplateException(
-					"tax is null for invoiceSubCategoryCountry id="
+					"Tax is null for invoiceSubCategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
 		}
 
@@ -1159,7 +1159,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Date nextapplicationDate = recurringChargeTemplate.getCalendar()
 					.nextCalendarDate(applicationDate);
 			log.debug(
-					"applyNotAppliedinAdvanceReccuringCharge next step for {}, applicationDate={}, nextApplicationDate={},nextApplicationDate={}",
+					"ApplyNotAppliedinAdvanceReccuringCharge next step for {}, applicationDate={}, nextApplicationDate={},nextApplicationDate={}",
 					chargeInstance.getId(), applicationDate,
 					nextapplicationDate, nextChargeDate);
 
@@ -1168,7 +1168,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			previousapplicationDate = DateUtils.parseDateWithPattern(
 					previousapplicationDate, "dd/MM/yyyy");
 			log.debug(
-					" applyNotAppliedinAdvanceReccuringCharge applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
+					"ApplyNotAppliedinAdvanceReccuringCharge applicationDate={}, nextapplicationDate={},previousapplicationDate={}",
 					applicationDate, nextapplicationDate,
 					previousapplicationDate);
 
@@ -1180,7 +1180,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			// n'appliquer le prorata que dans le cas de la 1ere application de
 			// charges echues
 			log.debug(
-					" applyNotAppliedinAdvanceReccuringCharge chargeInstance.getWalletOperations().size()={}",
+					"ApplyNotAppliedinAdvanceReccuringCharge chargeInstance.getWalletOperations().size()={}",
 					chargeInstance.getWalletOperations().size());
 			if (chargeInstance.getWalletOperations().size() == 0
 					&& recurringChargeTemplate.getSubscriptionProrata()) {
@@ -1195,7 +1195,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					prorataRatio = part1 / part2;
 				} else {
 					log.error(
-							"applyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
+							"ApplyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}",
 							nextapplicationDate, previousapplicationDate);
 				}
 				quantity = quantity
@@ -1214,7 +1214,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			log.debug("param2={}", param2);
 
 			log.debug(
-					"applyNotAppliedinAdvanceReccuringCharge : nextapplicationDate={}, param2={}",
+					"ApplyNotAppliedinAdvanceReccuringCharge : nextapplicationDate={}, param2={}",
 					nextapplicationDate, param2);
 
 			if (reimbursement) {
@@ -1269,7 +1269,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				.nextCalendarDate(applicationDate);
 		chargeInstance.setNextChargeDate(nextapplicationDate);
 		chargeInstance.setChargeDate(applicationDate);
-
 	}
 
 	public void applyChargeAgreement(RecurringChargeInstance chargeInstance,

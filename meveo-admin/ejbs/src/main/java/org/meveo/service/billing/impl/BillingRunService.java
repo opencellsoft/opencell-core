@@ -426,17 +426,23 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<BillingRun> getbillingRuns(Provider provider, String code) {
+		return getbillingRuns(getEntityManager(), provider, code);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BillingRun> getbillingRuns(EntityManager em, Provider provider,
+			String code) {
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				provider);
+
 		qb.startOrClause();
 		if (code != null) {
 			qb.addCriterion("c.billingCycle.code", "=", code, false);
 		}
 		qb.endOrClause();
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager())
-				.getResultList();
+
+		List<BillingRun> billingRuns = qb.getQuery(em).getResultList();
 
 		return billingRuns;
 
@@ -541,7 +547,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 				log.info("billingAccounts to process={}",
 						(billingAccounts != null ? billingAccounts.size() : 0));
-				
+
 				if (billingAccounts != null && billingAccounts.size() > 0) {
 					ratedTransactionService.sumbillingRunAmounts(billingRun,
 							billingAccounts, RatedTransactionStatusEnum.OPEN,
