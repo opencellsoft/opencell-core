@@ -56,7 +56,7 @@ select[disabled] { color : #000; }
  * Generics
  **************************************************************************/
 .body h1 { text-align: right; margin: 0px; padding: 0px; font-style: italic; font-size: 1.2em; }
-.body form { margin: 0px; padding-bottom : 10px; border-bottom : 1px solid #e7e5e5; }
+.body form { margin: 10px; padding-bottom : 10px; border-bottom : 1px solid #e7e5e5; }
 .body #loginForm { border : 1px solid #dddddd; width : 400px; margin-left : auto; margin-right : auto; padding : 10px; -moz-border-radius: 5px; -webkit-border-radius : 5px; border-radius : 5px; }
 .body form:first-child { border-top : none; }
 .body button.ui-state-hover .ui-icon-search { background-image : url(../img/ui-icons_616161_256x240-2.png) !Important; }
@@ -264,7 +264,7 @@ div.body > table > thead,
  * JSF/Prime Overrides
  **************************************************************************/
 .ui-tabs-panel { padding: 10px !important; }
-.ui-tabs-panel .form-panel { margin: 0px !important; padding: 0px !important; }
+.ui-tabs-panel .form-panel { padding: 0px !important; }
 .ui-panel-titlebar { border: none !important; }
 .ui-datatable-header, .ui-datatable-footer { text-align: left !important; }
 .ui-editor { border-radius : 8px; overflow : hidden; border : 1px solid #d6d6d6; -webkit-box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 2, .1); box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 2, .1); }

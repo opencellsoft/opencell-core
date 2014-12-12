@@ -5,8 +5,8 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:o="http://omnifaces.org/ui"
-	template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+	xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml"
+	xmlns:p="http://primefaces.org/ui">
 
 	<ui:define name="metadata">
 		<f:metadata>
@@ -21,7 +21,7 @@
 				value="#{customerAccountBean.objectId}" />
 			<f:viewParam name="customerId" value="#{customerBean.objectId}" />
 		</f:metadata>
-		
+
 		<o:importConstants type="org.meveo.model.crm.CustomFieldTypeEnum" />
 	</ui:define>
 
@@ -476,8 +476,6 @@
 										field="terminationDate" />
 								</hftl:panelGroup>
 							</hf:formPanel>
-							<br />
-							<br />
 
 							<hftl:dataList
 								dataModel="#{invoiceBean.getBillingAccountInvoices(billingAccountBean.entity)}"
