@@ -48,7 +48,7 @@ public class UsageRatingJobBean {
 				log.info("rate edr={}", edr.getId());
 
 				try {
-					usageRatingService.ratePostpaidUsage(edr);
+					usageRatingService.ratePostpaidUsage(edr, currentUser);
 
 					edrService.setProvider(currentUser.getProvider());
 					edrService.update(em, edr, currentUser);

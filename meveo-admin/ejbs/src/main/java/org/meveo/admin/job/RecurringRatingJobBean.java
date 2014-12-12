@@ -86,6 +86,7 @@ public class RecurringRatingJobBean {
 						result.registerSucces();
 					}
 				} catch (Exception e) {
+					log.error(e.getMessage());
 					result.registerError(e.getMessage());
 				}
 			}

@@ -14,9 +14,6 @@ import org.meveo.model.billing.CounterPeriod;
  */
 public class CounterInstanceCache implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4237398308951202639L;
 	
 	private Long counterInstanceId;

@@ -53,9 +53,12 @@ public class RatedTransactionsJobBean {
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
 					String unityDescription = null;
-					if(walletOperation.getChargeInstance() instanceof UsageChargeInstance){
-						unityDescription = ((UsageChargeTemplate)((UsageChargeInstance)walletOperation.getChargeInstance()).getChargeTemplate()).getUnityDescription();
+					if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+						unityDescription = ((UsageChargeTemplate) ((UsageChargeInstance) walletOperation
+								.getChargeInstance()).getChargeTemplate())
+								.getUnityDescription();
 					}
+
 					RatedTransaction ratedTransaction = new RatedTransaction(
 							walletOperation.getId(),
 							walletOperation.getOperationDate(),
@@ -75,8 +78,7 @@ public class RatedTransactionsJobBean {
 									.getInvoiceSubCategory(),
 							walletOperation.getParameter1(),
 							walletOperation.getParameter2(),
-							walletOperation.getParameter3(),
-							unityDescription);
+							walletOperation.getParameter3(), unityDescription);
 					ratedTransactionService.create(em, ratedTransaction,
 							currentUser, currentUser.getProvider());
 

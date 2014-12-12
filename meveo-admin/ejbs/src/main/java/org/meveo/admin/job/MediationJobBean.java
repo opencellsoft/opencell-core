@@ -125,10 +125,12 @@ public class MediationJobBean {
 						outputCDR(line);
 						result.registerSucces();
 					} catch (CDRParsingException e) {
+						log.warn(e.getMessage());
 						result.registerError("line " + processed + " :"
 								+ e.getRejectionCause().name());
 						rejectCDR(e.getCdr(), e.getRejectionCause());
 					} catch (Exception e) {
+						log.error(e.getMessage());
 						result.registerError("line " + processed + " :"
 								+ e.getMessage());
 						rejectCDR(line, CDRRejectionCauseEnum.TECH_ERR);
@@ -149,6 +151,7 @@ public class MediationJobBean {
 							cdrReader.close();
 						}
 					} catch (Exception e) {
+						log.error(e.getMessage());
 					}
 				} else {
 					try {
@@ -156,6 +159,7 @@ public class MediationJobBean {
 							cdrReader.close();
 						}
 					} catch (Exception e) {
+						log.error(e.getMessage());
 					}
 					if (!cdrFile.delete()) {
 						report += "\r\n cannot delete "

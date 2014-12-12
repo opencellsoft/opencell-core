@@ -82,7 +82,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	}
 
 	public CounterPeriod createPeriod(CounterInstance counterInstance,
-			Date chargeDate,EntityManager em) {
+			Date chargeDate, EntityManager em, User currentUser) {
 		CounterPeriod counterPeriod = new CounterPeriod();
 		counterPeriod.setCounterInstance(counterInstance);
 		Date startDate = counterInstance.getCounterTemplate().getCalendar()
@@ -90,6 +90,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		Date endDate = counterInstance.getCounterTemplate().getCalendar()
 				.nextCalendarDate(startDate);
 		log.info("create counter period from " + startDate + " to " + endDate);
+
 		counterPeriod.setPeriodStartDate(startDate);
 		counterPeriod.setPeriodEndDate(endDate);
 		counterPeriod.setProvider(counterInstance.getProvider());
@@ -103,21 +104,26 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		auditable.setCreated(new Date());
 		auditable.setCreator(counterInstance.getAuditable().getCreator());
 		counterPeriod.setAuditable(auditable);
-		counterPeriodService.create(em,counterPeriod,counterInstance.getAuditable().getCreator(),counterInstance.getProvider());
+		counterPeriodService.create(em, counterPeriod, counterInstance
+				.getAuditable().getCreator(), counterInstance.getProvider());
+
 		counterInstance.getCounterPeriods().add(counterPeriod);
-		update(em,counterInstance);
+		counterInstance.updateAudit(currentUser);
+
 		return counterPeriod;
 	}
 
 	public void updatePeriodValue(Long counterPeriodId, BigDecimal value,
-			EntityManager em) throws BusinessException {
+			EntityManager em, User currentUser) throws BusinessException {
 		CounterPeriod counterPeriod = counterPeriodService.findById(em,
 				counterPeriodId);
+
 		if (counterPeriod == null)
 			throw new BusinessException("CounterPeriod with id="
 					+ counterPeriodId + " does not exists.");
+
 		counterPeriod.setValue(value);
-		counterPeriod.getAuditable().setUpdated(new Date());
-		counterPeriodService.update(em, counterPeriod);
+		counterPeriod.updateAudit(currentUser);
 	}
+
 }

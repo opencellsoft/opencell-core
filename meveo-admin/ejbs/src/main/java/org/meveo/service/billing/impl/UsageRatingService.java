@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -341,15 +342,18 @@ public class UsageRatingService {
 			cachedValue.setUnityNbDecimal(usageChargeTemplate
 					.getUnityNbDecimal());
 			cachedValue.setLastUpdate(new Date());
+
 			if (!cacheContainsCharge) {
 				charges.add(cachedValue);
 				log.info("charge added, we order it");
 				Collections.sort(charges);
 			}
+
 			if (!cacheContainsKey) {
 				log.info("key added to charge cache");
 				chargeCache.put(key, charges);
 			}
+
 			reorderChargeCache(key);
 		}
 	}
@@ -414,11 +418,13 @@ public class UsageRatingService {
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), countryId);
+
 		if (invoiceSubcategoryCountry == null) {
 			throw new BusinessException("nos tax defined for countryId="
 					+ countryId + " in invoice Sub-Category="
 					+ invoiceSubCat.getCode());
 		}
+
 		TradingCurrency currency = edr.getSubscription().getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
@@ -430,24 +436,30 @@ public class UsageRatingService {
 		walletOperation.setWallet(edr.getSubscription().getUserAccount()
 				.getWallet());
 		walletOperation.setCode(chargeInstance.getCode());
+
 		if (deducedQuantity != null) {
 			walletOperation.setQuantity(deducedQuantity);
 		} else {
 			walletOperation.setQuantity(edr.getQuantity());
 		}
+
 		walletOperation.setTaxPercent(tax.getPercent());
 		walletOperation.setStartDate(null);
 		walletOperation.setEndDate(null);
 		walletOperation.setCurrency(currency.getCurrency());
+
 		if (chargeInstance.getCounter() != null) {
 			walletOperation.setCounter(chargeInstance.getCounter());
 		}
+
 		walletOperation
 				.setOfferCode(edr.getSubscription().getOffer().getCode());
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
+
 		// log.info("provider code:" + provider.getCode());
 		ratingService.rateBareWalletOperation(em, walletOperation, null, null,
 				countryId, currency, provider);
+
 		// for AGGREGATED counter we update the price of the previous wallet
 		// Operation to the current price
 		// FIXME: just need to do that if its the first event deduced on the
@@ -480,6 +492,7 @@ public class UsageRatingService {
 				}
 			}
 		}
+
 		return walletOperation;
 	}
 
@@ -492,13 +505,15 @@ public class UsageRatingService {
 	 *         remaining quantity
 	 * @throws BusinessException
 	 */
-	BigDecimal deduceCounter(EDR edr, UsageChargeInstanceCache charge)
-			throws BusinessException {
-		log.info("deduce counter for key " + charge.getCounter().getKey());
+	BigDecimal deduceCounter(EDR edr, UsageChargeInstanceCache charge,
+			User currentUser) throws BusinessException {
+		log.info("Deduce counter for key " + charge.getCounter().getKey());
+
 		BigDecimal deducedQuantity = BigDecimal.ZERO;
 		CounterInstanceCache counterInstanceCache = counterCache.get(charge
 				.getCounter().getKey());
 		CounterPeriodCache periodCache = null;
+
 		if (counterInstanceCache.getCounterPeriods() != null) {
 			for (CounterPeriodCache itemPeriodCache : counterInstanceCache
 					.getCounterPeriods()) {
@@ -507,7 +522,7 @@ public class UsageRatingService {
 						&& itemPeriodCache.getEndDate().after(
 								edr.getEventDate())) {
 					periodCache = itemPeriodCache;
-					log.info("found counter period in cache:" + periodCache);
+					log.info("Found counter period in cache:" + periodCache);
 					break;
 				}
 			}
@@ -515,17 +530,20 @@ public class UsageRatingService {
 			counterInstanceCache
 					.setCounterPeriods(new ArrayList<CounterPeriodCache>());
 		}
+
 		CounterInstance counterInstance = null;
 		if (periodCache == null) {
-			counterInstance = counterInstanceService
-					.findById(counterInstanceCache.getKey());
+			counterInstance = counterInstanceService.findById(em,
+					counterInstanceCache.getKey());
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(
-					counterInstance, edr.getEventDate(), em);
+					counterInstance, edr.getEventDate(), em, currentUser);
 			periodCache = CounterPeriodCache.getInstance(counterPeriod,
 					counterInstance.getCounterTemplate());
 			counterInstanceCache.getCounterPeriods().add(periodCache);
+
 			log.info("created counter period in cache:" + periodCache);
 		}
+
 		synchronized (periodCache) {
 			BigDecimal countedValue = edr.getQuantity().multiply(
 					charge.getUnityMultiplicator());
@@ -537,6 +555,7 @@ public class UsageRatingService {
 				countedValue = countedValue.setScale(rounding,
 						RoundingMode.HALF_UP);
 			}
+
 			if (periodCache.getLevel() == null) {
 				deducedQuantity = countedValue;
 			} else if (periodCache.getValue().compareTo(BigDecimal.ZERO) > 0) {
@@ -553,12 +572,14 @@ public class UsageRatingService {
 				// periodCache.setDbDirty(true);
 				counterInstanceService.updatePeriodValue(
 						periodCache.getCounterPeriodId(),
-						periodCache.getValue(), em);
+						periodCache.getValue(), em, currentUser);
 			}
+
 			// put back the deduced quantity in charge unit
 			deducedQuantity = deducedQuantity.divide(charge
 					.getUnityMultiplicator());
 		}
+
 		return deducedQuantity;
 	}
 
@@ -573,23 +594,24 @@ public class UsageRatingService {
 	 * @throws BusinessException
 	 */
 	public boolean rateEDRonChargeAndCounters(EDR edr,
-			UsageChargeInstanceCache charge) throws BusinessException {
+			UsageChargeInstanceCache charge, User currentUser)
+			throws BusinessException {
 		boolean stopEDRRating = false;
 		BigDecimal deducedQuantity = null;
-		if (charge.getCounter() != null) {
 
+		if (charge.getCounter() != null) {
 			// if the charge is associated to a counter and we can decrement it
-			// then
-			// we rate the charge if not we simply try the next charge
+			// then we rate the charge if not we simply try the next charge
 			// if the counter has been decremented by the full quantity we stop
 			// the rating
-			deducedQuantity = deduceCounter(edr, charge);
+			deducedQuantity = deduceCounter(edr, charge, currentUser);
 			if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
 				stopEDRRating = true;
 			}
 		} else {
 			stopEDRRating = true;
 		}
+
 		if (deducedQuantity == null
 				|| deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
@@ -597,11 +619,15 @@ public class UsageRatingService {
 					.findById(em, charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
 					deducedQuantity, charge, chargeInstance, provider);
+
 			if (deducedQuantity != null) {
 				edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
 				walletOperation.setQuantity(deducedQuantity);
 			}
-			walletOperationService.create(em, walletOperation, null, provider);
+
+			walletOperationService.create(em, walletOperation, currentUser,
+					provider);
+
 			// handle associated edr creation
 			if (charge.getTemplateCache().isEdrTemplate()
 					&& (charge.getTemplateCache().getConditionEL() == null
@@ -628,9 +654,11 @@ public class UsageRatingService {
 						walletOperation)));
 				newEdr.setStatus(EDRStatusEnum.OPEN);
 				newEdr.setSubscription(edr.getSubscription());
-				edrService.create(em, newEdr, null, provider);
+
+				edrService.create(em, newEdr, currentUser, provider);
 			}
 		}
+
 		return stopEDRRating;
 	}
 
@@ -642,7 +670,7 @@ public class UsageRatingService {
 	// TODO: this is only for postpaid wallets, for prepaid we dont need to
 	// check counters
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void ratePostpaidUsage(EDR edr) {
+	public void ratePostpaidUsage(EDR edr, User currentUser) {
 		BigDecimal originalQuantity = edr.getQuantity();
 
 		log.info("Rating EDR={}", edr);
@@ -693,7 +721,7 @@ public class UsageRatingService {
 											log.debug("found matchig charge inst : id="
 													+ charge.getChargeInstanceId());
 											edrIsRated = rateEDRonChargeAndCounters(
-													edr, charge);
+													edr, charge, currentUser);
 											if (edrIsRated) {
 												edr.setStatus(EDRStatusEnum.RATED);
 												break;
