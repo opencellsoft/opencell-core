@@ -10,38 +10,52 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-   	
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{measurementBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="body">
 
-			
-			<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
-			<hf:searchPanel label="#{messages['menu.measuredValues']}" columns="3" backingBean="#{measurementBean}">
-				<hf:searchField label="#{messages['entity.measuredvalue.measurementPeriod']}" field="measurementPeriod" />
-				<hf:searchField label="#{messages['entity.measuredvalue.date']}" field="date" />
-				<hf:searchField label="#{messages['entity.measuredvalue.value']}" field="value" />
-			</hf:searchPanel>
-			<!-- ===================================== SEARCH USERS RESULTS ================================= -->
 
-			<hftl:dataList backingBean="#{measurementBean}">
-				<!-- <cftl:column label="#{messages['entity.measurement.code']}"
+		<!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+		<hf:searchPanel label="#{messages['menu.measuredValues']}" columns="3"
+			backingBean="#{measurementBean}">
+			<hf:searchField
+				label="#{messages['entity.measuredvalue.measurementPeriod']}"
+				field="measurementPeriod" />
+			<hf:searchField label="#{messages['entity.measuredvalue.date']}"
+				field="date" />
+			<hf:searchField label="#{messages['entity.measuredvalue.value']}"
+				field="value" />
+		</hf:searchPanel>
+		<!-- ===================================== SEARCH USERS RESULTS ================================= -->
+
+		<hftl:dataList backingBean="#{measurementBean}">
+			<!-- <cftl:column label="#{messages['entity.measurement.code']}"
 					field="code" /> -->
-				<hftl:column
-					label="#{messages['entity.measuredvalue.measurableQuantity']}"
-					field="measurableQuantity" childField="code" />
+			<hftl:column
+				label="#{messages['entity.measuredvalue.measurableQuantity']}"
+				field="measurableQuantity" childField="code" />
 
-				<p:column
-					headerText="#{messages['entity.measuredvalue.measurementPeriod']}">
-					<h:outputText value="#{messages[entity.measurementPeriod.label]}"></h:outputText>
-				</p:column>
-				<hftl:column label="#{messages['entity.measuredvalue.date']}"
-					field="date" isDate="true" />
-				<hftl:column label="#{messages['entity.measuredvalue.value']}"
-					field="value" />
-				<hftl:actionsColumn editView="/pages/reporting/dwh/measuredValueDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"  />
-			</hftl:dataList>
+			<p:column
+				headerText="#{messages['entity.measuredvalue.measurementPeriod']}">
+				<h:outputText value="#{messages[entity.measurementPeriod.label]}"></h:outputText>
+			</p:column>
+			<hftl:column label="#{messages['entity.measuredvalue.date']}"
+				field="date" isDate="true" />
+			<hftl:column label="#{messages['entity.measuredvalue.value']}"
+				field="value" />
+			<hftl:actionsColumn
+				editView="/pages/reporting/dwh/measuredValueDetail.xhtml"
+				permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" />
+		</hftl:dataList>
 
 	</ui:define>
 </ui:composition>
