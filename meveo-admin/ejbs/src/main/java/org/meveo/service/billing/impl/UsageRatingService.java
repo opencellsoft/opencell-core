@@ -429,6 +429,7 @@ public class UsageRatingService {
 				.getBillingAccount().getCustomerAccount().getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		walletOperation.setChargeInstance(chargeInstance);
+		walletOperation.setUnityDescription(chargeInstance.getUnityDescription());
 		walletOperation.setSeller(edr.getSubscription().getUserAccount()
 				.getBillingAccount().getCustomerAccount().getCustomer()
 				.getSeller());

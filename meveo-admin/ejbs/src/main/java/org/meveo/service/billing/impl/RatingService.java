@@ -37,6 +37,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -44,6 +45,7 @@ import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.SimpleELResolver;
@@ -198,6 +200,8 @@ public class RatingService {
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
+		} else if (chargeInstance instanceof UsageChargeInstance){
+			result.setUnityDescription(((UsageChargeInstance)chargeInstance).getUnityDescription());
 		}
 
 		Provider provider = chargeInstance.getProvider();

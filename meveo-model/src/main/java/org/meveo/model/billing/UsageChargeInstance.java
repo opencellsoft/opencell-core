@@ -43,6 +43,9 @@ public class UsageChargeInstance extends ChargeInstance {
 	@JoinColumn(name = "COUNTER_ID")
 	private CounterInstance counter;
 
+	@Column(name = "UNITY_DESCRIPTION", length = 20)
+	private String unityDescription;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "LAST_UPDATE")
 	private Date lastUpdate;
@@ -64,6 +67,14 @@ public class UsageChargeInstance extends ChargeInstance {
 
 	public void setCounter(CounterInstance counter) {
 		this.counter = counter;
+	}
+
+	public String getUnityDescription() {
+		return unityDescription;
+	}
+
+	public void setUnityDescription(String unityDescription) {
+		this.unityDescription = unityDescription;
 	}
 
 	public Date getLastUpdate() {

@@ -70,6 +70,9 @@ public class WalletOperation extends BusinessEntity {
 	@JoinColumn(name = "CHARGE_INSTANCE_ID")
 	private ChargeInstance chargeInstance;
 
+	@Column(name = "UNITY_DESCRIPTION", length = 20)
+	private String unityDescription;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CURRENCY_ID")
 	private Currency currency;
@@ -173,6 +176,14 @@ public class WalletOperation extends BusinessEntity {
 
 	public void setChargeInstance(ChargeInstance chargeInstance) {
 		this.chargeInstance = chargeInstance;
+	}
+
+	public String getUnityDescription() {
+		return unityDescription;
+	}
+
+	public void setUnityDescription(String unityDescription) {
+		this.unityDescription = unityDescription;
 	}
 
 	public Currency getCurrency() {

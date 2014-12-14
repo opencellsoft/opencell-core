@@ -71,6 +71,8 @@ public class UsageChargeInstanceService extends
 		usageChargeInstance.setAmountWithTax(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		usageChargeInstance.setServiceInstance(serviceInstance);
+		usageChargeInstance.setUnityDescription(serviceUsageChargeTemplate
+				.getChargeTemplate().getUnityDescription());
 		usageChargeInstance.setSeller(seller);
 		usageChargeInstance.setCountry(subscription.getUserAccount()
 				.getBillingAccount().getTradingCountry());
