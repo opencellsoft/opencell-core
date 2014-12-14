@@ -42,6 +42,13 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 	}
 
 	
+
+	
+	public MeasuredValue getByDate(Date date, MeasurementPeriodEnum period,
+			MeasurableQuantity mq){
+		return getByDate(getEntityManager(), date, period, mq);
+	}
+	
 	public MeasuredValue getByDate(EntityManager em,Date date, MeasurementPeriodEnum period,
 			MeasurableQuantity mq){
 		MeasuredValue result=null;

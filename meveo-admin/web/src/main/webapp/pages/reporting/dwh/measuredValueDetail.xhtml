@@ -32,46 +32,127 @@
 					<p:panelGrid columns="4">
 
 						<p:panelGrid columns="2">
+							<p:outputLabel for="measurableQuantityCode"
+								value="#{messages['entity.measuredvalue.measurableQuantityCode']}"></p:outputLabel>
+							<p:selectOneMenu id="measurableQuantityCode" required="true"
+								value="#{measurementBean.measurableQuantityCode}"
+								converter="omnifaces.SelectItemsConverter" style="width: 150px">
+								<f:selectItems value="#{measurementBean.getMeasurableQuantityCodes()}"
+									var="obj" itemValue="#{obj}"
+									itemLabel="#{obj}"></f:selectItems>
+								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
+							</p:selectOneMenu>
+						</p:panelGrid>
+						
+						
+						<p:panelGrid columns="2" rendered="#{measurementBean.measurableQuantity != null}">
 							<p:outputLabel for="measurablePeriod"
 								value="#{messages['entity.measuredvalue.measurementPeriod']}"></p:outputLabel>
 							<p:selectOneMenu id="measurablePeriod" required="true"
 								value="#{measurementBean.measuredPeriod}"
 								converter="omnifaces.SelectItemsConverter" style="width: 150px">
+								<f:selectItem itemLabel="" itemValue="" />
 								<f:selectItems value="#{measurementBean.getMeasurePeriods()}"
 									var="obj" itemValue="#{obj}"
 									itemLabel="#{messages['enum.measurementperiod.'.concat(obj)]}"></f:selectItems>
+								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
 						</p:panelGrid>
-						<p:panelGrid columns="2">
+						<p:panelGrid columns="2" rendered="#{measurementBean.measurableQuantity != null}">
 							<p:outputLabel for="selectedDate"
 								value="#{messages['commons.date']}" />
-
 							<p:calendar id="selectedDate"
 								value="#{measurementBean.selectedDate}" required="true"
-								pattern="MMMM yyyy" />
+								pattern="MMMM yyyy">
+								<p:ajax event="dateSelect" update=":measurementForm"></p:ajax>
+							</p:calendar>
 						</p:panelGrid>
-
-						<p:panelGrid columns="2">
+						
+						<p:commandButton value="Display Table" 
+							action="#{measurementBean.generateMVModel()}"
+							update=":mqTableForm " rendered="#{(measurementBean.measurableQuantity != null)  and (measurementBean.selectedDate != null)}" />
+						
+						</p:panelGrid>
+					<p:panelGrid columns="4">
+						<p:panelGrid columns="2"  rendered="#{measurementBean.measurableQuantityCode != null}">
 							<p:outputLabel for="dimension1Filter"
 								value="#{messages['entity.measurablequantity.dimension1']}"></p:outputLabel>
 							<p:selectOneMenu id="dimension1Filter"
 								value="#{measurementBean.dimension1Filter}"
-								converter="omnifaces.SelectItemsConverter">
+								converter="omnifaces.SelectItemsConverter"
+								rendered="#{measurementBean.measurableQuantity == null}"
+								>
 								<f:selectItem itemLabel="" itemValue="" />
-								<f:selectItems value="#{measurementBean.dimension1List}"
+								<f:selectItems value="#{measurementBean.getDimensionList(1)}"
 									var="obj" itemValue="#{obj}"></f:selectItems>
+								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
 							</p:selectOneMenu>
+							<p:outputLabel
+								value="#{measurementBean.dimension1Filter}" 
+								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
+							
 						</p:panelGrid>
-						<p:commandButton value="Generate Table"
-							action="#{measurementBean.generateMVModel()}"
-							update=":mqTableForm " />
 
+
+						<p:panelGrid columns="2"  rendered="#{measurementBean.measurableQuantityCode != null}">
+							<p:outputLabel for="dimension2Filter"
+								value="#{messages['entity.measurablequantity.dimension2']}"></p:outputLabel>
+							<p:selectOneMenu id="dimension2Filter"
+								value="#{measurementBean.dimension2Filter}"
+								converter="omnifaces.SelectItemsConverter"
+								rendered="#{measurementBean.measurableQuantity == null}"
+								>
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{measurementBean.getDimensionList(2)}"
+									var="obj" itemValue="#{obj}"></f:selectItems>
+								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
+							</p:selectOneMenu>
+							<p:outputLabel
+								value="#{measurementBean.dimension2Filter}" 
+								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
+						</p:panelGrid>
+						
+						<p:panelGrid columns="2"  rendered="#{measurementBean.measurableQuantityCode != null}">
+							<p:outputLabel for="dimension3Filter"
+								value="#{messages['entity.measurablequantity.dimension3']}"></p:outputLabel>
+							<p:selectOneMenu id="dimension3Filter"
+								value="#{measurementBean.dimension3Filter}"
+								converter="omnifaces.SelectItemsConverter"
+								rendered="#{measurementBean.measurableQuantity == null}"
+								>
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{measurementBean.getDimensionList(3)}"
+									var="obj" itemValue="#{obj}"></f:selectItems>
+								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
+							</p:selectOneMenu>
+							<p:outputLabel
+								value="#{measurementBean.dimension3Filter}" 
+								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
+						</p:panelGrid>
+						
+						<p:panelGrid columns="2"  rendered="#{measurementBean.measurableQuantityCode != null}">
+							<p:outputLabel for="dimension4Filter"
+								value="#{messages['entity.measurablequantity.dimension4']}"></p:outputLabel>
+							<p:selectOneMenu id="dimension4Filter"
+								value="#{measurementBean.dimension4Filter}"
+								converter="omnifaces.SelectItemsConverter"
+								rendered="#{measurementBean.measurableQuantity == null}"
+								>
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{measurementBean.getDimensionList(4)}"
+									var="obj" itemValue="#{obj}"></f:selectItems>
+								<p:ajax event="valueChange" update=":measurementForm"></p:ajax>
+							</p:selectOneMenu>
+							<p:outputLabel
+								value="#{measurementBean.dimension4Filter}" 
+								rendered="#{measurementBean.measurableQuantity != null}"></p:outputLabel>
+						</p:panelGrid>
 					</p:panelGrid>
 				</h:form>
 
 				<h:form id="mqTableForm">
 					<p:dataTable id="mqTable" value="#{measurementBean.mainMVModel}"
-						var="meas" rendered="#{measurementBean.selectedDate != null}"
+						var="meas" rendered="#{measurementBean.mainMVModel != null}"
 						editable="true" editMode="cell">
 
 						<p:ajax event="cellEdit" listener="#{measurementBean.onCellEdit}"
@@ -79,47 +160,34 @@
 
 						<p:columnGroup type="header">
 							<p:row>
-								<p:column rowspan="3" headerText="#{messages['commons.date']}" />
-							</p:row>
-							<p:row>
-								<c:forEach items="#{measurementBean.getDimension(1)}" var="dim">
-									<p:column colspan="#{measurementBean.getColspan(dim,1)}"
-										headerText="#{dim}"></p:column>
-								</c:forEach>
-							</p:row>
-							<p:row>
-								<c:forEach items="#{measurementBean.getDimension(2)}" var="dim">
-									<p:column headerText="#{dim}"></p:column>
-								</c:forEach>
+								<p:column headerText="#{messages['commons.date']}" />
+								<p:column headerText="#{messages['commons.value']}" />
 							</p:row>
 						</p:columnGroup>
 
-						<c:forEach begin="0"
-							end="#{measurementBean.mainMVModel.get(0).size() -1}" step="1"
-							varStatus="colIndex">
-							<p:column styleClass="ui-editable-column"
-								id="#{'col'.concat(colIndex.index)}">
-								<h:outputText value="#{meas[0].date}"
-									rendered="#{colIndex.index eq 0}">
+						
+						<p:column styleClass="ui-editable-column"
+								id="col0">
+								<h:outputText value="#{meas.date}">
 									<f:convertDateTime
 										pattern="#{paramBean.getProperty('format.date','dd/MM/yyyy')}" />
 								</h:outputText>
-								<h:outputText value="#{meas[colIndex.index].value}"
-									rendered="#{not measurementBean.edit}" />
-								<h:outputText value="#{meas[colIndex.index].value}"
-									rendered="#{measurementBean.edit and (not meas[colIndex.index].measurableQuantity.editable)}" />
+						</p:column>
+						<p:column styleClass="ui-editable-column"
+								id="col1">
+								<h:outputText value="#{meas.value}"
+									rendered="#{not measurementBean.measurableQuantity.editable}" />
 								<p:cellEditor
-									rendered="#{measurementBean.edit and (meas[colIndex.index].measurableQuantity.editable) and (colIndex.index != 0)}">
+									rendered="#{measurementBean.measurableQuantity.editable}">
 									<f:facet name="output">
-										<h:outputText value="#{meas[colIndex.index].value}" />
+										<h:outputText value="#{meas.value}" />
 									</f:facet>
 									<f:facet name="input">
-										<p:inputText value="#{meas[colIndex.index].value}">
+										<p:inputText value="#{meas.value}">
 										</p:inputText>
 									</f:facet>
 								</p:cellEditor>
-							</p:column>
-						</c:forEach>
+						</p:column>
 
 					</p:dataTable>
 

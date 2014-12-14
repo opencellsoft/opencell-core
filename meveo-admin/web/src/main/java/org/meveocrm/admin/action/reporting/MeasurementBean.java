@@ -54,7 +54,7 @@ public class MeasurementBean extends
 
 	ParamBean paramBean = ParamBean.getInstance();
 
-	private List<List<MeasuredValue>> mainMVModel;
+	private List<MeasuredValue> mainMVModel;
 
 	@Inject
 	private MeasurableQuantityService mqService;
@@ -62,8 +62,13 @@ public class MeasurementBean extends
 	private MeasuredValue selectedMV;
 	private String measuredPeriod;
 	private MeasurementPeriodEnum period;
+	private String measurableQuantityCode;
+	private MeasurableQuantity measurableQuantity;
 	private Date selectedDate;
 	private String dimension1Filter;
+	private String dimension2Filter;
+	private String dimension3Filter;
+	private String dimension4Filter;
 
 	public MeasurementBean() {
 		super(MeasuredValue.class);
@@ -78,12 +83,34 @@ public class MeasurementBean extends
 		period = MeasurementPeriodEnum.valueOf(measuredPeriod);
 	}
 
+	public String getMeasurableQuantityCode() {
+		return measurableQuantityCode;
+	}
+
+	public void setMeasurableQuantityCode(String measurableQuantityCode) {
+		if(measurableQuantityCode!=null && !measurableQuantityCode.equals(this.measurableQuantityCode)){
+			this.measurableQuantityCode = measurableQuantityCode;
+			this.dimension1Filter=null;
+			this.dimension2Filter=null;
+			this.dimension3Filter=null;
+			this.dimension4Filter=null;
+			this.mainMVModel=null;
+			selectMeasurableQuantity();
+		}
+		this.measurableQuantityCode = measurableQuantityCode;
+	}
+
+	public MeasurableQuantity getMeasurableQuantity(){
+		return measurableQuantity;
+	}
+	
 	public Date getSelectedDate() {
 		return selectedDate;
 	}
 
 	public void setSelectedDate(Date selectedDate) {
 		this.selectedDate = selectedDate;
+		this.mainMVModel=null;
 	}
 
 	public MeasurementPeriodEnum[] getMeasuredPeriodEnums() {
@@ -104,16 +131,79 @@ public class MeasurementBean extends
 
 	public void setDimension1Filter(String dimension1Filter) {
 		this.dimension1Filter = dimension1Filter;
+		this.dimension2Filter=null;
+		this.dimension3Filter=null;
+		this.dimension4Filter=null;
+		selectMeasurableQuantity();
 	}
 
-	public List<List<MeasuredValue>> getMainMVModel() {
+	public String getDimension2Filter() {
+		return dimension2Filter;
+	}
+
+	public void setDimension2Filter(String dimension2Filter) {
+		this.dimension2Filter = dimension2Filter;
+		this.dimension3Filter=null;
+		this.dimension4Filter=null;
+		selectMeasurableQuantity();
+	}
+
+	public String getDimension3Filter() {
+		return dimension3Filter;
+	}
+
+	public void setDimension3Filter(String dimension3Filter) {
+		this.dimension3Filter = dimension3Filter;
+		this.dimension4Filter=null;
+		selectMeasurableQuantity();
+	}
+
+	public String getDimension4Filter() {
+		return dimension4Filter;
+	}
+
+	public void setDimension4Filter(String dimension4Filter) {
+		this.dimension4Filter = dimension4Filter;
+		selectMeasurableQuantity();
+	}
+
+	public List<MeasuredValue> getMainMVModel() {
+		log.info("mainMVModel:"+(mainMVModel==null?"null":mainMVModel.size()));
 		return mainMVModel;
 	}
 
-	public void setMainMVModel(List<List<MeasuredValue>> mainMVModel) {
-		this.mainMVModel = mainMVModel;
+	public List<String> getMeasurableQuantityCodes(){
+		List<MeasurableQuantity> mqlist = mqService.list();
+		List<String> codes = new ArrayList<String>();
+		for(MeasurableQuantity mq:mqlist){
+			if(!codes.contains(mq.getCode())){
+				codes.add(mq.getCode());
+			}
+		}
+		Collections.sort(codes);
+		return codes;
 	}
-
+	
+	
+	private void selectMeasurableQuantity(){
+		List<MeasurableQuantity> mqlist = null;
+		if(StringUtils.isBlank(measurableQuantityCode)){
+			measurableQuantity=null;
+		} else {
+			mqlist=mqService.listByCodeAndDim(measurableQuantityCode,
+					dimension1Filter,dimension2Filter,dimension3Filter,dimension4Filter);
+			if(mqlist.size()==1){
+				measurableQuantity=mqlist.get(0);
+				dimension1Filter=measurableQuantity.getDimension1();
+				dimension2Filter=measurableQuantity.getDimension2();
+				dimension3Filter=measurableQuantity.getDimension3();
+				dimension4Filter=measurableQuantity.getDimension4();
+			} else {
+				measurableQuantity=null;
+			}
+		}
+	}
+	
 	@SuppressWarnings("unused")
 	public List<String> getDimension(Integer i) throws NoSuchFieldException,
 			SecurityException, IllegalArgumentException, IllegalAccessException {
@@ -248,25 +338,11 @@ public class MeasurementBean extends
 	}
 
 	public void generateMVModel() throws ParseException {
-		if (selectedDate != null) {
-			mainMVModel = new ArrayList<List<MeasuredValue>>();
+		if (measurableQuantity!=null && selectedDate != null) {
+			mainMVModel = new ArrayList<MeasuredValue>();
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(selectedDate);
 
-			List<MeasurableQuantity> mqList = new ArrayList<MeasurableQuantity>();
-
-			if (dimension1Filter != null) {
-				if (!dimension1Filter.isEmpty()) {
-					for (MeasurableQuantity mq : mqService.list()) {
-						if (mq.getDimension1().equals(dimension1Filter)) {
-							mqList.add(mq);
-						}
-					}
-					mqList = sortMQList(mqList);
-				} else {
-					mqList = sortMQList(mqService.list());
-				}
-			}
 			int daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
 			for (int i = 0; i < daysInMonth; i++) {
@@ -277,62 +353,18 @@ public class MeasurementBean extends
 								+ String.valueOf(cal.get(Calendar.MONTH) + 1),
 						2, '0')
 						+ "/" + String.valueOf(cal.get(Calendar.YEAR));
-
-				MeasuredValue mv = new MeasuredValue();
-
-				Date mvDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-						.parse(dateCol);
-				mv.setDate(mvDate);
-				List<MeasuredValue> dateList = new ArrayList<MeasuredValue>();
-
-				dateList.add(mv);
-
-				for (int j = 0; j < mqList.size(); j++) {
-					MeasuredValue newMV = new MeasuredValue();
-					newMV.setDate(mvDate);
-					newMV.setMeasurableQuantity(mqList.get(j));
-					newMV.setMeasurementPeriod(period);
-					dateList.add(newMV);
-
+				Date date =new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+				.parse(dateCol);
+				MeasuredValue mv= measuredValueService.getByDate(date, period, measurableQuantity);
+				if(mv==null){
+					mv = new MeasuredValue();
+					mv.setMeasurableQuantity(measurableQuantity);
+					mv.setDate(date);
+					mv.setMeasurementPeriod(period);
 				}
-				mainMVModel.add(dateList);
-			}
-
-			for (MeasuredValue mv : getPersistenceService().list()) {
-				if (dimension1Filter != null) {
-					if (!dimension1Filter.isEmpty()) {
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(mv.getDate());
-						if (cal.get(Calendar.MONTH) == calendar
-								.get(Calendar.MONTH)
-								&& cal.get(Calendar.YEAR) == calendar
-										.get(Calendar.YEAR)
-								&& mv.getMeasurementPeriod() == period) {
-							mainMVModel.get(
-									calendar.get(Calendar.DAY_OF_MONTH) - 1)
-									.set(mqList.indexOf(mv
-											.getMeasurableQuantity()) + 1, mv);
-
-						}
-					} else {
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(mv.getDate());
-						if (cal.get(Calendar.MONTH) == calendar
-								.get(Calendar.MONTH)
-								&& cal.get(Calendar.YEAR) == calendar
-										.get(Calendar.YEAR)
-								&& mv.getMeasurementPeriod() == period) {
-							mainMVModel.get(
-									calendar.get(Calendar.DAY_OF_MONTH) - 1)
-									.set(mqList.indexOf(mv
-											.getMeasurableQuantity()) + 1, mv);
-
-						}
-					}
-				}
+				mainMVModel.add(mv);
 			}
 		}
-
 	}
 
 	public String saveMV() throws BusinessException, ParseException {
@@ -351,14 +383,24 @@ public class MeasurementBean extends
 		return null;
 	}
 
-	public List<String> getDimension1List() {
-		List<String> dim1List = new ArrayList<String>();
-		for (MeasurableQuantity mq : mqService.list()) {
-			if (!dim1List.contains(mq.getDimension1())) {
-				dim1List.add(mq.getDimension1());
+	public List<String> getDimensionList(int dim) {
+		List<String> dimList = new ArrayList<String>();
+		if(measurableQuantityCode!=null){
+			List<MeasurableQuantity> mqlist=mqService.listByCode(measurableQuantityCode);
+			for (MeasurableQuantity mq : mqlist) {
+				String dimension="";
+				switch(dim){
+					case 1 : dimension = mq.getDimension1();break;
+					case 2 : dimension = mq.getDimension2();break;
+					case 3 : dimension = mq.getDimension3();break;
+					case 4 : dimension = mq.getDimension4();break;
+				}
+				if (!dimList.contains(dimension)) {
+					dimList.add(dimension);
+				}
 			}
 		}
-		return dim1List;
+		return dimList;
 	}
 
 	public Boolean hasSubDimension(String dimensionName, Integer dimensionNum)
@@ -392,15 +434,14 @@ public class MeasurementBean extends
 	public void onCellEdit(CellEditEvent event) throws BusinessException,
 			ParseException {
 
-		String columnIndex = event
+		/*String columnIndex = event
 				.getColumn()
 				.getColumnKey()
 				.replace(
 						"mqTableForm:mqTable:"
 								+ String.valueOf(event.getRowIndex()) + ":col",
-						"");
-		selectedMV = mainMVModel.get(event.getRowIndex()).get(
-				Integer.parseInt(columnIndex));
+						"");*/
+		selectedMV = mainMVModel.get(event.getRowIndex());
 
 		saveMV();
 
@@ -475,10 +516,10 @@ public class MeasurementBean extends
 
 		}
 
-		for (List<MeasuredValue> mv : mainMVModel) {
+		//for (List<MeasuredValue> mv : mainMVModel) {
 			row = sheet.createRow(j);
 			int mvCounter = 0;
-			for (MeasuredValue subMV : mv) {
+			for (MeasuredValue subMV : mainMVModel) {
 				Cell cell = row.createCell(mvCounter);
 				if (mvCounter == 0) {
 					cell.setCellValue(sdf1.format(subMV.getDate()));
@@ -496,7 +537,7 @@ public class MeasurementBean extends
 			}
 			j++;
 
-		}
+		//}
 
 		HSSFRow reportTitleRow = sheet.getRow(0);
 		HSSFCell reportTitleCell = reportTitleRow.createCell(0);
@@ -532,13 +573,13 @@ public class MeasurementBean extends
 	
 
 	protected String getDefaultViewName() {
-		return "measuredValues";
+		return "measuredValueDetail";
 	}
 	
 
 	@Override
 	protected String getListViewName() {
-		return "measuredValues";
+		return "measuredValueDetail";
 	}
 
 }

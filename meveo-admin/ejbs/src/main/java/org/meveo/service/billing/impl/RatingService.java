@@ -856,7 +856,18 @@ public class RatingService {
 			WalletOperation bareOperation, UserAccount ua) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
-		userMap.put("ua", ua);
+		if(expression.indexOf("ua.")>=0){
+			userMap.put("ua", ua);
+		}
+		if(expression.indexOf("ba.")>=0){
+			userMap.put("ba", ua.getBillingAccount());
+		}
+		if(expression.indexOf("ca.")>=0){
+			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
+		}
+		if(expression.indexOf("c.")>=0){
+			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+		}
 		// FIXME: externilize the resolver to instance variable and simply set
 		// the bare operation
 		// before evaluation
