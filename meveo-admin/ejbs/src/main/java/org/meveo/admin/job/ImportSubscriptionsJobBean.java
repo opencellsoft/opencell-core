@@ -32,7 +32,6 @@ import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.admin.impl.SubscriptionImportHistoService;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -63,9 +62,6 @@ public class ImportSubscriptionsJobBean {
 
 	@Inject
 	private SubscriptionImportService subscriptionImportService;
-
-	@Inject
-	private UserService userService;
 
 	@Inject
 	@MeveoJpaForJobs
@@ -118,7 +114,7 @@ public class ImportSubscriptionsJobBean {
 			try {
 				log.info("InputFiles job {} in progress...", file.getName());
 				currentFile = FileUtils.addExtension(file, ".processing");
-				importFile(currentFile, file.getName(), provider);
+				importFile(currentFile, file.getName(), currentUser);
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job {} done.", file.getName());
 				result.registerSucces();
@@ -134,9 +130,11 @@ public class ImportSubscriptionsJobBean {
 		}
 	}
 
-	public void importFile(File file, String fileName, Provider provider)
+	public void importFile(File file, String fileName, User currentUser)
 			throws JAXBException, Exception {
 		log.info("start import file :" + fileName);
+
+		Provider provider = currentUser.getProvider();
 		subscriptionsError = new Subscriptions();
 		subscriptionsWarning = new Subscriptions();
 		nbSubscriptions = 0;
@@ -148,13 +146,11 @@ public class ImportSubscriptionsJobBean {
 		subscriptionImportHisto = new SubscriptionImportHisto();
 		subscriptionImportHisto.setExecutionDate(new Date());
 		subscriptionImportHisto.setFileName(fileName);
-		User userJob = userService.findById(em,
-				new Long(param.getProperty("connectorCRM.userId", "1")));
 
 		if (file.length() < 100) {
 			createSubscriptionWarning(null, "Empty file.");
 			generateReport(fileName, provider);
-			createHistory(provider, userJob);
+			createHistory(currentUser);
 			return;
 		}
 
@@ -167,12 +163,14 @@ public class ImportSubscriptionsJobBean {
 		if (nbSubscriptions == 0) {
 			createSubscriptionWarning(null, "Empty file.");
 		}
+
 		for (org.meveo.model.jaxb.subscription.Subscription subscrip : subscriptions
 				.getSubscription()) {
 			try {
 				i++;
 				CheckedSubscription checkSubscription = subscriptionCheckError(
 						provider, subscrip);
+
 				if (checkSubscription == null) {
 					createSubscriptionError(subscrip,
 							"Error in checkSubscription");
@@ -182,10 +180,10 @@ public class ImportSubscriptionsJobBean {
 							+ ", code:" + subscrip.getCode() + ", status:Error");
 					break;
 				}
-				
+
 				nbSubscriptionsCreated += subscriptionImportService
-						.importSubscription(em, checkSubscription, provider,
-								subscrip, fileName, userJob, i);
+						.importSubscription(em, checkSubscription, subscrip,
+								fileName, currentUser, i);
 			} catch (ImportIgnoredException ie) {
 				log.info("file:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
@@ -212,12 +210,12 @@ public class ImportSubscriptionsJobBean {
 		}
 
 		generateReport(fileName, provider);
-		createHistory(provider, userJob);
+		createHistory(currentUser);
 		log.info("end import file ");
 	}
 
-	private void createHistory(Provider provider, User currentUser)
-			throws Exception {
+	private void createHistory(User currentUser) throws Exception {
+		Provider provider = currentUser.getProvider();
 		subscriptionImportHisto.setLinesRead(nbSubscriptions);
 		subscriptionImportHisto.setLinesInserted(nbSubscriptionsCreated);
 		subscriptionImportHisto.setLinesRejected(nbSubscriptionsError);

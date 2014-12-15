@@ -45,7 +45,6 @@ import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.SimpleELResolver;
@@ -200,8 +199,9 @@ public class RatingService {
 
 		if (chargeInstance instanceof RecurringChargeInstance) {
 			result.setSubscriptionDate(subscriptionDate);
-		} else if (chargeInstance instanceof UsageChargeInstance){
-			result.setUnityDescription(((UsageChargeInstance)chargeInstance).getUnityDescription());
+		} else if (chargeInstance instanceof UsageChargeInstance) {
+			result.setUnityDescription(((UsageChargeInstance) chargeInstance)
+					.getUnityDescription());
 		}
 
 		Provider provider = chargeInstance.getProvider();
@@ -860,17 +860,18 @@ public class RatingService {
 			WalletOperation bareOperation, UserAccount ua) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("op", bareOperation);
-		if(expression.indexOf("ua.")>=0){
+		if (expression.indexOf("ua.") >= 0) {
 			userMap.put("ua", ua);
 		}
-		if(expression.indexOf("ba.")>=0){
+		if (expression.indexOf("ba.") >= 0) {
 			userMap.put("ba", ua.getBillingAccount());
 		}
-		if(expression.indexOf("ca.")>=0){
+		if (expression.indexOf("ca.") >= 0) {
 			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
 		}
-		if(expression.indexOf("c.")>=0){
-			userMap.put("c", ua.getBillingAccount().getCustomerAccount().getCustomer());
+		if (expression.indexOf("c.") >= 0) {
+			userMap.put("c", ua.getBillingAccount().getCustomerAccount()
+					.getCustomer());
 		}
 		// FIXME: externilize the resolver to instance variable and simply set
 		// the bare operation

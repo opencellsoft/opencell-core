@@ -760,9 +760,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			WalletOperation chargeApplication = rateSubscription(em,
 					chargeInstance, nextapplicationDate);
 			create(em, chargeApplication, creator, chargeInstance.getProvider());
-
 			chargeInstance.setNextChargeDate(nextapplicationDate);
-
 		} else {
 			chargeInstance.setNextChargeDate(nextapplicationDate);
 		}

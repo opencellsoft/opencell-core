@@ -23,7 +23,6 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
-
 @Stateless
 public class CatalogImportJobBean {
 
@@ -67,25 +66,29 @@ public class CatalogImportJobBean {
 					+ File.separator;
 
 			inputDir = catalogDir + "input";
-			String fileExtension = parambean.getProperty("catalogImport.extensions",
-					"xls");
+			String fileExtension = parambean.getProperty(
+					"catalogImport.extensions", "xls");
 			ArrayList<String> fileExtensions = new ArrayList<String>();
 			fileExtensions.add(fileExtension);
 			outputDir = catalogDir + "output";
 			rejectDir = catalogDir + "reject";
+			
 			// TODO creer les reps
 			File f = new File(inputDir);
 			if (!f.exists()) {
 				f.mkdirs();
 			}
+			
 			f = new File(outputDir);
 			if (!f.exists()) {
 				f.mkdirs();
 			}
+			
 			f = new File(rejectDir);
 			if (!f.exists()) {
 				f.mkdirs();
 			}
+			
 			report = "";
 			file = FileUtils.getFileForParsing(inputDir, fileExtensions);
 			if (file != null) {
@@ -93,8 +96,9 @@ public class CatalogImportJobBean {
 				report = "parse " + fileName;
 				file = FileUtils.addExtension(file, ".processing");
 				inputFileStream = new FileInputStream(file);
-				
-				int processed= pricePlanService.importFromExcel(em, inputFileStream, currentUser, provider);
+
+				int processed = pricePlanService.importFromExcel(em,
+						inputFileStream, currentUser, provider);
 
 				result.setNbItemsToProcess(processed);
 
@@ -125,7 +129,7 @@ public class CatalogImportJobBean {
 								+ file.getAbsolutePath();
 					}
 				}
-
+				
 				result.setReport(report);
 			} else {
 				log.info("No file to process.");
@@ -141,6 +145,7 @@ public class CatalogImportJobBean {
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			}
+			
 			try {
 				if (outputFileWriter != null) {
 					outputFileWriter.close();
@@ -151,6 +156,5 @@ public class CatalogImportJobBean {
 			}
 		}
 	}
-
 
 }

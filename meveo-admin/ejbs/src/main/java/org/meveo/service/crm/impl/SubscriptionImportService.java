@@ -55,10 +55,12 @@ public class SubscriptionImportService {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public int importSubscription(EntityManager em,
-			CheckedSubscription checkSubscription, Provider provider,
+			CheckedSubscription checkSubscription,
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
-			String fileName, User userJob, int i) throws BusinessException,
+			String fileName, User currentUser, int i) throws BusinessException,
 			SubscriptionServiceException, ImportIgnoredException {
+
+		Provider provider = currentUser.getProvider();
 
 		Subscription subscription = checkSubscription.subscription;
 		if (subscription != null) {
@@ -88,7 +90,7 @@ public class SubscriptionImportService {
 						DateUtils.parseDateWithPattern(subscrip.getStatus()
 								.getDate(), paramBean.getProperty(
 								"connectorCRM.dateFormat", "dd/MM/yyyy")),
-						subscriptionTerminationType, userJob);
+						subscriptionTerminationType, currentUser);
 				log.info("File:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
 						+ subscrip.getCode() + ", status:Terminated");
@@ -117,7 +119,7 @@ public class SubscriptionImportService {
 				"connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
-		subscriptionService.create(em, subscription, userJob, provider);
+		subscriptionService.create(em, subscription, currentUser, provider);
 
 		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i
 				+ ", code:" + subscrip.getCode() + ", status:Created");
@@ -151,7 +153,7 @@ public class SubscriptionImportService {
 				serviceInstance.setQuantity(quantity);
 				serviceInstance.setProvider(provider);
 				serviceInstanceService.serviceInstanciation(em,
-						serviceInstance, userJob);
+						serviceInstance, currentUser);
 				subscription.getServiceInstances().add(serviceInstance);
 
 				if (serviceInst.getRecurringCharges() != null) {
@@ -275,9 +277,9 @@ public class SubscriptionImportService {
 				}
 
 				subscriptionService.setProvider(provider);
-				subscriptionService.update(em, subscription, userJob);
+				subscriptionService.update(em, subscription, currentUser);
 				serviceInstanceService.serviceActivation(em, serviceInstance,
-						null, null, userJob);
+						null, null, currentUser);
 			} catch (Exception e) {
 				throw new SubscriptionServiceException(subscrip, serviceInst,
 						e.getMessage());
@@ -299,7 +301,7 @@ public class SubscriptionImportService {
 			access.setEndDate(DateUtils.parseDateWithPattern(
 					accessPoint.getEndDate(),
 					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
-			accessService.create(em, access, userJob, provider);
+			accessService.create(em, access, currentUser, provider);
 			log.info("File:" + fileName + ", typeEntity:access, index:" + i
 					+ ", AccessUserId:" + access.getAccessUserId());
 		}

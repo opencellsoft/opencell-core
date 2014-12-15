@@ -73,6 +73,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			result.setUserAccount(userAccount);
 			create(em, result, creator, userAccount.getProvider());
 			userAccount.getCounters().put(counterTemplate.getCode(), result);
+			userAccountService.setProvider(creator.getProvider());
 			userAccountService.update(em, userAccount);
 		} else {
 			result = userAccount.getCounters().get(counterTemplate.getCode());

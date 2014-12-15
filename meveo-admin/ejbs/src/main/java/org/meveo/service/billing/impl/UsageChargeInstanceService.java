@@ -86,6 +86,7 @@ public class UsageChargeInstanceService extends
 							.getUserAccount(), serviceUsageChargeTemplate
 							.getCounterTemplate(), creator);
 			usageChargeInstance.setCounter(counterInstance);
+			setProvider(creator.getProvider());
 			update(em, usageChargeInstance, creator);
 		}
 
@@ -93,13 +94,15 @@ public class UsageChargeInstanceService extends
 	}
 
 	public void activateUsageChargeInstance(
-			UsageChargeInstance usageChargeInstance) {
-		activateUsageChargeInstance(getEntityManager(), usageChargeInstance);
+			UsageChargeInstance usageChargeInstance, User currentUser) {
+		activateUsageChargeInstance(getEntityManager(), usageChargeInstance,
+				currentUser);
 	}
 
 	public void activateUsageChargeInstance(EntityManager em,
-			UsageChargeInstance usageChargeInstance) {
+			UsageChargeInstance usageChargeInstance, User currentUser) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+		setProvider(currentUser.getProvider());
 		update(em, usageChargeInstance);
 		usageRatingService.updateCache(usageChargeInstance);
 	}

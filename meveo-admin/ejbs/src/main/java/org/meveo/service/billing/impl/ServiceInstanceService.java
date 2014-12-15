@@ -154,8 +154,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				serviceCode, subscription);
 		if (serviceInst != null) {
 			throw new IncorrectServiceInstanceException(
-					"service instance already created. service Code="
-							+ serviceInstance.getCode() + ",subscription Code"
+					"Service instance already created. service Code="
+							+ serviceInstance.getCode() + ", subscription Code"
 							+ subscription.getCode());
 		}
 
@@ -278,6 +278,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					.getSeller());
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			recurringChargeInstance.setStatusDate(new Date());
+			recurringChargeInstanceService.setProvider(creator.getProvider());
 			recurringChargeInstanceService.update(em, recurringChargeInstance);
 			recurringChargeInstanceService.recurringChargeApplication(em,
 					recurringChargeInstance, creator);
@@ -291,7 +292,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 							.getDurationTermInMonth();
 				}
 			}
-
 		}
 
 		// set end Agreement Date
@@ -321,22 +321,23 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 						serviceInstance.getQuantity(), creator);
 				oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				oneShotChargeInstance.setStatusDate(new Date());
+				oneShotChargeInstanceService.setProvider(creator.getProvider());
 				oneShotChargeInstanceService.update(em, oneShotChargeInstance);
 			}
 		} else {
-			log.debug("serviceActivation: subscription charges are not applied");
+			log.debug("ServiceActivation: subscription charges are not applied.");
 		}
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
 			usageChargeInstanceService.activateUsageChargeInstance(em,
-					usageChargeInstance);
+					usageChargeInstance, creator);
 		}
 
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		serviceInstance.setStatusDate(new Date());
+		setProvider(creator.getProvider());
 		update(em, serviceInstance, creator);
-
 	}
 
 	public void terminateService(ServiceInstance serviceInstance,

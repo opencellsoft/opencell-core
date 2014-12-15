@@ -22,6 +22,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.crm.CustomerBrand;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -34,7 +35,8 @@ public class CustomerBrandService extends PersistenceService<CustomerBrand> {
 		try {
 			return (CustomerBrand) getEntityManager()
 					.createQuery(
-							"from " + CustomerBrand.class.getSimpleName()
+							"from "
+									+ CustomerBrand.class.getSimpleName()
 									+ " where code=:code and provider=:provider")
 					.setParameter("code", code)
 					.setParameter("provider", getCurrentProvider())
@@ -44,12 +46,13 @@ public class CustomerBrandService extends PersistenceService<CustomerBrand> {
 		}
 	}
 
-	public CustomerBrand findByCode(EntityManager em, String code) {
+	public CustomerBrand findByCode(EntityManager em, String code,
+			Provider provider) {
 		QueryBuilder qb = new QueryBuilder(CustomerBrand.class, "b");
 
 		try {
 			qb.addCriterion("code", "=", code, true);
-			qb.addCriterion("provider", "=", getCurrentProvider(), true);
+			qb.addCriterionEntity("provider", provider);
 			return (CustomerBrand) qb.getQuery(em).getSingleResult();
 		} catch (NoResultException e) {
 			return null;

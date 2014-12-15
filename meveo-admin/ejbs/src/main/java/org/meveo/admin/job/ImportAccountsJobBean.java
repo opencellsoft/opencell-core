@@ -33,7 +33,6 @@ import org.meveo.model.jaxb.account.WarningUserAccount;
 import org.meveo.model.jaxb.account.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.admin.impl.AccountImportHistoService;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.AccountImportService;
@@ -50,9 +49,6 @@ public class ImportAccountsJobBean {
 	@Inject
 	@MeveoJpaForJobs
 	private EntityManager em;
-
-	@Inject
-	private UserService userService;
 
 	@Inject
 	private BillingAccountService billingAccountService;
@@ -113,12 +109,13 @@ public class ImportAccountsJobBean {
 		int numberOfFiles = files.size();
 		log.info("InputFiles job " + numberOfFiles + " to import");
 		result.setNbItemsToProcess(numberOfFiles);
+
 		for (File file : files) {
 			File currentFile = null;
 			try {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
-				importFile(currentFile, file.getName(), provider);
+				importFile(currentFile, file.getName(), currentUser);
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
 				result.registerSucces();
@@ -149,9 +146,11 @@ public class ImportAccountsJobBean {
 		return files;
 	}
 
-	public void importFile(File file, String fileName, Provider provider)
+	public void importFile(File file, String fileName, User currentUser)
 			throws JAXBException, Exception {
 		log.info("start import file :" + fileName);
+
+		Provider provider = currentUser.getProvider();
 		billingAccountsWarning = new BillingAccounts();
 		billingAccountsError = new BillingAccounts();
 		nbBillingAccounts = 0;
@@ -169,12 +168,11 @@ public class ImportAccountsJobBean {
 
 		accountImportHisto.setExecutionDate(new Date());
 		accountImportHisto.setFileName(fileName);
-		User userJob = userService.findById(em,
-				new Long(param.getProperty("connectorCRM.userId", "1")));
+
 		if (file.length() < 83) {
 			createBillingAccountWarning(null, "Fichier vide");
 			generateReport(fileName, provider);
-			createHistory(provider, userJob);
+			createHistory(provider, currentUser);
 			return;
 		}
 		BillingAccounts billingAccounts = (BillingAccounts) JAXBUtils
@@ -204,7 +202,7 @@ public class ImportAccountsJobBean {
 					billingAccount = billingAccountService.findByCode(em,
 							billAccount.getCode(), provider);
 					billingAccount = accountImportService.importBillingAccount(
-							em, billAccount, provider, userJob);
+							em, billAccount, provider, currentUser);
 					log.info("file6:" + fileName
 							+ ", typeEntity:BillingAccount, index:" + i
 							+ ", code:" + billAccount.getCode()
@@ -268,7 +266,7 @@ public class ImportAccountsJobBean {
 					try {
 						accountImportService.importUserAccount(em,
 								billingAccount, billAccount, uAccount,
-								provider, userJob);
+								provider, currentUser);
 						log.info("file:"
 								+ fileName
 								+ ", typeEntity:UserAccount,  indexBillingAccount:"
@@ -299,7 +297,7 @@ public class ImportAccountsJobBean {
 			}
 		}
 		generateReport(fileName, provider);
-		createHistory(provider, userJob);
+		createHistory(provider, currentUser);
 		log.info("end import file ");
 	}
 
@@ -311,13 +309,16 @@ public class ImportAccountsJobBean {
 		ErrorBillingAccount errorBillingAccount = new ErrorBillingAccount();
 		errorBillingAccount.setCause(cause);
 		errorBillingAccount.setCode(billAccount.getCode());
+
 		if (!billingAccountsError.getBillingAccount().contains(billAccount)
 				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
 			billingAccountsError.getBillingAccount().add(billAccount);
 		}
+
 		if (billingAccountsError.getErrors() == null) {
 			billingAccountsError.setErrors(new Errors());
 		}
+
 		billingAccountsError.getErrors().getErrorBillingAccount()
 				.add(errorBillingAccount);
 	}
@@ -331,9 +332,11 @@ public class ImportAccountsJobBean {
 		errorUserAccount.setCause(cause);
 		errorUserAccount.setCode(uAccount.getCode());
 		errorUserAccount.setBillingAccountCode(billAccount.getCode());
+
 		if (billingAccountsError.getErrors() == null) {
 			billingAccountsError.setErrors(new Errors());
 		}
+
 		if (!billingAccountsError.getBillingAccount().contains(billAccount)
 				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
 			billingAccountsError.getBillingAccount().add(billAccount);
@@ -352,14 +355,17 @@ public class ImportAccountsJobBean {
 		warningBillingAccount.setCause(cause);
 		warningBillingAccount.setCode(billAccount == null ? "" : billAccount
 				.getCode());
+
 		if (!billingAccountsWarning.getBillingAccount().contains(billAccount)
 				&& "true".equalsIgnoreCase(generateFullCrmReject)
 				&& billAccount != null) {
 			billingAccountsWarning.getBillingAccount().add(billAccount);
 		}
+
 		if (billingAccountsWarning.getWarnings() == null) {
 			billingAccountsWarning.setWarnings(new Warnings());
 		}
+
 		billingAccountsWarning.getWarnings().getWarningBillingAccount()
 				.add(warningBillingAccount);
 	}
@@ -373,13 +379,16 @@ public class ImportAccountsJobBean {
 		warningUserAccount.setCause(cause);
 		warningUserAccount.setCode(uAccount.getCode());
 		warningUserAccount.setBillingAccountCode(billAccount.getCode());
+
 		if (!billingAccountsWarning.getBillingAccount().contains(billAccount)
 				&& "true".equalsIgnoreCase(generateFullCrmReject)) {
 			billingAccountsWarning.getBillingAccount().add(billAccount);
 		}
+
 		if (billingAccountsWarning.getWarnings() == null) {
 			billingAccountsWarning.setWarnings(new Warnings());
 		}
+
 		billingAccountsWarning.getWarnings().getWarningUserAccount()
 				.add(warningUserAccount);
 	}
@@ -392,6 +401,7 @@ public class ImportAccountsJobBean {
 				+ provider.getCode()
 				+ File.separator
 				+ "imports" + File.separator + "accounts" + File.separator;
+
 		if (billingAccountsWarning.getWarnings() != null) {
 			String warningDir = importDir + "output" + File.separator
 					+ "warnings";
@@ -402,6 +412,7 @@ public class ImportAccountsJobBean {
 			JAXBUtils.marshaller(billingAccountsWarning, new File(warningDir
 					+ File.separator + "WARN_" + fileName));
 		}
+
 		if (billingAccountsError.getErrors() != null) {
 			String errorDir = importDir + "output" + File.separator + "errors";
 
@@ -412,7 +423,6 @@ public class ImportAccountsJobBean {
 			JAXBUtils.marshaller(billingAccountsError, new File(errorDir
 					+ File.separator + "ERR_" + fileName));
 		}
-
 	}
 
 	private void createHistory(Provider provider, User userJob)

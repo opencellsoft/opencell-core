@@ -58,10 +58,11 @@ public class CustomerImportService {
 	private CustomerAccountService customerAccountService;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Customer createCustomer(EntityManager em, Provider provider,
-			User userJob, org.meveo.model.admin.Seller seller,
+	public Customer createCustomer(EntityManager em, User currentUser,
+			org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust) {
+		Provider provider = currentUser.getProvider();
 		Customer customer = null;
 
 		if (seller == null) {
@@ -78,30 +79,33 @@ public class CustomerImportService {
 					.findByTradingLanguageCode(em,
 							sell.getTradingLanguageCode(), provider));
 			seller.setProvider(provider);
-			sellerService.create(em, seller, userJob, provider);
+			sellerService.create(em, seller, currentUser, provider);
 		}
+
 		if (customer == null) {
 			customer = new Customer();
 			customer.setCode(cust.getCode());
 			customer.setDescription(cust.getDesCustomer());
 			customer.setCustomerBrand(customerBrandService.findByCode(em,
-					cust.getCustomerBrand()));
+					cust.getCustomerBrand(), provider));
 			customer.setCustomerCategory(customerCategoryService.findByCode(em,
-					cust.getCustomerCategory()));
+					cust.getCustomerCategory(), provider));
 			customer.setSeller(seller);
 			customer.setProvider(provider);
-			customerService.create(em, customer, userJob, provider);
+			customerService.create(em, customer, currentUser, provider);
 		}
+
 		return customer;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createCustomerAccount(EntityManager em, Provider provider,
-			User userJob, Customer customer,
-			org.meveo.model.admin.Seller seller,
+	public void createCustomerAccount(EntityManager em, User currentUser,
+			Customer customer, org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc,
 			org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.Seller sell) {
+
+		Provider provider = currentUser.getProvider();
 
 		CustomerAccount customerAccount = new CustomerAccount();
 		customerAccount.setCode(custAcc.getCode());
@@ -111,6 +115,7 @@ public class CustomerImportService {
 		customerAccount.setPassword(RandomStringUtils.randomAlphabetic(8));
 		customerAccount.setDateStatus(new Date());
 		customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
+
 		Address address = new Address();
 		address.setAddress1(custAcc.getAddress().getAddress1());
 		address.setAddress2(custAcc.getAddress().getAddress2());
@@ -120,6 +125,7 @@ public class CustomerImportService {
 		address.setZipCode("" + custAcc.getAddress().getZipCode());
 		address.setState(custAcc.getAddress().getState());
 		customerAccount.setAddress(address);
+
 		ContactInformation contactInformation = new ContactInformation();
 		contactInformation.setEmail(custAcc.getEmail());
 		contactInformation.setPhone(custAcc.getTel1());
@@ -143,11 +149,12 @@ public class CustomerImportService {
 		}
 
 		customerAccount.setTradingCurrency(tradingCurrencyService
-				.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(),
-						provider));
+				.findByTradingCurrencyCode(em,
+						custAcc.getTradingCurrencyCode(), provider));
 		customerAccount.setProvider(provider);
 		customerAccount.setCustomer(customer);
-		customerAccountService.create(em, customerAccount, userJob, provider);
+		customerAccountService.create(em, customerAccount, currentUser,
+				provider);
 	}
 
 }
