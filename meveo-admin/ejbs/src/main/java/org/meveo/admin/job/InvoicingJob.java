@@ -65,7 +65,6 @@ public class InvoicingJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("execute InvoicingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		invoicingJobBean.execute(result, currentUser);
 		result.close("");

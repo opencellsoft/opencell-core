@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,19 +13,25 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.admin.parse.xls;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Gediminas Ubartas
@@ -33,40 +39,47 @@ import jxl.read.biff.BiffException;
  */
 public class XLSFile implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private File file;
+	private Logger log = LoggerFactory.getLogger(XLSFile.class);
 
-    private List<String[]> contexts;
+	private File file;
+	private List<String[]> contexts;
 
-    public XLSFile(File file) {
-        this.file = file;
-        contexts = new ArrayList<String[]>();
-    }
+	public XLSFile(File file) {
+		this.file = file;
+		contexts = new ArrayList<String[]>();
+	}
 
-    public void parse() throws IOException {
-        Workbook w;
-        try {
-            w = Workbook.getWorkbook(file);
-            // Get the first sheet
-            Sheet sheet = w.getSheet(0);
-            // Loop over first 10 column and lines
+	public void parse() throws IOException {
+		Workbook w;
+		try {
+			w = WorkbookFactory.create(new FileInputStream(file));
+			// Get the first sheet
+			Sheet sheet = w.getSheetAt(0);
+			// Loop over first 10 column and lines
 
-            for (int j = 0; j < sheet.getRows(); j++) {
-                String[] strs = new String[sheet.getColumns()];
-                for (int i = 0; i < sheet.getColumns(); i++) {
-                    Cell cell = sheet.getCell(i, j);
-                    strs[i] = cell.getContents();
-                }
-                contexts.add(strs);
-            }
-        } catch (BiffException e) {
-            e.printStackTrace();
-        }
-    }
+			Iterator<Row> rowIterator = sheet.rowIterator();
+			while (rowIterator.hasNext()) {
+				Row row = rowIterator.next();
+				Iterator<Cell> cellIterator = row.cellIterator();
+				String[] strs = new String[row.getPhysicalNumberOfCells()];
 
-    public List<String[]> getContexts() {
-        return contexts;
-    }
+				int cellCtr = 0;
+				while (cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					strs[cellCtr++] = cell.getStringCellValue();
+				}
+
+				contexts.add(strs);
+			}
+		} catch (InvalidFormatException e) {
+			log.error(e.getMessage());
+		}
+	}
+
+	public List<String[]> getContexts() {
+		return contexts;
+	}
 
 }

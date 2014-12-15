@@ -65,9 +65,8 @@ public class CatalogImportJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("execute CatalogImportJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		catalogImportJobBean.execute(result,parameter, currentUser);
+		catalogImportJobBean.execute(result, parameter, currentUser);
 		result.close("");
 		return result;
 	}

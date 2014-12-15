@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -30,11 +31,13 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
-
+import org.apache.commons.collections.IteratorUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -133,66 +136,98 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 
 		// TODO cache entities
 		try {
-			workbook = Workbook.getWorkbook(excelInputStream);
-			Sheet sheet = workbook.getSheet(0);
-			int nbRows = sheet.getRows();
-			Cell[] headerCells = sheet.getRow(0);
-			if (headerCells.length != colNames.length) {
+			workbook = WorkbookFactory.create(excelInputStream);
+			Sheet sheet = workbook.getSheetAt(0);
+
+			Iterator<Row> rowIterator = sheet.rowIterator();
+			Object[] rowsObj = IteratorUtils.toArray(rowIterator);
+			Row row0 = (Row) rowsObj[0];
+			Object[] headerCellsObj = IteratorUtils
+					.toArray(row0.cellIterator());
+
+			if (headerCellsObj.length != colNames.length) {
 				throw new BusinessException(
 						"Invalid number of columns in the excel file.");
 			}
-			for (int i = 0; i < headerCells.length; i++) {
-				if (!colNames[i].equalsIgnoreCase(headerCells[i].getContents())) {
+
+			for (int i = 0; i < headerCellsObj.length; i++) {
+				if (!colNames[i].equalsIgnoreCase(((Cell) headerCellsObj[i])
+						.getStringCellValue())) {
 					throw new BusinessException("Invalid column " + i
-							+ " found [" + headerCells[i].getContents()
+							+ " found ["
+							+ ((Cell) headerCellsObj[i]).getStringCellValue()
 							+ "] but was expecting [" + colNames[i] + "]");
 				}
 			}
-			for (int rowIndex = 1; rowIndex < nbRows; rowIndex++) {
-				// TODO : rewrite to alow import of many lines by charge
-				Cell[] cells = sheet.getRow(rowIndex);
+
+			for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {
+				Row row = (Row) rowsObj[rowIndex];
+				Object[] cellsObj = IteratorUtils.toArray(row.cellIterator());
+
 				PricePlanMatrix pricePlan = null;
 				QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
-				qb.addCriterion("eventCode", "=", cells[0].getContents(), false);
+				qb.addCriterion("eventCode", "=",
+						((Cell) cellsObj[0]).getStringCellValue(), false);
 				qb.addCriterionEntity("provider", provider);
 				@SuppressWarnings("unchecked")
 				List<PricePlanMatrix> pricePlans = qb.getQuery(em)
 						.getResultList();
+
 				if (pricePlans == null || pricePlans.size() == 0) {
 					pricePlan = new PricePlanMatrix();
 					pricePlan.setProvider(provider);
 					pricePlan.setAuditable(new Auditable());
 					pricePlan.getAuditable().setCreated(new Date());
 					pricePlan.getAuditable().setCreator(user);
-					pricePlan.setEventCode(cells[0].getContents());
+					pricePlan.setEventCode(((Cell) cellsObj[0])
+							.getStringCellValue());
 				} else if (pricePlans.size() == 1) {
 					pricePlan = pricePlans.get(0);
 				}
-				if (pricePlan == null) {
-					log.warn("there are several pricePlan records for charge "
-							+ cells[0].getContents() + " we do not update them");
-				} else {
 
+				if (pricePlan == null) {
+					log.warn("There are several pricePlan records for charge "
+							+ ((Cell) cellsObj[0]).getStringCellValue()
+							+ " we do not update them.");
+				} else {
 					int i = 1;
-					String sellerCode = cells[i++].getContents();
-					String countryCode = cells[i++].getContents();
-					String currencyCode = cells[i++].getContents();
-					String startSub = cells[i++].getContents();
-					String endSub = cells[i++].getContents();
-					String offerCode = cells[i++].getContents();
-					String priority = cells[i++].getContents();
-					String amountWOTax = cells[i++].getContents();
-					String amountWithTax = cells[i++].getContents();
-					String minQuantity = cells[i++].getContents();
-					String maxQuantity = cells[i++].getContents();
-					String criteria1 = cells[i++].getContents();
-					String criteria2 = cells[i++].getContents();
-					String criteria3 = cells[i++].getContents();
-					String criteriaEL = cells[i++].getContents();
-					String startRating = cells[i++].getContents();
-					String endRating = cells[i++].getContents();
-					String minSubAge = cells[i++].getContents();
-					String maxSubAge = cells[i++].getContents();
+					String sellerCode = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String countryCode = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String currencyCode = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String startSub = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String endSub = ((Cell) cellsObj[i++]).getStringCellValue();
+					String offerCode = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String priority = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String amountWOTax = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String amountWithTax = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String minQuantity = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String maxQuantity = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String criteria1 = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String criteria2 = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String criteria3 = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String criteriaEL = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String startRating = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String endRating = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String minSubAge = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					String maxSubAge = ((Cell) cellsObj[i++])
+							.getStringCellValue();
 
 					// Seller
 					if (!StringUtils.isBlank(sellerCode)) {
@@ -202,11 +237,13 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 						@SuppressWarnings("unchecked")
 						List<Seller> sellers = qb.getQuery(em).getResultList();
 						Seller seller = null;
+
 						if (sellers == null || sellers.size() == 0) {
 							throw new BusinessException(
-									"Invalid seller in line " + rowIndex
+									"Invalid seller in line=" + rowIndex
 											+ ", code=" + sellerCode);
 						}
+
 						seller = sellers.get(0);
 						pricePlan.setSeller(seller);
 					} else {
@@ -216,17 +253,20 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 					// Country
 					if (!StringUtils.isBlank(countryCode)) {
 						qb = new QueryBuilder(TradingCountry.class, "p");
-						qb.addCriterion("code", "=", countryCode, false);
+						qb.addCriterion("p.country.countryCode", "=",
+								countryCode, false);
 						qb.addCriterionEntity("provider", provider);
 						@SuppressWarnings("unchecked")
 						List<TradingCountry> countries = qb.getQuery(em)
 								.getResultList();
 						TradingCountry tradingCountry = null;
+
 						if (countries == null || countries.size() == 0) {
 							throw new BusinessException(
-									"Invalid country in line " + rowIndex
+									"Invalid country in line=" + rowIndex
 											+ ", code=" + countryCode);
 						}
+
 						tradingCountry = countries.get(0);
 						pricePlan.setTradingCountry(tradingCountry);
 					} else {
@@ -236,17 +276,20 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 					// Currency
 					if (!StringUtils.isBlank(currencyCode)) {
 						qb = new QueryBuilder(TradingCurrency.class, "p");
-						qb.addCriterion("code", "=", currencyCode, false);
+						qb.addCriterion("p.currency.currencyCode", "=", currencyCode,
+								false);
 						qb.addCriterionEntity("provider", provider);
 						@SuppressWarnings("unchecked")
 						List<TradingCurrency> currencies = qb.getQuery(em)
 								.getResultList();
 						TradingCurrency tradingCurrency = null;
+
 						if (currencies == null || currencies.size() == 0) {
 							throw new BusinessException(
-									"Invalid currency in line " + rowIndex
+									"Invalid currency in line=" + rowIndex
 											+ ", code=" + countryCode);
 						}
+
 						tradingCurrency = currencies.get(0);
 						pricePlan.setTradingCurrency(tradingCurrency);
 					} else {
@@ -260,7 +303,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 									.parse(startSub));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid startSub in line "
+									"Invalid startSub in line="
 											+ rowIndex
 											+ ", startSub="
 											+ startSub
@@ -280,7 +323,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							pricePlan.setEndSubscriptionDate(sdf.parse(endSub));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid endSub in line "
+									"Invalid endSub in line="
 											+ rowIndex
 											+ ", endSub="
 											+ endSub
@@ -297,17 +340,19 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 					// OfferCode
 					if (!StringUtils.isBlank(offerCode)) {
 						qb = new QueryBuilder(OfferTemplate.class, "p");
-						qb.addCriterion("code", "=", currencyCode, false);
+						qb.addCriterion("code", "=", offerCode, false);
 						qb.addCriterionEntity("provider", provider);
 						@SuppressWarnings("unchecked")
 						List<OfferTemplate> offers = qb.getQuery(em)
 								.getResultList();
 						OfferTemplate offer = null;
+
 						if (offers == null || offers.size() == 0) {
 							throw new BusinessException(
-									"Invalid offer code in line " + rowIndex
+									"Invalid offer code in line=" + rowIndex
 											+ ", code=" + offerCode);
 						}
+
 						offer = offers.get(0);
 						pricePlan.setOfferTemplate(offer);
 					} else {
@@ -320,7 +365,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							pricePlan.setPriority(Integer.parseInt(priority));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid priority in line " + rowIndex
+									"Invalid priority in line=" + rowIndex
 											+ ", priority=" + priority);
 						}
 					} else {
@@ -334,11 +379,11 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 									amountWOTax));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid amount wo tax in line " + rowIndex
+									"Invalid amount wo tax in line=" + rowIndex
 											+ ", amountWOTax=" + amountWOTax);
 						}
 					} else {
-						throw new BusinessException("Amount wo tax in line "
+						throw new BusinessException("Amount wo tax in line="
 								+ rowIndex + " should not be empty");
 					}
 
@@ -349,7 +394,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 									amountWithTax));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid amount wo tax in line " + rowIndex
+									"Invalid amount wo tax in line=" + rowIndex
 											+ ", amountWithTax="
 											+ amountWithTax);
 						}
@@ -364,7 +409,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 									.setMinQuantity(new BigDecimal(minQuantity));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid minQuantity in line " + rowIndex
+									"Invalid minQuantity in line=" + rowIndex
 											+ ", minQuantity=" + minQuantity);
 						}
 					} else {
@@ -377,7 +422,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							pricePlan.setMaxQuantity(new BigDecimal(maxSubAge));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid maxQuantity in line " + rowIndex
+									"Invalid maxQuantity in line=" + rowIndex
 											+ ", maxQuantity=" + maxQuantity);
 						}
 					} else {
@@ -390,7 +435,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							pricePlan.setCriteria1Value(criteria1);
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid criteria1 in line " + rowIndex
+									"Invalid criteria1 in line=" + rowIndex
 											+ ", criteria1=" + criteria1);
 						}
 					} else {
@@ -403,7 +448,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							pricePlan.setCriteria2Value(criteria2);
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid criteria2 in line " + rowIndex
+									"Invalid criteria2 in line=" + rowIndex
 											+ ", criteria2=" + criteria2);
 						}
 					} else {
@@ -416,7 +461,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							pricePlan.setCriteria3Value(criteria3);
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid criteria3 in line " + rowIndex
+									"Invalid criteria3 in line=" + rowIndex
 											+ ", criteria3=" + criteria3);
 						}
 					} else {
@@ -430,12 +475,13 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							;
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid criteriaEL in line " + rowIndex
+									"Invalid criteriaEL in line=" + rowIndex
 											+ ", criteriaEL=" + criteriaEL);
 						}
 					} else {
 						pricePlan.setCriteriaEL(null);
 					}
+					
 					if (pricePlan.getId() == null) {
 						em.persist(pricePlan);
 					}
@@ -447,7 +493,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 									.setStartRatingDate(sdf.parse(startRating));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid startRating in line "
+									"Invalid startRating in line="
 											+ rowIndex
 											+ ", startRating="
 											+ startRating
@@ -467,7 +513,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 							pricePlan.setEndRatingDate(sdf.parse(endRating));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid endRating in line "
+									"Invalid endRating in line="
 											+ rowIndex
 											+ ", endRating="
 											+ endRating
@@ -488,7 +534,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 									.parseLong(minSubAge));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid minSubAge in line " + rowIndex
+									"Invalid minSubAge in line=" + rowIndex
 											+ ", minSubAge=" + minSubAge);
 						}
 					} else {
@@ -502,7 +548,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 									.parseLong(maxSubAge));
 						} catch (Exception e) {
 							throw new BusinessException(
-									"Invalid maxSubAge in line " + rowIndex
+									"Invalid maxSubAge in line=" + rowIndex
 											+ ", maxSubAge=" + maxSubAge);
 						}
 					} else {
@@ -511,15 +557,17 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 					result++;
 				}
 			}
-		} catch (BiffException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
+			log.error(e.getMessage());
 			throw new BusinessException("Error while accessing the excel file.");
 		} catch (RuntimeException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new BusinessException("Error while parsing the excel file.");
+		} catch (InvalidFormatException e) {
+			log.error(e.getMessage());
 			throw new BusinessException("Error while parsing the excel file.");
 		}
+		
 		return result;
 	}
-
 }

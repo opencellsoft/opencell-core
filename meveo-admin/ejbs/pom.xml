@@ -161,19 +161,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>net.sourceforge.jexcelapi</groupId>
-			<artifactId>jxl</artifactId>
-			<version>2.6.8-seam</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<!-- <dependency> <groupId>pentaho-kettle</groupId> <artifactId>kettle-engine</artifactId> 
 			<version>4.2.0-GA</version> <scope>compile</scope> <exclusions> <exclusion> 
 			<groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> </exclusion> 
@@ -191,15 +178,17 @@
 			<version>1.7R1</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.7</version>
+			<version>3.10-FINAL</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.7</version>
+			<version>3.10-FINAL</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.xmlbeans</groupId>
@@ -213,9 +202,9 @@
 					<groupId>org.apache.poi</groupId>
 					<artifactId>poi-ooxml-schemas</artifactId>
 				</exclusion>
-
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
@@ -240,16 +229,19 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<version>2.7.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.3</version>
 		</dependency>
+
 		<dependency>
 			<groupId>commons-vfs</groupId>
 			<artifactId>commons-vfs</artifactId>
@@ -261,18 +253,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.5</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
-			<version>1.7.2</version> </dependency> -->
 
 		<dependency>
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-core</artifactId>
-		    <version>${version.org.infinispan}</version>
+			<version>${version.org.infinispan}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -289,6 +280,7 @@
 			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
@@ -318,10 +310,24 @@
 			<artifactId>commons-collections</artifactId>
 			<version>3.2</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 			<version>2.3.7</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sourceforge.jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<version>2.6.8-seam</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- <dependency> -->
