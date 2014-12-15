@@ -301,23 +301,30 @@ public class UserBean extends BaseBean<User> {
 				+ File.separator + "customers" + File.separator;
 		String customerDirIN = importDir + "input";
 		String customerDirOUT = importDir + "output";
-		String customerDirERR = customerDirOUT + "errors";
-		String customerDirWARN = customerDirOUT + "warnings";
+		String customerDirERR = importDir + "errors";
+		String customerDirWARN = importDir + "warnings";
 		String customerDirKO = importDir + "reject";
 		importDir = getFilePath() + File.separator + "imports" + File.separator
 				+ "accounts" + File.separator;
 		String accountDirIN = importDir + "input";
 		String accountDirOUT = importDir + "output";
-		String accountDirERR = accountDirOUT + "errors";
-		String accountDirWARN = accountDirOUT + "warnings";
+		String accountDirERR = importDir + "errors";
+		String accountDirWARN = importDir + "warnings";
 		String accountDirKO = importDir + "reject";
 		importDir = getFilePath() + File.separator + "imports" + File.separator
 				+ "subscriptions" + File.separator;
 		String subDirIN = importDir + "input";
 		String subDirOUT = importDir + "output";
-		String subDirERR = subDirOUT + "errors";
-		String subDirWARN = subDirOUT + "warnings";
+		String subDirERR = importDir + "errors";
+		String subDirWARN = importDir + "warnings";
 		String subDirKO = importDir + "reject";
+		importDir = getFilePath() + File.separator + "imports" + File.separator
+				+ "catalog" + File.separator;
+		String catDirIN = importDir + "input";
+		String catDirOUT = importDir + "output";
+		String catDirERR = importDir + "errors";
+		String catDirWARN = importDir + "warnings";
+		String catDirKO = importDir + "reject";
 		importDir = getFilePath() + File.separator + "imports" + File.separator
 				+ "metering" + File.separator;
 		String meterDirIN = importDir + "input";
@@ -332,6 +339,7 @@ public class UserBean extends BaseBean<User> {
 				customerDirOUT, customerDirERR, customerDirWARN, customerDirKO,
 				accountDirIN, accountDirOUT, accountDirERR, accountDirWARN,
 				accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN,
+				catDirIN,catDirOUT,catDirERR,catDirWARN,catDirKO,
 				subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
 				invoiceXmlDir, jasperDir);
 		for (String custDirs : filePaths) {

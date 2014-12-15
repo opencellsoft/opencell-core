@@ -43,8 +43,6 @@ import org.meveo.model.BaseEntity;
 /**
  * Excel converter class. This class exports data from dataTable to excel file
  * 
- * @author Gediminas Ubartas
- * @created 2010.06.10
  */
 @Named
 public class ExcelConverter {
