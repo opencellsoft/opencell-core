@@ -322,8 +322,6 @@ public class UserBean extends BaseBean<User> {
 				+ "catalog" + File.separator;
 		String catDirIN = importDir + "input";
 		String catDirOUT = importDir + "output";
-		String catDirERR = importDir + "errors";
-		String catDirWARN = importDir + "warnings";
 		String catDirKO = importDir + "reject";
 		importDir = getFilePath() + File.separator + "imports" + File.separator
 				+ "metering" + File.separator;
@@ -339,7 +337,7 @@ public class UserBean extends BaseBean<User> {
 				customerDirOUT, customerDirERR, customerDirWARN, customerDirKO,
 				accountDirIN, accountDirOUT, accountDirERR, accountDirWARN,
 				accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN,
-				catDirIN,catDirOUT,catDirERR,catDirWARN,catDirKO,
+				catDirIN,catDirOUT,catDirKO,
 				subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
 				invoiceXmlDir, jasperDir);
 		for (String custDirs : filePaths) {

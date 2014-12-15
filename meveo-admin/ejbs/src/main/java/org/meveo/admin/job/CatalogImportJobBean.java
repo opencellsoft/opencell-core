@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -40,9 +41,7 @@ public class CatalogImportJobBean {
 	File file;
 	String inputDir;
 	String outputDir;
-	PrintWriter outputFileWriter;
 	String rejectDir;
-	PrintWriter rejectFileWriter;
 	String report;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -97,18 +96,23 @@ public class CatalogImportJobBean {
 				file = FileUtils.addExtension(file, ".processing");
 				inputFileStream = new FileInputStream(file);
 
-				int processed = pricePlanService.importFromExcel(em,
+				int processed = 0;
+				try{
+					processed = pricePlanService.importFromExcel(em,
 						inputFileStream, currentUser, provider);
-
+				} catch (BusinessException e){
+					report+="Error "+e.getMessage();
+					e.printStackTrace();
+				}
 				result.setNbItemsToProcess(processed);
 
 				if (FileUtils.getFileForParsing(inputDir, fileExtensions) != null) {
 					result.setDone(false);
 				}
 
-				if (processed == 0) {
-					FileUtils.replaceFileExtension(file, ".xsl.processed");
-					report += "\r\n file is empty ";
+				if (processed > 0) {
+					File fi = FileUtils.replaceFileExtension(file, ".processed");
+					FileUtils.moveFile(outputDir, fi, null);
 					try {
 						if (inputFileStream != null) {
 							inputFileStream.close();
@@ -117,16 +121,14 @@ public class CatalogImportJobBean {
 						log.error(e.getMessage());
 					}
 				} else {
+					File fi = FileUtils.replaceFileExtension(file, "");
+					FileUtils.moveFile(rejectDir, fi, null);
 					try {
 						if (inputFileStream != null) {
 							inputFileStream.close();
 						}
 					} catch (Exception e) {
 						log.error(e.getMessage());
-					}
-					if (!file.delete()) {
-						report += "\r\n cannot delete "
-								+ file.getAbsolutePath();
 					}
 				}
 				
@@ -136,25 +138,7 @@ public class CatalogImportJobBean {
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
-		} finally {
-			try {
-				if (rejectFileWriter != null) {
-					rejectFileWriter.close();
-					rejectFileWriter = null;
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
-			
-			try {
-				if (outputFileWriter != null) {
-					outputFileWriter.close();
-					outputFileWriter = null;
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
-		}
+		} 
 	}
 
 }
