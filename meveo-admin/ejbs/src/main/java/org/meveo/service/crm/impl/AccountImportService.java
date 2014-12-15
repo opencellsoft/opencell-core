@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -61,31 +62,39 @@ public class AccountImportService {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public org.meveo.model.billing.BillingAccount importBillingAccount(
+			EntityManager em,
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			Provider provider, User userJob) throws BusinessException,
 			ImportWarningException {
 		log.debug("billingAccount found code:" + billAccount.getCode());
+
 		org.meveo.model.billing.BillingAccount billingAccount = null;
 		CustomerAccount customerAccount = null;
 		BillingCycle billingCycle = null;
+
 		try {
-			billingCycle = billingCycleService.findByBillingCycleCode(
+			billingCycle = billingCycleService.findByBillingCycleCode(em,
 					billAccount.getBillingCycle(), provider);
 		} catch (Exception e) {
-
+			log.warn(e.getMessage());
 		}
+
 		if (billingCycle == null) {
 			throw new BusinessException("billingCycle not found "
 					+ billAccount.getBillingCycle());
 		}
+
 		try {
-			customerAccount = customerAccountService.findByCode(
+			customerAccount = customerAccountService.findByCode(em,
 					billAccount.getCustomerAccountId(), provider);
 		} catch (Exception e) {
+			log.warn(e.getMessage());
 		}
+
 		if (customerAccount == null) {
 			throw new BusinessException("Cannot find CustomerAccount");
 		}
+
 		billingAccountCheckError(billAccount);
 
 		billingAccountCheckWarning(billAccount);
@@ -103,6 +112,7 @@ public class AccountImportService {
 		billingAccount.setDescription(billAccount.getDescription());
 		billingAccount.setPaymentMethod(PaymentMethodEnum.valueOf(billAccount
 				.getPaymentMethod()));
+
 		if (billAccount.getBankCoordinates() != null
 				&& ("DIRECTDEBIT".equalsIgnoreCase(billAccount
 						.getPaymentMethod()) || "TIP"
@@ -139,6 +149,7 @@ public class AccountImportService {
 			address.setZipCode("" + billAccount.getAddress().getZipCode());
 			address.setState(billAccount.getAddress().getState());
 		}
+
 		billingAccount.setAddress(address);
 		billingAccount.setElectronicBilling("1".equalsIgnoreCase(billAccount
 				.getElectronicBilling()));
@@ -146,28 +157,31 @@ public class AccountImportService {
 		billingAccount.setExternalRef1(billAccount.getExternalRef1());
 		billingAccount.setExternalRef2(billAccount.getExternalRef2());
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
+
 		if (billAccount.getName() != null) {
 			name.setFirstName(billAccount.getName().getFirstname());
 			name.setLastName(billAccount.getName().getName());
-			name.setTitle(titleService.findByCode(provider, billAccount
+			name.setTitle(titleService.findByCode(em, provider, billAccount
 					.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
+
 		billingAccount.setTradingCountry(tradingCountryService
-				.findByTradingCountryCode(billAccount.getTradingCountryCode(),
-						provider));
+				.findByTradingCountryCode(em,
+						billAccount.getTradingCountryCode(), provider));
 		billingAccount.setTradingLanguage(tradingLanguageService
-				.findByTradingLanguageCode(
+				.findByTradingLanguageCode(em,
 						billAccount.getTradingLanguageCode(), provider));
 
 		billingAccount.setProvider(provider);
 
-		billingAccountService.create(billingAccount, userJob);
+		billingAccountService.create(em, billingAccount, userJob, provider);
+
 		return billingAccount;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void importUserAccount(
+	public void importUserAccount(EntityManager em,
 			org.meveo.model.billing.BillingAccount billingAccount,
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount,
@@ -178,6 +192,7 @@ public class AccountImportService {
 		UserAccount userAccount = new UserAccount();
 		userAccount.setBillingAccount(billingAccount);
 		Address addressUA = new Address();
+
 		if (uAccount.getAddress() != null) {
 			addressUA.setAddress1(uAccount.getAddress().getAddress1());
 			addressUA.setAddress2(uAccount.getAddress().getAddress2());
@@ -187,16 +202,18 @@ public class AccountImportService {
 			addressUA.setState(uAccount.getAddress().getState());
 			addressUA.setZipCode("" + uAccount.getAddress().getZipCode());
 		}
+
 		userAccount.setAddress(addressUA);
 		userAccount.setCode(uAccount.getCode());
 		userAccount.setDescription(uAccount.getDescription());
 		userAccount.setExternalRef1(uAccount.getExternalRef1());
 		userAccount.setExternalRef2(uAccount.getExternalRef2());
 		org.meveo.model.shared.Name nameUA = new org.meveo.model.shared.Name();
+
 		if (uAccount.getName() != null) {
 			nameUA.setFirstName(uAccount.getName().getFirstname());
 			nameUA.setLastName(uAccount.getName().getName());
-			nameUA.setTitle(titleService.findByCode(provider, uAccount
+			nameUA.setTitle(titleService.findByCode(em, provider, uAccount
 					.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
@@ -204,9 +221,8 @@ public class AccountImportService {
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);
-		userAccountService.createUserAccount(billingAccount, userAccount,
+		userAccountService.createUserAccount(em, billingAccount, userAccount,
 				userJob);
-
 	}
 
 	private boolean billingAccountCheckError(
@@ -231,26 +247,30 @@ public class AccountImportService {
 		 */
 		if ("DIRECTDEBIT".equals(billAccount.getPaymentMethod())) {
 			if (billAccount.getBankCoordinates() == null) {
-				throw new BusinessException("BankCoordinates is null");
+				throw new BusinessException("BankCoordinates is null.");
 			}
+
 			if (StringUtils.isBlank(billAccount.getBankCoordinates()
 					.getAccountName())) {
 				throw new BusinessException(
-						"BankCoordinates.AccountName is null");
+						"BankCoordinates.AccountName is null.");
 			}
+
 			if (StringUtils.isBlank(billAccount.getBankCoordinates()
 					.getAccountNumber())) {
 				throw new BusinessException(
-						"BankCoordinates.AccountNumber is null");
+						"BankCoordinates.AccountNumber is null.");
 			}
+
 			if (StringUtils.isBlank(billAccount.getBankCoordinates()
 					.getBankCode())) {
-				throw new BusinessException("BankCoordinates.BankCode is null");
+				throw new BusinessException("BankCoordinates.BankCode is null.");
 			}
+
 			if (StringUtils.isBlank(billAccount.getBankCoordinates()
 					.getBranchCode())) {
 				throw new BusinessException(
-						"BankCoordinates.BranchCode is null");
+						"BankCoordinates.BranchCode is null.");
 			}
 		}
 		/*
@@ -313,10 +333,12 @@ public class AccountImportService {
 				&& StringUtils.isBlank(billAccount.getEmail())) {
 			throw new ImportWarningException("Email is null");
 		}
+
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() == null) {
 			throw new ImportWarningException("BankCoordinates is null");
 		}
+
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
 				&& StringUtils.isBlank(billAccount.getBankCoordinates()
@@ -324,6 +346,7 @@ public class AccountImportService {
 			throw new ImportWarningException(
 					"BankCoordinates.BranchCode is null");
 		}
+
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
 				&& StringUtils.isBlank(billAccount.getBankCoordinates()
@@ -331,12 +354,14 @@ public class AccountImportService {
 			throw new ImportWarningException(
 					"BankCoordinates.AccountNumber is null");
 		}
+
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
 				&& StringUtils.isBlank(billAccount.getBankCoordinates()
 						.getBankCode())) {
 			throw new ImportWarningException("BankCoordinates.BankCode is null");
 		}
+
 		if (("DIRECTDEBIT".equalsIgnoreCase(billAccount.getPaymentMethod()))
 				&& billAccount.getBankCoordinates() != null
 				&& StringUtils.isBlank(billAccount.getBankCoordinates()

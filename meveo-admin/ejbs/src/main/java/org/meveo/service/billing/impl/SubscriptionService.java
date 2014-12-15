@@ -77,6 +77,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			SubscriptionTerminationReason terminationReason, User user)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
+		terminateSubscription(getEntityManager(), subscription,
+				terminationDate, terminationReason, user);
+	}
+
+	public void terminateSubscription(EntityManager em,
+			Subscription subscription, Date terminationDate,
+			SubscriptionTerminationReason terminationReason, User user)
+			throws IncorrectSusbcriptionException,
+			IncorrectServiceInstanceException, BusinessException {
 		if (terminationReason == null) {
 			throw new BusinessException("terminationReason is null");
 		}

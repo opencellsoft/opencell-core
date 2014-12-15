@@ -62,6 +62,7 @@ public class MediationJob implements Job {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(infos);
 		timerConfig.setPersistent(false);
+		
 		return timerService
 				.createCalendarTimer(scheduleExpression, timerConfig);
 	}

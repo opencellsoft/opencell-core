@@ -20,10 +20,13 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -35,15 +38,25 @@ public class SubscriptionTerminationReasonService extends
 		PersistenceService<SubscriptionTerminationReason> {
 
 	public SubscriptionTerminationReason findByCodeReason(String codeReason,
-			String providerCode) throws Exception {
-		return (SubscriptionTerminationReason) getEntityManager()
-				.createQuery(
-						"from "
-								+ SubscriptionTerminationReason.class
-										.getSimpleName()
-								+ " where code=:codeReason and provider.code=:providerCode")
-				.setParameter("codeReason", codeReason)
-				.setParameter("providerCode", providerCode).getSingleResult();
+			Provider provider) throws Exception {
+		return findByCodeReason(getEntityManager(), codeReason, provider);
+	}
+
+	public SubscriptionTerminationReason findByCodeReason(EntityManager em,
+			String codeReason, Provider provider) throws Exception {
+		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class,
+				"r");
+
+		qb.addCriterion("codeReason", "=", codeReason, true);
+		qb.addCriterionEntity("provider", provider);
+
+		try {
+			return (SubscriptionTerminationReason) qb.getQuery(em)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

@@ -69,6 +69,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		wallet.setCode("PRINCIPAL");
 		wallet.setUserAccount(userAccount);
 		walletService.create(em, wallet, creator, billingAccount.getProvider());
+
 		userAccount.setWallet(wallet);
 
 		List<WalletTemplate> prepaidWalletTemplates = billingAccount
@@ -76,6 +77,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		if (prepaidWalletTemplates != null && prepaidWalletTemplates.size() > 0) {
 			HashMap<String, WalletInstance> prepaidWallets = new HashMap<String, WalletInstance>(
 					prepaidWalletTemplates.size());
+
 			for (WalletTemplate prepaidWalletTemplate : prepaidWalletTemplates) {
 				WalletInstance prepaidWallet = new WalletInstance();
 				wallet.setUserAccount(userAccount);
@@ -85,6 +87,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 				prepaidWallets.put(prepaidWalletTemplate.getCode(),
 						prepaidWallet);
 			}
+
 			userAccount.setPrepaidWallets(prepaidWallets);
 		}
 	}

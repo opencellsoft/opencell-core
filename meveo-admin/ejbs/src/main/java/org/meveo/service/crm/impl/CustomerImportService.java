@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.meveo.model.admin.User;
@@ -28,80 +29,80 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
 public class CustomerImportService {
-	
-	@Inject
-	TradingCountryService tradingCountryService;
 
 	@Inject
-	TradingCurrencyService tradingCurrencyService;
+	private TradingCountryService tradingCountryService;
 
 	@Inject
-	TradingLanguageService tradingLanguageService;
-	
+	private TradingCurrencyService tradingCurrencyService;
+
+	@Inject
+	private TradingLanguageService tradingLanguageService;
+
 	@Inject
 	private SellerService sellerService;
-	
+
 	@Inject
 	private CustomerService customerService;
 
 	@Inject
-	CustomerBrandService customerBrandService;
+	private CustomerBrandService customerBrandService;
 
 	@Inject
-	CustomerCategoryService customerCategoryService;
+	private CustomerCategoryService customerCategoryService;
 
 	@Inject
 	private TitleService titleService;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
-	
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Customer createCustomer(Provider provider,
+	public Customer createCustomer(EntityManager em, Provider provider,
 			User userJob, org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust) {
-		Customer customer=null;
+		Customer customer = null;
 
-			if (seller == null) {
-				seller = new org.meveo.model.admin.Seller();
-				seller.setCode(sell.getCode());
-				seller.setDescription(sell.getDescription());
-				seller.setTradingCountry(tradingCountryService
-						.findByTradingCountryCode(sell.getTradingCountryCode(),
-								provider));
-				seller.setTradingCurrency(tradingCurrencyService
-						.findByTradingCurrencyCode(
-								sell.getTradingCurrencyCode(), provider));
-				seller.setTradingLanguage(tradingLanguageService
-						.findByTradingLanguageCode(
-								sell.getTradingLanguageCode(), provider));
-				seller.setProvider(provider);
-				sellerService.create(seller, userJob);
-			}
-			if (customer == null) {
-				customer = new Customer();
-				customer.setCode(cust.getCode());
-				customer.setDescription(cust.getDesCustomer());
-				customer.setCustomerBrand(customerBrandService.findByCode(cust
-						.getCustomerBrand()));
-				customer.setCustomerCategory(customerCategoryService
-						.findByCode(cust.getCustomerCategory()));
-				customer.setSeller(seller);
-				customer.setProvider(provider);
-				customerService.create(customer, userJob);
-			}
-			return customer;
+		if (seller == null) {
+			seller = new org.meveo.model.admin.Seller();
+			seller.setCode(sell.getCode());
+			seller.setDescription(sell.getDescription());
+			seller.setTradingCountry(tradingCountryService
+					.findByTradingCountryCode(em, sell.getTradingCountryCode(),
+							provider));
+			seller.setTradingCurrency(tradingCurrencyService
+					.findByTradingCurrencyCode(em,
+							sell.getTradingCurrencyCode(), provider));
+			seller.setTradingLanguage(tradingLanguageService
+					.findByTradingLanguageCode(em,
+							sell.getTradingLanguageCode(), provider));
+			seller.setProvider(provider);
+			sellerService.create(em, seller, userJob, provider);
+		}
+		if (customer == null) {
+			customer = new Customer();
+			customer.setCode(cust.getCode());
+			customer.setDescription(cust.getDesCustomer());
+			customer.setCustomerBrand(customerBrandService.findByCode(em,
+					cust.getCustomerBrand()));
+			customer.setCustomerCategory(customerCategoryService.findByCode(em,
+					cust.getCustomerCategory()));
+			customer.setSeller(seller);
+			customer.setProvider(provider);
+			customerService.create(em, customer, userJob, provider);
+		}
+		return customer;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createCustomerAccount( Provider provider,
+	public void createCustomerAccount(EntityManager em, Provider provider,
 			User userJob, Customer customer,
 			org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc,
 			org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.Seller sell) {
-		
+
 		CustomerAccount customerAccount = new CustomerAccount();
 		customerAccount.setCode(custAcc.getCode());
 		customerAccount.setDescription(custAcc.getDescription());
@@ -131,21 +132,22 @@ public class CustomerImportService {
 		customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc
 				.getPaymentMethod()));
 		org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
+
 		if (custAcc.getName() != null) {
 			name.setFirstName(custAcc.getName().getFirstname());
 			name.setLastName(custAcc.getName().getName());
-			Title title = titleService.findByCode(provider, custAcc.getName()
-					.getTitle().trim());
+			Title title = titleService.findByCode(em, provider, custAcc
+					.getName().getTitle().trim());
 			name.setTitle(title);
 			customerAccount.setName(name);
 		}
+
 		customerAccount.setTradingCurrency(tradingCurrencyService
 				.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode(),
 						provider));
 		customerAccount.setProvider(provider);
 		customerAccount.setCustomer(customer);
-		customerAccountService.create(customerAccount, userJob);
+		customerAccountService.create(em, customerAccount, userJob, provider);
 	}
-
 
 }
