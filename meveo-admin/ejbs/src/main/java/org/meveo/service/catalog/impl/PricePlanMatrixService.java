@@ -193,41 +193,61 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 					int i = 1;
 					String sellerCode = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("sellerCode="+sellerCode);
 					String countryCode = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("countryCode="+countryCode);
 					String currencyCode = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("currencyCode="+currencyCode);
 					String startSub = ((Cell) cellsObj[i++])
 							.getStringCellValue();
-					String endSub = ((Cell) cellsObj[i++]).getStringCellValue();
+					log.debug("startSub="+startSub);
+					String endSub = ((Cell) cellsObj[i++])
+							.getStringCellValue();
+					log.debug("endSub="+endSub);
 					String offerCode = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("offerCode="+offerCode);
 					String priority = ((Cell) cellsObj[i++])
-							.getStringCellValue();
+							.getNumericCellValue()+"";
+					log.debug("priority="+priority);
 					String amountWOTax = ((Cell) cellsObj[i++])
-							.getStringCellValue();
+							.getNumericCellValue()+"";
+					log.debug("amountWOTax="+amountWOTax);
 					String amountWithTax = ((Cell) cellsObj[i++])
-							.getStringCellValue();
+							.getNumericCellValue()+"";
+					log.debug("amountWithTax="+amountWithTax);
 					String minQuantity = ((Cell) cellsObj[i++])
-							.getStringCellValue();
+							.getNumericCellValue()+"";
+					log.debug("minQuantity="+minQuantity);
 					String maxQuantity = ((Cell) cellsObj[i++])
-							.getStringCellValue();
+							.getNumericCellValue()+"";
+					log.debug("maxQuantity="+maxQuantity);
 					String criteria1 = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("criteria1="+criteria1);
 					String criteria2 = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("criteria2="+criteria2);
 					String criteria3 = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("criteria3="+criteria3);
 					String criteriaEL = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("criteriaEL="+criteriaEL);
 					String startRating = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("startRating="+startRating);
 					String endRating = ((Cell) cellsObj[i++])
 							.getStringCellValue();
+					log.debug("endRating="+endRating);
 					String minSubAge = ((Cell) cellsObj[i++])
-							.getStringCellValue();
+							.getNumericCellValue()+"";
+					log.debug("minSubAge="+minSubAge);
 					String maxSubAge = ((Cell) cellsObj[i++])
-							.getStringCellValue();
+							.getNumericCellValue()+"";
+					log.debug("maxSubAge="+maxSubAge);
 
 					// Seller
 					if (!StringUtils.isBlank(sellerCode)) {
@@ -563,7 +583,7 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		} catch (RuntimeException e) {
 			log.error(e.getMessage());
 			throw new BusinessException("Error while parsing the excel file.");
-		} catch (InvalidFormatException e) {
+		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new BusinessException("Error while parsing the excel file.");
 		}

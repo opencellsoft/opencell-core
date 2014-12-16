@@ -659,11 +659,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									invoiceSubCat.getClass().getSimpleName()
 											+ "_" + invoiceSubCat.getId(),
 									languageCode) : "";
-					invoiceSubCategoryLabel = invoiceSubCategoryLabel != null ? invoiceSubCategoryLabel
+					invoiceSubCategoryLabel = (!StringUtils.isBlank(invoiceSubCategoryLabel)) ? invoiceSubCategoryLabel
 							: invoiceSubCat.getDescription();
 					Element subCategory = doc.createElement("subCategory");
 					subCategories.appendChild(subCategory);
 					subCategory.setAttribute("label", invoiceSubCategoryLabel);
+					subCategory.setAttribute("code", invoiceSubCat.getCode());
 					subCategory.setAttribute("taxCode", subCatInvoiceAgregate
 							.getSubCategoryTax().getCode());
 					subCategory.setAttribute("taxPercent",
