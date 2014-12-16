@@ -3,7 +3,6 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.ejb.Stateless;
@@ -71,23 +70,23 @@ public class CatalogImportJobBean {
 			fileExtensions.add(fileExtension);
 			outputDir = catalogDir + "output";
 			rejectDir = catalogDir + "reject";
-			
+
 			// TODO creer les reps
 			File f = new File(inputDir);
 			if (!f.exists()) {
 				f.mkdirs();
 			}
-			
+
 			f = new File(outputDir);
 			if (!f.exists()) {
 				f.mkdirs();
 			}
-			
+
 			f = new File(rejectDir);
 			if (!f.exists()) {
 				f.mkdirs();
 			}
-			
+
 			report = "";
 			file = FileUtils.getFileForParsing(inputDir, fileExtensions);
 			if (file != null) {
@@ -97,11 +96,11 @@ public class CatalogImportJobBean {
 				inputFileStream = new FileInputStream(file);
 
 				int processed = 0;
-				try{
+				try {
 					processed = pricePlanService.importFromExcel(em,
-						inputFileStream, currentUser, provider);
-				} catch (BusinessException e){
-					report+="Error "+e.getMessage();
+							inputFileStream, currentUser, provider);
+				} catch (BusinessException e) {
+					report += "Error " + e.getMessage();
 					e.printStackTrace();
 				}
 				result.setNbItemsToProcess(processed);
@@ -111,7 +110,8 @@ public class CatalogImportJobBean {
 				}
 
 				if (processed > 0) {
-					File fi = FileUtils.replaceFileExtension(file, ".processed");
+					File fi = FileUtils
+							.replaceFileExtension(file, ".processed");
 					FileUtils.moveFile(outputDir, fi, null);
 					try {
 						if (inputFileStream != null) {
@@ -131,14 +131,14 @@ public class CatalogImportJobBean {
 						log.error(e.getMessage());
 					}
 				}
-				
+
 				result.setReport(report);
 			} else {
 				log.info("No file to process.");
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
-		} 
+		}
 	}
 
 }
