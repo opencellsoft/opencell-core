@@ -34,6 +34,7 @@ import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
@@ -42,6 +43,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean}
@@ -256,5 +258,14 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 
 	public String getDate(){
 	    return (new Date()).toString();
+	}
+	
+	public LazyDataModel<AccountOperation> getAccountOperations(CustomerAccount ca) {
+		getFilters();
+		
+		filters.put("customerAccount", ca);
+		
+
+		return getLazyDataModel();
 	}
 }
