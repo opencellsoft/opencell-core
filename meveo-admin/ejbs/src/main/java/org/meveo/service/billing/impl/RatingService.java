@@ -45,7 +45,10 @@ import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.SimpleELResolver;
 import org.meveo.service.base.SimpleFunctionMapper;
@@ -67,6 +70,13 @@ public class RatingService {
 	@Inject
 	protected CatMessagesService catMessagesService;
 
+	@Inject
+	private EdrService edrService;
+
+	@Inject
+	private SubscriptionService subscriptionService;
+	
+	
 	private static boolean isPricePlanDirty;
 	private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
 	private static boolean isDiscountPlanDirty;
@@ -256,7 +266,7 @@ public class RatingService {
 				endDate, mode);
 	}
 
-	// used to rate a oneshot or recurring charge
+	// used to rate a oneshot or recurring charge and triggerEDR
 	public WalletOperation rateChargeApplication(EntityManager em, String code,
 			Subscription subscription, ChargeInstance chargeInstance,
 			ApplicationTypeEnum applicationType, Date applicationDate,
@@ -283,8 +293,9 @@ public class RatingService {
 				endDate, mode);
 
 		String chargeInstnceLabel = null;
+		UserAccount ua = subscription.getUserAccount();
 		try {
-			String languageCode = subscription.getUserAccount()
+			String languageCode = ua
 					.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
 			CatMessages catMessage = catMessagesService.getCatMessages(
@@ -297,6 +308,50 @@ public class RatingService {
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
 				: chargeInstance.getDescription());
 
+		List<TriggeredEDRTemplate> triggeredEDRTemplates=chargeInstance.getChargeTemplate().getEdrTemplates();
+		if(triggeredEDRTemplates.size()>0){
+			for(TriggeredEDRTemplate triggeredEDRTemplate:triggeredEDRTemplates){
+				if (triggeredEDRTemplate.getConditionEl() == null
+						|| "".equals(triggeredEDRTemplate
+								.getConditionEl()) || matchExpression(
+										triggeredEDRTemplate.getConditionEl(),
+							 result,ua)) {
+			EDR newEdr = new EDR();
+			newEdr.setCreated(new Date());
+			newEdr.setEventDate(applicationDate);
+			newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
+			newEdr.setOriginRecord("CHRG_" + chargeInstance.getId()+"_"+applicationDate.getTime());
+			newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), result,ua));
+			newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), result,ua));
+			newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), result,ua));
+			newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), result,ua));
+			newEdr.setProvider(chargeInstance.getProvider());
+			newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(
+					triggeredEDRTemplate.getQuantityEl(),
+					result,ua)));
+			newEdr.setStatus(EDRStatusEnum.OPEN);
+			Subscription sub = null;
+			if(StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())){
+				newEdr.setSubscription(subscription);
+			} else {
+				String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result,ua);
+			   sub = subscriptionService.findByCode(em,subCode, subscription.getProvider());
+			   if(sub==null){
+				   log.info("could not find subscription for code ="+subCode+" (EL="+triggeredEDRTemplate.getSubscriptionEl()+") in triggered EDR with code "+triggeredEDRTemplate.getCode());
+			   }
+			}
+			if(sub!=null){
+				log.info("trigger EDR from code "+triggeredEDRTemplate.getCode());
+				if(chargeInstance.getAuditable()==null){
+					log.info("trigger EDR from code "+triggeredEDRTemplate.getCode());	
+				} else {
+					edrService.create(em, newEdr, chargeInstance.getAuditable().getCreator(), chargeInstance.getProvider());
+				}
+			}
+		}
+			}
+		}
+		
 		return result;
 	}
 
@@ -873,9 +928,73 @@ public class RatingService {
 			userMap.put("c", ua.getBillingAccount().getCustomerAccount()
 					.getCustomer());
 		}
+
+		return (Boolean) evaluateExpression(expression,userMap,Boolean.class);
+	}
+	
+
+	private String evaluateStringExpression(String expression,
+			WalletOperation walletOperation, UserAccount ua) {
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("op", walletOperation);
+		if (expression.indexOf("ua.") >= 0) {
+			userMap.put("ua", ua);
+		}
+		if (expression.indexOf("ba.") >= 0) {
+			userMap.put("ba", ua.getBillingAccount());
+		}
+		if (expression.indexOf("ca.") >= 0) {
+			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
+		}
+		if (expression.indexOf("c.") >= 0) {
+			userMap.put("c", ua.getBillingAccount().getCustomerAccount()
+					.getCustomer());
+		}
+		return (String) evaluateExpression(expression, userMap, String.class);
+	}
+
+	private Double evaluateDoubleExpression(String expression,
+			WalletOperation walletOperation, UserAccount ua) {
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("op", walletOperation);
+		if (expression.indexOf("ua.") >= 0) {
+			userMap.put("ua", ua);
+		}
+		if (expression.indexOf("ba.") >= 0) {
+			userMap.put("ba", ua.getBillingAccount());
+		}
+		if (expression.indexOf("ca.") >= 0) {
+			userMap.put("ca", ua.getBillingAccount().getCustomerAccount());
+		}
+		if (expression.indexOf("c.") >= 0) {
+			userMap.put("c", ua.getBillingAccount().getCustomerAccount()
+					.getCustomer());
+		}
+		return (Double) evaluateExpression(expression, userMap, Double.class);
+	}
+
+
+
+	public static Object evaluateExpression(String expression,
+			Map<Object, Object> userMap,
+			@SuppressWarnings("rawtypes") Class resultClass) {
+		
+		if(!expression.startsWith("#")){
+			if(resultClass.equals(String.class)){
+				return expression;
+			} else if(resultClass.equals(Double.class)){
+				return Double.parseDouble(expression);
+			} else if(resultClass.equals(Boolean.class)){
+				if("true".equalsIgnoreCase(expression)){
+					return Boolean.TRUE;
+				} else {
+					return Boolean.FALSE;
+				}
+			}
+		}
 		// FIXME: externilize the resolver to instance variable and simply set
-		// the bare operation
-		// before evaluation
+				// the bare operation
+				// before evaluation
 		ELResolver simpleELResolver = new SimpleELResolver(userMap);
 		final VariableMapper variableMapper = new SimpleVariableMapper();
 		final FunctionMapper functionMapper = new SimpleFunctionMapper();
@@ -904,8 +1023,7 @@ public class RatingService {
 		ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
 
 		ValueExpression ve = expressionFactory.createValueExpression(context,
-				expression, Boolean.class);
-		return (Boolean) ve.getValue(context);
+				expression, resultClass);
+		return ve.getValue(context);
 	}
-
 }

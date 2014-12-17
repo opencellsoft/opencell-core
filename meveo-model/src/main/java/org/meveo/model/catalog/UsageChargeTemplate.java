@@ -19,7 +19,6 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -61,9 +60,6 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	@Column(name = "FILTER_EXPRESSION", length = 255)
 	private String filterExpression = null;
-
-	@Embedded
-	private UsageChargeEDRTemplate edrTemplate;
 
 	@Column(name = "PRIORITY", columnDefinition = "int default 1")
 	private int priority = 1;
@@ -138,14 +134,6 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	public void setFilterExpression(String filterExpression) {
 		this.filterExpression = filterExpression;
-	}
-
-	public UsageChargeEDRTemplate getEdrTemplate() {
-		return edrTemplate;
-	}
-
-	public void setEdrTemplate(UsageChargeEDRTemplate edrTemplate) {
-		this.edrTemplate = edrTemplate;
 	}
 
 	public int getPriority() {

@@ -58,6 +58,9 @@ public class ChargeTemplate extends BusinessEntity {
 	@OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY)
 	private List<ChargeInstance> chargeInstances = new ArrayList<ChargeInstance>();
 
+	@OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY)
+	private List<TriggeredEDRTemplate> edrTemplates;
+	
 	public OperationTypeEnum getType() {
 		return type;
 	}
@@ -88,6 +91,14 @@ public class ChargeTemplate extends BusinessEntity {
 
 	public void setChargeInstances(List<ChargeInstance> chargeInstances) {
 		this.chargeInstances = chargeInstances;
+	}
+
+	public List<TriggeredEDRTemplate> getEdrTemplates() {
+		return edrTemplates;
+	}
+
+	public void setEdrTemplates(List<TriggeredEDRTemplate> edrTemplates) {
+		this.edrTemplates = edrTemplates;
 	}
 
 }

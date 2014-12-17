@@ -28,7 +28,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.UsageChargeEDRTemplate;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -177,9 +177,10 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	public void toggleEdrPanel() {
 		if (showEdrPanel) {
-			if (entity.getEdrTemplate() == null) {
-				entity.setEdrTemplate(new UsageChargeEDRTemplate());
-			}
+			//FIXME
+			//if (entity.getEdrTemplate() == null) {
+			//	entity.setEdrTemplate(new TriggeredEDRTemplate());
+			//}
 		}
 	}
 
