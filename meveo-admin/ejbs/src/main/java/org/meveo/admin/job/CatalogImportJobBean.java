@@ -101,7 +101,7 @@ public class CatalogImportJobBean {
 							inputFileStream, currentUser, provider);
 				} catch (BusinessException e) {
 					report += "Error " + e.getMessage();
-					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 				result.setNbItemsToProcess(processed);
 
@@ -129,6 +129,8 @@ public class CatalogImportJobBean {
 						}
 					} catch (Exception e) {
 						log.error(e.getMessage());
+					} finally {
+						fi.delete();
 					}
 				}
 

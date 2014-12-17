@@ -569,9 +569,6 @@ public class PricePlanMatrixService extends PersistenceService<PricePlanMatrix> 
 		} catch (IOException e) {
 			log.error(e.getMessage());
 			throw new BusinessException("Error while accessing the excel file.");
-		} catch (RuntimeException e) {
-			log.error(e.getMessage());
-			throw new BusinessException("Error while parsing the excel file.");
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new BusinessException("Error while parsing the excel file.");
