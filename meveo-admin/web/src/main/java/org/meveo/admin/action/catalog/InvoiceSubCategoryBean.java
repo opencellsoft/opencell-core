@@ -93,8 +93,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		this.invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 	}
 
-	public void saveInvoiceSubCategoryCountry() {
-		log.info("saveOneShotChargeIns getObjectId=#0", getObjectId());
+	public String saveInvoiceSubCategoryCountry() {
+		log.info("saveOneShotChargeIns getObjectId={}", getObjectId());
 
 		try {
 			if (invoiceSubcategoryCountry != null) {
@@ -112,6 +112,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 						throw new Exception();
 					}
 				}
+
 				if (invoiceSubcategoryCountry.getId() != null) {
 					invoiceSubCategoryCountryService
 							.update(invoiceSubcategoryCountry);
@@ -124,6 +125,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 							invoiceSubcategoryCountry);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
+				
+				return getListViewName();
 			}
 		} catch (Exception e) {
 			log.error(
@@ -134,7 +137,8 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 		}
 
 		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
-		
+
+		return null;
 	}
 
 	public void deleteInvoiceSubcategoryCountry(

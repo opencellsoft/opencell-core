@@ -53,6 +53,7 @@
 			<f:facet name="header">
 				<h:outputText value="#{messages['invoiceSubCategory.panel']}" />
 			</f:facet>
+
 			<p:tabView id="tabView">
 				<p:tab title="#{messages['invoiceSubCategory.tab1']}">
 
@@ -74,7 +75,6 @@
 							label="#{messages['invoiceSubCategory.accountingCode']}"
 							field="accountingCode" />
 					</hf:formPanel>
-
 
 				</p:tab>
 
@@ -141,17 +141,13 @@
 									action="#{invoiceSubCategoryBean.deleteInvoiceSubcategoryCountry(entity)}"
 									icon="ui-icon-trash" ajax="true"
 									update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax" />
-
 							</p:column>
 						</hftl:dataList>
 					</p:outputPanel>
+
 					<p:panel>
-
-
 						<p:panel id="subCategoryCountrydiv"
 							rendered="#{invoiceSubCategoryBean.edit}">
-
-
 							<p:panel id="subCategoryCountrySdiv">
 								<hf:formPanel id="formPanelTax" formId="formTax"
 									edit="#{invoiceSubCategoryBean.edit}"
@@ -159,7 +155,6 @@
 									backingBean="#{invoiceSubCategoryBean}"
 									entity="#{invoiceSubcategoryCountry}" showFormButtons="false"
 									ajaxSubmit="true">
-
 
 									<hf:formEntityField id="countrySelectedId"
 										label="#{messages['address.country']}" field="tradingCountry"
@@ -171,17 +166,18 @@
 										field="tax" childField="code" popup="true"
 										popupId="invSubCatCountTaxPopup" required="true" />
 
-									<p:panelGrid columns="3">
+									<p:panelGrid columns="4">
 										<p:commandButton
 											rendered="#{invoiceSubcategoryCountry.id==null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['invoiceSubCategoryCountry.saveNewtax']}"
 											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv" />
+
 										<p:commandButton
 											rendered="#{invoiceSubcategoryCountry.id!=null}"
 											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
 											value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
-											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formPanelTax:formTax,:tabView:subCategoryCountrydiv" />
+											ajax="false" />
 
 										<p:commandButton value="#{messages['action.cancel']}"
 											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
@@ -190,7 +186,8 @@
 										<p:button id="buttonBack" value="#{messages['action.back']}"
 											outcome="#{invoiceSubCategoryBean.back()}"
 											includeViewParams="true">
-											<f:param name="cid" value="#{conversation.id}" />
+											<f:param name="cid"
+												value="#{javax.enterprise.context.conversation.id}" />
 										</p:button>
 									</p:panelGrid>
 
