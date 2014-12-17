@@ -398,3 +398,5 @@ input[type="submit"],
 .alert-box-warning { background:#fff8c4 url('../resources/img/warning.png') no-repeat 10px 50%; border:1px solid #f2c779; }
 .alert-box-notice { background:#e3f7fc url('../resources/img/notice.png') no-repeat 10px 50%; border:1px solid #8ed9f6; }
 .main-error-box { }
+
+.ui-state-default .ui-icon-xls { background-image: url(../img/excel.gif); }

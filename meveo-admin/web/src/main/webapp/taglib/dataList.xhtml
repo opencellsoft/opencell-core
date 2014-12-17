@@ -62,7 +62,7 @@
 					onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}"
 					ajax="false" /> -->
 
-			<p:commandButton id="#{formId}buttonExport"
+			<p:commandButton id="#{formId}buttonExport" icon="ui-icon-xls"
 				value="#{messages['commons.exportExcel']}" ajax="false"
 				rendered="#{exportButton}">
 				<p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data"
