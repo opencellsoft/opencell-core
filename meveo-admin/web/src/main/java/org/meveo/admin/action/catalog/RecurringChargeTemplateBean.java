@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,13 +30,16 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link RecurringChargeTemplate} (extends
@@ -65,6 +69,11 @@ public class RecurringChargeTemplateBean extends
 	@Inject
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
+	@Inject
+	private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
+	private DualListModel<TriggeredEDRTemplate> edrTemplates;
+	
 	@Inject
 	private CatMessagesService catMessagesService;
 
@@ -191,5 +200,23 @@ public class RecurringChargeTemplateBean extends
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+	
+
+	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
+		if (edrTemplates == null) {
+			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
+			if (getEntity().getEdrTemplates() != null) {
+				target.addAll(getEntity().getEdrTemplates());
+			}
+			source.removeAll(target);
+			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
+		}
+		return edrTemplates;
+	}
+
+	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
+		getEntity().setEdrTemplates(temp.getTarget());
 	}
 }

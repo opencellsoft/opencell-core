@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+
+		<hf:formPanel id="formPanel" formId="triggeredTemplateId"
+			label="#{messages['menu.triggeredEdrTemplates']}"
+			backingBean="#{triggeredEDRTemplateBean}">
+
+
+			<hf:formField label="#{messages['businessEntity.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hf:formField label="#{messages['businessEntity.description']}"
+				field="description" id="description"/>
+			<hf:formField
+				label="#{messages['triggeredEdrTemplate.conditionEl']}"
+				field="conditionEl" />
+			<hf:formField
+				label="#{messages['triggeredEdrTemplate.quantityEl']}"
+				field="quantityEl" />
+			<hf:formField
+				label="#{messages['triggeredEdrTemplate.param1El']}"
+				field="param1El" />
+			<hf:formField
+				label="#{messages['triggeredEdrTemplate.param2El']}"
+				field="param2El" />
+			<hf:formField
+				label="#{messages['triggeredEdrTemplate.param3El']}"
+				field="param3El" />
+			<hf:formField
+				label="#{messages['triggeredEdrTemplate.param4El']}"
+				field="param4El" />
+			<hf:formField
+				label="#{messages['triggeredEdrTemplate.subscriptionEl']}"
+				field="subscriptionEl" />
+
+		</hf:formPanel>
+
+	</ui:define>
+</ui:composition>
