@@ -132,8 +132,6 @@
 									action="#{serviceTemplateBean.deleteServiceUsageChargeTemplate(entity)}"
 									icon="ui-icon-trash" ajax="true"
 									update=":tabView:serviceUsageChargeTempalte_panel,:tabView:formPanelUsageCharge:formUsageCharge" />
-
-
 							</p:column>
 						</hftl:dataList>
 					</p:outputPanel>
@@ -144,7 +142,6 @@
 
 						<p:panel id="serviceUsageChargediv"
 							rendered="#{serviceTemplateBean.edit}">
-
 
 							<p:panel id="serviceUsageChargeTemplate">
 								<hf:formPanel id="formPanelUsageCharge" formId="formUsageCharge"
@@ -163,9 +160,7 @@
 									<hf:formEntityField id="counterTemplateSelectedId"
 										label="#{messages['counterTemplate.title']}"
 										field="counterTemplate" childField="code" popup="true"
-										popupId="searchCounterTemplatePopup" clearButton="true"
-										required="false" />
-
+										popupId="searchCounterTemplatePopup" required="false" />
 
 									<p:panelGrid columns="3">
 
@@ -192,11 +187,6 @@
 										</p:button>
 
 									</p:panelGrid>
-
-
-
-
-
 
 								</hf:formPanel>
 							</p:panel>
