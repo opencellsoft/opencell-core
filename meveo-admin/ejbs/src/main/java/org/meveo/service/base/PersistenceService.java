@@ -61,13 +61,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	@MeveoJpaForJobs
 	private EntityManager emfForJobs;
 
-	// TODO move to places where it is needed
-	/*
-	 * @Inject
-	 * 
-	 * @MeveoDWHJpa protected EntityManager dwhEntityManager;
-	 */
-
 	@Inject
 	private Conversation conversation;
 
@@ -78,7 +71,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public PersistenceService() {
-
 		Class clazz = getClass();
 		while (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
 			clazz = clazz.getSuperclass();
@@ -541,6 +533,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 
 	protected EntityManager getEntityManager() {
 		EntityManager result = emfForJobs;
+
 		if (conversation != null) {
 			try {
 				conversation.isTransient();
@@ -548,11 +541,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 			} catch (Exception e) {
 			}
 		}
+
 		return result;
 	}
 
 	public EntityManager getEmfForJobs() {
 		return emfForJobs;
+	}
+
+	public void updateAudit(E e) {
+		updateAudit(e, getCurrentUser());
+	}
+
+	public void updateAudit(E e, User currentUser) {
+		if (e instanceof AuditableEntity) {
+			((AuditableEntity) e).updateAudit(currentUser);
+		}
 	}
 
 }

@@ -287,13 +287,15 @@ public class RatingService {
 			String languageCode = subscription.getUserAccount()
 					.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
-			CatMessages catMessage = catMessagesService.getCatMessages(
+			CatMessages catMessage = catMessagesService.getCatMessages(em,
 					chargeInstance.getClass().getSimpleName() + "_"
 							+ chargeInstance.getId(), languageCode);
 			chargeInstnceLabel = catMessage != null ? catMessage
 					.getDescription() : null;
 		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
+
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
 				: chargeInstance.getDescription());
 
@@ -418,6 +420,7 @@ public class RatingService {
 		BigDecimal priceWithTax = null;
 		BigDecimal unitPriceAmountTax = null;
 		BigDecimal amountTax = BigDecimal.ZERO;
+		
 		if (bareWalletOperation.getTaxPercent() != null) {
 			unitPriceAmountTax = unitPriceWithoutTax
 					.multiply(bareWalletOperation.getTaxPercent().divide(
@@ -425,6 +428,7 @@ public class RatingService {
 			amountTax = priceWithoutTax.multiply(bareWalletOperation
 					.getTaxPercent().divide(HUNDRED));
 		}
+		
 		if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
 			if (unitPriceAmountTax != null) {
 				unitPriceWithTax = unitPriceWithoutTax.add(unitPriceAmountTax);
@@ -451,7 +455,6 @@ public class RatingService {
 		bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
 		bareWalletOperation.setAmountWithTax(priceWithTax);
 		bareWalletOperation.setAmountTax(amountTax);
-
 	}
 
 	private DiscountPlanMatrix discountPrice(

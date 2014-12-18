@@ -97,8 +97,8 @@ public class RealtimeChargingService {
 
 		Long tradingCountryId = tradingCountry.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
-						tradingCountryId);
+				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+						tradingCountryId, provider);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="

@@ -52,7 +52,7 @@ public class RatedTransactionsJob implements Job {
 
 	@Inject
 	private JobExecutionService jobExecutionService;
-	
+
 	@Inject
 	private RatedTransactionsJobBean ratedTransactionsJobBean;
 
@@ -66,8 +66,6 @@ public class RatedTransactionsJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("execute RatedTransactionsJob.");
-
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		ratedTransactionsJobBean.execute(result, currentUser);
 		result.close("");

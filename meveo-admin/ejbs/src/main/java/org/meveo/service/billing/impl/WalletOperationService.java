@@ -66,14 +66,9 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.util.MeveoJpa;
 
 @Stateless
 public class WalletOperationService extends BusinessService<WalletOperation> {
-
-	@Inject
-	@MeveoJpa
-	protected EntityManager entityManager;
 
 	@Inject
 	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
@@ -85,7 +80,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	private OneShotChargeTemplateService oneShotChargeTemplateService;
 
 	@Inject
-	private ResourceBundle resourceMessages;
+	private transient ResourceBundle resourceBundle;
 
 	@Inject
 	private RatingService chargeApplicationRatingService;
@@ -98,14 +93,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		ParamBean paramBean = ParamBean.getInstance();
 		sdf = new SimpleDateFormat(paramBean.getProperty(
 				"walletOperation.dateFormat", "dd/MM/yyyy"));
-		str_tooPerceived = resourceMessages.getString("str_tooPerceived");
+		str_tooPerceived = resourceBundle.getString("str_tooPerceived");
 	}
 
 	public BigDecimal getRatedAmount(Provider provider, Seller seller,
 			Customer customer, CustomerAccount customerAccount,
 			BillingAccount billingAccount, UserAccount userAccount,
 			Date startDate, Date endDate, boolean amountWithTax) {
-		return getRatedAmount(entityManager, provider, seller, customer,
+		return getRatedAmount(getEntityManager(), provider, seller, customer,
 				customerAccount, billingAccount, userAccount, startDate,
 				endDate, amountWithTax);
 	}
@@ -347,31 +342,34 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			OneShotChargeInstance chargeInstance, Integer quantity,
 			Date applicationDate) throws BusinessException {
 		return rateOneShotApplication(getEntityManager(), subscription,
-				chargeInstance, quantity, applicationDate);
+				chargeInstance, quantity, applicationDate, getCurrentUser());
 	}
 
 	public WalletOperation rateOneShotApplication(EntityManager em,
 			Subscription subscription, OneShotChargeInstance chargeInstance,
-			Integer quantity, Date applicationDate) throws BusinessException {
+			Integer quantity, Date applicationDate, User creator)
+			throws BusinessException {
+		
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 		if (chargeTemplate == null) {
 			throw new IncorrectChargeTemplateException(
-					"chargeTemplate is null for chargeInstance id="
+					"ChargeTemplate is null for chargeInstance id="
 							+ chargeInstance.getId() + ", code="
 							+ chargeInstance.getCode());
 		}
+		
 		InvoiceSubCategory invoiceSubCategory = chargeTemplate
 				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
 			throw new IncorrectChargeTemplateException(
-					"invoiceSubCategory is null for chargeTemplate code="
+					"InvoiceSubCategory is null for chargeTemplate code="
 							+ chargeTemplate.getCode());
 		}
 
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
-					"no currency exists for customerAccount id="
+					"No currency exists for customerAccount id="
 							+ subscription.getUserAccount().getBillingAccount()
 									.getCustomerAccount().getId());
 		}
@@ -379,36 +377,39 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
-					"no country exists for billingAccount id="
+					"No country exists for billingAccount id="
 							+ chargeInstance.getSubscription().getUserAccount()
 									.getBillingAccount().getId());
 		}
-		Long countryId = country.getId();
 
+		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
-						countryId);
+						countryId, creator.getProvider());
+
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
-					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
+					"No invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
 							+ " and trading country="
-							+ country.getCountryCode());
+							+ country.getCountryCode() + ".");
 		}
+
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
 			throw new IncorrectChargeTemplateException(
-					"no tax exists for invoiceSubcategoryCountry id="
+					"No tax exists for invoiceSubcategoryCountry id="
 							+ invoiceSubcategoryCountry.getId());
 		}
 
 		WalletOperation chargeApplication = chargeApplicationRatingService
-				.rateChargeApplication(chargeTemplate.getCode(), subscription,
-						chargeInstance, ApplicationTypeEnum.PUNCTUAL,
-						applicationDate, chargeInstance.getAmountWithoutTax(),
-						chargeInstance.getAmountWithTax(),
-						quantity == null ? null : new BigDecimal(quantity),
-						currency, countryId, tax.getPercent(), null, null,
+				.rateChargeApplication(em, chargeTemplate.getCode(),
+						subscription, chargeInstance,
+						ApplicationTypeEnum.PUNCTUAL, applicationDate,
+						chargeInstance.getAmountWithoutTax(), chargeInstance
+								.getAmountWithTax(), quantity == null ? null
+								: new BigDecimal(quantity), currency,
+						countryId, tax.getPercent(), null, null,
 						invoiceSubCategory, chargeInstance.getCriteria1(),
 						chargeInstance.getCriteria2(), chargeInstance
 								.getCriteria3(), null, null, null);
@@ -438,27 +439,29 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		log.debug(
-				"WalletOperationService.oneShotWalletOperation subscriptionCode={},quantity={},"
-						+ "applicationDate={},chargeInstance.getId={}",
-				subscription.getId(), quantity, applicationDate,
-				chargeInstance.getId());
-		WalletOperation chargeApplication = rateOneShotApplication(
-				subscription, chargeInstance, quantity, applicationDate);
+				"WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.getId={}",
+				new Object[] { subscription.getId(), quantity, applicationDate,
+						chargeInstance.getId() });
+		
+		WalletOperation chargeApplication = rateOneShotApplication(em,
+				subscription, chargeInstance, quantity, applicationDate,
+				creator);
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
-		create(chargeApplication, creator, chargeTemplate.getProvider());
+		create(em, chargeApplication, creator, chargeTemplate.getProvider());
 		OneShotChargeTemplate oneShotChargeTemplate = null;
+
 		if (chargeTemplate instanceof OneShotChargeTemplate) {
 			oneShotChargeTemplate = (OneShotChargeTemplate) chargeInstance
 					.getChargeTemplate();
-
 		} else {
-			oneShotChargeTemplate = oneShotChargeTemplateService
-					.findById(chargeTemplate.getId());
+			oneShotChargeTemplate = oneShotChargeTemplateService.findById(em,
+					chargeTemplate.getId());
 		}
 
 		Boolean immediateInvoicing = oneShotChargeTemplate != null ? oneShotChargeTemplate
 				.getImmediateInvoicing() : false;
+
 		if (immediateInvoicing != null && immediateInvoicing) {
 			BillingAccount billingAccount = subscription.getUserAccount()
 					.getBillingAccount();
@@ -469,12 +472,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					"dd/MM/yyyy");
 			applicationDate = DateUtils.parseDateWithPattern(applicationDate,
 					"dd/MM/yyyy");
+
 			if (applicationDate.after(nextInvoiceDate)) {
 				billingAccount.setNextInvoiceDate(applicationDate);
-				billingAccountService.update(billingAccount, creator);
+				billingAccountService.setProvider(creator.getProvider());
+				billingAccountService.update(em, billingAccount, creator);
 			}
 		}
-
 	}
 
 	public void recurringWalletOperation(Subscription subscription,
@@ -523,8 +527,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
-						countryId);
+				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+						countryId, creator.getProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
@@ -678,7 +682,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
-						countryId);
+						countryId, getCurrentProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
@@ -884,7 +888,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 					.findInvoiceSubCategoryCountry(em,
-							invoiceSubCategory.getId(), countryId);
+							invoiceSubCategory.getId(), countryId,
+							creator.getProvider());
 			if (invoiceSubcategoryCountry == null) {
 				throw new IncorrectChargeTemplateException(
 						"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
@@ -1006,7 +1011,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
-						countryId);
+						countryId, creator.getProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
@@ -1137,7 +1142,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
 				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
-						countryId);
+						countryId, creator.getProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
 					"No invoiceSubcategoryCountry exists for invoiceSubCategory code="
@@ -1322,8 +1327,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
-						countryId);
+				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+						countryId, creator.getProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
 					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="

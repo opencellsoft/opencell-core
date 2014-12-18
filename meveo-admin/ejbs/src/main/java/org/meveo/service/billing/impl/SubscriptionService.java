@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -46,7 +45,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 
 @Stateless
-@LocalBean
 public class SubscriptionService extends BusinessService<Subscription> {
 
 	@EJB

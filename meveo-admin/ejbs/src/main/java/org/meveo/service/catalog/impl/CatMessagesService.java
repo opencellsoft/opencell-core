@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -34,40 +35,43 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @Named
 public class CatMessagesService extends PersistenceService<CatMessages> {
-	
-	
 
-    
-    @PostConstruct
-    private void init() {
+	@PostConstruct
+	private void init() {
 
 	}
 
 	@SuppressWarnings("unchecked")
 	public String getMessageDescription(String messageCode, String languageCode) {
-		long startDate=System.currentTimeMillis();
-		if(messageCode==null || languageCode==null){
+		long startDate = System.currentTimeMillis();
+		if (messageCode == null || languageCode == null) {
 			return null;
 		}
-			QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
-			qb.addCriterionWildcard("c.messageCode", messageCode, true);
-			qb.addCriterionWildcard("c.languageCode", languageCode, true);
-			List<CatMessages> catMessages = qb.getQuery(getEntityManager()).getResultList();
-			
-			String  description= catMessages.size() > 0 ? catMessages.get(0).getDescription() : "";
-			
-		
-		
-		log.info("get message description description ="+description+", time="+(System.currentTimeMillis()-startDate));
-		return description;
-	}
-
-	@SuppressWarnings("unchecked")
-	public CatMessages getCatMessages(String messageCode, String languageCode) {
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterionWildcard("c.messageCode", messageCode, true);
 		qb.addCriterionWildcard("c.languageCode", languageCode, true);
-		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager())
+		List<CatMessages> catMessages = qb.getQuery(getEntityManager())
+				.getResultList();
+
+		String description = catMessages.size() > 0 ? catMessages.get(0)
+				.getDescription() : "";
+
+		log.info("get message description description =" + description
+				+ ", time=" + (System.currentTimeMillis() - startDate));
+		return description;
+	}
+
+	public CatMessages getCatMessages(String messageCode, String languageCode) {
+		return getCatMessages(getEntityManager(), messageCode, languageCode);
+	}
+
+	@SuppressWarnings("unchecked")
+	public CatMessages getCatMessages(EntityManager em, String messageCode,
+			String languageCode) {
+		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
+		qb.addCriterionWildcard("c.messageCode", messageCode, true);
+		qb.addCriterionWildcard("c.languageCode", languageCode, true);
+		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(em)
 				.getResultList();
 		return cats != null && cats.size() > 0 ? cats.get(0) : null;
 	}
@@ -80,12 +84,11 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		}
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterion("c.messageCode", "=", messageCode, true);
-		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(getEntityManager())
-				.getResultList();
+		List<CatMessages> cats = (List<CatMessages>) qb.getQuery(
+				getEntityManager()).getResultList();
 		return cats;
 	}
 
-	
 	public void batchRemove(String entityName, Long id) {
 		String strQuery = "DELETE FROM " + CatMessages.class.getSimpleName()
 				+ " c WHERE c.messageCode=:messageCode";
@@ -98,7 +101,5 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 			log.error(e.getMessage());
 		}
 	}
-	
-	
 
 }

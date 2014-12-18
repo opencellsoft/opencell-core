@@ -80,6 +80,7 @@ public class UsageChargeInstanceService extends
 				.getBillingAccount().getCustomerAccount().getTradingCurrency());
 
 		create(em, usageChargeInstance, creator, serviceInstance.getProvider());
+		
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
 			CounterInstance counterInstance = counterInstanceService
 					.counterInstanciation(em, serviceInstance.getSubscription()
@@ -103,7 +104,7 @@ public class UsageChargeInstanceService extends
 			UsageChargeInstance usageChargeInstance, User currentUser) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		setProvider(currentUser.getProvider());
-		update(em, usageChargeInstance);
+		update(em, usageChargeInstance, currentUser);
 		usageRatingService.updateCache(usageChargeInstance);
 	}
 

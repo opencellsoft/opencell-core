@@ -3,7 +3,6 @@ package org.meveo.service.crm.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -28,6 +27,7 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -45,17 +45,20 @@ public class SubscriptionImportService {
 	@Inject
 	private ServiceTemplateService serviceTemplateService;
 
-	@EJB
+	@Inject
 	private ServiceInstanceService serviceInstanceService;
 
 	@Inject
 	private AccessService accessService;
 
+	@Inject
+	@MeveoJpaForJobs
+	private EntityManager em;
+
 	private ParamBean paramBean = ParamBean.getInstance();
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public int importSubscription(EntityManager em,
-			CheckedSubscription checkSubscription,
+	public int importSubscription(CheckedSubscription checkSubscription,
 			org.meveo.model.jaxb.subscription.Subscription subscrip,
 			String fileName, User currentUser, int i) throws BusinessException,
 			SubscriptionServiceException, ImportIgnoredException {
@@ -123,6 +126,7 @@ public class SubscriptionImportService {
 
 		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i
 				+ ", code:" + subscrip.getCode() + ", status:Created");
+
 		for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.serviceInsts) {
 			try {
 				ServiceTemplate serviceTemplate = null;
@@ -154,6 +158,7 @@ public class SubscriptionImportService {
 				serviceInstance.setProvider(provider);
 				serviceInstanceService.serviceInstanciation(em,
 						serviceInstance, currentUser);
+
 				subscription.getServiceInstances().add(serviceInstance);
 
 				if (serviceInst.getRecurringCharges() != null) {
@@ -276,11 +281,12 @@ public class SubscriptionImportService {
 					}
 				}
 
-				subscriptionService.setProvider(provider);
-				subscriptionService.update(em, subscription, currentUser);
+				subscription.updateAudit(currentUser);
+
 				serviceInstanceService.serviceActivation(em, serviceInstance,
 						null, null, currentUser);
 			} catch (Exception e) {
+				log.error(e.getMessage());
 				throw new SubscriptionServiceException(subscrip, serviceInst,
 						e.getMessage());
 			}
@@ -289,6 +295,7 @@ public class SubscriptionImportService {
 					+ ", typeEntity:ServiceInstance, index:" + i + ", code:"
 					+ serviceInst.getCode() + ", status:Actived");
 		}
+
 		log.info("accessPoints.size=" + checkSubscription.accessPoints.size());
 
 		for (Access accessPoint : checkSubscription.accessPoints) {

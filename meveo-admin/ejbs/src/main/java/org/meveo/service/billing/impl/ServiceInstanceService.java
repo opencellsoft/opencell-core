@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -57,7 +56,6 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
-@LocalBean
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 	@EJB
@@ -240,19 +238,19 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		// String serviceCode = serviceInstance.getCode();
 		if (subscription == null) {
 			throw new IncorrectSusbcriptionException(
-					"subscription does not exist. code="
+					"Subscription does not exist. code="
 							+ serviceInstance.getSubscription().getCode());
 		}
 
 		if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
 				|| subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
-			throw new IncorrectServiceInstanceException("subscription is "
+			throw new IncorrectServiceInstanceException("Subscription is "
 					+ subscription.getStatus());
 		}
 
 		if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE
 				|| serviceInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
-			throw new IncorrectServiceInstanceException("serviceInstance is "
+			throw new IncorrectServiceInstanceException("ServiceInstance is "
 					+ subscription.getStatus());
 		}
 
@@ -265,6 +263,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		log.debug(
 				"serviceActivation:serviceInstance.getRecurrringChargeInstances.size={}",
 				serviceInstance.getRecurringChargeInstances().size());
+
 		for (RecurringChargeInstance recurringChargeInstance : serviceInstance
 				.getRecurringChargeInstances()) {
 
@@ -279,7 +278,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			recurringChargeInstance.setStatusDate(new Date());
 			recurringChargeInstanceService.setProvider(creator.getProvider());
-			recurringChargeInstanceService.update(em, recurringChargeInstance);
+			recurringChargeInstanceService.update(em, recurringChargeInstance,
+					creator);
 			recurringChargeInstanceService.recurringChargeApplication(em,
 					recurringChargeInstance, creator);
 
@@ -322,7 +322,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				oneShotChargeInstance.setStatusDate(new Date());
 				oneShotChargeInstanceService.setProvider(creator.getProvider());
-				oneShotChargeInstanceService.update(em, oneShotChargeInstance);
+				oneShotChargeInstanceService.update(em, oneShotChargeInstance,
+						creator);
 			}
 		} else {
 			log.debug("ServiceActivation: subscription charges are not applied.");

@@ -19,7 +19,6 @@ package org.meveo.service.billing.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -33,33 +32,35 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@Named
 public class InvoiceSubCategoryCountryService extends
 		PersistenceService<InvoiceSubcategoryCountry> {
 
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
 			Long invoiceSubCategoryId, Long countryId) {
 		return findInvoiceSubCategoryCountry(getEntityManager(),
-				invoiceSubCategoryId, countryId);
+				invoiceSubCategoryId, countryId, getCurrentProvider());
 	}
 
 	@SuppressWarnings("unchecked")
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
-			EntityManager em, Long invoiceSubCategoryId, Long countryId) {
+			EntityManager em, Long invoiceSubCategoryId, Long countryId,
+			Provider provider) {
 		try {
 			QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
 					"i");
-			qb.addCriterionEntity("i.invoiceSubCategory.id",
-					invoiceSubCategoryId);
-			qb.addCriterionEntity("i.tradingCountry.id", countryId);
+			qb.addCriterion("invoiceSubCategory.id", "=",
+					invoiceSubCategoryId, true);
+			qb.addCriterion("tradingCountry.id", "=", countryId, true);
+			qb.addCriterionEntity("provider", provider);
 
-			List<InvoiceSubcategoryCountry> InvoiceSubcategoryCountries = qb
+			List<InvoiceSubcategoryCountry> invoiceSubcategoryiountries = qb
 					.getQuery(em).getResultList();
-			return InvoiceSubcategoryCountries.size() > 0 ? InvoiceSubcategoryCountries
+			return invoiceSubcategoryiountries.size() > 0 ? invoiceSubcategoryiountries
 					.get(0) : null;
 		} catch (NoResultException ex) {
-			ex.printStackTrace();
+			log.warn(ex.getMessage());
 		}
+
 		return null;
 	}
 

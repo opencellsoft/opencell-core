@@ -49,8 +49,6 @@ public class UsageRatingJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("execute UsageRatingJob.");
-
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		usageRatingJobBean.execute(result, currentUser);
 		result.close("");

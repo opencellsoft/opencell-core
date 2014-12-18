@@ -67,7 +67,7 @@ public class ImportSubscriptionsJobBean {
 	@MeveoJpaForJobs
 	private EntityManager em;
 
-	ParamBean param = ParamBean.getInstance();
+	ParamBean paramBean = ParamBean.getInstance();
 
 	Subscriptions subscriptionsError;
 	Subscriptions subscriptionsWarning;
@@ -83,20 +83,24 @@ public class ImportSubscriptionsJobBean {
 	@Interceptors({ JobLoggingInterceptor.class })
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
-		String importDir = param
-				.getProperty("providers.rootDir", "/tmp/meveo/")
+
+		String importDir = paramBean.getProperty("providers.rootDir",
+				"/tmp/meveo/")
 				+ File.separator
 				+ provider.getCode()
 				+ File.separator
-				+ "imports" + File.separator + "subscriptions" + File.separator;
+				+ "imports"
+				+ File.separator
+				+ "subscriptions"
+				+ File.separator;
 
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
 		String dirOK = importDir + "output";
 		String dirKO = importDir + "reject";
-		String prefix = param.getProperty(
+		String prefix = paramBean.getProperty(
 				"connectorCRM.importSubscriptions.prefix", "SUB_");
-		String ext = param.getProperty(
+		String ext = paramBean.getProperty(
 				"connectorCRM.importSubscriptions.extension", "xml");
 
 		File dir = new File(dirIN);
@@ -115,6 +119,7 @@ public class ImportSubscriptionsJobBean {
 				log.info("InputFiles job {} in progress...", file.getName());
 				currentFile = FileUtils.addExtension(file, ".processing");
 				importFile(currentFile, file.getName(), currentUser);
+
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job {} done.", file.getName());
 				result.registerSucces();
@@ -175,17 +180,17 @@ public class ImportSubscriptionsJobBean {
 					createSubscriptionError(subscrip,
 							"Error in checkSubscription");
 					nbSubscriptionsError++;
-					log.info("file:" + fileName
+					log.info("File:" + fileName
 							+ ", typeEntity:Subscription, index:" + i
 							+ ", code:" + subscrip.getCode() + ", status:Error");
 					break;
 				}
 
 				nbSubscriptionsCreated += subscriptionImportService
-						.importSubscription(em, checkSubscription, subscrip,
+						.importSubscription(checkSubscription, subscrip,
 								fileName, currentUser, i);
 			} catch (ImportIgnoredException ie) {
-				log.info("file:" + fileName
+				log.info("File:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
 						+ subscrip.getCode() + ", status:Ignored");
 				nbSubscriptionsIgnored++;
@@ -193,7 +198,7 @@ public class ImportSubscriptionsJobBean {
 				createServiceInstanceError(se.getSubscrip(),
 						se.getServiceInst(), se.getMess());
 				nbSubscriptionsError++;
-				log.info("file:" + fileName
+				log.info("File:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
 						+ subscrip.getCode() + ", status:Error");
 			} catch (Exception e) {
@@ -202,7 +207,7 @@ public class ImportSubscriptionsJobBean {
 				// ExceptionUtils.getRootCause(e).getMessage());
 				createSubscriptionError(subscrip, e.getMessage());
 				nbSubscriptionsError++;
-				log.info("file:" + fileName
+				log.info("File:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
 						+ subscrip.getCode() + ", status:Error");
 				log.error(e.getMessage());
@@ -230,12 +235,15 @@ public class ImportSubscriptionsJobBean {
 
 	private void generateReport(String fileName, Provider provider)
 			throws Exception {
-		String importDir = param
-				.getProperty("providers.rootDir", "/tmp/meveo/")
+		String importDir = paramBean.getProperty("providers.rootDir",
+				"/tmp/meveo/")
 				+ File.separator
 				+ provider.getCode()
 				+ File.separator
-				+ "imports" + File.separator + "subscriptions" + File.separator;
+				+ "imports"
+				+ File.separator
+				+ "subscriptions"
+				+ File.separator;
 
 		if (subscriptionsWarning.getWarnings() != null) {
 			String warningDir = importDir + "output" + File.separator
@@ -327,8 +335,8 @@ public class ImportSubscriptionsJobBean {
 							+ subscrip.getOfferCode());
 			return null;
 		}
-
 		checkSubscription.offerTemplate = offerTemplate;
+
 		UserAccount userAccount = null;
 		try {
 			userAccount = userAccountService.findByCode(em,
@@ -353,8 +361,8 @@ public class ImportSubscriptionsJobBean {
 
 		if (!"ACTIVE".equals(subscrip.getStatus().getValue())
 				&& checkSubscription.subscription == null) {
-			createSubscriptionError(subscrip, "cannot find souscription code:"
-					+ subscrip.getCode());
+			createSubscriptionError(subscrip,
+					"cannot find subscription with code=" + subscrip.getCode());
 			return null;
 		}
 
@@ -363,7 +371,7 @@ public class ImportSubscriptionsJobBean {
 					|| subscrip.getServices().getServiceInstance() == null
 					|| subscrip.getServices().getServiceInstance().isEmpty()) {
 				createSubscriptionError(subscrip,
-						"cannot create souscription without services");
+						"cannot create subscription without services");
 				return null;
 			}
 
@@ -380,6 +388,7 @@ public class ImportSubscriptionsJobBean {
 				if (accessCheckError(subscrip, access)) {
 					return null;
 				}
+
 				checkSubscription.accessPoints.add(access);
 			}
 		}
@@ -392,7 +401,7 @@ public class ImportSubscriptionsJobBean {
 			String cause) {
 		log.error(cause);
 
-		String generateFullCrmReject = param.getProperty(
+		String generateFullCrmReject = paramBean.getProperty(
 				"connectorCRM.generateFullCrmReject", "true");
 		ErrorSubscription errorSubscription = new ErrorSubscription();
 		errorSubscription.setCause(cause);
@@ -416,7 +425,7 @@ public class ImportSubscriptionsJobBean {
 			String cause) {
 		log.warn(cause);
 
-		String generateFullCrmReject = param.getProperty(
+		String generateFullCrmReject = paramBean.getProperty(
 				"connectorCRM.generateFullCrmReject", "true");
 		WarningSubscription warningSubscription = new WarningSubscription();
 		warningSubscription.setCause(cause);

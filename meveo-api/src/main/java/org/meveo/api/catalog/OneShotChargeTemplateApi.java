@@ -368,8 +368,9 @@ public class OneShotChargeTemplateApi extends BaseApi {
 				log.warn("country with code={} does not exists", countryCode);
 			} else {
 				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-						.findInvoiceSubCategoryCountry(
-								invoiceSubCategory.getId(), country.getId());
+						.findInvoiceSubCategoryCountry(em,
+								invoiceSubCategory.getId(), country.getId(),
+								provider);
 				if (invoiceSubcategoryCountry != null
 						&& invoiceSubcategoryCountry.getTax() != null) {
 					Tax tax = invoiceSubcategoryCountry.getTax();
