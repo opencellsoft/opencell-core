@@ -10,7 +10,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -39,7 +38,6 @@ import org.meveo.service.crm.impl.CheckedSubscription;
 import org.meveo.service.crm.impl.ImportIgnoredException;
 import org.meveo.service.crm.impl.SubscriptionImportService;
 import org.meveo.service.crm.impl.SubscriptionServiceException;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -62,10 +60,6 @@ public class ImportSubscriptionsJobBean {
 
 	@Inject
 	private SubscriptionImportService subscriptionImportService;
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
 
 	ParamBean paramBean = ParamBean.getInstance();
 
@@ -229,7 +223,7 @@ public class ImportSubscriptionsJobBean {
 		subscriptionImportHisto
 				.setNbSubscriptionsTerminated(nbSubscriptionsTerminated);
 		subscriptionImportHisto.setProvider(provider);
-		subscriptionImportHistoService.create(em, subscriptionImportHisto,
+		subscriptionImportHistoService.create(subscriptionImportHisto,
 				currentUser, provider);
 	}
 
@@ -322,7 +316,7 @@ public class ImportSubscriptionsJobBean {
 
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(em, subscrip
+			offerTemplate = offerTemplateService.findByCode(subscrip
 					.getOfferCode().toUpperCase(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
@@ -339,7 +333,7 @@ public class ImportSubscriptionsJobBean {
 
 		UserAccount userAccount = null;
 		try {
-			userAccount = userAccountService.findByCode(em,
+			userAccount = userAccountService.findByCode(
 					subscrip.getUserAccountId(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -353,7 +347,7 @@ public class ImportSubscriptionsJobBean {
 		checkSubscription.userAccount = userAccount;
 
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(em,
+			checkSubscription.subscription = subscriptionService.findByCode(
 					subscrip.getCode(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());

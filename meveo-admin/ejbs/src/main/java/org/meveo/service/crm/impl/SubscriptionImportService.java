@@ -27,7 +27,6 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -51,10 +50,6 @@ public class SubscriptionImportService {
 	@Inject
 	private AccessService accessService;
 
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
-
 	private ParamBean paramBean = ParamBean.getInstance();
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -77,8 +72,8 @@ public class SubscriptionImportService {
 				SubscriptionTerminationReason subscriptionTerminationType = null;
 				try {
 					subscriptionTerminationType = subscriptionTerminationReasonService
-							.findByCodeReason(em, subscrip.getStatus()
-									.getReason(), provider);
+							.findByCodeReason(subscrip.getStatus().getReason(),
+									provider);
 				} catch (Exception e) {
 					log.error(e.getMessage());
 				}
@@ -89,7 +84,7 @@ public class SubscriptionImportService {
 									+ subscrip.getStatus().getReason());
 				}
 
-				subscriptionService.terminateSubscription(em, subscription,
+				subscriptionService.terminateSubscription(subscription,
 						DateUtils.parseDateWithPattern(subscrip.getStatus()
 								.getDate(), paramBean.getProperty(
 								"connectorCRM.dateFormat", "dd/MM/yyyy")),
@@ -122,7 +117,7 @@ public class SubscriptionImportService {
 				"connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
-		subscriptionService.create(em, subscription, currentUser, provider);
+		subscriptionService.create(subscription, currentUser, provider);
 
 		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i
 				+ ", code:" + subscrip.getCode() + ", status:Created");
@@ -131,8 +126,8 @@ public class SubscriptionImportService {
 			try {
 				ServiceTemplate serviceTemplate = null;
 				ServiceInstance serviceInstance = new ServiceInstance();
-				serviceTemplate = serviceTemplateService.findByCode(em,
-						serviceInst.getCode().toUpperCase(), provider);
+				serviceTemplate = serviceTemplateService.findByCode(serviceInst
+						.getCode().toUpperCase(), provider);
 				serviceInstance.setCode(serviceTemplate.getCode());
 				serviceInstance
 						.setDescription(serviceTemplate.getDescription());
@@ -156,8 +151,8 @@ public class SubscriptionImportService {
 						+ subscrip.getCode() + ", quantity:" + quantity);
 				serviceInstance.setQuantity(quantity);
 				serviceInstance.setProvider(provider);
-				serviceInstanceService.serviceInstanciation(em,
-						serviceInstance, currentUser);
+				serviceInstanceService.serviceInstanciation(serviceInstance,
+						currentUser);
 
 				subscription.getServiceInstances().add(serviceInstance);
 
@@ -283,8 +278,8 @@ public class SubscriptionImportService {
 
 				subscription.updateAudit(currentUser);
 
-				serviceInstanceService.serviceActivation(em, serviceInstance,
-						null, null, currentUser);
+				serviceInstanceService.serviceActivation(serviceInstance, null,
+						null, currentUser);
 			} catch (Exception e) {
 				log.error(e.getMessage());
 				throw new SubscriptionServiceException(subscrip, serviceInst,
@@ -308,12 +303,33 @@ public class SubscriptionImportService {
 			access.setEndDate(DateUtils.parseDateWithPattern(
 					accessPoint.getEndDate(),
 					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
-			accessService.create(em, access, currentUser, provider);
+			accessService.create(access, currentUser, provider);
 			log.info("File:" + fileName + ", typeEntity:access, index:" + i
 					+ ", AccessUserId:" + access.getAccessUserId());
 		}
 
 		return 1;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void activateServices(EntityManager em,
+			CheckedSubscription checkSubscription,
+			org.meveo.model.jaxb.subscription.Subscription subscrip,
+			User currentUser) throws SubscriptionServiceException {
+		if (checkSubscription.subscription != null
+				&& checkSubscription.subscription.getServiceInstances().size() > 0) {
+			for (ServiceInstance serviceInstance : checkSubscription.subscription
+					.getServiceInstances()) {
+				try {
+					serviceInstanceService.serviceActivation(em,
+							serviceInstance, null, null, currentUser);
+				} catch (Exception e) {
+					log.error(e.getMessage());
+					throw new SubscriptionServiceException(subscrip, null,
+							e.getMessage());
+				}
+			}
+		}
 	}
 
 }
