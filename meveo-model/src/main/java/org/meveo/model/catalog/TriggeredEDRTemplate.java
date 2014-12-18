@@ -1,15 +1,30 @@
 package org.meveo.model.catalog;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-@Embeddable
-public class UsageChargeEDRTemplate  implements Serializable, Cloneable {
+import org.meveo.model.BusinessEntity;
+
+@Entity
+@Table(name = "CAT_TRIGERRED_EDR")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_TRIGERRED_EDR_SEQ")
+public class TriggeredEDRTemplate  extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CHARGE_TEMPLATE_ID")
+	protected ChargeTemplate chargeTemplate;
+	
+	@Column(name = "SUBSCRIPTION_EL", length = 1000)
+	@Size(max = 1000)
+	private String subscriptionEl;
+	
 	@Column(name = "CONDITION_EL", length = 1000)
 	@Size(max = 1000)
 	private String conditionEl;
@@ -33,6 +48,14 @@ public class UsageChargeEDRTemplate  implements Serializable, Cloneable {
 	@Column(name = "PARAM_4_EL", length = 1000)
 	@Size(max = 1000)
 	private String param4El;
+	
+	public String getSubscriptionEl() {
+		return subscriptionEl;
+	}
+
+	public void setSubscriptionEl(String subscriptionEl) {
+		this.subscriptionEl = subscriptionEl;
+	}
 
 	public String getConditionEl() {
 		return conditionEl;

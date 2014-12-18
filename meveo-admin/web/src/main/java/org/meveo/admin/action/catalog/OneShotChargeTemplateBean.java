@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,13 +29,16 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.DualListModel;
 
 /**
  * Standard backing bean for {@link OneShotChargeTemplate} (extends
@@ -65,6 +71,10 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	@Inject
 	private UsageChargeTemplateService usageChargeTemplateService;
 
+	@Inject
+	private TriggeredEDRTemplateService triggeredEDRTemplateService;
+
+	private DualListModel<TriggeredEDRTemplate> edrTemplates;
 	private String descriptionFr;
 
 	/**
@@ -201,4 +211,23 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+	
+
+	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
+		if (edrTemplates == null) {
+			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
+			if (getEntity().getEdrTemplates() != null) {
+				target.addAll(getEntity().getEdrTemplates());
+			}
+			source.removeAll(target);
+			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
+		}
+		return edrTemplates;
+	}
+
+	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
+		getEntity().setEdrTemplates(temp.getTarget());
+	}
+
 }

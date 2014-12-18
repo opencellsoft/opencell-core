@@ -39,6 +39,12 @@
 			<hf:formField label="#{messages['oneShotChargeTemplate.type']}"
 				field="oneShotChargeTemplateType" required="true" />
 
+			<hf:formField
+				label="#{messages['menu.triggeredEdrTemplates']}"
+				field="edrTemplates" listType="pickUpList"
+				childField="code"
+				dualListModel="#{oneShotChargeTemplateBean.edrTemplatesModel}" />
+				
 			<hftl:panelGroup columns="2">
 				<hf:formEntityField id="invoiceSubCategorySelectedId"
 					label="#{messages['charge.subCategory']}"

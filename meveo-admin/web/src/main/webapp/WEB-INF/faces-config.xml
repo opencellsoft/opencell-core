@@ -529,6 +529,16 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>triggeredEdrTemplates</from-outcome>
+			<to-view-id>/pages/catalog/triggeredEdrTemplates/triggeredEdrTemplates.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>triggeredEdrTemplateDetail</from-outcome>
+			<to-view-id>/pages/catalog/triggeredEdrTemplates/triggeredEdrTemplateDetail.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>calendars</from-outcome>
 			<to-view-id>/pages/catalog/calendars/calendars.xhtml</to-view-id>
 			<redirect />
