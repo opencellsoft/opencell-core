@@ -448,12 +448,7 @@
 															onkeyup="validateAmounts();"
 															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
 														</p:inputText>
-														<!-- <h:outputText
-															rendered="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}"
-															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
-															style="font-weight:bold;" converter="bigDecimalConverter" /> -->
 													</h:panelGrid>
-
 													<h:panelGrid columns="2">
 														<p:outputLabel for="amountWithTax"
 															value="#{messages['oneShotChargeInstance.amountWithTax']}" />
@@ -463,10 +458,6 @@
 															onkeyup="validateAmounts();"
 															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
 														</p:inputText>
-														<!-- <h:outputText
-															rendered="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}"
-															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
-															style="font-weight:bold;" converter="bigDecimalConverter" /> -->
 													</h:panelGrid>
 													<hf:formField
 														label="#{messages['oneShotChargeInstance.criteria1']}"
