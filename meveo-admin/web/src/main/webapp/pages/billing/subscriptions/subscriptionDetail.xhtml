@@ -446,11 +446,12 @@
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
 															size="5" converter="bigDecimalConverter"
 															onkeyup="validateAmounts();"
-															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
 														</p:inputText>
-														<h:outputText rendered="#{!subscriptionBean.edit}"
+														<!-- <h:outputText
+															rendered="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}"
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
-															style="font-weight:bold;" converter="bigDecimalConverter" />
+															style="font-weight:bold;" converter="bigDecimalConverter" /> -->
 													</h:panelGrid>
 
 													<h:panelGrid columns="2">
@@ -460,11 +461,12 @@
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 															size="5" converter="bigDecimalConverter"
 															onkeyup="validateAmounts();"
-															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
 														</p:inputText>
-														<h:outputText rendered="#{!subscriptionBean.edit}"
+														<!-- <h:outputText
+															rendered="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}"
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
-															style="font-weight:bold;" converter="bigDecimalConverter" />
+															style="font-weight:bold;" converter="bigDecimalConverter" /> -->
 													</h:panelGrid>
 													<hf:formField
 														label="#{messages['oneShotChargeInstance.criteria1']}"
