@@ -58,49 +58,59 @@
 						rendered="#{timerBean.timerEntity.id!=null or timerBean.timerEntity.jobName!=null}">
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.hour']}" />
-							<p:inputText value="#{timerBean.timerEntity.hour}" />
+							<p:outputLabel for="hour" value="#{messages['timer.hour']}" />
+							<p:inputText id="hour" value="#{timerBean.timerEntity.hour}"
+								required="true" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.minute']}" />
-							<p:inputText value="#{timerBean.timerEntity.minute}" />
+							<p:outputLabel for="minute" value="#{messages['timer.minute']}" />
+							<p:inputText id="minute" value="#{timerBean.timerEntity.minute}"
+								required="true" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.second']}" />
-							<p:inputText value="#{timerBean.timerEntity.second}" />
+							<p:outputLabel for="second" value="#{messages['timer.second']}" />
+							<p:inputText id="second" value="#{timerBean.timerEntity.second}"
+								required="true" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.year']}" />
-							<p:inputText value="#{timerBean.timerEntity.year}" />
+							<p:outputLabel for="year" value="#{messages['timer.year']}" />
+							<p:inputText id="year" value="#{timerBean.timerEntity.year}"
+								required="true" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.month']}" />
-							<p:inputText value="#{timerBean.timerEntity.month}" />
+							<p:outputLabel for="month" value="#{messages['timer.month']}" />
+							<p:inputText id="month" value="#{timerBean.timerEntity.month}"
+								required="true" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.dayOfMonth']}" />
-							<p:inputText value="#{timerBean.timerEntity.dayOfMonth}" />
+							<p:outputLabel for="dayOfMonth"
+								value="#{messages['timer.dayOfMonth']}" />
+							<p:inputText id="dayOfMonth"
+								value="#{timerBean.timerEntity.dayOfMonth}" required="true" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.dayOfWeek']}" />
-							<p:inputText value="#{timerBean.timerEntity.dayOfWeek}" />
+							<p:outputLabel for="dayOfWeek"
+								value="#{messages['timer.dayOfWeek']}" />
+							<p:inputText id="dayOfWeek"
+								value="#{timerBean.timerEntity.dayOfWeek}" required="true" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.parameter']}" />
-							<p:inputText
+							<p:outputLabel for="parameters"
+								value="#{messages['timer.parameter']}" />
+							<p:inputText id="parameters"
 								value="#{timerBean.timerEntity.timerInfo.parametres}" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="2">
-							<p:outputLabel value="#{messages['timer.active']}" />
-							<p:selectBooleanCheckbox
+							<p:outputLabel for="active" value="#{messages['timer.active']}" />
+							<p:selectBooleanCheckbox id="active"
 								value="#{timerBean.timerEntity.timerInfo.active}" />
 						</p:panelGrid>
 
