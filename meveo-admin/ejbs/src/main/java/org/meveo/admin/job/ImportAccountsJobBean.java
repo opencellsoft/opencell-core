@@ -6,11 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -37,7 +34,6 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.ImportWarningException;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -45,10 +41,6 @@ public class ImportAccountsJobBean {
 
 	@Inject
 	private Logger log;
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
 
 	@Inject
 	private BillingAccountService billingAccountService;
@@ -79,7 +71,6 @@ public class ImportAccountsJobBean {
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class })
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		log.info("execute ImportAccountsJob.");
@@ -199,10 +190,10 @@ public class ImportAccountsJobBean {
 			boolean existBillingAccount = false;
 			try {
 				try {
-					billingAccount = billingAccountService.findByCode(em,
+					billingAccount = billingAccountService.findByCode(
 							billAccount.getCode(), provider);
 					billingAccount = accountImportService.importBillingAccount(
-							em, billAccount, provider, currentUser);
+							billAccount, provider, currentUser);
 					log.info("file6:" + fileName
 							+ ", typeEntity:BillingAccount, index:" + i
 							+ ", code:" + billAccount.getCode()
@@ -252,7 +243,7 @@ public class ImportAccountsJobBean {
 				UserAccount userAccount = null;
 				log.debug("userAccount found code:" + uAccount.getCode());
 				try {
-					userAccount = userAccountService.findByCode(em,
+					userAccount = userAccountService.findByCode(
 							uAccount.getCode(), provider);
 				} catch (Exception e) {
 				}
@@ -264,9 +255,8 @@ public class ImportAccountsJobBean {
 							+ uAccount.getCode() + ", status:Ignored");
 				} else {
 					try {
-						accountImportService.importUserAccount(em,
-								billingAccount, billAccount, uAccount,
-								provider, currentUser);
+						accountImportService.importUserAccount(billingAccount,
+								billAccount, uAccount, provider, currentUser);
 						log.info("file:"
 								+ fileName
 								+ ", typeEntity:UserAccount,  indexBillingAccount:"
@@ -441,8 +431,7 @@ public class ImportAccountsJobBean {
 		accountImportHisto.setNbUserAccountsIgnored(nbUserAccountsIgnored);
 		accountImportHisto.setNbUserAccountsWarning(nbUserAccountsWarning);
 		accountImportHisto.setProvider(provider);
-		accountImportHistoService.create(em, accountImportHisto, userJob,
-				provider);
+		accountImportHistoService.create(accountImportHisto, userJob, provider);
 	}
 
 }

@@ -24,10 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.context.Conversation;
-import javax.inject.Inject;
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ProviderNotAllowedException;
@@ -42,8 +43,6 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * Generic implementation that provides the default implementation for
@@ -53,16 +52,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		implements IPersistenceService<E> {
 	protected final Class<E> entityClass;
 
-	@Inject
-	@MeveoJpa
+	@PersistenceContext(unitName = "MeveoAdmin")
 	protected EntityManager em;
 
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager emfForJobs;
-
-	@Inject
-	private Conversation conversation;
+	@Resource
+	private TransactionSynchronizationRegistry txReg;
 
 	private Provider provider;
 
@@ -490,8 +484,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	private void checkProvider(E e) {
 		if (getCurrentProvider() != null) {
 			if (e instanceof BaseEntity) {
+				Long providerId = ((BaseEntity) e).getProvider().getId();
 				Provider entityProvider = getEntityManager().find(
-						Provider.class, ((BaseEntity) e).getProvider().getId());
+						Provider.class, providerId);
 				boolean notSameProvider = !(entityProvider != null && entityProvider
 						.getId().equals(getCurrentProvider().getId()));
 				log.debug(
@@ -532,21 +527,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	protected EntityManager getEntityManager() {
-		EntityManager result = emfForJobs;
-
-		if (conversation != null) {
-			try {
-				conversation.isTransient();
-				result = em;
-			} catch (Exception e) {
-			}
-		}
-
-		return result;
-	}
-
-	public EntityManager getEmfForJobs() {
-		return emfForJobs;
+		log.debug("tx.key={}", txReg.getTransactionKey());
+		return em;
 	}
 
 	public void updateAudit(E e) {

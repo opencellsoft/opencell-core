@@ -7,11 +7,8 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -40,7 +37,6 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -48,10 +44,6 @@ public class ImportCustomersJobBean {
 
 	@Inject
 	private Logger log;
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
 
 	@Inject
 	private CustomerImportHistoService customerImportHistoService;
@@ -92,7 +84,6 @@ public class ImportCustomersJobBean {
 	int nbCustomerAccountsCreated;
 	CustomerImportHisto customerImportHisto;
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class })
 	public void execute(JobExecutionResultImpl result, User currentUser) {
 		Provider provider = currentUser.getProvider();
@@ -217,7 +208,7 @@ public class ImportCustomersJobBean {
 			try {
 				log.debug("seller found  code:" + sell.getCode());
 				try {
-					seller = sellerService.findByCode(em, sell.getCode(), provider);
+					seller = sellerService.findByCode(sell.getCode(), provider);
 				} catch (Exception e) {
 					log.warn(e.getMessage());
 				}
@@ -268,8 +259,7 @@ public class ImportCustomersJobBean {
 		try {
 			log.debug("customer found  code:" + cust.getCode());
 			try {
-				customer = customerService.findByCode(em, cust.getCode(),
-						provider);
+				customer = customerService.findByCode(cust.getCode(), provider);
 			} catch (Exception e) {
 				log.warn(e.getMessage());
 			}
@@ -297,7 +287,7 @@ public class ImportCustomersJobBean {
 				return;
 			}
 
-			customer = customerImportService.createCustomer(em, currentUser,
+			customer = customerImportService.createCustomer(currentUser,
 					seller, sell, cust);
 
 			if (seller == null) {
@@ -315,8 +305,8 @@ public class ImportCustomersJobBean {
 			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust
 					.getCustomerAccounts().getCustomerAccount()) {
 				j++;
-				createCustomerAccount(em, fileName, currentUser, customer,
-						seller, custAcc, cust, sell, i, j);
+				createCustomerAccount(fileName, currentUser, customer, seller,
+						custAcc, cust, sell, i, j);
 			}
 		} catch (Exception e) {
 			createCustomerError(sell, cust, ExceptionUtils.getRootCause(e)
@@ -328,9 +318,8 @@ public class ImportCustomersJobBean {
 		}
 	}
 
-	private void createCustomerAccount(EntityManager em, String fileName,
-			User currentUser, Customer customer,
-			org.meveo.model.admin.Seller seller,
+	private void createCustomerAccount(String fileName, User currentUser,
+			Customer customer, org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc,
 			org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.Seller sell, int i, int j) {
@@ -338,7 +327,7 @@ public class ImportCustomersJobBean {
 		CustomerAccount customerAccountTmp = null;
 
 		try {
-			customerAccountTmp = customerAccountService.findByCode(em,
+			customerAccountTmp = customerAccountService.findByCode(
 					custAcc.getCode(), currentUser.getProvider());
 		} catch (Exception e) {
 			log.warn(e.getMessage());
@@ -373,7 +362,7 @@ public class ImportCustomersJobBean {
 					+ ", status:Warning");
 		}
 
-		customerImportService.createCustomerAccount(em, currentUser, customer,
+		customerImportService.createCustomerAccount(currentUser, customer,
 				seller, custAcc, cust, sell);
 		nbCustomerAccountsCreated++;
 
@@ -405,7 +394,7 @@ public class ImportCustomersJobBean {
 		customerImportHisto.setNbSellersIgnored(nbSellersIgnored);
 		customerImportHisto.setNbSellersWarning(nbSellersWarning);
 		customerImportHisto.setProvider(provider);
-		customerImportHistoService.create(em, customerImportHisto, currentUser,
+		customerImportHistoService.create(customerImportHisto, currentUser,
 				provider);
 	}
 
