@@ -102,7 +102,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					new Object[] { "ServiceInstance", code,
 							chargeInstance != null });
 		} catch (NoResultException nre) {
-			log.debug("findByCodeAndSubscription : aucun service n'a ete trouve");
+			log.debug("findByCodeAndSubscription : no service has been found");
 		} catch (Exception e) {
 			log.error("findByCodeAndSubscription error={} ", e.getMessage());
 		}
@@ -167,20 +167,20 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
 		serviceInstance.setStatusDate(new Date());
 		serviceInstance.setCode(serviceCode);
-		create(em, serviceInstance, creator, subscription.getProvider());
+		create(serviceInstance, creator, subscription.getProvider());
 
 		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
 		for (RecurringChargeTemplate recurringChargeTemplate : serviceTemplate
 				.getRecurringCharges()) {
-			chargeInstanceService.recurringChargeInstanciation(em,
-					serviceInstance, recurringChargeTemplate.getCode(),
+			chargeInstanceService.recurringChargeInstanciation(serviceInstance,
+					recurringChargeTemplate.getCode(),
 					serviceInstance.getSubscriptionDate(), seller, creator);
 		}
 
 		for (OneShotChargeTemplate subscriptionChargeTemplate : serviceTemplate
 				.getSubscriptionCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(em,
+			oneShotChargeInstanceService.oneShotChargeInstanciation(
 					serviceInstance.getSubscription(), serviceInstance,
 					subscriptionChargeTemplate,
 					serviceInstance.getSubscriptionDate(), subscriptionAmount,
@@ -189,7 +189,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (OneShotChargeTemplate terminationChargeTemplate : serviceTemplate
 				.getTerminationCharges()) {
-			oneShotChargeInstanceService.oneShotChargeInstanciation(em,
+			oneShotChargeInstanceService.oneShotChargeInstanciation(
 					serviceInstance.getSubscription(), serviceInstance,
 					terminationChargeTemplate,
 					serviceInstance.getSubscriptionDate(), terminationAmount,
@@ -198,7 +198,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (ServiceUsageChargeTemplate serviceUsageChargeTemplate : serviceTemplate
 				.getServiceUsageCharges()) {
-			usageChargeInstanceService.usageChargeInstanciation(em,
+			usageChargeInstanceService.usageChargeInstanciation(
 					serviceInstance.getSubscription(), serviceInstance,
 					serviceUsageChargeTemplate,
 					serviceInstance.getSubscriptionDate(), seller, creator);

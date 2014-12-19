@@ -36,6 +36,12 @@ public class InvoiceSubCategoryCountryService extends
 		PersistenceService<InvoiceSubcategoryCountry> {
 
 	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
+			Long invoiceSubCategoryId, Long countryId, Provider provider) {
+		return findInvoiceSubCategoryCountry(getEntityManager(),
+				invoiceSubCategoryId, countryId, provider);
+	}
+
+	public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(
 			Long invoiceSubCategoryId, Long countryId) {
 		return findInvoiceSubCategoryCountry(getEntityManager(),
 				invoiceSubCategoryId, countryId, getCurrentProvider());
@@ -48,8 +54,8 @@ public class InvoiceSubCategoryCountryService extends
 		try {
 			QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
 					"i");
-			qb.addCriterion("invoiceSubCategory.id", "=",
-					invoiceSubCategoryId, true);
+			qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId,
+					true);
 			qb.addCriterion("tradingCountry.id", "=", countryId, true);
 			qb.addCriterionEntity("provider", provider);
 
@@ -98,4 +104,5 @@ public class InvoiceSubCategoryCountryService extends
 			return null;
 		}
 	}
+
 }

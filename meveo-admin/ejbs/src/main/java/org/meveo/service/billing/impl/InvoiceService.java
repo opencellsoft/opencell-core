@@ -309,7 +309,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
 			invoice.setPaymentMethod(billingAccount.getPaymentMethod());
 			invoice.setProvider(billingRun.getProvider());
-			create(em, invoice, currentUser, currentUser.getProvider());
+			create(invoice, currentUser, currentUser.getProvider());
 			ratedTransactionService.createInvoiceAndAgregates(em,
 					billingAccount, invoice, currentUser);
 
@@ -337,7 +337,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					+ e.getMessage());
 			RejectedBillingAccount rejectedBA = new RejectedBillingAccount(
 					billingAccount, billingRun, e.getMessage());
-			rejectedBillingAccountService.create(em, rejectedBA);
+			rejectedBillingAccountService.create(rejectedBA);
 		}
 
 		return new AsyncResult<Boolean>(false);

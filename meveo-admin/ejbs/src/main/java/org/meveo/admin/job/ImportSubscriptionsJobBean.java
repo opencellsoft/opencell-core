@@ -109,6 +109,7 @@ public class ImportSubscriptionsJobBean {
 			try {
 				log.info("InputFiles job {} in progress...", file.getName());
 				currentFile = FileUtils.addExtension(file, ".processing");
+				
 				importFile(currentFile, file.getName(), currentUser);
 
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
@@ -150,40 +151,40 @@ public class ImportSubscriptionsJobBean {
 			return;
 		}
 
-		Subscriptions subscriptions = (Subscriptions) JAXBUtils.unmarshaller(
+		Subscriptions jaxbSubscriptions = (Subscriptions) JAXBUtils.unmarshaller(
 				Subscriptions.class, file);
 		log.debug("parsing file ok");
 
 		int i = -1;
-		nbSubscriptions = subscriptions.getSubscription().size();
+		nbSubscriptions = jaxbSubscriptions.getSubscription().size();
 		if (nbSubscriptions == 0) {
 			createSubscriptionWarning(null, "Empty file.");
 		}
 
-		for (org.meveo.model.jaxb.subscription.Subscription subscrip : subscriptions
+		for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions
 				.getSubscription()) {
 			try {
 				i++;
 				CheckedSubscription checkSubscription = subscriptionCheckError(
-						provider, subscrip);
+						provider, jaxbSubscription);
 
 				if (checkSubscription == null) {
-					createSubscriptionError(subscrip,
+					createSubscriptionError(jaxbSubscription,
 							"Error in checkSubscription");
 					nbSubscriptionsError++;
 					log.info("File:" + fileName
 							+ ", typeEntity:Subscription, index:" + i
-							+ ", code:" + subscrip.getCode() + ", status:Error");
+							+ ", code:" + jaxbSubscription.getCode() + ", status:Error");
 					break;
 				}
 
 				nbSubscriptionsCreated += subscriptionImportService
-						.importSubscription(checkSubscription, subscrip,
+						.importSubscription(checkSubscription, jaxbSubscription,
 								fileName, currentUser, i);
 			} catch (ImportIgnoredException ie) {
 				log.info("File:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
-						+ subscrip.getCode() + ", status:Ignored");
+						+ jaxbSubscription.getCode() + ", status:Ignored");
 				nbSubscriptionsIgnored++;
 			} catch (SubscriptionServiceException se) {
 				createServiceInstanceError(se.getSubscrip(),
@@ -191,16 +192,16 @@ public class ImportSubscriptionsJobBean {
 				nbSubscriptionsError++;
 				log.info("File:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
-						+ subscrip.getCode() + ", status:Error");
+						+ jaxbSubscription.getCode() + ", status:Error");
 			} catch (Exception e) {
 
 				// createSubscriptionError(subscrip,
 				// ExceptionUtils.getRootCause(e).getMessage());
-				createSubscriptionError(subscrip, e.getMessage());
+				createSubscriptionError(jaxbSubscription, e.getMessage());
 				nbSubscriptionsError++;
 				log.info("File:" + fileName
 						+ ", typeEntity:Subscription, index:" + i + ", code:"
-						+ subscrip.getCode() + ", status:Error");
+						+ jaxbSubscription.getCode() + ", status:Error");
 				log.error(e.getMessage());
 			}
 		}
@@ -278,42 +279,42 @@ public class ImportSubscriptionsJobBean {
 	}
 
 	private CheckedSubscription subscriptionCheckError(Provider provider,
-			org.meveo.model.jaxb.subscription.Subscription subscrip) {
+			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription) {
 		CheckedSubscription checkSubscription = new CheckedSubscription();
 
-		if (StringUtils.isBlank(subscrip.getCode())) {
-			createSubscriptionError(subscrip, "Code is null.");
+		if (StringUtils.isBlank(jaxbSubscription.getCode())) {
+			createSubscriptionError(jaxbSubscription, "Code is null.");
 			return null;
 		}
 
-		if (StringUtils.isBlank(subscrip.getUserAccountId())) {
-			createSubscriptionError(subscrip, "UserAccountId is null.");
+		if (StringUtils.isBlank(jaxbSubscription.getUserAccountId())) {
+			createSubscriptionError(jaxbSubscription, "UserAccountId is null.");
 			return null;
 		}
 
-		if (StringUtils.isBlank(subscrip.getOfferCode())) {
-			createSubscriptionError(subscrip, "OfferCode is null.");
+		if (StringUtils.isBlank(jaxbSubscription.getOfferCode())) {
+			createSubscriptionError(jaxbSubscription, "OfferCode is null.");
 			return null;
 		}
 
-		if (StringUtils.isBlank(subscrip.getSubscriptionDate())) {
-			createSubscriptionError(subscrip, "SubscriptionDate is null.");
+		if (StringUtils.isBlank(jaxbSubscription.getSubscriptionDate())) {
+			createSubscriptionError(jaxbSubscription, "SubscriptionDate is null.");
 			return null;
 		}
 
-		if (subscrip.getStatus() == null
-				|| StringUtils.isBlank(subscrip.getStatus().getValue())
+		if (jaxbSubscription.getStatus() == null
+				|| StringUtils.isBlank(jaxbSubscription.getStatus().getValue())
 				|| ("ACTIVE" + "TERMINATED" + "CANCELED" + "SUSPENDED")
-						.indexOf(subscrip.getStatus().getValue()) == -1) {
-			createSubscriptionError(subscrip,
-					"Status is null,or not in {ACTIVE, TERMINATED, CANCELED, SUSPENDED}");
+						.indexOf(jaxbSubscription.getStatus().getValue()) == -1) {
+			createSubscriptionError(jaxbSubscription,
+					"Status is null, or not in { ACTIVE, TERMINATED, CANCELED, SUSPENDED }");
 
 			return null;
 		}
 
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(subscrip
+			offerTemplate = offerTemplateService.findByCode(jaxbSubscription
 					.getOfferCode().toUpperCase(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
@@ -321,9 +322,9 @@ public class ImportSubscriptionsJobBean {
 
 		if (offerTemplate == null) {
 			createSubscriptionError(
-					subscrip,
+					jaxbSubscription,
 					"Cannot find OfferTemplate with code="
-							+ subscrip.getOfferCode());
+							+ jaxbSubscription.getOfferCode());
 			return null;
 		}
 		checkSubscription.offerTemplate = offerTemplate;
@@ -331,56 +332,57 @@ public class ImportSubscriptionsJobBean {
 		UserAccount userAccount = null;
 		try {
 			userAccount = userAccountService.findByCode(
-					subscrip.getUserAccountId(), provider);
+					jaxbSubscription.getUserAccountId(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
 		if (userAccount == null) {
-			createSubscriptionError(subscrip, "cannot find UserAccount entity:"
-					+ subscrip.getUserAccountId());
+			createSubscriptionError(jaxbSubscription, "Cannot find UserAccount entity="
+					+ jaxbSubscription.getUserAccountId());
 			return null;
 		}
 		checkSubscription.userAccount = userAccount;
 
 		try {
 			checkSubscription.subscription = subscriptionService.findByCode(
-					subscrip.getCode(), provider);
+					jaxbSubscription.getCode(), provider);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
-		if (!"ACTIVE".equals(subscrip.getStatus().getValue())
+		if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())
 				&& checkSubscription.subscription == null) {
-			createSubscriptionError(subscrip,
-					"cannot find subscription with code=" + subscrip.getCode());
+			createSubscriptionError(jaxbSubscription,
+					"Cannot find subscription with code=" + jaxbSubscription.getCode());
 			return null;
 		}
 
-		if ("ACTIVE".equals(subscrip.getStatus().getValue())) {
-			if (subscrip.getServices() == null
-					|| subscrip.getServices().getServiceInstance() == null
-					|| subscrip.getServices().getServiceInstance().isEmpty()) {
-				createSubscriptionError(subscrip,
-						"cannot create subscription without services");
+		if ("ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
+			if (jaxbSubscription.getServices() == null
+					|| jaxbSubscription.getServices().getServiceInstance() == null
+					|| jaxbSubscription.getServices().getServiceInstance().isEmpty()) {
+				createSubscriptionError(jaxbSubscription,
+						"Cannot create subscription without services");
 				return null;
 			}
 
-			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : subscrip
+			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : jaxbSubscription
 					.getServices().getServiceInstance()) {
-				if (serviceInstanceCheckError(subscrip, serviceInst)) {
+				if (serviceInstanceCheckError(jaxbSubscription, serviceInst)) {
 					return null;
 				}
+				
 				checkSubscription.serviceInsts.add(serviceInst);
 			}
 
-			for (org.meveo.model.jaxb.subscription.Access access : subscrip
+			for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription
 					.getAccesses().getAccess()) {
-				if (accessCheckError(subscrip, access)) {
+				if (accessCheckError(jaxbSubscription, jaxbAccess)) {
 					return null;
 				}
 
-				checkSubscription.accessPoints.add(access);
+				checkSubscription.accessPoints.add(jaxbAccess);
 			}
 		}
 

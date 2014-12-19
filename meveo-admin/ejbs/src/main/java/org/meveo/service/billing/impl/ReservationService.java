@@ -187,7 +187,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 			walletReservation.setAmountWithoutTax(servicesSum);
 		}
 
-		walletReservationService.create(em, walletReservation, null, provider);
+		walletReservationService.create(walletReservation, null, provider);
 
 		// #4 Return the reservationId.
 		return reservation.getId();
@@ -376,7 +376,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		subscription.setStatusDate(new Date());
 		subscription.setSubscriptionDate(subscriptionDate);
 		subscription.setTerminationDate(terminationDate);
-		subscriptionService.create(em, subscription, null, provider);
+		subscriptionService.create(subscription, null, provider);
 
 		reservation.setSubscription(subscription);
 

@@ -126,7 +126,7 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 
 	public void create(EntityManager em, EDR e, User user, Provider provider) {
-		super.create(em, e, user, provider);
+		super.create(e, user, provider);
 		if (useInMemoryDeduplication) {
 			synchronized (duplicateCache) {
 				duplicateCache.put(e.getOriginBatch() + e.getOriginRecord(), 0);

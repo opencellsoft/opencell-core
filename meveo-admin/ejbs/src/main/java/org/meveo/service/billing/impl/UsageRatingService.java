@@ -90,7 +90,7 @@ public class UsageRatingService {
 
 	@Inject
 	private WalletOperationService walletOperationService;
-	
+
 	@Inject
 	private SubscriptionService subscriptionService;
 
@@ -176,58 +176,68 @@ public class UsageRatingService {
 						+ usageChargeTemplate.getFilterParam4());
 				cachedValue.setFilter4(usageChargeTemplate.getFilterParam4());
 			}
-			if (usageChargeTemplate.getEdrTemplates() == null || usageChargeTemplate.getEdrTemplates().size()==0) {
+			if (usageChargeTemplate.getEdrTemplates() == null
+					|| usageChargeTemplate.getEdrTemplates().size() == 0) {
 				log.info("do not set erdTemplates");
 			} else {
 				log.info("set erdTemplates");
-				Set<TriggeredEDRCache> edrTemplates=cachedValue.getEdrTemplates();
-				for(TriggeredEDRTemplate edrTemplate:usageChargeTemplate.getEdrTemplates()){
+				Set<TriggeredEDRCache> edrTemplates = cachedValue
+						.getEdrTemplates();
+				for (TriggeredEDRTemplate edrTemplate : usageChargeTemplate
+						.getEdrTemplates()) {
 					TriggeredEDRCache trigerredEDRCache = new TriggeredEDRCache();
-					trigerredEDRCache.setConditionEL(edrTemplate.getConditionEl());
-	
+					trigerredEDRCache.setConditionEL(edrTemplate
+							.getConditionEl());
+
 					trigerredEDRCache.setCode(edrTemplate.getCode());
-					trigerredEDRCache.setSubscriptionEL(edrTemplate.getSubscriptionEl());
-					
+					trigerredEDRCache.setSubscriptionEL(edrTemplate
+							.getSubscriptionEl());
+
 					if (edrTemplate.getQuantityEl() == null
 							|| (edrTemplate.getQuantityEl().equals(""))) {
 						log.error("edrTemplate QuantityEL must be set for triggeredEDRTemplate="
 								+ edrTemplate.getId());
 					} else {
-						trigerredEDRCache.setQuantityEL(edrTemplate.getQuantityEl());
+						trigerredEDRCache.setQuantityEL(edrTemplate
+								.getQuantityEl());
 					}
 					if (edrTemplate.getParam1El() == null
 							|| (edrTemplate.getParam1El().equals(""))) {
 						log.error("edrTemplate param1El must be set for triggeredEDRTemplate="
 								+ edrTemplate.getId());
 					} else {
-						trigerredEDRCache.setParam1EL(edrTemplate.getParam1El());
+						trigerredEDRCache
+								.setParam1EL(edrTemplate.getParam1El());
 					}
-	
+
 					if (edrTemplate.getParam2El() == null
 							|| (edrTemplate.getParam2El().equals(""))) {
 						log.info("set param2El to null");
 						trigerredEDRCache.setParam2EL(null);
 					} else {
 						log.info("set param2El to " + edrTemplate.getParam2El());
-						trigerredEDRCache.setParam2EL(edrTemplate.getParam2El());
+						trigerredEDRCache
+								.setParam2EL(edrTemplate.getParam2El());
 					}
-	
+
 					if (edrTemplate.getParam3El() == null
 							|| (edrTemplate.getParam3El().equals(""))) {
 						log.info("set param3El to null");
 						trigerredEDRCache.setParam3EL(null);
 					} else {
 						log.info("set param3El to " + edrTemplate.getParam3El());
-						trigerredEDRCache.setParam3EL(edrTemplate.getParam3El());
+						trigerredEDRCache
+								.setParam3EL(edrTemplate.getParam3El());
 					}
-	
+
 					if (edrTemplate.getParam4El() == null
 							|| (edrTemplate.getParam4El().equals(""))) {
 						log.info("set param4El to null");
 						trigerredEDRCache.setParam4EL(null);
 					} else {
 						log.info("set param4El to " + edrTemplate.getParam4El());
-						trigerredEDRCache.setParam4EL(edrTemplate.getParam4El());
+						trigerredEDRCache
+								.setParam4EL(edrTemplate.getParam4El());
 					}
 					edrTemplates.add(trigerredEDRCache);
 				}
@@ -423,7 +433,8 @@ public class UsageRatingService {
 				.getBillingAccount().getCustomerAccount().getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		walletOperation.setChargeInstance(chargeInstance);
-		walletOperation.setUnityDescription(chargeInstance.getUnityDescription());
+		walletOperation.setUnityDescription(chargeInstance
+				.getUnityDescription());
 		walletOperation.setSeller(edr.getSubscription().getUserAccount()
 				.getBillingAccount().getCustomerAccount().getCustomer()
 				.getSeller());
@@ -452,7 +463,7 @@ public class UsageRatingService {
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 
 		// log.info("provider code:" + provider.getCode());
-		ratingService.rateBareWalletOperation(em, walletOperation, null, null,
+		ratingService.rateBareWalletOperation(walletOperation, null, null,
 				countryId, currency, provider);
 
 		// for AGGREGATED counter we update the price of the previous wallet
@@ -531,7 +542,7 @@ public class UsageRatingService {
 			counterInstance = counterInstanceService.findById(em,
 					counterInstanceCache.getKey());
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(
-					counterInstance, edr.getEventDate(), em, currentUser);
+					counterInstance, edr.getEventDate(), currentUser);
 			periodCache = CounterPeriodCache.getInstance(counterPeriod,
 					counterInstance.getCounterTemplate());
 			counterInstanceCache.getCounterPeriods().add(periodCache);
@@ -567,7 +578,7 @@ public class UsageRatingService {
 				// periodCache.setDbDirty(true);
 				counterInstanceService.updatePeriodValue(
 						periodCache.getCounterPeriodId(),
-						periodCache.getValue(), em, currentUser);
+						periodCache.getValue(), currentUser);
 			}
 
 			// put back the deduced quantity in charge unit
@@ -611,7 +622,7 @@ public class UsageRatingService {
 				|| deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService
-					.findById(em, charge.getChargeInstanceId());
+					.findById(charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
 					deducedQuantity, charge, chargeInstance, provider);
 
@@ -620,45 +631,65 @@ public class UsageRatingService {
 				walletOperation.setQuantity(deducedQuantity);
 			}
 
-			walletOperationService.create(em, walletOperation, currentUser,
+			walletOperationService.create(walletOperation, currentUser,
 					provider);
 
 			// handle associated edr creation
-			if(charge.getTemplateCache().getEdrTemplates().size()>0){
-				for(TriggeredEDRCache triggeredEDRCache:charge.getTemplateCache().getEdrTemplates()){
+			if (charge.getTemplateCache().getEdrTemplates().size() > 0) {
+				for (TriggeredEDRCache triggeredEDRCache : charge
+						.getTemplateCache().getEdrTemplates()) {
 					if (triggeredEDRCache.getConditionEL() == null
-									|| "".equals(triggeredEDRCache
-											.getConditionEL()) || matchExpression(
-													triggeredEDRCache.getConditionEL(),
-										edr, walletOperation)) {
+							|| "".equals(triggeredEDRCache.getConditionEL())
+							|| matchExpression(
+									triggeredEDRCache.getConditionEL(), edr,
+									walletOperation)) {
 						EDR newEdr = new EDR();
 						newEdr.setCreated(new Date());
 						newEdr.setEventDate(edr.getEventDate());
 						newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
 						newEdr.setOriginRecord("" + walletOperation.getId());
-						newEdr.setParameter1(evaluateStringExpression(triggeredEDRCache.getParam1EL(), edr, walletOperation));
-						newEdr.setParameter2(evaluateStringExpression(triggeredEDRCache.getParam2EL(), edr, walletOperation));
-						newEdr.setParameter3(evaluateStringExpression(triggeredEDRCache.getParam3EL(), edr, walletOperation));
-						newEdr.setParameter4(evaluateStringExpression(triggeredEDRCache.getParam4EL(), edr, walletOperation));
+						newEdr.setParameter1(evaluateStringExpression(
+								triggeredEDRCache.getParam1EL(), edr,
+								walletOperation));
+						newEdr.setParameter2(evaluateStringExpression(
+								triggeredEDRCache.getParam2EL(), edr,
+								walletOperation));
+						newEdr.setParameter3(evaluateStringExpression(
+								triggeredEDRCache.getParam3EL(), edr,
+								walletOperation));
+						newEdr.setParameter4(evaluateStringExpression(
+								triggeredEDRCache.getParam4EL(), edr,
+								walletOperation));
 						newEdr.setProvider(edr.getProvider());
-						newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(
-								triggeredEDRCache.getQuantityEL(), edr,
-								walletOperation)));
+						newEdr.setQuantity(new BigDecimal(
+								evaluateDoubleExpression(
+										triggeredEDRCache.getQuantityEL(), edr,
+										walletOperation)));
 						newEdr.setStatus(EDRStatusEnum.OPEN);
 						Subscription sub = null;
-						if(StringUtils.isBlank(triggeredEDRCache.getSubscriptionEL())){
+						if (StringUtils.isBlank(triggeredEDRCache
+								.getSubscriptionEL())) {
 							newEdr.setSubscription(edr.getSubscription());
 						} else {
-							String subCode = evaluateStringExpression(triggeredEDRCache.getSubscriptionEL(), edr, walletOperation);
-						   sub = subscriptionService.findByCode(em,subCode, provider);
-						   if(sub==null){
-							   log.info("could not find subscription for code ="+subCode+" (EL="+triggeredEDRCache.getSubscriptionEL()+") in triggered EDR with code "+triggeredEDRCache.getCode());
-						   }
+							String subCode = evaluateStringExpression(
+									triggeredEDRCache.getSubscriptionEL(), edr,
+									walletOperation);
+							sub = subscriptionService.findByCode(em, subCode,
+									provider);
+							if (sub == null) {
+								log.info("could not find subscription for code ="
+										+ subCode
+										+ " (EL="
+										+ triggeredEDRCache.getSubscriptionEL()
+										+ ") in triggered EDR with code "
+										+ triggeredEDRCache.getCode());
+							}
 						}
-						if(sub!=null){
-							log.info("trigger EDR from code "+triggeredEDRCache.getCode());
-							edrService.create(em, newEdr, currentUser, provider);
-						} 
+						if (sub != null) {
+							log.info("trigger EDR from code "
+									+ triggeredEDRCache.getCode());
+							edrService.create(newEdr, currentUser, provider);
+						}
 					}
 				}
 			}
@@ -762,7 +793,8 @@ public class UsageRatingService {
 	private boolean matchExpression(String expression, EDR edr) {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
-		return (Boolean) RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		return (Boolean) RatingService.evaluateExpression(expression, userMap,
+				Boolean.class);
 	}
 
 	private boolean matchExpression(String expression, EDR edr,
@@ -770,7 +802,8 @@ public class UsageRatingService {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (Boolean) RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		return (Boolean) RatingService.evaluateExpression(expression, userMap,
+				Boolean.class);
 	}
 
 	private String evaluateStringExpression(String expression, EDR edr,
@@ -778,7 +811,8 @@ public class UsageRatingService {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (String) RatingService.evaluateExpression(expression, userMap, String.class);
+		return (String) RatingService.evaluateExpression(expression, userMap,
+				String.class);
 	}
 
 	private Double evaluateDoubleExpression(String expression, EDR edr,
@@ -786,9 +820,8 @@ public class UsageRatingService {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("edr", edr);
 		userMap.put("op", walletOperation);
-		return (Double) RatingService.evaluateExpression(expression, userMap, Double.class);
+		return (Double) RatingService.evaluateExpression(expression, userMap,
+				Double.class);
 	}
-
-
 
 }

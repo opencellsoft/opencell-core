@@ -71,11 +71,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 			result = new CounterInstance();
 			result.setCounterTemplate(counterTemplate);
 			result.setUserAccount(userAccount);
-			create(em, result, creator, userAccount.getProvider());
+			create(result, creator, userAccount.getProvider());
 
 			userAccount.getCounters().put(counterTemplate.getCode(), result);
 			userAccountService.setProvider(creator.getProvider());
-			userAccountService.update(em, userAccount, creator);
+			userAccountService.update(userAccount, creator);
 		} else {
 			result = userAccount.getCounters().get(counterTemplate.getCode());
 		}
@@ -84,7 +84,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	}
 
 	public CounterPeriod createPeriod(CounterInstance counterInstance,
-			Date chargeDate, EntityManager em, User currentUser) {
+			Date chargeDate, User currentUser) {
 		CounterPeriod counterPeriod = new CounterPeriod();
 		counterPeriod.setCounterInstance(counterInstance);
 		Date startDate = counterInstance.getCounterTemplate().getCalendar()
@@ -106,7 +106,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 		auditable.setCreated(new Date());
 		auditable.setCreator(counterInstance.getAuditable().getCreator());
 		counterPeriod.setAuditable(auditable);
-		counterPeriodService.create(em, counterPeriod, counterInstance
+		counterPeriodService.create(counterPeriod, counterInstance
 				.getAuditable().getCreator(), counterInstance.getProvider());
 
 		counterInstance.getCounterPeriods().add(counterPeriod);
@@ -116,7 +116,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 	}
 
 	public void updatePeriodValue(Long counterPeriodId, BigDecimal value,
-			EntityManager em, User currentUser) throws BusinessException {
+			User currentUser) throws BusinessException {
 		CounterPeriod counterPeriod = counterPeriodService.findById(em,
 				counterPeriodId);
 

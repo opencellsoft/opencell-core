@@ -89,7 +89,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			billingAccount.setProvider(billingAccount.getCustomerAccount()
 					.getProvider());
 		}
-		create(em, billingAccount, creator, provider);
+		create(billingAccount, creator, provider);
 	}
 
 	public void updateBillingAccount(BillingAccount billingAccount, User updater) {

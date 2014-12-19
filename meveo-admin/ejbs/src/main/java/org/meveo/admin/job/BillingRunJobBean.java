@@ -73,7 +73,7 @@ public class BillingRunJobBean {
 					billingRun.setAuditable(auditable);
 					billingRun.setBillingCycle(billingCycle);
 					billingRun.setStatus(BillingRunStatusEnum.NEW);
-					billingRunService.create(em, billingRun, currentUser,
+					billingRunService.create(billingRun, currentUser,
 							currentUser.getProvider());
 					result.registerSucces();
 				}

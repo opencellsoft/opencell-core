@@ -84,14 +84,15 @@ public class SubscriptionService extends BusinessService<Subscription> {
 			SubscriptionTerminationReason terminationReason, User user)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
+
 		if (terminationReason == null) {
 			throw new BusinessException("terminationReason is null");
 		}
+
 		terminateSubscription(subscription, terminationDate, terminationReason,
 				terminationReason.isApplyAgreement(),
 				terminationReason.isApplyReimbursment(),
 				terminationReason.isApplyTerminationCharges(), user);
-
 	}
 
 	public void subscriptionCancellation(Subscription subscription,

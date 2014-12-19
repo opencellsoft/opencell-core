@@ -108,7 +108,7 @@ public class OneShotChargeInstanceService extends
 		oneShotChargeInstance.setChargeDate(serviceInstance
 				.getSubscriptionDate());
 
-		create(em, oneShotChargeInstance, creator, chargeTemplate.getProvider());
+		create(oneShotChargeInstance, creator, chargeTemplate.getProvider());
 
 		return oneShotChargeInstance;
 	}

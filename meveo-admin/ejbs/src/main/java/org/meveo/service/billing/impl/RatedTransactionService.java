@@ -323,7 +323,7 @@ public class RatedTransactionService extends
 						+ object[2] + "amountTax" + object[3]);
 				Long invoiceSubCategoryId = (Long) object[0];
 				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService
-						.findById(em, invoiceSubCategoryId);
+						.findById(invoiceSubCategoryId);
 				Tax tax = null;
 				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory
 						.getInvoiceSubcategoryCountries()) {
@@ -400,7 +400,7 @@ public class RatedTransactionService extends
 				invoiceAgregateT.setProvider(billingAccount.getProvider());
 
 				if (invoiceAgregateT.getId() == null) {
-					invoiceAgregateService.create(em, invoiceAgregateT,
+					invoiceAgregateService.create(invoiceAgregateT,
 							currentUser, currentUser.getProvider());
 				}
 
@@ -429,7 +429,7 @@ public class RatedTransactionService extends
 
 				fillAgregates(invoiceAgregateR, wallet);
 				if (invoiceAgregateR.getId() == null) {
-					invoiceAgregateService.create(em, invoiceAgregateR,
+					invoiceAgregateService.create(invoiceAgregateR,
 							currentUser, currentUser.getProvider());
 				}
 
@@ -481,8 +481,8 @@ public class RatedTransactionService extends
 					biggestSubCat = invoiceAgregateF;
 				}
 
-				invoiceAgregateService.create(em, invoiceAgregateF,
-						currentUser, currentUser.getProvider());
+				invoiceAgregateService.create(invoiceAgregateF, currentUser,
+						currentUser.getProvider());
 			}
 
 			// compute the tax
@@ -561,7 +561,7 @@ public class RatedTransactionService extends
 				invoice.setAmountWithTax(nonEnterprisePriceWithTax.setScale(2,
 						RoundingMode.HALF_UP));
 				BigDecimal balance = customerAccountService
-						.customerAccountBalanceDue(em, null, invoice
+						.customerAccountBalanceDue(null, invoice
 								.getBillingAccount().getCustomerAccount()
 								.getCode(), invoice.getDueDate());
 

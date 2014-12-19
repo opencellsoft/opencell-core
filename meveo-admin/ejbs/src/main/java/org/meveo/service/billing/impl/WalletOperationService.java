@@ -384,7 +384,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
 						countryId, creator.getProvider());
 
 		if (invoiceSubcategoryCountry == null) {
@@ -448,7 +448,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				creator);
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
-		create(em, chargeApplication, creator, chargeTemplate.getProvider());
+		create(chargeApplication, creator, chargeTemplate.getProvider());
 		OneShotChargeTemplate oneShotChargeTemplate = null;
 
 		if (chargeTemplate instanceof OneShotChargeTemplate) {
@@ -763,7 +763,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		if (recurringChargeTemplate.getApplyInAdvance()) {
 			WalletOperation chargeApplication = rateSubscription(em,
 					chargeInstance, nextapplicationDate);
-			create(em, chargeApplication, creator, chargeInstance.getProvider());
+			create(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setNextChargeDate(nextapplicationDate);
 		} else {
 			chargeInstance.setNextChargeDate(nextapplicationDate);
@@ -921,7 +921,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 									.addDaysToDate(nextapplicationDate, -1),
 							ChargeApplicationModeEnum.REIMBURSMENT);
 
-			create(em, chargeApplication, creator, chargeInstance.getProvider());
+			create(chargeApplication, creator, chargeInstance.getProvider());
 		}
 
 		if (recurringChargeTemplate.getApplyInAdvance()) {
@@ -1079,7 +1079,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			chargeApplication.setSubscriptionDate(chargeInstance
 					.getServiceInstance().getSubscriptionDate());
 
-			create(em, chargeApplication, creator, chargeInstance.getProvider());
+			create(chargeApplication, creator, chargeInstance.getProvider());
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
 		}
@@ -1253,7 +1253,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			walletOperation.setSubscriptionDate(chargeInstance
 					.getServiceInstance().getSubscriptionDate());
 
-			create(em, walletOperation, creator, chargeInstance.getProvider());
+			create(walletOperation, creator, chargeInstance.getProvider());
 			// em.flush();
 			// em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);

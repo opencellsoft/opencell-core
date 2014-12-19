@@ -64,11 +64,11 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 
 		userAccount.setBillingAccount(billingAccount);
-		create(em, userAccount, creator, billingAccount.getProvider());
+		create(userAccount, creator, billingAccount.getProvider());
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode("PRINCIPAL");
 		wallet.setUserAccount(userAccount);
-		walletService.create(em, wallet, creator, billingAccount.getProvider());
+		walletService.create(wallet, creator, billingAccount.getProvider());
 
 		userAccount.setWallet(wallet);
 
@@ -82,7 +82,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 				WalletInstance prepaidWallet = new WalletInstance();
 				wallet.setUserAccount(userAccount);
 				wallet.setWalletTemplate(prepaidWalletTemplate);
-				walletService.create(em, wallet, creator,
+				walletService.create(wallet, creator,
 						billingAccount.getProvider());
 				prepaidWallets.put(prepaidWalletTemplate.getCode(),
 						prepaidWallet);

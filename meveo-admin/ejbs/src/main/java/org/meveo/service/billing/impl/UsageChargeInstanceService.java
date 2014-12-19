@@ -79,16 +79,16 @@ public class UsageChargeInstanceService extends
 		usageChargeInstance.setCurrency(subscription.getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency());
 
-		create(em, usageChargeInstance, creator, serviceInstance.getProvider());
-		
+		create(usageChargeInstance, creator, serviceInstance.getProvider());
+
 		if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
 			CounterInstance counterInstance = counterInstanceService
-					.counterInstanciation(em, serviceInstance.getSubscription()
+					.counterInstanciation(serviceInstance.getSubscription()
 							.getUserAccount(), serviceUsageChargeTemplate
 							.getCounterTemplate(), creator);
 			usageChargeInstance.setCounter(counterInstance);
 			setProvider(creator.getProvider());
-			update(em, usageChargeInstance, creator);
+			update(usageChargeInstance, creator);
 		}
 
 		return usageChargeInstance;

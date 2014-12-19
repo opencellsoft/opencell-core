@@ -102,7 +102,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		}
 
 		RecurringChargeInstance chargeInst = (RecurringChargeInstance) recurringChargeInstanceService
-				.findByCodeAndService(em, chargeCode, serviceInst.getId());
+				.findByCodeAndService(chargeCode, serviceInst.getId());
 
 		if (chargeInst != null) {
 			throw new BusinessException(
@@ -110,7 +110,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		}
 
 		RecurringChargeTemplate recurringChargeTemplate = recurringChargeTemplateService
-				.findByCode(em, chargeCode, serviceInst.getProvider());
+				.findByCode(chargeCode, serviceInst.getProvider());
 		RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
 		chargeInstance.setCode(chargeCode);
 		chargeInstance.setDescription(recurringChargeTemplate.getDescription());
@@ -128,7 +128,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 				.getUserAccount().getBillingAccount().getCustomerAccount()
 				.getTradingCurrency());
 
-		recurringChargeInstanceService.create(em, chargeInstance, creator,
+		recurringChargeInstanceService.create(chargeInstance, creator,
 				recurringChargeTemplate.getProvider());
 	}
 

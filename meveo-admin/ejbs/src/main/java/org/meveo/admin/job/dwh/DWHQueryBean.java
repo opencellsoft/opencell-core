@@ -69,7 +69,7 @@ public class DWHQueryBean {
 				if (mv.getId() != null) {
 					mvService.update(em, mv);
 				} else {
-					mvService.create(em, mv, null, provider);
+					mvService.create(mv, null, provider);
 				}
 
 				result++;
