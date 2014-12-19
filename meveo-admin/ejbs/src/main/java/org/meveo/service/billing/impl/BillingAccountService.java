@@ -98,7 +98,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
 	public void updateBillingAccount(EntityManager em,
 			BillingAccount billingAccount, User updater) {
-		update(em, billingAccount, updater);
+		update(billingAccount, updater);
 	}
 
 	public void updateElectronicBilling(BillingAccount billingAccount,
@@ -272,7 +272,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 				entreprise);
 		billingAccount.setBillingRun(billingRun);
 		setProvider(currentUser.getProvider());
-		update(em, billingAccount, currentUser);
+		update(billingAccount, currentUser);
 		return new AsyncResult<Boolean>(true);
 	}
 

@@ -325,7 +325,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			}
 			invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
 			setProvider(currentUser.getProvider());
-			update(em, invoice, currentUser);
+			update(invoice, currentUser);
 			Long endDate = System.currentTimeMillis();
 			log.info("createAgregatesAndInvoice BR_ID=" + billingRun.getId()
 					+ ", BA_ID=" + billingAccount.getId() + ", Time en ms="

@@ -101,13 +101,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	/**
-	 * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
-	 */
-	public void update(EntityManager em, E e) {
-		update(em, e, getCurrentUser());
-	}
-
-	/**
 	 * @see org.meveo.service.base.local.IPersistenceService#remove(java.lang.Long)
 	 */
 	public void remove(Long id) {
@@ -236,12 +229,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	 *      org.manaty.model.user.User)
 	 */
 	public void update(E e, User updater) {
-		update(getEntityManager(), e, updater);
-	}
-
-	public void update(EntityManager em, E e, User updater) {
 		log.debug("start of update {} entity (id={}) ..", e.getClass()
 				.getSimpleName(), e.getId());
+		
 		if (e instanceof AuditableEntity) {
 			if (updater != null) {
 				((AuditableEntity) e).updateAudit(updater);
@@ -251,6 +241,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		}
 		checkProvider(e);
 		em.merge(e);
+		
 		log.debug("end of update {} entity (id={}).", e.getClass()
 				.getSimpleName(), e.getId());
 	}

@@ -120,7 +120,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			ServiceInstance serviceInstance, User creator)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
-		serviceInstanciation(em, serviceInstance, creator, null, null);
+		serviceInstanciation(serviceInstance, creator, null, null);
 	}
 
 	public void serviceInstanciation(ServiceInstance serviceInstance,
@@ -205,6 +205,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		}
 	}
 
+	/**
+	 * Activate a service, the subscription charges are applied
+	 */
 	public void serviceActivation(ServiceInstance serviceInstance,
 			BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2,
 			User creator) throws IncorrectSusbcriptionException,
@@ -213,9 +216,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				amountWithoutTax, amountWithoutTax2, creator);
 	}
 
-	/**
-	 * Activate a service, the subscription charges are applied
-	 */
 	public void serviceActivation(EntityManager em,
 			ServiceInstance serviceInstance, BigDecimal amountWithoutTax,
 			BigDecimal amountWithoutTax2, User creator)
@@ -278,7 +278,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			recurringChargeInstance.setStatusDate(new Date());
 			recurringChargeInstanceService.setProvider(creator.getProvider());
-			recurringChargeInstanceService.update(em, recurringChargeInstance,
+			recurringChargeInstanceService.update(recurringChargeInstance,
 					creator);
 			recurringChargeInstanceService.recurringChargeApplication(em,
 					recurringChargeInstance, creator);
@@ -322,7 +322,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
 				oneShotChargeInstance.setStatusDate(new Date());
 				oneShotChargeInstanceService.setProvider(creator.getProvider());
-				oneShotChargeInstanceService.update(em, oneShotChargeInstance,
+				oneShotChargeInstanceService.update(oneShotChargeInstance,
 						creator);
 			}
 		} else {
@@ -338,7 +338,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		serviceInstance.setStatusDate(new Date());
 		setProvider(creator.getProvider());
-		update(em, serviceInstance, creator);
+		update(serviceInstance, creator);
 	}
 
 	public void terminateService(ServiceInstance serviceInstance,
@@ -443,7 +443,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			recurringChargeInstance.setNextChargeDate(storedNextChargeDate);
 			recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 			recurringChargeInstance.setStatusDate(new Date());
-			chargeInstanceService.update(em, recurringChargeInstance);
+			chargeInstanceService.update(recurringChargeInstance);
 		}
 
 		if (applyTerminationCharges) {
@@ -457,14 +457,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
-			usageChargeInstanceService.terminateUsageChargeInstance(em,
+			usageChargeInstanceService.terminateUsageChargeInstance(
 					usageChargeInstance, terminationDate);
 		}
 
 		serviceInstance.setTerminationDate(terminationDate);
 		serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		serviceInstance.setStatusDate(new Date());
-		update(em, serviceInstance, user);
+		update(serviceInstance, user);
 
 		boolean termineSubscription = true;
 		for (ServiceInstance srv : subscription.getServiceInstances()) {
@@ -476,7 +476,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 			subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
 			subscription.setStatusDate(new Date());
 			subscription.setTerminationDate(new Date());
-			subscriptionService.update(em, subscription);
+			subscriptionService.update(subscription);
 		}
 
 		CustomerAccount customerAccount = serviceInstance.getSubscription()
@@ -488,7 +488,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 					WalletInstance wallet = ua.getWallet();
 					for (RatedTransaction rt : wallet.getRatedTransactions()) {
 						rt.setDoNotTriggerInvoicing(false);
-						ratedTransactionService.update(em, rt);
+						ratedTransactionService.update(rt, user);
 					}
 				}
 			}
@@ -720,7 +720,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		for (UsageChargeInstance usageChargeInstance : serviceInstance
 				.getUsageChargeInstances()) {
 			usageChargeInstanceService.terminateUsageChargeInstance(
-					usageChargeInstance, terminationDate);
+					usageChargeInstance, terminationDate, updater);
 		}
 
 		serviceInstance.setTerminationDate(terminationDate);

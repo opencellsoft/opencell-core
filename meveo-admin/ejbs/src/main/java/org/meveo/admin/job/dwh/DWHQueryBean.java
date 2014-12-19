@@ -42,12 +42,12 @@ public class DWHQueryBean {
 					+ measurableQuantityCode + " for provider "
 					+ provider.getCode());
 		}
-		
+
 		if (StringUtils.isBlank(mq.getSqlQuery())) {
 			throw new BusinessException("Measurable quantity with code "
 					+ measurableQuantityCode + " has no SQL query set.");
 		}
-		
+
 		try {
 			Query query = em.createNativeQuery(mq.getSqlQuery());
 			@SuppressWarnings("unchecked")
@@ -67,7 +67,7 @@ public class DWHQueryBean {
 				mv.setValue(Long.parseLong("" + res[1]));
 
 				if (mv.getId() != null) {
-					mvService.update(em, mv);
+					mvService.update(mv);
 				} else {
 					mvService.create(mv, null, provider);
 				}

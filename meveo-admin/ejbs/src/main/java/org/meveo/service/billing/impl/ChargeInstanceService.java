@@ -155,8 +155,7 @@ public class ChargeInstanceService<P extends ChargeInstance> extends
 		// chargeApplicationService.cancelChargeApplications(recurringChargeInstanId,
 		// null, updater);
 
-		recurringChargeInstanceService.update(em, recurringChargeInstance,
-				updater);
+		recurringChargeInstanceService.update(recurringChargeInstance, updater);
 
 	}
 

@@ -621,7 +621,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		billingRun.setStatus(BillingRunStatusEnum.TERMINATED);
 
 		setProvider(currentUser.getProvider());
-		update(em, billingRun, currentUser);
+		update(billingRun, currentUser);
 	}
 
 }

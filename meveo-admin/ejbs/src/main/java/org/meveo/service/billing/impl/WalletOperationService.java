@@ -476,7 +476,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			if (applicationDate.after(nextInvoiceDate)) {
 				billingAccount.setNextInvoiceDate(applicationDate);
 				billingAccountService.setProvider(creator.getProvider());
-				billingAccountService.update(em, billingAccount, creator);
+				billingAccountService.update(billingAccount, creator);
 			}
 		}
 	}

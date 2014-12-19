@@ -104,22 +104,30 @@ public class UsageChargeInstanceService extends
 			UsageChargeInstance usageChargeInstance, User currentUser) {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		setProvider(currentUser.getProvider());
-		update(em, usageChargeInstance, currentUser);
+		update(usageChargeInstance, currentUser);
 		usageRatingService.updateCache(usageChargeInstance);
 	}
 
 	public void terminateUsageChargeInstance(
 			UsageChargeInstance usageChargeInstance, Date terminationDate) {
+		terminateUsageChargeInstance(usageChargeInstance, terminationDate,
+				getCurrentUser());
+	}
+
+	public void terminateUsageChargeInstance(
+			UsageChargeInstance usageChargeInstance, Date terminationDate,
+			User currentUser) {
 		terminateUsageChargeInstance(getEntityManager(), usageChargeInstance,
-				terminationDate);
+				terminationDate, currentUser);
 	}
 
 	public void terminateUsageChargeInstance(EntityManager em,
-			UsageChargeInstance usageChargeInstance, Date terminationDate) {
+			UsageChargeInstance usageChargeInstance, Date terminationDate,
+			User currentUser) {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		usageRatingService.updateCache(usageChargeInstance);
-		update(em, usageChargeInstance);
+		update(usageChargeInstance, currentUser);
 	}
 
 	public void suspendUsageChargeInstance(

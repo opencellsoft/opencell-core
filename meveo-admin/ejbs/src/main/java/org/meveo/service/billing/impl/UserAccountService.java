@@ -99,7 +99,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 	public void updateUserAccount(EntityManager em, UserAccount userAccount,
 			User updater) throws BusinessException {
-		update(em, userAccount, updater);
+		update(userAccount, updater);
 	}
 
 	public void userAccountTermination(UserAccount userAccount,
