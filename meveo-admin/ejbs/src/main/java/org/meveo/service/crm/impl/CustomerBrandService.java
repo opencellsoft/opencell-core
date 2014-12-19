@@ -46,6 +46,10 @@ public class CustomerBrandService extends PersistenceService<CustomerBrand> {
 		}
 	}
 
+	public CustomerBrand findByCode(String code, Provider provider) {
+		return findByCode(getEntityManager(), code, provider);
+	}
+
 	public CustomerBrand findByCode(EntityManager em, String code,
 			Provider provider) {
 		QueryBuilder qb = new QueryBuilder(CustomerBrand.class, "b");

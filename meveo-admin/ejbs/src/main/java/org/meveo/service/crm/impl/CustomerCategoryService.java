@@ -44,6 +44,11 @@ public class CustomerCategoryService extends
 		}
 	}
 
+	public CustomerCategory findByCode(String code,
+			Provider provider) {
+		return findByCode(getEntityManager(), code, provider);
+	}
+
 	public CustomerCategory findByCode(EntityManager em, String code,
 			Provider provider) {
 		QueryBuilder qb = new QueryBuilder(CustomerCategory.class, "c");

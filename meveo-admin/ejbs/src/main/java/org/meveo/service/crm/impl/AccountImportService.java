@@ -6,7 +6,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -62,10 +61,9 @@ public class AccountImportService {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public org.meveo.model.billing.BillingAccount importBillingAccount(
-			EntityManager em,
-			org.meveo.model.jaxb.account.BillingAccount billAccount,
-			Provider provider, User userJob) throws BusinessException,
-			ImportWarningException {
+
+	org.meveo.model.jaxb.account.BillingAccount billAccount, Provider provider,
+			User userJob) throws BusinessException, ImportWarningException {
 		log.debug("billingAccount found code:" + billAccount.getCode());
 
 		org.meveo.model.billing.BillingAccount billingAccount = null;
@@ -73,7 +71,7 @@ public class AccountImportService {
 		BillingCycle billingCycle = null;
 
 		try {
-			billingCycle = billingCycleService.findByBillingCycleCode(em,
+			billingCycle = billingCycleService.findByBillingCycleCode(
 					billAccount.getBillingCycle(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
@@ -85,7 +83,7 @@ public class AccountImportService {
 		}
 
 		try {
-			customerAccount = customerAccountService.findByCode(em,
+			customerAccount = customerAccountService.findByCode(
 					billAccount.getCustomerAccountId(), provider);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
@@ -161,27 +159,27 @@ public class AccountImportService {
 		if (billAccount.getName() != null) {
 			name.setFirstName(billAccount.getName().getFirstname());
 			name.setLastName(billAccount.getName().getName());
-			name.setTitle(titleService.findByCode(em, provider, billAccount
+			name.setTitle(titleService.findByCode(provider, billAccount
 					.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
 
 		billingAccount.setTradingCountry(tradingCountryService
-				.findByTradingCountryCode(em,
-						billAccount.getTradingCountryCode(), provider));
+				.findByTradingCountryCode(billAccount.getTradingCountryCode(),
+						provider));
 		billingAccount.setTradingLanguage(tradingLanguageService
-				.findByTradingLanguageCode(em,
+				.findByTradingLanguageCode(
 						billAccount.getTradingLanguageCode(), provider));
 
 		billingAccount.setProvider(provider);
 
-		billingAccountService.create(em, billingAccount, userJob, provider);
+		billingAccountService.create(billingAccount, userJob, provider);
 
 		return billingAccount;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void importUserAccount(EntityManager em,
+	public void importUserAccount(
 			org.meveo.model.billing.BillingAccount billingAccount,
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
 			org.meveo.model.jaxb.account.UserAccount uAccount,
@@ -213,7 +211,7 @@ public class AccountImportService {
 		if (uAccount.getName() != null) {
 			nameUA.setFirstName(uAccount.getName().getFirstname());
 			nameUA.setLastName(uAccount.getName().getName());
-			nameUA.setTitle(titleService.findByCode(em, provider, uAccount
+			nameUA.setTitle(titleService.findByCode(provider, uAccount
 					.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
@@ -221,7 +219,7 @@ public class AccountImportService {
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
 		userAccount.setProvider(provider);
-		userAccountService.createUserAccount(em, billingAccount, userAccount,
+		userAccountService.createUserAccount(billingAccount, userAccount,
 				userJob);
 	}
 
