@@ -116,24 +116,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 		serviceInstanciation(serviceInstance, creator, null, null);
 	}
 
-	public void serviceInstanciation(EntityManager em,
-			ServiceInstance serviceInstance, User creator)
-			throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
-		serviceInstanciation(serviceInstance, creator, null, null);
-	}
-
 	public void serviceInstanciation(ServiceInstance serviceInstance,
 			User creator, BigDecimal subscriptionAmount,
 			BigDecimal terminationAmount)
-			throws IncorrectSusbcriptionException,
-			IncorrectServiceInstanceException, BusinessException {
-		serviceInstanciation(getEntityManager(), serviceInstance, creator);
-	}
-
-	public void serviceInstanciation(EntityManager em,
-			ServiceInstance serviceInstance, User creator,
-			BigDecimal subscriptionAmount, BigDecimal terminationAmount)
 			throws IncorrectSusbcriptionException,
 			IncorrectServiceInstanceException, BusinessException {
 		log.debug("serviceInstanciation serviceID={}, code={}",
