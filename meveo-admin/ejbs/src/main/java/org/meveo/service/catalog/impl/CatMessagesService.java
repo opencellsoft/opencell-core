@@ -64,7 +64,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		String description = catMessages.size() > 0 ? catMessages.get(0)
 				.getDescription() : "";
 
-		log.debug("get message description =" + description
+		log.debug("get message "+messageCode+" description =" + description
 				+ ", time=" + (System.currentTimeMillis() - startDate));
 		return description;
 	}
