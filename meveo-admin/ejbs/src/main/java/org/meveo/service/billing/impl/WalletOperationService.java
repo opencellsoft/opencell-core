@@ -1449,11 +1449,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			String strQuery = "UPDATE " + WalletOperation.class.getSimpleName()
 					+ " as w SET  w.amountWithoutTax = w.quantity * "
 					+ unitPriceWithoutTax + ","
-					+ " w.amountTax = w.quantity * " + unitTax;
+					+ " w.amountTax = w.quantity * " + unitTax
+					+ " w.unitAmountWithoutTax = "+ unitPriceWithoutTax + ","
+					+ " w.unitAmountTax = " + unitTax;
 			if (unitPriceWithTax != null) {
 				strQuery += "," + " w.amountWithTax = w.quantity * "
+						+ unitPriceWithTax
+						+ "," + " w.unitAmountWithTax = "
 						+ unitPriceWithTax;
 			}
+			
 			strQuery += ", w.auditable.updated = CURRENT_TIMESTAMP"
 					+ " WHERE  w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "

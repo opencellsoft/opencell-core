@@ -767,26 +767,39 @@ public class UsageRatingService {
 
 	private boolean matchExpression(String expression, EDR edr,
 			WalletOperation walletOperation) {
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("edr", edr);
-		userMap.put("op", walletOperation);
-		return (Boolean) RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		boolean result=true;
+		if(!StringUtils.isBlank(expression)){
+			Map<Object, Object> userMap = new HashMap<Object, Object>();
+			userMap.put("edr", edr);
+			userMap.put("op", walletOperation);
+			result = (Boolean) RatingService.evaluateExpression(expression, userMap, Boolean.class);
+		}
+		return result;
+		
 	}
 
 	private String evaluateStringExpression(String expression, EDR edr,
 			WalletOperation walletOperation) {
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("edr", edr);
-		userMap.put("op", walletOperation);
-		return (String) RatingService.evaluateExpression(expression, userMap, String.class);
+		String result=null;
+		if(!StringUtils.isBlank(expression)){
+			Map<Object, Object> userMap = new HashMap<Object, Object>();
+			userMap.put("edr", edr);
+			userMap.put("op", walletOperation);
+			result =  (String) RatingService.evaluateExpression(expression, userMap, String.class);
+		}
+		return result;
 	}
 
 	private Double evaluateDoubleExpression(String expression, EDR edr,
 			WalletOperation walletOperation) {
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("edr", edr);
-		userMap.put("op", walletOperation);
-		return (Double) RatingService.evaluateExpression(expression, userMap, Double.class);
+		Double result=null;
+		if(!StringUtils.isBlank(expression)){
+			Map<Object, Object> userMap = new HashMap<Object, Object>();
+			userMap.put("edr", edr);
+			userMap.put("op", walletOperation);
+			result =  (Double) RatingService.evaluateExpression(expression, userMap, Double.class);
+		}
+		return result;
 	}
 
 

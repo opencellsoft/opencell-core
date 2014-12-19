@@ -490,7 +490,7 @@
 															style="padding:0px; margin:0px;text-align: right;"
 															rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
 															<h:outputText
-																value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
+																value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" />
 															<p:dataTable id="oneShotWalletOperationTable"
 																value="#{subscriptionBean.oneShotWalletOperations}"
 																var="oneShotWalletOp" rows="10" styleClass="custom-grid">

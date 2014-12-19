@@ -12,8 +12,8 @@ import javax.validation.constraints.Size;
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "CAT_TRIGERRED_EDR")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_TRIGERRED_EDR_SEQ")
+@Table(name = "CAT_TRIGGERED_EDR")
+@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_TRIGGERED_EDR_SEQ")
 public class TriggeredEDRTemplate  extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 

@@ -155,14 +155,14 @@ public class InvoiceBean extends BaseBean<Invoice> {
      	                InvoiceSubCategoryDTO headerSUbCat = null;
      	                if (headerSubCategories.containsKey(invoiceSubCategory.getCode())) {
      	                    headerSUbCat = headerSubCategories.get(invoiceSubCategory.getCode());
-     	                    headerSUbCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-     	                    headerSUbCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+     	                    headerSUbCat.addAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+     	                    headerSUbCat.addAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
      	                } else {
      	                    headerSUbCat = new InvoiceSubCategoryDTO();
      	                    headerSUbCat.setDescription(invoiceSubCategory.getDescription());
      	                    headerSUbCat.setCode(invoiceSubCategory.getCode());
-     	                    headerSUbCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-     	                    headerSUbCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+     	                    headerSUbCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+     	                    headerSUbCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
      	                   headerSubCategories.put(invoiceSubCategory.getCode(), headerSUbCat);
      	                }
                     }
