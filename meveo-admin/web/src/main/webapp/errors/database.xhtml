@@ -6,8 +6,7 @@
 	
 	<ui:define name="errorContent">
 		<p>
-			<a href="#{requestScope['javax.servlet.error.request_uri']}">Back
-				to initial page.</a>
+			<a href="#{request.contextPath}">#{messages['message.backToHome']}</a>
 		</p>
 	</ui:define>
 	
