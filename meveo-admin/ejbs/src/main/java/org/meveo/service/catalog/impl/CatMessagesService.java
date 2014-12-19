@@ -44,7 +44,12 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	}
 	
 	public String getMessageDescription(BusinessEntity businessEntity, String languageCode,String defaultDescription){
-		return getMessageDescription(businessEntity.getClass().getSimpleName() + "_" + businessEntity.getId(),
+		String className =businessEntity.getClass().getSimpleName();
+		//supress javassist proxy suffix
+		if(className.indexOf("_")>=0){
+			className=className.substring(0, className.indexOf("_"));
+		}
+		return getMessageDescription(className + "_" + businessEntity.getId(),
 				 languageCode, defaultDescription);
 	}
 	
@@ -62,7 +67,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 				.getResultList();
 
 		String description = catMessages.size() > 0 ? catMessages.get(0)
-				.getDescription() : "";
+				.getDescription() : defaultDescription;
 
 		log.debug("get message "+messageCode+" description =" + description
 				+ ", time=" + (System.currentTimeMillis() - startDate));
