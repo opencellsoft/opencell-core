@@ -17,7 +17,8 @@
 			<property name="hibernate.cache.use_second_level_cache"
 				value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="true" />
-			<property name="hibernate.connection.release_mode" value="AFTER_TRANSACTION" />
+			<!-- https://docs.jboss.org/hibernate/stable/core.old/reference/en/html/transactions-connection-release.html -->
+			<property name="hibernate.connection.release_mode" value="auto" />
 			<property name="hibernate.id.new_generator_mappings" value="false" />
 			<!-- <property name="hibernate.cache.provider_configuration_file_resource_path" 
 				value="ehcache.xml"></property> -->
