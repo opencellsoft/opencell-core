@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -35,7 +34,6 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 @Stateless
-@LocalBean
 public class RecurringChargeInstanceService extends
 		ChargeInstanceService<RecurringChargeInstance> {
 

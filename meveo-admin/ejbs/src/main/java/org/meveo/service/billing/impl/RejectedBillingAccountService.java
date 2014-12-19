@@ -16,16 +16,13 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@LocalBean
-public class RejectedBillingAccountService extends PersistenceService<RejectedBillingAccount> {
-
-	
+public class RejectedBillingAccountService extends
+		PersistenceService<RejectedBillingAccount> {
 
 }

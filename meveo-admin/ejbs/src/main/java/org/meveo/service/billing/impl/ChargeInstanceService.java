@@ -19,7 +19,6 @@ package org.meveo.service.billing.impl;
 import java.util.Date;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -40,7 +39,6 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 
 @Stateless
-@LocalBean
 public class ChargeInstanceService<P extends ChargeInstance> extends
 		BusinessService<P> {
 

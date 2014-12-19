@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
@@ -54,7 +53,6 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.slf4j.Logger;
 
 @Stateless
-@LocalBean
 public class SepaService extends PersistenceService<DDRequestItem> {
 
 	@Inject
