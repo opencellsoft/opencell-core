@@ -26,7 +26,9 @@ import javax.persistence.EntityManager;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.billing.CatMessages;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -40,9 +42,15 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	private void init() {
 
 	}
+	
+	public String getMessageDescription(BusinessEntity businessEntity, String languageCode,String defaultDescription){
+		return getMessageDescription(businessEntity.getClass().getSimpleName() + "_" + businessEntity.getId(),
+				 languageCode, defaultDescription);
+	}
+	
 
 	@SuppressWarnings("unchecked")
-	public String getMessageDescription(String messageCode, String languageCode) {
+	public String getMessageDescription(String messageCode, String languageCode,String defaultDescription) {
 		long startDate = System.currentTimeMillis();
 		if (messageCode == null || languageCode == null) {
 			return null;
@@ -56,7 +64,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		String description = catMessages.size() > 0 ? catMessages.get(0)
 				.getDescription() : "";
 
-		log.info("get message description description =" + description
+		log.debug("get message description =" + description
 				+ ", time=" + (System.currentTimeMillis() - startDate));
 		return description;
 	}
@@ -66,7 +74,7 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public CatMessages getCatMessages(EntityManager em, String messageCode,
+	private CatMessages getCatMessages(EntityManager em, String messageCode,
 			String languageCode) {
 		QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
 		qb.addCriterionWildcard("c.messageCode", messageCode, true);
@@ -89,13 +97,14 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		return cats;
 	}
 
-	public void batchRemove(String entityName, Long id) {
+	public void batchRemove(String entityName, Long id,Provider provider) {
 		String strQuery = "DELETE FROM " + CatMessages.class.getSimpleName()
-				+ " c WHERE c.messageCode=:messageCode";
+				+ " c WHERE c.messageCode=:messageCode and c.provider=:provider";
 
 		try {
 			getEntityManager().createQuery(strQuery)
 					.setParameter("messageCode", entityName + "_" + id)
+					.setParameter("provider", provider)
 					.executeUpdate();
 		} catch (Exception e) {
 			log.error(e.getMessage());

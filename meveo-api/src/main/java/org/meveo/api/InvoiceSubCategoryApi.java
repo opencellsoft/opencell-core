@@ -248,7 +248,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
 			// remove cat messages
 			catMessagesService.batchRemove(
 					InvoiceSubCategory.class.getSimpleName(),
-					invoiceSubCategory.getId());
+					invoiceSubCategory.getId(),provider);
 
 			invoiceSubCategoryService.remove(invoiceSubCategory);
 		} else {

@@ -298,11 +298,7 @@ public class RatingService {
 			String languageCode = ua
 					.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
-			CatMessages catMessage = catMessagesService.getCatMessages(em,
-					chargeInstance.getClass().getSimpleName() + "_"
-							+ chargeInstance.getId(), languageCode);
-			chargeInstnceLabel = catMessage != null ? catMessage
-					.getDescription() : null;
+			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode, chargeInstance.getDescription());
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

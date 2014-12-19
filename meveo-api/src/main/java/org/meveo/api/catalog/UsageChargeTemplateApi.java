@@ -323,7 +323,7 @@ public class UsageChargeTemplateApi extends BaseApi {
 			// remove cat messages
 			catMessagesService.batchRemove(
 					UsageChargeTemplate.class.getSimpleName(),
-					chargeTemplate.getId());
+					chargeTemplate.getId(),provider);
 
 			usageChargeTemplateService.remove(chargeTemplate);
 		} else {

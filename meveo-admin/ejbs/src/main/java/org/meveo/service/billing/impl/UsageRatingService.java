@@ -47,6 +47,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
@@ -94,6 +95,9 @@ public class UsageRatingService {
 	@Inject
 	private SubscriptionService subscriptionService;
 
+	@Inject
+	private CatMessagesService catMessagesService;
+	
 	@PostConstruct
 	public synchronized void updateCacheFromDB() {
 		if (!cacheLoaded) {
@@ -431,7 +435,8 @@ public class UsageRatingService {
 		walletOperation.setWallet(edr.getSubscription().getUserAccount()
 				.getWallet());
 		walletOperation.setCode(chargeInstance.getCode());
-
+		walletOperation.setDescription(catMessagesService.getMessageDescription(chargeInstance.getChargeTemplate(), edr.getSubscription().getUserAccount()
+				.getBillingAccount().getTradingLanguage().getLanguageCode(), chargeInstance.getDescription()));
 		if (deducedQuantity != null) {
 			walletOperation.setQuantity(deducedQuantity);
 		} else {
