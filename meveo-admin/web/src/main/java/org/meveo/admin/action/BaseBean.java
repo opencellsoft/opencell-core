@@ -23,10 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.Messages;
@@ -76,6 +80,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	@Inject
 	protected Conversation conversation;
+
+	@PersistenceContext(unitName = "MeveoAdmin", type = PersistenceContextType.EXTENDED)
+	private EntityManager em;
 
 	/** Search filters. */
 	protected Map<String, Object> filters = new HashMap<String, Object>();
@@ -147,6 +154,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	public BaseBean(Class<T> clazz) {
 		super();
 		this.clazz = clazz;
+	}
+
+	@PostConstruct
+	private void init() {
+		beginConversation();
 	}
 
 	/**
