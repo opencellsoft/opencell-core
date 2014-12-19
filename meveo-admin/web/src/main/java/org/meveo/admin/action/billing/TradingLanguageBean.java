@@ -151,12 +151,12 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("language");
+		return Arrays.asList("language", "provider");
 	}
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("language");
+		return Arrays.asList("language", "provider");
 	}
 	
 	@Override
