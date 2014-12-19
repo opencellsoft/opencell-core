@@ -635,7 +635,7 @@
 
 													<h:panelGrid columns="2">
 														<h:commandButton
-															action="#{subscriptionBean.saveOneShotChargeIns}"
+															action="#{subscriptionBean.saveOneShotChargeIns()}"
 															value="#{messages['action.save']}"
 															rendered="#{currentProvider.amountValidation}">
 															<a:ajax event="click" render="OS_oneShot_results_form"
@@ -1073,7 +1073,7 @@
 					<p:panelGrid width="100%" columns="1"
 						rendered="#{not empty subscriptionBean.recurringWalletOperations}">
 						<h:outputText
-							value="#{subscriptionBean.recurringWalletOperations.size} #{messages['commons.itemsFound']}" />
+							value="#{subscriptionBean.recurringWalletOperations.size()} #{messages['commons.itemsFound']}" />
 						<p:dataTable id="recurringWalletOperationTable"
 							value="#{subscriptionBean.recurringWalletOperations}"
 							var="shotApplication" paginator="true" rows="10"
