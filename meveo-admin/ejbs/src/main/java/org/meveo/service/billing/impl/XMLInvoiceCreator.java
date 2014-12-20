@@ -615,7 +615,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					.getMessageDescription(invoiceCategory,
 							languageCode,invoiceCategory.getDescription()) : "";
 			Element category = doc.createElement("category");
-			category.setAttribute("label", invoiceCategoryLabel);
+			category.setAttribute("label", (invoiceCategoryLabel!=null)?invoiceCategoryLabel:"");
 			category.setAttribute(
 					"code",
 					invoiceCategory != null
@@ -655,7 +655,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							.getMessageDescription(invoiceSubCat,languageCode,invoiceSubCat.getDescription()) : "";
 					Element subCategory = doc.createElement("subCategory");
 					subCategories.appendChild(subCategory);
-					subCategory.setAttribute("label", invoiceSubCategoryLabel);
+					subCategory.setAttribute("label", (invoiceSubCategoryLabel!=null)?invoiceSubCategoryLabel:"");
 					subCategory.setAttribute("code", invoiceSubCat.getCode());
 					subCategory.setAttribute("taxCode", subCatInvoiceAgregate
 							.getSubCategoryTax().getCode());
@@ -809,7 +809,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					taxInvoiceAgregate.getTax(), languageCode,taxInvoiceAgregate.getTax().getDescription());
 			Element taxName = doc.createElement("name");
 			Text taxNameTxt = doc
-					.createTextNode(taxInvoiceAgregate.getTax() != null ? taxDescription
+					.createTextNode(taxDescription != null ? taxDescription
 							: "");
 			taxName.appendChild(taxNameTxt);
 			tax.appendChild(taxName);

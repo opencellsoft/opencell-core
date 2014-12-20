@@ -66,7 +66,8 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		List<CatMessages> catMessages = qb.getQuery(getEntityManager())
 				.getResultList();
 
-		String description = catMessages.size() > 0 ? catMessages.get(0)
+		String description = (catMessages.size() > 0 && !StringUtils.isBlank(catMessages.get(0)
+				.getDescription())) ? catMessages.get(0)
 				.getDescription() : defaultDescription;
 
 		log.debug("get message "+messageCode+" description =" + description
