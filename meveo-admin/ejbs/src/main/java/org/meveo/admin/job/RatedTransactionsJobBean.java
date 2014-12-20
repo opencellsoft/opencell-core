@@ -3,11 +3,8 @@ package org.meveo.admin.job;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.model.admin.User;
@@ -20,7 +17,6 @@ import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -35,11 +31,6 @@ public class RatedTransactionsJobBean {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class })
 	public JobExecutionResult execute(JobExecutionResultImpl result,
 			User currentUser) {
@@ -48,9 +39,11 @@ public class RatedTransactionsJobBean {
 		try {
 			// FIXME: only for postpaid wallets
 			List<WalletOperation> walletOperations = walletOperationService
-					.findByStatus(em, WalletOperationStatusEnum.OPEN, provider);
+					.findByStatus(WalletOperationStatusEnum.OPEN, provider);
+	
 			log.info("WalletOperations to convert into rateTransactions={}",
 					walletOperations.size());
+			
 			for (WalletOperation walletOperation : walletOperations) {
 				try {
 					RatedTransaction ratedTransaction = new RatedTransaction(
@@ -72,7 +65,8 @@ public class RatedTransactionsJobBean {
 									.getInvoiceSubCategory(),
 							walletOperation.getParameter1(),
 							walletOperation.getParameter2(),
-							walletOperation.getParameter3(), walletOperation.getUnityDescription());
+							walletOperation.getParameter3(),
+							walletOperation.getUnityDescription());
 					ratedTransactionService.create(ratedTransaction,
 							currentUser, currentUser.getProvider());
 

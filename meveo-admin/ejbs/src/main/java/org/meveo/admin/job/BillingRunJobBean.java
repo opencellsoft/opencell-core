@@ -4,11 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -21,7 +18,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -36,18 +32,13 @@ public class BillingRunJobBean {
 	@Inject
 	private BillingCycleService billingCycleService;
 
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class })
 	public void execute(JobExecutionResultImpl result, String parameter,
 			User currentUser) {
 		Provider provider = currentUser.getProvider();
 
 		try {
-			List<BillingRun> billruns = billingRunService.getbillingRuns(em,
+			List<BillingRun> billruns = billingRunService.getbillingRuns(
 					provider, parameter);
 
 			boolean notTerminatedBillRun = false;
@@ -66,6 +57,7 @@ public class BillingRunJobBean {
 			if (!notTerminatedBillRun && !StringUtils.isEmpty(parameter)) {
 				BillingCycle billingCycle = billingCycleService
 						.findByBillingCycleCode(parameter, provider);
+				
 				if (billingCycle != null) {
 					BillingRun billingRun = new BillingRun();
 					Auditable auditable = new Auditable();

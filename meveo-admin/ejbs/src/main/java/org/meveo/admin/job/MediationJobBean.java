@@ -14,7 +14,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -28,7 +27,6 @@ import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -39,10 +37,6 @@ public class MediationJobBean {
 
 	@Inject
 	private EdrService edrService;
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
 
 	@Inject
 	private CDRParsingService cdrParser;
@@ -59,7 +53,6 @@ public class MediationJobBean {
 	PrintWriter rejectFileWriter;
 	String report;
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class })
 	public void execute(JobExecutionResultImpl result, String parameter,
 			User currentUser) {
@@ -118,7 +111,6 @@ public class MediationJobBean {
 						List<EDR> edrs = cdrParser.getEDRList(line);
 						if (edrs != null && edrs.size() > 0) {
 							for (EDR edr : edrs) {
-								// edrService.create(edr);
 								createEdr(edr, currentUser);
 							}
 						}
@@ -224,8 +216,9 @@ public class MediationJobBean {
 		}
 	}
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createEdr(EDR edr, User currentUser) throws BusinessException {
-		edrService.create(em, edr, currentUser, currentUser.getProvider());
+		edrService.create(edr, currentUser, currentUser.getProvider());
 	}
 
 }

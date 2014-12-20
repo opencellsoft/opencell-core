@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.model.mediation.Access;
@@ -67,7 +65,6 @@ public class CDRParsingService {
 		}
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<EDR> getEDRList(String line) throws CDRParsingException {
 		List<EDR> result = new ArrayList<EDR>();
 		Serializable cdr = cdrParser.getCDR(line);
@@ -99,9 +96,11 @@ public class CDRParsingService {
 				result.add(edr);
 			}
 		}
+		
 		if (!foundMatchingAccess) {
 			throw new InvalidAccessException(cdr);
 		}
+		
 		return result;
 	}
 
@@ -116,6 +115,8 @@ public class CDRParsingService {
 			throws InvalidAccessException {
 		String userId = cdrParser.getAccessUserId(cdr);
 		List<Access> accesses = null;
+		
+		
 		if (accessCache.containsKey(userId)) {
 			accesses = accessCache.get(userId);
 		} else {
@@ -123,8 +124,10 @@ public class CDRParsingService {
 			if (accesses.size() == 0) {
 				throw new InvalidAccessException(cdr);
 			}
+			
 			accessCache.put(userId, accesses);
 		}
+		
 		return accesses;
 	}
 

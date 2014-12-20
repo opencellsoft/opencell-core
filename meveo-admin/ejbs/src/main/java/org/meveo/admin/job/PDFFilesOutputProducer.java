@@ -32,7 +32,6 @@ import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -74,9 +73,8 @@ public class PDFFilesOutputProducer {
 	 * @see org.meveo.core.outputproducer.OutputProducer#produceOutput(java.util.List)
 	 */
 	@Asynchronous
-	public Future<Boolean> producePdf(EntityManager em,
-			Map<String, Object> parameters, JobExecutionResultImpl result,
-			User currentUser) throws Exception {
+	public Future<Boolean> producePdf(Map<String, Object> parameters,
+			JobExecutionResultImpl result, User currentUser) throws Exception {
 		try {
 			ParamBean paramBean = ParamBean.getInstance();
 			log.info("PDFInvoiceGenerationJob is invoice key exists="
