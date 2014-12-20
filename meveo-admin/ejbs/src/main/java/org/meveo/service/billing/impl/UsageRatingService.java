@@ -461,7 +461,7 @@ public class UsageRatingService {
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 
 		// log.info("provider code:" + provider.getCode());
-		ratingService.rateBareWalletOperation(walletOperation, null, null,
+		ratingService.rateBareWalletOperation(em, walletOperation, null, null,
 				countryId, currency, provider);
 
 		// for AGGREGATED counter we update the price of the previous wallet
@@ -620,7 +620,7 @@ public class UsageRatingService {
 				|| deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService
-					.findById(charge.getChargeInstanceId());
+					.findById(em, charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
 					deducedQuantity, charge, chargeInstance, provider);
 
@@ -686,7 +686,8 @@ public class UsageRatingService {
 						if (sub != null) {
 							log.info("trigger EDR from code "
 									+ triggeredEDRCache.getCode());
-							edrService.create(newEdr, currentUser, provider);
+							edrService
+									.create(em, newEdr, currentUser, provider);
 						}
 					}
 				}

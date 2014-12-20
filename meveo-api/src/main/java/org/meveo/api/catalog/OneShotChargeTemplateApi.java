@@ -329,7 +329,7 @@ public class OneShotChargeTemplateApi extends BaseApi {
 			// remove cat messages
 			catMessagesService.batchRemove(
 					OneShotChargeTemplate.class.getSimpleName(),
-					chargeTemplate.getId());
+					chargeTemplate.getId(),provider);
 
 			oneShotChargeTemplateService.remove(chargeTemplate);
 		} else {

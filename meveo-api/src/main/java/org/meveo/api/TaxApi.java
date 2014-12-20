@@ -246,7 +246,7 @@ public class TaxApi extends BaseApi {
 
 			// remove cat messages
 			catMessagesService.batchRemove(Tax.class.getSimpleName(),
-					tax.getId());
+					tax.getId(),provider);
 
 			taxService.remove(tax);
 		} else {

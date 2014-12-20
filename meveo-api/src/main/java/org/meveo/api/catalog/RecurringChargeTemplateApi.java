@@ -315,7 +315,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi {
 			// remove cat messages
 			catMessagesService.batchRemove(
 					RecurringChargeTemplate.class.getSimpleName(),
-					chargeTemplate.getId());
+					chargeTemplate.getId(),provider);
 
 			recurringChargeTemplateService.remove(chargeTemplate);
 		} else {

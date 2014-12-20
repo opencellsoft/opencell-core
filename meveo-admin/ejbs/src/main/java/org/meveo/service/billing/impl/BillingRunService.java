@@ -457,6 +457,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public List<BillingRun> getbillingRuns(EntityManager em, Provider provider,
 			BillingRunStatusEnum... status) {
 		BillingRunStatusEnum bRStatus;
+		log.debug("getbillingRuns for provider "+provider==null?"null":provider.getCode());
 		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null,
 				provider);
 

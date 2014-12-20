@@ -446,13 +446,9 @@
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
 															size="5" converter="bigDecimalConverter"
 															onkeyup="validateAmounts();"
-															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
 														</p:inputText>
-														<h:outputText rendered="#{!subscriptionBean.edit}"
-															value="#{subscriptionBean.oneShotChargeInstance.amountWithoutTax}"
-															style="font-weight:bold;" converter="bigDecimalConverter" />
 													</h:panelGrid>
-
 													<h:panelGrid columns="2">
 														<p:outputLabel for="amountWithTax"
 															value="#{messages['oneShotChargeInstance.amountWithTax']}" />
@@ -460,11 +456,8 @@
 															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 															size="5" converter="bigDecimalConverter"
 															onkeyup="validateAmounts();"
-															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}">
+															disabled="#{!subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and subscriptionBean.oneShotChargeInstance.id != null}">
 														</p:inputText>
-														<h:outputText rendered="#{!subscriptionBean.edit}"
-															value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
-															style="font-weight:bold;" converter="bigDecimalConverter" />
 													</h:panelGrid>
 													<hf:formField
 														label="#{messages['oneShotChargeInstance.criteria1']}"
@@ -497,7 +490,7 @@
 															style="padding:0px; margin:0px;text-align: right;"
 															rendered="#{not empty subscriptionBean.oneShotWalletOperations}">
 															<h:outputText
-																value="#{subscriptionBean.oneShotWalletOperations.size} #{messages['commons.itemsFound']}" />
+																value="#{subscriptionBean.oneShotWalletOperations.size()} #{messages['commons.itemsFound']}" />
 															<p:dataTable id="oneShotWalletOperationTable"
 																value="#{subscriptionBean.oneShotWalletOperations}"
 																var="oneShotWalletOp" rows="10" styleClass="custom-grid">
@@ -642,7 +635,7 @@
 
 													<h:panelGrid columns="2">
 														<h:commandButton
-															action="#{subscriptionBean.saveOneShotChargeIns}"
+															action="#{subscriptionBean.saveOneShotChargeIns()}"
 															value="#{messages['action.save']}"
 															rendered="#{currentProvider.amountValidation}">
 															<a:ajax event="click" render="OS_oneShot_results_form"
@@ -1080,7 +1073,7 @@
 					<p:panelGrid width="100%" columns="1"
 						rendered="#{not empty subscriptionBean.recurringWalletOperations}">
 						<h:outputText
-							value="#{subscriptionBean.recurringWalletOperations.size} #{messages['commons.itemsFound']}" />
+							value="#{subscriptionBean.recurringWalletOperations.size()} #{messages['commons.itemsFound']}" />
 						<p:dataTable id="recurringWalletOperationTable"
 							value="#{subscriptionBean.recurringWalletOperations}"
 							var="shotApplication" paginator="true" rows="10"

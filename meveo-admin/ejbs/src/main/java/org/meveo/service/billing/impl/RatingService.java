@@ -298,11 +298,7 @@ public class RatingService {
 			String languageCode = ua
 					.getBillingAccount().getTradingLanguage().getLanguage()
 					.getLanguageCode();
-			CatMessages catMessage = catMessagesService.getCatMessages(em,
-					chargeInstance.getClass().getSimpleName() + "_"
-							+ chargeInstance.getId(), languageCode);
-			chargeInstnceLabel = catMessage != null ? catMessage
-					.getDescription() : null;
+			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode, chargeInstance.getDescription());
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -791,7 +787,7 @@ public class RatingService {
 					|| pricePlan.getMinQuantity().compareTo(
 							bareOperation.getQuantity()) <= 0;
 			if (quantityMinOk) {
-				log.debug("quantityMaxOkInPricePlan");
+				log.debug("quantityMinOkInPricePlan");
 				return pricePlan;
 			} else {
 				log.debug("the quantity " + bareOperation.getQuantity()
@@ -981,7 +977,10 @@ public class RatingService {
 	public static Object evaluateExpression(String expression,
 			Map<Object, Object> userMap,
 			@SuppressWarnings("rawtypes") Class resultClass) {
-		
+		Object result=null;
+		if(expression==null){
+			return null;
+		}
 		if(!expression.startsWith("#")){
 			if(resultClass.equals(String.class)){
 				return expression;
@@ -996,37 +995,42 @@ public class RatingService {
 			}
 		}
 		// FIXME: externilize the resolver to instance variable and simply set
-				// the bare operation
-				// before evaluation
-		ELResolver simpleELResolver = new SimpleELResolver(userMap);
-		final VariableMapper variableMapper = new SimpleVariableMapper();
-		final FunctionMapper functionMapper = new SimpleFunctionMapper();
-		final CompositeELResolver compositeELResolver = new CompositeELResolver();
-		compositeELResolver.add(simpleELResolver);
-		compositeELResolver.add(new ArrayELResolver());
-		compositeELResolver.add(new ListELResolver());
-		compositeELResolver.add(new BeanELResolver());
-		compositeELResolver.add(new MapELResolver());
-		ELContext context = new ELContext() {
-			@Override
-			public ELResolver getELResolver() {
-				return compositeELResolver;
-			}
-
-			@Override
-			public FunctionMapper getFunctionMapper() {
-				return functionMapper;
-			}
-
-			@Override
-			public VariableMapper getVariableMapper() {
-				return variableMapper;
-			}
-		};
-		ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-
-		ValueExpression ve = expressionFactory.createValueExpression(context,
-				expression, resultClass);
-		return ve.getValue(context);
+		// the bare operation
+		// before evaluation
+		try {
+			ELResolver simpleELResolver = new SimpleELResolver(userMap);
+			final VariableMapper variableMapper = new SimpleVariableMapper();
+			final FunctionMapper functionMapper = new SimpleFunctionMapper();
+			final CompositeELResolver compositeELResolver = new CompositeELResolver();
+			compositeELResolver.add(simpleELResolver);
+			compositeELResolver.add(new ArrayELResolver());
+			compositeELResolver.add(new ListELResolver());
+			compositeELResolver.add(new BeanELResolver());
+			compositeELResolver.add(new MapELResolver());
+			ELContext context = new ELContext() {
+				@Override
+				public ELResolver getELResolver() {
+					return compositeELResolver;
+				}
+	
+				@Override
+				public FunctionMapper getFunctionMapper() {
+					return functionMapper;
+				}
+	
+				@Override
+				public VariableMapper getVariableMapper() {
+					return variableMapper;
+				}
+			};
+			ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
+	
+			ValueExpression ve = expressionFactory.createValueExpression(context,
+					expression, resultClass);
+			result = ve.getValue(context);
+		} catch(Exception e){
+			
+		}
+		return result;
 	}
 }
