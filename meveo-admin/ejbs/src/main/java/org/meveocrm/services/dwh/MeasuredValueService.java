@@ -24,10 +24,10 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		if (startDate != null && endDate != null) {
 			QueryBuilder qb = new QueryBuilder("FROM "
 					+ MeasuredValue.class.getName());
-			//qb.startInnerAndClause();
+			// qb.startInnerAndClause();
 			qb.addCriterionDateRangeFromTruncatedToDay("date", startDate);
 			qb.addCriterionDateRangeToTruncatedToDay("date", endDate);
-			//qb.endInnerAndClause();
+			// qb.endInnerAndClause();
 
 			Query query = qb.getQuery(getEntityManager());
 
@@ -41,45 +41,40 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 
 	}
 
-	
-
-	
 	public MeasuredValue getByDate(Date date, MeasurementPeriodEnum period,
-			MeasurableQuantity mq){
+			MeasurableQuantity mq) {
 		return getByDate(getEntityManager(), date, period, mq);
 	}
-	
-	public MeasuredValue getByDate(EntityManager em,Date date, MeasurementPeriodEnum period,
-			MeasurableQuantity mq){
-		MeasuredValue result=null;
+
+	public MeasuredValue getByDate(EntityManager em, Date date,
+			MeasurementPeriodEnum period, MeasurableQuantity mq) {
+		MeasuredValue result = null;
 		QueryBuilder queryBuilder = new QueryBuilder("FROM "
 				+ MeasuredValue.class.getName() + " m ");
 		queryBuilder.addCriterionDate("m.date", date);
-		queryBuilder
-					.addCriterion("m.measurementPeriod", "=", period, false);
+		queryBuilder.addCriterion("m.measurementPeriod", "=", period, false);
 		queryBuilder.addCriterion("m.measurableQuantity", "=", mq, false);
 		Query query = queryBuilder.getQuery(em);
 		@SuppressWarnings("unchecked")
 		List<MeasuredValue> res = query.getResultList();
-		if(res.size()>0){
+		if (res.size() > 0) {
 			result = res.get(0);
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<MeasuredValue> getByDateAndPeriod(String code,
-			Date fromDate, Date toDate, MeasurementPeriodEnum period,
-			MeasurableQuantity mq) {
+	public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate,
+			Date toDate, MeasurementPeriodEnum period, MeasurableQuantity mq) {
 
 		QueryBuilder queryBuilder = new QueryBuilder("FROM "
 				+ MeasuredValue.class.getName() + " m ");
 
 		if (code != null) {
-				queryBuilder.addSql(" m.measurableQuantity.code = '"
-						+ code.toUpperCase() + "' ");
+			queryBuilder.addSql(" m.measurableQuantity.code = '"
+					+ code.toUpperCase() + "' ");
 		}
-		
+
 		if (fromDate != null && toDate == null) {
 			Calendar start = Calendar.getInstance();
 			start.setTime(fromDate);
@@ -111,8 +106,8 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 	}
 
 	public Long getMeasuredValueSumByDate(Date fromDate, Date toDate,
-			String code, MeasurementPeriodEnum period,
-			String followUpTheme, Boolean includeLastdDay) {
+			String code, MeasurementPeriodEnum period, String followUpTheme,
+			Boolean includeLastdDay) {
 		Calendar cal = Calendar.getInstance();
 		String sqlQuery = null;
 		if (fromDate == null && toDate != null) {
@@ -153,8 +148,8 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 			sqlQuery += " AND mv.measurementPeriod = '" + period.name() + "' ";
 		}
 		if (code != null) {
-				sqlQuery += " AND mv.measurableQuantity.code ='"
-						+ code.toUpperCase() + "'";
+			sqlQuery += " AND mv.measurableQuantity.code ='"
+					+ code.toUpperCase() + "'";
 		}
 		long time = System.currentTimeMillis();
 		Query query = getEntityManager().createQuery(sqlQuery);
@@ -212,8 +207,8 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 		}
 		if (code != null) {
 			sqlQuery += " AND mv.measurableQuantity.code ='"
-						+ code.toUpperCase() + "'";
-			
+					+ code.toUpperCase() + "'";
+
 		}
 
 		long time = System.currentTimeMillis();
@@ -224,7 +219,7 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 			result = (Long) query.getSingleResult();
 		}
 		time = System.currentTimeMillis() - time;
-		log.debug("Time : "+time+ " SQL : "+sqlQuery);
+		log.debug("Time : " + time + " SQL : " + sqlQuery);
 		return result;
 
 	}

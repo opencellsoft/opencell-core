@@ -11,8 +11,7 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 @Named
 @ConversationScoped
-public class MeasurableQuantityBean extends
-		BaseBean<MeasurableQuantity> {
+public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 
 	private static final long serialVersionUID = -1644247310944456827L;
 
@@ -22,22 +21,19 @@ public class MeasurableQuantityBean extends
 	public MeasurableQuantityBean() {
 		super(MeasurableQuantity.class);
 	}
-	
+
 	@Override
 	protected IPersistenceService<MeasurableQuantity> getPersistenceService() {
 		return measurableQuantityService;
 	}
 
-
 	protected String getDefaultViewName() {
 		return "measurableQuantities";
 	}
-	
 
 	@Override
 	protected String getListViewName() {
 		return "measurableQuantities";
 	}
-
 
 }

@@ -9,22 +9,47 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{measurableQuantityBean.preRenderView}" />
+			<f:viewParam name="objectId"
+				value="#{measurableQuantityBean.objectId}" />
+
+		</f:metadata>
+	</ui:define>
+
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-	
+
 	<ui:define name="body">
 
 		<hf:formPanel id="measurableQuantityForm"
 			backingBean="#{measurableQuantityBean}" columns="1">
-			<hf:formField label="#{messages['entity.measurablequantity.code']}" field="code" />
-			<hf:formField label="#{messages['entity.measurablequantity.dimension1']}" field="dimension1" />
-			<hf:formField label="#{messages['entity.measurablequantity.dimension2']}" field="dimension2" />
-			<hf:formField label="#{messages['entity.measurablequantity.dimension3']}" field="dimension3" />
-			<hf:formField label="#{messages['entity.measurablequantity.dimension4']}" field="dimension4" />
-			<hf:formField label="#{messages['entity.measurablequantity.sqlQuery']}" field="sqlQuery" textArea="true" maxlength="2000"/>
-			<hf:formField label="#{messages['entity.measuredvalue.measurementPeriod']}" field="measurementPeriod" />
-			<hf:formField label="#{messages['entity.measurablequantity.editable']}" field="editable" />
+			<hf:formField label="#{messages['entity.measurablequantity.code']}"
+				field="code" />
+			<hf:formField
+				label="#{messages['entity.measurablequantity.dimension1']}"
+				field="dimension1" />
+			<hf:formField
+				label="#{messages['entity.measurablequantity.dimension2']}"
+				field="dimension2" />
+			<hf:formField
+				label="#{messages['entity.measurablequantity.dimension3']}"
+				field="dimension3" />
+			<hf:formField
+				label="#{messages['entity.measurablequantity.dimension4']}"
+				field="dimension4" />
+			<hf:formField
+				label="#{messages['entity.measurablequantity.sqlQuery']}"
+				field="sqlQuery" textArea="true" maxlength="2000" />
+			<hf:formField
+				label="#{messages['entity.measuredvalue.measurementPeriod']}"
+				field="measurementPeriod" />
+			<hf:formField
+				label="#{messages['entity.measurablequantity.editable']}"
+				field="editable" />
 		</hf:formPanel>
 
 	</ui:define>
