@@ -148,7 +148,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("country");
+		return Arrays.asList("country", "provider");
 	}
 
 	@Override

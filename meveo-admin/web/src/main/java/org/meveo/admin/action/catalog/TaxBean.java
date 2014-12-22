@@ -64,7 +64,8 @@ public class TaxBean extends BaseBean<Tax> {
 	public TaxBean() {
 		super(Tax.class);
 		ParamBean param = ParamBean.getInstance();
-		separator = param.getProperty("reporting.accountingCode.separator", ",");
+		separator = param
+				.getProperty("reporting.accountingCode.separator", ",");
 	}
 
 	/**
@@ -81,9 +82,11 @@ public class TaxBean extends BaseBean<Tax> {
 
 		languageMessagesMap.clear();
 		if (tax.getId() != null) {
-			for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName()
-					+ "_" + tax.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			for (CatMessages msg : catMessagesService
+					.getCatMessagesList(Tax.class.getSimpleName() + "_"
+							+ tax.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(),
+						msg.getDescription());
 			}
 		}
 		parseAccountingCode();
@@ -103,14 +106,16 @@ public class TaxBean extends BaseBean<Tax> {
 		if (entity.getId() != null) {
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMsg = catMessagesService.getCatMessages(entity.getClass()
-						.getSimpleName() + "_" + entity.getId(), msgKey);
+				CatMessages catMsg = catMessagesService.getCatMessages(entity
+						.getClass().getSimpleName() + "_" + entity.getId(),
+						msgKey);
 				if (catMsg != null) {
 					catMsg.setDescription(description);
 					catMessagesService.update(catMsg);
 				} else {
-					CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName()
-							+ "_" + entity.getId(), msgKey, description);
+					CatMessages catMessages = new CatMessages(entity.getClass()
+							.getSimpleName() + "_" + entity.getId(), msgKey,
+							description);
 					catMessagesService.create(catMessages);
 				}
 			}
@@ -119,8 +124,9 @@ public class TaxBean extends BaseBean<Tax> {
 			back = super.saveOrUpdate(killConversation);
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(entity.getClass().getSimpleName() + "_"
-						+ entity.getId(), msgKey, description);
+				CatMessages catMessages = new CatMessages(entity.getClass()
+						.getSimpleName() + "_" + entity.getId(), msgKey,
+						description);
 				catMessagesService.create(catMessages);
 			}
 		}
@@ -154,9 +160,10 @@ public class TaxBean extends BaseBean<Tax> {
 	 * Constructs cost accounting code
 	 */
 	public String generateAccountingCode() {
-		return accountingCodeFields[0] + separator + accountingCodeFields[1] + separator
-				+ accountingCodeFields[2] + separator + accountingCodeFields[3] + separator
-				+ accountingCodeFields[4] + separator + accountingCodeFields[5] + separator
+		return accountingCodeFields[0] + separator + accountingCodeFields[1]
+				+ separator + accountingCodeFields[2] + separator
+				+ accountingCodeFields[3] + separator + accountingCodeFields[4]
+				+ separator + accountingCodeFields[5] + separator
 				+ accountingCodeFields[6];
 	}
 
@@ -166,7 +173,8 @@ public class TaxBean extends BaseBean<Tax> {
 	 */
 	public void parseAccountingCode() {
 		if (entity.getAccountingCode() != null) {
-			String[] accountingCodeValues = entity.getAccountingCode().split(separator);
+			String[] accountingCodeValues = entity.getAccountingCode().split(
+					separator);
 			if (accountingCodeValues != null) {
 				for (int i = 0; i < accountingCodeFields.length; i++) {
 					if (i < accountingCodeValues.length) {
@@ -265,11 +273,12 @@ public class TaxBean extends BaseBean<Tax> {
 	 */
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList();
+		return Arrays.asList("provider");
 	}
 
 	@Override
 	protected String getDefaultSort() {
 		return "code";
 	}
+
 }

@@ -93,21 +93,26 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	public String saveOrUpdate(boolean killConversation) {
 		String back = null;
 		try {
-			Provider currentProvider = providerService.findById(getCurrentProvider().getId());
+			Provider currentProvider = providerService
+					.findById(getCurrentProvider().getId());
 			for (TradingLanguage tr : currentProvider.getTradingLanguages()) {
-				if (tr.getLanguage().getLanguageCode()
-						.equalsIgnoreCase(entity.getLanguage().getLanguageCode())
+				if (tr.getLanguage()
+						.getLanguageCode()
+						.equalsIgnoreCase(
+								entity.getLanguage().getLanguageCode())
 						&& !tr.getId().equals(entity.getId())) {
 					throw new BusinessEntityException();
 				}
 			}
 			back = super.saveOrUpdate(killConversation);
 		} catch (BusinessEntityException e) {
-			messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
+			messages.error(new BundleKey("messages",
+					"tradingLanguage.uniqueField"));
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			messages.error(new BundleKey("messages", "tradingLanguage.uniqueField"));
+			messages.error(new BundleKey("messages",
+					"tradingLanguage.uniqueField"));
 		}
 
 		return back;
@@ -116,8 +121,8 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	public void onRowSelect(SelectEvent event) {
 		if (event.getObject() instanceof Language) {
 			Language language = (Language) event.getObject();
-			log.info("populatLanguages language", language != null ? language.getLanguageCode()
-					: null);
+			log.info("populatLanguages language",
+					language != null ? language.getLanguageCode() : null);
 			if (language != null) {
 				entity.setLanguage(language);
 				entity.setPrDescription(language.getDescriptionEn());
@@ -156,9 +161,9 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("language", "provider");
+		return Arrays.asList("language");
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "language.languageCode";

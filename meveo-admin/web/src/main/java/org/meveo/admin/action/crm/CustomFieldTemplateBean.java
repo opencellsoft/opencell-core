@@ -1,5 +1,8 @@
 package org.meveo.admin.action.crm;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,6 +43,11 @@ public class CustomFieldTemplateBean extends BaseBean<CustomFieldTemplate> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

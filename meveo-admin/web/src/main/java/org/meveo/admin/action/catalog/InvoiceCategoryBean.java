@@ -165,7 +165,7 @@ public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("invoiceSubCategories");
+		return Arrays.asList("provider", "invoiceSubCategories");
 	}
 
 	@Override

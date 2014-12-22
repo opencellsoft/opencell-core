@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,7 +30,8 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 
 @Named
 @ConversationScoped
-public class TerminationReasonBean extends BaseBean<SubscriptionTerminationReason> {
+public class TerminationReasonBean extends
+		BaseBean<SubscriptionTerminationReason> {
 
 	private static final long serialVersionUID = 3745349578244346473L;
 
@@ -51,6 +55,11 @@ public class TerminationReasonBean extends BaseBean<SubscriptionTerminationReaso
 	@Override
 	public String getEditViewName() {
 		return "terminationReasonDetail";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }
