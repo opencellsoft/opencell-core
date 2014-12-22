@@ -73,7 +73,7 @@ public class RecurringChargeTemplateBean extends
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
-	
+
 	@Inject
 	private CatMessagesService catMessagesService;
 
@@ -186,7 +186,7 @@ public class RecurringChargeTemplateBean extends
 	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
 	 */
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("calendar");
+		return Arrays.asList("provider", "calendar");
 	}
 
 	public String getDescriptionFr() {
@@ -201,17 +201,18 @@ public class RecurringChargeTemplateBean extends
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
 
 	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
 		if (edrTemplates == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService
+					.list();
 			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
 			if (getEntity().getEdrTemplates() != null) {
 				target.addAll(getEntity().getEdrTemplates());
 			}
 			source.removeAll(target);
-			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
+			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source,
+					target);
 		}
 		return edrTemplates;
 	}

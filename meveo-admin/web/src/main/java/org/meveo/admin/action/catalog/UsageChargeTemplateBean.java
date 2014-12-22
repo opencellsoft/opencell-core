@@ -58,10 +58,9 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
 	private DualListModel<TriggeredEDRTemplate> edrTemplates;
-	
+
 	@Inject
 	private CatMessagesService catMessagesService;
-
 
 	private String descriptionFr;
 
@@ -90,7 +89,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("edrTemplate");
+		return Arrays.asList("provider", "edrTemplate");
 	}
 
 	@Override
@@ -110,7 +109,8 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		String back = null;
 
 		// check for unicity
@@ -173,16 +173,18 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
+
 	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
 		if (edrTemplates == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService
+					.list();
 			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
 			if (getEntity().getEdrTemplates() != null) {
 				target.addAll(getEntity().getEdrTemplates());
 			}
 			source.removeAll(target);
-			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
+			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source,
+					target);
 		}
 		return edrTemplates;
 	}

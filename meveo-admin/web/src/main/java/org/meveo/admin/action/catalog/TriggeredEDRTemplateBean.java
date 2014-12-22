@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -71,7 +74,23 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	}
 
 	@Override
+	public String getEditViewName() {
+		return "triggeredEdrTemplateDetail";
+	}
+
+	@Override
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("chargeTemplate");
+	}
+
 }
