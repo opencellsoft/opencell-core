@@ -49,7 +49,6 @@ public class RecurringRatingJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("execute RecurringRatingJob.");
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		recurringRatingJobBean.execute(result, currentUser);
 		result.close("");

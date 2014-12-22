@@ -49,8 +49,6 @@ public class XMLInvoiceGenerationJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("execute XMLInvoiceGenerationJob.");
-
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		xmlInvoiceGenerationJobBean.execute(result, parameter, currentUser);
 		result.close("");

@@ -349,7 +349,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Subscription subscription, OneShotChargeInstance chargeInstance,
 			Integer quantity, Date applicationDate, User creator)
 			throws BusinessException {
-		
+
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 		if (chargeTemplate == null) {
 			throw new IncorrectChargeTemplateException(
@@ -357,7 +357,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 							+ chargeInstance.getId() + ", code="
 							+ chargeInstance.getCode());
 		}
-		
+
 		InvoiceSubCategory invoiceSubCategory = chargeTemplate
 				.getInvoiceSubCategory();
 		if (invoiceSubCategory == null) {
@@ -442,7 +442,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				"WalletOperationService.oneShotWalletOperation subscriptionCode={}, quantity={}, applicationDate={}, chargeInstance.getId={}",
 				new Object[] { subscription.getId(), quantity, applicationDate,
 						chargeInstance.getId() });
-		
+
 		WalletOperation chargeApplication = rateOneShotApplication(em,
 				subscription, chargeInstance, quantity, applicationDate,
 				creator);
@@ -957,12 +957,20 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				recurringChargeTemplate, creator);
 	}
 
+	/**
+	 * Apply the charge at its nextChargeDate.
+	 * 
+	 * @param em
+	 * @param chargeInstance
+	 * @param reimbursement
+	 * @param recurringChargeTemplate
+	 * @param creator
+	 * @throws BusinessException
+	 */
 	public void applyReccuringCharge(EntityManager em,
 			RecurringChargeInstance chargeInstance, boolean reimbursement,
 			RecurringChargeTemplate recurringChargeTemplate, User creator)
 			throws BusinessException {
-
-		// we apply the charge at its nextChargeDate
 
 		Date applicationDate = chargeInstance.getNextChargeDate();
 
@@ -980,7 +988,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				.getNextChargeDate() : recurringChargeTemplate.getCalendar()
 				.nextCalendarDate(applicationDate);
 
-		log.debug("reimbursement={},applicationDate={}", reimbursement,
+		log.debug("reimbursement={}, applicationDate={}", reimbursement,
 				applicationDate);
 
 		InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate
@@ -994,7 +1002,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
 			throw new IncorrectChargeTemplateException(
-					"no currency exists for customerAccount id="
+					"No currency exists for customerAccount id="
 							+ chargeInstance.getSubscription().getUserAccount()
 									.getBillingAccount().getCustomerAccount()
 									.getId());
@@ -1003,18 +1011,18 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		TradingCountry country = chargeInstance.getCountry();
 		if (country == null) {
 			throw new IncorrectChargeTemplateException(
-					"no country exists for billingAccount id="
+					"No country exists for billingAccount id="
 							+ chargeInstance.getSubscription().getUserAccount()
 									.getBillingAccount().getId());
 		}
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
 						countryId, creator.getProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
-					"no invoiceSubcategoryCountry exists for invoiceSubCategory code="
+					"No invoiceSubcategoryCountry exists for invoiceSubCategory code="
 							+ invoiceSubCategory.getCode()
 							+ " and trading country="
 							+ country.getCountryCode());
@@ -1052,7 +1060,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			WalletOperation chargeApplication = chargeApplicationRatingService
 					.rateChargeApplication(
-							em,
 							chargeInstance.getCode(),
 							chargeInstance.getServiceInstance()
 									.getSubscription(),
@@ -1141,7 +1148,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		Long countryId = country.getId();
 
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(em, invoiceSubCategory.getId(),
+				.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(),
 						countryId, creator.getProvider());
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
@@ -1226,7 +1233,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			WalletOperation walletOperation = chargeApplicationRatingService
 					.rateChargeApplication(
-							em,
 							chargeInstance.getCode(),
 							chargeInstance.getServiceInstance()
 									.getSubscription(),
@@ -1447,17 +1453,17 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			BigDecimal unitPriceWithTax = walletOperation
 					.getUnitAmountWithTax();
 			String strQuery = "UPDATE " + WalletOperation.class.getSimpleName()
-					+ " as w SET  w.amountWithoutTax = w.quantity * "+ unitPriceWithoutTax + ","
-					+ " w.amountTax = w.quantity * " + unitTax+ ","
-					+ " w.unitAmountWithoutTax = "+ unitPriceWithoutTax + ","
+					+ " as w SET  w.amountWithoutTax = w.quantity * "
+					+ unitPriceWithoutTax + ","
+					+ " w.amountTax = w.quantity * " + unitTax + ","
+					+ " w.unitAmountWithoutTax = " + unitPriceWithoutTax + ","
 					+ " w.unitAmountTax = " + unitTax;
 			if (unitPriceWithTax != null) {
 				strQuery += "," + " w.amountWithTax = w.quantity * "
-						+ unitPriceWithTax
-						+ "," + " w.unitAmountWithTax = "
+						+ unitPriceWithTax + "," + " w.unitAmountWithTax = "
 						+ unitPriceWithTax;
 			}
-			
+
 			strQuery += ", w.auditable.updated = CURRENT_TIMESTAMP"
 					+ " WHERE  w.operationDate>=:startDate "
 					+ " AND w.operationDate<:endDate "

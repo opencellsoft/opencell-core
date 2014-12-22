@@ -60,7 +60,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 @Stateless
-public class PDFFilesOutputProducer {
+public class PdfFilesOutputProducer {
 
 	private static final String PDF_DIR_NAME = "pdf";
 	private static final String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";

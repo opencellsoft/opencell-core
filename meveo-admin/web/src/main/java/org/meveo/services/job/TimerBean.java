@@ -16,6 +16,7 @@
  */
 package org.meveo.services.job;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,8 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 
 		if (timerEntity == null) {
 			if (timerId.get() != null) {
-				timerEntity = timerEntityService.findById(timerId.get());
+				timerEntity = timerEntityService.findById(timerId.get(),
+						Arrays.asList("provider"));
 				filters.put("jobName", timerEntity.getJobName());
 			} else {
 				log.debug("create new timerEntity");

@@ -41,10 +41,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
-public class PDFParametersConstruction {
+public class PdfParametersConstruction {
 
 	private Logger log = LoggerFactory
-			.getLogger(PDFParametersConstruction.class);
+			.getLogger(PdfParametersConstruction.class);
 
 	private static final String TIP_PAYMENT_METHOD = "TIP";
 	private static final String PDF_DIR_NAME = "pdf";
@@ -55,7 +55,7 @@ public class PDFParametersConstruction {
 	}
 
 	private ClassLoader cl = new URLClassLoader(
-			new URL[] { PDFParametersConstruction.class.getClassLoader()
+			new URL[] { PdfParametersConstruction.class.getClassLoader()
 					.getResource("reports/fonts.jar") });
 
 	@SuppressWarnings("deprecation")

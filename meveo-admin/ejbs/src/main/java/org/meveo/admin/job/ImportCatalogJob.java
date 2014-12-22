@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 
 @Startup
 @Singleton
-public class CatalogImportJob implements Job {
+public class ImportCatalogJob implements Job {
 
 	@Inject
 	private Logger log;
@@ -56,7 +56,7 @@ public class CatalogImportJob implements Job {
 	private JobExecutionService jobExecutionService;
 
 	@Inject
-	private CatalogImportJobBean catalogImportJobBean;
+	private ImportCatalogJobBean importCatalogJobBean;
 
 	@PostConstruct
 	public void init() {
@@ -66,7 +66,7 @@ public class CatalogImportJob implements Job {
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
-		catalogImportJobBean.execute(result, parameter, currentUser);
+		importCatalogJobBean.execute(result, parameter, currentUser);
 		result.close("");
 		return result;
 	}

@@ -18,7 +18,7 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
 
 @Stateless
-public class PDFInvoiceGenerationJobBean {
+public class PdfInvoiceGenerationJobBean {
 
 	@Inject
 	private Logger log;
@@ -27,10 +27,10 @@ public class PDFInvoiceGenerationJobBean {
 	private InvoiceService invoiceService;
 
 	@Inject
-	private PDFParametersConstruction pDFParametersConstruction;
+	private PdfParametersConstruction pDFParametersConstruction;
 
 	@Inject
-	private PDFFilesOutputProducer pDFFilesOutputProducer;
+	private PdfFilesOutputProducer pDFFilesOutputProducer;
 
 	@Inject
 	private BillingRunService billingRunService;

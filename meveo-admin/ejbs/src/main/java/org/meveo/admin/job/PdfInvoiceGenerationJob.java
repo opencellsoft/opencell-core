@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
-public class PDFInvoiceGenerationJob implements Job {
+public class PdfInvoiceGenerationJob implements Job {
 
-	private Logger log = LoggerFactory.getLogger(PDFInvoiceGenerationJob.class);
+	private Logger log = LoggerFactory.getLogger(PdfInvoiceGenerationJob.class);
 
 	@Resource
 	private TimerService timerService;
@@ -40,7 +40,7 @@ public class PDFInvoiceGenerationJob implements Job {
 	private JobExecutionService jobExecutionService;
 
 	@Inject
-	private PDFInvoiceGenerationJobBean pdfInvoiceGenerationJobBean;
+	private PdfInvoiceGenerationJobBean pdfInvoiceGenerationJobBean;
 
 	@PostConstruct
 	public void init() {
@@ -49,8 +49,6 @@ public class PDFInvoiceGenerationJob implements Job {
 
 	@Override
 	public JobExecutionResult execute(String parameter, User currentUser) {
-		log.info("execute PDFInvoiceGenerationJob.");
-
 		JobExecutionResultImpl result = new JobExecutionResultImpl();
 		pdfInvoiceGenerationJobBean.execute(result, parameter, currentUser);
 		result.close("");
