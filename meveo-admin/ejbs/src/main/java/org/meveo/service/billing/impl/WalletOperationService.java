@@ -1440,7 +1440,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return walletOperations;
 	}
 
-	public void updatePriceForSameServiceAndType(EntityManager em,
+	public void updatePriceForSameServiceAndType(
 			WalletOperation walletOperation, ServiceInstance serviceInstance,
 			Date startDate, Date endDate) {
 		if (walletOperation.getChargeInstance() != null
@@ -1458,6 +1458,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ " w.amountTax = w.quantity * " + unitTax + ","
 					+ " w.unitAmountWithoutTax = " + unitPriceWithoutTax + ","
 					+ " w.unitAmountTax = " + unitTax;
+			
 			if (unitPriceWithTax != null) {
 				strQuery += "," + " w.amountWithTax = w.quantity * "
 						+ unitPriceWithTax + "," + " w.unitAmountWithTax = "
@@ -1470,17 +1471,19 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ " AND w.status=:status "
 					+ " AND w.aggregatedServiceInstance=:serviceInstance ";
 			log.debug("strQuery=" + strQuery);
-			Query query = em.createQuery(strQuery);
+			Query query = getEntityManager().createQuery(strQuery);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
 			query.setParameter("status", WalletOperationStatusEnum.OPEN);
 			query.setParameter("serviceInstance", serviceInstance);
+			
 			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
 				query.setParameter("serviceType",
 						((UsageChargeTemplate) walletOperation
 								.getChargeInstance().getChargeTemplate())
 								.getFilterParam1());
 			}
+			
 			query.executeUpdate();
 		}
 	}

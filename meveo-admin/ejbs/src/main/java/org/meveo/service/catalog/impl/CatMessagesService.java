@@ -42,20 +42,21 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 	private void init() {
 
 	}
-	
-	public String getMessageDescription(BusinessEntity businessEntity, String languageCode,String defaultDescription){
-		String className =businessEntity.getClass().getSimpleName();
-		//supress javassist proxy suffix
-		if(className.indexOf("_")>=0){
-			className=className.substring(0, className.indexOf("_"));
+
+	public String getMessageDescription(BusinessEntity businessEntity,
+			String languageCode, String defaultDescription) {
+		String className = businessEntity.getClass().getSimpleName();
+		// supress javassist proxy suffix
+		if (className.indexOf("_") >= 0) {
+			className = className.substring(0, className.indexOf("_"));
 		}
 		return getMessageDescription(className + "_" + businessEntity.getId(),
-				 languageCode, defaultDescription);
+				languageCode, defaultDescription);
 	}
-	
 
 	@SuppressWarnings("unchecked")
-	public String getMessageDescription(String messageCode, String languageCode,String defaultDescription) {
+	public String getMessageDescription(String messageCode,
+			String languageCode, String defaultDescription) {
 		long startDate = System.currentTimeMillis();
 		if (messageCode == null || languageCode == null) {
 			return null;
@@ -66,11 +67,11 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		List<CatMessages> catMessages = qb.getQuery(getEntityManager())
 				.getResultList();
 
-		String description = (catMessages.size() > 0 && !StringUtils.isBlank(catMessages.get(0)
-				.getDescription())) ? catMessages.get(0)
-				.getDescription() : defaultDescription;
+		String description = (catMessages.size() > 0 && !StringUtils
+				.isBlank(catMessages.get(0).getDescription())) ? catMessages
+				.get(0).getDescription() : defaultDescription;
 
-		log.debug("get message "+messageCode+" description =" + description
+		log.debug("get message " + messageCode + " description =" + description
 				+ ", time=" + (System.currentTimeMillis() - startDate));
 		return description;
 	}
@@ -103,15 +104,15 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
 		return cats;
 	}
 
-	public void batchRemove(String entityName, Long id,Provider provider) {
-		String strQuery = "DELETE FROM " + CatMessages.class.getSimpleName()
+	public void batchRemove(String entityName, Long id, Provider provider) {
+		String strQuery = "DELETE FROM "
+				+ CatMessages.class.getSimpleName()
 				+ " c WHERE c.messageCode=:messageCode and c.provider=:provider";
 
 		try {
 			getEntityManager().createQuery(strQuery)
 					.setParameter("messageCode", entityName + "_" + id)
-					.setParameter("provider", provider)
-					.executeUpdate();
+					.setParameter("provider", provider).executeUpdate();
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

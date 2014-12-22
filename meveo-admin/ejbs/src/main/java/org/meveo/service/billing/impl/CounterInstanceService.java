@@ -117,8 +117,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
 	public void updatePeriodValue(Long counterPeriodId, BigDecimal value,
 			User currentUser) throws BusinessException {
-		CounterPeriod counterPeriod = counterPeriodService.findById(em,
-				counterPeriodId);
+		CounterPeriod counterPeriod = counterPeriodService
+				.findById(counterPeriodId);
 
 		if (counterPeriod == null)
 			throw new BusinessException("CounterPeriod with id="

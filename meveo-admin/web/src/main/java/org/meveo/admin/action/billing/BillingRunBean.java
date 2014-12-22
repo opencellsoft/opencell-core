@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -393,6 +394,16 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public void setLaunchInvoicingRejectedBA(boolean launchInvoicingRejectedBA) {
 		this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

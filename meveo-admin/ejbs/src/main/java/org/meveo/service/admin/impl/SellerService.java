@@ -19,7 +19,6 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -30,7 +29,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@Named
 public class SellerService extends PersistenceService<Seller> {
 
 	public Seller findByCode(String code, Provider provider) {

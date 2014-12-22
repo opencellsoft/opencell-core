@@ -30,7 +30,6 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.ApplicationTypeEnum;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -75,8 +74,7 @@ public class RatingService {
 
 	@Inject
 	private SubscriptionService subscriptionService;
-	
-	
+
 	private static boolean isPricePlanDirty;
 	private static HashMap<String, HashMap<String, List<PricePlanMatrix>>> allPricePlan;
 	private static boolean isDiscountPlanDirty;
@@ -295,10 +293,11 @@ public class RatingService {
 		String chargeInstnceLabel = null;
 		UserAccount ua = subscription.getUserAccount();
 		try {
-			String languageCode = ua
-					.getBillingAccount().getTradingLanguage().getLanguage()
-					.getLanguageCode();
-			chargeInstnceLabel = catMessagesService.getMessageDescription(chargeInstance, languageCode, chargeInstance.getDescription());
+			String languageCode = ua.getBillingAccount().getTradingLanguage()
+					.getLanguage().getLanguageCode();
+			chargeInstnceLabel = catMessagesService.getMessageDescription(
+					chargeInstance, languageCode,
+					chargeInstance.getDescription());
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -306,50 +305,67 @@ public class RatingService {
 		result.setDescription(chargeInstnceLabel != null ? chargeInstnceLabel
 				: chargeInstance.getDescription());
 
-		List<TriggeredEDRTemplate> triggeredEDRTemplates=chargeInstance.getChargeTemplate().getEdrTemplates();
-		if(triggeredEDRTemplates.size()>0){
-			for(TriggeredEDRTemplate triggeredEDRTemplate:triggeredEDRTemplates){
+		List<TriggeredEDRTemplate> triggeredEDRTemplates = chargeInstance
+				.getChargeTemplate().getEdrTemplates();
+		if (triggeredEDRTemplates.size() > 0) {
+			for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
 				if (triggeredEDRTemplate.getConditionEl() == null
-						|| "".equals(triggeredEDRTemplate
-								.getConditionEl()) || matchExpression(
-										triggeredEDRTemplate.getConditionEl(),
-							 result,ua)) {
-			EDR newEdr = new EDR();
-			newEdr.setCreated(new Date());
-			newEdr.setEventDate(applicationDate);
-			newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
-			newEdr.setOriginRecord("CHRG_" + chargeInstance.getId()+"_"+applicationDate.getTime());
-			newEdr.setParameter1(evaluateStringExpression(triggeredEDRTemplate.getParam1El(), result,ua));
-			newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), result,ua));
-			newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), result,ua));
-			newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), result,ua));
-			newEdr.setProvider(chargeInstance.getProvider());
-			newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(
-					triggeredEDRTemplate.getQuantityEl(),
-					result,ua)));
-			newEdr.setStatus(EDRStatusEnum.OPEN);
-			Subscription sub = null;
-			if(StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())){
-				newEdr.setSubscription(subscription);
-			} else {
-				String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), result,ua);
-			   sub = subscriptionService.findByCode(em,subCode, subscription.getProvider());
-			   if(sub==null){
-				   log.info("could not find subscription for code ="+subCode+" (EL="+triggeredEDRTemplate.getSubscriptionEl()+") in triggered EDR with code "+triggeredEDRTemplate.getCode());
-			   }
-			}
-			if(sub!=null){
-				log.info("trigger EDR from code "+triggeredEDRTemplate.getCode());
-				if(chargeInstance.getAuditable()==null){
-					log.info("trigger EDR from code "+triggeredEDRTemplate.getCode());	
-				} else {
-					edrService.create(em, newEdr, chargeInstance.getAuditable().getCreator(), chargeInstance.getProvider());
+						|| "".equals(triggeredEDRTemplate.getConditionEl())
+						|| matchExpression(
+								triggeredEDRTemplate.getConditionEl(), result,
+								ua)) {
+					EDR newEdr = new EDR();
+					newEdr.setCreated(new Date());
+					newEdr.setEventDate(applicationDate);
+					newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
+					newEdr.setOriginRecord("CHRG_" + chargeInstance.getId()
+							+ "_" + applicationDate.getTime());
+					newEdr.setParameter1(evaluateStringExpression(
+							triggeredEDRTemplate.getParam1El(), result, ua));
+					newEdr.setParameter2(evaluateStringExpression(
+							triggeredEDRTemplate.getParam2El(), result, ua));
+					newEdr.setParameter3(evaluateStringExpression(
+							triggeredEDRTemplate.getParam3El(), result, ua));
+					newEdr.setParameter4(evaluateStringExpression(
+							triggeredEDRTemplate.getParam4El(), result, ua));
+					newEdr.setProvider(chargeInstance.getProvider());
+					newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(
+							triggeredEDRTemplate.getQuantityEl(), result, ua)));
+					newEdr.setStatus(EDRStatusEnum.OPEN);
+					Subscription sub = null;
+					if (StringUtils.isBlank(triggeredEDRTemplate
+							.getSubscriptionEl())) {
+						newEdr.setSubscription(subscription);
+					} else {
+						String subCode = evaluateStringExpression(
+								triggeredEDRTemplate.getSubscriptionEl(),
+								result, ua);
+						sub = subscriptionService.findByCode(em, subCode,
+								subscription.getProvider());
+						if (sub == null) {
+							log.info("could not find subscription for code ="
+									+ subCode + " (EL="
+									+ triggeredEDRTemplate.getSubscriptionEl()
+									+ ") in triggered EDR with code "
+									+ triggeredEDRTemplate.getCode());
+						}
+					}
+					if (sub != null) {
+						log.info("trigger EDR from code "
+								+ triggeredEDRTemplate.getCode());
+						if (chargeInstance.getAuditable() == null) {
+							log.info("trigger EDR from code "
+									+ triggeredEDRTemplate.getCode());
+						} else {
+							edrService.create(em, newEdr, chargeInstance
+									.getAuditable().getCreator(),
+									chargeInstance.getProvider());
+						}
+					}
 				}
 			}
 		}
-			}
-		}
-		
+
 		return result;
 	}
 
@@ -471,7 +487,7 @@ public class RatingService {
 		BigDecimal priceWithTax = null;
 		BigDecimal unitPriceAmountTax = null;
 		BigDecimal amountTax = BigDecimal.ZERO;
-		
+
 		if (bareWalletOperation.getTaxPercent() != null) {
 			unitPriceAmountTax = unitPriceWithoutTax
 					.multiply(bareWalletOperation.getTaxPercent().divide(
@@ -479,7 +495,7 @@ public class RatingService {
 			amountTax = priceWithoutTax.multiply(bareWalletOperation
 					.getTaxPercent().divide(HUNDRED));
 		}
-		
+
 		if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
 			if (unitPriceAmountTax != null) {
 				unitPriceWithTax = unitPriceWithoutTax.add(unitPriceAmountTax);
@@ -928,9 +944,8 @@ public class RatingService {
 					.getCustomer());
 		}
 
-		return (Boolean) evaluateExpression(expression,userMap,Boolean.class);
+		return (Boolean) evaluateExpression(expression, userMap, Boolean.class);
 	}
-	
 
 	private String evaluateStringExpression(String expression,
 			WalletOperation walletOperation, UserAccount ua) {
@@ -972,22 +987,20 @@ public class RatingService {
 		return (Double) evaluateExpression(expression, userMap, Double.class);
 	}
 
-
-
 	public static Object evaluateExpression(String expression,
 			Map<Object, Object> userMap,
 			@SuppressWarnings("rawtypes") Class resultClass) {
-		Object result=null;
-		if(expression==null){
+		Object result = null;
+		if (expression == null) {
 			return null;
 		}
-		if(!expression.startsWith("#")){
-			if(resultClass.equals(String.class)){
+		if (!expression.startsWith("#")) {
+			if (resultClass.equals(String.class)) {
 				return expression;
-			} else if(resultClass.equals(Double.class)){
+			} else if (resultClass.equals(Double.class)) {
 				return Double.parseDouble(expression);
-			} else if(resultClass.equals(Boolean.class)){
-				if("true".equalsIgnoreCase(expression)){
+			} else if (resultClass.equals(Boolean.class)) {
+				if ("true".equalsIgnoreCase(expression)) {
 					return Boolean.TRUE;
 				} else {
 					return Boolean.FALSE;
@@ -1012,24 +1025,25 @@ public class RatingService {
 				public ELResolver getELResolver() {
 					return compositeELResolver;
 				}
-	
+
 				@Override
 				public FunctionMapper getFunctionMapper() {
 					return functionMapper;
 				}
-	
+
 				@Override
 				public VariableMapper getVariableMapper() {
 					return variableMapper;
 				}
 			};
-			ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
-	
-			ValueExpression ve = expressionFactory.createValueExpression(context,
-					expression, resultClass);
+			ExpressionFactory expressionFactory = ExpressionFactory
+					.newInstance();
+
+			ValueExpression ve = expressionFactory.createValueExpression(
+					context, expression, resultClass);
 			result = ve.getValue(context);
-		} catch(Exception e){
-			
+		} catch (Exception e) {
+
 		}
 		return result;
 	}
