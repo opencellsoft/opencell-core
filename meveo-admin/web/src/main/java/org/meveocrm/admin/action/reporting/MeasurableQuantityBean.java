@@ -1,5 +1,8 @@
 package org.meveocrm.admin.action.reporting;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -11,8 +14,7 @@ import org.meveocrm.services.dwh.MeasurableQuantityService;
 
 @Named
 @ConversationScoped
-public class MeasurableQuantityBean extends
-		BaseBean<MeasurableQuantity> {
+public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 
 	private static final long serialVersionUID = -1644247310944456827L;
 
@@ -22,22 +24,29 @@ public class MeasurableQuantityBean extends
 	public MeasurableQuantityBean() {
 		super(MeasurableQuantity.class);
 	}
-	
+
 	@Override
 	protected IPersistenceService<MeasurableQuantity> getPersistenceService() {
 		return measurableQuantityService;
 	}
 
-
 	protected String getDefaultViewName() {
 		return "measurableQuantities";
 	}
-	
 
 	@Override
 	protected String getListViewName() {
 		return "measurableQuantities";
 	}
 
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
 
 }
