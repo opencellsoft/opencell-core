@@ -109,7 +109,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 			messages.error(new BundleKey("messages",
 					"tradingLanguage.uniqueField"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 
 			messages.error(new BundleKey("messages",
 					"tradingLanguage.uniqueField"));

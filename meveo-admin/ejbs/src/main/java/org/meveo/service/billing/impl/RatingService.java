@@ -168,7 +168,7 @@ public class RatingService {
 			Number sharedQuantity = (Number) query.getSingleResult();
 			result = sharedQuantity.intValue();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return result;
 	}

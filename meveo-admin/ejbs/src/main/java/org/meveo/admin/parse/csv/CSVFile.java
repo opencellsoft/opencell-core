@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.admin.parse.csv;
 
 import java.io.BufferedReader;
@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meveo.admin.exception.FileContentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class CSVFile<T extends CSVLineData> {
 
@@ -36,6 +38,8 @@ public abstract class CSVFile<T extends CSVLineData> {
 	private String header;
 	private File file;
 	private List<T> contexts;
+
+	private Logger log = LoggerFactory.getLogger(CSVFile.class);
 
 	public CSVFile() {
 	}
@@ -57,16 +61,17 @@ public abstract class CSVFile<T extends CSVLineData> {
 				String header = reader.readLine();
 				String[] headers = header.split(getSplit());
 				if (!checkHeader(headers)) {
-				    reader.close();
-		            read.close();
-		            fis.close();
+					reader.close();
+					read.close();
+					fis.close();
 					throw new FileContentException();
 				}
 				setHeader(header);
 			}
 
 			// 2)---context--
-			for (String str = reader.readLine(); str != null; str = reader.readLine()) {
+			for (String str = reader.readLine(); str != null; str = reader
+					.readLine()) {
 				String[] strs = str.split(getSplit());
 				T tRow = getTFromRow(strs);
 				if (tRow != null) {
@@ -81,10 +86,10 @@ public abstract class CSVFile<T extends CSVLineData> {
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -118,7 +123,6 @@ public abstract class CSVFile<T extends CSVLineData> {
 		out.close();
 		fos.close();
 	}
-
 
 	public File getFile() {
 		return file;

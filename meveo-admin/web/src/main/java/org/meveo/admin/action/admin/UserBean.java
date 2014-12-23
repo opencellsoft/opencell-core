@@ -379,7 +379,7 @@ public class UserBean extends BaseBean<User> {
 					selectedFileName);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return result;
 	}
@@ -480,7 +480,7 @@ public class UserBean extends BaseBean<User> {
 			messages.info(event.getFile().getFileName() + " is uploaded to "
 					+ ((selectedFolder != null) ? selectedFolder : "Home"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error("error while uploading "
 					+ event.getFile().getFileName());
 		}
@@ -496,7 +496,7 @@ public class UserBean extends BaseBean<User> {
 				messages.info(file.getFileName() + " is uploaded to "
 						+ ((selectedFolder != null) ? selectedFolder : "Home"));
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 				messages.error("error while uploading " + file.getFileName());
 			}
 		} else {

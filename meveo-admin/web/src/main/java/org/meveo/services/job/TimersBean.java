@@ -80,7 +80,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 		try {
 			result = timer.getSchedule().toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return result;
 	}
@@ -97,7 +97,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 			}
 			messages.info(new BundleKey("messages", "info.ejbTimer.cancelled"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(new BundleKey("messages", "error.ejbTimer.cancellation"));
 		}
 	}
@@ -149,7 +149,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 				return timerEntityservice.getTimers().size();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 			return 0;
 		}
@@ -160,7 +160,7 @@ public class TimersBean extends BaseBean<TimerEntity> {
 				return new ArrayList<Timer>(timerEntityservice.getTimers());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 			return null;
 		}

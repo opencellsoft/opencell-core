@@ -19,6 +19,7 @@ import org.meveo.api.dto.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.LoggingInterceptor;
 import org.meveo.api.rest.security.RSSecured;
+import org.slf4j.Logger;
 
 /**
  * @author R.AITYAAZZA
@@ -34,6 +35,9 @@ public class PaymentRs extends BaseRs {
 
 	@Inject
 	private PaymentApi paymentApi;
+	
+	@Inject
+	private Logger log;
 
 	@POST
 	@Path("/create")
@@ -45,11 +49,11 @@ public class PaymentRs extends BaseRs {
 		} catch (BusinessException e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (Exception e) {
 			result.setStatus(ActionStatusEnum.FAIL);
 			result.setMessage(e.getMessage());
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		return result;

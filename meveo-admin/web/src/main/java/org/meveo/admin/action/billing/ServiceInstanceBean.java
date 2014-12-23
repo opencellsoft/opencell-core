@@ -101,10 +101,10 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
         try {
             serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
         } catch (BusinessException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         }
         return null;
@@ -117,10 +117,10 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             messages.info(new BundleKey("messages", "activation.activateSuccessful"));
             return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         }
         return null;
@@ -135,7 +135,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         }
         return null;
@@ -149,7 +149,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
             return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         }
         return null;
@@ -163,7 +163,7 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
             return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         }
         return null;
@@ -176,10 +176,10 @@ public class ServiceInstanceBean extends BaseBean<ServiceInstance> {
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
             return "/pages/resource/serviceInstances/serviceInstanceDetail.xhtml?objectId=" + entity.getId() + "&edit=false";
         } catch (BusinessException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             messages.error(e.getMessage());
         }
         return null;

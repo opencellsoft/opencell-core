@@ -134,7 +134,7 @@ public class TimerBean extends BaseBean<JobExecutionResultImpl> {
 		try {
 			conversation.end();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		return "jobTimers";

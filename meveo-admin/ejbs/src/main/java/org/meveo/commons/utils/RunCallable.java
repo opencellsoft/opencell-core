@@ -1,6 +1,6 @@
 /*
-* (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
-*
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,12 +13,17 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.meveo.commons.utils;
 
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RunCallable implements Runnable {
+
+	private Logger log = LoggerFactory.getLogger(RunCallable.class);
 
 	Callable<?> callable;
 
@@ -30,7 +35,7 @@ public class RunCallable implements Runnable {
 		try {
 			callable.call();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 }

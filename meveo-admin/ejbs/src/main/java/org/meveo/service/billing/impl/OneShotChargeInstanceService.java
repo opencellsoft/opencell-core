@@ -64,7 +64,7 @@ public class OneShotChargeInstanceService extends
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return oneShotChargeInstance;
 	}

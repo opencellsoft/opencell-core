@@ -96,8 +96,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 			messages.error(new BundleKey("messages",
 					"tradingCurrency.uniqueField"));
 		} catch (Exception e) {
-			e.printStackTrace();
-
+			log.error(e.getMessage());
 			messages.error(new BundleKey("messages",
 					"tradingCurrency.uniqueField"));
 		}

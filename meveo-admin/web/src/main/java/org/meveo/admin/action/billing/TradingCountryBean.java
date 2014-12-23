@@ -131,7 +131,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	        } catch (BusinessEntityException e) {
 	            messages.error(new BundleKey("messages", "tradingCountry.uniqueField"));
 	        }catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 
 	            messages.error(new BundleKey("messages", "tradingCountry.uniqueField"));
 			}

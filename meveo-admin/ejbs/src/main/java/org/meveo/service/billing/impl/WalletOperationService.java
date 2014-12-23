@@ -192,7 +192,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			result = (BigDecimal) query.getSingleResult();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		if (result == null)
@@ -325,7 +325,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			result = (BigDecimal) query.getSingleResult();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		if (result == null)

@@ -89,7 +89,7 @@ public class MatchingCodeBean extends BaseBean<MatchingCode> {
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages",
 					"matchingCode.unmatchingKO"));
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return returnPage;
 	}

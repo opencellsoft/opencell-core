@@ -180,7 +180,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -223,7 +223,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			endConversation();
 			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -236,7 +236,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			endConversation();
 			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -250,7 +250,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			endConversation();
 			return "/pages/billing/invoicing/billingRuns.xhtml?faces-redirect=true&edit=false";
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -262,7 +262,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			cancelConfirmedInvoicing();
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -274,7 +274,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			cancelInvoicing();
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=false";
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -286,7 +286,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 					+ id;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -298,7 +298,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 					+ id;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;

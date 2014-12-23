@@ -172,7 +172,7 @@ public class ParamBean {
 				try {
 					propertyFile.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 			}
 		}
@@ -281,20 +281,20 @@ public class ParamBean {
 			bw.flush();
 			result = true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			if (propertyFile != null) {
 				try {
 					propertyFile.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 			}
 			if (bw != null) {
 				try {
 					bw.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 			}
 		}
