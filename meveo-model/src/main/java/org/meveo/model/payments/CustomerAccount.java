@@ -110,16 +110,13 @@ public class CustomerAccount extends AccountEntity {
 
 	@Column(name = "PASSWORD", length = 10)
 	private String password = "";
-	
-	
+
 	@Column(name = "MANDATE_IDENTIFICATION", length = 35)
 	private String mandateIdentification = "";
-	
+
 	@Column(name = "MANDATE_DATE")
 	@Temporal(TemporalType.DATE)
 	private Date mandateDate;
-	
-	
 
 	public Customer getCustomer() {
 		return customer;
@@ -265,8 +262,5 @@ public class CustomerAccount extends AccountEntity {
 	public void setMandateDate(Date mandateDate) {
 		this.mandateDate = mandateDate;
 	}
-
-	
-	
 
 }

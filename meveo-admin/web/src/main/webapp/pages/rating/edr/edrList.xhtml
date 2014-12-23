@@ -38,7 +38,7 @@
 		<p:messages id="messages" />
 
 		<hf:searchPanel label="#{messages['commons.search']}" id="searchPanel"
-			backingBean="#{edrBean}">
+			backingBean="#{edrBean}" renderNewButton="false">
 			<hf:searchField id="edr" label="#{messages['BusinessEntity.code']}"
 				field="subscription" childField="code" popup="true"
 				popupId="searchEdrPopup" />

@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.crm;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -108,4 +109,15 @@ public class CustomerBean extends AccountBean<Customer> {
 			List<CustomFieldTemplate> customFieldTemplates) {
 		this.customFieldTemplates = customFieldTemplates;
 	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
 }

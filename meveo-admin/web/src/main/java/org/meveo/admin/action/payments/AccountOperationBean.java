@@ -17,6 +17,7 @@
 package org.meveo.admin.action.payments;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -88,7 +89,8 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return partialMatchingOps;
 	}
 
-	public void setPartialMatchingOps(List<PartialMatchingOccToSelect> partialMatchingOps) {
+	public void setPartialMatchingOps(
+			List<PartialMatchingOccToSelect> partialMatchingOps) {
 		this.partialMatchingOps = partialMatchingOps;
 	}
 
@@ -120,7 +122,6 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		return initEntity();
 	}
 
-
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
@@ -134,7 +135,8 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	 */
 	public String displayOperation(Long accountOperationId) {
 		String page = "/pages/payments/accountOperations/showOcc.xhtml";
-		AccountOperation accountOperation = accountOperationService.findById(accountOperationId);
+		AccountOperation accountOperation = accountOperationService
+				.findById(accountOperationId);
 		if (accountOperation instanceof RecordedInvoice) {
 			page = "/pages/payments/accountOperations/showInvoice.xhtml";
 		}
@@ -154,18 +156,21 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		List<Long> operationIds = new ArrayList<Long>();
 		log.debug("getChecked():" + getSelectedEntities());
 		for (IEntity operation : getSelectedEntities()) {
-		    operationIds.add((Long)operation.getId());
+			operationIds.add((Long) operation.getId());
 		}
 		log.info("operationIds    " + operationIds);
 		if (operationIds.isEmpty()) {
-			messages.error(new BundleKey("messages", "customerAccount.matchingUnselectedOperation"));
+			messages.error(new BundleKey("messages",
+					"customerAccount.matchingUnselectedOperation"));
 			return null;
 		}
 		try {
-			MatchingReturnObject result = matchingCodeService.matchOperations(customerAccountId,
-					null, operationIds, null, getCurrentUser());
+			MatchingReturnObject result = matchingCodeService.matchOperations(
+					customerAccountId, null, operationIds, null,
+					getCurrentUser());
 			if (result.isOk()) {
-				messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
+				messages.info(new BundleKey("messages",
+						"customerAccount.matchingSuccessful"));
 			} else {
 				setPartialMatchingOps(result.getPartialMatchingOcc());
 				return "/pages/payments/customerAccounts/partialMatching.xhtml?objectId="
@@ -173,7 +178,8 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			}
 
 		} catch (NoAllOperationUnmatchedException ee) {
-			messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
+			messages.error(new BundleKey("messages",
+					"customerAccount.noAllOperationUnmatched"));
 		} catch (BusinessException ee) {
 			messages.error(new BundleKey("messages", ee.getMessage()));
 		} catch (Exception e) {
@@ -185,29 +191,35 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	}
 
 	// called from page of selection partial operation
-	public String partialMatching(PartialMatchingOccToSelect partialMatchingOccSelected) {
+	public String partialMatching(
+			PartialMatchingOccToSelect partialMatchingOccSelected) {
 		List<Long> operationIds = new ArrayList<Long>();
 		for (PartialMatchingOccToSelect p : getPartialMatchingOps()) {
 			operationIds.add(p.getAccountOperation().getId());
 		}
 		try {
 			MatchingReturnObject result = matchingCodeService.matchOperations(
-					partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId(),
-					null, operationIds, partialMatchingOccSelected.getAccountOperation().getId(),
+					partialMatchingOccSelected.getAccountOperation()
+							.getCustomerAccount().getId(), null, operationIds,
+					partialMatchingOccSelected.getAccountOperation().getId(),
 					getCurrentUser());
 			if (result.isOk()) {
-				messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
+				messages.info(new BundleKey("messages",
+						"customerAccount.matchingSuccessful"));
 			} else {
-				messages.error(new BundleKey("messages", "customerAccount.matchingFailed"));
+				messages.error(new BundleKey("messages",
+						"customerAccount.matchingFailed"));
 			}
 		} catch (NoAllOperationUnmatchedException ee) {
-			messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
+			messages.error(new BundleKey("messages",
+					"customerAccount.noAllOperationUnmatched"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-				+ partialMatchingOccSelected.getAccountOperation().getCustomerAccount().getId()
+				+ partialMatchingOccSelected.getAccountOperation()
+						.getCustomerAccount().getId()
 				+ "&edit=false&tab=ops&faces-redirect=true";
 	}
 
@@ -221,28 +233,34 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 	public String consultMatching(long customerAccountId) {
 		List<Long> operationIds = new ArrayList<Long>();
 		log.debug("getChecked():" + getSelectedEntities());
-        for (IEntity operation : getSelectedEntities()) {
-            operationIds.add((Long)operation.getId());
-        }
+		for (IEntity operation : getSelectedEntities()) {
+			operationIds.add((Long) operation.getId());
+		}
 		log.info(" consultMatching operationIds " + operationIds);
 		if (operationIds.isEmpty() || operationIds.size() > 1) {
-			messages.info(new BundleKey("messages", "consultMatching.noOperationSelected"));
+			messages.info(new BundleKey("messages",
+					"consultMatching.noOperationSelected"));
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-					+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
+					+ customerAccountId
+					+ "&edit=false&tab=ops&faces-redirect=true";
 		}
-		AccountOperation accountOperation = accountOperationService.findById(operationIds.get(0));
+		AccountOperation accountOperation = accountOperationService
+				.findById(operationIds.get(0));
 		if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L
 				&& accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
-			messages.info(new BundleKey("messages", "consultMatching.operationNotMatched"));
+			messages.info(new BundleKey("messages",
+					"consultMatching.operationNotMatched"));
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
-					+ customerAccountId + "&edit=false&tab=ops&faces-redirect=true";
+					+ customerAccountId
+					+ "&edit=false&tab=ops&faces-redirect=true";
 		}
 		matchingAmounts = accountOperation.getMatchingAmounts();
 		if (matchingAmounts.size() == 1) {
 			return "/pages/payments/matchingCode/matchingCodeDetail.xhtml?objectId="
-					+ matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false&faces-redirect=true";
+					+ matchingAmounts.get(0).getMatchingCode().getId()
+					+ "&edit=false&faces-redirect=true";
 		}
 		return "/pages/payments/matchingCode/selectMatchingCode.xhtml?objectId="
 				+ accountOperation.getId() + "&edit=false&faces-redirect=true";
@@ -256,16 +274,28 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		this.matchingAmounts = matchingAmounts;
 	}
 
-	public String getDate(){
-	    return (new Date()).toString();
+	public String getDate() {
+		return (new Date()).toString();
 	}
-	
-	public LazyDataModel<AccountOperation> getAccountOperations(CustomerAccount ca) {
-		getFilters();
-		
-		filters.put("customerAccount", ca);
-		
 
-		return getLazyDataModel();
+	public LazyDataModel<AccountOperation> getAccountOperations(
+			CustomerAccount ca) {
+		if (!ca.isTransient()) {
+			filters.put("customerAccount", ca);
+			return getLazyDataModel();
+		} else {
+			return null;
+		}
 	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider", "customerAccount");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider", "customerAccount");
+	}
+
 }

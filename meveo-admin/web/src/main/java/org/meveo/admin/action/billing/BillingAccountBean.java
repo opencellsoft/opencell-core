@@ -499,14 +499,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider", "tradingCountry", "tradingLanguage",
-				"customerAccount", "billingCycle");
+		return Arrays.asList("provider", "customerAccount");
 	}
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "tradingCountry", "tradingLanguage",
-				"customerAccount", "billingCycle");
+		return Arrays.asList("provider");
 	}
 
 }

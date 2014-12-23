@@ -337,7 +337,8 @@
 								</p:panelGrid>
 							</h:form>
 
-							<hftl:dataList backingBean="#{accountOperationBean}"  dataModel="#{accountOperationBean.getAccountOperations(customerAccountBean.entity)}"
+							<hftl:dataList backingBean="#{accountOperationBean}"
+								dataModel="#{accountOperationBean.getAccountOperations(customerAccountBean.entity)}"
 								label="#{messages['accountOperation.title']}" disabled="true"
 								checkMany="true">
 

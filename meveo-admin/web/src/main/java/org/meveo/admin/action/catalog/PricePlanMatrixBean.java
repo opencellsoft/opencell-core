@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -110,4 +113,15 @@ public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
 	protected String getDefaultSort() {
 		return "eventCode";
 	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
 }
