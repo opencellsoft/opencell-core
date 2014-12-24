@@ -89,7 +89,7 @@ public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "edrTemplate");
+		return Arrays.asList("provider", "edrTemplates");
 	}
 
 	@Override
