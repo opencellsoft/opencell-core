@@ -2,11 +2,8 @@ package org.meveo.admin.job.dwh;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -21,6 +18,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -31,7 +30,6 @@ import org.meveo.services.job.JobExecutionService;
 import org.meveo.services.job.TimerEntityService;
 import org.meveocrm.model.dwh.MeasurableQuantity;
 import org.meveocrm.model.dwh.MeasuredValue;
-import org.meveocrm.model.dwh.MeasurementPeriodEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
@@ -66,102 +64,44 @@ public class MeasurableQuantityAggregationJob implements Job {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void aggregateMeasuredValues(JobExecutionResultImpl result,
-			Date date, String report) {
-		// FOR WEEKLY MEASUREMENT PERIOD
-		Calendar cal = Calendar.getInstance(Locale.FRANCE);
-		cal.setTime(date);
+			String report, MeasurableQuantity mq) {
+		if (StringUtils.isBlank(report)) {
+			report = "Generate Measured Value for : " + mq.getCode();
+		} else {
+			report += "," + mq.getCode();
+		}
+		Object[] mvObject = mqService.executeMeasurableQuantitySQL(mq);
 
-		while (cal.getTime().before(new Date())) {
-			int firstDayOfTheWeek = cal.getFirstDayOfWeek();
-
-			Calendar startDate = Calendar.getInstance(Locale.FRANCE);
-			startDate.setTime(cal.getTime());
-
-			int days = (startDate.get(Calendar.DAY_OF_WEEK) + 7 - firstDayOfTheWeek) % 7;
-			startDate.add(Calendar.DATE, -days);
-
-			Calendar endDate = Calendar.getInstance(Locale.FRANCE);
-			endDate.setTime(startDate.getTime());
-			endDate.add(Calendar.DATE, 6);
-			endDate.add(Calendar.DAY_OF_MONTH, 1);
-			try {
-				for (MeasurableQuantity mq : mqService.list()) {
-					long mvTotal = 0;
-					List<MeasuredValue> mvList = mvService.getByDateAndPeriod(
-							null, startDate.getTime(), endDate.getTime(),
-							MeasurementPeriodEnum.DAILY, mq);
-					if (mvList.size() > 0) {
-						mvTotal = getMeasuredValueListValueSum(mvList);
-					}
-
-					List<MeasuredValue> mvWeeklyList = mvService
-							.getByDateAndPeriod(null, startDate.getTime(),
-									null, MeasurementPeriodEnum.WEEKLY, mq);
-					MeasuredValue newMV = null;
-					if (mvWeeklyList.size() > 0) {
-						newMV = mvWeeklyList.get(0);
-						newMV.setValue(mvTotal);
-						mvService.update(newMV);
-						result.registerSucces();
-					} else {
-
-						newMV = new MeasuredValue();
-						newMV.setMeasurableQuantity(mq);
-						newMV.setMeasurementPeriod(MeasurementPeriodEnum.WEEKLY);
-						newMV.setValue(mvTotal);
-						newMV.setDate(startDate.getTime());
-						mvService.create(newMV);
-						result.registerSucces();
-					}
-
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				log.error(e.getMessage());
+		try {
+			if (mvObject.length > 0) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				MeasuredValue mv = new MeasuredValue();
+				mv.setMeasurableQuantity(mq);
+				mv.setMeasurementPeriod(mq.getMeasurementPeriod());
+				mv.setDate(sdf.parse(mvObject[0] + ""));
+				mv.setValue(Long.parseLong(mvObject[1] + ""));
+				mvService.create(mv);
 			}
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-			// FOR MONTHLY MEASUREMENT PERIOD
-			startDate.set(Calendar.DAY_OF_MONTH, 1);
-			endDate.set(Calendar.DAY_OF_MONTH,
-					cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			try {
-				for (MeasurableQuantity mq : mqService.list()) {
-					long mvTotal = 0;
-					List<MeasuredValue> mvList = mvService.getByDateAndPeriod(
-							null, startDate.getTime(), endDate.getTime(),
-							MeasurementPeriodEnum.WEEKLY, mq);
-					if (mvList.size() > 0) {
-						mvTotal = getMeasuredValueListValueSum(mvList);
-					}
-
-					List<MeasuredValue> mvMonthlyList = mvService
-							.getByDateAndPeriod(null, startDate.getTime(),
-									null, MeasurementPeriodEnum.MONTHLY, mq);
-					MeasuredValue newMV = null;
-					if (mvMonthlyList.size() > 0) {
-						newMV = mvMonthlyList.get(0);
-						newMV.setValue(mvTotal);
-						mvService.update(newMV);
-						result.registerSucces();
-					} else {
-
-						newMV = new MeasuredValue();
-						newMV.setMeasurableQuantity(mq);
-						newMV.setMeasurementPeriod(MeasurementPeriodEnum.MONTHLY);
-						newMV.setValue(mvTotal);
-						newMV.setDate(startDate.getTime());
-						mvService.create(newMV);
-						result.registerSucces();
-
-					}
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				log.error(e.getMessage());
-			}
-			log.info(cal.getTime().toString());
-
-			cal.add(Calendar.DAY_OF_MONTH, 7);
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void aggregateMeasuredValues(JobExecutionResultImpl result,
+			String report, List<MeasurableQuantity> mq) {
+		for (MeasurableQuantity measurableQuantity : mq) {
+			aggregateMeasuredValues(result, report, measurableQuantity);
 		}
 
 	}
@@ -175,35 +115,18 @@ public class MeasurableQuantityAggregationJob implements Job {
 		String report = "";
 		if (parameter != null) {
 			if (!parameter.isEmpty()) {
-				Date date = new Date();
-				try {
-					SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy",
-							Locale.FRANCE);
-					date = df.parse(parameter);
-					report = "Parameter Date = " + df.format(date);
-					aggregateMeasuredValues(result, date, report);
-					result.setReport(report);
-					result.setDone(true);
-
-					return result;
-				} catch (ParseException e) {
-					report = "Parameter Date = "
-							+ Calendar.getInstance().getTime().toString();
-					aggregateMeasuredValues(result, Calendar.getInstance()
-							.getTime(), report);
-					result.setReport(report);
-					result.setDone(true);
-
-					return result;
-				}
+				MeasurableQuantity mq = mqService.listByCode(parameter).get(0);
+				aggregateMeasuredValues(result, report, mq);
+				result.setReport(report);
+			} else {
+				aggregateMeasuredValues(result, report, mqService.list());
+				result.setReport(report);
 			}
+		} else {
+			aggregateMeasuredValues(result, report, mqService.list());
+			result.setReport(report);
 		}
 
-		report = "Parameter Date = "
-				+ Calendar.getInstance().getTime().toString();
-		aggregateMeasuredValues(result, Calendar.getInstance().getTime(),
-				report);
-		result.setReport(report);
 		result.setDone(true);
 
 		return result;

@@ -12,7 +12,7 @@
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-	
+
 	<ui:define name="body">
 
 
@@ -22,43 +22,46 @@
 			selection="#{chartBean.entity.measurableQuantity}"
 			backingBean="#{measurableQuantityBean}"
 			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code"
-			column1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
-			column2="description" /> 
-			
+			column2="description" />
+
 		<hftl:entityPopup id="searchRole"
 			header="#{messages['role.userRolePanel']}"
 			updateField=":chartFormPanel:formChat:roleId:roleId"
-			selection="#{chartBean.entity.role}"
-			backingBean="#{userRoleBean}"
-			searchField1Label="#{messages['commons.name']}"
-			searchField1="name"
-			column1Label="#{messages['commons.name']}"
-			column1="name"
+			selection="#{chartBean.entity.role}" backingBean="#{userRoleBean}"
+			searchField1Label="#{messages['commons.name']}" searchField1="name"
+			column1Label="#{messages['commons.name']}" column1="name"
 			column2Label="#{messages['businessEntity.description']}"
-			column2="description" /> 
-			
-		<hf:formPanel id="chartFormPanel" formId="formChat" 
-		    label="#{messages['chart.panel']}"
-			backingBean="#{chartBean}" columns="2">
-			
+			column2="description" />
+
+		<hf:formPanel id="chartFormPanel" formId="formChat"
+			label="#{messages['chart.panel']}" backingBean="#{chartBean}"
+			columns="2">
+
 			<hf:formField label="#{messages['businessEntity.code']}" field="code" />
-			
-			<hf:formEntityField id="measurableQuantityId" label="#{messages['chart.measurableQuantity']}" 
-			field="measurableQuantity" childField="code" required="true"
-			popup="true" popupId="searchMeasurableQuantity" />
-			
-			<hf:formEntityField id="roleId" label="#{messages['chart.role']}" 
-			field="role" childField="name" required="false"
-			popup="true" popupId="searchRole" />
-			
+
+			<hf:formEntityField id="measurableQuantityId"
+				label="#{messages['chart.measurableQuantity']}"
+				field="measurableQuantity" childField="code" required="true"
+				popup="true" popupId="searchMeasurableQuantity" />
+
+			<hf:formEntityField id="roleId" label="#{messages['chart.role']}"
+				field="role" childField="name" required="false" popup="true"
+				popupId="searchRole" />
+
 			<hf:formField label="#{messages['chart.style']}" field="style" />
-			<hf:formField label="#{messages['chart.styleClass']}" field="styleClass" />
+			<hf:formField label="#{messages['chart.styleClass']}"
+				field="styleClass" />
 			<hf:formField label="#{messages['chart.extender']}" field="extender" />
 		</hf:formPanel>
 
+		<p:panel>
+			<p:barChart id="basic" value="#{chartBean.barModel}"
+				legendPosition="ne" title="FormularioUsuario" min="0" max="200"
+				style="height:300px" />
+		</p:panel>
 	</ui:define>
 
 </ui:composition>

@@ -38,7 +38,6 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	protected String getListViewName() {
 		return "measurableQuantities";
 	}
-
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
@@ -48,5 +47,4 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("provider");
 	}
-
 }
