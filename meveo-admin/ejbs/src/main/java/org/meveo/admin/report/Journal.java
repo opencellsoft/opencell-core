@@ -107,7 +107,7 @@ public class Journal extends FileProducer implements Reporting {
 				generatePDFfile(file, sb.toString(), templateFilename, parameters);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 

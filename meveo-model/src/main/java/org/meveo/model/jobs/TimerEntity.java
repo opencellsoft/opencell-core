@@ -30,6 +30,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.BaseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "MEVEO_TIMER")
@@ -37,6 +39,8 @@ import org.meveo.model.BaseEntity;
 public class TimerEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -3764934334462355788L;
+
+	private Logger log = LoggerFactory.getLogger(TimerEntity.class);
 
 	@Column(name = "NAME", nullable = false)
 	private String name;
@@ -208,7 +212,7 @@ public class TimerEntity extends BaseEntity {
 		try {
 			result = getScheduleExpression().toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return result;
 	}

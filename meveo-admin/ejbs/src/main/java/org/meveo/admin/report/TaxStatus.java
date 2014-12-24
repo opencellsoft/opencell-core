@@ -101,7 +101,7 @@ public class TaxStatus extends FileProducer implements Reporting {
 				generatePDFfile(file, sb.toString(), templateFilename, parameters);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 

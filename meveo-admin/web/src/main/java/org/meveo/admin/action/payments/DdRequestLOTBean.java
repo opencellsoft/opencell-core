@@ -100,7 +100,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.generateFileSuccessful"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(new BundleKey("messages",
 					"ddrequestLot.generateFileFailed"));
 		}
@@ -124,7 +124,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.doPaymentsSuccessful"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.doPaymentsFailed"));
 		}
@@ -149,7 +149,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.launchProcessSuccessful"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.launchProcessFailed"));
 			messages.info(e.getMessage());

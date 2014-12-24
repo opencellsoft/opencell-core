@@ -183,7 +183,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 		} catch (BusinessException ee) {
 			messages.error(new BundleKey("messages", ee.getMessage()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="
@@ -214,7 +214,7 @@ public class AccountOperationBean extends BaseBean<AccountOperation> {
 			messages.error(new BundleKey("messages",
 					"customerAccount.noAllOperationUnmatched"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?objectId="

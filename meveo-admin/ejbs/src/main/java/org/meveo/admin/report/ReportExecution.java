@@ -227,7 +227,7 @@ public class ReportExecution implements Serializable{
 					report.getSchedule(), exportFileName);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 

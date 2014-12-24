@@ -17,6 +17,7 @@
 package org.meveo.admin.action.billing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -193,7 +194,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 		}
 
 		super.saveOrUpdate(killConversation);
-		
+
 		return "/pages/billing/subscriptions/subscriptionDetail?edit=false&subscriptionId="
 				+ entity.getId()
 				+ "&faces-redirect=true&includeViewParams=true";
@@ -674,4 +675,15 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider", "userAccount");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider", "userAccount");
+	}
+
 }

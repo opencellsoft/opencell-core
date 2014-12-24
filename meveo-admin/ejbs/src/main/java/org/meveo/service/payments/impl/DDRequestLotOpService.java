@@ -39,7 +39,7 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 					.setParameter("status", DDRequestOpStatusEnum.WAIT)
 					.getResultList();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return ddrequestOps;
 	}

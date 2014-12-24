@@ -202,9 +202,9 @@ public class Management implements Serializable {
 			convertLogs(tempLogList);
 			close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return logs;
 	}*/

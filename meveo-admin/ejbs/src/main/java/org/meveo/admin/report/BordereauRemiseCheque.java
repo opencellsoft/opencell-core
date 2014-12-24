@@ -120,7 +120,7 @@ public class BordereauRemiseCheque {
 					context.responseComplete();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 
 			} else {
@@ -128,10 +128,10 @@ public class BordereauRemiseCheque {
 			}
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -182,7 +182,7 @@ public class BordereauRemiseCheque {
 			return temp;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return null;
 	}

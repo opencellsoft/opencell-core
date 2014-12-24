@@ -108,7 +108,7 @@ public class EmailService extends PersistenceService<Email> {
 			log.info("send email(s)");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			throw new BusinessException("Error: " + e.getMessage()
 					+ " when send email to " + to);
 		}

@@ -59,7 +59,7 @@ public abstract class InputFiles {
 			} catch (Exception e) {
 				log.info("InputFiles job " + file.getName() + " failed");
 				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 		}
 
@@ -77,7 +77,7 @@ public abstract class InputFiles {
 				return fields[1];
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return null;
 	}

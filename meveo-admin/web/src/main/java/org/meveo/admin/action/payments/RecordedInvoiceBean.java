@@ -99,7 +99,7 @@ public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 			messages.info(new BundleKey("messages",
 					"customerAccount.addLitigationSuccessful"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -112,7 +112,7 @@ public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
 			messages.info(new BundleKey("messages",
 					"customerAccount.cancelLitigationSuccessful"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;

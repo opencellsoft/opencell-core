@@ -112,7 +112,7 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 				messages.error(new BundleKey("messages",
 						"dunningPlanTransition.uniqueField"));
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 
 				messages.error(new BundleKey("messages",
 						"dunningPlanTransition.uniqueField"));

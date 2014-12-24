@@ -77,7 +77,7 @@ public class FileProducer {
             }
         } catch (JRException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (FileNotFoundException e) {
             throw new NoTemplateException();
         }

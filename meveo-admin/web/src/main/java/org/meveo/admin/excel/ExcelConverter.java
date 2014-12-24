@@ -39,6 +39,8 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.util.pagination.PaginationDataModel;
 import org.meveo.model.BaseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Excel converter class. This class exports data from dataTable to excel file
@@ -62,6 +64,8 @@ public class ExcelConverter {
 
 	@Inject
 	private ResourceBundle resourceMessages;
+
+	private Logger log = LoggerFactory.getLogger(ExcelConverter.class);
 
 	/**
 	 * Generates file for export
@@ -105,26 +109,26 @@ public class ExcelConverter {
 			workbook.write();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			try {
 				workbook.close();
 				redirectExport();
 			} catch (WriteException e) {
 				// TODO Auto-generated catch block
-				// e.printStackTrace();
+				// log.error(e.getMessage());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				// e.printStackTrace();
+				// log.error(e.getMessage());
 			}
 		}
 
@@ -224,7 +228,7 @@ public class ExcelConverter {
 				sheet.addCell(label);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e.getMessage());
 			}
 		}
 

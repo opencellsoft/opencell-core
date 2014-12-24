@@ -85,7 +85,7 @@ public class DunningLOTService extends PersistenceService<DunningLOT> {
 						dunningLOT.setDunningHistory(dunningHistory);
 						update(dunningLOT);
 					} catch (Exception e) {
-						e.printStackTrace();
+						log.error(e.getMessage());
 					}
 				}
 			}
