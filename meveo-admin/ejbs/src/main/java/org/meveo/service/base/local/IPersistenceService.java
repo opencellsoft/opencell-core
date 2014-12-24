@@ -178,7 +178,7 @@ public interface IPersistenceService<E extends IEntity> {
 	 * 
 	 * @return List of entities.
 	 */
-	public List<E> list();//? extends E
+	public List<E> list();// ? extends E
 
 	/**
 	 * Load and return the list of the entities from database according to
@@ -186,7 +186,7 @@ public interface IPersistenceService<E extends IEntity> {
 	 * 
 	 * @return List of entities.
 	 */
-	public List<E> list(PaginationConfiguration config); //? extends E
+	public List<E> list(PaginationConfiguration config); // ? extends E
 
 	/**
 	 * Count number of entities in database.
@@ -209,6 +209,8 @@ public interface IPersistenceService<E extends IEntity> {
 	 *            Entity which has to be detached.
 	 */
 	public void detach(Object entity);
+
+	public BaseEntity attach(BaseEntity e);
 
 	/**
 	 * Refresh entity with state from database.

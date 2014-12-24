@@ -12,7 +12,7 @@
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
 	</ui:define>
-	
+
 	<ui:define name="body">
 
 
@@ -57,8 +57,11 @@
 			<hf:formField label="#{messages['chart.extender']}" field="extender" />
 		</hf:formPanel>
 
-		<!-- <p:chart type="bar" model="#{chartBean.barModel}" style="height:300px" /> -->
-
+		<p:panel>
+			<p:barChart id="basic" value="#{chartBean.barModel}"
+				legendPosition="ne" title="FormularioUsuario" min="0" max="200"
+				style="height:300px" />
+		</p:panel>
 	</ui:define>
 
 </ui:composition>

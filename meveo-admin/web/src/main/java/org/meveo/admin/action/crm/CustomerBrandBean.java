@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.crm;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -78,10 +81,15 @@ public class CustomerBrandBean extends BaseBean<CustomerBrand> {
 	protected IPersistenceService<CustomerBrand> getPersistenceService() {
 		return customerBrandService;
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

@@ -135,7 +135,6 @@ public class SubscriptionImportService {
 		}
 
 		subscription = new Subscription();
-
 		subscription.setOffer(checkSubscription.offerTemplate);
 		subscription.setCode(jaxbSubscription.getCode());
 		subscription.setDescription(jaxbSubscription.getDescription());

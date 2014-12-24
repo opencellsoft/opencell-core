@@ -17,7 +17,9 @@
 package org.meveo.admin.action.payments;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
@@ -356,4 +358,15 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	protected String getDefaultSort() {
 		return "code";
 	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
 }

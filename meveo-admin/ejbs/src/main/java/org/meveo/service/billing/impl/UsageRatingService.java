@@ -419,10 +419,11 @@ public class UsageRatingService {
 				.getBillingAccount().getTradingCountry();
 		Long countryId = country.getId();
 		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
-				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(), countryId);
+				.findInvoiceSubCategoryCountry(invoiceSubCat.getId(),
+						countryId, provider);
 
 		if (invoiceSubcategoryCountry == null) {
-			throw new BusinessException("nos tax defined for countryId="
+			throw new BusinessException("No tax defined for countryId="
 					+ countryId + " in invoice Sub-Category="
 					+ invoiceSubCat.getCode());
 		}
@@ -430,6 +431,7 @@ public class UsageRatingService {
 		TradingCurrency currency = edr.getSubscription().getUserAccount()
 				.getBillingAccount().getCustomerAccount().getTradingCurrency();
 		Tax tax = invoiceSubcategoryCountry.getTax();
+
 		walletOperation.setChargeInstance(chargeInstance);
 		walletOperation.setUnityDescription(chargeInstance
 				.getUnityDescription());
@@ -461,7 +463,7 @@ public class UsageRatingService {
 		walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 
 		// log.info("provider code:" + provider.getCode());
-		ratingService.rateBareWalletOperation(em, walletOperation, null, null,
+		ratingService.rateBareWalletOperation(walletOperation, null, null,
 				countryId, currency, provider);
 
 		// for AGGREGATED counter we update the price of the previous wallet
@@ -486,7 +488,7 @@ public class UsageRatingService {
 								.setAggregatedServiceInstance(chargeInstance
 										.getServiceInstance());
 						walletOperationService
-								.updatePriceForSameServiceAndType(em,
+								.updatePriceForSameServiceAndType(
 										walletOperation,
 										chargeInstance.getServiceInstance(),
 										itemPeriodCache.getStartDate(),
@@ -537,8 +539,8 @@ public class UsageRatingService {
 
 		CounterInstance counterInstance = null;
 		if (periodCache == null) {
-			counterInstance = counterInstanceService.findById(em,
-					counterInstanceCache.getKey());
+			counterInstance = counterInstanceService
+					.findById(counterInstanceCache.getKey());
 			CounterPeriod counterPeriod = counterInstanceService.createPeriod(
 					counterInstance, edr.getEventDate(), currentUser);
 			periodCache = CounterPeriodCache.getInstance(counterPeriod,
@@ -620,7 +622,7 @@ public class UsageRatingService {
 				|| deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 			Provider provider = charge.getProvider();
 			UsageChargeInstance chargeInstance = usageChargeInstanceService
-					.findById(em, charge.getChargeInstanceId());
+					.findById(charge.getChargeInstanceId());
 			WalletOperation walletOperation = rateEDRwithMatchingCharge(edr,
 					deducedQuantity, charge, chargeInstance, provider);
 
@@ -665,6 +667,7 @@ public class UsageRatingService {
 										walletOperation)));
 						newEdr.setStatus(EDRStatusEnum.OPEN);
 						Subscription sub = null;
+
 						if (StringUtils.isBlank(triggeredEDRCache
 								.getSubscriptionEL())) {
 							newEdr.setSubscription(edr.getSubscription());
@@ -672,8 +675,9 @@ public class UsageRatingService {
 							String subCode = evaluateStringExpression(
 									triggeredEDRCache.getSubscriptionEL(), edr,
 									walletOperation);
-							sub = subscriptionService.findByCode(em, subCode,
+							sub = subscriptionService.findByCode(subCode,
 									provider);
+
 							if (sub == null) {
 								log.info("could not find subscription for code ="
 										+ subCode
@@ -683,15 +687,17 @@ public class UsageRatingService {
 										+ triggeredEDRCache.getCode());
 							}
 						}
+
 						if (sub != null) {
 							log.info("trigger EDR from code "
 									+ triggeredEDRCache.getCode());
-							edrService
-									.create(em, newEdr, currentUser, provider);
+							edrService.create(newEdr, currentUser, provider);
 						}
 					}
 				}
 			}
+		} else {
+			log.warn("deduceQuantity is null");
 		}
 
 		return stopEDRRating;

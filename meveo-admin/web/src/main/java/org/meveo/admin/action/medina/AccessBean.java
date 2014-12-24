@@ -16,6 +16,9 @@
  */
 package org.meveo.admin.action.medina;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -144,4 +147,15 @@ public class AccessBean extends BaseBean<Access> {
 			entity.setSubscription(subscription);
 		}
 	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
 }

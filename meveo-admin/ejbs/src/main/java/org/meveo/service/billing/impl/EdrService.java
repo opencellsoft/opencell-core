@@ -70,18 +70,14 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
-	public List<EDR> getEDRToRate(Provider provider) {
-		return getEDRToRate(getEntityManager(), provider);
-	}
-
 	@SuppressWarnings("unchecked")
-	public List<EDR> getEDRToRate(EntityManager em, Provider provider) {
+	public List<EDR> getEDRToRate(Provider provider) {
 		QueryBuilder qb = new QueryBuilder(EDR.class, "e");
 		qb.addCriterionEntity("provider", provider);
 		qb.addCriterion("status", "=", EDRStatusEnum.OPEN, true);
 
 		try {
-			return (List<EDR>) qb.getQuery(em).getResultList();
+			return (List<EDR>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

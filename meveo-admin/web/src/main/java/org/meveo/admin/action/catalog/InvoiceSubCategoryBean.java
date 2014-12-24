@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -125,7 +126,7 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 							invoiceSubcategoryCountry);
 					messages.info(new BundleKey("messages", "save.successful"));
 				}
-				
+
 				return getListViewName();
 			}
 		} catch (Exception e) {
@@ -270,6 +271,11 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

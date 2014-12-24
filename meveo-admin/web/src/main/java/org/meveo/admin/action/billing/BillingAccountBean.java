@@ -19,6 +19,7 @@ package org.meveo.admin.action.billing;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -210,8 +211,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 				messages.info(new BundleKey("messages", "update.successful"));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			// messages.error(e.getMessage());
+			log.error(e.getMessage());
 		}
 
 		return back();
@@ -495,6 +495,16 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider", "customerAccount");
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

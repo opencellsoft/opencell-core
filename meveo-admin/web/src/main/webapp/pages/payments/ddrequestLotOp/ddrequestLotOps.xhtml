@@ -1,53 +1,58 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:s="http://jboss.com/products/seam/taglib"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:a="http://richfaces.org/a4j"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
-    
-    	<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{ddRequestLotOpBean.preRenderView}" />
-		</f:metadata>
-    
-    
-    <ui:define name="navigation">
-   		<ui:include src="/layout/navigation.xhtml" />
-   	</ui:define>
-    
-    <ui:define name="body"> 
-    	
-		 
-			  
-    		<hf:searchPanel id="searchPanel"  label="#{messages['menu.ddrequestLotOp']}"  backingBean="#{ddRequestLotOpBean}">
-    			<hf:searchField label="#{messages['ddrequestLotOp.ddrequestOp']}" field="ddrequestOp" />
-    			<hf:searchField label="#{messages['ddrequestLotOp.status']}" field="status" />    			    			
-    		</hf:searchPanel>
-		
- 
-		<hftl:dataList label="#{messages['menu.ddrequestLotOp']}" backingBean="#{ddRequestLotOpBean}"  >
-	    <p:column > 
-       <f:facet name="header">
-	    <h:outputText value="#{messages['ddrequestLotOp.date']}" />
-		</f:facet>
-		<h:outputText 
-		value="#{entity.getAuditable().getCreated()}" isDate="true">
-		<f:convertDateTime pattern="dd/MM/yyyy" />
-        </h:outputText >		
-	    </p:column >
-			
-		      <hftl:column label="#{messages['ddrequestLotOp.fromDueDate']}" field="fromDueDate" isDate="true"   />
-			  <hftl:column label="#{messages['ddrequestLotOp.toDueDate']}" field="toDueDate" isDate="true"  />
-	    		<hftl:column label="#{messages['ddrequestLotOp.ddrequestOp']}" field="ddrequestOp" childField="label" isMessage="true"  />
-				<hftl:column label="#{messages['ddrequestLotOp.status']}" field="status" childField="label" isMessage="true"  /> 				
-				<hftl:column label="#{messages['ddrequestLotOp.errorCause']}" field="errorCause" />	
-				 <hftl:actionsColumn
-				permission="#{identity.hasPermission('billing','billingManagement')}" />  
-	        </hftl:dataList>
-	 
-    </ui:define>
-    
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{ddRequestLotOpBean.preRenderView}" />
+	</f:metadata>
+
+	<ui:define name="navigation">
+		<ui:include src="/layout/navigation.xhtml" />
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hf:searchPanel id="searchPanel"
+			label="#{messages['menu.ddrequestLotOp']}"
+			backingBean="#{ddRequestLotOpBean}">
+			<hf:searchField label="#{messages['ddrequestLotOp.ddrequestOp']}"
+				field="ddrequestOp" />
+			<hf:searchField label="#{messages['ddrequestLotOp.status']}"
+				field="status" />
+		</hf:searchPanel>
+
+		<hftl:dataList label="#{messages['menu.ddrequestLotOp']}"
+			backingBean="#{ddRequestLotOpBean}">
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="#{messages['ddrequestLotOp.date']}" />
+				</f:facet>
+				<h:outputText value="#{entity.getAuditable().getCreated()}"
+					isDate="true">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+			<hftl:column label="#{messages['ddrequestLotOp.fromDueDate']}"
+				field="fromDueDate" isDate="true" />
+			<hftl:column label="#{messages['ddrequestLotOp.toDueDate']}"
+				field="toDueDate" isDate="true" />
+			<hftl:column label="#{messages['ddrequestLotOp.ddrequestOp']}"
+				field="ddrequestOp" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['ddrequestLotOp.status']}"
+				field="status" childField="label" isMessage="true" />
+			<hftl:column label="#{messages['ddrequestLotOp.errorCause']}"
+				field="errorCause" />
+			<hftl:actionsColumn
+				permission="#{identity.hasPermission('billing','billingManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
 </ui:composition>

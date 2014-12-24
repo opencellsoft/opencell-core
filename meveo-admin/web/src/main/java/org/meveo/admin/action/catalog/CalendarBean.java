@@ -17,6 +17,7 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -53,12 +54,11 @@ public class CalendarBean extends BaseBean<Calendar> {
 	private DayInYearService dayInYearService;
 
 	private DualListModel<DayInYear> dayInYearListModel;
-	
+
 	@Inject
 	private HourInDayService hourInDayService;
 
 	private DualListModel<HourInDay> hourInDayListModel;
-
 
 	@Inject
 	@RequestParam()
@@ -71,22 +71,23 @@ public class CalendarBean extends BaseBean<Calendar> {
 	public CalendarBean() {
 		super(Calendar.class);
 	}
-	
+
 	public Calendar getInstance() throws InstantiationException,
-	IllegalAccessException {
-		//TODO: should take classType into account
+			IllegalAccessException {
+		// TODO: should take classType into account
 		return CalendarYearly.class.newInstance();
 	}
 
 	public Calendar initEntity() {
-		
+
 		log.debug("instantiating calendar of type " + this.getClass());
 		if (getObjectId() != null) {
 			if (getFormFieldsToFetch() == null) {
-				entity = (Calendar) getPersistenceService().findById(getObjectId());
+				entity = (Calendar) getPersistenceService().findById(
+						getObjectId());
 			} else {
-				entity = (Calendar) getPersistenceService().findById(getObjectId(),
-						getFormFieldsToFetch());
+				entity = (Calendar) getPersistenceService().findById(
+						getObjectId(), getFormFieldsToFetch());
 			}
 			// getPersistenceService().detach(entity);
 		} else {
@@ -108,7 +109,7 @@ public class CalendarBean extends BaseBean<Calendar> {
 
 		return entity;
 	}
-	
+
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
@@ -116,44 +117,52 @@ public class CalendarBean extends BaseBean<Calendar> {
 	protected IPersistenceService<Calendar> getPersistenceService() {
 		return calendarService;
 	}
-	
+
 	public DualListModel<DayInYear> getDayInYearModel() {
 		if (dayInYearListModel == null) {
 			List<DayInYear> perksSource = dayInYearService.list();
 			List<DayInYear> perksTarget = new ArrayList<DayInYear>();
-			if (((CalendarYearly)getEntity()).getDays() != null) {
-				perksTarget.addAll(((CalendarYearly)getEntity()).getDays());
+			if (((CalendarYearly) getEntity()).getDays() != null) {
+				perksTarget.addAll(((CalendarYearly) getEntity()).getDays());
 			}
 			perksSource.removeAll(perksTarget);
-			dayInYearListModel = new DualListModel<DayInYear>(perksSource, perksTarget);
+			dayInYearListModel = new DualListModel<DayInYear>(perksSource,
+					perksTarget);
 		}
 		return dayInYearListModel;
 	}
-	
+
 	public void setDayInYearModel(DualListModel<DayInYear> perks) {
-		((CalendarYearly)getEntity()).setDays((List<DayInYear>) perks.getTarget());
+		((CalendarYearly) getEntity()).setDays((List<DayInYear>) perks
+				.getTarget());
 	}
-	
+
 	public DualListModel<HourInDay> getHourInDayModel() {
 		if (hourInDayListModel == null) {
 			List<HourInDay> perksSource = hourInDayService.list();
 			List<HourInDay> perksTarget = new ArrayList<HourInDay>();
-			if (((CalendarDaily)getEntity()).getHours() != null) {
-				perksTarget.addAll(((CalendarDaily)getEntity()).getHours());
+			if (((CalendarDaily) getEntity()).getHours() != null) {
+				perksTarget.addAll(((CalendarDaily) getEntity()).getHours());
 			}
 			perksSource.removeAll(perksTarget);
-			hourInDayListModel = new DualListModel<HourInDay>(perksSource, perksTarget);
+			hourInDayListModel = new DualListModel<HourInDay>(perksSource,
+					perksTarget);
 		}
 		return hourInDayListModel;
 	}
 
-
 	public void setHourInDayModel(DualListModel<HourInDay> perks) {
-		((CalendarDaily)getEntity()).setHours((List<HourInDay>) perks.getTarget());
+		((CalendarDaily) getEntity()).setHours((List<HourInDay>) perks
+				.getTarget());
 	}
 
 	@Override
 	protected String getDefaultSort() {
 		return "name";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 }

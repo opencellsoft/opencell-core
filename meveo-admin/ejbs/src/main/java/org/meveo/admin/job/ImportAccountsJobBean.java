@@ -106,7 +106,9 @@ public class ImportAccountsJobBean {
 			try {
 				log.info("InputFiles job " + file.getName() + " in progres");
 				currentFile = FileUtils.addExtension(file, ".processing");
+				
 				importFile(currentFile, file.getName(), currentUser);
+				
 				FileUtils.moveFile(dirOK, currentFile, file.getName());
 				log.info("InputFiles job " + file.getName() + " done");
 				result.registerSucces();

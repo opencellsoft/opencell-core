@@ -66,9 +66,11 @@ public class XMLInvoiceGenerationJobBean {
 
 				for (Invoice invoice : billingRun.getInvoices()) {
 					long startDate = System.currentTimeMillis();
+					
 					Future<Boolean> xmlCreated = xmlInvoiceCreator
 							.createXMLInvoice(invoice, billingRundir);
 					xmlCreated.get();
+					
 					log.info("Invoice creation delay :"
 							+ (System.currentTimeMillis() - startDate)
 							+ ", xmlCreated={1} " + xmlCreated.get() + "");

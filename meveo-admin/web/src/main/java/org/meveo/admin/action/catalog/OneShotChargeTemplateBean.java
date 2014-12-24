@@ -17,6 +17,7 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -96,9 +97,11 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	public OneShotChargeTemplate initEntity() {
 		OneShotChargeTemplate oneShotChargeTemplate = super.initEntity();
 		if (oneShotChargeTemplate.getId() != null) {
-			for (CatMessages msg : catMessagesService.getCatMessagesList(ChargeTemplate.class
-					.getSimpleName() + "_" + oneShotChargeTemplate.getId())) {
-				languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
+			for (CatMessages msg : catMessagesService
+					.getCatMessagesList(ChargeTemplate.class.getSimpleName()
+							+ "_" + oneShotChargeTemplate.getId())) {
+				languageMessagesMap.put(msg.getLanguageCode(),
+						msg.getDescription());
 			}
 		}
 		return oneShotChargeTemplate;
@@ -153,12 +156,15 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		String back = null;
 
 		// check for unicity
-		if (recurringChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode(),entity.getProvider()) != null) {
+		if (recurringChargeTemplateService.findByCode(entity.getCode(),
+				entity.getProvider()) != null
+				|| usageChargeTemplateService.findByCode(entity.getCode(),
+						entity.getProvider()) != null) {
 			messages.error(new BundleKey("messages", "commons.uniqueField.code"));
 			return null;
 		}
@@ -167,13 +173,15 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
 				CatMessages catMsg = catMessagesService.getCatMessages(
-						ChargeTemplate.class.getSimpleName() + "_" + entity.getId(), msgKey);
+						ChargeTemplate.class.getSimpleName() + "_"
+								+ entity.getId(), msgKey);
 				if (catMsg != null) {
 					catMsg.setDescription(description);
 					catMessagesService.update(catMsg);
 				} else {
-					CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-							+ "_" + entity.getId(), msgKey, description);
+					CatMessages catMessages = new CatMessages(
+							ChargeTemplate.class.getSimpleName() + "_"
+									+ entity.getId(), msgKey, description);
 					catMessagesService.create(catMessages);
 				}
 			}
@@ -183,8 +191,9 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 			back = super.saveOrUpdate(killConversation);
 			for (String msgKey : languageMessagesMap.keySet()) {
 				String description = languageMessagesMap.get(msgKey);
-				CatMessages catMessages = new CatMessages(ChargeTemplate.class.getSimpleName()
-						+ "_" + entity.getId(), msgKey, description);
+				CatMessages catMessages = new CatMessages(
+						ChargeTemplate.class.getSimpleName() + "_"
+								+ entity.getId(), msgKey, description);
 				catMessagesService.create(catMessages);
 			}
 		}
@@ -211,23 +220,29 @@ public class OneShotChargeTemplateBean extends BaseBean<OneShotChargeTemplate> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-	
 
 	public DualListModel<TriggeredEDRTemplate> getEdrTemplatesModel() {
 		if (edrTemplates == null) {
-			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService.list();
+			List<TriggeredEDRTemplate> source = triggeredEDRTemplateService
+					.list();
 			List<TriggeredEDRTemplate> target = new ArrayList<TriggeredEDRTemplate>();
 			if (getEntity().getEdrTemplates() != null) {
 				target.addAll(getEntity().getEdrTemplates());
 			}
 			source.removeAll(target);
-			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source, target);
+			edrTemplates = new DualListModel<TriggeredEDRTemplate>(source,
+					target);
 		}
 		return edrTemplates;
 	}
 
 	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> temp) {
 		getEntity().setEdrTemplates(temp.getTarget());
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

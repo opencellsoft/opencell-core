@@ -113,7 +113,7 @@
 				<!-- <h:commandButton action="#{billingRunBean.rerateInvoicing()}"
 					value="Rerate" /> -->
 				<p:commandButton action="#{billingRunBean.cancelInvoicing()}"
-					value="Cancel billing run"
+					value="#{messages['action.cancel']}"
 					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
 
 				<p:button id="backButton" value="#{messages['action.back']}"

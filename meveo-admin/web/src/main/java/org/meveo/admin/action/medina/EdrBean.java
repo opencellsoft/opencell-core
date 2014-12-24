@@ -1,5 +1,7 @@
 package org.meveo.admin.action.medina;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
@@ -62,6 +64,16 @@ public class EdrBean extends BaseBean<EDR> {
 	@Override
 	protected IPersistenceService<EDR> getPersistenceService() {
 		return edrService;
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

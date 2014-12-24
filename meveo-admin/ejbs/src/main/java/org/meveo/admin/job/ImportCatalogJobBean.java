@@ -24,7 +24,7 @@ import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
-public class CatalogImportJobBean {
+public class ImportCatalogJobBean {
 
 	@Inject
 	private PricePlanMatrixService pricePlanService;

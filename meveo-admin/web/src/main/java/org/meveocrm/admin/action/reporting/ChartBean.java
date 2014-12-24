@@ -1,5 +1,6 @@
 package org.meveocrm.admin.action.reporting;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -11,6 +12,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.model.dwh.Chart;
 import org.meveocrm.model.dwh.MeasuredValue;
 import org.meveocrm.services.dwh.ChartService;
+
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.primefaces.component.chart.bar.BarChart;
 import org.primefaces.model.chart.ChartSeries;
@@ -19,9 +21,6 @@ import org.primefaces.model.chart.ChartSeries;
 @ConversationScoped
 public class ChartBean extends BaseBean<Chart> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2585685452044860823L;
 
 	@Inject
@@ -61,9 +60,7 @@ public class ChartBean extends BaseBean<Chart> {
 			barChartSeries.set(measuredValue.getDate(),
 					measuredValue.getValue());
 		}
-		
-		
-		
+
 		return barModel;
 	}
 
@@ -71,4 +68,13 @@ public class ChartBean extends BaseBean<Chart> {
 		this.barModel = barModel;
 	}
 
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
 }

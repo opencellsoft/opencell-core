@@ -16,8 +16,10 @@
  */
 package org.meveo.admin.action.payments;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
@@ -73,7 +75,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * endDueDate parameter for ddRequest batch
 	 */
 	private Date endDueDate;
-	
+
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
 	 * bean for {@link BaseBean}.
@@ -94,11 +96,13 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-			    getCurrentProvider());
-			messages.info(new BundleKey("messages", "ddrequestLot.generateFileSuccessful"));
+					getCurrentProvider());
+			messages.info(new BundleKey("messages",
+					"ddrequestLot.generateFileSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			messages.error(new BundleKey("messages", "ddrequestLot.generateFileFailed"));
+			messages.error(new BundleKey("messages",
+					"ddrequestLot.generateFileFailed"));
 		}
 
 		return null;
@@ -116,11 +120,13 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestLOT(entity);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-			    getCurrentProvider());
-			messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsSuccessful"));
+					getCurrentProvider());
+			messages.info(new BundleKey("messages",
+					"ddrequestLot.doPaymentsSuccessful"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			messages.info(new BundleKey("messages", "ddrequestLot.doPaymentsFailed"));
+			messages.info(new BundleKey("messages",
+					"ddrequestLot.doPaymentsFailed"));
 		}
 
 		return null;
@@ -131,37 +137,35 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 	 * 
 	 * @return
 	 */
-	public String launchProcess() { 
+	public String launchProcess() {
 		try {
 			DDRequestLotOp ddrequestLotOp = new DDRequestLotOp();
 			ddrequestLotOp.setFromDueDate(getStartDueDate());
 			ddrequestLotOp.setToDueDate(getEndDueDate());
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
-			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE); 
+			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
 			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser(),
-			    getCurrentProvider()); 
-			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessSuccessful")); 
-		}
-		catch (Exception e) {
+					getCurrentProvider());
+			messages.info(new BundleKey("messages",
+					"ddrequestLot.launchProcessSuccessful"));
+		} catch (Exception e) {
 			e.printStackTrace();
-			messages.info(new BundleKey("messages", "ddrequestLot.launchProcessFailed"));
+			messages.info(new BundleKey("messages",
+					"ddrequestLot.launchProcessFailed"));
 			messages.info(e.getMessage());
 		}
 		return null;
 	}
-	
-	
+
 	@Override
 	public String getNewViewName() {
 		return "ddrequestLotDetail";
 	}
-	
+
 	@Override
 	protected String getListViewName() {
 		return "ddrequestLots";
 	}
-
- 
 
 	@Override
 	public String getEditViewName() {
@@ -220,5 +224,15 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 		invoices.addFetchFields(getListFieldsToFetch());
 		invoices.forceRefresh();
 		return invoices;
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 }

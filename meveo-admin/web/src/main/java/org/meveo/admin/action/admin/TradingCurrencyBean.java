@@ -78,10 +78,13 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	public String saveOrUpdate(boolean killConversation) {
 		String back = null;
 		try {
-			Provider currentProvider = providerService.findById(getCurrentProvider().getId());
+			Provider currentProvider = providerService
+					.findById(getCurrentProvider().getId());
 			for (TradingCurrency tr : currentProvider.getTradingCurrencies()) {
-				if (tr.getCurrency().getCurrencyCode()
-						.equalsIgnoreCase(entity.getCurrency().getCurrencyCode())
+				if (tr.getCurrency()
+						.getCurrencyCode()
+						.equalsIgnoreCase(
+								entity.getCurrency().getCurrencyCode())
 						&& !tr.getId().equals(entity.getId())) {
 					throw new BusinessEntityException();
 
@@ -90,11 +93,13 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 			back = super.saveOrUpdate(killConversation);
 
 		} catch (BusinessEntityException e) {
-			messages.error(new BundleKey("messages", "tradingCurrency.uniqueField"));
+			messages.error(new BundleKey("messages",
+					"tradingCurrency.uniqueField"));
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			messages.error(new BundleKey("messages", "tradingCurrency.uniqueField"));
+			messages.error(new BundleKey("messages",
+					"tradingCurrency.uniqueField"));
 		}
 		return back;
 
@@ -111,7 +116,8 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	}
 
 	public void populateCurrencies(Currency currency) {
-		log.info("populatCurrencies currency", currency != null ? currency.getCurrencyCode() : null);
+		log.info("populatCurrencies currency",
+				currency != null ? currency.getCurrencyCode() : null);
 		if (currency != null) {
 			entity.setCurrency(currency);
 			entity.setPrDescription(currency.getDescriptionEn());
@@ -121,8 +127,8 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	public void onRowSelect(SelectEvent event) {
 		if (event.getObject() instanceof Currency) {
 			Currency currency = (Currency) event.getObject();
-			log.info("populatCurrencies currency", currency != null ? currency.getCurrencyCode()
-					: null);
+			log.info("populatCurrencies currency",
+					currency != null ? currency.getCurrencyCode() : null);
 			if (currency != null) {
 				entity.setCurrency(currency);
 				entity.setPrDescription(currency.getDescriptionEn());
@@ -155,14 +161,14 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("currency");
+		return Arrays.asList("provider", "currency");
 	}
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
 		return Arrays.asList("currency");
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "currency.currencyCode";

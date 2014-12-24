@@ -17,6 +17,7 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -285,6 +286,11 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
 	}
 
 }

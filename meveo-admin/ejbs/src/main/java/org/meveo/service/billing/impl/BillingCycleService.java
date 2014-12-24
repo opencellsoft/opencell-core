@@ -22,6 +22,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.crm.Provider;
@@ -42,21 +43,15 @@ public class BillingCycleService extends PersistenceService<BillingCycle> {
 	 */
 	public BillingCycle findByBillingCycleCode(String billingCycleCode,
 			Provider provider) {
+		QueryBuilder qb = new QueryBuilder(BillingCycle.class, "b");
+		qb.addCriterion("code", "=", billingCycleCode, true);
+		qb.addCriterionEntity("provider", provider);
+
 		try {
-			log.info("findByBillingCycleCode billingCycleCode={},provider={}",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
-			Query query = getEntityManager()
-					.createQuery(
-							"select b from BillingCycle b where b.code = :billingCycleCode and b.provider=:provider");
-			query.setParameter("billingCycleCode", billingCycleCode);
-			query.setParameter("provider", provider);
-			return (BillingCycle) query.getSingleResult();
+			return (BillingCycle) qb.getQuery(getEntityManager())
+					.getSingleResult();
 		} catch (NoResultException e) {
-			log.warn(
-					"findByBillingCycleCode billing cycle not found : billingCycleCode={},provider={}",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
+			log.warn(e.getMessage());
 			return null;
 		}
 	}

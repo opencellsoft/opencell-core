@@ -1,5 +1,8 @@
 package org.meveocrm.admin.action.reporting;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,5 +38,13 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	protected String getListViewName() {
 		return "measurableQuantities";
 	}
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
 
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider");
+	}
 }

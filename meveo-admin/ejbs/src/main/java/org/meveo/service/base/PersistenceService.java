@@ -231,7 +231,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	public void update(E e, User updater) {
 		log.debug("start of update {} entity (id={}) ..", e.getClass()
 				.getSimpleName(), e.getId());
-		
+
 		if (e instanceof AuditableEntity) {
 			if (updater != null) {
 				((AuditableEntity) e).updateAudit(updater);
@@ -241,7 +241,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		}
 		checkProvider(e);
 		em.merge(e);
-		
+
 		log.debug("end of update {} entity (id={}).", e.getClass()
 				.getSimpleName(), e.getId());
 	}
@@ -510,7 +510,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 	}
 
 	protected EntityManager getEntityManager() {
-		log.debug("tx.key={}", txReg.getTransactionKey());
 		return em;
 	}
 

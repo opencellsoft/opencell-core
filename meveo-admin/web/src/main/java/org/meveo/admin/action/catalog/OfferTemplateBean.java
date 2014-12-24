@@ -39,8 +39,7 @@ import org.primefaces.model.DualListModel;
  * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean}
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
- * s
+ * Manaty custom JSF components. s
  * 
  */
 @Named
@@ -113,11 +112,12 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
 	 */
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("serviceTemplates");
+		return Arrays.asList("provider", "serviceTemplates");
 	}
 
 	public void setDualListModel(DualListModel<ServiceTemplate> perks) {
-		getEntity().setServiceTemplates((List<ServiceTemplate>) perks.getTarget());
+		getEntity().setServiceTemplates(
+				(List<ServiceTemplate>) perks.getTarget());
 	}
 
 	public List<OfferTemplate> listActive() {
@@ -127,7 +127,7 @@ public class OfferTemplateBean extends BaseBean<OfferTemplate> {
 
 		return offerTemplateService.list(config);
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";
