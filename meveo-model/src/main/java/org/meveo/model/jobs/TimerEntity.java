@@ -40,6 +40,7 @@ public class TimerEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
+	@Transient
 	private Logger log = LoggerFactory.getLogger(TimerEntity.class);
 
 	@Column(name = "NAME", nullable = false)
