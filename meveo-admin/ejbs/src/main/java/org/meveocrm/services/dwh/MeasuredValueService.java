@@ -98,7 +98,8 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 					.addCriterion("m.measurementPeriod", "=", period, false);
 		}
 		if (mq != null) {
-			queryBuilder.addCriterion("m.measurableQuantity", "=", mq, false);
+			queryBuilder.addCriterion("m.measurableQuantity.id", "=",
+					mq.getId(), false);
 		}
 
 		Query query = queryBuilder.getQuery(getEntityManager());

@@ -55,13 +55,29 @@
 			<hf:formField label="#{messages['chart.styleClass']}"
 				field="styleClass" />
 			<hf:formField label="#{messages['chart.extender']}" field="extender" />
+
+			<p:panelGrid columns="1"
+				rendered="#{not chartBean.entity.isTransient()}"
+				styleClass="form-panel">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="dateSelect"
+						value="#{messages['page.chart.filterDate']}" />
+					<p:calendar id="dateSelect" value="#{chartBean.selectedDate}"
+						pattern="MMMM yyyy">
+						<p:ajax event="dateSelect" listener="#{chartBean.getChartModel()}"
+							update="chartPanel" />
+					</p:calendar>
+				</p:panelGrid>
+				<p:outputPanel id="chartPanel">
+					<p:barChart id="stats" value="#{chartBean.chartModel}"
+						legendPosition="e" fill="true" widgetVar="lineChart1"
+						rendered="#{chartBean.selectedDate != null}" />
+				</p:outputPanel>
+			</p:panelGrid>
 		</hf:formPanel>
 
-		<p:panel>
-			<p:barChart id="basic" value="#{chartBean.barModel}"
-				legendPosition="ne" title="FormularioUsuario" min="0" max="200"
-				style="height:300px" />
-		</p:panel>
+
+
 	</ui:define>
 
 </ui:composition>
