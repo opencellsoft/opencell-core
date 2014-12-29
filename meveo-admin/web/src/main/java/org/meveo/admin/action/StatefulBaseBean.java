@@ -12,14 +12,13 @@ public abstract class StatefulBaseBean<T extends IEntity> extends BaseBean<T> {
 
 	@PersistenceContext(unitName = "MeveoAdmin", type = PersistenceContextType.EXTENDED)
 	private EntityManager em;
-	
+
 	public StatefulBaseBean() {
 		super();
 	}
 
 	public StatefulBaseBean(Class<T> clazz) {
-		super();
-		this.clazz = clazz;
+		super(clazz);
 	}
 
 }

@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,7 @@ import org.meveo.service.billing.impl.BillingAccountService;
  */
 @Named
 @ConversationScoped
+@Stateful
 public class BillingAccountListBean extends StatelessBaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;

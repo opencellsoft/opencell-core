@@ -18,8 +18,7 @@ public abstract class StatelessBaseBean<T extends IEntity> extends BaseBean<T> {
 	}
 
 	public StatelessBaseBean(Class<T> clazz) {
-		super();
-		this.clazz = clazz;
+		super(clazz);
 	}
 
 }

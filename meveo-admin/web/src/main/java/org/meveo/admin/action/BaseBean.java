@@ -85,7 +85,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected T entity;
 
 	/** Class of backing bean. */
-	protected Class<T> clazz;
+	private Class<T> clazz;
 
 	/**
 	 * Request parameter. Should form be displayed in create/edit or view mode

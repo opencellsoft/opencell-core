@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -130,19 +129,15 @@ public class UserBean extends StatelessBaseBean<User> {
 		super(User.class);
 	}
 
-	@PostConstruct
-	public void init() {
-		if (conversation.isTransient()) {
-			conversation.begin();
-			createMissingDirectories();
-			setSelectedFolder(null);
-		}
-	}
-
-	public String saveOrUpdate(boolean killConversation, String objectName,
-			Long objectId) throws BusinessException {
-		return saveOrUpdate(killConversation);
-	}
+	// @Override
+	// @PostConstruct
+	// public void postConstruct() {
+	// if (conversation.isTransient()) {
+	// conversation.begin();
+	// createMissingDirectories();
+	// setSelectedFolder(null);
+	// }
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -180,7 +175,7 @@ public class UserBean extends StatelessBaseBean<User> {
 				entity.setPassword(password);
 				entity.setProvider(getCurrentProvider());
 			}
-			
+
 			return super.saveOrUpdate(killConversation);
 		}
 	}
