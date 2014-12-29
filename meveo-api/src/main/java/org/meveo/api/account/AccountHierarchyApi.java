@@ -10,11 +10,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -785,12 +783,7 @@ public class AccountHierarchyApi extends BaseApi {
 							userAccountCode);
 				}
 			} else {
-				try {
-					userAccountService.updateUserAccount(userAccount,
-							currentUser);
-				} catch (BusinessException e) {
-					throw new BusinessApiException();
-				}
+				userAccountService.update(userAccount, currentUser);
 			}
 		} else {
 			if (StringUtils.isEmpty(postData.getCustomerId())) {

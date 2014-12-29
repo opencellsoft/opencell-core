@@ -23,18 +23,15 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 
-/**
- * MBAREK
- */
 @Named
 @ConversationScoped
-public class CounterTemplateBean extends BaseBean<CounterTemplate> {
+public class CounterTemplateBean extends StatelessBaseBean<CounterTemplate> {
 
 	private static final long serialVersionUID = 1L;
 

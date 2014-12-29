@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
@@ -38,13 +39,10 @@ import org.primefaces.model.DualListModel;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Gediminas Ubartas
- * @created 2010.05.31
  */
 @Named
 @ConversationScoped
-public class UserRoleBean extends BaseBean<Role> {
+public class UserRoleBean extends StatelessBaseBean<Role> {
 
 	private static final long serialVersionUID = 1L;
 

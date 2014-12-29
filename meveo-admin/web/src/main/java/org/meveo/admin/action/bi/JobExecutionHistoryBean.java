@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.admin.DunningHistory;
 import org.meveo.model.bi.JobExecutionHisto;
 import org.meveo.model.bi.JobHistory;
@@ -34,13 +35,11 @@ import org.meveo.service.bi.impl.JobExecutionHistoryService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Gediminas Ubartas
- * @created 2011.04.14
  */
 @Named
 @ConversationScoped
-public class JobExecutionHistoryBean extends BaseBean<JobExecutionHisto> {
+public class JobExecutionHistoryBean extends
+		StatelessBaseBean<JobExecutionHisto> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -70,7 +69,6 @@ public class JobExecutionHistoryBean extends BaseBean<JobExecutionHisto> {
 	public JobExecutionHisto init() {
 		return initEntity();
 	}
-
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

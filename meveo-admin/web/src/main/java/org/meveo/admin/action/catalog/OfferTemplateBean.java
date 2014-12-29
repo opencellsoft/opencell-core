@@ -25,7 +25,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -44,7 +44,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ConversationScoped
-public class OfferTemplateBean extends BaseBean<OfferTemplate> {
+public class OfferTemplateBean extends StatelessBaseBean<OfferTemplate> {
 
 	private static final long serialVersionUID = 1L;
 

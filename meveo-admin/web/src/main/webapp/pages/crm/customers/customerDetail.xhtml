@@ -131,7 +131,7 @@
 						<div class="actionButtons">
 							<p:button outcome="addCustomerAccount"
 								value="#{messages['customer.buttonAddCustomerAccount']}">
-								<f:param name="cid" value="#{conversation.id}" />
+								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 							</p:button>
 						</div>
 					</h:form>

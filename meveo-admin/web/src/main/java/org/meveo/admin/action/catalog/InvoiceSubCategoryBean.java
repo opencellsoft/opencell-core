@@ -28,7 +28,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -45,13 +45,10 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
  * {@link BaseBean} that provides almost all common methods to handle entities
  * filtering/sorting in datatable, their create, edit, view, delete operations).
  * It works with Manaty custom JSF components.
- * 
- * @author Ignas
- * @created Dec 15, 2010
  */
 @Named
 @ConversationScoped
-public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
+public class InvoiceSubCategoryBean extends StatelessBaseBean<InvoiceSubCategory> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -86,12 +83,10 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 	@RequestParam
 	private Instance<Long> invoiceCategoryId;
 
-	@Produces
-	@Named
 	private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 
 	public void newInvoiceSubcategoryCountryInstance() {
-		this.invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 	}
 
 	public String saveInvoiceSubCategoryCountry() {
@@ -275,7 +270,18 @@ public class InvoiceSubCategoryBean extends BaseBean<InvoiceSubCategory> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
+		return Arrays.asList("provider", "invoiceSubcategoryCountries");
+	}
+
+	@Named
+	@Produces
+	public InvoiceSubcategoryCountry getInvoiceSubcategoryCountry() {
+		return invoiceSubcategoryCountry;
+	}
+
+	public void setInvoiceSubcategoryCountry(
+			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+		this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
 	}
 
 }

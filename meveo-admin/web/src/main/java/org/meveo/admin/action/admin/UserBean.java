@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -41,6 +40,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -68,12 +68,9 @@ import org.slf4j.LoggerFactory;
  */
 @Named
 @ConversationScoped
-public class UserBean extends BaseBean<User> {
+public class UserBean extends StatelessBaseBean<User> {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	Conversation conversation;
 
 	/** Injected @{link User} service. Extends {@link PersistenceService}. */
 	@Inject
@@ -181,7 +178,9 @@ public class UserBean extends BaseBean<User> {
 				entity.setLastPasswordModification(new Date());
 				entity.setNewPassword(password);
 				entity.setPassword(password);
+				entity.setProvider(getCurrentProvider());
 			}
+			
 			return super.saveOrUpdate(killConversation);
 		}
 	}
@@ -337,9 +336,9 @@ public class UserBean extends BaseBean<User> {
 				customerDirOUT, customerDirERR, customerDirWARN, customerDirKO,
 				accountDirIN, accountDirOUT, accountDirERR, accountDirWARN,
 				accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN,
-				catDirIN,catDirOUT,catDirKO,
-				subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
-				invoiceXmlDir, jasperDir);
+				catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN,
+				meterDirOUT, meterDirKO, invoicePdfDir, invoiceXmlDir,
+				jasperDir);
 		for (String custDirs : filePaths) {
 			File subDir = new File(custDirs);
 			if (!subDir.exists()) {

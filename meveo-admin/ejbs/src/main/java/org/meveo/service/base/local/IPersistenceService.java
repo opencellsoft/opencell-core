@@ -19,6 +19,8 @@ package org.meveo.service.base.local;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.BaseEntity;
@@ -216,5 +218,7 @@ public interface IPersistenceService<E extends IEntity> {
 	 * Refresh entity with state from database.
 	 */
 	public void refresh(BaseEntity entity);
+
+	public EntityManager getEntityManager();
 
 }

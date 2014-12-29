@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -31,7 +31,7 @@ import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 
 @Named
 @ConversationScoped
-public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
+public class TriggeredEDRTemplateBean extends StatelessBaseBean<TriggeredEDRTemplate> {
 
 	private static final long serialVersionUID = 1L;
 

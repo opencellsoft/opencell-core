@@ -55,7 +55,7 @@
 					<f:attribute name="objectId"
 						value="#{recordedInvoice.getCustomerAccount().getId()}" />
 					<f:attribute name="edit" value="false" />
-					<f:param name="cid" value="#{conversation.id}" />
+					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 				</p:commandButton>
 			</hftl:panelGroup>
 		</hf:formPanel>

@@ -23,7 +23,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
@@ -42,14 +42,10 @@ import org.meveo.service.crm.impl.AccountEntitySearchService;
  * {@link CustomerAccount} window). Concrete windows also show more of the
  * fields and filters specific for that entity. This bean works with Manaty
  * custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
- * 
  */
 @Named
 @ConversationScoped
-public class CustomerSearchBean extends BaseBean<AccountEntity> {
+public class CustomerSearchBean extends StatelessBaseBean<AccountEntity> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -75,7 +71,8 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 	 * can not be instantiated in {@link BaseBean}.
 	 */
 	@Override
-	public AccountEntity getInstance() throws InstantiationException, IllegalAccessException {
+	public AccountEntity getInstance() throws InstantiationException,
+			IllegalAccessException {
 		return new AccountEntity() {
 			private static final long serialVersionUID = 1L;
 
@@ -158,7 +155,7 @@ public class CustomerSearchBean extends BaseBean<AccountEntity> {
 		}
 		return "customerId";
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "code";

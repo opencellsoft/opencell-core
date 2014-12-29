@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -18,7 +18,7 @@ import org.meveo.service.billing.impl.EdrService;
 
 @Named
 @ConversationScoped
-public class EdrBean extends BaseBean<EDR> {
+public class EdrBean extends StatelessBaseBean<EDR> {
 
 	private static final long serialVersionUID = 7833532801870480214L;
 

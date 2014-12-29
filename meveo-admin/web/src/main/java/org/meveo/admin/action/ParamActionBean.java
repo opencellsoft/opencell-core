@@ -23,82 +23,84 @@ import org.primefaces.event.CellEditEvent;
 @ConversationScoped
 public class ParamActionBean implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4570971790276879220L;
 
 	@Inject
 	protected Conversation conversation;
-	
+
 	@Inject
 	private org.slf4j.Logger log;
-	
+
 	@Inject
 	private transient ResourceBundle bundle;
-	
-	private ParamBean paramBean= ParamBean.getInstance();
-	
+
+	private ParamBean paramBean = ParamBean.getInstance();
+
 	private List<ParamProperty> properties = null;
-	
+
 	private void beginConversation() {
 		if (conversation.isTransient()) {
 			conversation.begin();
 		}
 	}
-	
-	public void preRenderView(){
+
+	public void preRenderView() {
 		beginConversation();
 	}
-	
-	public void reset(){
+
+	public void reset() {
 		log.debug("load properties from paramBean");
 		properties = new ArrayList<ParamProperty>();
-		Set<Object> keys=paramBean.getProperties().keySet();
-		if(keys!=null){
-			for(Object key:keys){
-				ParamProperty paramProp=new ParamProperty(log);
-				String strKey=(String) key;
+		Set<Object> keys = paramBean.getProperties().keySet();
+		if (keys != null) {
+			for (Object key : keys) {
+				ParamProperty paramProp = new ParamProperty(log);
+				String strKey = (String) key;
 				paramProp.setKey(strKey);
-				paramProp.setValue(paramBean.getProperties().getProperty(strKey));
-				if(strKey.lastIndexOf(".")>0){
-				paramProp.setCategory(bundle.getString("property."+strKey.substring(0,strKey.lastIndexOf("."))));
+				paramProp.setValue(paramBean.getProperties()
+						.getProperty(strKey));
+				if (strKey.lastIndexOf(".") > 0) {
+					paramProp.setCategory(bundle.getString("property."
+							+ strKey.substring(0, strKey.lastIndexOf("."))));
 				}
 				properties.add(paramProp);
 			}
 		}
 		Collections.sort(properties);
 	}
-	
-	public List<ParamProperty> getProperties(){
-		if(properties==null){
+
+	public List<ParamProperty> getProperties() {
+		if (properties == null) {
 			reset();
 		}
 		return properties;
 	}
-	
-	public void setProperties(List<ParamProperty> properties){
-		this.properties=properties;
+
+	public void setProperties(List<ParamProperty> properties) {
+		this.properties = properties;
 	}
-	
-	public void save(){
-		log.info("update and save paramBean properties "+properties.size());
-		for(ParamProperty property:properties){
-			log.info(property.getKey()+"->"+property.getValue());
-			paramBean.setProperty(property.getKey(), property.getValue(),property.getCategory());
+
+	public void save() {
+		log.info("update and save paramBean properties " + properties.size());
+		for (ParamProperty property : properties) {
+			log.info(property.getKey() + "->" + property.getValue());
+			paramBean.setProperty(property.getKey(), property.getValue(),
+					property.getCategory());
 		}
 		paramBean.saveProperties();
 		reset();
-		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, bundle.getString("success"), bundle.getString("properties.save.successful"));  
-        FacesContext.getCurrentInstance().addMessage(null, msg);  
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+				bundle.getString("success"),
+				bundle.getString("properties.save.successful"));
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
-	
+
 	public void onCellEdit(CellEditEvent event) {
-	  Object oldValue = event.getOldValue();  
-      Object newValue = event.getNewValue();  
-      DataTable o=(DataTable) event.getSource();
-      ParamProperty property=(ParamProperty) o.getRowData();
-      property.setValue(newValue==null?null:newValue.toString());
-      log.debug("Old: " + oldValue + ", New:" + newValue);
+		Object oldValue = event.getOldValue();
+		Object newValue = event.getNewValue();
+		DataTable o = (DataTable) event.getSource();
+		ParamProperty property = (ParamProperty) o.getRowData();
+		property.setValue(newValue == null ? null : newValue.toString());
+		log.debug("Old: " + oldValue + ", New:" + newValue);
 	}
 }

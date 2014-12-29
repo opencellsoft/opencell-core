@@ -23,7 +23,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -34,13 +34,10 @@ import org.meveo.service.catalog.impl.CountryComService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Marouane ALAMI
- * @created 19-03-2013
  */
 @Named
 @ConversationScoped
-public class CountryComBean extends BaseBean<TradingCountry> {
+public class CountryComBean extends StatelessBaseBean<TradingCountry> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -73,7 +70,6 @@ public class CountryComBean extends BaseBean<TradingCountry> {
 		initEntity();
 		return entity;
 	}
-
 
 	/**
 	 * Override default list view name. (By default its class name starting

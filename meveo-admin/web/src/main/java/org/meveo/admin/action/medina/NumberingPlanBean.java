@@ -20,19 +20,15 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.mediation.NumberingPlan;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.medina.impl.NumberingPlanService;
 
-/**
- * @author MBAREK
- * 
- */
 @Named
 @ConversationScoped
-public class NumberingPlanBean extends BaseBean<NumberingPlan> {
+public class NumberingPlanBean extends StatelessBaseBean<NumberingPlan> {
 
 	private static final long serialVersionUID = 1L;
 

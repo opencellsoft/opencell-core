@@ -6,10 +6,6 @@ import java.util.Map;
 
 import org.primefaces.model.SortOrder;
 
-/**
- * @author Ignas
- *
- */
 public class PaginationConfiguration implements Serializable {
 
 	private static final long serialVersionUID = 1l;

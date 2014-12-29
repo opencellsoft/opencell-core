@@ -4,9 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:e="http://jboss.com/products/seam/excel"
-	xmlns:hftl="http://hftl.org"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
@@ -46,12 +44,12 @@
 		<hftl:dataList label="#{messages['billingAccount.title']}"
 			backingBean="#{billingAccountListBean}">
 			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['businessEntity.description']}"
+				field="description" />
 			<hftl:column label="#{messages['billingAccount.status']}"
 				field="status" childField="label" isMessage="true" />
 			<hftl:column label="#{messages['billingAccount.subscriptionDate']}"
 				field="subscriptionDate" isDate="true" />
-			<!-- 			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" -->
-			<!-- 				field="nextInvoiceDate" isDate="true" /> -->
 			<p:column width="100">
 				<f:facet name="header">
 					<h:outputText value="#{messages['name.title']}" />

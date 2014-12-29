@@ -70,8 +70,6 @@ import com.lowagie.text.pdf.PdfStamper;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * 
  */
 @Named
 @ConversationScoped
@@ -132,8 +130,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		if (entity.getId() == null && customerAccountId != null) {
 			CustomerAccount customerAccount = customerAccountService
 					.findById(customerAccountId);
-			entity.setCustomerAccount(customerAccountService
-					.findById(customerAccountId));
+			entity.setCustomerAccount(customerAccount);
 			populateAccounts(customerAccount);
 
 			// check if has default
@@ -171,12 +168,25 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 				}
 			}
 
-			super.saveOrUpdate(killConversation);
 			CustomerAccount customerAccount = entity.getCustomerAccount();
-			if (customerAccount != null
-					&& !customerAccount.getBillingAccounts().contains(entity)) {
-				customerAccount.getBillingAccounts().add(entity);
+			if (customerAccount != null) {
+				List<BillingAccount> billingAccounts = billingAccountService
+						.listByCustomerAccount(customerAccount);
+				if (billingAccounts != null) {
+					if (!billingAccounts.contains(entity)) {
+						customerAccount.getBillingAccounts().add(entity);
+					}
+				}
 			}
+
+			if (entity.isTransient()) {
+				billingAccountService.initBillingAccount(entity);
+			}
+
+			super.saveOrUpdate(killConversation);
+
+			log.debug("isAttached={}", getPersistenceService()
+					.getEntityManager().contains(entity));
 
 			saveCustomFields();
 
@@ -187,7 +197,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			messages.error(new BundleKey("messages",
 					"error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
 		}
 		return null;
@@ -201,22 +211,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		return billingAccountService;
 	}
 
-	protected String saveOrUpdate(BillingAccount entity) {
-		try {
-			if (entity.isTransient()) {
-				billingAccountService.createBillingAccount(entity, null);
-				messages.info(new BundleKey("messages", "save.successful"));
-			} else {
-				billingAccountService.updateBillingAccount(entity, null);
-				messages.info(new BundleKey("messages", "update.successful"));
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-
-		return back();
-	}
-
 	public void terminateAccount() {
 		log.debug("terminateAccount billingAccountId: {}", entity.getId());
 		try {
@@ -226,10 +220,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			messages.info(new BundleKey("messages",
 					"resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 	}
@@ -244,10 +238,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -261,10 +255,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			return "/pages/billing/billingAccounts/billingAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -499,12 +493,13 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider", "customerAccount");
+		return Arrays.asList("provider", "customerAccount",
+				"customerAccount.customer");
 	}
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
+		return Arrays.asList("provider", "customerAccount", "billingCycle");
 	}
 
 }

@@ -20,19 +20,15 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.mediation.TimePlan;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.medina.impl.TimePlanService;
 
-/**
- * @author MBAREK
- * 
- */
 @Named
 @ConversationScoped
-public class TimePlanBean extends BaseBean<TimePlan> {
+public class TimePlanBean extends StatelessBaseBean<TimePlan> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -34,14 +34,10 @@ import org.meveo.service.crm.impl.ProviderContactService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Gediminas Ubartas
- * @created 2011-10-04
- * 
  */
 @Named
 @ConversationScoped
-public class ProviderContactBean extends BaseBean<ProviderContact> {
+public class ProviderContactBean extends StatelessBaseBean<ProviderContact> {
 
 	private static final long serialVersionUID = 1L;
 

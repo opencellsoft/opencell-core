@@ -24,18 +24,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.admin.Seller;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 
-/**
- * @author MBAREK
- * 
- */
 @Named
 @ConversationScoped
-public class SellerBean extends BaseBean<Seller> {
+public class SellerBean extends StatelessBaseBean<Seller> {
 
 	private static final long serialVersionUID = 1L;
 

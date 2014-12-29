@@ -21,45 +21,45 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.Subscription;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 
 /**
- * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
+ * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  */
 @Named
 @ConversationScoped
-public class SubscriptionListBean extends BaseBean<Subscription> {
+public class SubscriptionListBean extends StatelessBaseBean<Subscription> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link Subscription} service. Extends {@link PersistenceService}
-     */
-    @Inject
-    private SubscriptionService subscriptionService;
+	/**
+	 * Injected
+	 * 
+	 * @{link Subscription} service. Extends {@link PersistenceService}
+	 */
+	@Inject
+	private SubscriptionService subscriptionService;
 
-    public SubscriptionListBean() {
-        super(Subscription.class);
-    }
+	public SubscriptionListBean() {
+		super(Subscription.class);
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<Subscription> getPersistenceService() {
-        return subscriptionService;
-    }
-    
-    @Override
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<Subscription> getPersistenceService() {
+		return subscriptionService;
+	}
+
+	@Override
 	protected String getDefaultSort() {
 		return "code";
 	}

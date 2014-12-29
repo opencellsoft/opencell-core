@@ -21,7 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.admin.DunningHistory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -32,13 +32,10 @@ import org.meveo.service.payments.impl.DunningHistoryService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Gediminas Ubartas
- * @created 2010.09.28
  */
 @Named
 @ConversationScoped
-public class DunningHistoryBean extends BaseBean<DunningHistory> {
+public class DunningHistoryBean extends StatelessBaseBean<DunningHistory> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -69,7 +66,6 @@ public class DunningHistoryBean extends BaseBean<DunningHistory> {
 	public DunningHistory init() {
 		return initEntity();
 	}
-
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

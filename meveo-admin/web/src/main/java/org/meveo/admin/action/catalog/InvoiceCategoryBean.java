@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
@@ -37,13 +37,10 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Ignas
- * @created Dec 15, 2010
  */
 @Named
 @ConversationScoped
-public class InvoiceCategoryBean extends BaseBean<InvoiceCategory> {
+public class InvoiceCategoryBean extends StatelessBaseBean<InvoiceCategory> {
 
 	private static final long serialVersionUID = 1L;
 

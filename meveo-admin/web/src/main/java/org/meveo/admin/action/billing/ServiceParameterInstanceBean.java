@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.ServiceParameterInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -31,13 +32,11 @@ import org.meveo.service.billing.impl.ServiceParameterInstanceService;
  * {@link BaseBean} that provides almost all common methods to handle entities
  * filtering/sorting in datatable, their create, edit, view, delete operations).
  * It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
  */
 @Named
 @ConversationScoped
-public class ServiceParameterInstanceBean extends BaseBean<ServiceParameterInstance> {
+public class ServiceParameterInstanceBean extends
+		StatelessBaseBean<ServiceParameterInstance> {
 
 	private static final long serialVersionUID = 1L;
 

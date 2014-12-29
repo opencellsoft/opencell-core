@@ -257,15 +257,16 @@ public class UserService extends PersistenceService<User> {
 
 		if (!skipPasswordExpiracy
 				&& user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user " + user.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user "
+			log.info("The password of user with id=" + user.getId()
+					+ " has expired.");
+			throw new PasswordExpiredException("The password of user with id="
 					+ user.getId() + " has expired.");
 		}
 
 		// Check the roles
 		if (user.getRoles() == null || user.getRoles().isEmpty()) {
-			log.info("The user " + user.getId() + " has no role!");
-			throw new NoRoleException("The user " + user.getId()
+			log.info("The user with id=" + user.getId() + " has no role!");
+			throw new NoRoleException("The user with id=" + user.getId()
 					+ " has no role!");
 		}
 

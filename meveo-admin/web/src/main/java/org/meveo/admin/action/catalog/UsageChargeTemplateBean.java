@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -42,7 +42,7 @@ import org.primefaces.model.DualListModel;
 
 @Named
 @ConversationScoped
-public class UsageChargeTemplateBean extends BaseBean<UsageChargeTemplate> {
+public class UsageChargeTemplateBean extends StatelessBaseBean<UsageChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	@Inject

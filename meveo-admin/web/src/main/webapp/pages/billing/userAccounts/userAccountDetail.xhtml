@@ -40,12 +40,7 @@
 			searchField1="code" column1Label="#{messages['billingAccount.code']}"
 			column1="code" selection="#{userAccountBean.entity.billingAccount}"
 			updateField=":userAccountFormPanel:formId:userAccountTab:billingAccountSelectId:billingAccountSelectId">
-
-			<!-- 			<a:commandLink value="#{messages['commons.select']}" render="formId" immediate="true" action="#{userAccountBean.populateAccounts(entity)}" -->
-			<!-- 				oncomplete="dlg_billingAccountPopup.hide()"> -->
-			<!-- 			</a:commandLink> -->
 		</hftl:entityPopup>
-
 
 		<hftl:entityPopup id="walletOperationPopup"
 			dataModel="#{userAccountBean.getWalletOperationsNoInvoiced()}"
@@ -66,7 +61,6 @@
 			column7="currency">
 		</hftl:entityPopup>
 
-		<!-- dataModel="#{getRatedTransactionsInvoiced}" -->
 		<hftl:entityPopup id="ratedTransactionsInvoicedPopup"
 			header="#{messages['ratedTransactionsInvoiced.popup.header']}"
 			showSearchButton="false" backingBean="#{ratedTransactionBean}"
@@ -122,22 +116,6 @@
 											field="description" id="description" showOnlyOnNew="true"
 											useConverter="false" size="70" maxlength="100" />
 									</hftl:panelGroup>
-									<!-- <hftl:panelGroup columns="2">
-										<hf:formField
-											label="#{messages['userAccount.subscriptionDate']}"
-											field="subscriptionDate" showOnlyOnConsult="true" />
-										<hf:formField
-											label="#{messages['userAccount.terminationDate']}"
-											field="terminationDate" showOnlyOnConsult="true" />
-									</hftl:panelGroup>
-									<hftl:panelGroup columns="2">
-										<hf:formField label="#{messages['userAccount.status']}"
-											field="status" childField="label" isMessage="true"
-											disabled="true" />
-										<hf:emtyFormField showOnlyOnNew="true" />
-										<hf:formField label="#{messages['userAccount.statusDate']}"
-											field="statusDate" showOnlyOnConsult="true" />
-									</hftl:panelGroup> -->
 									<hftl:panelGroup columns="1">
 										<p:panelGrid columns="2">
 											<p:outputLabel for="title_select"
@@ -226,7 +204,7 @@
 							<p:button outcome="addNewSubscription"
 								value="#{messages['userAccount.addNewSubscription']}"
 								disabled="#{userAccountBean.entity.status.toString() != 'ACTIVE'}">
-								<!-- 								<f:param name="cid" value="#{conversation.id}" /> -->
+								<!-- 								<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
 							</p:button>
 							<p:commandButton value="#{messages['button.terminateButton']}"
 								oncomplete="dlg_userAccountTerminationPopup.show()"

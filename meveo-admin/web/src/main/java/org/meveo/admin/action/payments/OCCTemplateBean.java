@@ -23,7 +23,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -34,13 +34,10 @@ import org.meveo.service.payments.impl.OCCTemplateService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Ignas
- * @created 2009.10.13
  */
-@Named("occTemplateBean")
+@Named
 @ConversationScoped
-public class OCCTemplateBean extends BaseBean<OCCTemplate> {
+public class OCCTemplateBean extends StatelessBaseBean<OCCTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -72,9 +69,9 @@ public class OCCTemplateBean extends BaseBean<OCCTemplate> {
 	}
 
 	public List<OCCTemplate> listOCCTemplate() {
-        return (List<OCCTemplate>) occTemplateService.getListOccSortedByName(getCurrentProvider().getCode());
+		return (List<OCCTemplate>) occTemplateService
+				.getListOccSortedByName(getCurrentProvider().getCode());
 	}
-
 
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()

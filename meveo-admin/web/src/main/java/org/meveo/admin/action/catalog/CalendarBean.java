@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
@@ -42,7 +42,7 @@ import org.primefaces.model.DualListModel;
 
 @Named
 @ConversationScoped
-public class CalendarBean extends BaseBean<Calendar> {
+public class CalendarBean extends StatelessBaseBean<Calendar> {
 
 	private static final long serialVersionUID = 1L;
 

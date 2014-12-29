@@ -71,7 +71,7 @@
 					value="" size="#{cc.attrs.size}" required="#{cc.attrs.required}"
 					disabled="true" />
 
-				<p:commandButton
+				<p:commandButton immediate="true"
 					rendered="#{(cc.attrs.edit and !cc.attrs.showPopupOnlyOnNew) or (cc.attrs.edit and cc.attrs.showPopupOnlyOnNew and cc.entityFromBackingBeanOrAttribute.id==null)}"
 					id="selectLink" onclick="dlg_#{cc.attrs.popupId}.show()"
 					icon="ui-icon-search" />

@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Country;
 import org.meveo.service.admin.impl.CountryService;
@@ -38,7 +39,7 @@ import org.meveo.service.base.local.IPersistenceService;
  */
 @Named
 @ConversationScoped
-public class CountryBean extends BaseBean<Country> {
+public class CountryBean extends StatelessBaseBean<Country> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -82,7 +83,7 @@ public class CountryBean extends BaseBean<Country> {
 	protected IPersistenceService<Country> getPersistenceService() {
 		return countryService;
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "descriptionEn";

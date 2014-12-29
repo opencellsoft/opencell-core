@@ -64,6 +64,7 @@ public class CustomerBean extends AccountBean<Customer> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
+	@Override
 	public Customer initEntity() {
 		Customer customer = super.initEntity();
 

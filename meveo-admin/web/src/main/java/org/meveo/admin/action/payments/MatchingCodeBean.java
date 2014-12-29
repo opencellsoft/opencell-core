@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.service.base.PersistenceService;
@@ -33,14 +33,10 @@ import org.meveo.service.payments.impl.MatchingCodeService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Tyshan(tyshanchn@manaty.net)
- * @created 2010-12-1
  */
 @Named
-// TODO: @Scope(ScopeType.PAGE)
 @ConversationScoped
-public class MatchingCodeBean extends BaseBean<MatchingCode> {
+public class MatchingCodeBean extends StatelessBaseBean<MatchingCode> {
 
 	private static final long serialVersionUID = 1L;
 

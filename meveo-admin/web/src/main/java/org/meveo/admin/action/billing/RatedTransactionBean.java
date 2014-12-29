@@ -22,55 +22,58 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 
 /**
- * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author R.AITYAAZZA
- * @created 16 dec. 10
+ * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
-public class RatedTransactionBean extends BaseBean<RatedTransaction> {
+public class RatedTransactionBean extends StatelessBaseBean<RatedTransaction> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link RatedTransaction} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private RatedTransactionService ratedTransactionService;
+	/**
+	 * Injected @{link RatedTransaction} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private RatedTransactionService ratedTransactionService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public RatedTransactionBean() {
-        super(RatedTransaction.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public RatedTransactionBean() {
+		super(RatedTransaction.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("ratedTransaction")
-    public RatedTransaction init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("ratedTransaction")
+	public RatedTransaction init() {
+		return initEntity();
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<RatedTransaction> getPersistenceService() {
-        return ratedTransactionService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<RatedTransaction> getPersistenceService() {
+		return ratedTransactionService;
+	}
 
 }

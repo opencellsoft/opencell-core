@@ -21,7 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.service.base.PersistenceService;
@@ -29,61 +29,63 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AutomatedPaymentService;
 
 /**
- * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author Ignas
- * @created 2009.10.13
+ * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
-public class AutomatedPaymentBean extends BaseBean<AutomatedPayment> {
+public class AutomatedPaymentBean extends StatelessBaseBean<AutomatedPayment> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link AutomatedPayment} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private AutomatedPaymentService automatedPaymentService;
+	/**
+	 * Injected @{link AutomatedPayment} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private AutomatedPaymentService automatedPaymentService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public AutomatedPaymentBean() {
-        super(AutomatedPayment.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public AutomatedPaymentBean() {
+		super(AutomatedPayment.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("automatedPayment")
-    public AutomatedPayment init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("automatedPayment")
+	public AutomatedPayment init() {
+		return initEntity();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+	 */
+	@Override
 	public String saveOrUpdate(boolean killConversation)
 			throws BusinessException {
-        entity.getCustomerAccount().getAccountOperations().add(entity);
-        return super.saveOrUpdate(killConversation);
-    }
+		entity.getCustomerAccount().getAccountOperations().add(entity);
+		return super.saveOrUpdate(killConversation);
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<AutomatedPayment> getPersistenceService() {
-        return automatedPaymentService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<AutomatedPayment> getPersistenceService() {
+		return automatedPaymentService;
+	}
 
 }

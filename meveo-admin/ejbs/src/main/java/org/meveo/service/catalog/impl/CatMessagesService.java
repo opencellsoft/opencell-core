@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -35,7 +34,6 @@ import org.meveo.service.base.PersistenceService;
  * CatMessagesService service implementation.
  */
 @Stateless
-@Named
 public class CatMessagesService extends PersistenceService<CatMessages> {
 
 	@PostConstruct

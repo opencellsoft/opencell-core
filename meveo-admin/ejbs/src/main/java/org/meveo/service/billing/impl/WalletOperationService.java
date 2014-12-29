@@ -27,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -41,6 +42,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -1458,7 +1460,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ " w.amountTax = w.quantity * " + unitTax + ","
 					+ " w.unitAmountWithoutTax = " + unitPriceWithoutTax + ","
 					+ " w.unitAmountTax = " + unitTax;
-			
+
 			if (unitPriceWithTax != null) {
 				strQuery += "," + " w.amountWithTax = w.quantity * "
 						+ unitPriceWithTax + "," + " w.unitAmountWithTax = "
@@ -1476,15 +1478,30 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			query.setParameter("endDate", endDate);
 			query.setParameter("status", WalletOperationStatusEnum.OPEN);
 			query.setParameter("serviceInstance", serviceInstance);
-			
+
 			if (walletOperation.getChargeInstance().getChargeTemplate() instanceof UsageChargeTemplate) {
 				query.setParameter("serviceType",
 						((UsageChargeTemplate) walletOperation
 								.getChargeInstance().getChargeTemplate())
 								.getFilterParam1());
 			}
-			
+
 			query.executeUpdate();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<WalletOperation> listByChargeInstance(
+			ChargeInstance chargeInstance) {
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
+		qb.addCriterionEntity("chargeInstance", chargeInstance);
+
+		try {
+			return (List<WalletOperation>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
 		}
 	}
 

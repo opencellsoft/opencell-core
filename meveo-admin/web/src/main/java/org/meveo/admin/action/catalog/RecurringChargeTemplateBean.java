@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -46,15 +46,11 @@ import org.primefaces.model.DualListModel;
  * {@link BaseBean} that provides almost all common methods to handle entities
  * filtering/sorting in datatable, their create, edit, view, delete operations).
  * It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Nov 18, 2010
- * 
  */
 @Named
 @ConversationScoped
 public class RecurringChargeTemplateBean extends
-		BaseBean<RecurringChargeTemplate> {
+		StatelessBaseBean<RecurringChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Injected @{link RecurringChargeTemplate} service. Extends

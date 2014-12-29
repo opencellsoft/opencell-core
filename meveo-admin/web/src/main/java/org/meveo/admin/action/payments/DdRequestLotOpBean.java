@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DDRequestLotOp;
@@ -38,12 +38,10 @@ import org.meveo.service.payments.impl.DDRequestLotOpService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Tyshan(tyshan@manaty.net)
  */
 @Named
 @ConversationScoped
-public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
+public class DdRequestLotOpBean extends StatelessBaseBean<DDRequestLotOp> {
 
 	private static final long serialVersionUID = 1L;
 

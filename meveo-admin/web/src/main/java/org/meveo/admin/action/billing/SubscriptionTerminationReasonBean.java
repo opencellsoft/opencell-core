@@ -22,54 +22,53 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
-/**
- * @author R.AITYAAZZA
- * @created 5 avr. 11
- */
 @Named
 @ConversationScoped
-public class SubscriptionTerminationReasonBean extends BaseBean<SubscriptionTerminationReason> {
-    private static final long serialVersionUID = 1L;
+public class SubscriptionTerminationReasonBean extends
+		StatelessBaseBean<SubscriptionTerminationReason> {
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link OneShotChargeTemplate} service. Extends {@link PersistenceService} .
-     */
-    @Inject
-    private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
+	/**
+	 * Injected
+	 * 
+	 * @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}
+	 */
+	@Inject
+	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public SubscriptionTerminationReasonBean() {
-        super(SubscriptionTerminationReason.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public SubscriptionTerminationReasonBean() {
+		super(SubscriptionTerminationReason.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("subscriptionTerminationReason")
-    public SubscriptionTerminationReason init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("subscriptionTerminationReason")
+	public SubscriptionTerminationReason init() {
+		return initEntity();
+	}
 
-
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<SubscriptionTerminationReason> getPersistenceService() {
-        return subscriptionTerminationReasonService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<SubscriptionTerminationReason> getPersistenceService() {
+		return subscriptionTerminationReasonService;
+	}
 
 }

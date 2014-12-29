@@ -21,13 +21,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
@@ -36,15 +35,9 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.selfcare.local.SelfcareServiceLocal;
 
-/**
- * 
- * 
- * @author Tyshan(tyshan@manaty.net)
- * @created 2011.2.15
- */
 @Named
 @ConversationScoped
-public class SyntheseClientBean extends BaseBean<BillingAccount> {
+public class SyntheseClientBean extends StatelessBaseBean<BillingAccount> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -54,20 +47,20 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 	@Inject
 	private BillingAccountService billingAccountService;
 
-//	@Named TODO migration
-//	@Produces
+	// @Named TODO migration
+	// @Produces
 	private CustomerAccount synCustomerAccount;
 
-//  @Named TODO migration
-	@Produces
+	// @Named TODO migration
+	// @Produces
 	private BillingAccount synBillingAccount;
 
-//  @Named TODO migration
-	@Produces
+	// @Named TODO migration
+	// @Produces
 	private List<Invoice> synInvoices;
 
-//  @Named TODO migration
-	@Produces
+	// @Named TODO migration
+	// @Produces
 	private BigDecimal customerAccountBalance;
 
 	public SyntheseClientBean() {
@@ -85,11 +78,12 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 		try {
 			customerAccountBalance = selfcareService
 					.getAccountBalance(synCustomerAccount.getCode());
-			synInvoices = selfcareService.getBillingAccountValidatedInvoices(synBillingAccount
-					.getCode());
+			synInvoices = selfcareService
+					.getBillingAccountValidatedInvoices(synBillingAccount
+							.getCode());
 		} catch (BusinessException e) {
-			log.error("Error:#0 when try to retrieve accountBalance with #1", e.getMessage(),
-					synCustomerAccount.getCode());
+			log.error("Error:#0 when try to retrieve accountBalance with #1",
+					e.getMessage(), synCustomerAccount.getCode());
 		}
 	}
 
@@ -104,8 +98,8 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 		try {
 			pdf = selfcareService.getPDFInvoice(invoiceNumber);
 		} catch (BusinessException e1) {
-			log.error("Error:#0, when retrieve pdf array with number #1", e1.getMessage(),
-					invoiceNumber);
+			log.error("Error:#0, when retrieve pdf array with number #1",
+					e1.getMessage(), invoiceNumber);
 		}
 		if (pdf == null || pdf.length == 0) {
 			return;
@@ -113,12 +107,12 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 		try {
 			javax.faces.context.FacesContext context = javax.faces.context.FacesContext
 					.getCurrentInstance();
-			HttpServletResponse res = (HttpServletResponse) context.getExternalContext()
-					.getResponse();
+			HttpServletResponse res = (HttpServletResponse) context
+					.getExternalContext().getResponse();
 			res.setContentType("application/pdf");
 			res.setContentLength(pdf.length);
-			res.addHeader("Content-disposition", "attachment;filename=\"invoice_" + invoiceNumber
-					+ ".pdf\"");
+			res.addHeader("Content-disposition",
+					"attachment;filename=\"invoice_" + invoiceNumber + ".pdf\"");
 
 			ServletOutputStream out = res.getOutputStream();
 
@@ -128,7 +122,8 @@ public class SyntheseClientBean extends BaseBean<BillingAccount> {
 			context.responseComplete();
 
 		} catch (IOException e) {
-			log.error("Error:#0, when output invoice with number #1", e.getMessage(), invoiceNumber);
+			log.error("Error:#0, when output invoice with number #1",
+					e.getMessage(), invoiceNumber);
 		}
 
 	}

@@ -26,6 +26,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
@@ -41,14 +42,10 @@ import org.primefaces.event.SelectEvent;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Marouane ALAMI
- * @created 25-03-2013
- * 
  */
 @Named
 @ConversationScoped
-public class TradingLanguageBean extends BaseBean<TradingLanguage> {
+public class TradingLanguageBean extends StatelessBaseBean<TradingLanguage> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -16,70 +16,84 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService; 
+import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 
-/** 
- * @author MBAREK
- * 
- */
 @Named
 @ConversationScoped
-public class InvoiceSubCategoryCountryBean extends BaseBean<InvoiceSubcategoryCountry> {
+public class InvoiceSubCategoryCountryBean extends
+		StatelessBaseBean<InvoiceSubcategoryCountry> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link PricePlanMatrix} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+	/**
+	 * Injected @{link PricePlanMatrix} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public InvoiceSubCategoryCountryBean() {
-        super(InvoiceSubcategoryCountry.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public InvoiceSubCategoryCountryBean() {
+		super(InvoiceSubcategoryCountry.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-   
-    public InvoiceSubcategoryCountry initEntity() {
-        return super.initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
 
-    /**
-     * Override default list view name. (By default its class name starting lower case + 's').
-     * 
-     * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
-     */
-    protected String getDefaultViewName() {
-        return "invoiceSubCategoryCountries";
-    }
+	public InvoiceSubcategoryCountry initEntity() {
+		return super.initEntity();
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<InvoiceSubcategoryCountry> getPersistenceService() {
-        return invoiceSubCategoryCountryService;
-    }
-    
-    @Override
-    protected String getListViewName() {
-    	 return "invoiceSubCategoryCountries";
-    }
+	/**
+	 * Override default list view name. (By default its class name starting
+	 * lower case + 's').
+	 * 
+	 * @see org.meveo.admin.action.BaseBean#getDefaultViewName()
+	 */
+	protected String getDefaultViewName() {
+		return "invoiceSubCategoryCountries";
+	}
+
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<InvoiceSubcategoryCountry> getPersistenceService() {
+		return invoiceSubCategoryCountryService;
+	}
+
+	@Override
+	protected String getListViewName() {
+		return "invoiceSubCategoryCountries";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("invoiceSubCategory", "tradingCountry", "tax");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("invoiceSubCategory", "tradingCountry", "tax");
+	}
 
 }

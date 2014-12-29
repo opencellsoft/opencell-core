@@ -22,17 +22,14 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.local.IPersistenceService;
 
-/**
- * @author MBAREK
- */
 @Named
 @ConversationScoped
-public class LanguageBean extends BaseBean<Language> {
+public class LanguageBean extends StatelessBaseBean<Language> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -68,7 +65,7 @@ public class LanguageBean extends BaseBean<Language> {
 	public void test() throws BatchUpdateException {
 		throw new BatchUpdateException();
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "languageCode";

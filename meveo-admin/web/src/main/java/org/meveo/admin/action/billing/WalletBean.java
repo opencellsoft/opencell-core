@@ -23,63 +23,69 @@ import javax.inject.Named;
 
 import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletService;
 
 /**
- * Standard backing bean for {@link WalletInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
- * view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
+ * Standard backing bean for {@link WalletInstance} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
-public class WalletBean extends BaseBean<WalletInstance> {
+public class WalletBean extends StatelessBaseBean<WalletInstance> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /** Injected @{link WalletInstance} service. Extends {@link PersistenceService}. */
-    @Inject
-    private WalletService walletService;
+	/**
+	 * Injected @{link WalletInstance} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private WalletService walletService;
 
-    /**
-     * Customer account Id passed as a parameter. Used when creating new WalletInstance from customer account window, so default customer account will be set on newly created wallet.
-     */
-    @Inject
-    @RequestParam
-    private Instance<Long> customerAccountId;
+	/**
+	 * Customer account Id passed as a parameter. Used when creating new
+	 * WalletInstance from customer account window, so default customer account
+	 * will be set on newly created wallet.
+	 */
+	@Inject
+	@RequestParam
+	private Instance<Long> customerAccountId;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public WalletBean() {
-        super(WalletInstance.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public WalletBean() {
+		super(WalletInstance.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    public WalletInstance initEntity() {
-        super.initEntity();
-        if (customerAccountId != null) {
-            // wallet.setCustomerAccount(customerAccountService.findById(customerAccountId));
-        }
-        return entity;
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	public WalletInstance initEntity() {
+		super.initEntity();
+		if (customerAccountId != null) {
+			// wallet.setCustomerAccount(customerAccountService.findById(customerAccountId));
+		}
+		return entity;
+	}
 
-
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<WalletInstance> getPersistenceService() {
-        return walletService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<WalletInstance> getPersistenceService() {
+		return walletService;
+	}
 
 }

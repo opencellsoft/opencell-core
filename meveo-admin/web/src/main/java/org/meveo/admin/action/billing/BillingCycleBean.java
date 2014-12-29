@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -34,14 +35,10 @@ import org.meveo.service.billing.impl.BillingCycleService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
- * 
  */
 @Named
 @ConversationScoped
-public class BillingCycleBean extends BaseBean<BillingCycle> {
+public class BillingCycleBean extends StatelessBaseBean<BillingCycle> {
 
 	private static final long serialVersionUID = 1L;
 

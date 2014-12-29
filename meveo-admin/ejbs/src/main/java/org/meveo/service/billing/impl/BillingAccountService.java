@@ -44,6 +44,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 
 @Stateless
@@ -53,21 +54,22 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	private UserAccountService userAccountService;
 
 	@Inject
-	RatedTransactionService ratedTransactionService;
+	private RatedTransactionService ratedTransactionService;
 
-	public void createBillingAccount(BillingAccount billingAccount, User creator) {
+	public void initBillingAccount(BillingAccount billingAccount) {
 		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
 		if (billingAccount.getSubscriptionDate() == null) {
 			billingAccount.setSubscriptionDate(new Date());
 		}
+
 		if (billingAccount.getNextInvoiceDate() == null) {
 			billingAccount.setNextInvoiceDate(new Date());
 		}
+
 		if (billingAccount.getCustomerAccount() != null) {
 			billingAccount.setProvider(billingAccount.getCustomerAccount()
 					.getProvider());
 		}
-		create(billingAccount, creator);
 	}
 
 	public void createBillingAccount(BillingAccount billingAccount,
@@ -216,8 +218,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			return false;
 		}
 
-		List<BillingAccount> billingAccounts = billingAccount
-				.getCustomerAccount().getBillingAccounts();
+		List<BillingAccount> billingAccounts = listByCustomerAccount(billingAccount
+				.getCustomerAccount());
 		for (BillingAccount ba : billingAccounts) {
 			if (ba.getDefaultLevel() != null
 					&& ba.getDefaultLevel()
@@ -274,6 +276,21 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		setProvider(currentUser.getProvider());
 		update(billingAccount, currentUser);
 		return new AsyncResult<Boolean>(true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<BillingAccount> listByCustomerAccount(
+			CustomerAccount customerAccount) {
+		QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
+		qb.addCriterionEntity("customerAccount", customerAccount);
+
+		try {
+			return (List<BillingAccount>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
 	}
 
 }

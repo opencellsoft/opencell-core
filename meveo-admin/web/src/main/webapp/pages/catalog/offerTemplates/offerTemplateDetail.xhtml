@@ -1,11 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a="http://richfaces.org/a4j"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:a="http://richfaces.org/a4j" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://java.sun.com/jsf/composite/tags"
 	template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
@@ -14,12 +13,17 @@
 
 	<ui:define name="body">
 
-		<hf:formPanel label="#{messages['offerTemplate.offerTemplatePanel']}" backingBean="#{offerTemplateBean}">
-    			<hf:formField label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
-    			<hf:formField label="#{messages['offerTemplate.description']}" field="description" required="true" useConverter="false" id="description" maxlength="50"/>
-		    	<hf:formField  label="#{messages['enableEntity.disabled']}" field="disabled" isMessage="true"/>
-    			<hf:formField  label="#{messages['offerTemplate.serviceTemplates']}" field="serviceTemplates" listType="pickUpList" listService="#{serviceTemplateService}" childField="code"/>	
-		
+		<hf:formPanel label="#{messages['offerTemplate.offerTemplatePanel']}"
+			backingBean="#{offerTemplateBean}">
+			<hf:formField label="#{messages['offerTemplate.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hf:formField label="#{messages['offerTemplate.description']}"
+				field="description" required="true" useConverter="false"
+				id="description" maxlength="50" />
+			<hf:formField label="#{messages['enableEntity.disabled']}"
+				field="disabled" isMessage="true" />
+			<hf:formField label="#{messages['offerTemplate.serviceTemplates']}"
+				field="serviceTemplates" listType="pickUpList" childField="code" />
 		</hf:formPanel>
 
 	</ui:define>

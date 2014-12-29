@@ -21,12 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -46,19 +45,13 @@ import org.primefaces.model.DualListModel;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
- * 
  */
 @Named
 @ConversationScoped
-public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
+public class ServiceTemplateBean extends StatelessBaseBean<ServiceTemplate> {
 
 	private static final long serialVersionUID = 1L;
 
-	@Produces
-	@Named
 	private ServiceUsageChargeTemplate serviceUsageChargeTemplate = new ServiceUsageChargeTemplate();
 
 	public void newServiceUsageChargeTemplate() {
@@ -291,6 +284,15 @@ public class ServiceTemplateBean extends BaseBean<ServiceTemplate> {
 	@Override
 	protected List<String> getFormFieldsToFetch() {
 		return Arrays.asList("provider");
+	}
+
+	public ServiceUsageChargeTemplate getServiceUsageChargeTemplate() {
+		return serviceUsageChargeTemplate;
+	}
+
+	public void setServiceUsageChargeTemplate(
+			ServiceUsageChargeTemplate serviceUsageChargeTemplate) {
+		this.serviceUsageChargeTemplate = serviceUsageChargeTemplate;
 	}
 
 }

@@ -509,7 +509,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService
 		return (BaseEntity) getEntityManager().merge(e);
 	}
 
-	protected EntityManager getEntityManager() {
+	public EntityManager getEntityManager() {
+		log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
+				em.hashCode());
 		return em;
 	}
 

@@ -86,7 +86,7 @@
 						
 					<p:button  outcome="customerAccountDetail" value="#{messages['action.back']}">
 									<f:param name="objectId" value="#{customerAccountBean.entity.id}" />
-									<f:param name="cid" value="#{conversation.id}" />
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 					</p:button>	
 				</p:panelGrid>
 			</h:form>

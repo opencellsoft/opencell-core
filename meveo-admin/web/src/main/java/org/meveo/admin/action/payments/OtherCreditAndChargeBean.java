@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.CustomerAccount;
@@ -43,13 +43,10 @@ import org.meveo.service.payments.impl.OtherCreditAndChargeService;
  * {@link BaseBean} that provides almost all common methods to handle entities
  * filtering/sorting in datatable, their create, edit, view, delete operations).
  * It works with Manaty custom JSF components.
- * 
- * @author Ignas
- * @created 2009.10.13
  */
 @Named
 @ConversationScoped
-public class OtherCreditAndChargeBean extends BaseBean<OtherCreditAndCharge> {
+public class OtherCreditAndChargeBean extends StatelessBaseBean<OtherCreditAndCharge> {
 
 	private static final long serialVersionUID = 1L;
 

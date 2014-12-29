@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlanMatrix;
 import org.meveo.service.base.PersistenceService;
@@ -40,7 +40,7 @@ import org.primefaces.event.SelectEvent;
  */
 @Named
 @ConversationScoped
-public class DiscountPlanMatrixBean extends BaseBean<DiscountPlanMatrix> {
+public class DiscountPlanMatrixBean extends StatelessBaseBean<DiscountPlanMatrix> {
 
 	private static final long serialVersionUID = 1L;
 

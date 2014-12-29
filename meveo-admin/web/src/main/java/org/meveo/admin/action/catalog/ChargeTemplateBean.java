@@ -21,7 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.service.base.PersistenceService;
@@ -29,50 +29,50 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 
 /**
- * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
- * create, edit, view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author Gediminas Ubartas
- * @created 2011-01-28
- * @author Sebastien Michea updated 2011-02-01
- * 
+ * Standard backing bean for {@link ChargeInstance} (extends {@link BaseBean}
+ * that provides almost all common methods to handle entities filtering/sorting
+ * in datatable, their create, edit, view, delete operations). It works with
+ * Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
-public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
-    private static final long serialVersionUID = 1L;
+public class ChargeTemplateBean extends StatelessBaseBean<ChargeTemplate> {
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private ChargeTemplateServiceAll chargeTemplateService;
+	/**
+	 * Injected @{link OneShotChargeTemplate} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private ChargeTemplateServiceAll chargeTemplateService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public ChargeTemplateBean() {
-        super(ChargeTemplate.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public ChargeTemplateBean() {
+		super(ChargeTemplate.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("chargeTemplate")
-    public ChargeTemplate init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("chargeTemplate")
+	public ChargeTemplate init() {
+		return initEntity();
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<ChargeTemplate> getPersistenceService() {
-        return chargeTemplateService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<ChargeTemplate> getPersistenceService() {
+		return chargeTemplateService;
+	}
 
 }

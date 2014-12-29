@@ -21,48 +21,49 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.UserAccountService;
 
 /**
- * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
+ * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that
+ * provides almost all common methods to handle entities filtering/sorting in
+ * datatable, their create, edit, view, delete operations). It works with Manaty
+ * custom JSF components.
  */
 @Named
 @ConversationScoped
-public class UserAccountListBean extends BaseBean<UserAccount> {
+public class UserAccountListBean extends StatelessBaseBean<UserAccount> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link UserAccount} service. Extends {@link PersistenceService} .
-     */
-    @Inject
-    private UserAccountService userAccountService;
+	/**
+	 * Injected
+	 * 
+	 * @{link UserAccount} service. Extends {@link PersistenceService} .
+	 */
+	@Inject
+	private UserAccountService userAccountService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public UserAccountListBean() {
-        super(UserAccount.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public UserAccountListBean() {
+		super(UserAccount.class);
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<UserAccount> getPersistenceService() {
-        return userAccountService;
-    }
-    
-    @Override
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<UserAccount> getPersistenceService() {
+		return userAccountService;
+	}
+
+	@Override
 	protected String getDefaultSort() {
 		return "code";
 	}

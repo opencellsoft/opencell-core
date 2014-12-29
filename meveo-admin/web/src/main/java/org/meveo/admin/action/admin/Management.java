@@ -31,9 +31,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.slf4j.Logger;
 
 /**
- * Class to manage other applications : Medina, Vertina, Oudaya, Bayad
- * 
- * @author Gediminas Ubartas
+ * Class to manage other applications : Medina, Vertina, Oudaya, Bayad.
  */
 @Named
 @ConversationScoped
@@ -44,8 +42,7 @@ public class Management implements Serializable {
 	@Inject
 	protected Logger log;
 
-
-    private ParamBean paramBean=ParamBean.getInstance();
+	private ParamBean paramBean = ParamBean.getInstance();
 
 	/**
 	 * Application name for daemon to know what application info to send back.
@@ -78,8 +75,10 @@ public class Management implements Serializable {
 	 */
 	public void connect() {
 
-		String connectionUrl = paramBean.getProperty("connectionUrl","127.0.0.1");
-		int connectionPort = Integer.parseInt(paramBean.getProperty("connectionPort","3000"));
+		String connectionUrl = paramBean.getProperty("connectionUrl",
+				"127.0.0.1");
+		int connectionPort = Integer.parseInt(paramBean.getProperty(
+				"connectionPort", "3000"));
 
 		connectionEstablished = false;
 		// open a socket connection
@@ -179,35 +178,25 @@ public class Management implements Serializable {
 	 * @param tempLogList
 	 *            Logging Events List.
 	 */
-	/*public void convertLogs(List<LoggingEvent> tempLogList) {
-
-		for (Object o : tempLogList) {
-			if (o instanceof LoggingEvent) {
-				final LoggingEvent logEvent = (LoggingEvent) o;
-				logs.add("[" + logEvent.getLevel() + "] " + logEvent.getRenderedMessage());
-			}
-		}
-	}*/
+	/*
+	 * public void convertLogs(List<LoggingEvent> tempLogList) {
+	 * 
+	 * for (Object o : tempLogList) { if (o instanceof LoggingEvent) { final
+	 * LoggingEvent logEvent = (LoggingEvent) o; logs.add("[" +
+	 * logEvent.getLevel() + "] " + logEvent.getRenderedMessage()); } } }
+	 */
 
 	/**
 	 * Get logs from application (what it does at the time).
 	 */
-	/*@SuppressWarnings("unchecked")
-	public List<String> getLogs() {
-		connect();
-		try {
-			oos.writeObject("log");
-			logs.clear();
-			List<LoggingEvent> tempLogList = (List<LoggingEvent>) ois.readObject();
-			convertLogs(tempLogList);
-			close();
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		} catch (ClassNotFoundException e) {
-			log.error(e.getMessage());
-		}
-		return logs;
-	}*/
+	/*
+	 * @SuppressWarnings("unchecked") public List<String> getLogs() { connect();
+	 * try { oos.writeObject("log"); logs.clear(); List<LoggingEvent>
+	 * tempLogList = (List<LoggingEvent>) ois.readObject();
+	 * convertLogs(tempLogList); close(); } catch (IOException e) {
+	 * log.error(e.getMessage()); } catch (ClassNotFoundException e) {
+	 * log.error(e.getMessage()); } return logs; }
+	 */
 
 	/**
 	 * Sends application kill signal to socket server.

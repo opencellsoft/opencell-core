@@ -30,6 +30,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -53,10 +54,12 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.medina.impl.AccessService;
 
 @Named
 @ConversationScoped
-public class SubscriptionBean extends BaseBean<Subscription> {
+public class SubscriptionBean extends StatelessBaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -74,14 +77,6 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	@Inject
 	private UserAccountService userAccountService;
 
-	private ServiceInstance selectedServiceInstance;
-
-	private Integer quantity = 1;
-
-	private OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
-
-	private RecurringChargeInstance recurringChargeInstance;
-
 	@Inject
 	private ServiceInstanceService serviceInstanceService;
 
@@ -93,6 +88,20 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	@Inject
 	private UsageChargeInstanceService usageChargeInstanceService;
+
+	@Inject
+	private AccessService accessService;
+
+	@Inject
+	private WalletOperationService walletOperationService;
+
+	private ServiceInstance selectedServiceInstance;
+
+	private Integer quantity = 1;
+
+	private OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance();
+
+	private RecurringChargeInstance recurringChargeInstance;
 
 	private Integer oneShotChargeInstanceQuantity = 1;
 
@@ -127,6 +136,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationExceptionC
 	 */
+	@Override
 	public Subscription initEntity() {
 		super.initEntity();
 		if (userAccountId != null) {
@@ -139,6 +149,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				entity.setDefaultLevel(true);
 			}
 		}
+
 		if (entity.getId() == null) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(entity.getSubscriptionDate());
@@ -153,6 +164,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 				for (ServiceTemplate serviceTemplate : entity.getOffer()
 						.getServiceTemplates()) {
 					boolean alreadyInstanciated = false;
+
 					for (ServiceInstance serviceInstance : serviceInstances) {
 						if (serviceTemplate.getCode().equals(
 								serviceInstance.getCode())) {
@@ -160,18 +172,20 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 							break;
 						}
 					}
+
 					if (!alreadyInstanciated) {
 						serviceTemplates.add(serviceTemplate);
 					}
-
 				}
 			}
+
 			serviceInstances.addAll(entity.getServiceInstances());
 
 		}
 
 		log.debug("serviceInstances=" + serviceInstances.getSize());
 		log.debug("servicetemplates=" + serviceTemplates.getSize());
+
 		return entity;
 	}
 
@@ -183,11 +197,11 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	public String saveOrUpdate(boolean killConversation)
 			throws BusinessException {
 		if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
-			// UserAccount userAccount = entity.getUserAccount();
 			if (subscriptionService.isDuplicationExist(entity)) {
 				entity.setDefaultLevel(false);
 				messages.error(new BundleKey("messages",
 						"error.account.duplicateDefautlLevel"));
+
 				return null;
 			}
 
@@ -204,6 +218,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	protected String saveOrUpdate(Subscription entity) throws BusinessException {
 		if (entity.isTransient()) {
 			subscriptionService.create(entity);
+			// TODO [edward] Why lazy doesn't work?
 			serviceTemplates.addAll(entity.getOffer().getServiceTemplates());
 			messages.info(new BundleKey("messages", "save.successful"));
 		} else {
@@ -405,18 +420,21 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 			log.debug("recurringChargeInstance is null");
 			return null;
 		}
+
 		log.debug("recurringChargeInstance is "
 				+ recurringChargeInstance.getId());
-		List<WalletOperation> results = new ArrayList<WalletOperation>(
-				recurringChargeInstance.getWalletOperations());
+
+		List<WalletOperation> results = walletOperationService
+				.listByChargeInstance(recurringChargeInstance);
 		Collections.sort(results, new Comparator<WalletOperation>() {
 			public int compare(WalletOperation c0, WalletOperation c1) {
-
 				return c1.getOperationDate().compareTo(c0.getOperationDate());
 			}
 		});
+
 		log.debug("retrieve " + (results != null ? results.size() : 0)
 				+ " WalletOperations");
+
 		return results;
 	}
 
@@ -663,12 +681,7 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 	}
 
 	public List<Access> getAccess() {
-		List<Access> accessList = new ArrayList<Access>();
-		getPersistenceService().refresh(entity);
-		for (Access access : entity.getAccessPoints()) {
-			accessList.add(access);
-		}
-		return accessList;
+		return accessService.listBySubscription(entity);
 	}
 
 	@Override
@@ -678,12 +691,15 @@ public class SubscriptionBean extends BaseBean<Subscription> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "userAccount");
+		return Arrays.asList("provider", "userAccount", "offer",
+				"userAccount.billingAccount",
+				"userAccount.billingAccount.customerAccount",
+				"userAccount.billingAccount.customerAccount.customer");
 	}
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider", "userAccount");
+		return Arrays.asList("provider");
 	}
 
 }

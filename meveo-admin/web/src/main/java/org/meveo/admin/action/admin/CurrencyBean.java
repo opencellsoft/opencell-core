@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
@@ -33,13 +34,10 @@ import org.meveo.service.base.local.IPersistenceService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Ignas
- * @created 2009.10.13
  */
 @Named
 @ConversationScoped
-public class CurrencyBean extends BaseBean<Currency> {
+public class CurrencyBean extends StatelessBaseBean<Currency> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -85,7 +83,7 @@ public class CurrencyBean extends BaseBean<Currency> {
 	protected IPersistenceService<Currency> getPersistenceService() {
 		return currencyService;
 	}
-	
+
 	@Override
 	protected String getDefaultSort() {
 		return "currencyCode";

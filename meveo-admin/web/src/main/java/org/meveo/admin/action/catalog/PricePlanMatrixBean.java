@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.PersistenceService;
@@ -36,12 +36,10 @@ import org.primefaces.event.SelectEvent;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * 
  */
 @Named
 @ConversationScoped
-public class PricePlanMatrixBean extends BaseBean<PricePlanMatrix> {
+public class PricePlanMatrixBean extends StatelessBaseBean<PricePlanMatrix> {
 
 	private static final long serialVersionUID = 1L;
 

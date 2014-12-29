@@ -23,11 +23,12 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -46,18 +47,14 @@ public class UserAccountService extends AccountService<UserAccount> {
 	@Inject
 	private WalletService walletService;
 
+	@Inject
+	private WalletTemplateService walletTemplateService;
+
 	public void createUserAccount(BillingAccount billingAccount,
 			UserAccount userAccount, User creator)
 			throws AccountAlreadyExistsException {
-		createUserAccount(getEntityManager(), billingAccount, userAccount,
-				creator);
-	}
 
-	public void createUserAccount(EntityManager em,
-			BillingAccount billingAccount, UserAccount userAccount, User creator)
-			throws AccountAlreadyExistsException {
-
-		UserAccount existingUserAccount = findByCode(em, userAccount.getCode(),
+		UserAccount existingUserAccount = findByCode(userAccount.getCode(),
 				userAccount.getProvider());
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
@@ -72,8 +69,8 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 		userAccount.setWallet(wallet);
 
-		List<WalletTemplate> prepaidWalletTemplates = billingAccount
-				.getProvider().getPrepaidWalletTemplates();
+		List<WalletTemplate> prepaidWalletTemplates = walletTemplateService
+				.listByProvider(billingAccount.getProvider());
 		if (prepaidWalletTemplates != null && prepaidWalletTemplates.size() > 0) {
 			HashMap<String, WalletInstance> prepaidWallets = new HashMap<String, WalletInstance>(
 					prepaidWalletTemplates.size());
@@ -91,17 +88,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 			userAccount.setPrepaidWallets(prepaidWallets);
 		}
 	}
-
-	public void updateUserAccount(UserAccount userAccount, User updater)
-			throws BusinessException {
-		update(userAccount, updater);
-	}
-
-	public void updateUserAccount(EntityManager em, UserAccount userAccount,
-			User updater) throws BusinessException {
-		update(userAccount, updater);
-	}
-
+	
 	public void userAccountTermination(UserAccount userAccount,
 			Date terminationDate,
 			SubscriptionTerminationReason terminationReason, User updater)
@@ -192,19 +179,36 @@ public class UserAccountService extends AccountService<UserAccount> {
 		if (userAccount == null || !userAccount.getDefaultLevel()) {
 			return false;
 		}
-		BillingAccount ba = userAccount.getBillingAccount();
-		List<UserAccount> userAccounts = ba.getUsersAccounts();
-		for (UserAccount ua : userAccounts) {
-			if (ua.getDefaultLevel() != null
-					&& ua.getDefaultLevel()
-					&& (userAccount.getId() == null || (userAccount.getId() != null && !userAccount
-							.getId().equals(ua.getId())))) {
-				return true;
+
+		List<UserAccount> userAccounts = listByBillingAccount(userAccount
+				.getBillingAccount());
+		if (userAccounts != null) {
+			for (UserAccount ua : userAccounts) {
+				if (ua.getDefaultLevel() != null
+						&& ua.getDefaultLevel()
+						&& (userAccount.getId() == null || (userAccount.getId() != null && !userAccount
+								.getId().equals(ua.getId())))) {
+					return true;
+				}
 			}
 		}
 
 		return false;
 
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
+		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
+		qb.addCriterionEntity("billingAccount", billingAccount);
+
+		try {
+			return (List<UserAccount>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
 	}
 
 }

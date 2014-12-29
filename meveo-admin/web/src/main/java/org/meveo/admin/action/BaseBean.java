@@ -28,9 +28,6 @@ import javax.enterprise.context.Conversation;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.Messages;
@@ -81,9 +78,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	@Inject
 	protected Conversation conversation;
 
-	@PersistenceContext(unitName = "MeveoAdmin", type = PersistenceContextType.EXTENDED)
-	private EntityManager em;
-
 	/** Search filters. */
 	protected Map<String, Object> filters = new HashMap<String, Object>();
 
@@ -91,7 +85,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	protected T entity;
 
 	/** Class of backing bean. */
-	private Class<T> clazz;
+	protected Class<T> clazz;
 
 	/**
 	 * Request parameter. Should form be displayed in create/edit or view mode
@@ -157,7 +151,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	@PostConstruct
-	private void init() {
+	public void postConstruct() {
 		beginConversation();
 	}
 
@@ -269,9 +263,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	public String saveOrUpdate(boolean killConversation)
 			throws BusinessException {
 		String outcome = saveOrUpdate(entity);
+
 		if (killConversation) {
 			endConversation();
 		}
+
 		return outcome;
 	}
 
@@ -413,6 +409,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						"error.delete.unexpected"));
 			}
 		}
+
+		initEntity();
 	}
 
 	public void delete() {
@@ -435,6 +433,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						"error.delete.unexpected"));
 			}
 		}
+
+		initEntity();
 	}
 
 	/**
@@ -475,6 +475,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 						"error.delete.unexpected"));
 			}
 		}
+
+		initEntity();
 	}
 
 	/**
@@ -514,7 +516,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 */
 	public T getInstance() throws InstantiationException,
 			IllegalAccessException {
-
 		return clazz.newInstance();
 	}
 
@@ -709,7 +710,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		this.selectedEntities = selectedEntities;
 	}
 
-	protected Long getObjectId() {
+	public Long getObjectId() {
 		if (objectIdFromParam != null && objectIdFromParam.get() != null) {
 			objectIdFromSet = objectIdFromParam.get();
 		}

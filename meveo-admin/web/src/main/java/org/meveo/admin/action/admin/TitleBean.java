@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -30,7 +31,7 @@ import org.meveo.service.catalog.impl.TitleService;
 
 @Named
 @ConversationScoped
-public class TitleBean extends BaseBean<Title> {
+public class TitleBean extends StatelessBaseBean<Title> {
 
 	private static final long serialVersionUID = 1L;
 

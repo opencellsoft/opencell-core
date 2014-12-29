@@ -284,7 +284,7 @@
 											rendered="#{customerAccountBean.isActiveAccount() and !customerAccountBean.edit}"
 											outcome="addBillingAccount"
 											value="#{messages['customerAccount.buttonAddBillingAccount']}">
-											<f:param name="cid" value="#{conversation.id}" />
+											<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 										</p:button>
 									</hf:formButtons>
 								</p:panel>
@@ -321,7 +321,7 @@
 										outcome="addNewOperation"
 										rendered="#{customerAccountBean.isActiveAccount()}"
 										includeViewParams="true">
-										<f:param name="cid" value="#{conversation.id}" />
+										<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
 									<p:commandButton
 										value="#{messages['customerAccount.addPaymentCheck']}"
@@ -332,7 +332,7 @@
 										rendered="#{customerAccountBean.isActiveAccount()}">
 										<f:param name="objectId"
 											value="#{customerAccountBean.entity.id}" />
-										<f:param name="cid" value="#{conversation.id}" />
+										<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 									</p:button>
 								</p:panelGrid>
 							</h:form>

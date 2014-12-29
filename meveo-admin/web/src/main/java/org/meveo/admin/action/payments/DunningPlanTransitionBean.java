@@ -22,7 +22,7 @@ import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.DunningPlan;
 import org.meveo.model.payments.DunningPlanTransition;
@@ -36,12 +36,10 @@ import org.meveo.service.payments.impl.DunningPlanTransitionService;
  * {@link BaseBean} that provides almost all common methods to handle entities
  * filtering/sorting in datatable, their create, edit, view, delete operations).
  * It works with Manaty custom JSF components.
- * 
- * @author Tyshan(tyshan@manaty.net)
  */
 @Named
 @ConversationScoped
-public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
+public class DunningPlanTransitionBean extends StatelessBaseBean<DunningPlanTransition> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -94,10 +92,11 @@ public class DunningPlanTransitionBean extends BaseBean<DunningPlanTransition> {
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
 	 */
 	@Override
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+	public String saveOrUpdate(boolean killConversation)
+			throws BusinessException {
 		dunningPlan.getTransitions().add(entity);
 		super.saveOrUpdate(killConversation);
-		
+
 		return "/pages/payments/dunning/dunningPlanDetail.xhtml?objectId="
 				+ dunningPlan.getId() + "&edit=true";
 

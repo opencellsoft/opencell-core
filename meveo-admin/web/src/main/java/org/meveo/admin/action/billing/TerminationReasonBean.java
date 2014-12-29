@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TerminationReasonService;
@@ -31,7 +31,7 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 @Named
 @ConversationScoped
 public class TerminationReasonBean extends
-		BaseBean<SubscriptionTerminationReason> {
+		StatelessBaseBean<SubscriptionTerminationReason> {
 
 	private static final long serialVersionUID = 3745349578244346473L;
 

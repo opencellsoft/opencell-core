@@ -22,58 +22,59 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 
 /**
- * Standard backing bean for {@link OneShotChargeInstance} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable,
- * their create, edit, view, delete operations). It works with Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created Dec 7, 2010
- * 
+ * Standard backing bean for {@link OneShotChargeInstance} (extends
+ * {@link BaseBean} that provides almost all common methods to handle entities
+ * filtering/sorting in datatable, their create, edit, view, delete operations).
+ * It works with Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
-// @Restrict("#{s:hasRole('meveo.vertina')}")*/
-public class PonctualChargeInstanceBean extends BaseBean<OneShotChargeInstance> {
+public class PonctualChargeInstanceBean extends
+		StatelessBaseBean<OneShotChargeInstance> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link OneShotChargeInstance} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private OneShotChargeInstanceService oneShotChargeInstanceService;
+	/**
+	 * Injected @{link OneShotChargeInstance} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private OneShotChargeInstanceService oneShotChargeInstanceService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public PonctualChargeInstanceBean() {
-        super(OneShotChargeInstance.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public PonctualChargeInstanceBean() {
+		super(OneShotChargeInstance.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("ponctualChargeInstance")
-    public OneShotChargeInstance init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("ponctualChargeInstance")
+	public OneShotChargeInstance init() {
+		return initEntity();
+	}
 
-
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<OneShotChargeInstance> getPersistenceService() {
-        return oneShotChargeInstanceService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<OneShotChargeInstance> getPersistenceService() {
+		return oneShotChargeInstanceService;
+	}
 
 }

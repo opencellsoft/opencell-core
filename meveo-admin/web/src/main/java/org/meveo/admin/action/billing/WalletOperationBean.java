@@ -22,49 +22,52 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletOperationService;
 
-
 @Named
 @ConversationScoped
-public class WalletOperationBean extends BaseBean<WalletOperation> {
+public class WalletOperationBean extends StatelessBaseBean<WalletOperation> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected @{link WalletOperation} service. Extends {@link PersistenceService}.
-     */
-    @Inject
-    private WalletOperationService walletOperationService;
+	/**
+	 * Injected @{link WalletOperation} service. Extends
+	 * {@link PersistenceService}.
+	 */
+	@Inject
+	private WalletOperationService walletOperationService;
 
-    /**
-     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
-     */
-    public WalletOperationBean() {
-        super(WalletOperation.class);
-    }
+	/**
+	 * Constructor. Invokes super constructor and provides class type of this
+	 * bean for {@link BaseBean}.
+	 */
+	public WalletOperationBean() {
+		super(WalletOperation.class);
+	}
 
-    /**
-     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
-    @Produces
-    @Named("walletOperation")
-    public WalletOperation init() {
-        return initEntity();
-    }
+	/**
+	 * Factory method for entity to edit. If objectId param set load that entity
+	 * from database, otherwise create new.
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Produces
+	@Named("walletOperation")
+	public WalletOperation init() {
+		return initEntity();
+	}
 
-    /**
-     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-     */
-    @Override
-    protected IPersistenceService<WalletOperation> getPersistenceService() {
-        return walletOperationService;
-    }
+	/**
+	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+	 */
+	@Override
+	protected IPersistenceService<WalletOperation> getPersistenceService() {
+		return walletOperationService;
+	}
 
 }

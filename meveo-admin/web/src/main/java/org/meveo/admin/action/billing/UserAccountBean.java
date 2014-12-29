@@ -16,6 +16,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,6 @@ import org.primefaces.model.LazyDataModel;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
  */
 @Named
 @ConversationScoped
@@ -104,8 +104,8 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		super.initEntity();
 
 		if (entity.getId() == null && billingAccountId != null) {
-			BillingAccount billingAccount = billingAccountService
-					.findById(billingAccountId);
+			BillingAccount billingAccount = billingAccountService.findById(
+					billingAccountId, Arrays.asList("customerAccount"));
 			entity.setBillingAccount(billingAccount);
 			populateAccounts(billingAccount);
 
@@ -136,9 +136,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 			}
 			super.saveOrUpdate(killConversation);
-			
+
 			saveCustomFields();
-			
+
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?edit=false&userAccountId="
 					+ entity.getId()
 					+ "&faces-redirect=true&includeViewParams=true";
@@ -146,7 +146,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			messages.error(new BundleKey("messages",
 					"error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
 
 		}
@@ -176,12 +176,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 						entity.getBillingAccount(), entity, getCurrentUser());
 				messages.info(new BundleKey("messages", "save.successful"));
 			} else {
-				userAccountService.updateUserAccount(entity, getCurrentUser());
+				entity.updateAudit(getCurrentUser());
 				messages.info(new BundleKey("messages", "update.successful"));
 			}
-
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 
@@ -197,10 +196,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			messages.info(new BundleKey("messages",
 					"resiliation.resiliateSuccessful"));
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 	}
@@ -215,10 +214,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -234,27 +233,26 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			return "/pages/billing/userAccounts/userAccountDetail.xhtml?objectId="
 					+ entity.getId() + "&edit=false";
 		} catch (BusinessException e) {
-			e.printStackTrace(); // TODO WTF printStackTrace??
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
 	}
 
 	public LazyDataModel<WalletOperation> getWalletOperationsNoInvoiced() {
-		System.out.println("getWalletOperationsNoInvoiced");
+		log.debug("getWalletOperationsNoInvoiced");
 		LazyDataModel<WalletOperation> result = null;
 		HashMap<String, Object> filters = new HashMap<String, Object>();
 		if (entity == null) {
-			System.out
-					.println("getWalletOperationsNoInvoiced: userAccount is null");
+			log.debug("getWalletOperationsNoInvoiced: userAccount is null");
 			initEntity();
-			System.out.println("entity.id=" + entity.getId());
+			log.debug("entity.id=" + entity.getId());
 		}
 		if (entity.getWallet() == null) {
-			System.out.println("getWalletOperationsNoInvoiced: userAccount "
+			log.debug("getWalletOperationsNoInvoiced: userAccount "
 					+ entity.getId() + " has no wallet");
 		} else {
 			filters.put("wallet", entity.getWallet());
@@ -271,7 +269,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	}
 
 	public void populateAccounts(BillingAccount billingAccount) {
-
 		entity.setBillingAccount(billingAccount);
 		if (userAccountService.isDuplicationExist(entity)) {
 			entity.setDefaultLevel(false);
@@ -296,6 +293,18 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
+	}
+
+	@Override
+	protected List<String> getFormFieldsToFetch() {
+		return Arrays.asList("provider", "billingAccount",
+				"billingAccount.customerAccount",
+				"billingAccount.customerAccount.customer");
+	}
+
+	@Override
+	protected List<String> getListFieldsToFetch() {
+		return Arrays.asList("provider", "billingAccount");
 	}
 
 }

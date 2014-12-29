@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.ActionPlanItem;
@@ -42,12 +42,10 @@ import org.meveo.service.payments.impl.DunningPlanTransitionService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
- * @author Tyshan(tyshan@manaty.net)
  */
 @Named
 @ConversationScoped
-public class DunningPlanBean extends BaseBean<DunningPlan> {
+public class DunningPlanBean extends StatelessBaseBean<DunningPlan> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -63,13 +61,13 @@ public class DunningPlanBean extends BaseBean<DunningPlan> {
 	@Inject
 	private ActionPlanItemService actionPlanItemService;
 
-	@Produces
-	@Named
-	private DunningPlanTransition dunningPlanTransition = new DunningPlanTransition();
+	// @Produces
+	// @Named
+	private transient DunningPlanTransition dunningPlanTransition = new DunningPlanTransition();
 
-	@Produces
-	@Named
-	private ActionPlanItem actionPlanItem = new ActionPlanItem();
+	// @Produces
+	// @Named
+	private transient ActionPlanItem actionPlanItem = new ActionPlanItem();
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

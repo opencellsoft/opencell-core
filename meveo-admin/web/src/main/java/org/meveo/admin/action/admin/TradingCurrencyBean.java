@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
@@ -35,12 +35,9 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.primefaces.event.SelectEvent;
 
-/**
- * @author Marouane ALAMI
- */
 @Named
 @ConversationScoped
-public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
+public class TradingCurrencyBean extends StatelessBaseBean<TradingCurrency> {
 
 	private static final long serialVersionUID = 1L;
 

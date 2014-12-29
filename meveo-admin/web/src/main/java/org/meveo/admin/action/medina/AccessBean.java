@@ -26,7 +26,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
@@ -38,7 +38,7 @@ import org.meveo.service.medina.impl.CDRParsingService;
 
 @Named
 @ConversationScoped
-public class AccessBean extends BaseBean<Access> {
+public class AccessBean extends StatelessBaseBean<Access> {
 
 	private static final long serialVersionUID = 1L;
 

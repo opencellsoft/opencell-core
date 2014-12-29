@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.report.ReportExecution;
 import org.meveo.model.bi.Report;
@@ -36,11 +37,10 @@ import org.meveo.service.bi.impl.ReportService;
  * provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty
  * custom JSF components.
- * 
  */
 @Named
 @ConversationScoped
-public class ReportBean extends BaseBean<Report> {
+public class ReportBean extends StatelessBaseBean<Report> {
 
 	private static final long serialVersionUID = 1L;
 

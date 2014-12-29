@@ -13,7 +13,7 @@ import org.meveo.model.crm.CustomFieldTypeEnum;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
-public abstract class AccountBean<T extends AccountEntity> extends BaseBean<T> {
+public abstract class AccountBean<T extends AccountEntity> extends StatelessBaseBean<T> {
 
 	private static final long serialVersionUID = 3407699633028715707L;
 

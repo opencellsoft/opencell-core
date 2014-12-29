@@ -148,14 +148,13 @@
 									edit="#{serviceTemplateBean.edit}"
 									label="#{messages['serviceUsageChargeTemplate.title']}"
 									backingBean="#{serviceTemplateBean}"
-									entity="#{serviceUsageChargeTemplate}" showFormButtons="false"
-									ajaxSubmit="true">
+									entity="#{serviceTemplateBean.serviceUsageChargeTemplate}"
+									showFormButtons="false" ajaxSubmit="true">
 
 									<hf:formEntityField id="chargeTemplateSelectedId"
 										label="#{messages['usageChargeTemplate.title']}"
 										field="chargeTemplate" childField="code" popup="true"
-										popupId="searchChargeTemplatePopup" clearButton="true"
-										required="true" />
+										popupId="searchChargeTemplatePopup" required="true" />
 
 									<hf:formEntityField id="counterTemplateSelectedId"
 										label="#{messages['counterTemplate.title']}"
@@ -183,7 +182,8 @@
 										<p:button id="buttonBack" value="#{messages['action.back']}"
 											outcome="#{serviceTemplateBean.back()}"
 											includeViewParams="true">
-											<f:param name="cid" value="#{conversation.id}" />
+											<f:param name="cid"
+												value="#{javax.enterprise.context.conversation.id}" />
 										</p:button>
 
 									</p:panelGrid>

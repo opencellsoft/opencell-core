@@ -47,9 +47,6 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Ignas
- * @created 2009.10.13
  */
 @Named
 @ConversationScoped
@@ -101,6 +98,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
+	@Override
 	public CustomerAccount initEntity() {
 		super.initEntity();
 		if (entity.getId() == null) {
@@ -133,31 +131,31 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 * 
 	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
 	 */
+	@Override
 	public String saveOrUpdate(boolean killConversation) {
 		try {
-
 			if (entity.getDefaultLevel() != null && entity.getDefaultLevel()) {
 				if (customerAccountService.isDuplicationExist(entity)) {
 					entity.setDefaultLevel(false);
 					throw new DuplicateDefaultAccountException();
 				}
-
 			}
 
 			super.saveOrUpdate(killConversation);
+
+			log.debug("isAttached={}", getPersistenceService()
+					.getEntityManager().contains(entity));
 
 			saveCustomFields();
 
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=false&customerAccountId="
 					+ entity.getId()
-					+ "&cid="
-					+ conversation.getId()
 					+ "&faces-redirect=true&includeViewParams=true";
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages",
 					"error.account.duplicateDefautlLevel"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(new BundleKey("messages", "javax.el.ELException"));
 
 		}
@@ -183,7 +181,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			setAmountToTransfer(BigDecimal.ZERO);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(new BundleKey("messages",
 					"customerAccount.transfertKO"));
 		}
@@ -259,10 +257,10 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			messages.info(new BundleKey("messages",
 					"customerAccount.closeSuccessful"));
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			messages.error(e.getMessage());
 		}
 		return null;
@@ -361,12 +359,12 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
+		return Arrays.asList("provider", "customer");
 	}
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
+		return Arrays.asList("provider", "customer");
 	}
 
 }

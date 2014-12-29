@@ -44,7 +44,7 @@
 
 		<h:form id="#{formId}" prependId="false">
 
-			<e:sortableDataTable id="datatable_#{resultsId}" var="entity" value="#{dataModel}"
+			<p:dataTable id="datatable_#{resultsId}" var="entity" value="#{dataModel}"
 				paginator="true" rows="10"
 				selection="#{backingBean.selectedEntities}"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -54,7 +54,7 @@
 				<p:column selectionMode="multiple" style="width:2%"
 					rendered="#{checkMany}" exportable="false" />
 				<ui:insert />
-			</e:sortableDataTable>
+			</p:dataTable>
 
 			<!-- <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{checkMany}"
 					value="#{messages['commons.deleteMultiple']}"

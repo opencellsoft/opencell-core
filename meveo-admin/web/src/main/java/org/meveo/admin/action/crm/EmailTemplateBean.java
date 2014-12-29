@@ -23,7 +23,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -34,13 +34,10 @@ import org.meveo.service.communication.impl.EmailTemplateService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Ignas Lelys
- * @created 2011.04.26
  */
 @Named
 @ConversationScoped
-public class EmailTemplateBean extends BaseBean<EmailTemplate> {
+public class EmailTemplateBean extends StatelessBaseBean<EmailTemplate> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -70,8 +70,8 @@ public class DocumentBean implements Serializable {
 	private static String tmpPath = null;
 	static {
 		ParamBean param = ParamBean.getInstance();
-		savePath = param.getProperty("document.path","/tmp/docs");
-		tmpPath = param.getProperty("document.tmp.path","/tmp");
+		savePath = param.getProperty("document.path", "/tmp/docs");
+		tmpPath = param.getProperty("document.tmp.path", "/tmp");
 	}
 	private String sortOrder = "desc";
 
@@ -92,15 +92,15 @@ public class DocumentBean implements Serializable {
 	@Produces
 	@Named("documents")
 	@ConversationScoped
-	//@Begin(join = true)
+	// @Begin(join = true)
 	public List<Document> list() {
 		documents = new ArrayList<Document>();
 		File path = new File(savePath);
 		if (!path.exists()) {
 			path.mkdirs();
 		}
-		File[] files = path.listFiles(new FileNameDateFilter(this.filename, this.fromDate,
-				this.toDate));
+		File[] files = path.listFiles(new FileNameDateFilter(this.filename,
+				this.fromDate, this.toDate));
 		if (files != null) {
 			Document d = null;
 			for (File file : files) {
@@ -120,7 +120,7 @@ public class DocumentBean implements Serializable {
 			comparator = new DocumetCreateDateDESCComparator();
 		}
 		Collections.sort(documents, comparator);
-		
+
 		return documents;
 	}
 
@@ -132,13 +132,17 @@ public class DocumentBean implements Serializable {
 			tmp.mkdirs();
 		}
 
-		File tmpFile = new File(tmpPath + File.separator + UUID.randomUUID().toString());
+		File tmpFile = new File(tmpPath + File.separator
+				+ UUID.randomUUID().toString());
 
 		try {
 			FileOutputStream fout = new FileOutputStream(tmpFile);
-			CheckedOutputStream csum = new CheckedOutputStream(fout, new CRC32());
-			GZIPOutputStream out = new GZIPOutputStream(new BufferedOutputStream(csum));
-			InputStream in = new FileInputStream(new File(document.getAbsolutePath()));
+			CheckedOutputStream csum = new CheckedOutputStream(fout,
+					new CRC32());
+			GZIPOutputStream out = new GZIPOutputStream(
+					new BufferedOutputStream(csum));
+			InputStream in = new FileInputStream(new File(
+					document.getAbsolutePath()));
 			int sig = 0;
 			byte[] buf = new byte[1024];
 			while ((sig = in.read(buf, 0, 1024)) != -1)
@@ -148,14 +152,15 @@ public class DocumentBean implements Serializable {
 			out.close();
 			csum.close();
 			fout.close();
-			File createdFile = new File(savePath + File.separator + document.getFilename()
-					+ ".gzip");
+			File createdFile = new File(savePath + File.separator
+					+ document.getFilename() + ".gzip");
 			if (createdFile.exists()) {
 				createdFile.delete();
 			}
 			tmpFile.renameTo(createdFile);
 		} catch (Exception e) {
-			log.error("Error:#0, when compress file:#1", e.getMessage(), document.getAbsolutePath());
+			log.error("Error:#0, when compress file:#1", e.getMessage(),
+					document.getAbsolutePath());
 		}
 		list();
 		log.info("end compress...");
@@ -169,12 +174,12 @@ public class DocumentBean implements Serializable {
 		try {
 			javax.faces.context.FacesContext context = javax.faces.context.FacesContext
 					.getCurrentInstance();
-			HttpServletResponse res = (HttpServletResponse) context.getExternalContext()
-					.getResponse();
+			HttpServletResponse res = (HttpServletResponse) context
+					.getExternalContext().getResponse();
 			res.setContentType("application/force-download");
 			res.setContentLength(document.getSize().intValue());
-			res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename()
-					+ "\"");
+			res.addHeader("Content-disposition", "attachment;filename=\""
+					+ document.getFilename() + "\"");
 
 			OutputStream out = res.getOutputStream();
 			InputStream fin = new FileInputStream(f);
@@ -190,7 +195,8 @@ public class DocumentBean implements Serializable {
 			context.responseComplete();
 			log.info("download over!");
 		} catch (Exception e) {
-			log.error("Error:#0, when dowload file: #1", e.getMessage(), document.getAbsolutePath());
+			log.error("Error:#0, when dowload file: #1", e.getMessage(),
+					document.getAbsolutePath());
 		}
 		log.info("downloaded successfully!");
 		return null;
@@ -290,10 +296,12 @@ public class DocumentBean implements Serializable {
 			if (name == null) {
 				result = false;
 			}
-			if (currentProvider != null && !name.startsWith(currentProvider.getCode())) {
+			if (currentProvider != null
+					&& !name.startsWith(currentProvider.getCode())) {
 				result = false;
 			}
-			if (this.filename != null && !this.filename.equals("") && name.indexOf(filename) < 0) {
+			if (this.filename != null && !this.filename.equals("")
+					&& name.indexOf(filename) < 0) {
 				result = false;
 			}
 			if (this.fromDate != null) {

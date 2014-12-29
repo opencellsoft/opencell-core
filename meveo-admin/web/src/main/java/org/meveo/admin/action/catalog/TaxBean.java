@@ -24,7 +24,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.CatMessages;
@@ -42,7 +42,7 @@ import org.meveo.service.catalog.impl.TaxService;
  */
 @Named
 @ConversationScoped
-public class TaxBean extends BaseBean<Tax> {
+public class TaxBean extends StatelessBaseBean<Tax> {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Injected @{link Tax} service. Extends {@link PersistenceService}.

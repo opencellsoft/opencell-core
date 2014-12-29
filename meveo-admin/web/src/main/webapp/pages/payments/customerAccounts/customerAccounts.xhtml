@@ -29,14 +29,12 @@
 			updateField=":searchPanel:searchForm:customer:customer_child">
 		</hftl:entityPopup>
 
-
 		<hf:searchPanel id="searchPanel"
 			label="#{messages['customerAccount.search']}"
 			backingBean="#{customerAccountListBean}">
 			<hf:searchField id="customer"
 				label="#{messages['customerAccount.customer']}" field="customer"
-				childField="code" popup="true" popupId="searchCustomerPopup"
-				clearButton="true" />
+				childField="code" popup="true" popupId="searchCustomerPopup" />
 			<hf:searchField label="#{messages['businessEntity.code']}"
 				field="code" />
 			<hf:searchField label="#{messages['businessEntity.description']}"
@@ -51,7 +49,6 @@
 				field="creditCategory" />
 			<hf:searchField label="#{messages['customerAccount.customer']}"
 				field="customer" />
-
 		</hf:searchPanel>
 
 		<hftl:dataList backingBean="#{customerAccountListBean}">
@@ -70,7 +67,9 @@
 				field="customer" childField="code" />
 			<hftl:column label="#{messages['currency.codeCurrency']}"
 				field="tradingCurrency" childField="currencyCode" />
-			<hftl:actionsColumn useCustomIdParam="true" propagateConversation="false"
+
+			<hftl:actionsColumn useCustomIdParam="true"
+				propagateConversation="false"
 				permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
 		</hftl:dataList>
 

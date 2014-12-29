@@ -252,8 +252,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 		if (subscription == null) {
 			return false;
 		}
-		UserAccount ua = subscription.getUserAccount();
-		List<Subscription> subscriptions = ua.getSubscriptions();
+
+		List<Subscription> subscriptions = listByUserAccount(subscription
+				.getUserAccount());
 		for (Subscription sub : subscriptions) {
 			if (sub.getDefaultLevel() != null
 					&& sub.getDefaultLevel()
@@ -278,6 +279,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
 			return (List<Subscription>) qb.getQuery(em).getResultList();
 		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Subscription> listByUserAccount(UserAccount userAccount) {
+		QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
+		qb.addCriterionEntity("userAccount", userAccount);
+
+		try {
+			return (List<Subscription>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
 			return null;
 		}
 	}

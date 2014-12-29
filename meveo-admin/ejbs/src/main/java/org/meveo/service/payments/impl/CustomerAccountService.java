@@ -25,6 +25,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.jboss.seam.transaction.Transactional;
@@ -735,4 +736,19 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 				.setParameter("providerCode", providerCode).getResultList();
 		return customerAccounts;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<CustomerAccount> listByCustomer(Customer customer) {
+		QueryBuilder qb = new QueryBuilder(CustomerAccount.class, "c");
+		qb.addCriterionEntity("customer", customer);
+
+		try {
+			return (List<CustomerAccount>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
+
 }

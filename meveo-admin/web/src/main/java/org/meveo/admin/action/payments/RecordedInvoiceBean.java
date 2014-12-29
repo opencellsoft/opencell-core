@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
@@ -34,13 +34,10 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Ignas
- * @created 2009.10.13
  */
 @Named
 @ConversationScoped
-public class RecordedInvoiceBean extends BaseBean<RecordedInvoice> {
+public class RecordedInvoiceBean extends StatelessBaseBean<RecordedInvoice> {
 
 	private static final long serialVersionUID = 1L;
 

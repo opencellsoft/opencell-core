@@ -69,4 +69,18 @@ public class AccessService extends PersistenceService<Access> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Access> listBySubscription(Subscription subscription) {
+		QueryBuilder qb = new QueryBuilder(Access.class, "c");
+		qb.addCriterionEntity("subscription", subscription);
+
+		try {
+			return (List<Access>) qb.getQuery(getEntityManager())
+					.getResultList();
+		} catch (NoResultException e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
+
 }

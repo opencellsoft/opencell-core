@@ -118,7 +118,7 @@
 
 				<p:button id="backButton" value="#{messages['action.back']}"
 					outcome="billingRuns" includeViewParams="true">
-					<f:param name="cid" value="#{conversation.id}" />
+					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 				</p:button>
 			</p:panelGrid>
 		</h:form>

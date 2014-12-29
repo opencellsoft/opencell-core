@@ -22,7 +22,7 @@ import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.ActionPlanItem;
 import org.meveo.model.payments.DunningPlan;
@@ -36,12 +36,10 @@ import org.meveo.service.payments.impl.DunningPlanService;
  * that provides almost all common methods to handle entities filtering/sorting
  * in datatable, their create, edit, view, delete operations). It works with
  * Manaty custom JSF components.
- * 
- * @author Tyshan(tyshan@manaty.net)
  */
 @Named
 @ConversationScoped
-public class ActionPlanItemBean extends BaseBean<ActionPlanItem> {
+public class ActionPlanItemBean extends StatelessBaseBean<ActionPlanItem> {
 
 	private static final long serialVersionUID = 1L;
 
