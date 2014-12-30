@@ -28,6 +28,7 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.jboss.solder.servlet.http.RequestParam;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.StatelessBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
@@ -48,7 +49,8 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
  */
 @Named
 @ConversationScoped
-public class InvoiceSubCategoryBean extends StatelessBaseBean<InvoiceSubCategory> {
+public class InvoiceSubCategoryBean extends
+		StatelessBaseBean<InvoiceSubCategory> {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -139,6 +141,8 @@ public class InvoiceSubCategoryBean extends StatelessBaseBean<InvoiceSubCategory
 
 	public void deleteInvoiceSubcategoryCountry(
 			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+		invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService
+				.attach(invoiceSubcategoryCountry);
 		invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
 		entity.getInvoiceSubcategoryCountries().remove(
 				invoiceSubcategoryCountry);
