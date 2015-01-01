@@ -25,6 +25,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -58,9 +60,10 @@ public class ChargeTemplate extends BusinessEntity {
 	@OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY)
 	private List<ChargeInstance> chargeInstances = new ArrayList<ChargeInstance>();
 
-	@OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY)
-	private List<TriggeredEDRTemplate> edrTemplates;
-	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CAT_CHRG_EDR", joinColumns = @JoinColumn(name = "CHARGE_TMPL_ID"), inverseJoinColumns = @JoinColumn(name = "TRIGG_EDR_ID"))
+	private List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+
 	public OperationTypeEnum getType() {
 		return type;
 	}

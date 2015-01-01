@@ -88,9 +88,4 @@ public class TriggeredEDRTemplateBean extends StatelessBaseBean<TriggeredEDRTemp
 		return Arrays.asList("provider");
 	}
 
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("chargeTemplate");
-	}
-
 }

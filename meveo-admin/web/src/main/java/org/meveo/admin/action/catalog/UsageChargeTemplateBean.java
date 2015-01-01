@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -41,8 +42,9 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
 @Named
+@Stateful
 @ConversationScoped
-public class UsageChargeTemplateBean extends StatelessBaseBean<UsageChargeTemplate> {
+public class UsageChargeTemplateBean extends StatefulBaseBean<UsageChargeTemplate> {
 	private static final long serialVersionUID = 1L;
 
 	@Inject

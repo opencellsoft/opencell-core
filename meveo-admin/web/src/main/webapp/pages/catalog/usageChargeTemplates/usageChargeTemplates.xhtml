@@ -35,22 +35,18 @@
 			<hftl:column label="#{messages['chargeTemplate.code']}" field="code" />
 			<hftl:column label="#{messages['chargeTemplate.description']}"
 				field="description" />
-			<hftl:column label="#{messages['chargeTemplate.amountEditable']}"
-				field="amountEditable" isMessage="true" />
-
 			<hftl:column
 				label="#{messages['usageChargeTemplate.unityMultiplicator']}"
 				field="unityMultiplicator" converterParam="12digits" />
 			<hftl:column
 				label="#{messages['usageChargeTemplate.unityDescription']}"
 				field="unityDescription" />
-			<hftl:column
-				label="#{messages['usageChargeTemplate.unityFormatter']}"
-				field="unityFormatter" />
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam1']}"
 				field="filterParam1" />
 			<hftl:column label="#{messages['usageChargeTemplate.filterParam2']}"
 				field="filterParam2" />
+			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
+				childField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['usageChargeTemplate.priority']}"
 				field="priority" />
 

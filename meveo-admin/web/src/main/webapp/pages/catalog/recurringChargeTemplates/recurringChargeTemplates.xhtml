@@ -56,6 +56,8 @@
 				field="invoiceSubCategory" childField="code" childFieldId="id"
 				entityView="/pages/catalog/invoiceSubCategories/invoiceSubCategoryDetail.xhtml"
 				backView="invoiceCategories" />
+			<hftl:column label="#{messages['menu.triggeredEdrTemplates']}" field="edrTemplates"
+				childField="code" isList="true" sort="false" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:actionsColumn

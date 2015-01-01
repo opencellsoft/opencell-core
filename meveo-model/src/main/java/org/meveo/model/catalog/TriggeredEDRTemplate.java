@@ -2,9 +2,6 @@ package org.meveo.model.catalog;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -16,10 +13,6 @@ import org.meveo.model.BusinessEntity;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_TRIGGERED_EDR_SEQ")
 public class TriggeredEDRTemplate  extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CHARGE_TEMPLATE_ID")
-	protected ChargeTemplate chargeTemplate;
 	
 	@Column(name = "SUBSCRIPTION_EL", length = 1000)
 	@Size(max = 1000)
