@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AccountOperationDto;
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldDto;
 
 @XmlRootElement(name = "CustomerAccount")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -22,6 +23,7 @@ public class CustomerAccountDto extends BaseDto {
 	private String paymentMethod;
 	private String creditCategory;
 	private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();
+	private List<CustomFieldDto> customFields= new ArrayList<CustomFieldDto>();
 	private Date dateStatus;
 	private Date dateDunningLevel;
 
@@ -58,6 +60,14 @@ public class CustomerAccountDto extends BaseDto {
 
 	public void setAccountOperations(List<AccountOperationDto> accountOperations) {
 		this.accountOperations = accountOperations;
+	}
+
+	public List<CustomFieldDto> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(List<CustomFieldDto> customFields) {
+		this.customFields = customFields;
 	}
 
 	public Date getDateStatus() {

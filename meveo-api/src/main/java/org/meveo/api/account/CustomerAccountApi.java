@@ -3,6 +3,7 @@ package org.meveo.api.account;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -10,11 +11,13 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.AccountOperationDto;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.MatchingAmountDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
+import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -84,6 +87,19 @@ public class CustomerAccountApi extends BaseApi {
 			if (customerAccount.getCustomer() != null) {
 				customerAccountDto.setCustomerCode(customerAccount
 						.getCustomer().getCode());
+			}
+			
+			if(customerAccount.getCustomFields() !=null && customerAccount.getCustomFields().size()>0){
+				for(Map.Entry<String, CustomFieldInstance> entry : customerAccount.getCustomFields().entrySet()){
+					CustomFieldDto cfDto = new CustomFieldDto();
+					cfDto.setCode(entry.getValue().getCode());
+					cfDto.setDateValue(entry.getValue().getDateValue());
+					cfDto.setDescription(entry.getValue().getDescription());
+					cfDto.setDoubleValue(entry.getValue().getDoubleValue());
+					cfDto.setLongValue(entry.getValue().getLongValue());
+					cfDto.setStringValue(entry.getValue().getStringValue());
+					customerAccountDto.getCustomFields().add(cfDto);
+				}
 			}
 
 			customerAccountDto.setDunningLevel(customerAccount
