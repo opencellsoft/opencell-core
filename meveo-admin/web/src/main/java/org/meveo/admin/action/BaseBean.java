@@ -177,6 +177,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	}
 
 	public void preRenderView() {
+		endConversation();
+		entity=null;
 		beginConversation();
 	}
 
@@ -226,7 +228,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	 * @return Entity in current view state.
 	 */
 	public T getEntity() {
-		return entity != null ? entity : initEntity();
+		if((entity==null) || 
+			(entity.getId()!=null && objectIdFromParam!=null && objectIdFromParam.get() != null
+			&& entity.getId()!=objectIdFromParam.get())){
+			initEntity(); 
+		}
+		return entity;
 	}
 
 	public void setEntity(T entity) {

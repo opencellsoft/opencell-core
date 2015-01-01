@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.ejb.Stateful;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -39,7 +40,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.StatelessBaseBean;
+import org.meveo.admin.action.StatefulBaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
@@ -66,8 +67,9 @@ import org.slf4j.LoggerFactory;
  * custom JSF components.
  */
 @Named
+@Stateful
 @ConversationScoped
-public class UserBean extends StatelessBaseBean<User> {
+public class UserBean extends StatefulBaseBean<User> {
 
 	private static final long serialVersionUID = 1L;
 
